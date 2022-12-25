@@ -45,6 +45,15 @@ body {
   border-radius: 5px !important;
 }
 
+.ant-tooltip-inner{
+  border-radius: 5px !important;
+  background-color: #16b1ff !important;
+}
+
+.ant-tooltip-arrow-content {
+  --antd-arrow-background-color: linear-gradient(to right bottom, #16b1ff, #16b1ff) !important;
+}
+
 .ant-radio-group {
   display: flex;
   flex-direction: row;
@@ -103,7 +112,8 @@ body {
 }
 
 .PhoneInput {
-  .PhoneInputInput:focus-visible {
+  .PhoneInputInput:focus-visible,
+  .PhoneInputInput:hover {
     flex: 1 1;
     min-width: 0;
     border-radius: 5px !important;

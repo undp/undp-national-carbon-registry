@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { Row, Col, Button, Form, Input, Select, message, Spin, Upload, Modal, Radio } from 'antd';
+import {
+  Row,
+  Col,
+  Button,
+  Form,
+  Input,
+  Select,
+  message,
+  Spin,
+  Upload,
+  Modal,
+  Radio,
+  Tooltip,
+} from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -103,7 +116,7 @@ const AddUser = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Please input the user name!');
+                          throw new Error('Name is required!');
                         }
                       },
                     },
@@ -127,14 +140,14 @@ const AddUser = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Please input the E-mail!');
+                          throw new Error('Email is required!');
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error('Please input a valid E-mail!');
+                            throw new Error('Email is invalid!');
                           }
                         }
                       },
@@ -154,28 +167,40 @@ const AddUser = () => {
                   rules={[
                     {
                       required: true,
-                      message: 'Please select the user role!',
+                      message: 'Role is required!',
                     },
                   ]}
                 >
                   <Radio.Group size="large">
                     <div className="admin-radio-container">
-                      <Radio.Button className="admin" value="Admin">
-                        <StarOutlined className="role-icons" />
-                        Admin
-                      </Radio.Button>
+                      <Tooltip placement="top" title="Full access to all permitted functions">
+                        <Radio.Button className="admin" value="Admin">
+                          <StarOutlined className="role-icons" />
+                          Admin
+                        </Radio.Button>
+                      </Tooltip>
                     </div>
                     <div className="manager-radio-container">
-                      <Radio.Button className="manager" value="Manager">
-                        <ToolOutlined className="role-icons" />
-                        Manager
-                      </Radio.Button>
+                      <Tooltip
+                        placement="top"
+                        title="Access to all permitted functions except user management"
+                      >
+                        <Radio.Button className="manager" value="Manager">
+                          <ToolOutlined className="role-icons" />
+                          Manager
+                        </Radio.Button>
+                      </Tooltip>
                     </div>
                     <div className="view-only-radio-container">
-                      <Radio.Button className="view-only" value="ViewOnly">
-                        <EyeOutlined className="role-icons" />
-                        View Only
-                      </Radio.Button>
+                      <Tooltip
+                        placement="top"
+                        title="Read-only access to all permitted functionalities"
+                      >
+                        <Radio.Button className="view-only" value="ViewOnly">
+                          <EyeOutlined className="role-icons" />
+                          Viewer
+                        </Radio.Button>
+                      </Tooltip>
                     </div>
                   </Radio.Group>
                 </Form.Item>
@@ -185,7 +210,7 @@ const AddUser = () => {
                   rules={[
                     {
                       required: true,
-                      message: 'Please input the phone number!',
+                      message: 'Phone Number is required!',
                     },
                   ]}
                 >

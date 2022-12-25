@@ -48,7 +48,7 @@
       .details-part-two {
         .role-group {
           .certifier-radio-container {
-            width: 25%;
+            width: 45%;
             .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
               color: $cert-color !important;
               border-color: $cert-color !important;
@@ -63,7 +63,7 @@
             }
           }
           .dev-radio-container {
-            width: 40%;
+            width: 45%;
             .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
               color: $dev-color !important;
               border-color: $dev-color !important;

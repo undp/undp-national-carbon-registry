@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Radio, Row, Steps, Upload, message } from 'antd';
+import { Button, Col, Form, Input, Radio, Row, Steps, Tooltip, Upload, message } from 'antd';
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { ExperimentOutlined, EyeOutlined, SafetyOutlined, UploadOutlined } from '@ant-design/icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -69,7 +69,7 @@ const AddNewCompany = () => {
       });
     } finally {
       setLoading(false);
-      navigate('/userManagement/viewAll', { replace: true });
+      navigate('/companyManagement/viewAll', { replace: true });
     }
   };
 
@@ -104,7 +104,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Please input the organisation name!');
+                            throw new Error('Name is required!');
                           }
                         },
                       },
@@ -128,7 +128,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Please input the tax id!');
+                            throw new Error('Tax ID is required!');
                           }
                         },
                       },
@@ -152,14 +152,14 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Please input the E-mail!');
+                            throw new Error('Email is required!');
                           } else {
                             const val = value.trim();
                             const reg =
                               /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                             const matches = val.match(reg) ? val.match(reg) : [];
                             if (matches.length === 0) {
-                              throw new Error('Please input a valid E-mail!');
+                              throw new Error('Email is invalid!');
                             }
                           }
                         },
@@ -172,7 +172,7 @@ const AddNewCompany = () => {
                     className="website"
                     label="Website"
                     name="website"
-                    rules={[{ required: true, message: 'Please input the website url!' }]}
+                    rules={[{ required: true, message: 'Website is required!' }]}
                   >
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
@@ -181,6 +181,7 @@ const AddNewCompany = () => {
                     label="Organisation Logo"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
+                    rules={[{ required: true, message: 'Organisation Logo is required!' }]}
                   >
                     <Upload
                       className="logo-upload-section"
@@ -204,28 +205,32 @@ const AddNewCompany = () => {
                     rules={[
                       {
                         required: true,
-                        message: 'Please select the organisation role!',
+                        message: 'Role is required!',
                       },
                     ]}
                   >
                     <Radio.Group size="large">
                       <div className="certifier-radio-container">
-                        <Radio.Button className="certifier" value="Certifier">
-                          <SafetyOutlined className="role-icons" />
-                          Certifier
-                        </Radio.Button>
+                        <Tooltip
+                          placement="top"
+                          title="Permitted to certify and revoke certifications of programmes"
+                        >
+                          <Radio.Button className="certifier" value="Certifier">
+                            <SafetyOutlined className="role-icons" />
+                            Certifier
+                          </Radio.Button>
+                        </Tooltip>
                       </div>
                       <div className="dev-radio-container">
-                        <Radio.Button className="dev" value="ProgrammeDeveloper">
-                          <ExperimentOutlined className="role-icons" />
-                          Programme Developer
-                        </Radio.Button>
-                      </div>
-                      <div className="observer-radio-container">
-                        <Radio.Button className="observer" value="Observer">
-                          <EyeOutlined className="role-icons" />
-                          Observer
-                        </Radio.Button>
+                        <Tooltip
+                          placement="top"
+                          title="Permitted to own programmes and transfer carbon credits"
+                        >
+                          <Radio.Button className="dev" value="ProgrammeDeveloper">
+                            <ExperimentOutlined className="role-icons" />
+                            Programme Developer
+                          </Radio.Button>
+                        </Tooltip>
                       </div>
                     </Radio.Group>
                   </Form.Item>
@@ -246,7 +251,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Please input the phone number!');
+                            throw new Error('Phone Number is required!');
                           }
                         },
                       },
@@ -264,7 +269,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     name="address"
                     label="Address"
-                    rules={[{ required: true, message: 'Please input the address!' }]}
+                    rules={[{ required: true, message: 'Address is required!' }]}
                   >
                     <Input.TextArea rows={3} maxLength={100} />
                   </Form.Item>
