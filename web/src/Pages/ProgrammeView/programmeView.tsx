@@ -390,6 +390,7 @@ const ProgrammeView = () => {
                     ]}
                     type="donut"
                     width="100%"
+                    fontFamily="inter"
                   />
                 </div>
               </div>
