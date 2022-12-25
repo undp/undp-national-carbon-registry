@@ -423,6 +423,8 @@ export class ProgrammeLedgerService {
           creditIssued: programme.creditIssued,
           creditBalance: programme.creditBalance,
           creditChange: programme.creditChange,
+          txRef: programme.txRef,
+          txTime: programme.txTime
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
