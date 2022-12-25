@@ -335,66 +335,70 @@ const ProgrammeView = () => {
         <Row gutter={16}>
           <Col md={24} lg={10}>
             <Card className="card-container centered-card">{elements}</Card>
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<BlockOutlined />}</span>
-                  <span className="title-text">{t('view:credits')}</span>
-                </div>
-                <div className="map-content">
-                  <Chart
-                    options={{
-                      labels: ['Issued', 'Transferred', 'Balance', 'Frozen', 'Retired'],
-                      legend: {
-                        position: 'bottom',
-                      },
-                      colors: ['#FFB480', '#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
-                      plotOptions: {
-                        pie: {
-                          donut: {
-                            labels: {
-                              show: true,
-                              total: {
-                                showAlways: true,
+            {data.creditIssued ? (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<BlockOutlined />}</span>
+                    <span className="title-text">{t('view:credits')}</span>
+                  </div>
+                  <div className="map-content">
+                    <Chart
+                      options={{
+                        labels: ['Issued', 'Transferred', 'Balance', 'Frozen', 'Retired'],
+                        legend: {
+                          position: 'bottom',
+                        },
+                        colors: ['#FFB480', '#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        plotOptions: {
+                          pie: {
+                            donut: {
+                              labels: {
                                 show: true,
-                                label: 'Total',
-                                formatter: () => '' + data.creditIssued,
+                                total: {
+                                  showAlways: true,
+                                  show: true,
+                                  label: 'Total',
+                                  formatter: () => '' + data.creditIssued,
+                                },
                               },
                             },
                           },
                         },
-                      },
-                      dataLabels: {
-                        enabled: false,
-                      },
-                      responsive: [
-                        {
-                          breakpoint: 480,
-                          options: {
-                            chart: {
-                              width: '15vw',
-                            },
-                            legend: {
-                              position: 'bottom',
+                        dataLabels: {
+                          enabled: false,
+                        },
+                        responsive: [
+                          {
+                            breakpoint: 480,
+                            options: {
+                              chart: {
+                                width: '15vw',
+                              },
+                              legend: {
+                                position: 'bottom',
+                              },
                             },
                           },
-                        },
-                      ],
-                    }}
-                    series={[
-                      Number(data.creditIssued),
-                      Number(data.creditTransferred),
-                      Number(data.creditBalance),
-                      0,
-                      0,
-                    ]}
-                    type="donut"
-                    width="100%"
-                    fontFamily="inter"
-                  />
+                        ],
+                      }}
+                      series={[
+                        Number(data.creditIssued),
+                        Number(data.creditTransferred),
+                        Number(data.creditBalance),
+                        0,
+                        0,
+                      ]}
+                      type="donut"
+                      width="100%"
+                      fontFamily="inter"
+                    />
+                  </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            ) : (
+              <div></div>
+            )}
             <Card className="card-container">
               <div>
                 <InfoView
