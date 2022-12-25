@@ -23,5 +23,7 @@
     "consumerGroup": "Building Type",
     "constantVersion": "Standard Version",
     "landArea": "Land Area",
-    "timeline": "Activity Timeline"
+    "timeline": "Activity Timeline",
+    "location": "Geographical Location",
+    "credits": "Credits"
 }

@@ -21,6 +21,9 @@ export class Programme implements EntitySubject {
     @Column()
     title: string;
 
+    @Column({unique: true, nullable: true})
+    externalId: string;
+
     @Column({
         type: "enum",
         enum: SectoralScope,

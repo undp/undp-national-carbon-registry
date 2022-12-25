@@ -32,7 +32,37 @@ export class ProgrammeLedgerService {
     //     console.log("create programme in repo -- ", e)
     //   });
     // }
-    await this.ledger.insertRecord(programme);
+
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      externalId: programme.externalId,
+    };
+
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length > 0) {
+          throw new HttpException(
+            "Programme already exist with the given externalId",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+
+        let insertMap = {};
+        insertMap[this.ledger.tableName] = programme
+          
+        return [{}, {}, insertMap];
+      }
+    );
     return programme;
   }
 
@@ -366,7 +396,7 @@ export class ProgrammeLedgerService {
         programme.creditIssued = programme.creditEst;
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
-        programme.txRef = 
+        programme.txRef = user;
         updatedProgramme = programme;
 
         let companyCreditDistribution = {}

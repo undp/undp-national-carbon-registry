@@ -24,6 +24,17 @@
     padding: 12px;
   }
 
+  .centered-card {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .separator {
+    border-bottom: 1px solid $sep-line-color;
+    width: 100%;
+  }
+
   .company-info {
 
     padding: 25px 10px 30px 10px;
@@ -46,12 +57,6 @@
     }
   }
 
-  .centered-card {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-  }
-
   .programme-name {
     color: $title-text-color;
     margin-top: 14px;
@@ -65,6 +70,10 @@
     margin-left: -8px;
   }
 
+  .map-content {
+    margin-left: 20px;
+    padding: 15px 0px;
+  }
   .ant-steps-item-subtitle {
     display: block;
     margin-left: 0px;
@@ -92,4 +101,9 @@
     padding: 0.35rem 0.4rem;
     font-size: 0.8rem;
   }
+}
+
+.map-container {
+  width: 100%;
+  height: 250px;
 }
