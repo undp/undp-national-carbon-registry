@@ -243,17 +243,17 @@ export class ProgrammeService {
 
         const req = await this.getCreditRequest(programmeDto, constants);
         try {
-            programme.creditIssued = Math.round(await calculateCredit(req));
+            programme.creditEst = Math.round(await calculateCredit(req));
         } catch (err) {
             this.logger.log(`Credit calculate failed ${err.message}`)
             throw new HttpException(err.message, HttpStatus.BAD_REQUEST)
         }
 
-        if (programme.creditIssued <= 0) {
+        if (programme.creditEst <= 0) {
             throw new HttpException("Not enough credits to create the programme", HttpStatus.BAD_REQUEST)
         }
-        programme.creditBalance = programme.creditIssued;
-        programme.creditChange = programme.creditIssued;
+        // programme.creditBalance = programme.creditIssued;
+        // programme.creditChange = programme.creditIssued;
         programme.programmeProperties.creditYear = new Date(programme.startTime * 1000).getFullYear()
         programme.constantVersion = constants ? String(constants.version) : "default"
         programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
@@ -329,14 +329,14 @@ export class ProgrammeService {
         });
     }
 
-    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage) {
+    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
         this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
         if (status == ProgrammeStage.ISSUED) {
             const program = await this.programmeLedger.getProgrammeById(req.programmeId);
             if (!program) {
                 throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
-            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId)
+            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }

@@ -32,7 +32,37 @@ export class ProgrammeLedgerService {
     //     console.log("create programme in repo -- ", e)
     //   });
     // }
-    await this.ledger.insertRecord(programme);
+
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      externalId: programme.externalId,
+    };
+
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length > 0) {
+          throw new HttpException(
+            "Programme already exist with the given externalId",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+
+        let insertMap = {};
+        insertMap[this.ledger.tableName] = programme
+          
+        return [{}, {}, insertMap];
+      }
+    );
     return programme;
   }
 
@@ -251,13 +281,15 @@ export class ProgrammeLedgerService {
   public async updateProgrammeStatus(
     programmeId: string,
     status: ProgrammeStage,
-    currentExpectedStatus: ProgrammeStage
+    currentExpectedStatus: ProgrammeStage,
+    user: string
   ): Promise<boolean> {
     this.logger.log(`Updating programme ${programmeId} status ${status}`);
     const affected = await this.ledger.updateRecords(
       {
         currentStage: status.valueOf(),
-        txTime: new Date().getTime()
+        txTime: new Date().getTime(),
+        txRef: user
       },
       {
         programmeId: programmeId,
@@ -276,7 +308,8 @@ export class ProgrammeLedgerService {
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,
-    companyIds: number[]
+    companyIds: number[],
+    user: string
   ): Promise<boolean> {
     this.logger.log(`Authorizing programme ${programmeId}`);
 
@@ -360,6 +393,10 @@ export class ProgrammeLedgerService {
         programme.txTime = new Date().getTime();
         programme.currentStage = ProgrammeStage.ISSUED;
         programme.creditTransferred = 0
+        programme.creditIssued = programme.creditEst;
+        programme.creditBalance = programme.creditIssued;
+        programme.creditChange = programme.creditIssued;
+        programme.txRef = user;
         updatedProgramme = programme;
 
         let companyCreditDistribution = {}
@@ -382,7 +419,10 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.tableName] = {
           currentStage: ProgrammeStage.ISSUED.valueOf(),
           serialNo: serialNo,
-          creditTransferred: 0
+          creditTransferred: 0,
+          creditIssued: programme.creditIssued,
+          creditBalance: programme.creditBalance,
+          creditChange: programme.creditChange,
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,

@@ -24,6 +24,17 @@
     padding: 12px;
   }
 
+  .centered-card {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .separator {
+    border-bottom: 1px solid $sep-line-color;
+    width: 100%;
+  }
+
   .company-info {
 
     padding: 25px 10px 30px 10px;
@@ -46,15 +57,53 @@
     }
   }
 
-  .centered-card {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-  }
-
   .programme-name {
     color: $title-text-color;
     margin-top: 14px;
     font-weight: 600;
   }
+}
+
+.info-view {
+  .content {
+    padding: 15px 0px;
+    margin-left: -8px;
+  }
+
+  .map-content {
+    margin-left: 20px;
+    padding: 15px 0px;
+  }
+  .ant-steps-item-subtitle {
+    display: block;
+    margin-left: 0px;
+    font-size: 0.8rem;
+    color: $light-text-color;
+    margin-top: -12px;
+    font-weight: 500;
+  }
+
+  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title {
+    color: $title-text-color;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-description {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $body-text-color;
+  }
+
+  .step-icon {
+    border-radius: 100%;
+    margin-right: 10px;
+    padding: 0.35rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+
+.map-container {
+  width: 100%;
+  height: 250px;
 }

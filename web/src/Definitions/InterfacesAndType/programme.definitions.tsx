@@ -6,12 +6,18 @@ export enum ProgrammeStage {
   Rejected = 'Rejected',
   Retired = 'Retired',
   Transferred = 'Transferred',
+  Frozen = 'Frozen',
 }
 
 export enum SectoralScope {
   'Energy Industry' = '1',
   'Energy Distribution' = '2',
   'Agriculture' = '15',
+}
+
+export enum TypeOfMitigation {
+  AGRICULTURE = 'Agriculture',
+  SOLAR = 'Solar',
 }
 
 export const getStageEnumVal = (value: string) => {
@@ -75,6 +81,7 @@ export interface Programme {
   txTime: number;
   createdTime: number;
   txRef: string;
+  typeOfMitigation: TypeOfMitigation;
 }
 
 export const getGeneralFields = (programme: Programme) => {

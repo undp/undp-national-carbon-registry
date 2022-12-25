@@ -64,22 +64,22 @@ export class ProgrammeController {
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('authorize')
-    async programmeApprove(@Body() body: ProgrammeApprove) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.ISSUED, ProgrammeStage.AWAITING_AUTHORIZATION)
+    async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.ISSUED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.username}`)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('reject')
-    async programmeReject(@Body() body: ProgrammeReject) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION)
+    async programmeReject(@Body() body: ProgrammeReject, @Request() req) {
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.username}`)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('retire')
-    async programmeRetire(@Body() body: ProgrammeRetire) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.RETIRED, ProgrammeStage.ISSUED)
+    async programmeRetire(@Body() body: ProgrammeRetire, @Request() req) {
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.RETIRED, ProgrammeStage.ISSUED, `${req.user.id}#${req.user.username}`)
     }
 
     @ApiBearerAuth()
