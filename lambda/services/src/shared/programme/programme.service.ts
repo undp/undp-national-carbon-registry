@@ -278,6 +278,7 @@ export class ProgrammeService {
             .skip(skip)
             .take(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
+            .leftJoinAndMapMany('programme.certifierId', Company, 'certcomp', 'certcomp.companyId = ANY(programme.certifierId)')
             .getManyAndCount())
 
         return new DataListResponseDto(

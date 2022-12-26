@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Row, Col, Card, Progress, Tag, Steps, message, Skeleton } from 'antd';
+import { Row, Col, Card, Progress, Tag, Steps, message, Skeleton, Button, Modal } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './programmeView.scss';
@@ -48,12 +48,13 @@ import { DateTime } from 'luxon';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
+import TextArea from 'antd/lib/input/TextArea';
 
 mapboxgl.accessToken =
   '';
 
 const ProgrammeView = () => {
-  const { get } = useConnection();
+  const { get, put } = useConnection();
   const { state } = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState<Programme>();
@@ -61,6 +62,50 @@ const ProgrammeView = () => {
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const mapContainerRef = useRef(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [actionInfo, setActionInfo] = useState<any>({});
+  const [comment, setComment] = useState<any>('');
+
+  const showModal = () => {
+    setOpenModal(true);
+  };
+
+  const onAction = async (action: string) => {
+    try {
+      if (actionInfo.action === 'Reject' || actionInfo.action === 'Approve') {
+        setConfirmLoading(true);
+        const response: any = await put(
+          `programme/${actionInfo.action === 'Reject' ? 'reject' : 'authorize'}`,
+          {
+            comment: comment,
+            programmeId: data?.programmeId,
+          }
+        );
+        if (response.statusCode === 200) {
+          setData(response.data);
+          setOpenModal(false);
+        } else {
+          message.open({
+            type: 'error',
+            content: response.message,
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+
+        setConfirmLoading(false);
+      }
+    } catch (e: any) {
+      message.open({
+        type: 'error',
+        content: e.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setConfirmLoading(false);
+    }
+  };
 
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
@@ -302,6 +347,61 @@ const ProgrammeView = () => {
     );
   });
 
+  const certs = data.certifierId.map((cert: any) => {
+    return (
+      <div className="">
+        <div className="cert-info">
+          {isBase64(cert.logo) ? (
+            <img src={'data:image/jpeg;base64,' + cert.logo} />
+          ) : cert.name ? (
+            <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
+          ) : (
+            <div className="cert-logo">{'A'}</div>
+          )}
+          <div className="text-center cert-name">{cert.name}</div>
+        </div>
+      </div>
+    );
+  });
+
+  const actionBtns = [];
+  if (data.currentStage.toString() === 'AwaitingAuthorization') {
+    actionBtns.push(
+      <Button
+        danger
+        onClick={() => {
+          setActionInfo({
+            action: 'Reject',
+            text: `You are going to reject programme ${data.title}`,
+            type: 'danger',
+          });
+          showModal();
+        }}
+      >
+        {t('view:reject')}
+      </Button>
+    );
+    actionBtns.push(
+      <Button
+        type="primary"
+        onClick={() => {
+          setActionInfo({
+            action: 'Approve',
+            text: `You are going to approve programme ${data.title}`,
+            type: 'primary',
+          });
+          showModal();
+        }}
+      >
+        {t('view:authorise')}
+      </Button>
+    );
+  } else if (
+    data.currentStage.toString() !== ProgrammeStage.Rejected &&
+    data.currentStage.toString() !== ProgrammeStage.Retired
+  ) {
+  }
+
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
     const text = t('view:' + k);
@@ -345,8 +445,11 @@ const ProgrammeView = () => {
   return (
     <div className="content-container programme-view">
       <div className="title-bar">
-        <div className="body-title">{t('view:details')}</div>
-        <div className="body-sub-title">{t('view:desc')}</div>
+        <div>
+          <div className="body-title">{t('view:details')}</div>
+          <div className="body-sub-title">{t('view:desc')}</div>
+        </div>
+        <div className="flex-display action-btns">{actionBtns}</div>
       </div>
       <div className="content-body">
         <Row gutter={16}>
@@ -455,6 +558,15 @@ const ProgrammeView = () => {
             <Card className="card-container">
               <div className="info-view">
                 <div className="title">
+                  <span className="title-icon">{<SafetyOutlined />}</span>
+                  <span className="title-text">{t('view:certification')}</span>
+                </div>
+                <div className="cert-content">{certs}</div>
+              </div>
+            </Card>
+            <Card className="card-container">
+              <div className="info-view">
+                <div className="title">
                   <span className="title-icon">{<ClockCircleOutlined />}</span>
                   <span className="title-text">{t('view:timeline')}</span>
                 </div>
@@ -470,6 +582,23 @@ const ProgrammeView = () => {
           </Col>
         </Row>
       </div>
+      <Modal
+        title={`Programme ${actionInfo.action} - ${data.title}`}
+        open={openModal}
+        onOk={() => onAction(actionInfo.action)}
+        onCancel={() => setOpenModal(false)}
+        okText={actionInfo.action}
+        confirmLoading={confirmLoading}
+        okType={actionInfo.type}
+        cancelText="Cancel"
+      >
+        <p>{actionInfo.text}</p>
+        <TextArea
+          rows={4}
+          placeholder="Leave your comment here"
+          onChange={(v) => setComment(v.target.value)}
+        />
+      </Modal>
     </div>
   );
 };
