@@ -21,6 +21,7 @@ import {
   TransactionOutlined,
 } from '@ant-design/icons';
 import {
+  CompanyRole,
   getFinancialFields,
   getGeneralFields,
   getStageEnumVal,
@@ -49,12 +50,15 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 mapboxgl.accessToken =
   '';
 
 const ProgrammeView = () => {
   const { get, put } = useConnection();
+
+  const { userInfoState } = useUserContext();
   const { state } = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState<Programme>();
@@ -73,18 +77,40 @@ const ProgrammeView = () => {
 
   const onAction = async (action: string) => {
     try {
-      if (actionInfo.action === 'Reject' || actionInfo.action === 'Approve') {
+      if (actionInfo.action !== 'Transfer') {
         setConfirmLoading(true);
         const response: any = await put(
-          `programme/${actionInfo.action === 'Reject' ? 'reject' : 'authorize'}`,
+          `programme/${
+            actionInfo.action === 'Reject'
+              ? 'reject'
+              : actionInfo.action === 'Approve'
+              ? 'authorize'
+              : actionInfo.action === 'Certify'
+              ? 'certify'
+              : 'retire'
+          }`,
           {
             comment: comment,
             programmeId: data?.programmeId,
           }
         );
-        if (response.statusCode === 200) {
+        if (response.statusCode === 200 || response.status === 200) {
           setData(response.data);
           setOpenModal(false);
+          message.open({
+            type: 'success',
+            content:
+              'Successfully ' +
+              (actionInfo.action === 'Reject'
+                ? 'rejected'
+                : actionInfo.action === 'Approve'
+                ? 'approved'
+                : actionInfo.action === 'Certify'
+                ? 'certified'
+                : 'retired'),
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
         } else {
           message.open({
             type: 'error',
@@ -366,40 +392,93 @@ const ProgrammeView = () => {
 
   const actionBtns = [];
   if (data.currentStage.toString() === 'AwaitingAuthorization') {
-    actionBtns.push(
-      <Button
-        danger
-        onClick={() => {
-          setActionInfo({
-            action: 'Reject',
-            text: `You are going to reject programme ${data.title}`,
-            type: 'danger',
-          });
-          showModal();
-        }}
-      >
-        {t('view:reject')}
-      </Button>
-    );
-    actionBtns.push(
-      <Button
-        type="primary"
-        onClick={() => {
-          setActionInfo({
-            action: 'Approve',
-            text: `You are going to approve programme ${data.title}`,
-            type: 'primary',
-          });
-          showModal();
-        }}
-      >
-        {t('view:authorise')}
-      </Button>
-    );
+    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Reject',
+              text: `You are going to reject programme ${data.title}`,
+              type: 'danger',
+            });
+            showModal();
+          }}
+        >
+          {t('view:reject')}
+        </Button>
+      );
+      actionBtns.push(
+        <Button
+          type="primary"
+          onClick={() => {
+            setActionInfo({
+              action: 'Approve',
+              text: `You are going to approve programme ${data.title}`,
+              type: 'primary',
+            });
+            showModal();
+          }}
+        >
+          {t('view:authorise')}
+        </Button>
+      );
+    }
   } else if (
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
+    if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Retire',
+              text: `You are going to retire programme ${data.title}`,
+              type: 'danger',
+            });
+            showModal();
+          }}
+        >
+          {t('view:retire')}
+        </Button>
+      );
+    } else {
+      // actionBtns.push(
+      //   <Button
+      //     danger
+      //     onClick={() => {
+      //       setActionInfo({
+      //         action: 'Retire',
+      //         text: `You are going to transfer programme ${data.title}`,
+      //         type: 'danger',
+      //       });
+      //       showModal();
+      //     }}
+      //   >
+      //     {t('view:Transfer')}
+      //   </Button>
+      // );
+    }
+
+    if (userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+      actionBtns.push(
+        <Button
+          type="primary"
+          onClick={() => {
+            setActionInfo({
+              action: 'Certify',
+              text: `You are going to certify programme ${data.title}`,
+              type: 'primary',
+            });
+            showModal();
+          }}
+        >
+          {t('view:certify')}
+        </Button>
+      );
+    }
   }
 
   const generalInfo: any = {};

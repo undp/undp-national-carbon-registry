@@ -333,6 +333,10 @@ export class ProgrammeService {
 
     async certify(req: ProgrammeCertify, user: User) {
         this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
+
+        if (user.companyRole != CompanyRole.CERTIFIER) {
+            throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
+        }
         return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.email}`)
     }
 

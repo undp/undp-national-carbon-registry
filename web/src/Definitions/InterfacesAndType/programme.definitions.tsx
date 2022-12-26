@@ -6,7 +6,7 @@ export enum ProgrammeStage {
   Rejected = 'Rejected',
   Retired = 'Retired',
   Transferred = 'Transferred',
-  Frozen = 'Frozen',
+  // Frozen = 'Frozen',
 }
 
 export enum TxType {
@@ -49,6 +49,13 @@ export const getStageTagType = (stage: ProgrammeStage) => {
       return 'default';
   }
 };
+
+export enum CompanyRole {
+  CERTIFIER = 'Certifier',
+  PROGRAMME_DEVELOPER = 'ProgrammeDeveloper',
+  MRV = 'MRV',
+  GOVERNMENT = 'Government',
+}
 
 export interface ProgrammeProperties {
   maxInternationalTransferAmount: string;

@@ -35,7 +35,12 @@ const Login = () => {
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
-        setUserInfo({ id: response.data.id, userRole: response.data.role });
+        setUserInfo({
+          id: response.data.id,
+          userRole: response.data.role,
+          companyId: response.data.companyId,
+          companyRole: response.data.companyRole,
+        });
         removeToken();
         return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');
       }
