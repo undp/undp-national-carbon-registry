@@ -95,6 +95,9 @@ const ProgrammeView = () => {
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
+          if (!response.data.certifierId) {
+            response.data.certifierId = [];
+          }
           setData(response.data);
           setOpenModal(false);
           message.open({
@@ -634,15 +637,19 @@ const ProgrammeView = () => {
                 />
               </div>
             </Card>
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<SafetyOutlined />}</span>
-                  <span className="title-text">{t('view:certification')}</span>
+            {certs.length > 0 ? (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<SafetyOutlined />}</span>
+                    <span className="title-text">{t('view:certification')}</span>
+                  </div>
+                  <div className="cert-content">{certs}</div>
                 </div>
-                <div className="cert-content">{certs}</div>
-              </div>
-            </Card>
+              </Card>
+            ) : (
+              <span></span>
+            )}
             <Card className="card-container">
               <div className="info-view">
                 <div className="title">

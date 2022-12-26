@@ -51,6 +51,13 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       tokenVal = token;
     } else {
       tokenVal = localStorage.getItem('token');
+
+      setUserInfoState({
+        id: localStorage.getItem('userId') as string,
+        userRole: localStorage.getItem('userRole') as string,
+        companyRole: localStorage.getItem('companyRole') as string,
+        companyId: parseInt(localStorage.getItem('companyId') as string),
+      });
     }
     try {
       if (tokenVal) {
