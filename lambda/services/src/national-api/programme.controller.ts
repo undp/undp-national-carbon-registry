@@ -18,6 +18,7 @@ import { ProgrammeTransferRequest } from '../shared/dto/programme.transfer.reque
 import { ProgrammeTransfer } from '../shared/entities/programme.transfer';
 import { ProgrammeTransferApprove } from '../shared/dto/programme.transfer.approve';
 import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject';
+import { ProgrammeCertify } from '../shared/dto/programme.certify';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -65,21 +66,28 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('authorize')
     async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.ISSUED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.username}`)
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.ISSUED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.email}`)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('reject')
     async programmeReject(@Body() body: ProgrammeReject, @Request() req) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.username}`)
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.email}`)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('retire')
     async programmeRetire(@Body() body: ProgrammeRetire, @Request() req) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.RETIRED, ProgrammeStage.ISSUED, `${req.user.id}#${req.user.username}`)
+        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.RETIRED, ProgrammeStage.ISSUED, `${req.user.id}#${req.user.email}`)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeCertify))
+    @Put('certify')
+    async programmeCertify(@Body() body: ProgrammeCertify, @Request() req) {
+        return this.programmeService.certify(body, req.user)
     }
 
     @ApiBearerAuth()

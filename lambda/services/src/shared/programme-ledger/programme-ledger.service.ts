@@ -23,6 +23,7 @@ export class ProgrammeLedgerService {
 
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
+    programme.txType = TxType.CREATE;
     // if (programme) {
     //   await this.entityManger.save<Programme>(
     //     plainToClass(Programme, programme)
@@ -184,6 +185,7 @@ export class ProgrammeLedgerService {
        
         programme.txTime = new Date().getTime();
         programme.txRef = `${transfer.requestId}`;
+        programme.txType = TxType.TRANSFER;
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
 
@@ -200,6 +202,7 @@ export class ProgrammeLedgerService {
         const uPayload  = {
           txTime: programme.txTime,
           txRef: programme.txRef,
+          txType: programme.txType,
           creditChange: programme.creditChange,
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
@@ -278,6 +281,80 @@ export class ProgrammeLedgerService {
     });
   }
 
+  public async updateCertifier(programmeId: string, certifierId: number, add: boolean, user: string) {
+
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            "Programme does not exist",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let programme = programmes[0];
+        if (add) {
+          if (!programme.certifierId) {
+            programme.certifierId = [certifierId];
+          } else {
+            programme.certifierId.push(certifierId);
+          }
+        } else {
+          const index = programme.certifierId.indexOf(certifierId);
+          if (index < 0) {
+            throw new HttpException(
+              "Certifier does not certified the programme",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        }
+
+        programme.txRef = user;
+        programme.txTime = new Date().getTime();
+        programme.txType = TxType.CERTIFY;
+
+        let updateMap = {};
+        let updateWhere = {};
+        updateMap[this.ledger.tableName] = {
+          certifierId: programme.certifierId,
+          txType: programme.txType,
+          txTime: programme.txTime,
+          txRef: programme.txRef
+        }
+        updateWhere[this.ledger.tableName] = {
+          programmeId: programme.programmeId
+        }
+          
+        updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    throw new HttpException(
+      "Programme failed to update",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
   public async updateProgrammeStatus(
     programmeId: string,
     status: ProgrammeStage,
@@ -289,7 +366,8 @@ export class ProgrammeLedgerService {
       {
         currentStage: status.valueOf(),
         txTime: new Date().getTime(),
-        txRef: user
+        txRef: user,
+        txType: (status == ProgrammeStage.REJECTED ? TxType.REJECT : status == ProgrammeStage.RETIRED ? TxType.RETIRE : null)
       },
       {
         programmeId: programmeId,
@@ -397,6 +475,7 @@ export class ProgrammeLedgerService {
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
         programme.txRef = user;
+        programme.txType = TxType.ISSUE;
         updatedProgramme = programme;
 
         let companyCreditDistribution = {}
@@ -424,7 +503,8 @@ export class ProgrammeLedgerService {
           creditBalance: programme.creditBalance,
           creditChange: programme.creditChange,
           txRef: programme.txRef,
-          txTime: programme.txTime
+          txTime: programme.txTime,
+          txType: programme.txType
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,

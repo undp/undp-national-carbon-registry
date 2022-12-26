@@ -31,6 +31,7 @@ import { ProgrammeTransferReject } from '../dto/programme.transfer.reject';
 import { Company } from '../entities/company.entity';
 import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
+import { ProgrammeCertify } from '../dto/programme.certify';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -329,6 +330,11 @@ export class ProgrammeService {
         });
     }
 
+    async certify(req: ProgrammeCertify, user: User) {
+        this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
+        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.email}`)
+    }
+
     async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
         this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
         if (status == ProgrammeStage.ISSUED) {
@@ -342,7 +348,7 @@ export class ProgrammeService {
             }
             return new DataResponseDto(HttpStatus.OK, updated)
         } else {
-            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus)
+            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }
