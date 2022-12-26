@@ -5,6 +5,7 @@ import { AgricultureProperties } from '../dto/agriculture.properties';
 import { ProgrammeProperties } from '../dto/programme.properties';
 import { SolarProperties } from '../dto/solar.properties';
 import { Sector } from '../enum/sector.enum';
+import { TxType } from '../enum/txtype.enum';
 import { TypeOfMitigation } from '../enum/typeofmitigation.enum';
 import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
 import { EntitySubject } from './entity.subject';
@@ -122,5 +123,13 @@ export class Programme implements EntitySubject {
 
     @Column({nullable: true})
     txRef: string;
+    
+    @Column({
+        type: "enum",
+        enum: TxType,
+        array: false,
+        nullable: true
+    })
+    txType: TxType;
     
 }

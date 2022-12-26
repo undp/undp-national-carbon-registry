@@ -17,6 +17,7 @@ import {
   LikeOutlined,
   PlusOutlined,
   PushpinOutlined,
+  SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
 import {
@@ -26,6 +27,7 @@ import {
   getStageTagType,
   Programme,
   ProgrammeStage,
+  TxType,
   TypeOfMitigation,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import i18next from 'i18next';
@@ -68,8 +70,9 @@ const ProgrammeView = () => {
       const activityList: any[] = [];
       for (const activity of response.data) {
         let el = undefined;
-        if (activity.data.currentStage === 'AwaitingAuthorization') {
+        if (activity.data.txType === TxType.CREATE) {
           el = {
+            status: 'process',
             title: 'Programme Created',
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: `The programme was estimated ${activity.data.creditEst} Credits`,
@@ -82,8 +85,9 @@ const ProgrammeView = () => {
               </span>
             ),
           };
-        } else if (activity.data.currentStage === 'Issued') {
+        } else if (activity.data.txType === TxType.ISSUE) {
           el = {
+            status: 'process',
             title: `Programme Authorised by ${activity.data.txRef.substring(
               activity.data.txRef.indexOf('#') + 1
             )}`,
@@ -99,12 +103,9 @@ const ProgrammeView = () => {
               </span>
             ),
           };
-          // Issued = 'Issued',
-          // Rejected = 'Rejected',
-          // Retired = 'Retired',
-          // Transferred = 'Transferred',
-        } else if (activity.data.currentStage === 'Rejected') {
+        } else if (activity.data.txType === TxType.REJECT) {
           el = {
+            status: 'process',
             title: `Programme Rejected by ${activity.data.txRef.substring(
               activity.data.txRef.indexOf('#') + 1
             )}`,
@@ -119,24 +120,40 @@ const ProgrammeView = () => {
               </span>
             ),
           };
-        } else if (activity.data.currentStage === 'Transferred') {
+        } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
+            status: 'process',
             title: `Credit Transferred`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: `${Number(activity.data.creditChange)
               .toFixed(0)
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Credits were transferred`,
             icon: (
+              <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
+                <TransactionOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.CERTIFY) {
+          el = {
+            status: 'process',
+            title: `Programme Certified by ${activity.data.txRef.substring(
+              activity.data.txRef.indexOf('#') + 1
+            )}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `Programme Certified`,
+            icon: (
               <span
                 className="step-icon"
                 style={{ backgroundColor: CertBGColor, color: CertColor }}
               >
-                <TransactionOutlined />
+                <SafetyOutlined />
               </span>
             ),
           };
         } else {
           el = {
+            status: 'process',
             title: activity.data.currentStage,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: ``,

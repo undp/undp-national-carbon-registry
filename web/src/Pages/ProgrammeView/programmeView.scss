@@ -3,6 +3,10 @@
 .programme-view {
   padding: 0px 50px;
 
+  .ant-steps-vertical>.ant-steps-item>.ant-steps-item-container>.ant-steps-item-tail {
+    left: 13px;
+  }
+
   .apexcharts-legend-series {
     padding-bottom: 5px;
   }
@@ -113,3 +117,4 @@
   font-family: $primary-font-family !important;
   color: $title-text-color !important;
 }
+
