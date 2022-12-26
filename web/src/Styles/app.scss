@@ -128,12 +128,15 @@ body {
     background-color: $primary-color;
     color: $dark-text-color;
     border: none;
+  }
+
+  .ant-btn {
     height: 32px;
     font-weight: 500;
     font-size: 0.8rem;
     border-radius: 0.3rem;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
-    min-width: 120px;
+    min-width: 80px;
     box-shadow: none;
     span {
       text-transform: uppercase;
@@ -231,3 +234,6 @@ body {
   padding: 1px 10px;
 }
 
+.flex-display {
+  display: flex;
+}

@@ -25,5 +25,8 @@
     "landArea": "Land Area",
     "timeline": "Activity Timeline",
     "location": "Geographical Location",
-    "credits": "Credits"
+    "credits": "Credits",
+    "certification": "Certification Details",
+    "authorise": "Approve",
+    "reject": "Reject"
 }

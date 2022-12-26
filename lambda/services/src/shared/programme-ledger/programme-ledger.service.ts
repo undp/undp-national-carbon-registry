@@ -308,14 +308,21 @@ export class ProgrammeLedgerService {
         }
 
         let programme = programmes[0];
+        const index = programme.certifierId.indexOf(certifierId);
         if (add) {
+          if (index >= 0) {
+            throw new HttpException(
+              "Certifier already certified the programme",
+              HttpStatus.BAD_REQUEST
+            );
+          }
           if (!programme.certifierId) {
             programme.certifierId = [certifierId];
           } else {
             programme.certifierId.push(certifierId);
           }
         } else {
-          const index = programme.certifierId.indexOf(certifierId);
+          
           if (index < 0) {
             throw new HttpException(
               "Certifier does not certified the programme",
