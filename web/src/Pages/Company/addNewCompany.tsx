@@ -18,7 +18,6 @@ const AddNewCompany = () => {
   const [current, setCurrent] = useState<number>(0);
 
   const normFile = (e: any) => {
-    console.log('Upload event:', e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -45,10 +44,9 @@ const AddNewCompany = () => {
       requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
       requestData.company.website = 'https://' + requestData.company.website;
-      requestData.company.logo =
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJJxYMar-aROQ3X1nBanP0uKGI7ODpIULjgA&usqp=CAU';
+      requestData.company.logo = requestData?.company?.logo[0]?.thumbUrl;
       console.log(requestData);
-      const response = await post('user/add', requestData);
+      const response = await post('national/user/add', requestData);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
@@ -73,6 +71,21 @@ const AddNewCompany = () => {
     }
   };
 
+  const convertBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const CompanyDetailsForm = () => {
     return (
       <div className="company-details-form-container">
@@ -81,7 +94,7 @@ const AddNewCompany = () => {
             name="company-details"
             className="company-details-form"
             layout="vertical"
-            requiredMark={false}
+            requiredMark={true}
             form={formOne}
             onFinish={onFinishStepOne}
           >
@@ -172,22 +185,55 @@ const AddNewCompany = () => {
                     className="website"
                     label="Website"
                     name="website"
-                    rules={[{ required: true, message: 'Website is required!' }]}
+                    rules={[{ required: false }]}
                   >
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
                   <Form.Item
                     name="logo"
-                    label="Organisation Logo"
+                    label="Organisation Logo (File Type : JPEG , PNG , SVG )"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    rules={[{ required: true, message: 'Organisation Logo is required!' }]}
+                    rules={[
+                      { required: true, message: '' },
+                      {
+                        validator: async (rule, file) => {
+                          if (
+                            String(file).trim() === '' ||
+                            String(file).trim() === undefined ||
+                            file === null ||
+                            file === undefined
+                          ) {
+                            throw new Error('Organisation Logo is required!');
+                          } else {
+                            let isCorrectFormat = false;
+                            if (file[0]?.type === 'image/png') {
+                              isCorrectFormat = true;
+                            } else if (file[0]?.type === 'image/jpeg') {
+                              isCorrectFormat = true;
+                            } else if (file[0]?.type === 'image/svg') {
+                              isCorrectFormat = true;
+                            }
+                            if (!isCorrectFormat) {
+                              throw new Error('Unsupported file format!');
+                            } else if (file[0]?.size > 1000000) {
+                              // default size format of files would be in bytes -> 1MB = 1000000bytes
+                              throw new Error('Maximum upload file size is 5MB!');
+                            }
+                          }
+                        },
+                      },
+                    ]}
                   >
                     <Upload
                       className="logo-upload-section"
                       name="logo"
                       action="/upload.do"
                       listType="picture"
+                      maxCount={1}
+                      onChange={(file: any) => {
+                        console.log('ogo upload -------- ', file);
+                      }}
                     >
                       <Button size="large" icon={<UploadOutlined />}>
                         Upload
@@ -319,7 +365,7 @@ const AddNewCompany = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Please input the organisation admin name!');
+                          throw new Error('Name is required!');
                         }
                       },
                     },
@@ -332,8 +378,7 @@ const AddNewCompany = () => {
                   label="Phone Number"
                   rules={[
                     {
-                      required: true,
-                      message: 'Please input the phone number!',
+                      required: false,
                     },
                   ]}
                 >
@@ -366,14 +411,14 @@ const AddNewCompany = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Please input the E-mail!');
+                          throw new Error('Email is required!');
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error('Please input a valid E-mail!');
+                            throw new Error('Email is invalid!');
                           }
                         }
                       },

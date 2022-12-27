@@ -5,6 +5,7 @@ import {
   EllipsisOutlined,
   ExperimentOutlined,
   EyeOutlined,
+  FilterOutlined,
   PlusOutlined,
   SafetyOutlined,
   SearchOutlined,
@@ -15,12 +16,14 @@ import {
   Button,
   Col,
   Empty,
+  Input,
   List,
   message,
   PaginationProps,
   Popconfirm,
   Popover,
   Row,
+  Select,
   Space,
   Table,
   Typography,
@@ -52,6 +55,9 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+
+const { Search } = Input;
+const { Option } = Select;
 
 const CompanyManagement = () => {
   const navigate = useNavigate();
@@ -114,9 +120,10 @@ const CompanyManagement = () => {
 
   const columns = [
     {
-      title: t('company:name'),
-      dataIndex: 'name',
-      key: 'name',
+      title: '',
+      dataIndex: 'logo',
+      key: 'logo',
+      width: '20px',
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
@@ -126,6 +133,19 @@ const CompanyManagement = () => {
               bg={getCompanyBgColor(itemObj.companyRole)}
               name={itemObj.name}
             />
+          </div>
+        );
+      },
+    },
+    {
+      title: t('company:name'),
+      dataIndex: 'name',
+      key: 'name',
+      sorter: true,
+      align: 'left' as const,
+      render: (item: any, itemObj: any) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ fontWeight: 600 }}>{item}</div>
           </div>
         );
@@ -135,15 +155,37 @@ const CompanyManagement = () => {
       title: t('company:taxId'),
       dataIndex: 'taxId',
       key: 'taxId',
+      sorter: true,
       align: 'left' as const,
     },
     {
       title: t('company:companyRole'),
       dataIndex: 'companyRole',
       key: 'companyRole',
+      sorter: true,
       align: 'left' as const,
       render: (item: any) => {
         return getCompanyRoleComponent(item);
+      },
+    },
+    {
+      title: t('company:numberOfProgrammes'),
+      dataIndex: 'numberOfProgrammes',
+      key: 'numberOfProgrammes',
+      sorter: true,
+      align: 'left' as const,
+      render: (item: any) => {
+        return item ? item : '-';
+      },
+    },
+    {
+      title: t('company:creditBalance'),
+      dataIndex: 'credit',
+      key: 'credit',
+      sorter: true,
+      align: 'left' as const,
+      render: (item: any) => {
+        return item ? item : '-';
       },
     },
     {
@@ -167,7 +209,7 @@ const CompanyManagement = () => {
   const getAllCompany = async () => {
     setLoading(true);
     try {
-      const response: any = await post('company/query', {
+      const response: any = await post('national/company/query', {
         page: currentPage,
         size: pageSize,
       });
@@ -202,18 +244,40 @@ const CompanyManagement = () => {
         <div className="body-sub-title">{t('company:viewDesc')}</div>
       </div>
       <div className="content-card">
-        <Row>
-          <div className="action-bar">
-            <Button
-              type="primary"
-              size="large"
-              block
-              icon={<PlusOutlined />}
-              onClick={() => navigate('/companyManagement/addCompany')}
-            >
-              {t('company:addCompany')}
-            </Button>
-          </div>
+        <Row className="table-actions-section">
+          <Col md={8} xs={24}>
+            <div className="action-bar">
+              <Button
+                type="primary"
+                size="large"
+                block
+                icon={<PlusOutlined />}
+                onClick={() => navigate('/companyManagement/addCompany')}
+              >
+                {t('company:addCompany')}
+              </Button>
+            </div>
+          </Col>
+          <Col md={16} xs={24}>
+            <div className="filter-section">
+              <div className="search-bar">
+                <Search
+                  placeholder="Search by Email"
+                  allowClear
+                  onSearch={() => {}}
+                  style={{ width: 265 }}
+                />
+              </div>
+              <div className="filter-bar">
+                <FilterOutlined
+                  style={{
+                    color: 'rgba(58, 53, 65, 0.3)',
+                    fontSize: '20px',
+                  }}
+                />
+              </div>
+            </div>
+          </Col>
         </Row>
         <Row>
           <Col span={24}>

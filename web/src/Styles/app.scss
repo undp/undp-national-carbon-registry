@@ -45,7 +45,7 @@ body {
   border-radius: 5px !important;
 }
 
-.ant-tooltip-inner{
+.ant-tooltip-inner {
   border-radius: 5px !important;
   background-color: #16b1ff !important;
 }
@@ -93,6 +93,21 @@ body {
 
 .ant-form-item-explain-error {
   font-size: 0.875rem;
+}
+
+.ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  background-color: transparent !important;
+}
+
+.ant-form-item-label > label {
+  flex-direction: row-reverse !important;
+}
+
+.ant-form-item-label
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  margin-left: 0.2rem !important;
 }
 
 .PhoneInput {
@@ -168,8 +183,50 @@ body {
   border-radius: 10px;
   width: 100%;
   .action-bar {
-    padding: 30px;
+    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+
+    button {
+      width: fit-content;
+    }
   }
+
+  .filter-section {
+    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .search-bar {
+      display: flex;
+      flex-direction: row-reverse;
+      width: 90%;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-direction: row-reverse;
+      width: 10%;
+    }
+
+    .ant-input-affix-wrapper {
+      border-radius: 0.313rem 0 0 0.313rem !important;
+    }
+
+    .ant-input-search
+      > .ant-input-group
+      > .ant-input-group-addon:last-child
+      .ant-input-search-button {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-radius: 0 0.313rem 0.313rem 0 !important;
+    }
+  }
+}
+
+.table-actions-section {
+  width: 100%;
 }
 
 .action-menu {

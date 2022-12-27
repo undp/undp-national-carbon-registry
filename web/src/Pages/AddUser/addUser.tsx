@@ -58,7 +58,7 @@ const AddUser = () => {
     console.log({ ...values });
     try {
       values.phoneNo = formatPhoneNumberIntl(values.phoneNo);
-      const response = await post('user/add', values);
+      const response = await post('national/user/add', values);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
@@ -94,7 +94,7 @@ const AddUser = () => {
           name="user-details"
           className="user-details-form"
           layout="vertical"
-          requiredMark={false}
+          requiredMark={true}
           onFinish={onSubmitData}
         >
           <Row className="row" gutter={[16, 16]}>
@@ -209,8 +209,7 @@ const AddUser = () => {
                   label="Phone Number"
                   rules={[
                     {
-                      required: true,
-                      message: 'Phone Number is required!',
+                      required: false,
                     },
                   ]}
                 >

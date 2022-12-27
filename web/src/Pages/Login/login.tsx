@@ -28,7 +28,7 @@ const Login = () => {
     setShowError(false);
     try {
       const email = values.email.trim();
-      const response = await post('auth/login', {
+      const response = await post('national/auth/login', {
         username: email.trim(),
         password: values.password.trim(),
       });
