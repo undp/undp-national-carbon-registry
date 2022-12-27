@@ -21,7 +21,7 @@ export class ProgrammeTransfer implements EntitySubject {
     @Column()
     requesterId: number;
 
-    @Column()
+    @Column("real")
     creditAmount: number;
 
     @Column()
