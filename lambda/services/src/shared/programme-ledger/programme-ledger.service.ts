@@ -206,7 +206,8 @@ export class ProgrammeLedgerService {
           creditChange: programme.creditChange,
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
-          currentStage: programme.currentStage
+          currentStage: programme.currentStage,
+          creditTransferred: programme.creditTransferred
         }
 
         if (programme.creditOwnerPercentage) {
