@@ -6,12 +6,27 @@ export enum ProgrammeStage {
   Rejected = 'Rejected',
   Retired = 'Retired',
   Transferred = 'Transferred',
+  // Frozen = 'Frozen',
+}
+
+export enum TxType {
+  CREATE = '0',
+  REJECT = '1',
+  ISSUE = '2',
+  TRANSFER = '3',
+  CERTIFY = '4',
+  RETIRE = '5',
 }
 
 export enum SectoralScope {
   'Energy Industry' = '1',
   'Energy Distribution' = '2',
   'Agriculture' = '15',
+}
+
+export enum TypeOfMitigation {
+  AGRICULTURE = 'Agriculture',
+  SOLAR = 'Solar',
 }
 
 export const getStageEnumVal = (value: string) => {
@@ -34,6 +49,13 @@ export const getStageTagType = (stage: ProgrammeStage) => {
       return 'default';
   }
 };
+
+export enum CompanyRole {
+  CERTIFIER = 'Certifier',
+  PROGRAMME_DEVELOPER = 'ProgrammeDeveloper',
+  MRV = 'MRV',
+  GOVERNMENT = 'Government',
+}
 
 export interface ProgrammeProperties {
   maxInternationalTransferAmount: string;
@@ -75,6 +97,7 @@ export interface Programme {
   txTime: number;
   createdTime: number;
   txRef: string;
+  typeOfMitigation: TypeOfMitigation;
 }
 
 export const getGeneralFields = (programme: Programme) => {

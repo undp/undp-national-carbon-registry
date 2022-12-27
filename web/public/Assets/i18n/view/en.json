@@ -21,5 +21,12 @@
     "calculation": "Mitigation Type Calculation",
     "energyGeneration": "Energy Generation",
     "consumerGroup": "Building Type",
-    "constantVersion": "Standard Version"
+    "constantVersion": "Standard Version",
+    "landArea": "Land Area",
+    "timeline": "Activity Timeline",
+    "location": "Geographical Location",
+    "credits": "Credits",
+    "certification": "Certification Details",
+    "authorise": "Approve",
+    "reject": "Reject"
 }

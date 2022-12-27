@@ -31,6 +31,7 @@ import { ProgrammeTransferReject } from '../dto/programme.transfer.reject';
 import { Company } from '../entities/company.entity';
 import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
+import { ProgrammeCertify } from '../dto/programme.certify';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -176,6 +177,9 @@ export class ProgrammeService {
         if (programme.creditBalance < req.creditAmount) {
             throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
         }
+        if (programme.companyId.includes(requester.companyId)) {
+            throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
+        }
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
@@ -243,17 +247,17 @@ export class ProgrammeService {
 
         const req = await this.getCreditRequest(programmeDto, constants);
         try {
-            programme.creditIssued = Math.round(await calculateCredit(req));
+            programme.creditEst = Math.round(await calculateCredit(req));
         } catch (err) {
             this.logger.log(`Credit calculate failed ${err.message}`)
             throw new HttpException(err.message, HttpStatus.BAD_REQUEST)
         }
 
-        if (programme.creditIssued <= 0) {
+        if (programme.creditEst <= 0) {
             throw new HttpException("Not enough credits to create the programme", HttpStatus.BAD_REQUEST)
         }
-        programme.creditBalance = programme.creditIssued;
-        programme.creditChange = programme.creditIssued;
+        // programme.creditBalance = programme.creditIssued;
+        // programme.creditChange = programme.creditIssued;
         programme.programmeProperties.creditYear = new Date(programme.startTime * 1000).getFullYear()
         programme.constantVersion = constants ? String(constants.version) : "default"
         programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
@@ -277,6 +281,7 @@ export class ProgrammeService {
             .skip(skip)
             .take(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
+            .leftJoinAndMapMany('programme.certifierId', Company, 'certcomp', 'certcomp.companyId = ANY(programme.certifierId)')
             .getManyAndCount())
 
         return new DataListResponseDto(
@@ -329,20 +334,29 @@ export class ProgrammeService {
         });
     }
 
-    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage) {
+    async certify(req: ProgrammeCertify, user: User) {
+        this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
+
+        if (user.companyRole != CompanyRole.CERTIFIER) {
+            throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
+        }
+        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.email}`)
+    }
+
+    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
         this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
         if (status == ProgrammeStage.ISSUED) {
             const program = await this.programmeLedger.getProgrammeById(req.programmeId);
             if (!program) {
                 throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
-            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId)
+            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }
             return new DataResponseDto(HttpStatus.OK, updated)
         } else {
-            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus)
+            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }

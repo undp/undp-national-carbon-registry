@@ -17,6 +17,7 @@ import CompanyManagement from './Pages/CompanyManagement/companyManagement';
 import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
 import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 const App = () => {
   useEffect(() => {

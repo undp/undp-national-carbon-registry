@@ -17,11 +17,13 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
   const initialUserProps: UserProps = {
     id: '',
     userRole: '',
+    companyRole: '',
+    companyId: -1,
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
   const setUserInfo = (value: UserProps) => {
-    const { id, userRole } = value;
+    const { id, userRole, companyId, companyRole } = value;
     if (id) {
       setUserInfoState((prev) => ({ ...prev, id }));
       localStorage.setItem('userId', id);
@@ -31,6 +33,16 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       setUserInfoState((prev) => ({ ...prev, userRole }));
       localStorage.setItem('userRole', userRole);
     }
+
+    if (companyId) {
+      setUserInfoState((prev) => ({ ...prev, companyId }));
+      localStorage.setItem('companyId', companyId + '');
+    }
+
+    if (userRole) {
+      setUserInfoState((prev) => ({ ...prev, companyRole }));
+      localStorage.setItem('companyRole', companyRole);
+    }
   };
 
   const IsAuthenticated = useCallback((): boolean => {
@@ -39,6 +51,13 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       tokenVal = token;
     } else {
       tokenVal = localStorage.getItem('token');
+
+      setUserInfoState({
+        id: localStorage.getItem('userId') as string,
+        userRole: localStorage.getItem('userRole') as string,
+        companyRole: localStorage.getItem('companyRole') as string,
+        companyId: parseInt(localStorage.getItem('companyId') as string),
+      });
     }
     try {
       if (tokenVal) {
@@ -54,6 +73,8 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
   const removeUserInfo = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('companyId');
+    localStorage.removeItem('companyRole');
     setUserInfoState(initialUserProps);
   };
 

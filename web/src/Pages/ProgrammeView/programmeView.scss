@@ -3,6 +3,21 @@
 .programme-view {
   padding: 0px 50px;
 
+  .action-btns {
+    button {
+      margin-left: 15px;
+    }
+  }
+
+  .title-bar {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail {
+    left: 13px;
+  }
+
   .apexcharts-legend-series {
     padding-bottom: 5px;
   }
@@ -24,8 +39,46 @@
     padding: 12px;
   }
 
-  .company-info {
+  .centered-card {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
 
+  .separator {
+    border-bottom: 1px solid $sep-line-color;
+    width: 100%;
+  }
+
+  .cert-info {
+    padding: 20px 30px 20px 30px;
+    img {
+      width: 60px;
+    }
+  }
+
+  .cert-content {
+    display: flex;
+  }
+
+  .cert-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    background-color: $dev-bg-color;
+    font-size: 30px;
+    color: $dev-color;
+    text-align: center;
+    padding: 6px;
+  }
+
+  .cert-name {
+    color: $title-text-color;
+    margin-top: 14px;
+    font-weight: 600;
+  }
+
+  .company-info {
     padding: 25px 10px 30px 10px;
     img {
       width: 90px;
@@ -41,15 +94,10 @@
       margin-top: 15px;
     }
 
-    .ant-progress-success-bg, .ant-progress-bg {
+    .ant-progress-success-bg,
+    .ant-progress-bg {
       background-color: $primary-color;
     }
-  }
-
-  .centered-card {
-    display: flex;
-    justify-content: center;
-    text-align: center;
   }
 
   .programme-name {
@@ -58,3 +106,59 @@
     font-weight: 600;
   }
 }
+
+.info-view {
+  .content {
+    padding: 15px 0px;
+    margin-left: -8px;
+  }
+
+  .map-content {
+    margin-left: 20px;
+    padding: 15px 0px;
+  }
+  .ant-steps-item-subtitle {
+    display: block;
+    margin-left: 0px;
+    font-size: 0.8rem;
+    color: $light-text-color;
+    margin-top: -12px;
+    font-weight: 500;
+  }
+
+  .ant-steps-item-process
+    > .ant-steps-item-container
+    > .ant-steps-item-content
+    > .ant-steps-item-title {
+    color: $title-text-color;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .ant-steps-item-process
+    > .ant-steps-item-container
+    > .ant-steps-item-content
+    > .ant-steps-item-description {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: $body-text-color;
+  }
+
+  .step-icon {
+    border-radius: 100%;
+    margin-right: 10px;
+    padding: 0.35rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+
+.map-container {
+  width: 100%;
+  height: 250px;
+}
+
+.apexcharts-datalabels-group {
+  font-family: $primary-font-family !important;
+  color: $title-text-color !important;
+}
+

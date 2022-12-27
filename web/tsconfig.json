@@ -14,7 +14,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["@types/mapbox__mapbox-sdk"],
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

@@ -5,6 +5,8 @@ import { AgricultureProperties } from '../dto/agriculture.properties';
 import { ProgrammeProperties } from '../dto/programme.properties';
 import { SolarProperties } from '../dto/solar.properties';
 import { Sector } from '../enum/sector.enum';
+import { TxType } from '../enum/txtype.enum';
+import { TypeOfMitigation } from '../enum/typeofmitigation.enum';
 import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
 import { EntitySubject } from './entity.subject';
 
@@ -19,6 +21,9 @@ export class Programme implements EntitySubject {
 
     @Column()
     title: string;
+
+    @Column({unique: true, nullable: true})
+    externalId: string;
 
     @Column({
         type: "enum",
@@ -41,22 +46,32 @@ export class Programme implements EntitySubject {
     })
     currentStage: ProgrammeStage;
 
+    @Column({
+        type: "enum",
+        enum: TypeOfMitigation,
+        array: false
+    })
+    typeOfMitigation: TypeOfMitigation;
+
     @Column({type: 'bigint'})
     startTime: number;
 
     @Column({type: 'bigint'})
     endTime: number;
 
-    @Column({type: "decimal", precision: 10, scale: PRECISION})
+    @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
+    creditEst: number;
+
+    @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
     creditChange: number;
 
-    @Column({type: "decimal", precision: 10, scale: PRECISION})
+    @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
     creditIssued: number;
 
-    @Column({type: "decimal", precision: 10, scale: PRECISION})
+    @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
     creditBalance: number;
 
-    @Column({type: "decimal", precision: 10, scale: PRECISION, default: 0})
+    @Column({type: "decimal", precision: 10, scale: PRECISION, default: 0, nullable: true})
     creditTransferred: number;
 
     @Column({nullable: true})
@@ -108,5 +123,13 @@ export class Programme implements EntitySubject {
 
     @Column({nullable: true})
     txRef: string;
+    
+    @Column({
+        type: "enum",
+        enum: TxType,
+        array: false,
+        nullable: true
+    })
+    txType: TxType;
     
 }

@@ -1,6 +1,8 @@
 export type UserProps = {
   id: string;
   userRole: string;
+  companyId: number;
+  companyRole: string
 };
 
 export interface UserContextProps {
