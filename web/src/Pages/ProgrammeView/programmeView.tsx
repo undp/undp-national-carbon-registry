@@ -80,7 +80,7 @@ const ProgrammeView = () => {
       if (actionInfo.action !== 'Transfer') {
         setConfirmLoading(true);
         const response: any = await put(
-          `programme/${
+          `national/programme/${
             actionInfo.action === 'Reject'
               ? 'reject'
               : actionInfo.action === 'Approve'
@@ -139,7 +139,7 @@ const ProgrammeView = () => {
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
-      const response: any = await get(`programme/getHistory?programmeId=${programmeId}`);
+      const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
 
       const activityList: any[] = [];
       for (const activity of response.data) {

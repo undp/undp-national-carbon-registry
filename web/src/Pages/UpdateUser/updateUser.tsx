@@ -41,7 +41,7 @@ const UpdateUser = () => {
     try {
       values.contactNo = formatPhoneNumberIntl(values.contactNo);
       console.log(values);
-      const response = await put('user/update', values);
+      const response = await put('national/user/update', values);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',

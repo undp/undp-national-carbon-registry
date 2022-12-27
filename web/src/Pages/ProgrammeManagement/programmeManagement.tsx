@@ -180,7 +180,7 @@ const ProgrammeManagement = () => {
   const getAllProgramme = async () => {
     setLoading(true);
     try {
-      const response: any = await post('programme/query', {
+      const response: any = await post('national/programme/query', {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
