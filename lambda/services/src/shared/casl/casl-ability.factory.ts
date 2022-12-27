@@ -38,6 +38,8 @@ export class CaslAbilityFactory {
         can(Action.Manage, Programme);
 
         can(Action.Manage, Company);
+        
+        can(Action.Manage, ProgrammeTransfer);
 
       } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
         can(Action.Read, User, { companyId: { $eq: user.companyId } });

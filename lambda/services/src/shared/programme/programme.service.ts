@@ -177,6 +177,9 @@ export class ProgrammeService {
         if (programme.creditBalance < req.creditAmount) {
             throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
         }
+        if (programme.companyId.includes(requester.companyId)) {
+            throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
+        }
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
