@@ -158,12 +158,20 @@ export class ProgrammeLedgerService {
           }
           for (const i in approve.companyCredit) {
             const changeCredit = approve.companyCredit[i];
-            if (!currentCredit[approve.companyIds[i]] || currentCredit[approve.companyIds[i]] < changeCredit){
+            if (!currentCredit[approve.companyIds[i]]){
               throw new HttpException(
                 `Company ${approve.companyIds[i]} is not an owner company of the programme`,
                 HttpStatus.BAD_REQUEST
               );
             }
+
+            if (currentCredit[approve.companyIds[i]] < changeCredit){
+              throw new HttpException(
+                `Company ${approve.companyIds[i]} does not have enough credits`,
+                HttpStatus.BAD_REQUEST
+              );
+            }
+            
             companyIds.push(approve.companyIds[i])
             companyCreditDistribution[approve.companyIds[i]] = -changeCredit
             percentages.push(this.round2Precision((currentCredit[approve.companyIds[i]] - changeCredit)*100/(programme.creditBalance - transfer.creditAmount)))

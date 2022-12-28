@@ -38,8 +38,6 @@ export class CaslAbilityFactory {
         can(Action.Manage, Programme);
 
         can(Action.Manage, Company);
-        
-        can(Action.Manage, ProgrammeTransfer);
 
       } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
         can(Action.Read, User, { companyId: { $eq: user.companyId } });
@@ -59,6 +57,10 @@ export class CaslAbilityFactory {
       }
 
       if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
+        can(Action.Manage, ProgrammeTransfer);
+      }
+
+      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, ProgrammeTransfer);
       }
 
