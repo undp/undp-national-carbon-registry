@@ -90,9 +90,9 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
         console.log(JSON.stringify(mongoQuery))
 
         if (mongoQuery && mongoQuery != "" && mongoQuery != "{}" && mongoQuery != '{"$or":[{}]}') {
-          const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
-          console.log("Where", whereQuery)
-          context.switchToHttp().getRequest()['abilityCondition'] = whereQuery;
+          // const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
+          // console.log("Where", whereQuery)
+          context.switchToHttp().getRequest()['abilityCondition'] = JSON.parse(mongoQuery);
         }
       }
 
