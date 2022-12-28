@@ -29,8 +29,7 @@ export class CaslAbilityFactory {
 
         cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
         cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
-      }
-      else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
+      } else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
         cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
         cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
@@ -50,9 +49,13 @@ export class CaslAbilityFactory {
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, ['taxId', 'companyRole']);
       } else {
-        can([Action.Update, Action.Read], User, { id: { $eq: user.id } })
+        if (user.companyRole == CompanyRole.GOVERNMENT) {
+          can(Action.Read, User);
+        } else {
+          can(Action.Read, User, { companyId: { $eq: user.companyId } });
+        }
+        can(Action.Update, User, { id: { $eq: user.id } })
         cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyId', 'companyRole']);
-
         can(Action.Read, Company);
       }
 
