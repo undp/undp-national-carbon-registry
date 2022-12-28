@@ -7,6 +7,7 @@ import { generateSerialNumber } from "serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
 import { ProgrammeTransferApprove } from "../dto/programme.transfer.approve";
+import { Company } from "../entities/company.entity";
 import { CreditOverall } from "../entities/credit.overall.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
@@ -67,7 +68,7 @@ export class ProgrammeLedgerService {
     return programme;
   }
 
-  public async transferProgramme(transfer: ProgrammeTransfer, approve: ProgrammeTransferApprove) {
+  public async transferProgramme(transfer: ProgrammeTransfer, approve: ProgrammeTransferApprove, companyReceive: Company) {
     this.logger.log(`Transfer programme ${JSON.stringify(transfer)} ${JSON.stringify(approve)}`);
 
     const getQueries = {};
@@ -192,7 +193,7 @@ export class ProgrammeLedgerService {
         companyCreditDistribution[transfer.requesterId] = transfer.creditAmount;
        
         programme.txTime = new Date().getTime();
-        programme.txRef = `${transfer.requestId}`;
+        programme.txRef = `${transfer.requestId}#${companyReceive.name}`;
         programme.txType = TxType.TRANSFER;
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
@@ -404,7 +405,7 @@ export class ProgrammeLedgerService {
     countryCodeA2: string,
     companyIds: number[],
     user: string
-  ): Promise<boolean> {
+  ): Promise<Programme> {
     this.logger.log(`Authorizing programme ${programmeId}`);
 
     const getQueries = {};

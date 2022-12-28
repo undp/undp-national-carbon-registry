@@ -43,6 +43,7 @@ export class AuthService {
   async login(user: any) {
     const payload = new JWTPayload(
       user.email,
+      user.name,
       user.id,
       user.role,
       user.companyId,
@@ -53,6 +54,7 @@ export class AuthService {
       access_token: this.jwtService.sign(instanceToPlain(payload)),
       role: user.role,
       id: user.id,
+      name: user.name,
       companyId: user.companyId,
       companyRole: user.companyRole,
       ability: JSON.stringify(ability),

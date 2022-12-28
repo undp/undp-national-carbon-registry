@@ -7,7 +7,7 @@ import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
 import { AgricultureConstants, AgricultureCreationRequest, calculateCredit, SolarConstants, SolarCreationRequest } from 'carbon-credit-calculator';
 import { QueryDto } from '../dto/query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PrimaryGeneratedColumnType } from 'typeorm/driver/types/ColumnTypes';
 import { CounterService } from '../util/counter.service';
 import { CounterType } from '../util/counter.type.enum';
@@ -46,6 +46,7 @@ export class ProgrammeService {
         private emailService: EmailService,
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
+        @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
         private logger: Logger) { }
@@ -143,7 +144,8 @@ export class ProgrammeService {
             throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
         }
 
-        const programme = await this.programmeLedger.transferProgramme(transfer, req);
+        const received = await this.companyService.findByCompanyId(transfer.requesterId);
+        const programme = await this.programmeLedger.transferProgramme(transfer, req, received);
 
         if (!programme.companyId.includes(approverCompanyId)) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
@@ -340,7 +342,9 @@ export class ProgrammeService {
         if (user.companyRole != CompanyRole.CERTIFIER) {
             throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
         }
-        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.email}`)
+
+        const company = await this.companyService.findByCompanyId(user.companyId);
+        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}}`)
     }
 
     async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
@@ -350,9 +354,18 @@ export class ProgrammeService {
             if (!program) {
                 throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
-            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
+            const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
+            }
+
+            updated.companyId = await this.companyRepo.find({
+                where: { companyId: In(updated.companyId) },
+            })
+            if (updated.certifierId && updated.certifierId.length > 0) {
+                updated.certifierId = await this.companyRepo.find({
+                    where: { companyId: In(updated.certifierId) },
+                })
             }
             return new DataResponseDto(HttpStatus.OK, updated)
         } else {

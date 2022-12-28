@@ -18,6 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     async validate(payload: any) {
         const jwtPayload: JWTPayload = plainToClass(JWTPayload, payload)
-        return { id: jwtPayload.sub, email: jwtPayload.u, role: jwtPayload.r, companyId: jwtPayload.cid, companyRole: jwtPayload.cr };
+        return { id: jwtPayload.sub, email: jwtPayload.u, role: jwtPayload.r, companyId: jwtPayload.cid, companyRole: jwtPayload.cr, name: jwtPayload.n };
     }
 }
