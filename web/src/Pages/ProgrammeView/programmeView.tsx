@@ -136,6 +136,23 @@ const ProgrammeView = () => {
     }
   };
 
+  const getTxRefValues = (value: string, position: number, sep?: string) => {
+    if (sep === undefined) {
+      sep = '#';
+    }
+    const parts = value.split(sep);
+    if (parts.length - 1 < position) {
+      return null;
+    }
+    return parts[position];
+  };
+
+  const addCommasToNumber = (value: any) => {
+    return Number(value)
+      .toFixed(0)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
@@ -149,7 +166,9 @@ const ProgrammeView = () => {
             status: 'process',
             title: 'Programme Created',
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was estimated ${activity.data.creditEst} Credits`,
+            description: `The programme was created with a valuation of ${addCommasToNumber(
+              activity.data.creditEst
+            )} credits.`,
             icon: (
               <span
                 className="step-icon"
@@ -162,15 +181,11 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
             status: 'process',
-            title: `Programme Authorised by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
+            title: `Authorised by ${getTxRefValues(activity.data.txRef, 1)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was issued ${Number(activity.data.creditIssued)
-              .toFixed(0)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Credits with the Serial Number ${
-              activity.data.serialNo
-            }`,
+            description: `The programme was issued ${addCommasToNumber(
+              activity.data.creditIssued
+            )} Credits with the Serial Number ${activity.data.serialNo}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
                 <LikeOutlined />
@@ -180,9 +195,7 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.REJECT) {
           el = {
             status: 'process',
-            title: `Programme Rejected by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
+            title: `Rejected by ${getTxRefValues(activity.data.txRef, 1)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: `The programme was rejected`,
             icon: (
@@ -199,9 +212,9 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Credit Transferred`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `${Number(activity.data.creditChange)
-              .toFixed(0)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Credits were transferred`,
+            description: `${addCommasToNumber(
+              activity.data.creditChange
+            )} Credits were transferred to ${getTxRefValues(activity.data.txRef, 1)}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
                 <TransactionOutlined />
@@ -211,11 +224,12 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
-            title: `Programme Certified by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
+            title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `Programme Certified`,
+            description: `The programme was certified by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span
                 className="step-icon"
