@@ -1,13 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable, mixin } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { plainToClass } from "class-transformer";
+import { Stat } from "../dto/stat.dto";
 import { EntitySubject } from "../entities/entity.subject";
-import { User } from "../entities/user.entity";
 import { Action } from "./action.enum";
 import { CaslAbilityFactory, AppAbility } from "./casl-ability.factory";
 import { CHECK_POLICIES_KEY } from "./policy.decorator";
 import { PolicyHandler } from "./policy.handler";
 const { rulesToQuery } = require('@casl/ability/extra');
-const mongoToSqlConverter = require("mongo-to-sql-converter")
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -39,7 +39,7 @@ export class PoliciesGuard implements CanActivate {
   }
 }
 
-export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:typeof EntitySubject, onlyInject?: boolean) => {
+export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?: typeof EntitySubject, onlyInject?: boolean, dropArrayFields?: boolean) => {
 
   @Injectable()
   class PoliciesGuardMixin implements CanActivate {
@@ -53,16 +53,16 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       for (let operator in mongoQuery) {
         if (operator.startsWith("$")) {
           if (operator == "$and" || operator == "$or") {
-            const val = mongoQuery[operator].map( st => this.parseMongoQueryToSQL(st)).join(` ${operator.replace("$", '')} `)
+            const val = mongoQuery[operator].map(st => this.parseMongoQueryToSQL(st)).join(` ${operator.replace("$", '')} `)
             final = final == undefined ? val : `${final} and ${val}`
           } else if (operator == "$not") {
             return this.parseMongoQueryToSQL(mongoQuery["$not"], !isNot)
           } else if (operator == "$eq") {
             const value = (typeof mongoQuery["$eq"] === "number") ? String(mongoQuery["$eq"]) : `'${mongoQuery["$eq"]}'`
-            return `${key} ${ isNot ? "!=" : "=" } ${value}`
+            return `"${key}" ${isNot ? "!=" : "="} ${value}`
           } else if (operator == "$ne") {
             const value = (typeof mongoQuery["$ne"] === "number") ? String(mongoQuery["$ne"]) : `'${mongoQuery["$ne"]}'`
-            return `${key} ${ isNot ? "=" : "!=" } ${value}`
+            return `"${key}" ${isNot ? "=" : "!="} ${value}`
           }
         } else {
           return this.parseMongoQueryToSQL(mongoQuery[operator], isNot, operator)
@@ -87,22 +87,45 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
         const mongoQuery = JSON.stringify(rulesToQuery(ability, action, subject, rule => {
           return rule.inverted ? { $not: rule.conditions } : rule.conditions
         }))
-      
+        console.log(JSON.stringify(mongoQuery))
+
         if (mongoQuery && mongoQuery != "" && mongoQuery != "{}" && mongoQuery != '{"$or":[{}]}') {
           const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
           console.log("Where", whereQuery)
           context.switchToHttp().getRequest()['abilityCondition'] = whereQuery;
         }
       }
-      
+
+      if (dropArrayFields) {
+        const obj = Object.assign(new subject(), body);
+        for (const key in obj) {
+          const possible = [];
+          if (obj[key] instanceof Array) {
+            console.log(obj[key])
+            for (const en of obj[key]) {
+              for (const key2 in en) {
+                console.log(action, en, key2)
+                if (ability.can(action, plainToClass(Stat, en), key2)) {
+                  possible.push(en)
+                }
+              }
+            }
+            obj[key] = possible
+            context.switchToHttp().getRequest()['body'] = obj;
+            return possible.length > 0;
+          }
+        }
+      }
+
       if (policyHandlers.length == 0 && action && subject && !onlyInject) {
         const obj = Object.assign(new subject(), body);
+
         if (action == Action.Update) {
           for (const key in obj) {
-            if(!ability.can(action, obj, key)) {
+            if (!ability.can(action, obj, key)) {
               return false
             }
-          }  
+          }
         } else if (action == Action.Delete) {
           return ability.can(action, subject)
         }

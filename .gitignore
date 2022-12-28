@@ -5,3 +5,4 @@
 lambda/services/.env.local
 **/yarn-error.log
 **/coverage
+.env.local

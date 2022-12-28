@@ -32,55 +32,19 @@ const LayoutHeader = (props: HeaderProps) => {
   return (
     <div className="header-container">
       <Row>
-        <Col span={8}>
-          <div className="header-country-logo">
-            <img src={countryLogo} alt="country-logo" />
-          </div>
-        </Col>
-        <Col span={8} offset={8}>
+        <Col span={1} offset={23}>
           <Row>
-            <Col offset={14} span={10}>
-              <div className="header-menu-container">
+            <Col>
+              <div className="header-country-logo">
+                <img src={countryLogo} alt="country-logo" />
+              </div>
+              {/* <div className="header-menu-container">
                 <div className="header-signOut-container">
                   <Dropdown menu={{ items }} placement="bottomLeft">
                     <PersonCircle size={25} />
                   </Dropdown>
                 </div>
-                <span className="header-language-selection-txt">
-                  {/* {t('common:language')} : */}
-                  <Select
-                    placeholder="Search to Select"
-                    defaultValue={
-                      localStorage.getItem('i18nextLng') !== null
-                        ? localStorage.getItem('i18nextLng')
-                        : 'en'
-                    }
-                    placement="bottomLeft"
-                    onChange={(lan: string) => handleLanguageChange(lan)}
-                    optionFilterProp="children"
-                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? '')
-                        .toLowerCase()
-                        .localeCompare((optionB?.label ?? '').toLowerCase())
-                    }
-                    options={[
-                      {
-                        value: 'en',
-                        label: 'English',
-                      },
-                      {
-                        value: 'es',
-                        label: 'Española',
-                      },
-                      {
-                        value: 'fr',
-                        label: 'française',
-                      },
-                    ]}
-                  />
-                </span>
-              </div>
+              </div> */}
             </Col>
           </Row>
         </Col>

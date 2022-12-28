@@ -1,75 +1,133 @@
-@import '../../Pages/Common/colors.layout.header.scss';
+@import '../../Styles/variables.scss';
 
 .header-container {
-  overflow: hidden;
-  padding: 0;
-  .ant-col-8 {
-    .header-country-logo {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      height: 90px;
-      overflow: hidden;
-      // background-color: red;
-      img {
-        margin: 5px 10px;
-        object-fit: cover;
-        height: auto;
-        height: 70%;
-      }
-    }
-    .header-title-container {
-      .header-title-txt {
-        font-family: 'Proxima-Nova-Bold';
-        font-size: 1.4rem;
-        font-style: Bold;
-        color: $layout-black;
-      }
-      height: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      //   background-color: rgb(0, 38, 255);
-    }
-    .ant-col-offset-14 {
-      .header-menu-container {
-        font-family: 'Proxima-Nova-Regular';
-        font-size: 1rem;
-        height: 90px;
-        color: $layout-black;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        // background-color: rgb(77, 255, 0);
-        .header-language-selection-txt {
-        }
-        .header-signOut-container {
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-          align-items: center;
-          // flex: 1;
-        }
-      }
-    }
-    .ant-select-selector {
-      border: none;
-      background-color: unset;
-      color: $layout-txt-black;
-    }
-    .ant-select-focused .ant-select-selector,
-    .ant-select-selector:focus,
-    .ant-select-selector:active,
-    .ant-select-open .ant-select-selector {
-      border-color: none;
-      box-shadow: none !important;
-    }
+  background-color: $background-color;
+}
+
+.layout-header-container {
+  height: 90px;
+  padding-top: 15px;
+}
+
+.header-country-logo {
+  height: 44px;
+  width: 44px;
+  background-color: $outside-background-color;
+  border-radius: 50%;
+  margin-top: 14px;
+  img {
+    margin: -14px 5px 7px 5px;
+    object-fit: cover;
+    // height: auto;
+    height: 30px;
+
   }
 }
-.ant-layout-header {
-  box-shadow: 1px 10px 9px rgba(0, 0, 0, 0.06);
-  background-color: $layout-header-bg !important;
-}
+
+// .header-container {
+//   overflow: hidden;
+//   padding: 0;
+//   .ant-col-8 {
+//     .header-country-logo {
+//       display: flex;
+//       flex-direction: row;
+//       justify-content: flex-start;
+//       align-items: center;
+//       height: 90px;
+//       overflow: hidden;
+//       // background-color: red;
+//       img {
+//         margin: 5px 10px;
+//         object-fit: cover;
+//         height: auto;
+//         height: 70%;
+//       }
+//     }
+//     .header-title-container {
+//       .header-title-txt {
+//         font-family: 'Inter-Bold';
+//         font-size: 1.4rem;
+//         font-style: Bold;
+//         color: $layout-black;
+//       }
+//       height: 100%;
+//       display: flex;
+//       flex-direction: row;
+//       justify-content: center;
+//       align-items: center;
+//       //   background-color: rgb(0, 38, 255);
+//     }
+//     .ant-col-offset-14 {
+//       .header-menu-container {
+//         font-family: 'Inter-Regular';
+//         font-size: 1rem;
+//         height: 90px;
+//         color: $layout-black;
+//         display: flex;
+//         flex-direction: row;
+//         justify-content: space-around;
+//         align-items: center;
+//         // background-color: rgb(77, 255, 0);
+//         .header-language-selection-txt {
+//         }
+//         .header-signOut-container {
+//           display: flex;
+//           flex-direction: row;
+//           justify-content: center;
+//           align-items: center;
+//           // flex: 1;
+//         }
+//       }
+//     }
+//     .ant-select-selector {
+//       border: none;
+//       background-color: unset;
+//       color: $layout-txt-black;
+//     }
+//     .ant-select-focused .ant-select-selector,
+//     .ant-select-selector:focus,
+//     .ant-select-selector:active,
+//     .ant-select-open .ant-select-selector {
+//       border-color: none;
+//       box-shadow: none !important;
+//     }
+//   }
+// }
+// .ant-layout-header {
+//   background-color: $layout-header-bg !important;
+// }
+
+// <span className="header-language-selection-txt">
+//                   {/* {t('common:language')} : */}
+//                   <Select
+//                     placeholder="Search to Select"
+//                     defaultValue={
+//                       localStorage.getItem('i18nextLng') !== null
+//                         ? localStorage.getItem('i18nextLng')
+//                         : 'en'
+//                     }
+//                     placement="bottomLeft"
+//                     onChange={(lan: string) => handleLanguageChange(lan)}
+//                     optionFilterProp="children"
+//                     filterOption={(input, option) => (option?.label ?? '').includes(input)}
+//                     filterSort={(optionA, optionB) =>
+//                       (optionA?.label ?? '')
+//                         .toLowerCase()
+//                         .localeCompare((optionB?.label ?? '').toLowerCase())
+//                     }
+//                     options={[
+//                       {
+//                         value: 'en',
+//                         label: 'English',
+//                       },
+//                       {
+//                         value: 'es',
+//                         label: 'Española',
+//                       },
+//                       {
+//                         value: 'fr',
+//                         label: 'française',
+//                       },
+//                     ]}
+//                   />
+//                 </span>

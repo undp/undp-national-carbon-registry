@@ -1,16 +1,16 @@
 import { SubSectorConstants } from "carbon-credit-calculator";
 import { Column, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { SubSector } from "../enum/subsector.enum";
+import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 
 @Entity()
 export class ConstantEntity {
 
     @PrimaryColumn({
         type: "enum",
-        enum: SubSector,
+        enum: TypeOfMitigation,
         array: false
     })
-    id: SubSector;
+    id: TypeOfMitigation;
 
     @PrimaryGeneratedColumn('increment')
     version: number;

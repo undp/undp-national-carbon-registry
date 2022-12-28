@@ -107,4 +107,15 @@ describe("Solar calculation", () => {
         req.energyGenerationUnit = 'kWh/year/unit'
         expect(() => calculateCredit(req)).toThrow("Invalid building type TestType");
     });
+
+    it("Rounding issue fix", () => {
+        const req = new SolarCreationRequest();
+        req.energyGeneration = 8520000000
+        req.buildingType = 'TestType'
+        req.solarConstants.buildingTypes = {
+            'TestType': 825
+        };
+        req.energyGenerationUnit = 'Wh/year/unit'
+        expect(calculateCredit(req)).toBe(11080.538);
+    });
 });

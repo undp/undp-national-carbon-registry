@@ -1,4 +1,4 @@
-@import './common.table.colors.scss';
+@import '../../Styles/variables.scss';
 
 .common-table-class {
   .ant-table {
@@ -6,16 +6,64 @@
     .ant-table-thead {
       justify-content: center;
       .ant-table-cell {
-        color: $common-table-txt-color;
-        font-family: 'Proxima-Nova-Bold';
-        font-size: 1rem;
+        color: $title-text-color;
+        font-weight: 600;
+        font-size: 0.8rem;
         text-align: center;
       }
     }
     .ant-table-tbody {
-      font-family: 'Proxima-Nova-Regular';
-      font-size: 1rem;
+      font-size: 0.8rem;
       text-align: center;
+      color: $title-text-color;
     }
+
+    .ant-table-cell {
+      padding: 14px 18px;
+    }
+
+    .ant-table-thead {
+      .ant-table-cell {
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+
+.ant-table-pagination.ant-pagination {
+  margin: 16px 24px;
+}
+.ant-pagination-prev, .ant-pagination-next, .ant-pagination-jump-prev, .ant-pagination-jump-next, .ant-pagination-item {
+  height: 28px;
+  border-radius: 4px;
+  line-height: 26px;
+  font-size: 0.8rem;
+  font-family: $primary-font-family;
+}
+
+.ant-pagination-item-active:focus-visible {
+  border-color: $primary-color;
+}
+
+.ant-pagination-options {
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 28px;
+    border-radius: 4px;
+    line-height: 26px;
+    font-size: 0.8rem;
+    font-family: $primary-font-family;
+    color: $title-text-color;
+  }
+
+  .ant-select-selection-item {
+    height: 28px;
+    color: $title-text-color;
+    line-height: 26px !important;
+  }
+  .ant-select-dropdown {
+    font-family: $primary-font-family;
+    color: $title-text-color;
+    font-size: 0.8rem;
   }
 }

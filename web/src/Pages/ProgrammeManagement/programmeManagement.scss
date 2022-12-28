@@ -1,0 +1,30 @@
+@import '../../Styles/variables.scss';
+
+.programme-management {
+    .ant-checkbox-checked {
+        .ant-checkbox-input[value=Retired] + .ant-checkbox-inner{
+            background-color: rgba(#3A3541, 0.4);
+            border: none
+        }
+
+        .ant-checkbox-input[value=AwaitingAuthorization] + .ant-checkbox-inner{
+            background-color: rgba(#ED4D47, 0.6);
+            border: none
+        }
+
+        .ant-checkbox-input[value=Rejected] + .ant-checkbox-inner{
+            background-color: rgba(#3A3541, 0.4);
+            border: none
+        }
+
+        .ant-checkbox-input[value=Issued] + .ant-checkbox-inner{
+            background-color: rgba(#16B1FF, 1);
+            border: none
+        }
+
+        .ant-checkbox-input[value=Transferred] + .ant-checkbox-inner{
+            background-color: rgba(#76C327, 0.6);
+            border: none
+        }
+    }
+}

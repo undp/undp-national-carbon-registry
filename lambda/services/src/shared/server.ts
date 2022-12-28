@@ -15,6 +15,7 @@ import { ValidationException } from './validation/validation.exception';
 import { ValidationExceptionFilter } from './validation/validation-exception.filter';
 import { useContainer } from 'class-validator';
 import { UtilModule } from './util/util.module';
+import * as bodyParser from 'body-parser';
 
 const express = require('express');
 
@@ -75,6 +76,7 @@ export async function bootstrapServer(cachedServer: Server, module: any, httpBas
           })
         useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
         nestApp.setGlobalPrefix(httpBase)
+        nestApp.use(bodyParser.json({limit: '5mb'}));
         nestApp.enableCors();
         nestApp.useGlobalPipes(new TrimPipe());
         nestApp.useGlobalPipes(new ValidationPipe({

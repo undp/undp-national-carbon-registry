@@ -35,7 +35,7 @@ const Map = ReactMapboxGl({
 const Dashboard = () => {
   return (
     <div className="dashboard-main-container">
-      <div className="header-and-title">Overall</div>
+      {/* <div className="header-and-title">Overall</div>
       <div className="stastics-cards-container">
         <Row gutter={[16, 40]} className="stastic-card-row">
           {DUmData?.map((cardItem: any, index: number) => {
@@ -52,7 +52,7 @@ const Dashboard = () => {
           })}
         </Row>
       </div>
-      <div className="stastics-charts-container-total-projects">
+      <div className="stastics-charts-container-total-programmes">
         <Row gutter={[16, 30]} justify="start" className="stastic-charts-row">
           <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
             <div className="chart-card">
@@ -71,7 +71,7 @@ const Dashboard = () => {
           </Col>
         </Row>
       </div>
-      <div className="stastics-charts-container-certified-projects">
+      <div className="stastics-charts-container-certified-programmes">
         <Row gutter={[16, 30]} justify="start" className="stastic-charts-row">
           <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
             <div className="chart-card">
@@ -108,7 +108,7 @@ const Dashboard = () => {
       <div className="maps-container">
         <Row gutter={[16, 30]} justify="start" className="maps-container-row">
           <Col xxl={12} xl={12} md={12} className="maps-container-col">
-            <MapCard title="Projects Locations">&nbsp;</MapCard>
+            <MapCard title="Programmes Locations">&nbsp;</MapCard>
           </Col>
           <Col xxl={12} xl={12} md={12} className="maps-container-col">
             <MapCard title="Transfer Locations">&nbsp;</MapCard>
@@ -117,7 +117,7 @@ const Dashboard = () => {
             <MapCard title="Transfer by Entity">&nbsp;</MapCard>
           </Col>
         </Row>
-      </div>
+      </div> */}
     </div>
   );
 };

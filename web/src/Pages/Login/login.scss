@@ -1,220 +1,276 @@
-@import '../Common/colors.login.scss';
 @import '../../Assets/Fonts/fonts.scss';
+@import '../../Styles/variables.scss';
 
 .login-container {
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: $outside-background-color;
 
   .login-language-selection-container {
-    // display: flex;
-    // flex-direction: row;
-    // justify-content: flex-end;
-    // margin-top: 10vh;
     position: absolute;
     bottom: 1rem;
     right: 2rem;
-    font-family: 'Proxima-Nova-Regular';
+    font-weight: regular;
     font-size: 0.8rem;
-    color: $login-black;
+    color: $body-text-color;
 
     .ant-select-selector {
       border: none;
-      color: $login-grey;
+      color: $body-text-color;
     }
   }
 
-  .ant-row {
-    .ant-col-15 {
-      .login-img-container {
-        background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(4, 104, 177, 0.6) 0.01%),
-          url('../../Assets/Images/login.jpeg') left 10% bottom 20% / cover no-repeat border-box;
-        height: 100vh;
-        background-position-x: 75%;
-        background-position-y: 75%;
-        // zoom: 1.2;
-        flex-direction: column;
-        justify-content: flex-end;
-        display: flex;
-        flex: 1;
-        background-size: 300vh;
-        span {
-          margin-left: 2vw;
-          margin-bottom: 2vw;
-          font-family: 'Sohne-Breit';
-          font-size: 5rem;
-          color: $login-white;
-          line-height: 6vw;
-        }
-      }
+  .login-img-container {
+    background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(4, 104, 177, 0.6) 0.01%),
+      url('../../Assets/Images/login.jpeg') left 10% bottom 20% / cover no-repeat border-box;
+    height: 100vh;
+    background-position-x: 75%;
+    background-position-y: 75%;
+    flex-direction: column;
+    justify-content: flex-end;
+    display: flex;
+    flex: 1;
+    text-align: left;
+    background-size: 300vh;
+
+    @media (max-width: $lg-size) {
+      text-align: center;
+      justify-content: center;
     }
-    .ant-col-9 {
-      .ant-col-offset-3 {
-        .login-country-logo {
-          flex-direction: column;
-          align-items: center;
-          display: flex;
-          img {
-            margin-top: 2vh;
-            object-fit: cover;
-            height: auto;
-            width: 8rem;
-          }
-        }
-        .login-country-name {
-          font-family: 'Proxima-Nova-Regular';
-          font-size: 0.7vw;
-          flex-direction: column;
-          align-items: center;
-          display: flex;
-          margin-top: 1.5vh;
-        }
-        .login-text-contents {
-          display: flex;
-          flex-direction: column;
-          margin-top: 5vh;
-          .login-text-signin {
-            font-family: 'Proxima-Nova-Black';
-            font-size: 3rem;
-            line-height: 2rem;
-            .login-text-welcome {
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 1rem;
-            }
-          }
-        }
-        .login-input-fields {
-          margin-top: 3vh;
-          height: 15vh;
-          .login-error-message-container {
-            display: flex;
-            flex: 1;
-            flex-direction: row;
-            justify-content: flex-start;
-            // background-color: $login-red-error;
-            // padding: 0.5rem;
-            // margin-top: 1.2rem;
-            // margin-bottom: 2rem;
-            align-items: center;
-            .login-error-message-txt {
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 0.9rem;
-              color: $login-red;
-              // color: $login-white;
-            }
-          }
-          .ant-form-item {
-            .login-input-email {
-              margin-bottom: 0.5rem;
-            }
-            .ant-form-item-explain-error {
-              padding-left: 1rem;
-              margin-bottom: 1rem;
-              font-family: 'Proxima-Nova-Regular';
-              // margin-top: 1vw;
-            }
-            #login-details_password_help {
-              margin-top: 0.5rem;
-            }
-          }
-          .login-forget-pwd-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-end;
-            align-items: flex-start;
-            flex: 1;
-            margin-top: 1vw;
-            .login-forget-pwd-txt {
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 0.8rem;
-              color: $login-grey;
-              cursor: pointer;
-            }
-          }
-          .login-submit-btn-container {
-            margin-top: 2rem;
-          }
-          .login-register-new-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            margin-top: 1rem;
-            font-family: 'Proxima-Nova-Regular';
-            font-size: 0.9rem;
-            .login-register-new-txt {
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 0.8rem;
-              color: $login-grey;
-              cursor: pointer;
-              .login-register-new-txt-span {
-                color: $login-red;
-                font-family: 'Proxima-Nova-Bold';
-              }
-            }
-          }
-          .login-input-email {
-            box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.06);
-            .ant-input {
-              height: 3.4rem;
-              border-radius: 0.3rem;
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 1rem;
-              border: none;
-              padding-left: 1.5rem;
-            }
-            input[type='username']:-webkit-autofill,
-            input[type='username']:-webkit-autofill:hover,
-            input[type='username']:-webkit-autofill:focus {
-              -webkit-text-fill-color: $login-black;
-              -webkit-box-shadow: 0 0 0 30px white inset !important;
-            }
-            .ant-input:focus {
-              border: none !important;
-              box-shadow: none;
-            }
-          }
-          .login-input-password {
-            .ant-input {
-              height: 3.4rem;
-              font-family: 'Proxima-Nova-Regular';
-              font-size: 1rem;
-              border: none;
-              padding-left: 0.8rem;
-              box-shadow: none;
-            }
-            .ant-input-password {
-              border: none;
-              box-shadow: 4px 0px 15px rgba(0, 0, 0, 0.06);
-              background-color: white !important;
-              padding: 0px 11px;
-            }
-            input[type='password']:-webkit-autofill,
-            input[type='password']:-webkit-autofill:hover,
-            input[type='password']:-webkit-autofill:focus {
-              -webkit-text-fill-color: $login-black;
-              -webkit-box-shadow: 0 0 0 30px white inset !important;
-            }
-          }
-        }
-        .ant-input::placeholder {
-          font-family: 'Proxima-Nova-Regular';
-          font-size: 1rem;
-          color: $login-grey-shade;
-        }
-        .ant-btn-primary {
-          background-color: $login-red;
-          color: $login-white;
-          font-family: 'Proxima-Nova-Regular';
-          border: none;
-          height: 3rem;
-          font-size: 1rem;
-          border-radius: 0.3vw;
-          box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
-        }
-        .ant-select-selector {
-          border: none;
-          color: $login-grey;
-        }
+
+    span {
+      margin-left: 2vw;
+      margin-bottom: 8vh;
+      font-family: $secondary-font-family;
+      font-size: 4rem;
+      color: $outside-background-color;
+      line-height: 1.2em;
+      text-transform: uppercase;
+
+      @media (max-width: $lg-size) {
+        font-size: 2.2rem;
+        margin-top: 1rem;
+        margin-bottom: unset;
+        // width: 100vw;
+        line-height: 1.5em;
       }
     }
   }
+
+  .login-country-logo {
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+
+    @media (max-width: $lg-size) {
+      // width: 100vw;;
+    }
+
+    img {
+      margin-top: 20px;
+      object-fit: cover;
+      height: auto;
+      width: 5rem;
+    }
+  }
+
+  .login-country-name {
+    font-size: 0.6rem;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+    margin-top: 1.5vh;
+    color: $title-text-color;
+
+    span {
+      @media (max-width: $lg-size) {
+        text-align: center;
+      }
+    }
+
+  }
+
+  .login-text-contents {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5vh;
+
+
+    @media (max-width: $lg-size) {
+      text-align: center;
+    }
+
+
+    .login-text-signin {
+      font-size: 2.4rem;
+      line-height: 2rem;
+      color: $title-text-color;
+      font-weight: 600;
+
+      .login-text-welcome {
+        font-size: 0.8rem;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .login-input-fields {
+    margin-top: 3vh;
+    height: 15vh;
+
+    @media (max-width: $lg-size) {
+      margin: auto;
+      padding: 30px;
+      width: 100vw;
+      margin-bottom: 350px;
+    }
+
+    .login-error-message-container {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      .login-error-message-txt {
+        font-size: 0.9rem;
+        color: $error-color;
+      }
+    }
+
+    .ant-form-item {
+      margin-bottom: 14px;
+
+      .login-input-email {
+        margin-bottom: 0.2rem;
+      }
+
+      .ant-form-item-explain-error {
+        // padding-left: 1rem;
+        margin-bottom: 0.2rem;
+        color: $error-color;
+      }
+
+      #login-details_password_help {
+        margin-top: 0.2rem;
+      }
+    }
+
+    .login-forget-pwd-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: flex-start;
+      flex: 1;
+      margin-top: 0.2rem;
+
+      .login-forget-pwd-txt {
+        font-size: 0.8rem;
+        color: $title-text-color;
+        cursor: pointer;
+      }
+    }
+
+    .login-submit-btn-container {
+      margin-top: 2rem;
+    }
+
+    .login-register-new-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: $body-text-color;
+
+      .login-register-new-txt {
+        font-size: 0.8rem;
+        color: $body-text-color;
+        cursor: pointer;
+
+        .login-register-new-txt-span {
+          color: $primary-color;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .ant-form-item-label {
+      label {
+        color: $title-text-color;
+      }
+    }
+
+    .login-input-email {
+      .ant-input {
+        height: 2.8rem;
+        border-radius: 0.3rem;
+        font-size: 0.8rem;
+        border: 1px solid $line-colors;
+        padding-left: 1.5rem;
+        color: $title-text-color;
+      }
+
+      input[type='username']:-webkit-autofill,
+      input[type='username']:-webkit-autofill:hover,
+      input[type='username']:-webkit-autofill:focus {
+        -webkit-text-fill-color: $title-text-color;
+        -webkit-box-shadow: 0 0 0 30px $outside-background-color inset !important;
+      }
+
+      .ant-input:focus {
+        box-shadow: none;
+      }
+    }
+
+    .login-input-password {
+      .ant-input {
+        height: 2.8rem;
+        font-size: 0.8rem;
+        border-radius: 0.3rem;
+        // border: 1px solid $line-colors;
+        padding-left: 0.8rem;
+        box-shadow: none;
+      }
+
+      .ant-input-password {
+        border: 1px solid $line-colors;
+        border-radius: 0.3rem;
+        box-shadow: none;
+        background-color: $outside-background-color !important;
+        padding: 0px 11px;
+      }
+
+      input[type='password']:-webkit-autofill,
+      input[type='password']:-webkit-autofill:hover,
+      input[type='password']:-webkit-autofill:focus {
+        -webkit-text-fill-color: $title-text-color;
+        -webkit-box-shadow: 0 0 0 30px $outside-background-color inset !important;
+      }
+    }
+  }
+
+  .ant-input::placeholder {
+    font-size: 1rem;
+    color: $light-text-color;
+  }
+
+  .ant-btn-primary {
+    // background-color: $login-red;
+    // color: $login-white;
+    background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+    border: none;
+    height: 2.4rem;
+    font-size: 1rem;
+    border-radius: 0.3vw;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  .ant-select-selector {
+    border: none;
+    color: $background-color;
+  }
+
+
 }

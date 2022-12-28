@@ -215,7 +215,7 @@ Resources:
         Ref: DBPassword
       PubliclyAccessible: True
       Tags:
-        - Key: Project
+        - Key: Programme
           Value: "RDS PostgreSQL"
       VPCSecurityGroups:
         - !Ref NoIngressSecurityGroup

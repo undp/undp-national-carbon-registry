@@ -1,46 +1,37 @@
-@import '../../Pages/Common/colors.layout.scss';
+@import '../../Styles/variables.scss';
 
 .layout-main-container {
-  overflow: hidden;
-  .layout-header-container {
-    // position: fixed;
-    top: 0;
-    z-index: 10;
-    // width: 80vw;
-    padding: 0;
-    padding-left: 2vw;
-    // padding-right: 2vw;
-  }
-  .ant-layout-header {
-    height: 90px;
-  }
-  .layout-container {
-    margin-left: 310px;
-    // margin-left: 21vw;
-    // margin-bottom: 4vw;
-    // background-color: red !important;
-  }
-  .layout-content-container {
-    margin: 20px;
-    // margin-left: 3rem;
-    // margin-right: 2rem;
-    background-color: $layout-content-bg;
-    // margin-top: 3vw;
-    border-radius: 0.5vw;
-    padding-bottom: 0px;
-    // margin-bottom: 2vw;
-  }
-  .ant-layout {
-    background-color: $layout-bg;
-    // height: 100vh;
-    // overflow: initial;
-  }
-  // .ant-layout-content {
-  //   margin-top: 5vw;
-  // }
+  background-color: $background-color;
 }
-@media screen and (max-width: 1170px) {
-  .layout-container {
-    margin-left: unset !important;
-  }
+
+.layout-content-container {
+  background-color: $background-color;
 }
+// .layout-main-container {
+//   overflow: hidden;
+//   .layout-header-container {
+//     top: 0;
+//     z-index: 10;
+//     padding: 0;
+//     padding-left: 2vw;
+//   }
+//   .ant-layout-header {
+//     height: 90px;
+//   }
+
+//   .layout-content-container {
+//     margin: 20px;
+//     background-color: $background-color;
+//     border-radius: 0.5vw;
+//     padding-bottom: 0px;
+//   }
+//   .ant-layout {
+//     background-color: $background-color;
+//   }
+
+// }
+// @media screen and (max-width: 1170px) {
+//   .layout-container {
+//     margin-left: unset !important;
+//   }
+// }

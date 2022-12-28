@@ -1,0 +1,54 @@
+$primary-font-family: 'Inter';
+$secondary-font-family: 'Sohne-Breit';
+$common-form-input-border: #d9d9d9;
+
+$primary-color: #16B1FF;
+
+$nav-color: #282828;
+$text-color: #3A3541;
+$dark-text-color: #FFFFFF;
+
+$line-colors: #D9D9D9;
+$error-color: rgba(#FF4D4F, 0.8);
+$background-color: #F4F5FA;
+$outside-background-color: #FFFFFF;
+
+$gradient-background-start: #6ACDFF;
+$gradient-background-end: rgba(#16B1FF, 0.94);
+
+$sep-line-color: #F0F0F0;
+
+$title-text-color: rgba($text-color, .8);
+$body-text-color: rgba($text-color, .6);
+$light-text-color: rgba($text-color, .3);
+
+$lg-size: 992px;
+
+$logo-text-color: #262626;
+
+$dev-bg-color: rgba(254, 241, 173, 0.5);
+$dev-color: #FFA070;
+
+// @screen-xs: 480px;
+// @screen-xs-min: @screen-xs;
+// // 👆 Extra small screen / phone
+
+// // 👇 Small screen / tablet
+// @screen-sm: 576px;
+// @screen-sm-min: @screen-sm;
+
+// // Medium screen / desktop
+// @screen-md: 768px;
+// @screen-md-min: @screen-md;
+
+// // Large screen / wide desktop
+// @screen-lg: 992px;
+// @screen-lg-min: @screen-lg;
+
+// // Extra large screen / full hd
+// @screen-xl: 1200px;
+// @screen-xl-min: @screen-xl;
+
+// // Extra extra large screen / large desktop
+// @screen-xxl: 1600px;
+// @screen-xxl-min: @screen-xxl;

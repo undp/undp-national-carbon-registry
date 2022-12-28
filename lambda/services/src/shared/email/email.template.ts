@@ -24,5 +24,18 @@ export const EmailTemplates = {
         The Carbon Credit Registry Team 
     `,
         text: ''
+    },
+    TRANSFER_REQUEST: {
+        subject: 'Transfer Request Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{requestedCompany}} has requested to transfer {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
+
+        <br><br>
+        Sincerely,<br>
+        The Carbon Credit Registry Team 
+        `,
+        text: ''
     }
 };

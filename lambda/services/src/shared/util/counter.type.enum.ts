@@ -1,5 +1,5 @@
 export enum CounterType {
     USER = 0,
-    PROJECT = 1,
+    PROGRAMME = 1,
     ITMO = 2
 }

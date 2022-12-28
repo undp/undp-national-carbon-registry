@@ -25,28 +25,28 @@ const Login = () => {
 
   const onSubmit = async (values: LoginProps) => {
     setLoading(true);
+    setShowError(false);
     try {
       const email = values.email.trim();
-      const response = await post('auth/login', {
+      const response = await post('national/auth/login', {
         username: email.trim(),
         password: values.password.trim(),
       });
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
-        setUserInfo({ id: response.data.id, userRole: response.data.role });
+        setUserInfo({
+          id: response.data.id,
+          userRole: response.data.role,
+          companyId: response.data.companyId,
+          companyRole: response.data.companyRole,
+        });
         removeToken();
         return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');
       }
     } catch (error: any) {
       console.log('Error in Login', error);
       setShowError(true);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 2,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <Row>
-        <Col span={15}>
+        <Col md={24} lg={15} flex="auto">
           <div className="login-img-container">
             <span>
               {t('login:carbon')} <br /> {t('login:credit')} <br />
@@ -69,11 +69,11 @@ const Login = () => {
             </span>
           </div>
         </Col>
-        <Col span={9}>
+        <Col md={24} lg={9} flex="auto">
           <Row>
-            <Col span={18} offset={3}>
+            <Col lg={{ span: 18, offset: 4 }} md={{ span: 24 }} flex="auto">
               <Row>
-                <Col span={9} offset={15}>
+                <Col lg={{ span: 9, offset: 15 }} md={{ span: 24 }} flex="auto">
                   <div className="login-country-logo">
                     <img src={countryLogo} alt="country-logo" />
                   </div>
@@ -85,7 +85,7 @@ const Login = () => {
             </Col>
           </Row>
           <Row>
-            <Col span={18} offset={3}>
+            <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
               <div className="login-text-contents">
                 <span className="login-text-signin">
                   {t('common:login')} <br />
@@ -95,7 +95,7 @@ const Login = () => {
             </Col>
           </Row>
           <Row>
-            <Col span={18} offset={3}>
+            <Col lg={{ span: 18, offset: 3 }} md={{ span: 18 }} flex="fill">
               <div className="login-input-fields">
                 <Form
                   layout="vertical"
@@ -105,7 +105,8 @@ const Login = () => {
                 >
                   <Form.Item
                     name="email"
-                    validateTrigger={'onBlur'}
+                    label={`${t('common:email')}`}
+                    validateTrigger={'onSubmit'}
                     rules={[
                       ({ getFieldValue }) => ({
                         validator() {
@@ -117,40 +118,46 @@ const Login = () => {
                                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                               )
                           ) {
-                            return Promise.reject('Please enter a valid E-mail!');
+                            return Promise.reject('Please enter a valid email');
                           }
                           return Promise.resolve();
                         },
                       }),
                       {
                         required: true,
-                        message: 'Email cannot be empty!',
+                        message: 'Email cannot be empty',
                       },
                     ]}
                   >
                     <div className="login-input-email">
-                      <Input type="username" placeholder={`${t('common:email')}`} />
+                      <Input type="username" />
                     </div>
                   </Form.Item>
                   <Form.Item
                     name="password"
+                    validateTrigger={'onSubmit'}
+                    label={`${t('common:pwd')}`}
                     rules={[
                       {
                         required: true,
-                        message: 'Password cannot be empty!',
+                        message: 'Password cannot be empty',
                       },
                     ]}
                   >
                     <div className="login-input-password">
-                      <Input.Password type="password" placeholder={`${t('common:pwd')}`} />
+                      <Input.Password type="password" />
                     </div>
                   </Form.Item>
                   {showError && (
                     <div className="login-error-message-container">
                       <ExclamationCircleOutlined
-                        style={{ color: '#d12800', marginRight: '0.5rem', fontSize: '1.1rem' }}
+                        style={{
+                          color: 'rgba(255, 77, 79, 0.8)',
+                          marginRight: '0.5rem',
+                          fontSize: '1.1rem',
+                        }}
                       />
-                      <span className="login-error-message-txt">Invalid Login credentials !</span>
+                      <span className="login-error-message-txt">Invalid login credentials</span>
                     </div>
                   )}
                   <div className="login-forget-pwd-container">
@@ -173,42 +180,44 @@ const Login = () => {
               </div>
             </Col>
           </Row>
-          <div className="login-language-selection-container">
-            <span className="login-language-selection-txt">
-              {t('common:language')} :
-              <Select
-                placeholder="Search to Select"
-                defaultValue={
-                  localStorage.getItem('i18nextLng') !== null
-                    ? localStorage.getItem('i18nextLng')
-                    : 'en'
-                }
-                placement="topRight"
-                onChange={(lan: string) => handleLanguageChange(lan)}
-                optionFilterProp="children"
-                filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? '')
-                    .toLowerCase()
-                    .localeCompare((optionB?.label ?? '').toLowerCase())
-                }
-                options={[
-                  {
-                    value: 'en',
-                    label: 'English',
-                  },
-                  {
-                    value: 'es',
-                    label: 'Española',
-                  },
-                  {
-                    value: 'fr',
-                    label: 'française',
-                  },
-                ]}
-              />
-            </span>
-          </div>
+          <Row>
+            <div className="login-language-selection-container">
+              <span className="login-language-selection-txt">
+                {t('common:language')} :
+                <Select
+                  placeholder="Search to Select"
+                  defaultValue={
+                    localStorage.getItem('i18nextLng') !== null
+                      ? localStorage.getItem('i18nextLng')
+                      : 'en'
+                  }
+                  placement="topRight"
+                  onChange={(lan: string) => handleLanguageChange(lan)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? '')
+                      .toLowerCase()
+                      .localeCompare((optionB?.label ?? '').toLowerCase())
+                  }
+                  options={[
+                    {
+                      value: 'en',
+                      label: 'English',
+                    },
+                    {
+                      value: 'es',
+                      label: 'Española',
+                    },
+                    {
+                      value: 'fr',
+                      label: 'française',
+                    },
+                  ]}
+                />
+              </span>
+            </div>
+          </Row>
         </Col>
       </Row>
     </div>

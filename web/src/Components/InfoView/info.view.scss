@@ -1,0 +1,30 @@
+@import '../../Styles/variables.scss';
+
+.info-view {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .field-key {
+    color: $body-text-color;
+    font-weight: 500;
+  }
+
+  .field-value {
+    color: $body-text-color;
+  }
+
+  .field {
+    margin: 15px 25px;
+    font-size: 0.8rem;
+  }
+}

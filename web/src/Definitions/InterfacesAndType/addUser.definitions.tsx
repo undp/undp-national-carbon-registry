@@ -1,10 +1,10 @@
-export interface ProjectDeveloperCreation {
+export interface ProgrammeDeveloperCreation {
   companyName?: string;
   companyLocation?: string;
   industry?: string;
   registrationNo?: string;
 }
-export interface UserCreationProps extends ProjectDeveloperCreation {
+export interface UserCreationProps extends ProgrammeDeveloperCreation {
   name: string;
   email: string;
   role: string;

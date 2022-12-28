@@ -1,6 +1,8 @@
 import { Role } from '../casl/role.enum';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
 import { EntitySubject } from './entity.subject';
+import { CompanyRole } from '../enum/company.role.enum';
+import { Company } from './company.entity';
 
 @Entity()
 export class User  implements EntitySubject{
@@ -25,34 +27,25 @@ export class User  implements EntitySubject{
     name: string;
 
     @Column()
-    city: string;
-
-    @Column()
-    zipCode: string;
-
-    @Column()
-    state: string;
-
-    @Column()
     country: string;
 
-    @Column()
-    contactNo: string;
+    @Column({nullable: true})
+    phoneNo: string;
 
     @Column({nullable: true})
-    companyName: string;
+    companyId: number;
 
-    @Column({nullable: true})
-    companyLogo: string;
+    // @ManyToOne(() => Company, (company) => company.companyId)
+    // @JoinColumn({name: "companyId"})
+    // company: Company | null;
 
-    @Column({nullable: true})
-    companyLocation: string;
-
-    @Column({nullable: true})
-    registrationNo: string;
-
-    @Column({nullable: true})
-    industry: string;
+    @Column({
+        type: "enum",
+        enum: CompanyRole,
+        array: false,
+        default: CompanyRole.PROGRAMME_DEVELOPER
+    })
+    companyRole: CompanyRole;
 
     @Column({nullable: true, select: false})
     apiKey: string;

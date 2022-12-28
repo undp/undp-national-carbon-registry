@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../shared/entities/project.entity';
+import { Programme } from '../shared/entities/programme.entity';
 import { dom } from "ion-js";
 import { plainToClass } from 'class-transformer';
+import { ConfigService } from '@nestjs/config';
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";
@@ -12,7 +13,7 @@ const deagg = require('aws-kinesis-agg');
 @Injectable()
 export class LedgerReplicatorService {
 
-    constructor(@InjectRepository(Project) private projectRepo: Repository<Project>, private logger: Logger) {
+    constructor(@InjectRepository(Programme) private programmeRepo: Repository<Programme>, private logger: Logger, private configService: ConfigService) {
 
     }
 
@@ -29,10 +30,26 @@ export class LedgerReplicatorService {
                     this.logger.log(`Skipping record of type ${ionRecord.get('recordType').stringValue()}`);
                 } else {
                     this.logger.log('ION Record', JSON.stringify(ionRecord))
+
+                    const tableName = ionRecord.get("payload").get("tableInfo").get("tableName");
+                    if (tableName != this.configService.get('ledger.table')) {
+                        return;
+                    }
+                    
                     const payload = ionRecord.get("payload").get("revision").get("data");
-                    const project: Project = plainToClass(Project, JSON.parse(JSON.stringify(payload)));
-                    this.logger.debug(JSON.stringify(project));
-                    return await this.projectRepo.save(project);
+       
+                    const programme: Programme = plainToClass(Programme, JSON.parse(JSON.stringify(payload)));
+
+                    const columns = this.programmeRepo.manager.connection.getMetadata("Programme").columns;
+                    const columnNames = columns.filter(function (item) {
+                        return item.propertyName !== 'programmeId';
+                    }).map( e => e.propertyName)
+                    this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
+                    return await this.programmeRepo.createQueryBuilder()
+                        .insert()
+                        .values(programme)
+                        .orUpdate(columnNames, ['programmeId'])
+                        .execute();
                 }
             })
         );

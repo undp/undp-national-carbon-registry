@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsEnum, isNotEmpty, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { Role } from "../casl/role.enum";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class PasswordUpdateDto {
 

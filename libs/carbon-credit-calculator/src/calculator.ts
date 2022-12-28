@@ -4,7 +4,7 @@ import { AgricultureCreationRequest } from "./requests/agricultureCreationReques
 import { CreditCreationRequest } from "./requests/creditCreationRequest";
 import { SolarCreationRequest } from "./requests/solarCreationRequest";
 
-export const PRECISION = 3
+export const PRECISION = 2
 export const calculateCredit = (request: CreditCreationRequest): number => {
     if (request instanceof AgricultureCreationRequest) {
         return AgricultureCal.calculate(request)

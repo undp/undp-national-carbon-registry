@@ -6,18 +6,22 @@ import { dom } from "ion-js";
 @Injectable()
 export class LedgerDbService {
 
-    private tableName: string;
+    public tableName: string;
+    public overallTableName: string;
+    public companyTableName: string;
     private ledgerName: string;
     private driver: QldbDriver;
 
     constructor(private readonly logger: Logger, private readonly configService: ConfigService) {
         this.ledgerName = configService.get<string>('ledger.name')
         this.tableName = configService.get<string>('ledger.table')
+        this.overallTableName = configService.get<string>('ledger.overallTable')
+        this.companyTableName = configService.get<string>('ledger.companyTable')
         logger.log("Ledger init ", this.ledgerName)
     }
 
     // TODO: Handler session expire
-    private async execute<TM>(sql, ...parameters: any[]): Promise<Result> {
+    public async execute<TM>(sql, ...parameters: any[]): Promise<Result> {
         this.logger.debug(`Statement: ${sql}, parameter: ${JSON.stringify(parameters)}`)
         this.driver = new QldbDriver(this.ledgerName);
         const resp = await this.driver.executeLambda(async (txn: TransactionExecutor) => {
@@ -33,19 +37,19 @@ export class LedgerDbService {
         return resp;
     }
 
-    public async createTable(): Promise<void> {
-        await (await this.execute(`create table ${this.tableName}`));
+    public async createTable(tableName?: string): Promise<void> {
+        await (await this.execute(`create table ${tableName ? tableName : this.tableName}`));
     }
 
-    public async createIndex(indexCol: string): Promise<void> {
-        await (await this.execute(`create index on ${this.tableName} (${indexCol})`));
+    public async createIndex(indexCol: string, tableName?: string): Promise<void> {
+        await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
     }
 
-    public async insertRecord(document: Record<string, any>): Promise<void> {
-        await (await this.execute(`INSERT INTO ${this.tableName} ?`, document));
+    public async insertRecord(document: Record<string, any>, tableName?: string): Promise<void> {
+        await (await this.execute(`INSERT INTO ${tableName ? tableName : this.tableName} ?`, document));
     }
     
-    public async fetchRecords<T extends Record<string, any>>(where: Record<string, any>): Promise<dom.Value[]> {
+    public async fetchRecords(where: Record<string, any>): Promise<dom.Value[]> {
         const whereClause = Object.keys(where).map(k => (`${k} = ?`)).join(' and ')
         return (await this.execute(`SELECT * FROM ${this.tableName} WHERE ${whereClause}`, ...Object.values(where)))?.getResultList();
     }
@@ -62,4 +66,48 @@ export class LedgerDbService {
         const updateClause = Object.keys(update).map(k => (`${k} = ?`)).join(',')
         return (await this.execute(`UPDATE ${this.tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update), ...Object.values(where)))?.getResultList();
     };
+
+    public async getAndUpdateTx<TM>(getQueries: Record<string, Record<string, any>>, processGetFn: (results: Record<string, dom.Value[]>) => [Record<string, any>, Record<string, any>, Record<string, any>]): Promise<Record<string, dom.Value[]>> {
+        this.logger.debug(``)
+        this.driver = new QldbDriver(this.ledgerName);
+        const resp = await this.driver.executeLambda(async (txn: TransactionExecutor) => {
+            const getResults = {}
+            for (const t in getQueries) {
+                if (getQueries.hasOwnProperty(t)) {
+                    const wc = Object.keys(getQueries[t]).map(k => {
+                        if (getQueries[t][k] instanceof Array) {
+                            return (`${k} in ?`)
+                        }
+                        return (`${k} = ?`)
+                    }).join(' and ')
+                    const r = (await this.execute(`SELECT * FROM ${t} WHERE ${wc}`, ...Object.values(getQueries[t])))?.getResultList();
+                    getResults[t] = r;
+                }
+            }
+            const [update,  updateWhere, insert] = processGetFn(getResults);
+            const updateResults = {}
+            for (const qk in update) {
+                const tableName = qk.split('#')[0]
+                if (update.hasOwnProperty(qk) && updateWhere.hasOwnProperty(qk)) {
+                    const whereClause = Object.keys(updateWhere[qk]).map(k => (`${k} = ?`)).join(' and ')
+                    const updateClause = Object.keys(update[qk]).map(k => (`${k} = ?`)).join(',')
+                    updateResults[qk] = (await this.execute(`UPDATE ${tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update[qk]), ...Object.values(updateWhere[qk])))?.getResultList();
+                }
+            }
+
+            this.logger.verbose(`Insert queries`, insert)
+            for (const qk in insert) {
+                const tableName = qk.split('#')[0]
+                if (insert.hasOwnProperty(qk)) {
+                    updateResults[qk] = (await this.execute(`INSERT INTO ${tableName ? tableName : this.tableName} ?`, insert[qk]))?.getResultList();
+                }
+            }
+
+            return updateResults;
+        });
+        this.logger.debug('Response', JSON.stringify(resp))
+        this.driver.close()
+        return resp;
+    }
+
 }

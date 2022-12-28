@@ -1,0 +1,11 @@
+{
+    "name": "NAME",
+    "email": "EMAIL",
+    "phone": "PHONE",
+    "company": "ORGANIZATION",
+    "companyRole": "ORGANIZATION TYPE",
+    "role": "ROLE",
+    "addUser": "Add User",
+    "viewUsers": "View Users",
+    "viewDesc": "View all the visible users in the system based on your permissions"
+}

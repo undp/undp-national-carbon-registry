@@ -1,8 +1,6 @@
 import { Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
-import React from 'react';
+const { Header, Sider, Content } = Layout;
 import { Outlet } from 'react-router-dom';
-import { LayoutProps } from '../../Definitions/InterfacesAndType/layout.definitions';
 import LayoutHeader from '../Header/layout.header';
 import LayoutSider from '../Sider/layout.sider';
 import './layout.scss';

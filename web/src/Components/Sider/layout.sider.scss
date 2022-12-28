@@ -1,54 +1,118 @@
-@import '../../Pages//Common/colors.layout.sider.scss';
+@import '../../Styles/variables.scss';
 
 .layout-sider-container {
-  overflow: auto;
-  height: 100vh;
-  position: fixed;
-  z-index: 20;
-  background-color: #023c66;
+  background-color: $background-color;
+
+
+  .layout-sider-menu-container {
+    background-color: $background-color;
+    padding-top: 12px;
+    padding-left: 10px;
+  }
+
   .layout-sider-div-container {
-    padding-top: 2vw;
+    padding-top: 22px;
+
     .layout-sider-heading-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       // margin-bottom: 2vw;
       // padding-left: 2rem;
-        padding: 0rem 2rem 1rem;
-      .layout-sider-heading-txt {
-        font-family: 'Proxima-Nova-Bold';
-        font-size: 2rem;
-        color: $layout-sider-header-txt;
-        cursor: pointer;
+      padding: 0rem 2rem 0 2rem;
+      cursor: pointer;
+
+      .title {
+        font-family: 'MuseoSans';
+        font-size: 1.2rem;
+        color: $logo-text-color;
+        font-weight: 700;
+        margin-right: 0.5rem;
+      }
+
+      .title-sub {
+        font-weight: 100 !important;
+        font-family: 'MuseoSans';
+        font-size: 1.2rem;
+        color: $logo-text-color;
+        // padding-bottom: 3px;
+      }
+
+      .logo {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        height: 50px;
+        overflow: hidden;
+        margin-right: 0.8rem;
+
+        // background-color: red;
+        img {
+          object-fit: cover;
+          height: auto;
+          height: 70%;
+        }
       }
     }
-    .layout-sider-menu-container {
-      .ant-menu {
-        background-color: #023c66;
-        .ant-menu-title-content {
-          font-family: 'Proxima-Nova-Regular';
-          font-size: 0.9rem;
-          color: $layout-sider-menu-txt;
+
+    .ant-menu-item-selected {
+      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+      color: $dark-text-color;
+      border-top-right-radius: 22px;
+      border-bottom-right-radius: 22px;
+
+      a {
+        color: $dark-text-color;
+      }
+    }
+
+    .ant-menu-item::after {
+      border: none;
+    }
+
+    .ant-menu-submenu-selected {
+
+      .ant-menu-item::after {
+        border-left: 2px solid $primary-color;
+      }
+
+      .ant-menu-submenu-title {
+        background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+        color: $dark-text-color;
+        border-top-right-radius: 22px;
+        border-bottom-right-radius: 22px;
+        
+        .ant-menu-submenu-arrow {
+          color: $dark-text-color;
         }
-        .ant-menu-item-selected {
-          background-color: $layout-sider-hover-bg;
-          border-radius: 0.5vw;
-          // border-bottom-left-radius: 0.5vw;
-          .ant-menu-title-content {
-            font-family: 'Proxima-Nova-Regular';
-            font-size: 1rem;
-            color: $layout-sider-header-txt;
-          }
-        }
-        .ant-menu-item {
-          height: 3.2rem;
-          margin: 2px 10px;
-          width: 285px;
+
+        a {
+          color: $dark-text-color;
         }
       }
+
+      .ant-menu-item-selected {
+        background: none;
+        // border-left: 1px solid $primary-color;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+        
+
+        a {
+          color: $primary-color;
+        }
+      }
+    }
+
+    .ant-menu-item {
+      height: 44px;
+    }
+
+    .ant-menu-submenu-title {
+      height: 44px;
     }
   }
 }
-@media screen and (max-width: 1170px) {
-  .layout-sider-container {
-    position: unset !important;
-    height: 100vh !important;
-  }
-}
+
+

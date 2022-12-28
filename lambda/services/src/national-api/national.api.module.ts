@@ -5,16 +5,16 @@ import { NationalAPIService } from './national.api.service';
 import configuration from '../shared/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../shared/typeorm.config.service';
-// import { Project } from './entities/project.entity';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from '../shared/rbac/roles.guard';
+// import { Programme } from './entities/programme.entity';
+import { AuthModule } from '../shared/auth/auth.module';
 import { CaslModule } from '../shared/casl/casl.module';
-import { ProjectModule } from './project/project.module';
-import { ProjectLedgerModule } from '../shared/project-ledger/project-ledger.module';
-import { LedgerDbModule } from '../shared/ledger-db/ledger-db.module';
-import { UtilModule } from '../shared/util/util.module';
+import { ProgrammeModule } from '../shared/programme/programme.module';
+import { CompanyModule } from '../shared/company/company.module';
+import { UserController } from './user.controller';
+import { AuthController } from './auth.controller';
+import { CompanyController } from './company.controller';
+import { UserModule } from '../shared/user/user.module';
+import { ProgrammeController } from './programme.controller';
 
 @Module({
   imports: [
@@ -25,13 +25,15 @@ import { UtilModule } from '../shared/util/util.module';
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
+      imports: undefined
     }),
     AuthModule,
     UserModule,
     CaslModule,
-    ProjectModule
+    ProgrammeModule,
+    CompanyModule
   ],
-  controllers: [NationalAPIController],
+  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController ],
   providers: [
     NationalAPIService, 
     Logger
