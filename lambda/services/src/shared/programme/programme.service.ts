@@ -345,7 +345,8 @@ export class ProgrammeService {
         }
 
         const company = await this.companyService.findByCompanyId(user.companyId);
-        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}}`)
+        const updated = this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}}`)
+        return new DataResponseDto(HttpStatus.OK, updated)
     }
 
     async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
