@@ -236,8 +236,15 @@ const ProgrammeView = () => {
           if (!response.data.certifierId) {
             response.data.certifierId = [];
           }
-          setData(response.data);
-          navigate('.', { state: { record: response.data } });
+
+          if (actionInfo.action === 'Approve') {
+            setData(response.data);
+            navigate('.', { state: { record: response.data } });
+          } else if (actionInfo.action === 'Reject') {
+            data!.currentStage = ProgrammeStage.Rejected;
+            setData(data);
+          }
+
           setOpenModal(false);
           message.open({
             type: 'success',

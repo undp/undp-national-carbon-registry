@@ -372,7 +372,7 @@ export class ProgrammeService {
         } else {
             const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
             if (!updated) {
-                return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
+                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
             return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
         }
