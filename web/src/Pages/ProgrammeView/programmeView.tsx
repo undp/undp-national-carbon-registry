@@ -237,7 +237,7 @@ const ProgrammeView = () => {
             response.data.certifierId = [];
           }
 
-          if (actionInfo.action === 'Approve') {
+          if (actionInfo.action === 'Approve' || actionInfo.action === 'Certify') {
             setData(response.data);
             navigate('.', { state: { record: response.data } });
           } else if (actionInfo.action === 'Reject') {
