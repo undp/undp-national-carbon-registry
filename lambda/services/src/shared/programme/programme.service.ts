@@ -346,6 +346,14 @@ export class ProgrammeService {
 
         const company = await this.companyService.findByCompanyId(user.companyId);
         const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}}`)
+        updated.companyId = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated && updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifierId = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
