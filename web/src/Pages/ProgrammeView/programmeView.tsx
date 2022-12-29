@@ -299,8 +299,7 @@ const ProgrammeView = () => {
     if (!state) {
       console.log(state);
       navigate('/programmeManagement', { replace: true });
-    }
-    {
+    } else {
       getProgrammeHistory(state.record.programmeId);
       setData(state.record);
 
@@ -576,6 +575,27 @@ const ProgrammeView = () => {
                           position: 'bottom',
                         },
                         colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        states: {
+                          normal: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          hover: {
+                            filter: {
+                              type: 'darken',
+                              value: 0.9,
+                            },
+                          },
+                          active: {
+                            allowMultipleDataPointsSelection: false,
+                            filter: {
+                              type: 'darken',
+                              value: 0.7,
+                            },
+                          },
+                        },
                         plotOptions: {
                           pie: {
                             donut: {
