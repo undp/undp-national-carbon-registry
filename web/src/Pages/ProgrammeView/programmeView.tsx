@@ -75,67 +75,6 @@ const ProgrammeView = () => {
     setOpenModal(true);
   };
 
-  const onAction = async (action: string) => {
-    try {
-      if (actionInfo.action !== 'Transfer') {
-        setConfirmLoading(true);
-        const response: any = await put(
-          `national/programme/${
-            actionInfo.action === 'Reject'
-              ? 'reject'
-              : actionInfo.action === 'Approve'
-              ? 'authorize'
-              : actionInfo.action === 'Certify'
-              ? 'certify'
-              : 'retire'
-          }`,
-          {
-            comment: comment,
-            programmeId: data?.programmeId,
-          }
-        );
-        if (response.statusCode === 200 || response.status === 200) {
-          if (!response.data.certifierId) {
-            response.data.certifierId = [];
-          }
-          setData(response.data);
-          setOpenModal(false);
-          message.open({
-            type: 'success',
-            content:
-              'Successfully ' +
-              (actionInfo.action === 'Reject'
-                ? 'rejected'
-                : actionInfo.action === 'Approve'
-                ? 'approved'
-                : actionInfo.action === 'Certify'
-                ? 'certified'
-                : 'retired'),
-            duration: 3,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-          });
-        } else {
-          message.open({
-            type: 'error',
-            content: response.message,
-            duration: 3,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-          });
-        }
-
-        setConfirmLoading(false);
-      }
-    } catch (e: any) {
-      message.open({
-        type: 'error',
-        content: e.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setConfirmLoading(false);
-    }
-  };
-
   const getTxRefValues = (value: string, position: number, sep?: string) => {
     if (sep === undefined) {
       sep = '#';
@@ -271,6 +210,69 @@ const ProgrammeView = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       setLoadingHistory(false);
+    }
+  };
+
+  const onAction = async (action: string) => {
+    try {
+      if (actionInfo.action !== 'Transfer') {
+        setConfirmLoading(true);
+        const response: any = await put(
+          `national/programme/${
+            actionInfo.action === 'Reject'
+              ? 'reject'
+              : actionInfo.action === 'Approve'
+              ? 'authorize'
+              : actionInfo.action === 'Certify'
+              ? 'certify'
+              : 'retire'
+          }`,
+          {
+            comment: comment,
+            programmeId: data?.programmeId,
+          }
+        );
+        if (response.statusCode === 200 || response.status === 200) {
+          if (!response.data.certifierId) {
+            response.data.certifierId = [];
+          }
+          setData(response.data);
+          setOpenModal(false);
+          message.open({
+            type: 'success',
+            content:
+              'Successfully ' +
+              (actionInfo.action === 'Reject'
+                ? 'rejected'
+                : actionInfo.action === 'Approve'
+                ? 'approved'
+                : actionInfo.action === 'Certify'
+                ? 'certified'
+                : 'retired'),
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        } else {
+          message.open({
+            type: 'error',
+            content: response.message,
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+
+        await getProgrammeHistory(Number(data?.programmeId));
+
+        setConfirmLoading(false);
+      }
+    } catch (e: any) {
+      message.open({
+        type: 'error',
+        content: e.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setConfirmLoading(false);
     }
   };
 
@@ -561,11 +563,11 @@ const ProgrammeView = () => {
                   <div className="map-content">
                     <Chart
                       options={{
-                        labels: ['Issued', 'Transferred', 'Balance', 'Frozen', 'Retired'],
+                        labels: ['Transferred', 'Balance', 'Frozen', 'Retired'],
                         legend: {
                           position: 'bottom',
                         },
-                        colors: ['#FFB480', '#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
                         plotOptions: {
                           pie: {
                             donut: {
@@ -598,13 +600,7 @@ const ProgrammeView = () => {
                           },
                         ],
                       }}
-                      series={[
-                        Number(data.creditIssued),
-                        Number(data.creditTransferred),
-                        Number(data.creditBalance),
-                        0,
-                        0,
-                      ]}
+                      series={[Number(data.creditTransferred), Number(data.creditBalance), 0, 0]}
                       type="donut"
                       width="100%"
                       fontFamily="inter"

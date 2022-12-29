@@ -84,11 +84,8 @@
       width: 90px;
     }
 
-    .ant-progress {
-      width: calc(min(150px, 100%));
-    }
-
     .progress-bar {
+      width: calc(min(200px, 100%));
       font-size: 0.8rem;
       color: $body-text-color;
       margin-top: 15px;
