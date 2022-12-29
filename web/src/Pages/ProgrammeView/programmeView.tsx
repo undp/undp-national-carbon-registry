@@ -237,7 +237,7 @@ const ProgrammeView = () => {
             response.data.certifierId = [];
           }
           setData(response.data);
-          state.record = response.data;
+          navigate('.', { state: { record: response.data } });
           setOpenModal(false);
           message.open({
             type: 'success',
