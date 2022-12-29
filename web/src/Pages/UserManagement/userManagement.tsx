@@ -20,10 +20,12 @@ import {
   Input,
   List,
   Menu,
+  MenuProps,
   message,
   PaginationProps,
   Popconfirm,
   Popover,
+  Radio,
   Row,
   Select,
   Space,
@@ -69,8 +71,26 @@ const UserManagement = () => {
   const [tableData, setTableData] = useState<TableDataType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [filterVisible, setFilterVisible] = useState<any>();
+  const [searchByTermUser, setSearchByTermUser] = useState<any>('name');
+  const [searchValueUsers, setSearchValueUsers] = useState<string>('');
+  const [networksearchUsers, setNetworkSearchUsers] = useState<string>('');
+  const [filterVisible, setFilterVisible] = useState<boolean>(false);
+  const [filterByOrganisationType, setFilterByOrganisationType] = useState<string>('All');
+  const [filterByRole, setFilterByRole] = useState<string>('All');
   const { i18n, t } = useTranslation(['user']);
+
+  document.addEventListener('mousedown', (event: any) => {
+    const userFilterArea1 = document.querySelector('.filter-bar');
+    const userFilterArea2 = document.querySelector('.filter-dropdown');
+
+    if (userFilterArea1 !== null && userFilterArea2 !== null) {
+      if (userFilterArea1.contains(event.target) || userFilterArea2.contains(event.target)) {
+        setFilterVisible(true);
+      } else {
+        setFilterVisible(false);
+      }
+    }
+  });
 
   const getCompanyBgColor = (item: string) => {
     if (item === 'Government') {
@@ -273,13 +293,134 @@ const UserManagement = () => {
   ];
   // }
 
+  const filterOr = () => {
+    if (
+      searchByTermUser !== null &&
+      searchByTermUser !== '' &&
+      networksearchUsers !== null &&
+      networksearchUsers !== '' &&
+      filterByOrganisationType === 'All' &&
+      filterByRole === 'All'
+    ) {
+      return [
+        {
+          key: searchByTermUser,
+          operation: '=',
+          value: networksearchUsers,
+        },
+      ];
+    } else return undefined;
+  };
+
+  const filterAnd = () => {
+    if (
+      searchByTermUser !== null &&
+      searchByTermUser !== '' &&
+      networksearchUsers !== null &&
+      networksearchUsers !== '' &&
+      filterByRole !== 'All' &&
+      filterByOrganisationType !== 'All'
+    ) {
+      return [
+        {
+          key: searchByTermUser,
+          operation: '=',
+          value: networksearchUsers,
+        },
+        {
+          key: 'role',
+          operation: '=',
+          value: filterByRole,
+        },
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+      ];
+    } else if (
+      searchByTermUser !== null &&
+      searchByTermUser !== '' &&
+      networksearchUsers !== null &&
+      networksearchUsers !== '' &&
+      filterByRole !== 'All'
+    ) {
+      return [
+        {
+          key: searchByTermUser,
+          operation: '=',
+          value: networksearchUsers,
+        },
+        {
+          key: 'role',
+          operation: '=',
+          value: filterByRole,
+        },
+      ];
+    } else if (
+      searchByTermUser !== null &&
+      searchByTermUser !== '' &&
+      networksearchUsers !== null &&
+      networksearchUsers !== '' &&
+      filterByOrganisationType !== 'All'
+    ) {
+      return [
+        {
+          key: searchByTermUser,
+          operation: '=',
+          value: networksearchUsers,
+        },
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+      ];
+    } else if (filterByOrganisationType !== 'All' && filterByRole !== 'All') {
+      return [
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+        {
+          key: 'role',
+          operation: '=',
+          value: filterByRole,
+        },
+      ];
+    } else if (filterByOrganisationType !== 'All') {
+      return [
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+      ];
+    } else if (filterByRole !== 'All') {
+      return [
+        {
+          key: 'role',
+          operation: '=',
+          value: filterByRole,
+        },
+      ];
+    } else return undefined;
+  };
+
+  const getAllUserParams = () => {
+    return {
+      page: currentPage,
+      size: pageSize,
+      filterOr: filterOr(),
+      filterAnd: filterAnd(),
+    };
+  };
+
   const getAllUser = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/user/query', {
-        page: currentPage,
-        size: pageSize,
-      });
+      const response: any = await post('national/user/query', getAllUserParams());
       console.log('users data  -- > ', response?.data);
       setTableData(response?.data);
       setTotalUser(response?.response?.data?.total);
@@ -298,7 +439,14 @@ const UserManagement = () => {
 
   useEffect(() => {
     getAllUser();
-  }, [currentPage, pageSize]);
+  }, [
+    currentPage,
+    pageSize,
+    searchByTermUser,
+    networksearchUsers,
+    filterByRole,
+    filterByOrganisationType,
+  ]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
@@ -307,6 +455,77 @@ const UserManagement = () => {
 
   const handleFilterVisibleChange = () => {
     setFilterVisible(true);
+  };
+
+  const searchByTermHandler = (event: any) => {
+    setSearchByTermUser(event?.target?.value);
+  };
+
+  const onFilterOrganisationType = (checkedValue: any) => {
+    setCurrentPage(1);
+    setFilterByOrganisationType(checkedValue?.target?.value);
+  };
+
+  const onFilterRole = (checkedValue: any) => {
+    setCurrentPage(1);
+    setFilterByRole(checkedValue?.target?.value);
+  };
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      title: 'Search by',
+      label: (
+        <div className="filter-menu-item">
+          <div className="filter-title">Search by</div>
+          <Radio.Group onChange={searchByTermHandler} value={searchByTermUser}>
+            <Space direction="vertical">
+              <Radio value="name">Name</Radio>
+              <Radio value="email">Email</Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+      ),
+    },
+    {
+      key: '2',
+      title: 'Filter by',
+      label: (
+        <div className="filter-menu-item">
+          <div className="filter-title">Filter by role</div>
+          <Radio.Group onChange={onFilterRole} value={filterByRole}>
+            <Space direction="vertical">
+              <Radio value="All">All</Radio>
+              <Radio value="Admin">Admin</Radio>
+              <Radio value="Manager">Manager</Radio>
+              <Radio value="Viewer">Viewer</Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+      ),
+    },
+    {
+      key: '3',
+      title: 'Filter by',
+      label: (
+        <div className="filter-menu-item">
+          <div className="filter-title">Filter by organisation type</div>
+          <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
+            <Space direction="vertical">
+              <Radio value="All">All</Radio>
+              <Radio value="Government">Government</Radio>
+              <Radio value="ProgrammeDeveloper">Developer</Radio>
+              <Radio value="Certifier">Certifier</Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+      ),
+    },
+  ];
+
+  const onSearch = () => {
+    setCurrentPage(1);
+    setNetworkSearchUsers(searchValueUsers);
   };
 
   return (
@@ -334,19 +553,39 @@ const UserManagement = () => {
             <div className="filter-section">
               <div className="search-bar">
                 <Search
-                  placeholder="Search by Email"
+                  onPressEnter={onSearch}
+                  placeholder={searchByTermUser === 'email' ? 'Search by Email' : 'Search by name'}
                   allowClear
-                  onSearch={() => {}}
+                  onChange={(e) =>
+                    e.target.value === ''
+                      ? setNetworkSearchUsers(e.target.value)
+                      : setSearchValueUsers(e.target.value)
+                  }
+                  onSearch={onSearch}
                   style={{ width: 265 }}
                 />
               </div>
               <div className="filter-bar">
-                <FilterOutlined
-                  style={{
-                    color: 'rgba(58, 53, 65, 0.3)',
-                    fontSize: '20px',
-                  }}
-                />
+                <Dropdown
+                  arrow={false}
+                  menu={{ items }}
+                  placement="bottomRight"
+                  open={filterVisible}
+                  onOpenChange={handleFilterVisibleChange}
+                  overlayClassName="filter-dropdown"
+                >
+                  <a
+                    className="ant-dropdown-link"
+                    onClick={(e) => setFilterVisible(!filterVisible)}
+                  >
+                    <FilterOutlined
+                      style={{
+                        color: 'rgba(58, 53, 65, 0.3)',
+                        fontSize: '20px',
+                      }}
+                    />
+                  </a>
+                </Dropdown>
               </div>
             </div>
           </Col>

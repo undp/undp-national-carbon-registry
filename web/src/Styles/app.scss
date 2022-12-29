@@ -201,13 +201,14 @@ body {
     .search-bar {
       display: flex;
       flex-direction: row-reverse;
-      width: 90%;
+      width: 95%;
     }
 
     .filter-bar {
       display: flex;
       flex-direction: row-reverse;
-      width: 10%;
+      margin-top: 0.8rem;
+      width: 5%;
     }
 
     .ant-input-affix-wrapper {
@@ -225,8 +226,13 @@ body {
   }
 }
 
+.layout-content-container .ant-btn {
+  min-width: 50px !important;
+}
+
 .table-actions-section {
   width: 100%;
+  margin-bottom: 1rem;
 }
 
 .action-menu {
@@ -244,6 +250,23 @@ body {
   .anticon-delete {
     color: #f25a29;
   }
+}
+
+.ant-dropdown-menu {
+  // position: relative;
+  // margin: 0;
+  padding: 1rem 2rem 1rem 1rem !important;
+  // text-align: left;
+  // list-style-type: none;
+  // background-color: #fff;
+  // background-clip: padding-box;
+  border-radius: 5px;
+  // outline: none;
+  // box-shadow: 0 3px 6px -4px rgb(0 0 0 / 12%), 0 6px 16px 0 rgb(0 0 0 / 8%), 0 9px 28px 8px rgb(0 0 0 / 5%);
+}
+
+.ant-dropdown-menu-item-active {
+  background-color: transparent !important;
 }
 
 .ant-popover-inner-content {

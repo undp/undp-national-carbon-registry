@@ -248,6 +248,7 @@ export class UserService {
     }
 
     async query(query: QueryDto, abilityCondition: string): Promise<any> {
+        console.log("query ----> ", this.helperService.generateWhereSQL(query, abilityCondition, '"user"'))
 
         const resp = (await this.userRepo.createQueryBuilder('user')
             .where(this.helperService.generateWhereSQL(query, abilityCondition, '"user"'))

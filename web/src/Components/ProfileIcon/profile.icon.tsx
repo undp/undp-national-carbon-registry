@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import './profile.icon.scss';
 import { Buffer } from 'buffer';
 
