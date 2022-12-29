@@ -151,7 +151,11 @@ const Login = () => {
                   {showError && (
                     <div className="login-error-message-container">
                       <ExclamationCircleOutlined
-                        style={{ color: '#d12800', marginRight: '0.5rem', fontSize: '1.1rem' }}
+                        style={{
+                          color: 'rgba(255, 77, 79, 0.8)',
+                          marginRight: '0.5rem',
+                          fontSize: '1.1rem',
+                        }}
                       />
                       <span className="login-error-message-txt">Invalid login credentials</span>
                     </div>

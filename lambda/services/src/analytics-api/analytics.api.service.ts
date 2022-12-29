@@ -6,11 +6,13 @@ import { Programme } from "../shared/entities/programme.entity";
 import { Repository } from "typeorm";
 import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
+import { HelperService } from "../shared/util/helpers.service";
 
 @Injectable()
 export class AnalyticsAPIService {
   constructor(
     private configService: ConfigService,
+    private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>
   ) { }
 
@@ -27,7 +29,7 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_CERTIFIED:
           let resp = await this.programmeRepo
             .createQueryBuilder()
-            .where(abilityCondition ? abilityCondition : "")
+            .where(abilityCondition ? this.helperService.parseMongoQueryToSQL(abilityCondition) : "")
             .getCount();
           results[stat.type] = resp
           break;

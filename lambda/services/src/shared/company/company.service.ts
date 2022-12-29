@@ -21,7 +21,7 @@ export class CompanyService {
     async suspend(companyId: number, abilityCondition: string): Promise<any> {
 
         this.logger.verbose('Suspend company', companyId)
-        const company = await this.companyRepo.createQueryBuilder().where(`"companyId" = '${companyId}' and state = '1' ${abilityCondition ? ' AND ' + abilityCondition : ""}`).getOne()
+        const company = await this.companyRepo.createQueryBuilder().where(`"companyId" = '${companyId}' and state = '1' ${abilityCondition ? ' AND ' + this.helperService.parseMongoQueryToSQL(abilityCondition) : ""}`).getOne()
         if (!company) {
             throw new HttpException("No active company found", HttpStatus.UNAUTHORIZED)
         }
@@ -42,7 +42,7 @@ export class CompanyService {
 
     async activate(companyId: number, abilityCondition: string): Promise<any> {
         this.logger.verbose('revoke company', companyId)
-        const company = await this.companyRepo.createQueryBuilder().where(`"companyId" = '${companyId}' and state = '0' ${abilityCondition ? ' AND ' + abilityCondition : ""}`).getOne()
+        const company = await this.companyRepo.createQueryBuilder().where(`"companyId" = '${companyId}' and state = '0' ${abilityCondition ? ' AND ' + this.helperService.parseMongoQueryToSQL(abilityCondition) : ""}`).getOne()
         if (!company) {
             throw new HttpException("No suspended company found", HttpStatus.UNAUTHORIZED)
         }
@@ -63,7 +63,7 @@ export class CompanyService {
 
     async query(query: QueryDto, abilityCondition: string): Promise<any> {
         const resp = (await this.companyRepo.createQueryBuilder()
-            .where(this.helperService.generateWhereSQL(query, abilityCondition))
+            .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQL(abilityCondition)))
             .skip((query.size * query.page) - query.size)
             .take(query.size)
             .getManyAndCount())

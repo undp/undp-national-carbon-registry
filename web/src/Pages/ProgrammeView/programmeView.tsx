@@ -75,6 +75,144 @@ const ProgrammeView = () => {
     setOpenModal(true);
   };
 
+  const getTxRefValues = (value: string, position: number, sep?: string) => {
+    if (sep === undefined) {
+      sep = '#';
+    }
+    const parts = value.split(sep);
+    if (parts.length - 1 < position) {
+      return null;
+    }
+    return parts[position];
+  };
+
+  const addCommasToNumber = (value: any) => {
+    return Number(value)
+      .toFixed(0)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
+  const getProgrammeHistory = async (programmeId: number) => {
+    setLoadingHistory(true);
+    try {
+      const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
+
+      const activityList: any[] = [];
+      for (const activity of response.data) {
+        let el = undefined;
+        if (activity.data.txType === TxType.CREATE) {
+          el = {
+            status: 'process',
+            title: 'Programme Created',
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was created with a valuation of ${addCommasToNumber(
+              activity.data.creditEst
+            )} credits.`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
+              >
+                <PlusOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.ISSUE) {
+          el = {
+            status: 'process',
+            title: `Authorised by ${getTxRefValues(activity.data.txRef, 1)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was issued ${addCommasToNumber(
+              activity.data.creditIssued
+            )} Credits with the Serial Number ${activity.data.serialNo}`,
+            icon: (
+              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
+                <LikeOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.REJECT) {
+          el = {
+            status: 'process',
+            title: `Rejected by ${getTxRefValues(activity.data.txRef, 1)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was rejected`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: RootBGColor, color: RootColor }}
+              >
+                <LikeOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.TRANSFER) {
+          el = {
+            status: 'process',
+            title: `Credit Transferred`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `${addCommasToNumber(
+              activity.data.creditChange
+            )} Credits were transferred to ${getTxRefValues(activity.data.txRef, 1)}`,
+            icon: (
+              <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
+                <TransactionOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.CERTIFY) {
+          el = {
+            status: 'process',
+            title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was certified by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: CertBGColor, color: CertColor }}
+              >
+                <SafetyOutlined />
+              </span>
+            ),
+          };
+        } else {
+          el = {
+            status: 'process',
+            title: activity.data.currentStage,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: ``,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: RootBGColor, color: RootColor }}
+              >
+                <LikeOutlined />
+              </span>
+            ),
+          };
+        }
+        if (el) {
+          activityList.unshift(el);
+        }
+      }
+
+      setHistoryData(activityList);
+      setLoadingHistory(false);
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingHistory(false);
+    }
+  };
+
   const onAction = async (action: string) => {
     try {
       if (actionInfo.action !== 'Transfer') {
@@ -123,6 +261,8 @@ const ProgrammeView = () => {
           });
         }
 
+        await getProgrammeHistory(Number(data?.programmeId));
+
         setConfirmLoading(false);
       }
     } catch (e: any) {
@@ -133,130 +273,6 @@ const ProgrammeView = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       setConfirmLoading(false);
-    }
-  };
-
-  const getProgrammeHistory = async (programmeId: number) => {
-    setLoadingHistory(true);
-    try {
-      const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
-
-      const activityList: any[] = [];
-      for (const activity of response.data) {
-        let el = undefined;
-        if (activity.data.txType === TxType.CREATE) {
-          el = {
-            status: 'process',
-            title: 'Programme Created',
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was estimated ${activity.data.creditEst} Credits`,
-            icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
-                <PlusOutlined />
-              </span>
-            ),
-          };
-        } else if (activity.data.txType === TxType.ISSUE) {
-          el = {
-            status: 'process',
-            title: `Programme Authorised by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was issued ${Number(activity.data.creditIssued)
-              .toFixed(0)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Credits with the Serial Number ${
-              activity.data.serialNo
-            }`,
-            icon: (
-              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
-                <LikeOutlined />
-              </span>
-            ),
-          };
-        } else if (activity.data.txType === TxType.REJECT) {
-          el = {
-            status: 'process',
-            title: `Programme Rejected by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was rejected`,
-            icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
-                <LikeOutlined />
-              </span>
-            ),
-          };
-        } else if (activity.data.txType === TxType.TRANSFER) {
-          el = {
-            status: 'process',
-            title: `Credit Transferred`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `${Number(activity.data.creditChange)
-              .toFixed(0)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Credits were transferred`,
-            icon: (
-              <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
-                <TransactionOutlined />
-              </span>
-            ),
-          };
-        } else if (activity.data.txType === TxType.CERTIFY) {
-          el = {
-            status: 'process',
-            title: `Programme Certified by ${activity.data.txRef.substring(
-              activity.data.txRef.indexOf('#') + 1
-            )}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `Programme Certified`,
-            icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: CertBGColor, color: CertColor }}
-              >
-                <SafetyOutlined />
-              </span>
-            ),
-          };
-        } else {
-          el = {
-            status: 'process',
-            title: activity.data.currentStage,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: ``,
-            icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
-                <LikeOutlined />
-              </span>
-            ),
-          };
-        }
-        if (el) {
-          activityList.unshift(el);
-        }
-      }
-
-      setHistoryData(activityList);
-      setLoadingHistory(false);
-    } catch (error: any) {
-      console.log('Error in getting programme', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoadingHistory(false);
     }
   };
 
@@ -547,11 +563,11 @@ const ProgrammeView = () => {
                   <div className="map-content">
                     <Chart
                       options={{
-                        labels: ['Issued', 'Transferred', 'Balance', 'Frozen', 'Retired'],
+                        labels: ['Transferred', 'Balance', 'Frozen', 'Retired'],
                         legend: {
                           position: 'bottom',
                         },
-                        colors: ['#FFB480', '#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
                         plotOptions: {
                           pie: {
                             donut: {
@@ -584,13 +600,7 @@ const ProgrammeView = () => {
                           },
                         ],
                       }}
-                      series={[
-                        Number(data.creditIssued),
-                        Number(data.creditTransferred),
-                        Number(data.creditBalance),
-                        0,
-                        0,
-                      ]}
+                      series={[Number(data.creditTransferred), Number(data.creditBalance), 0, 0]}
                       type="donut"
                       width="100%"
                       fontFamily="inter"
