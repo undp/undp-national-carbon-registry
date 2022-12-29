@@ -144,8 +144,8 @@ export class ProgrammeService {
             throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
         }
 
-        const received = await this.companyService.findByCompanyId(transfer.requesterId);
-        const programme = await this.programmeLedger.transferProgramme(transfer, req, received);
+        const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
+        const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
 
         if (!programme.companyId.includes(approverCompanyId)) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
@@ -203,6 +203,7 @@ export class ProgrammeService {
         transfer.status = TransferStatus.PENDING;
         transfer.txTime = new Date().getTime()
         transfer.requesterId = requester.id;
+        transfer.requesterCompanyId = requester.companyId;
         transfer.companyId = programme.companyId;
         return await this.programmeTransferRepo.save(transfer);
     }

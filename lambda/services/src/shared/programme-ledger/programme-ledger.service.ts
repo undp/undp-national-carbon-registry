@@ -68,7 +68,7 @@ export class ProgrammeLedgerService {
     return programme;
   }
 
-  public async transferProgramme(transfer: ProgrammeTransfer, approve: ProgrammeTransferApprove, companyReceive: Company) {
+  public async transferProgramme(transfer: ProgrammeTransfer, approve: ProgrammeTransferApprove, name: string) {
     this.logger.log(`Transfer programme ${JSON.stringify(transfer)} ${JSON.stringify(approve)}`);
 
     const getQueries = {};
@@ -193,7 +193,7 @@ export class ProgrammeLedgerService {
         companyCreditDistribution[transfer.requesterId] = transfer.creditAmount;
        
         programme.txTime = new Date().getTime();
-        programme.txRef = `${transfer.requestId}#${companyReceive.name}`;
+        programme.txRef = `${transfer.requestId}#${name}`;
         programme.txType = TxType.TRANSFER;
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;

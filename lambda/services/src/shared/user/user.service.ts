@@ -55,7 +55,7 @@ export class UserService {
 
     async getUserCredentials(username: string): Promise<User | undefined> {
         const users = await this.userRepo.find({
-            select: ['id', 'email', 'password', 'role', 'apiKey', 'companyId', 'companyRole'],
+            select: ['id', 'email', 'password', 'role', 'apiKey', 'companyId', 'companyRole', 'name'],
             where: {
                 email: username,
             }
