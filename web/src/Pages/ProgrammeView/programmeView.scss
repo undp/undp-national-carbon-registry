@@ -85,7 +85,7 @@
     }
 
     .progress-bar {
-      width: calc(min(200px, 100%));
+      width: calc(max(200px, 100%));
       font-size: 0.8rem;
       color: $body-text-color;
       margin-top: 15px;

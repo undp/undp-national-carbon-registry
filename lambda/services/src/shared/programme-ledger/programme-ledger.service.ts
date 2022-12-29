@@ -318,7 +318,7 @@ export class ProgrammeLedgerService {
         }
 
         let programme = programmes[0];
-        const index = programme.certifierId.indexOf(certifierId);
+        const index = programme.certifierId ? programme.certifierId.indexOf(certifierId) : -1;
         if (add) {
           if (index >= 0) {
             throw new HttpException(
