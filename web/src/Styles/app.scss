@@ -294,3 +294,20 @@ body {
 .flex-display {
   display: flex;
 }
+
+.ant-modal-footer {
+  border-top: none;
+  text-align: center;
+
+  button {
+    margin: 10px 20px;
+  }
+}
+
+.ant-modal-header {
+  border-radius: 20px;
+}
+
+.ant-modal-content {
+  border-radius: 20px;
+}

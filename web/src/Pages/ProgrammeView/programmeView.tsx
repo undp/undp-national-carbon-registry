@@ -715,6 +715,8 @@ const ProgrammeView = () => {
         confirmLoading={confirmLoading}
         okType={actionInfo.type}
         cancelText="Cancel"
+        width={Math.min(400, window.innerWidth)}
+        centered={true}
       >
         <p>{actionInfo.text}</p>
         <TextArea
