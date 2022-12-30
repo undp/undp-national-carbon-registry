@@ -280,7 +280,7 @@ export class ProgrammeService {
     async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
         const skip = (query.size * query.page) - query.size;
         const resp = (await this.programmeRepo.createQueryBuilder("programme")
-            .where(this.helperService.generateWhereSQL(query, abilityCondition, "programme"))
+            .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
             .skip(skip)
             .take(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')

@@ -14,14 +14,18 @@ import {
 } from '@ant-design/icons';
 import {
   Button,
+  Checkbox,
   Col,
+  Dropdown,
   Empty,
   Input,
   List,
+  MenuProps,
   message,
   PaginationProps,
   Popconfirm,
   Popover,
+  Radio,
   Row,
   Select,
   Space,
@@ -67,7 +71,28 @@ const CompanyManagement = () => {
   const [tableData, setTableData] = useState<TableDataType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [searchByTermOrganisation, setSearchByTermOrganisation] = useState<any>('name');
+  const [searchValueOrganisations, setSearchValueOrganisations] = useState<string>('');
+  const [networksearchOrganisations, setNetworkSearchOrganisations] = useState<string>('');
+  const [filterVisible, setFilterVisible] = useState<boolean>(false);
+  const [filterByOrganisationType, setFilterByOrganisationType] = useState<string>('All');
   const { i18n, t } = useTranslation(['company']);
+
+  document.addEventListener('mousedown', (event: any) => {
+    const organisationFilterArea1 = document.querySelector('.filter-bar');
+    const organisationFilterArea2 = document.querySelector('.filter-dropdown');
+
+    if (organisationFilterArea1 !== null && organisationFilterArea2 !== null) {
+      if (
+        organisationFilterArea1.contains(event.target) ||
+        organisationFilterArea2.contains(event.target)
+      ) {
+        setFilterVisible(true);
+      } else {
+        setFilterVisible(false);
+      }
+    }
+  });
 
   const getCompanyBgColor = (item: string) => {
     if (item === 'Government') {
@@ -116,6 +141,14 @@ const CompanyManagement = () => {
         )}
       />
     );
+  };
+
+  const handleFilterVisibleChange = () => {
+    setFilterVisible(true);
+  };
+
+  const searchByTermHandler = (event: any) => {
+    setSearchByTermOrganisation(event?.target?.value);
   };
 
   const columns = [
@@ -206,13 +239,68 @@ const CompanyManagement = () => {
   ];
   // }
 
+  const filterOr = () => {
+    if (
+      searchByTermOrganisation !== null &&
+      searchByTermOrganisation !== '' &&
+      networksearchOrganisations !== null &&
+      networksearchOrganisations !== '' &&
+      filterByOrganisationType === 'All'
+    ) {
+      return [
+        {
+          key: searchByTermOrganisation,
+          operation: '=',
+          value: networksearchOrganisations,
+        },
+      ];
+    } else return undefined;
+  };
+
+  const filterAnd = () => {
+    if (
+      searchByTermOrganisation !== null &&
+      searchByTermOrganisation !== '' &&
+      networksearchOrganisations !== null &&
+      networksearchOrganisations !== '' &&
+      filterByOrganisationType !== 'All'
+    ) {
+      return [
+        {
+          key: searchByTermOrganisation,
+          operation: '=',
+          value: networksearchOrganisations,
+        },
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+      ];
+    } else if (filterByOrganisationType !== 'All') {
+      return [
+        {
+          key: 'companyRole',
+          operation: '=',
+          value: filterByOrganisationType,
+        },
+      ];
+    } else return undefined;
+  };
+
+  const getAllOrganisationParams = () => {
+    return {
+      page: currentPage,
+      size: pageSize,
+      filterOr: filterOr(),
+      filterAnd: filterAnd(),
+    };
+  };
+
   const getAllCompany = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/company/query', {
-        page: currentPage,
-        size: pageSize,
-      });
+      const response: any = await post('national/company/query', getAllOrganisationParams());
       setTableData(response.data);
       setTotalCompany(response.response.data.total);
       setLoading(false);
@@ -230,11 +318,47 @@ const CompanyManagement = () => {
 
   useEffect(() => {
     getAllCompany();
-  }, [currentPage, pageSize]);
+  }, [
+    currentPage,
+    pageSize,
+    searchByTermOrganisation,
+    networksearchOrganisations,
+    filterByOrganisationType,
+  ]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
+  };
+
+  const onFilterOrganisationType = (checkedValue: any) => {
+    setCurrentPage(1);
+    setFilterByOrganisationType(checkedValue?.target?.value);
+  };
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      title: 'Filter by',
+      label: (
+        <div className="filter-menu-item">
+          <div className="filter-title">Filter by organisation type</div>
+          <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
+            <Space direction="vertical">
+              <Radio value="All">All</Radio>
+              <Radio value="Government">Government</Radio>
+              <Radio value="ProgrammeDeveloper">Developer</Radio>
+              <Radio value="Certifier">Certifier</Radio>
+            </Space>
+          </Radio.Group>
+        </div>
+      ),
+    },
+  ];
+
+  const onSearch = () => {
+    setCurrentPage(1);
+    setNetworkSearchOrganisations(searchValueOrganisations);
   };
 
   return (
@@ -262,19 +386,41 @@ const CompanyManagement = () => {
             <div className="filter-section">
               <div className="search-bar">
                 <Search
-                  placeholder="Search by Email"
+                  onPressEnter={onSearch}
+                  placeholder={
+                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by name'
+                  }
                   allowClear
-                  onSearch={() => {}}
+                  onChange={(e) =>
+                    e.target.value === ''
+                      ? setNetworkSearchOrganisations(e.target.value)
+                      : setSearchValueOrganisations(e.target.value)
+                  }
+                  onSearch={onSearch}
                   style={{ width: 265 }}
                 />
               </div>
               <div className="filter-bar">
-                <FilterOutlined
-                  style={{
-                    color: 'rgba(58, 53, 65, 0.3)',
-                    fontSize: '20px',
-                  }}
-                />
+                <Dropdown
+                  arrow={false}
+                  menu={{ items }}
+                  placement="bottomRight"
+                  open={filterVisible}
+                  onOpenChange={handleFilterVisibleChange}
+                  overlayClassName="filter-dropdown"
+                >
+                  <a
+                    className="ant-dropdown-link"
+                    onClick={(e) => setFilterVisible(!filterVisible)}
+                  >
+                    <FilterOutlined
+                      style={{
+                        color: 'rgba(58, 53, 65, 0.3)',
+                        fontSize: '20px',
+                      }}
+                    />
+                  </a>
+                </Dropdown>
               </div>
             </div>
           </Col>

@@ -9,6 +9,7 @@ import { Programme } from "../shared/entities/programme.entity";
 import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledger.module";
 import { CaslModule } from "../shared/casl/casl.module";
 import { AuthModule } from "../shared/auth/auth.module";
+import { UtilModule } from "../shared/util/util.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AuthModule } from "../shared/auth/auth.module";
     TypeOrmModule.forFeature([Programme]),
     AuthModule,
     CaslModule,
+    UtilModule,
     ProgrammeLedgerModule,
   ],
   controllers: [ProgrammeController],

@@ -5,6 +5,7 @@ import { ExperimentOutlined, EyeOutlined, SafetyOutlined, UploadOutlined } from 
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useNavigate } from 'react-router-dom';
 import './addNewCompany.scss';
+import { RcFile } from 'antd/lib/upload';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -37,6 +38,14 @@ const AddNewCompany = () => {
     nextOne(values);
   };
 
+  const getBase64 = (file: RcFile): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
   const onFinishStepTwo = async (values: any) => {
     const requestData = { ...values, role: 'Admin', company: { ...stepOneData } };
     setLoading(true);
@@ -44,8 +53,9 @@ const AddNewCompany = () => {
       requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
       requestData.company.website = 'https://' + requestData.company.website;
-      requestData.company.logo = requestData?.company?.logo[0]?.thumbUrl;
-      console.log(requestData);
+      const logoBase64 = await getBase64(requestData?.company?.logo[0]?.originFileObj as RcFile);
+      const logoUrls = logoBase64.split(',');
+      requestData.company.logo = logoUrls[1];
       const response = await post('national/user/add', requestData);
       if (response.status === 200 || response.status === 201) {
         message.open({
@@ -216,7 +226,7 @@ const AddNewCompany = () => {
                             }
                             if (!isCorrectFormat) {
                               throw new Error('Unsupported file format!');
-                            } else if (file[0]?.size > 1000000) {
+                            } else if (file[0]?.size > 5000000) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
                               throw new Error('Maximum upload file size is 5MB!');
                             }
@@ -315,7 +325,22 @@ const AddNewCompany = () => {
                   <Form.Item
                     name="address"
                     label="Address"
-                    rules={[{ required: true, message: 'Address is required!' }]}
+                    rules={[
+                      { required: true, message: '' },
+                      {
+                        validator: async (rule, value) => {
+                          console.log('val - phone no --- ', value);
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error('Address is required!');
+                          }
+                        },
+                      },
+                    ]}
                   >
                     <Input.TextArea rows={3} maxLength={100} />
                   </Form.Item>
@@ -342,7 +367,7 @@ const AddNewCompany = () => {
           name="company-admin-details"
           className="company-details-form"
           layout="vertical"
-          requiredMark={false}
+          requiredMark={true}
           form={formTwo}
           onFinish={onFinishStepTwo}
         >

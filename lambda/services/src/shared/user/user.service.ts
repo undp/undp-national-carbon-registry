@@ -85,7 +85,7 @@ export class UserService {
         const result = await this.userRepo.createQueryBuilder()
             .update(User)
             .set(update)
-            .where(`id = ${id} ${abilityCondition ? (' AND ' + abilityCondition) : ""}`)
+            .where(`id = ${id} ${abilityCondition ? (' AND ' + this.helperService.parseMongoQueryToSQL(abilityCondition)) : ""}`)
             .execute().catch((err: any) => {
                 this.logger.error(err)
                 return err;
@@ -99,7 +99,7 @@ export class UserService {
     async resetPassword(id: number, passwordResetDto: PasswordUpdateDto, abilityCondition: string) {
         this.logger.verbose('User password reset received', id)
 
-        const user = await this.userRepo.createQueryBuilder().where(`id = '${id}' ${abilityCondition ? ' AND ' + abilityCondition : ""}`).addSelect(["User.password"]).getOne()
+        const user = await this.userRepo.createQueryBuilder().where(`id = '${id}' ${abilityCondition ? ' AND ' + this.helperService.parseMongoQueryToSQL(abilityCondition) : ""}`).addSelect(["User.password"]).getOne()
         if (!user || user.password != passwordResetDto.oldPassword) {
             throw new HttpException("Password mismatched", HttpStatus.UNAUTHORIZED)
         }
@@ -119,7 +119,7 @@ export class UserService {
 
     async regenerateApiKey(email, abilityCondition) {
         this.logger.verbose('Regenerated api key received', email)
-        const user = await this.userRepo.createQueryBuilder().where(`email = '${email}' ${abilityCondition ? ' AND ' + abilityCondition : ""}`).getOne()
+        const user = await this.userRepo.createQueryBuilder().where(`email = '${email}' ${abilityCondition ? ' AND ' + this.helperService.parseMongoQueryToSQL(abilityCondition) : ""}`).getOne()
         if (!user) {
             throw new HttpException("No visible user found", HttpStatus.UNAUTHORIZED)
         }
@@ -248,9 +248,10 @@ export class UserService {
     }
 
     async query(query: QueryDto, abilityCondition: string): Promise<any> {
+        console.log("query ----> ", this.helperService.generateWhereSQL(query, abilityCondition, '"user"'))
 
         const resp = (await this.userRepo.createQueryBuilder('user')
-            .where(this.helperService.generateWhereSQL(query, abilityCondition, '"user"'))
+            .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable('"user"', abilityCondition), '"user"'))
             // .leftJoinAndSelect("user.companyId", "company")
             .skip((query.size * query.page) - query.size)
             .take(query.size)
@@ -266,7 +267,7 @@ export class UserService {
     async delete(username: string, ability: string): Promise<BasicResponseDto> {
         this.logger.verbose('User delete received', username)
 
-        const result = await this.userRepo.createQueryBuilder().where(`email = '${username}' ${ability ? ' AND ' + ability : ""}`).getMany()
+        const result = await this.userRepo.createQueryBuilder().where(`email = '${username}' ${ability ? ' AND ' + this.helperService.parseMongoQueryToSQL(ability) : ""}`).getMany()
         if (result.length <= 0) {
             throw new HttpException("No visible user found", HttpStatus.NOT_FOUND)
         }
