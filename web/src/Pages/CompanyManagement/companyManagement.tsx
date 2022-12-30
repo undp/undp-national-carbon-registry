@@ -76,6 +76,8 @@ const CompanyManagement = () => {
   const [networksearchOrganisations, setNetworkSearchOrganisations] = useState<string>('');
   const [filterVisible, setFilterVisible] = useState<boolean>(false);
   const [filterByOrganisationType, setFilterByOrganisationType] = useState<string>('All');
+  const [sortOrder, setSortOrder] = useState<string>('');
+  const [sortField, setSortField] = useState<string>('');
   const { i18n, t } = useTranslation(['company']);
 
   document.addEventListener('mousedown', (event: any) => {
@@ -288,12 +290,22 @@ const CompanyManagement = () => {
     } else return undefined;
   };
 
+  const sort = () => {
+    if (sortOrder !== '' && sortField !== '') {
+      return {
+        key: sortField,
+        order: sortOrder,
+      };
+    } else return undefined;
+  };
+
   const getAllOrganisationParams = () => {
     return {
       page: currentPage,
       size: pageSize,
       filterOr: filterOr(),
       filterAnd: filterAnd(),
+      sort: sort(),
     };
   };
 
@@ -324,6 +336,8 @@ const CompanyManagement = () => {
     searchByTermOrganisation,
     networksearchOrganisations,
     filterByOrganisationType,
+    sortField,
+    sortOrder,
   ]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
@@ -359,6 +373,26 @@ const CompanyManagement = () => {
   const onSearch = () => {
     setCurrentPage(1);
     setNetworkSearchOrganisations(searchValueOrganisations);
+  };
+
+  const handleTableChange = (val: any, sorter: any) => {
+    if (sorter.order === 'ascend') {
+      setSortOrder('ASC');
+    } else if (sorter.order === 'descend') {
+      setSortOrder('DESC');
+    } else if (sorter.order === undefined) {
+      setSortOrder('');
+    }
+    if (sorter.columnKey !== undefined) {
+      if (sorter.columnKey === 'company') {
+        setSortField('company.name');
+      } else {
+        setSortField(sorter.columnKey);
+      }
+    } else {
+      setSortField('');
+    }
+    setCurrentPage(1);
   };
 
   return (
@@ -441,6 +475,7 @@ const CompanyManagement = () => {
                   showSizeChanger: true,
                   onChange: onChange,
                 }}
+                onChange={(val: any, filter: any, sorter: any) => handleTableChange(val, sorter)}
                 // scroll={{ x: 1500 }}
                 locale={{
                   emptyText: (
