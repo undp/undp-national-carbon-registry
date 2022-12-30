@@ -59,6 +59,11 @@ export class HelperService {
             } else if (operator == "$ne") {
               const value = (typeof mongoQuery["$ne"] === "number") ? String(mongoQuery["$ne"]) : `'${mongoQuery["$ne"]}'`
               return `${table ? table + '.' : ''}"${key}" ${isNot ? "=" : "!="} ${value}`
+            } else if (operator == "$in") {
+                const value = `('${mongoQuery["$in"].join("', '")}')`
+                return `${table ? table + '.' : ''}"${key}" ${isNot ? " NOT IN " : " IN "} ${value}`
+            } else if (operator == "$elemMatch") {
+                return `'${mongoQuery["$elemMatch"]["$eq"]}' ${isNot ? " <> ANY " : " =ANY "}(${table ? table + '.' : ''}"${key}")`
             }
           } else {
             return this.parseMongoQueryToSQLWithTable(table, mongoQuery[operator], isNot, operator)
