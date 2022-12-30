@@ -144,8 +144,8 @@ export class ProgrammeService {
             throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
         }
 
-        const received = await this.companyService.findByCompanyId(transfer.requesterId);
-        const programme = await this.programmeLedger.transferProgramme(transfer, req, received);
+        const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
+        const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
 
         if (!programme.companyId.includes(approverCompanyId)) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
@@ -203,6 +203,7 @@ export class ProgrammeService {
         transfer.status = TransferStatus.PENDING;
         transfer.txTime = new Date().getTime()
         transfer.requesterId = requester.id;
+        transfer.requesterCompanyId = requester.companyId;
         transfer.companyId = programme.companyId;
         return await this.programmeTransferRepo.save(transfer);
     }
@@ -344,7 +345,16 @@ export class ProgrammeService {
         }
 
         const company = await this.companyService.findByCompanyId(user.companyId);
-        return this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}}`)
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
+        updated.companyId = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated && updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifierId = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
     }
 
     async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
@@ -371,7 +381,7 @@ export class ProgrammeService {
         } else {
             const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
             if (!updated) {
-                return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
+                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
             return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
         }

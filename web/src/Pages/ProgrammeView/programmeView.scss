@@ -80,12 +80,13 @@
 
   .company-info {
     padding: 25px 10px 30px 10px;
+    min-width: 200px;
     img {
       width: 90px;
     }
 
     .progress-bar {
-      width: calc(min(200px, 100%));
+      width: calc(max(200px, 100%));
       font-size: 0.8rem;
       color: $body-text-color;
       margin-top: 15px;

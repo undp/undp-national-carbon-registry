@@ -25,6 +25,7 @@ export class HelperService {
         )
         .join(" and ");
     }
+<<<<<<< HEAD
     if (query.filterOr) {
       const orSQl = query.filterOr
         .map(
@@ -38,6 +39,39 @@ export class HelperService {
         sql = `(${sql}) and (${orSQl})`;
       } else {
         sql = orSQl;
+=======
+
+    public parseMongoQueryToSQL(mongoQuery, isNot = false, key = undefined) {
+        return this.parseMongoQueryToSQLWithTable(undefined, mongoQuery, isNot, key)
+    }
+
+    public parseMongoQueryToSQLWithTable(table, mongoQuery, isNot = false, key = undefined) {
+        let final = undefined;
+        for (let operator in mongoQuery) {
+          if (operator.startsWith("$")) {
+            if (operator == "$and" || operator == "$or") {
+              const val = mongoQuery[operator].map(st => this.parseMongoQueryToSQLWithTable(table, st)).join(` ${operator.replace("$", '')} `)
+              final = final == undefined ? val : `${final} and ${val}`
+            } else if (operator == "$not") {
+              return this.parseMongoQueryToSQLWithTable(table, mongoQuery["$not"], !isNot)
+            } else if (operator == "$eq") {
+              const value = (typeof mongoQuery["$eq"] === "number") ? String(mongoQuery["$eq"]) : `'${mongoQuery["$eq"]}'`
+              return `${table ? table + '.' : ''}"${key}" ${isNot ? "!=" : "="} ${value}`
+            } else if (operator == "$ne") {
+              const value = (typeof mongoQuery["$ne"] === "number") ? String(mongoQuery["$ne"]) : `'${mongoQuery["$ne"]}'`
+              return `${table ? table + '.' : ''}"${key}" ${isNot ? "=" : "!="} ${value}`
+            } else if (operator == "$in") {
+                const value = `('${mongoQuery["$in"].join("', '")}')`
+                return `${table ? table + '.' : ''}"${key}" ${isNot ? " NOT IN " : " IN "} ${value}`
+            } else if (operator == "$elemMatch") {
+                return `'${mongoQuery["$elemMatch"]["$eq"]}' ${isNot ? " <> ANY " : " =ANY "}(${table ? table + '.' : ''}"${key}")`
+            }
+          } else {
+            return this.parseMongoQueryToSQLWithTable(table, mongoQuery[operator], isNot, operator)
+          }
+        }
+        return final;
+>>>>>>> 507fe3e12af72613873e427989d9a9f5f9794eb3
       }
     }
 

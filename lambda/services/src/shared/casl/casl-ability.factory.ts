@@ -74,9 +74,11 @@ export class CaslAbilityFactory {
       if (user.role == Role.Admin && user.companyRole == CompanyRole.MRV) {
         can([Action.Create, Action.Read], Programme);
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
-        can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED, ProgrammeStage.RETIRED ]}});
+        can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED ]}});
+        can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED }});
+        can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
