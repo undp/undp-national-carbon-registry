@@ -392,7 +392,7 @@ const CompanyManagement = () => {
     } else {
       setSortField('');
     }
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   return (

@@ -542,7 +542,8 @@ const UserManagement = () => {
     setNetworkSearchUsers(searchValueUsers);
   };
 
-  const handleTableChange = (val: any, sorter: any) => {
+  const handleTableChange = (pag: any, sorter: any) => {
+    console.log(pag, sorter);
     if (sorter.order === 'ascend') {
       setSortOrder('ASC');
     } else if (sorter.order === 'descend') {
@@ -559,7 +560,7 @@ const UserManagement = () => {
     } else {
       setSortField('');
     }
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   return (
