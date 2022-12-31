@@ -281,8 +281,8 @@ export class ProgrammeService {
         const skip = (query.size * query.page) - query.size;
         const resp = (await this.programmeRepo.createQueryBuilder("programme")
             .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
-            .skip(skip)
-            .take(query.size)
+            .offset(skip)
+            .limit(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
             .leftJoinAndMapMany('programme.certifierId', Company, 'certcomp', 'certcomp.companyId = ANY(programme.certifierId)')
             .getManyAndCount())
