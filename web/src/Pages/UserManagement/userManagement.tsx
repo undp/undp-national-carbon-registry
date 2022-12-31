@@ -77,6 +77,8 @@ const UserManagement = () => {
   const [filterVisible, setFilterVisible] = useState<boolean>(false);
   const [filterByOrganisationType, setFilterByOrganisationType] = useState<string>('All');
   const [filterByRole, setFilterByRole] = useState<string>('All');
+  const [sortOrder, setSortOrder] = useState<string>('');
+  const [sortField, setSortField] = useState<string>('');
   const { i18n, t } = useTranslation(['user']);
 
   document.addEventListener('mousedown', (event: any) => {
@@ -408,12 +410,22 @@ const UserManagement = () => {
     } else return undefined;
   };
 
+  const sort = () => {
+    if (sortOrder !== '' && sortField !== '') {
+      return {
+        key: sortField,
+        order: sortOrder,
+      };
+    } else return undefined;
+  };
+
   const getAllUserParams = () => {
     return {
       page: currentPage,
       size: pageSize,
       filterOr: filterOr(),
       filterAnd: filterAnd(),
+      sort: sort(),
     };
   };
 
@@ -446,6 +458,8 @@ const UserManagement = () => {
     networksearchUsers,
     filterByRole,
     filterByOrganisationType,
+    sortField,
+    sortOrder,
   ]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
@@ -498,7 +512,7 @@ const UserManagement = () => {
               <Radio value="All">All</Radio>
               <Radio value="Admin">Admin</Radio>
               <Radio value="Manager">Manager</Radio>
-              <Radio value="Viewer">Viewer</Radio>
+              <Radio value="ViewOnly">Viewer</Radio>
             </Space>
           </Radio.Group>
         </div>
@@ -526,6 +540,26 @@ const UserManagement = () => {
   const onSearch = () => {
     setCurrentPage(1);
     setNetworkSearchUsers(searchValueUsers);
+  };
+
+  const handleTableChange = (val: any, sorter: any) => {
+    if (sorter.order === 'ascend') {
+      setSortOrder('ASC');
+    } else if (sorter.order === 'descend') {
+      setSortOrder('DESC');
+    } else if (sorter.order === undefined) {
+      setSortOrder('');
+    }
+    if (sorter.columnKey !== undefined) {
+      if (sorter.columnKey === 'company') {
+        setSortField('company.name');
+      } else {
+        setSortField(sorter.columnKey);
+      }
+    } else {
+      setSortField('');
+    }
+    setCurrentPage(1);
   };
 
   return (
@@ -606,6 +640,7 @@ const UserManagement = () => {
                   showSizeChanger: true,
                   onChange: onChange,
                 }}
+                onChange={(val: any, filter: any, sorter: any) => handleTableChange(val, sorter)}
                 // scroll={{ x: 1500 }}
                 locale={{
                   emptyText: (
