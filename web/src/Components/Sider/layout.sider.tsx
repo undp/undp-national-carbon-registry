@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, Layout } from 'antd';
+import { Menu, Layout, MenuProps } from 'antd';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { Link, useNavigate } from 'react-router-dom';
 import './layout.sider.scss';
@@ -17,20 +17,51 @@ import { useTranslation } from 'react-i18next';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
+type MenuItem = Required<MenuProps>['items'][number];
+
+function getItem(
+  label: React.ReactNode,
+  key: React.Key,
+  icon?: React.ReactNode,
+  children?: MenuItem[]
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+  } as MenuItem;
+}
+
 const LayoutSider = (props: LayoutSiderProps) => {
-  const { selectedKey } = props;
+  const { selectedKey, collapsed } = props;
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  // const [collapsed, setCollapsed] = useState(false);
   const { i18n, t } = useTranslation(['nav']);
+
+  const items: MenuItem[] = [
+    getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:companies'), 'companyManagement/viewAll', <ShopOutlined />),
+    getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
+    // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+  ];
+
+  const onClick: MenuProps['onClick'] = (e) => {
+    console.log('click', e);
+    navigate('/' + e.key);
+  };
+
   return (
     <Sider
       width={280}
       className="layout-sider-container"
-      breakpoint="lg"
+      breakpoint={collapsed ? undefined : 'lg'}
+      collapsed={collapsed}
       // collapsedWidth="70"
-      onCollapse={(col) => {
-        setCollapsed(col);
-      }}
+      // onCollapse={(col) => {
+      //   setCollapsed(col);
+      // }}
     >
       <div className="layout-sider-div-container">
         <div
@@ -44,15 +75,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
           <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
         </div>
         <div className="layout-sider-menu-container">
-          <Menu theme="light" mode="inline" defaultSelectedKeys={[selectedKey ?? 'dashboard']}>
-            {/* <Menu.Item
-              key="home"
-              icon={!collapsed ? <HomeOutlined style={{ fontSize: '1.2rem' }} /> : ''}
-            >
-              <Link to="/dashboard">
-                {collapsed ? <HomeOutlined style={{ fontSize: '2rem' }} /> : 'Home'}
-              </Link>
-            </Menu.Item> */}
+          <Menu
+            theme="light"
+            defaultSelectedKeys={[selectedKey ?? 'dashboard']}
+            mode="inline"
+            onClick={onClick}
+            items={items}
+          />
+          {/* <Menu theme="light" mode="inline" defaultSelectedKeys={[selectedKey ?? 'dashboard']}>
             <Menu.Item
               key="dashboard"
               icon={!collapsed ? <DashboardOutlined style={{ fontSize: '1.2rem' }} /> : ''}
@@ -125,16 +155,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 </Link>
               </Menu.Item>
             </SubMenu>
-            {/* <Menu.Item
-              style={{ marginTop: '25px' }}
-              key="userManagement"
-              icon={!collapsed ? <UserOutlined style={{ fontSize: '1.2rem' }} /> : ''}
-            >
-              <Link to="/userManagement">
-                {collapsed ? <UserOutlined style={{ fontSize: '2rem' }} /> : 'User Management'}
-              </Link>
-            </Menu.Item> */}
-          </Menu>
+          </Menu> */}
         </div>
       </div>
     </Sider>
