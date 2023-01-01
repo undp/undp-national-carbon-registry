@@ -7,7 +7,13 @@
   .layout-sider-menu-container {
     background-color: $background-color;
     padding-top: 12px;
-    padding-left: 10px;
+    // padding-left: 10px;
+
+    .ant-menu-inline-collapsed {
+      .ant-menu-item-icon {
+        line-height: 46px !important;
+      }
+    }
   }
 
   .layout-sider-div-container {
@@ -19,7 +25,7 @@
       align-items: center;
       // margin-bottom: 2vw;
       // padding-left: 2rem;
-      padding: 0rem 2rem 0 2rem;
+      padding: 0rem 2rem 0 1rem;
       cursor: pointer;
 
       .title {
@@ -39,19 +45,21 @@
       }
 
       .logo {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
+        // display: flex;
+        // flex-direction: row;
+        // justify-content: flex-start;
+        // align-items: center;
         height: 50px;
-        overflow: hidden;
-        margin-right: 0.8rem;
+        // overflow: hidden;
+        // margin-right: 0.8rem;
 
         // background-color: red;
         img {
           object-fit: cover;
           height: auto;
           height: 70%;
+          margin-top: 6px;
+          margin-right: 5px;
         }
       }
     }
@@ -107,6 +115,7 @@
 
     .ant-menu-item {
       height: 44px;
+      padding-left: 1.3rem;
     }
 
     .ant-menu-submenu-title {
