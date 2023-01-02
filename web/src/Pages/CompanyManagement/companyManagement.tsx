@@ -120,6 +120,26 @@ const CompanyManagement = () => {
     );
   };
 
+  const onDeleteUser = async (record: any) => {
+    setLoading(true);
+    try {
+      console.log('record   -- > ');
+      // const response: any = await del(`national/user/delete?email=${email}`);
+      // setTableData(response.data);
+      // setTotalCompany(response.response.data.total);
+      // setLoading(false);
+    } catch (error: any) {
+      console.log('Error in deleteting user', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoading(false);
+    }
+  };
+
   const actionMenu = (record: TableDataType) => {
     return (
       <List
@@ -133,10 +153,14 @@ const CompanyManagement = () => {
               navigate('/companyManagement/updateCompany', { state: { record } });
             },
           },
-          { text: 'Delete', icon: <DeleteOutlined />, click: () => {} },
+          {
+            text: 'Delete',
+            icon: <DeleteOutlined />,
+            click: () => {},
+          },
         ]}
         renderItem={(item) => (
-          <List.Item onClick={item.click}>
+          <List.Item onClick={() => item.click()}>
             <Typography.Text className="action-icon">{item.icon}</Typography.Text>
             <span>{item.text}</span>
           </List.Item>
@@ -252,7 +276,7 @@ const CompanyManagement = () => {
       return [
         {
           key: searchByTermOrganisation,
-          operation: '=',
+          operation: 'like',
           value: networksearchOrganisations,
         },
       ];
@@ -270,7 +294,7 @@ const CompanyManagement = () => {
       return [
         {
           key: searchByTermOrganisation,
-          operation: '=',
+          operation: 'like',
           value: networksearchOrganisations,
         },
         {

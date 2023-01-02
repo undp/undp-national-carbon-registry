@@ -95,7 +95,6 @@ const AddUser = () => {
         id: state?.record?.id,
         name: formOneValues?.name,
         phoneNo: formOneValues?.phoneNo,
-        email: formOneValues?.email,
       };
       console.log('form one values   -- > ', values, state.record);
       const response = await put('national/user/update', values);
@@ -268,10 +267,10 @@ const AddUser = () => {
                   <PhoneInput
                     placeholder="Phone number"
                     international
-                    // value={formatPhoneNumberIntl(contactNoInput)}
+                    // value={contactNoInput}
                     defaultCountry="LK"
                     countryCallingCodeEditable={false}
-                    onChange={(v) => setContactNoInput(v)}
+                    onChange={(v) => {}}
                   />
                 </Form.Item>
               </div>
