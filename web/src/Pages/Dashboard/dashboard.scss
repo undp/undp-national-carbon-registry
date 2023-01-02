@@ -43,7 +43,7 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 2rem;
-    padding: 0 1rem 0 1rem;
+    padding: 0 1.2rem 0 1.2rem;
 
     .radio-selection {
       .ant-radio-button-wrapper {
@@ -108,7 +108,7 @@
                 font-style: normal;
                 font-weight: 600;
                 height: 50px;
-                font-size: 1.25rem;
+                font-size: 1.15rem;
                 padding-left: 0.125rem;
                 color: $card-title;
               }
@@ -127,8 +127,8 @@
               .value {
                 font-family: 'Inter';
                 font-style: normal;
-                font-weight: 400;
-                font-size: 32px;
+                font-weight: 600;
+                font-size: 1.6rem;
                 line-height: 22px;
                 padding-left: 0.125rem;
                 padding: 0;

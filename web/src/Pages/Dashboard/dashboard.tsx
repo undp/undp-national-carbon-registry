@@ -39,7 +39,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-main-container">
       <div className="stastics-cards-container">
-        <Row gutter={[40, 40]} className="stastic-card-row">
+        <Row gutter={[20, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={220}
@@ -82,7 +82,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="stastics-and-pie-container">
-        <Row gutter={[40, 40]} className="stastic-card-row">
+        <Row gutter={[20, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card">
               <div className="total-programme-details">
