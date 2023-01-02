@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -20,7 +20,7 @@ import 'react-phone-number-input/style.css';
 import './addUser.scss';
 import '../../Styles/app.scss';
 import '../Common/common.form.scss';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ExperimentOutlined,
   EyeOutlined,
@@ -35,7 +35,9 @@ import type { RcFile, UploadProps } from 'antd/lib/upload';
 const { Option } = Select;
 
 const AddUser = () => {
-  const { post } = useConnection();
+  const { post, put } = useConnection();
+  const [formOne] = Form.useForm();
+  const { state } = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [userRole, setUserRole] = useState<string>('');
@@ -83,10 +85,50 @@ const AddUser = () => {
     }
   };
 
+  const onUpdateUser = async () => {
+    setLoading(true);
+    // values.id = state.record.id;
+    const formOneValues = formOne.getFieldsValue();
+    formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
+    try {
+      const values = {
+        id: state?.record?.id,
+        name: formOneValues?.name,
+        phoneNo: formOneValues?.phoneNo,
+      };
+      console.log('form one values   -- > ', values, state.record);
+      const response = await put('national/user/update', values);
+      if (response.status === 200 || response.status === 201) {
+        message.open({
+          type: 'success',
+          content: 'User Updated Successfully!',
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate('/userManagement/viewAll', { replace: true });
+        state.record = {};
+        setLoading(false);
+      }
+    } catch (error: any) {
+      console.log('Error in user update', error);
+      message.open({
+        type: 'error',
+        content: `Error in updating user! ${error.message}`,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    console.log('state -- val --- ', { ...state });
+  }, []);
+
   return (
     <div className="add-user-main-container">
       <div className="title-container">
-        <div className="main">Add New User</div>
+        <div className="main">{state?.record?.name ? 'Update User' : 'Add New User'}</div>
         <div className="sub">Add new users to the Carbon Registry for your organisation</div>
       </div>
       <div className="content-card user-content-card">
@@ -94,6 +136,7 @@ const AddUser = () => {
           name="user-details"
           className="user-details-form"
           layout="vertical"
+          form={formOne}
           requiredMark={true}
           onFinish={onSubmitData}
         >
@@ -102,6 +145,7 @@ const AddUser = () => {
               <div className="details-part-one">
                 <Form.Item
                   label="Name"
+                  initialValue={state?.record?.name}
                   name="name"
                   rules={[
                     {
@@ -127,6 +171,7 @@ const AddUser = () => {
                 <Form.Item
                   label="Email"
                   name="email"
+                  initialValue={state?.record?.email}
                   rules={[
                     {
                       required: true,
@@ -163,6 +208,7 @@ const AddUser = () => {
                 <Form.Item
                   className="role-group"
                   label="Role"
+                  initialValue={state?.record?.role}
                   name="role"
                   rules={[
                     {
@@ -171,7 +217,11 @@ const AddUser = () => {
                     },
                   ]}
                 >
-                  <Radio.Group size="large">
+                  <Radio.Group
+                    value={state?.record?.role}
+                    size="large"
+                    disabled={state?.record?.role}
+                  >
                     <div className="admin-radio-container">
                       <Tooltip placement="top" title="Full access to all permitted functions">
                         <Radio.Button className="admin" value="Admin">
@@ -207,6 +257,7 @@ const AddUser = () => {
                 <Form.Item
                   name="phoneNo"
                   label="Phone Number"
+                  initialValue={state?.record?.phoneNo}
                   rules={[
                     {
                       required: false,
@@ -216,10 +267,10 @@ const AddUser = () => {
                   <PhoneInput
                     placeholder="Phone number"
                     international
-                    value={formatPhoneNumberIntl(contactNoInput)}
+                    // value={contactNoInput}
                     defaultCountry="LK"
                     countryCallingCodeEditable={false}
-                    onChange={(v) => setContactNoInput(v)}
+                    onChange={(v) => {}}
                   />
                 </Form.Item>
               </div>
@@ -228,9 +279,15 @@ const AddUser = () => {
           <div className="actions">
             <Form.Item>
               <div className="create-user-btn-container">
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  SUBMIT
-                </Button>
+                {state?.record ? (
+                  <Button type="primary" onClick={onUpdateUser} loading={loading}>
+                    UPDATE
+                  </Button>
+                ) : (
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    SUBMIT
+                  </Button>
+                )}
               </div>
             </Form.Item>
           </div>

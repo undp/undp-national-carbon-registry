@@ -51,11 +51,12 @@ const App = () => {
                 <Route path="/companyManagement" element={<CustomLayout selectedKey="company" />}>
                   <Route path="viewAll" element={<CompanyManagement />} />
                   <Route path="addCompany" element={<AddNewCompany />} />
+                  <Route path="updateCompany" element={<AddNewCompany />} />
                 </Route>
                 <Route path="/userManagement" element={<CustomLayout selectedKey="user" />}>
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<UpdateUser />} />
+                  <Route path="updateUser" element={<AddUser />} />
                 </Route>
 
                 {/* <Route

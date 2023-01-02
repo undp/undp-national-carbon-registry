@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Row } from 'antd';
+import { Col, DatePicker, Radio, Row } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -26,6 +26,9 @@ import {
   seriesZ,
 } from './DUMMY_DATAS';
 import HtmlCluster from './SampleMap';
+import fileText from '../../Assets/Images/fileText.svg';
+
+const { RangePicker } = DatePicker;
 
 const Map = ReactMapboxGl({
   accessToken:
@@ -35,8 +38,76 @@ const Map = ReactMapboxGl({
 const Dashboard = () => {
   return (
     <div className="dashboard-main-container">
-      {/* <div className="header-and-title">Overall</div>
       <div className="stastics-cards-container">
+        <Row gutter={[20, 40]} className="stastic-card-row">
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <StasticCard
+              value={220}
+              title={'Programmes Pending'}
+              updatedDate={'1669781334'}
+              icon="clockHistory"
+            />
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <StasticCard
+              value={300}
+              title={'Transfer Requests Sent'}
+              updatedDate={'1669781334'}
+              icon="envelopeCheck"
+            />
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <StasticCard
+              value={42000}
+              title={'Credit Balance'}
+              updatedDate={'1669781334'}
+              icon="coin"
+            />
+          </Col>
+        </Row>
+      </div>
+      <div className="filter-container">
+        <div className="date-filter">
+          <RangePicker />
+        </div>
+        <div className="radio-selection">
+          <Radio.Group defaultValue="overall">
+            <Radio.Button className="overall" value="overall">
+              OVERALL
+            </Radio.Button>
+            <Radio.Button className="mine" value="mine">
+              MINE
+            </Radio.Button>
+          </Radio.Group>
+        </div>
+      </div>
+      <div className="stastics-and-pie-container">
+        <Row gutter={[20, 40]} className="stastic-card-row">
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card">
+              <div className="total-programme-details">
+                <div className="details">
+                  <div className="title">Programmes</div>
+                  <div className="detail">Issued</div>
+                  <div className="value">855</div>
+                </div>
+                <div className="icon">
+                  <img src={fileText} />
+                </div>
+              </div>
+              <div className="total-programme-extra-details"></div>
+              <div className="updated-on"></div>
+            </div>
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card"></div>
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card"></div>
+          </Col>
+        </Row>
+      </div>
+      {/* <div className="header-and-title">Overall</div>
         <Row gutter={[16, 40]} className="stastic-card-row">
           {DUmData?.map((cardItem: any, index: number) => {
             return (

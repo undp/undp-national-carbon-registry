@@ -116,7 +116,7 @@ const UserManagement = () => {
         ) : (
           <RoleIcon icon={<EyeOutlined />} bg={ViewBGColor} color={ViewColor} />
         )}
-        <div>{role}</div>
+        <div>{role === 'ViewOnly' ? 'Viewer' : role}</div>
       </div>
     );
   };
@@ -141,6 +141,37 @@ const UserManagement = () => {
     );
   };
 
+  const deleteUser = async (record: TableDataType) => {
+    setLoading(true);
+    try {
+      const response = await del(`national/user/delete?email=${record?.email}`);
+      if (response.status === 200) {
+        message.open({
+          type: 'success',
+          content: response.message,
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        const temp = [...tableData];
+        const index = temp.findIndex((value) => value.email === record?.email);
+        if (index > -1) {
+          temp.splice(index, 1);
+          setTableData(temp);
+        }
+        setLoading(false);
+      }
+    } catch (error: any) {
+      console.log('Error in deleting user', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoading(false);
+    }
+  };
+
   const actionMenu = (record: TableDataType) => {
     return (
       <List
@@ -154,7 +185,13 @@ const UserManagement = () => {
               navigate('/userManagement/updateUser', { state: { record } });
             },
           },
-          { text: 'Delete', icon: <DeleteOutlined />, click: () => {} },
+          {
+            text: 'Delete',
+            icon: <DeleteOutlined />,
+            click: () => {
+              deleteUser(record);
+            },
+          },
         ]}
         renderItem={(item) => (
           <List.Item onClick={item.click}>
@@ -164,37 +201,6 @@ const UserManagement = () => {
         )}
       />
     );
-  };
-
-  const deleteUser = async (email: string) => {
-    setLoading(true);
-    try {
-      const response = await del(`national/user/delete?email=${email}`);
-      if (response.status === 200) {
-        message.open({
-          type: 'success',
-          content: response.message,
-          duration: 3,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-        const temp = [...tableData];
-        const index = temp.findIndex((value) => value.email === email);
-        if (index > -1) {
-          temp.splice(index, 1);
-          setTableData(temp);
-        }
-        setLoading(false);
-      }
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoading(false);
-    }
   };
 
   const columns = [
@@ -251,7 +257,6 @@ const UserManagement = () => {
       title: t('user:company'),
       dataIndex: 'company',
       key: 'company',
-      sorter: true,
       render: (item: any, itemObj: TableDataType) => {
         return itemObj?.company?.name ? itemObj?.company?.name : '-';
       },
@@ -307,8 +312,8 @@ const UserManagement = () => {
       return [
         {
           key: searchByTermUser,
-          operation: '=',
-          value: networksearchUsers,
+          operation: 'like',
+          value: networksearchUsers + '%',
         },
       ];
     } else return undefined;
@@ -326,8 +331,8 @@ const UserManagement = () => {
       return [
         {
           key: searchByTermUser,
-          operation: '=',
-          value: networksearchUsers,
+          operation: 'like',
+          value: networksearchUsers + '%',
         },
         {
           key: 'role',
@@ -350,8 +355,8 @@ const UserManagement = () => {
       return [
         {
           key: searchByTermUser,
-          operation: '=',
-          value: networksearchUsers,
+          operation: 'like',
+          value: networksearchUsers + '%',
         },
         {
           key: 'role',
@@ -369,8 +374,8 @@ const UserManagement = () => {
       return [
         {
           key: searchByTermUser,
-          operation: '=',
-          value: networksearchUsers,
+          operation: 'like',
+          value: networksearchUsers + '%',
         },
         {
           key: 'companyRole',

@@ -3,12 +3,13 @@ import { Button, Col, Form, Input, Radio, Row, Steps, Tooltip, Upload, message }
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { ExperimentOutlined, EyeOutlined, SafetyOutlined, UploadOutlined } from '@ant-design/icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './addNewCompany.scss';
 import { RcFile } from 'antd/lib/upload';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
+  const { state } = useLocation();
   const { post } = useConnection();
   const navigate = useNavigate();
   const [formOne] = Form.useForm();
@@ -17,6 +18,10 @@ const AddNewCompany = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [contactNoInput, setContactNoInput] = useState<any>();
   const [current, setCurrent] = useState<number>(0);
+
+  useEffect(() => {
+    console.log('record data ---- > ', state);
+  }, []);
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -81,6 +86,42 @@ const AddNewCompany = () => {
     }
   };
 
+  const onUpdateCompany = async () => {
+    setLoading(true);
+    // values.id = state.record.id;
+    const formOneValues = formOne.getFieldsValue();
+    const formTwoValues = formTwo.getFieldsValue();
+    formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
+    try {
+      const values = {
+        ...formOneValues,
+        ...formTwoValues,
+      };
+      console.log('form one values   -- > ', values, state.record);
+      // const response = await put('national/user/update', values);
+      // if (response.status === 200 || response.status === 201) {
+      //   message.open({
+      //     type: 'success',
+      //     content: 'User Updated Successfully!',
+      //     duration: 3,
+      //     style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      //   });
+      //   navigate('/userManagement/viewAll', { replace: true });
+      //   state.record = {};
+      //   setLoading(false);
+      // }
+    } catch (error: any) {
+      console.log('Error in user update', error);
+      message.open({
+        type: 'error',
+        content: `Error in updating user! ${error.message}`,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoading(false);
+    }
+  };
+
   const convertBase64 = (file: any) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -94,6 +135,12 @@ const AddNewCompany = () => {
         reject(error);
       };
     });
+  };
+
+  const getImage = (base64: string) => {
+    const image = new Image();
+    image.src = 'data:image/png;base64,' + base64;
+    console.log('image --- > ', image);
   };
 
   const CompanyDetailsForm = () => {
@@ -114,6 +161,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     label="Name"
                     name="name"
+                    initialValue={state?.record?.name}
                     rules={[
                       {
                         required: true,
@@ -137,6 +185,7 @@ const AddNewCompany = () => {
                   </Form.Item>
                   <Form.Item
                     label="Tax ID"
+                    initialValue={state?.record?.taxId}
                     name="taxId"
                     rules={[
                       {
@@ -162,6 +211,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     label="Email"
                     name="email"
+                    initialValue={state?.record?.email}
                     rules={[
                       {
                         required: true,
@@ -194,6 +244,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     className="website"
                     label="Website"
+                    initialValue={state?.record?.website?.split('://')[1]}
                     name="website"
                     rules={[{ required: false }]}
                   >
@@ -203,6 +254,7 @@ const AddNewCompany = () => {
                     name="logo"
                     label="Organisation Logo (File Type : JPEG , PNG , SVG )"
                     valuePropName="fileList"
+                    initialValue={getImage(state?.record?.logo)}
                     getValueFromEvent={normFile}
                     rules={[
                       { required: true, message: '' },
@@ -258,6 +310,7 @@ const AddNewCompany = () => {
                     className="role-group"
                     label="Role"
                     name="companyRole"
+                    initialValue={state?.record?.companyRole}
                     rules={[
                       {
                         required: true,
@@ -265,7 +318,7 @@ const AddNewCompany = () => {
                       },
                     ]}
                   >
-                    <Radio.Group size="large">
+                    <Radio.Group size="large" disabled={state?.record?.companyRole}>
                       <div className="certifier-radio-container">
                         <Tooltip
                           placement="top"
@@ -293,6 +346,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     name="phoneNo"
                     label="Phone Number"
+                    initialValue={state?.record?.phoneNo}
                     rules={[
                       {
                         required: true,
@@ -325,6 +379,7 @@ const AddNewCompany = () => {
                   <Form.Item
                     name="address"
                     label="Address"
+                    initialValue={state?.record?.address}
                     rules={[
                       { required: true, message: '' },
                       {
@@ -456,7 +511,16 @@ const AddNewCompany = () => {
             </Col>
           </Row>
           <div className="steps-actions">
-            {current === 1 && (
+            {current === 1 && state?.record ? (
+              <Button
+                className="mg-left-1"
+                type="primary"
+                onClick={onUpdateCompany}
+                loading={loading}
+              >
+                UPDATE
+              </Button>
+            ) : (
               <Button className="mg-left-1" type="primary" htmlType="submit" loading={loading}>
                 SUBMIT
               </Button>

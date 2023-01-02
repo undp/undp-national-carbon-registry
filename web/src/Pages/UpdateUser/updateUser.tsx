@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Form, Input, Select, message, Spin, Upload, Modal } from 'antd';
+import {
+  Row,
+  Col,
+  Button,
+  Form,
+  Input,
+  Select,
+  message,
+  Spin,
+  Upload,
+  Modal,
+  Radio,
+  Tooltip,
+} from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import 'react-phone-number-input/style.css';
 import './updateUser.scss';
+import '../AddUser/addUser.scss';
+import '../../Styles/app.scss';
 import '../Common/common.form.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { PlusOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusOutlined, StarOutlined, ToolOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/lib/upload';
 
 const UpdateUser = () => {
@@ -122,402 +137,159 @@ const UpdateUser = () => {
   }, []);
 
   return (
-    <div className="create-user-container">
-      <Spin spinning={loading}>
+    <div className="add-user-main-container">
+      <div className="title-container">
+        <div className="main">{state?.record?.name}</div>
+        <div className="sub">Add new users to the Carbon Registry for your organisation</div>
+      </div>
+      <div className="content-card user-content-card">
         <Form
+          name="user-details"
+          className="user-details-form"
           layout="vertical"
-          name="userCreation"
+          requiredMark={true}
           onFinish={onSubmitData}
-          className="common-form-class"
         >
-          <Row>
-            <Col span={22} offset={1}>
-              <Form.Item
-                name="name"
-                label="User Name"
-                initialValue={state.record.name}
-                rules={[
-                  {
-                    required: true,
-                    message: "User Name can't be empty!",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator() {
-                      if (
-                        getFieldValue('name') !== undefined &&
-                        !getFieldValue('name').match(/^[a-zA-Z ]*$/gm)
-                      ) {
-                        return Promise.reject("User name can't have numbers!");
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Input placeholder="User Name" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={22} offset={1}>
-              <Form.Item
-                name="email"
-                label="Email"
-                initialValue={state.record.email}
-                rules={[
-                  ({ getFieldValue }) => ({
-                    validator() {
-                      if (
-                        getFieldValue('email') &&
-                        !getFieldValue('email')
-                          ?.trim()
-                          .match(
-                            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                          )
-                      ) {
-                        return Promise.reject('Please enter a valid E-mail!');
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                  {
-                    required: true,
-                    message: "Email can't be empty!",
-                  },
-                ]}
-              >
-                <Input placeholder="Email" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={11} offset={1}>
-              <Form.Item
-                name="role"
-                label="Role"
-                initialValue={state.record.role}
-                rules={[
-                  {
-                    required: true,
-                    message: 'User should have a role!',
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="Select user role"
-                  showSearch
-                  optionFilterProp="children"
-                  filterOption={(input, option: any) =>
-                    option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                  onChange={setUserRole}
-                  placement="bottomLeft"
-                  getPopupContainer={(triggerNode) => triggerNode.parentElement}
-                  options={[
-                    {
-                      value: 'Root',
-                      label: 'Root',
-                    },
-                    {
-                      value: 'Admin',
-                      label: 'Admin',
-                    },
-                    {
-                      value: 'Certifier',
-                      label: 'Certifier',
-                    },
-                    {
-                      value: 'ProgrammeDeveloper',
-                      label: 'Programme Developer',
-                    },
-                    {
-                      value: 'General',
-                      label: 'General',
-                    },
-                    {
-                      value: 'Visitor',
-                      label: 'Visitor',
-                    },
-                    {
-                      value: 'ViewOnly',
-                      label: 'View Only',
-                    },
-                  ]}
-                />
-              </Form.Item>
-            </Col>
-            {userRole === 'ProgrammeDeveloper' && (
-              <Col span={10} offset={1}>
+          <Row className="row" gutter={[16, 16]}>
+            <Col xl={12} md={24}>
+              <div className="details-part-one">
                 <Form.Item
-                  name="industry"
-                  label="Industry"
-                  initialValue={state.record.industry}
+                  label="Name"
+                  initialValue={state?.record?.name}
+                  name="name"
                   rules={[
                     {
                       required: true,
-                      message: "Industry can't be empty!",
+                      message: '',
                     },
-                    ({ getFieldValue }) => ({
-                      validator() {
+                    {
+                      validator: async (rule, value) => {
                         if (
-                          getFieldValue('industry') !== undefined &&
-                          !getFieldValue('industry').match(/^[a-zA-Z ]*$/gm)
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
                         ) {
-                          return Promise.reject("Industry name can't have numbers.");
+                          throw new Error('Name is required!');
                         }
-                        return Promise.resolve();
                       },
-                    }),
-                  ]}
-                >
-                  <Input placeholder="Industry" />
-                </Form.Item>
-              </Col>
-            )}
-          </Row>
-          {userRole === 'ProgrammeDeveloper' && (
-            <Row>
-              <Col span={22} offset={1}>
-                <Form.Item
-                  name="companyName"
-                  label="Company Name"
-                  initialValue={state.record.companyName}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Company Name can't be empty!",
                     },
                   ]}
                 >
-                  <Input placeholder="Company Name" />
+                  <Input size="large" />
                 </Form.Item>
-              </Col>
-            </Row>
-          )}
-          {userRole === 'ProgrammeDeveloper' && (
-            <Row>
-              <Col span={22} offset={1}>
                 <Form.Item
-                  name="companyLocation"
-                  initialValue={state.record.companyLocation}
-                  label="Company Location"
+                  label="Email"
+                  name="email"
                   rules={[
                     {
                       required: true,
-                      message: "Company Location can't be empty!",
+                      message: '',
                     },
-                  ]}
-                >
-                  <Input placeholder="Company Location" />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-          {userRole === 'ProgrammeDeveloper' && (
-            <Row>
-              <Col span={22} offset={1}>
-                <Form.Item
-                  name="registrationNo"
-                  label="Registration Number"
-                  initialValue={state.record.registrationNo}
-                  rules={[
                     {
-                      required: true,
-                      message: "Registration Number can't be empty!",
-                    },
-                  ]}
-                >
-                  <Input placeholder="Registration Number" />
-                </Form.Item>
-              </Col>
-            </Row>
-          )}
-          {userRole === 'ProgrammeDeveloper' && !imageLoading && (
-            <Row>
-              <Col span={22} offset={1}>
-                <Form.Item
-                  name="companyLogo"
-                  label="Company Logo"
-                  required
-                  rules={[
-                    () => ({
-                      validator() {
-                        if (fileList.length === 0) {
-                          return Promise.reject('Upload the logo of the company!');
-                        } else if (fileList.length > 1) {
-                          return Promise.reject("Can't upload more than one Image!");
-                        } else if (fileList.length === 1) {
-                          return Promise.resolve();
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error('Email is required!');
                         } else {
-                          return Promise.resolve();
+                          const val = value.trim();
+                          const reg =
+                            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                          const matches = val.match(reg) ? val.match(reg) : [];
+                          if (matches.length === 0) {
+                            throw new Error('Email is invalid!');
+                          }
                         }
                       },
-                    }),
+                    },
                   ]}
                 >
-                  <Upload
-                    name="companyLogo"
-                    listType="picture-card"
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                    fileList={fileList}
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
-                    onPreview={handlePreview}
-                    multiple={false}
-                  >
-                    {fileList.length > 0 ? null : (
-                      <div>
-                        <PlusOutlined />
-                        <div style={{ marginTop: 8 }}>Upload</div>
-                      </div>
-                    )}
-                  </Upload>
-                  <Modal
-                    open={previewOpen}
-                    title={previewTitle}
-                    footer={null}
-                    onCancel={handleCancel}
-                  >
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                  </Modal>
+                  <Input size="large" />
                 </Form.Item>
-              </Col>
-            </Row>
-          )}
-          <Row>
-            <Col span={11} offset={1}>
-              <Form.Item
-                name="city"
-                initialValue={state.record.city}
-                label="City"
-                rules={[
-                  {
-                    required: true,
-                    message: "City can't be empty!",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator() {
-                      if (
-                        getFieldValue('city') !== undefined &&
-                        !getFieldValue('city').match(/^[a-zA-Z ]*$/gm)
-                      ) {
-                        return Promise.reject("City name can't have numbers.");
-                      }
-                      return Promise.resolve();
+              </div>
+            </Col>
+            <Col xl={12} md={24}>
+              <div className="details-part-two">
+                <Form.Item
+                  className="role-group"
+                  label="Role"
+                  name="role"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Role is required!',
                     },
-                  }),
-                ]}
-              >
-                <Input placeholder="City" />
-              </Form.Item>
-            </Col>
-            <Col span={10} offset={1}>
-              <Form.Item
-                name="zipCode"
-                label="Zip Code"
-                initialValue={state.record.zipCode}
-                rules={[
-                  {
-                    required: true,
-                    message: "Zip Code can't be empty!",
-                  },
-                  () => ({
-                    validator(_, value) {
-                      if (!value) {
-                        return Promise.reject();
-                      }
-                      if (isNaN(value)) {
-                        return Promise.reject('Zip code has to be a number.');
-                      }
-                      return Promise.resolve();
+                  ]}
+                >
+                  <Radio.Group size="large">
+                    <div className="admin-radio-container">
+                      <Tooltip placement="top" title="Full access to all permitted functions">
+                        <Radio.Button className="admin" value="Admin">
+                          <StarOutlined className="role-icons" />
+                          Admin
+                        </Radio.Button>
+                      </Tooltip>
+                    </div>
+                    <div className="manager-radio-container">
+                      <Tooltip
+                        placement="top"
+                        title="Access to all permitted functions except user management"
+                      >
+                        <Radio.Button className="manager" value="Manager">
+                          <ToolOutlined className="role-icons" />
+                          Manager
+                        </Radio.Button>
+                      </Tooltip>
+                    </div>
+                    <div className="view-only-radio-container">
+                      <Tooltip
+                        placement="top"
+                        title="Read-only access to all permitted functionalities"
+                      >
+                        <Radio.Button className="view-only" value="ViewOnly">
+                          <EyeOutlined className="role-icons" />
+                          Viewer
+                        </Radio.Button>
+                      </Tooltip>
+                    </div>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item
+                  name="phoneNo"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      required: false,
                     },
-                  }),
-                ]}
-              >
-                <Input placeholder="Zip Code" />
-              </Form.Item>
+                  ]}
+                >
+                  <PhoneInput
+                    placeholder="Phone number"
+                    international
+                    value={formatPhoneNumberIntl(contactNoInput)}
+                    defaultCountry="LK"
+                    countryCallingCodeEditable={false}
+                    onChange={(v) => setContactNoInput(v)}
+                  />
+                </Form.Item>
+              </div>
             </Col>
           </Row>
-          <Row>
-            <Col span={11} offset={1}>
-              <Form.Item
-                name="state"
-                label="State/Province"
-                initialValue={state.record.state}
-                rules={[
-                  {
-                    required: true,
-                    message: "State/Province can't be empty!",
-                  },
-                ]}
-              >
-                <Input placeholder="State/Province" />
-              </Form.Item>
-            </Col>
-            <Col span={10} offset={1}>
-              <Form.Item
-                name="country"
-                label="Country"
-                initialValue={state.record.country}
-                rules={[
-                  {
-                    required: true,
-                    message: "Country can't be empty!",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator() {
-                      if (
-                        getFieldValue('country') !== undefined &&
-                        !getFieldValue('country').match(/^[a-zA-Z ]*$/gm)
-                      ) {
-                        return Promise.reject('Country name cant have numbers.');
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Input placeholder="Country" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={11} offset={1}>
-              <Form.Item
-                name="contactNo"
-                label="Contact Number"
-                initialValue={state.record.contactNo}
-                rules={[
-                  {
-                    required: true,
-                    message: "Contact Number can't be empty!",
-                  },
-                ]}
-              >
-                <PhoneInput
-                  placeholder="Contact number"
-                  international
-                  value={formatPhoneNumberIntl(contactNoInput)}
-                  defaultCountry="LK"
-                  countryCallingCodeEditable={false}
-                  onChange={(v) => setContactNoInput(v)}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={10} offset={7}>
-              <Form.Item>
-                <div className="create-user-btn-container">
-                  <Button type="primary" size="large" htmlType="submit" block loading={loading}>
-                    Update
-                  </Button>
-                </div>
-              </Form.Item>
-            </Col>
-          </Row>
+          <div className="actions">
+            <Form.Item>
+              <div className="create-user-btn-container">
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  SUBMIT
+                </Button>
+              </div>
+            </Form.Item>
+          </div>
         </Form>
-      </Spin>
+      </div>
     </div>
   );
 };
