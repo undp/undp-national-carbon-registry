@@ -13,9 +13,11 @@ import {
   BulbOutlined,
   CaretRightOutlined,
   ClockCircleOutlined,
+  CloseCircleOutlined,
   ExperimentOutlined,
   LikeOutlined,
   PlusOutlined,
+  PoweroffOutlined,
   PushpinOutlined,
   SafetyOutlined,
   TransactionOutlined,
@@ -51,6 +53,7 @@ import mapboxgl from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
 
 mapboxgl.accessToken =
   '';
@@ -425,8 +428,9 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Reject',
-              text: `You are going to reject programme ${data.title}`,
+              text: `You can’t undo this action`,
               type: 'danger',
+              icon: <CloseCircleOutlined />,
             });
             showModal();
           }}
@@ -440,8 +444,9 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Approve',
-              text: `You are going to approve programme ${data.title}`,
+              text: ``,
               type: 'primary',
+              icon: <LikeOutlined />,
             });
             showModal();
           }}
@@ -461,8 +466,9 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Retire',
-              text: `You are going to retire programme ${data.title}`,
+              text: `You can’t undo this action`,
               type: 'danger',
+              icon: <PoweroffOutlined />,
             });
             showModal();
           }}
@@ -495,8 +501,9 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Certify',
-              text: `You are going to certify programme ${data.title}`,
-              type: 'primary',
+              text: ``,
+              type: 'success',
+              icon: <ShieldCheck />,
             });
             showModal();
           }}
@@ -707,23 +714,33 @@ const ProgrammeView = () => {
         </Row>
       </div>
       <Modal
-        title={`Programme ${actionInfo.action} - ${data.title}`}
+        title={
+          <div className="popup-header">
+            <div className="icon">{actionInfo.icon}</div>
+            <div>{`Are you sure you want to ${actionInfo.action} programme ${data.title}?`}</div>
+          </div>
+        }
+        className={'popup-' + actionInfo.type}
         open={openModal}
         onOk={() => onAction(actionInfo.action)}
-        onCancel={() => setOpenModal(false)}
+        onCancel={() => {
+          setOpenModal(false);
+          setComment('');
+        }}
         okText={actionInfo.action}
+        okButtonProps={{ disabled: comment === '' }}
         confirmLoading={confirmLoading}
-        okType={actionInfo.type}
         cancelText="Cancel"
         width={Math.min(400, window.innerWidth)}
         centered={true}
+        destroyOnClose={true}
       >
         <p>{actionInfo.text}</p>
-        <TextArea
-          rows={4}
-          placeholder="Leave your comment here"
-          onChange={(v) => setComment(v.target.value)}
-        />
+        <div className="form-label">
+          {'Remarks'}
+          <span className="req-ast">*</span>
+        </div>
+        <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
       </Modal>
     </div>
   );

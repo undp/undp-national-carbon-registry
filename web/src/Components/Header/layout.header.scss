@@ -2,6 +2,26 @@
 
 .header-container {
   background-color: $background-color;
+
+  .toggle-btn {
+    // margin-left: -25px;
+    color: $primary-color;
+    cursor: pointer;
+  }
+
+  .ant-checkbox-inner {
+    border-radius: 100%;
+    // background-color: $primary-color;
+    border-color: $primary-color;
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner::after {
+    background-color: $primary-color;
+  }
+
+  // .ant-checkbox-inner::after {
+  //   content: none;
+  // }
 }
 
 .layout-header-container {
@@ -23,111 +43,3 @@
 
   }
 }
-
-// .header-container {
-//   overflow: hidden;
-//   padding: 0;
-//   .ant-col-8 {
-//     .header-country-logo {
-//       display: flex;
-//       flex-direction: row;
-//       justify-content: flex-start;
-//       align-items: center;
-//       height: 90px;
-//       overflow: hidden;
-//       // background-color: red;
-//       img {
-//         margin: 5px 10px;
-//         object-fit: cover;
-//         height: auto;
-//         height: 70%;
-//       }
-//     }
-//     .header-title-container {
-//       .header-title-txt {
-//         font-family: 'Inter-Bold';
-//         font-size: 1.4rem;
-//         font-style: Bold;
-//         color: $layout-black;
-//       }
-//       height: 100%;
-//       display: flex;
-//       flex-direction: row;
-//       justify-content: center;
-//       align-items: center;
-//       //   background-color: rgb(0, 38, 255);
-//     }
-//     .ant-col-offset-14 {
-//       .header-menu-container {
-//         font-family: 'Inter-Regular';
-//         font-size: 1rem;
-//         height: 90px;
-//         color: $layout-black;
-//         display: flex;
-//         flex-direction: row;
-//         justify-content: space-around;
-//         align-items: center;
-//         // background-color: rgb(77, 255, 0);
-//         .header-language-selection-txt {
-//         }
-//         .header-signOut-container {
-//           display: flex;
-//           flex-direction: row;
-//           justify-content: center;
-//           align-items: center;
-//           // flex: 1;
-//         }
-//       }
-//     }
-//     .ant-select-selector {
-//       border: none;
-//       background-color: unset;
-//       color: $layout-txt-black;
-//     }
-//     .ant-select-focused .ant-select-selector,
-//     .ant-select-selector:focus,
-//     .ant-select-selector:active,
-//     .ant-select-open .ant-select-selector {
-//       border-color: none;
-//       box-shadow: none !important;
-//     }
-//   }
-// }
-// .ant-layout-header {
-//   background-color: $layout-header-bg !important;
-// }
-
-// <span className="header-language-selection-txt">
-//                   {/* {t('common:language')} : */}
-//                   <Select
-//                     placeholder="Search to Select"
-//                     defaultValue={
-//                       localStorage.getItem('i18nextLng') !== null
-//                         ? localStorage.getItem('i18nextLng')
-//                         : 'en'
-//                     }
-//                     placement="bottomLeft"
-//                     onChange={(lan: string) => handleLanguageChange(lan)}
-//                     optionFilterProp="children"
-//                     filterOption={(input, option) => (option?.label ?? '').includes(input)}
-//                     filterSort={(optionA, optionB) =>
-//                       (optionA?.label ?? '')
-//                         .toLowerCase()
-//                         .localeCompare((optionB?.label ?? '').toLowerCase())
-//                     }
-//                     options={[
-//                       {
-//                         value: 'en',
-//                         label: 'English',
-//                       },
-//                       {
-//                         value: 'es',
-//                         label: 'Española',
-//                       },
-//                       {
-//                         value: 'fr',
-//                         label: 'française',
-//                       },
-//                     ]}
-//                   />
-//                 </span>

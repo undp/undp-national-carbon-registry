@@ -121,8 +121,8 @@ export class CompanyService {
         )
       )
       .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
-      .skip(query.size * query.page - query.size)
-      .take(query.size)
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
       .getManyAndCount();
 
     return new DataListResponseDto(

@@ -362,10 +362,6 @@ export class UserService {
   }
 
   async query(query: QueryDto, abilityCondition: string): Promise<any> {
-    console.log(
-      "query ----> ",
-      this.helperService.generateWhereSQL(query, abilityCondition, '"user"')
-    );
 
     const resp = await this.userRepo
       .createQueryBuilder("user")
@@ -379,19 +375,18 @@ export class UserService {
           '"user"'
         )
       )
-      .orderBy(
-        query?.sort?.key && `"user"."${query?.sort?.key}"`,
-        query?.sort?.order
-      )
-      // .leftJoinAndSelect("user.companyId", "company")
-      .skip(query.size * query.page - query.size)
-      .take(query.size)
       .leftJoinAndMapOne(
         "user.company",
         Company,
         "company",
         "company.companyId = user.companyId"
       )
+      .orderBy(
+        query?.sort?.key && `"user"."${query?.sort?.key}"`,
+        query?.sort?.order
+      )
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
       .getManyAndCount();
 
     return new DataListResponseDto(
