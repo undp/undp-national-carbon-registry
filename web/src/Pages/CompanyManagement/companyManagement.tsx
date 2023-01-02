@@ -277,7 +277,7 @@ const CompanyManagement = () => {
         {
           key: searchByTermOrganisation,
           operation: 'like',
-          value: networksearchOrganisations,
+          value: networksearchOrganisations + '%',
         },
       ];
     } else return undefined;
@@ -295,7 +295,7 @@ const CompanyManagement = () => {
         {
           key: searchByTermOrganisation,
           operation: 'like',
-          value: networksearchOrganisations,
+          value: networksearchOrganisations + '%',
         },
         {
           key: 'companyRole',
