@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, DatePicker, Radio, Row } from 'antd';
+import { Col, DatePicker, Progress, Radio, Row } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -27,6 +27,8 @@ import {
 } from './DUMMY_DATAS';
 import HtmlCluster from './SampleMap';
 import fileText from '../../Assets/Images/fileText.svg';
+import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 
 const { RangePicker } = DatePicker;
 
@@ -84,20 +86,7 @@ const Dashboard = () => {
       <div className="stastics-and-pie-container">
         <Row gutter={[20, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card">
-              <div className="total-programme-details">
-                <div className="details">
-                  <div className="title">Programmes</div>
-                  <div className="detail">Issued</div>
-                  <div className="value">855</div>
-                </div>
-                <div className="icon">
-                  <img src={fileText} />
-                </div>
-              </div>
-              <div className="total-programme-extra-details"></div>
-              <div className="updated-on"></div>
-            </div>
+            <ProgrammeRejectAndTransfer />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card"></div>

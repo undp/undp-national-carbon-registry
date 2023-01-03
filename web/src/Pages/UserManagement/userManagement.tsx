@@ -511,7 +511,7 @@ const UserManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by role</div>
+          <div className="filter-title">Filter by Role</div>
           <Radio.Group onChange={onFilterRole} value={filterByRole}>
             <Space direction="vertical">
               <Radio value="All">All</Radio>
@@ -528,7 +528,7 @@ const UserManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by organisation type</div>
+          <div className="filter-title">Filter by Organisation Type</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">All</Radio>
@@ -594,7 +594,7 @@ const UserManagement = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={searchByTermUser === 'email' ? 'Search by Email' : 'Search by name'}
+                  placeholder={searchByTermUser === 'email' ? 'Search by Email' : 'Search by Name'}
                   allowClear
                   onChange={(e) =>
                     e.target.value === ''

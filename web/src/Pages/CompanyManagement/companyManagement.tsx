@@ -380,7 +380,7 @@ const CompanyManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by organisation type</div>
+          <div className="filter-title">Filter by Organisation Type</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">All</Radio>
@@ -446,7 +446,7 @@ const CompanyManagement = () => {
                 <Search
                   onPressEnter={onSearch}
                   placeholder={
-                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by name'
+                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by Name'
                   }
                   allowClear
                   onChange={(e) =>

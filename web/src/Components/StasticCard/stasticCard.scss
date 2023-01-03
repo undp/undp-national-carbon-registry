@@ -42,7 +42,7 @@
       font-size: 2rem;
       font-weight: 600;
       width: 100%;
-      color: #16B1FF;
+      color: $primary-blue;
       padding: 0;
     }
 
@@ -52,7 +52,7 @@
       font-size: 0.813rem;
       border-radius: 3.125rem;
       padding: 0 0.5rem 0 0.5rem;
-      color: #16b1ff;
+      color: $primary-blue;
       background-color: rgba($color: #b9e2f4, $alpha: 0.4);
     }
   }

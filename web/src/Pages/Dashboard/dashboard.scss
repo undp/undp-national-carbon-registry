@@ -76,6 +76,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 2rem;
+    margin-bottom: 2rem;
 
     .stastic-card-row {
       width: 100%;
@@ -150,22 +151,103 @@
 
           .total-programme-extra-details {
             display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            height: 150px;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100px;
+            width: 100%;
+            padding: 0 0.5rem 0 0.5rem;
+
+            .rejected-details,
+            .transfered-details {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-between;
+              width: 100%;
+
+              .icon {
+                display: flex;
+                flex-direction: row;
+                width: 20%;
+
+                .icon-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 50px;
+                  width: 2.813rem;
+                  height: 2.813rem;
+                }
+
+                .reject {
+                  background-color: rgba(255, 166, 166, 0.4);
+                }
+
+                .transfer {
+                  background-color: rgba(254, 241, 173, 0.5);
+                }
+              }
+
+              .details {
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                height: 3.438rem;
+
+                .label-and-value {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+                  justify-content: space-between;
+
+                  .label {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 0.875rem;
+                    color: $card-labels;
+                  }
+
+                  .value {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 400;
+                    height: 30px;
+                    font-size: 1.5rem;
+                    margin-top: -8px;
+                    color: $card-title;
+                  }
+                }
+              }
+            }
           }
 
           .updated-on {
             display: flex;
             flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-end;
+            justify-content: flex-start;
             height: 50px;
+
+            .updated-moment-container {
+              display: flex;
+              flex-direction: row;
+              font-size: 0.813rem;
+              border-radius: 3.125rem;
+              padding: 0 0.5rem 0 0.5rem;
+              color: $primary-blue;
+              background-color: rgba($color: #b9e2f4, $alpha: 0.4);
+            }
           }
         }
       }
     }
+  }
+
+  .stastics-and-pie-card:hover {
+    box-shadow: rgba(0, 5, 18, 0.2) 0px 8px 24px;
   }
 
   .stastics-charts-container-total-programmes {
