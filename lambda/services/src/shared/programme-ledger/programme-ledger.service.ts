@@ -341,6 +341,13 @@ export class ProgrammeLedgerService {
           }
         }
 
+        if (programme.currentStage != ProgrammeStage.ISSUED) {
+          throw new HttpException(
+            "Can not certify only authorised programmes",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
         programme.txRef = user;
         programme.txTime = new Date().getTime();
         programme.txType = TxType.CERTIFY;
