@@ -262,7 +262,7 @@ export class UserService {
 
     let { company, ...userFields } = userDto;
     if (company) {
-      if (userFields.role && userFields.role != Role.Admin) {
+      if (userFields.role && ![Role.Admin, Role.Root].indexOf(userFields.role)) {
         throw new HttpException(
           "Company create user should be an Admin user",
           HttpStatus.BAD_REQUEST

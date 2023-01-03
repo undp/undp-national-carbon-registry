@@ -18,7 +18,7 @@ import { TxType } from "../shared/enum/txtype.enum";
 const fs = require('fs')
 
 exports.handler = async (event) => {
-    console.log(`Setup Handler Started with: ${event.body}`)
+    console.log(`Setup Handler Started with: ${JSON.stringify(event)}`)
 
     const userApp = await NestFactory.createApplicationContext(UserModule, {
       logger: getLogger(UserModule),

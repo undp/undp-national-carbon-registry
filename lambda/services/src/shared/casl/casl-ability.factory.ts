@@ -43,7 +43,7 @@ export class CaslAbilityFactory {
         can(Action.Delete, User, { companyId: { $eq: user.companyId } });
         can(Action.Update, User, { companyId: { $eq: user.companyId } });
         can(Action.Create, User) // Handling company id inside the service
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
+        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole'], { id: { $eq: user.id } });
 
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
@@ -55,7 +55,7 @@ export class CaslAbilityFactory {
           can(Action.Read, User, { companyId: { $eq: user.companyId } });
         }
         can(Action.Update, User, { id: { $eq: user.id } })
-        cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyId', 'companyRole']);
+        cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyRole']);
         can(Action.Read, Company);
       }
 
@@ -87,7 +87,7 @@ export class CaslAbilityFactory {
         can(Action.Read, Stat, { type: { $nin: [ ]}})
       }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
-      cannot(Action.Update, User, ['companyId', 'companyRole'])
+      cannot(Action.Update, User, ['companyRole'])
     }
 
     return build({

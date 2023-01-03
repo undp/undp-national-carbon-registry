@@ -84,11 +84,12 @@ export class ProgrammeService {
 
     async transferReject(req: ProgrammeTransferReject, approverCompanyId: number) {
 
-        this.logger.log('Programme reject');
+        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approverCompanyId}`);
 
         const pTransfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
         })
+
         if (!pTransfer.companyId.includes(approverCompanyId)) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
         }
