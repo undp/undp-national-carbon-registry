@@ -21,8 +21,8 @@ export class ProgrammeTransferApprove {
     @IsOptional()
     companyCredit: number[];
 
-    @ApiProperty()
+    @ApiPropertyOptional()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
 }

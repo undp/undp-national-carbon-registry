@@ -16,6 +16,7 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   ExperimentOutlined,
+  IssuesCloseOutlined,
   LikeOutlined,
   PlusOutlined,
   PoweroffOutlined,
@@ -73,7 +74,9 @@ const ProgrammeView = () => {
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
-  const [comment, setComment] = useState<any>('');
+  const [comment, setComment] = useState<any>(undefined);
+  const [certs, setCerts] = useState<any>([]);
+  const [certTimes, setCertTimes] = useState<any>({});
 
   const showModal = () => {
     setOpenModal(true);
@@ -96,11 +99,38 @@ const ProgrammeView = () => {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const genCerts = (d: any, certifiedTime: any) => {
+    if (d === undefined) {
+      return;
+    }
+    const c = d.certifierId.map((cert: any) => {
+      return (
+        <div className="">
+          <div className="cert-info">
+            {isBase64(cert.logo) ? (
+              <img src={'data:image/jpeg;base64,' + cert.logo} />
+            ) : cert.name ? (
+              <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
+            ) : (
+              <div className="cert-logo">{'A'}</div>
+            )}
+            <div className="text-center cert-name">{cert.name}</div>
+            {certifiedTime[cert.companyId] && (
+              <div className="text-center cert-date">{certifiedTime[cert.companyId]}</div>
+            )}
+          </div>
+        </div>
+      );
+    });
+    setCerts(c);
+  };
+
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
       const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
 
+      const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
         let el = undefined;
@@ -164,7 +194,7 @@ const ProgrammeView = () => {
               </span>
             ),
           };
-        } else if (activity.data.txType === TxType.CERTIFY) {
+        } else if (activity.data.txType === TxType.REVOKE) {
           el = {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
@@ -176,13 +206,13 @@ const ProgrammeView = () => {
             icon: (
               <span
                 className="step-icon"
-                style={{ backgroundColor: CertBGColor, color: CertColor }}
+                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
               >
-                <SafetyOutlined />
+                <CloseCircleOutlined />
               </span>
             ),
           };
-        } else if (activity.data.txType === TxType.REVOKE) {
+        } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
             title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
@@ -200,6 +230,10 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          const cid = getTxRefValues(activity.data.txRef, 2);
+          if (cid) {
+            certifiedTime[cid] = DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy');
+          }
         } else {
           el = {
             status: 'process',
@@ -223,6 +257,8 @@ const ProgrammeView = () => {
 
       setHistoryData(activityList);
       setLoadingHistory(false);
+      setCertTimes(certifiedTime);
+      genCerts(state.record, certifiedTime);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -274,12 +310,14 @@ const ProgrammeView = () => {
           ) {
             setData(response.data);
             navigate('.', { state: { record: response.data } });
+            genCerts(response.data, certTimes);
           } else if (actionInfo.action === 'Reject') {
             data!.currentStage = ProgrammeStage.Rejected;
             setData(data);
           }
 
           setOpenModal(false);
+          setComment(undefined);
           message.open({
             type: 'success',
             content:
@@ -434,24 +472,7 @@ const ProgrammeView = () => {
       </div>
     );
   });
-
-  const certs = data.certifierId.map((cert: any) => {
-    return (
-      <div className="">
-        <div className="cert-info">
-          {isBase64(cert.logo) ? (
-            <img src={'data:image/jpeg;base64,' + cert.logo} />
-          ) : cert.name ? (
-            <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
-          ) : (
-            <div className="cert-logo">{'A'}</div>
-          )}
-          <div className="text-center cert-name">{cert.name}</div>
-        </div>
-      </div>
-    );
-  });
-
+  // genCerts(data);
   const actionBtns = [];
   if (data.currentStage.toString() === 'AwaitingAuthorization') {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -463,6 +484,7 @@ const ProgrammeView = () => {
               action: 'Reject',
               text: `You can’t undo this action`,
               type: 'danger',
+              remark: true,
               icon: <CloseCircleOutlined />,
             });
             showModal();
@@ -479,6 +501,7 @@ const ProgrammeView = () => {
               action: 'Approve',
               text: ``,
               type: 'primary',
+              remark: false,
               icon: <LikeOutlined />,
             });
             showModal();
@@ -501,6 +524,7 @@ const ProgrammeView = () => {
               action: 'Retire',
               text: `You can’t undo this action`,
               type: 'danger',
+              remark: true,
               icon: <PoweroffOutlined />,
             });
             showModal();
@@ -537,6 +561,7 @@ const ProgrammeView = () => {
                 action: 'Certify',
                 text: ``,
                 type: 'success',
+                remark: false,
                 icon: <ShieldCheck />,
               });
               showModal();
@@ -554,6 +579,7 @@ const ProgrammeView = () => {
                 action: 'Revoke',
                 text: ``,
                 type: 'danger',
+                remark: true,
                 icon: <Icon.ShieldExclamation />,
               });
               showModal();
@@ -777,10 +803,10 @@ const ProgrammeView = () => {
         onOk={() => onAction(actionInfo.action)}
         onCancel={() => {
           setOpenModal(false);
-          setComment('');
+          setComment(undefined);
         }}
         okText={actionInfo.action}
-        okButtonProps={{ disabled: comment === '' }}
+        okButtonProps={{ disabled: actionInfo.remark && (!comment || comment.trim() === '') }}
         confirmLoading={confirmLoading}
         cancelText="Cancel"
         width={Math.min(400, window.innerWidth)}
@@ -790,7 +816,7 @@ const ProgrammeView = () => {
         <p>{actionInfo.text}</p>
         <div className="form-label">
           {'Remarks'}
-          <span className="req-ast">*</span>
+          {actionInfo.remark && <span className="req-ast">*</span>}
         </div>
         <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
       </Modal>

@@ -8,9 +8,9 @@ export class ProgrammeCertify {
     @IsString()
     programmeId: string;
 
-    @ApiProperty()
+    @ApiPropertyOptional()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
 
     @ApiPropertyOptional()
