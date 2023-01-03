@@ -1,13 +1,12 @@
-import { Checkbox, Col, Dropdown, MenuProps, Radio, Row, Select } from 'antd';
-import React, { useState } from 'react';
+import { Col, MenuProps, Row } from 'antd';
+import { useState } from 'react';
 import './layout.header.scss';
 import countryLogo from '../../Assets/Images/nigeria.png';
 import { useTranslation } from 'react-i18next';
 import { HeaderProps } from '../../Definitions/InterfacesAndType/layout.header';
-import { PersonCircle } from 'react-bootstrap-icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const LayoutHeader = (props: HeaderProps) => {
   const { title, onToggle } = props;
@@ -42,7 +41,7 @@ const LayoutHeader = (props: HeaderProps) => {
               setCollapsed(!collapsed);
             }}
           >
-            {collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
+            {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </div>
         </Col>
         <Col span={1} offset={22}>
