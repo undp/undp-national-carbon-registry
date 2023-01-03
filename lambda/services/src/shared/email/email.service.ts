@@ -39,7 +39,7 @@ export class EmailService {
 
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
         this.logger.log('Sending email', JSON.stringify(sendToEmail))
-        if (this.configService.get('stage') != 'local') {
+        if (this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))) {
             return new Promise((resolve, reject) => {
                 this.transporter.sendMail({
                     from: this.sourceEmail,
