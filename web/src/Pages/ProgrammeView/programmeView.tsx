@@ -7,6 +7,7 @@ import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
 import InfoView from '../../Components/InfoView/info.view';
+import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,
   BuildOutlined,
@@ -228,11 +229,19 @@ const ProgrammeView = () => {
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
+              : actionInfo.action === 'Revoke'
+              ? 'certify'
               : 'retire'
           }`,
           {
             comment: comment,
             programmeId: data?.programmeId,
+            add:
+              actionInfo.action === 'Certify'
+                ? true
+                : actionInfo.action === 'Revoke'
+                ? false
+                : undefined,
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
@@ -240,7 +249,11 @@ const ProgrammeView = () => {
             response.data.certifierId = [];
           }
 
-          if (actionInfo.action === 'Approve' || actionInfo.action === 'Certify') {
+          if (
+            actionInfo.action === 'Approve' ||
+            actionInfo.action === 'Certify' ||
+            actionInfo.action === 'Revoke'
+          ) {
             setData(response.data);
             navigate('.', { state: { record: response.data } });
           } else if (actionInfo.action === 'Reject') {
@@ -494,23 +507,42 @@ const ProgrammeView = () => {
       // );
     }
 
-    if (userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Certify',
-              text: ``,
-              type: 'success',
-              icon: <ShieldCheck />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:certify')}
-        </Button>
-      );
+    if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+      if (!data.certifierId.includes(userInfoState?.companyId)) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Certify',
+                text: ``,
+                type: 'success',
+                icon: <ShieldCheck />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:certify')}
+          </Button>
+        );
+      } else {
+        actionBtns.push(
+          <Button
+            danger
+            onClick={() => {
+              setActionInfo({
+                action: 'Revoke',
+                text: ``,
+                type: 'danger',
+                icon: Icon.ShieldExclamation,
+              });
+              showModal();
+            }}
+          >
+            {t('view:revoke')}
+          </Button>
+        );
+      }
     }
   }
 

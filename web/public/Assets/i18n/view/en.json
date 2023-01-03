@@ -28,5 +28,6 @@
     "credits": "Credits",
     "certification": "Certification Details",
     "authorise": "Approve",
-    "reject": "Reject"
+    "reject": "Reject",
+    "revoke": "Revoke"
 }
