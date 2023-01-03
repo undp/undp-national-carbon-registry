@@ -16,6 +16,7 @@ export enum TxType {
   TRANSFER = '3',
   CERTIFY = '4',
   RETIRE = '5',
+  REVOKE = '6',
 }
 
 export enum SectoralScope {
@@ -89,7 +90,7 @@ export interface Programme {
   companyId: number[];
   proponentPercentage: number[];
   creditOwnerPercentage: number[];
-  certifierId: number[];
+  certifierId: any[];
   creditUnit: string;
   programmeProperties: ProgrammeProperties;
   agricultureProperties: any;

@@ -167,6 +167,24 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
+            title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was certification revoke by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: CertBGColor, color: CertColor }}
+              >
+                <SafetyOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.REVOKE) {
+          el = {
+            status: 'process',
             title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: `The programme was certified by ${getTxRefValues(
@@ -272,6 +290,8 @@ const ProgrammeView = () => {
                 ? 'approved'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
+                : actionInfo.action === 'Revoke'
+                ? 'revoked'
                 : 'retired'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
@@ -508,7 +528,7 @@ const ProgrammeView = () => {
     }
 
     if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      if (!data.certifierId.includes(userInfoState?.companyId)) {
+      if (!data.certifierId.map((e) => e.companyId).includes(userInfoState?.companyId)) {
         actionBtns.push(
           <Button
             type="primary"
@@ -534,7 +554,7 @@ const ProgrammeView = () => {
                 action: 'Revoke',
                 text: ``,
                 type: 'danger',
-                icon: Icon.ShieldExclamation,
+                icon: <Icon.ShieldExclamation />,
               });
               showModal();
             }}
