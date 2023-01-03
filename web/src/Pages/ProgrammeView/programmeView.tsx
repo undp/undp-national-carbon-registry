@@ -7,6 +7,7 @@ import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
 import InfoView from '../../Components/InfoView/info.view';
+import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,
   BuildOutlined,
@@ -166,6 +167,24 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
+            title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was certification revoke by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: CertBGColor, color: CertColor }}
+              >
+                <SafetyOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.REVOKE) {
+          el = {
+            status: 'process',
             title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
             description: `The programme was certified by ${getTxRefValues(
@@ -228,11 +247,19 @@ const ProgrammeView = () => {
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
+              : actionInfo.action === 'Revoke'
+              ? 'certify'
               : 'retire'
           }`,
           {
             comment: comment,
             programmeId: data?.programmeId,
+            add:
+              actionInfo.action === 'Certify'
+                ? true
+                : actionInfo.action === 'Revoke'
+                ? false
+                : undefined,
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
@@ -240,7 +267,11 @@ const ProgrammeView = () => {
             response.data.certifierId = [];
           }
 
-          if (actionInfo.action === 'Approve' || actionInfo.action === 'Certify') {
+          if (
+            actionInfo.action === 'Approve' ||
+            actionInfo.action === 'Certify' ||
+            actionInfo.action === 'Revoke'
+          ) {
             setData(response.data);
             navigate('.', { state: { record: response.data } });
           } else if (actionInfo.action === 'Reject') {
@@ -259,6 +290,8 @@ const ProgrammeView = () => {
                 ? 'approved'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
+                : actionInfo.action === 'Revoke'
+                ? 'revoked'
                 : 'retired'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
@@ -494,23 +527,42 @@ const ProgrammeView = () => {
       // );
     }
 
-    if (userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Certify',
-              text: ``,
-              type: 'success',
-              icon: <ShieldCheck />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:certify')}
-        </Button>
-      );
+    if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+      if (!data.certifierId.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Certify',
+                text: ``,
+                type: 'success',
+                icon: <ShieldCheck />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:certify')}
+          </Button>
+        );
+      } else {
+        actionBtns.push(
+          <Button
+            danger
+            onClick={() => {
+              setActionInfo({
+                action: 'Revoke',
+                text: ``,
+                type: 'danger',
+                icon: <Icon.ShieldExclamation />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:revoke')}
+          </Button>
+        );
+      }
     }
   }
 
