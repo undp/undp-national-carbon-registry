@@ -32,7 +32,7 @@ export class ProgrammeTransfer implements EntitySubject {
     @Column("real")
     creditAmount: number;
 
-    @Column()
+    @Column({nullable: true})
     comment: string;
 
     @Column({type: "bigint"})

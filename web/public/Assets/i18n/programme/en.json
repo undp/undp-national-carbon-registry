@@ -7,5 +7,7 @@
     "viewProgrammes": "View Programmes",
     "desc": "View all the visible programmes in the system based on your permissions",
     "noProgrammes": "No Programmes",
-    "serialNoh": "Serial Number"
+    "serialNoh": "Serial Number",
+    "certifiers": "Certifiers",
+    "title": "Programme Name"
 }

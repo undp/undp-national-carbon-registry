@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 
 export class ProgrammeReject {
 
@@ -8,8 +8,8 @@ export class ProgrammeReject {
     @IsString()
     programmeId: string;
 
-    @ApiProperty()
+    @ApiPropertyOptional()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
 }
