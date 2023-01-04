@@ -72,7 +72,7 @@ export class LedgerReplicatorService {
                             },
                             {
                                 creditBalance: overall.credit,
-                                programmeCount: company.programmeCount + (overall.txType == TxType.ISSUE ? 1 : 0),
+                                programmeCount: Number(company.programmeCount) + (overall.txType == TxType.ISSUE ? 1 : 0),
                                 lastUpdateVersion: parseInt(meta["version"])
                             }
                         )
