@@ -15,6 +15,7 @@ import {
   CaretRightOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  DislikeOutlined,
   ExperimentOutlined,
   IssuesCloseOutlined,
   LikeOutlined,
@@ -176,7 +177,7 @@ const ProgrammeView = () => {
                 className="step-icon"
                 style={{ backgroundColor: RootBGColor, color: RootColor }}
               >
-                <LikeOutlined />
+                <DislikeOutlined />
               </span>
             ),
           };
