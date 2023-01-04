@@ -8,14 +8,8 @@ export class ProgrammeCertify {
     @IsString()
     programmeId: string;
 
-    @ApiProperty()
-    @IsString()
-    @Length(0, 200)
-    comment: string;
-
     @ApiPropertyOptional()
-    @IsBoolean()
+    @IsString()
     @IsOptional()
-    add?: boolean = true;
-    
+    comment: string; 
 }

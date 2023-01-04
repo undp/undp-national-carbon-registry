@@ -169,6 +169,28 @@ const ProgrammeManagement = () => {
       },
     },
     {
+      title: t('programme:certifiers'),
+      dataIndex: 'certifierId',
+      key: 'certifierId',
+      align: 'left' as const,
+      render: (item: any, itemObj: any) => {
+        const elements = item.map((obj: any) => {
+          return (
+            <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
+              <div>
+                <ProfileIcon
+                  icon={obj.logo}
+                  bg={getCompanyBgColor(obj.companyRole)}
+                  name={obj.name}
+                />
+              </div>
+            </Tooltip>
+          );
+        });
+        return <div style={{ display: 'flex', alignItems: 'center' }}>{elements}</div>;
+      },
+    },
+    {
       title: t('programme:serialNoh'),
       dataIndex: 'serialNo',
       key: 'serialNo',

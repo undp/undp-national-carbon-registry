@@ -332,18 +332,33 @@ export class ProgrammeLedgerService {
             programme.certifierId.push(certifierId);
           }
         } else {
-          
           if (index < 0) {
             throw new HttpException(
               "Certifier does not certified the programme",
               HttpStatus.BAD_REQUEST
             );
           }
+
+          programme.certifierId.splice(index, 1);
+        }
+
+        if (programme.currentStage != ProgrammeStage.ISSUED) {
+          throw new HttpException(
+            "Can certify only issued programmes",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        if (programme.currentStage != ProgrammeStage.ISSUED) {
+          throw new HttpException(
+            "Can not certify only authorised programmes",
+            HttpStatus.BAD_REQUEST
+          );
         }
 
         programme.txRef = user;
         programme.txTime = new Date().getTime();
-        programme.txType = TxType.CERTIFY;
+        programme.txType = add ? TxType.CERTIFY : TxType.REVOKE;
 
         let updateMap = {};
         let updateWhere = {};

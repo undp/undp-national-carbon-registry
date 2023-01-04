@@ -4,5 +4,6 @@ export enum TxType {
     ISSUE = '2',
     TRANSFER = '3',
     CERTIFY = '4',
-    RETIRE = '5'
+    RETIRE = '5',
+    REVOKE = '6',
 }

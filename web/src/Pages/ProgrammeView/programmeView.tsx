@@ -7,6 +7,7 @@ import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
 import InfoView from '../../Components/InfoView/info.view';
+import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,
   BuildOutlined,
@@ -14,7 +15,9 @@ import {
   CaretRightOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  DislikeOutlined,
   ExperimentOutlined,
+  IssuesCloseOutlined,
   LikeOutlined,
   PlusOutlined,
   PoweroffOutlined,
@@ -72,7 +75,9 @@ const ProgrammeView = () => {
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
-  const [comment, setComment] = useState<any>('');
+  const [comment, setComment] = useState<any>(undefined);
+  const [certs, setCerts] = useState<any>([]);
+  const [certTimes, setCertTimes] = useState<any>({});
 
   const showModal = () => {
     setOpenModal(true);
@@ -95,11 +100,38 @@ const ProgrammeView = () => {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const genCerts = (d: any, certifiedTime: any) => {
+    if (d === undefined) {
+      return;
+    }
+    const c = d.certifierId.map((cert: any) => {
+      return (
+        <div className="">
+          <div className="cert-info">
+            {isBase64(cert.logo) ? (
+              <img src={'data:image/jpeg;base64,' + cert.logo} />
+            ) : cert.name ? (
+              <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
+            ) : (
+              <div className="cert-logo">{'A'}</div>
+            )}
+            <div className="text-center cert-name">{cert.name}</div>
+            {certifiedTime[cert.companyId] && (
+              <div className="text-center cert-date">{certifiedTime[cert.companyId]}</div>
+            )}
+          </div>
+        </div>
+      );
+    });
+    setCerts(c);
+  };
+
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
       const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
 
+      const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
         let el = undefined;
@@ -145,7 +177,7 @@ const ProgrammeView = () => {
                 className="step-icon"
                 style={{ backgroundColor: RootBGColor, color: RootColor }}
               >
-                <LikeOutlined />
+                <DislikeOutlined />
               </span>
             ),
           };
@@ -160,6 +192,24 @@ const ProgrammeView = () => {
             icon: (
               <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
                 <TransactionOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.REVOKE) {
+          el = {
+            status: 'process',
+            title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            description: `The programme was certification revoke by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
+              >
+                <CloseCircleOutlined />
               </span>
             ),
           };
@@ -181,6 +231,10 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          const cid = getTxRefValues(activity.data.txRef, 2);
+          if (cid) {
+            certifiedTime[cid] = DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy');
+          }
         } else {
           el = {
             status: 'process',
@@ -204,6 +258,8 @@ const ProgrammeView = () => {
 
       setHistoryData(activityList);
       setLoadingHistory(false);
+      setCertTimes(certifiedTime);
+      genCerts(state.record, certifiedTime);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -228,6 +284,8 @@ const ProgrammeView = () => {
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
+              : actionInfo.action === 'Revoke'
+              ? 'revoke'
               : 'retire'
           }`,
           {
@@ -240,15 +298,21 @@ const ProgrammeView = () => {
             response.data.certifierId = [];
           }
 
-          if (actionInfo.action === 'Approve' || actionInfo.action === 'Certify') {
+          if (
+            actionInfo.action === 'Approve' ||
+            actionInfo.action === 'Certify' ||
+            actionInfo.action === 'Revoke'
+          ) {
             setData(response.data);
             navigate('.', { state: { record: response.data } });
+            genCerts(response.data, certTimes);
           } else if (actionInfo.action === 'Reject') {
             data!.currentStage = ProgrammeStage.Rejected;
             setData(data);
           }
 
           setOpenModal(false);
+          setComment(undefined);
           message.open({
             type: 'success',
             content:
@@ -259,6 +323,8 @@ const ProgrammeView = () => {
                 ? 'approved'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
+                : actionInfo.action === 'Revoke'
+                ? 'revoked'
                 : 'retired'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
@@ -401,24 +467,7 @@ const ProgrammeView = () => {
       </div>
     );
   });
-
-  const certs = data.certifierId.map((cert: any) => {
-    return (
-      <div className="">
-        <div className="cert-info">
-          {isBase64(cert.logo) ? (
-            <img src={'data:image/jpeg;base64,' + cert.logo} />
-          ) : cert.name ? (
-            <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
-          ) : (
-            <div className="cert-logo">{'A'}</div>
-          )}
-          <div className="text-center cert-name">{cert.name}</div>
-        </div>
-      </div>
-    );
-  });
-
+  // genCerts(data);
   const actionBtns = [];
   if (data.currentStage.toString() === 'AwaitingAuthorization') {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -430,6 +479,7 @@ const ProgrammeView = () => {
               action: 'Reject',
               text: `You can’t undo this action`,
               type: 'danger',
+              remark: true,
               icon: <CloseCircleOutlined />,
             });
             showModal();
@@ -446,6 +496,7 @@ const ProgrammeView = () => {
               action: 'Approve',
               text: ``,
               type: 'primary',
+              remark: false,
               icon: <LikeOutlined />,
             });
             showModal();
@@ -468,6 +519,7 @@ const ProgrammeView = () => {
               action: 'Retire',
               text: `You can’t undo this action`,
               type: 'danger',
+              remark: true,
               icon: <PoweroffOutlined />,
             });
             showModal();
@@ -494,23 +546,44 @@ const ProgrammeView = () => {
       // );
     }
 
-    if (userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Certify',
-              text: ``,
-              type: 'success',
-              icon: <ShieldCheck />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:certify')}
-        </Button>
-      );
+    if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+      if (!data.certifierId.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Certify',
+                text: ``,
+                type: 'success',
+                remark: false,
+                icon: <ShieldCheck />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:certify')}
+          </Button>
+        );
+      } else {
+        actionBtns.push(
+          <Button
+            danger
+            onClick={() => {
+              setActionInfo({
+                action: 'Revoke',
+                text: ``,
+                type: 'danger',
+                remark: true,
+                icon: <Icon.ShieldExclamation />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:revoke')}
+          </Button>
+        );
+      }
     }
   }
 
@@ -725,10 +798,10 @@ const ProgrammeView = () => {
         onOk={() => onAction(actionInfo.action)}
         onCancel={() => {
           setOpenModal(false);
-          setComment('');
+          setComment(undefined);
         }}
         okText={actionInfo.action}
-        okButtonProps={{ disabled: comment === '' }}
+        okButtonProps={{ disabled: actionInfo.remark && (!comment || comment.trim() === '') }}
         confirmLoading={confirmLoading}
         cancelText="Cancel"
         width={Math.min(400, window.innerWidth)}
@@ -738,7 +811,7 @@ const ProgrammeView = () => {
         <p>{actionInfo.text}</p>
         <div className="form-label">
           {'Remarks'}
-          <span className="req-ast">*</span>
+          {actionInfo.remark && <span className="req-ast">*</span>}
         </div>
         <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
       </Modal>
