@@ -304,6 +304,7 @@ const ProgrammeView = () => {
             actionInfo.action === 'Revoke'
           ) {
             setData(response.data);
+            state.record = response.data;
             navigate('.', { state: { record: response.data } });
             genCerts(response.data, certTimes);
           } else if (actionInfo.action === 'Reject') {
