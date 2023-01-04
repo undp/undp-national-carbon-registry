@@ -229,8 +229,8 @@ const CompanyManagement = () => {
     },
     {
       title: t('company:numberOfProgrammes'),
-      dataIndex: 'numberOfProgrammes',
-      key: 'numberOfProgrammes',
+      dataIndex: 'programmeCount',
+      key: 'programmeCount',
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
@@ -239,8 +239,8 @@ const CompanyManagement = () => {
     },
     {
       title: t('company:creditBalance'),
-      dataIndex: 'credit',
-      key: 'credit',
+      dataIndex: 'creditBalance',
+      key: 'creditBalance',
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
