@@ -34,7 +34,7 @@ export class CaslAbilityFactory {
         cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
         cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
 
-        can(Action.Manage, Programme);
+        // can(Action.Manage, Programme);
 
         can(Action.Manage, Company);
 
@@ -65,6 +65,7 @@ export class CaslAbilityFactory {
 
       if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, ProgrammeTransfer);
+        can(Action.Manage, Programme);
       }
 
       if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {

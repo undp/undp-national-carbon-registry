@@ -33,7 +33,7 @@ const LayoutHeader = (props: HeaderProps) => {
   return (
     <div className="header-container">
       <Row>
-        <Col span={1}>
+        {/* <Col span={1}>
           <div
             className="toggle-btn"
             onClick={() => {
@@ -43,8 +43,8 @@ const LayoutHeader = (props: HeaderProps) => {
           >
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </div>
-        </Col>
-        <Col span={1} offset={22}>
+        </Col> */}
+        <Col span={1} offset={23}>
           <Row>
             <Col>
               <div className="header-country-logo">
