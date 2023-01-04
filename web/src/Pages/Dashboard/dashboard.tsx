@@ -95,7 +95,12 @@ const Dashboard = () => {
             <div className="stastics-and-pie-card">
               <div className="pie-charts-title">Credits</div>
               <div className="pie-charts-section">
-                <Chart options={optionDonutPieA} series={seriesDonutPieA} type="donut" />
+                <Chart
+                  options={optionDonutPieA}
+                  series={seriesDonutPieA}
+                  type="donut"
+                  width="350px"
+                />
               </div>
               <div className="updated-on">
                 <div className="updated-moment-container">
@@ -108,7 +113,12 @@ const Dashboard = () => {
             <div className="stastics-and-pie-card">
               <div className="pie-charts-title">Certified</div>
               <div className="pie-charts-section">
-                <Chart options={optionDonutPieA} series={seriesDonutPieA} type="donut" />
+                <Chart
+                  options={optionDonutPieA}
+                  series={seriesDonutPieA}
+                  type="donut"
+                  width="350px"
+                />
               </div>
               <div className="updated-on">
                 <div className="updated-moment-container">
