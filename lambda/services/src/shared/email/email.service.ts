@@ -57,6 +57,8 @@ export class EmailService {
                     }
                 });
             })
+        } else {
+            this.logger.log('Skipped email due to local email', sendToEmail);
         }
     }
 }
