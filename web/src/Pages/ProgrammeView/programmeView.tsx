@@ -289,7 +289,7 @@ const ProgrammeView = () => {
           }`,
           {
             comment: comment,
-            programmeId: data?.programmeId
+            programmeId: data?.programmeId,
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
