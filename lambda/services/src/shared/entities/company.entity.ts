@@ -48,4 +48,13 @@ export class Company implements EntitySubject{
     })
     state: CompanyState;
 
+    @Column("real", { nullable: true })
+    creditBalance: number;
+
+    @Column("bigint", { nullable: true })
+    programmeCount: number;
+
+    @Column("bigint", { nullable: true })
+    lastUpdateVersion: number;
+
 }
