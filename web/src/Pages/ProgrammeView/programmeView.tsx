@@ -284,18 +284,12 @@ const ProgrammeView = () => {
               : actionInfo.action === 'Certify'
               ? 'certify'
               : actionInfo.action === 'Revoke'
-              ? 'certify'
+              ? 'revoke'
               : 'retire'
           }`,
           {
             comment: comment,
-            programmeId: data?.programmeId,
-            add:
-              actionInfo.action === 'Certify'
-                ? true
-                : actionInfo.action === 'Revoke'
-                ? false
-                : undefined,
+            programmeId: data?.programmeId
           }
         );
         if (response.statusCode === 200 || response.status === 200) {

@@ -338,7 +338,7 @@ export class ProgrammeService {
         });
     }
 
-    async certify(req: ProgrammeCertify, user: User) {
+    async certify(req: ProgrammeCertify, add: boolean, user: User) {
         this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
 
         if (user.companyRole != CompanyRole.CERTIFIER) {
@@ -346,7 +346,7 @@ export class ProgrammeService {
         }
 
         const company = await this.companyService.findByCompanyId(user.companyId);
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, req.add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
         updated.companyId = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
