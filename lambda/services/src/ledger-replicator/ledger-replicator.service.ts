@@ -60,7 +60,7 @@ export class LedgerReplicatorService {
                           });
                         const meta = JSON.parse(JSON.stringify(ionRecord.get("payload").get("revision").get("metadata")));
                         
-                        if (meta["version"]) {
+                        if (company && meta["version"]) {
                             if (company.lastUpdateVersion >= parseInt(meta["version"])) {
                                 return
                             }

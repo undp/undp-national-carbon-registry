@@ -26,6 +26,7 @@ export class UserDto {
 
     @IsString()
     @ApiPropertyOptional()
+    @IsOptional()
     phoneNo: string;
 
     @IsNotEmptyObject()
