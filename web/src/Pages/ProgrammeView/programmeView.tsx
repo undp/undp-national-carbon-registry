@@ -200,7 +200,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was certification revoke by ${getTxRefValues(
+            description: `The programme certification revoked by ${getTxRefValues(
               activity.data.txRef,
               1
             )} of ${getTxRefValues(activity.data.txRef, 3)}`,
@@ -280,7 +280,7 @@ const ProgrammeView = () => {
           `national/programme/${
             actionInfo.action === 'Reject'
               ? 'reject'
-              : actionInfo.action === 'Approve'
+              : actionInfo.action === 'Authorise'
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
@@ -299,7 +299,7 @@ const ProgrammeView = () => {
           }
 
           if (
-            actionInfo.action === 'Approve' ||
+            actionInfo.action === 'Authorise' ||
             actionInfo.action === 'Certify' ||
             actionInfo.action === 'Revoke'
           ) {
@@ -320,8 +320,8 @@ const ProgrammeView = () => {
               'Successfully ' +
               (actionInfo.action === 'Reject'
                 ? 'rejected'
-                : actionInfo.action === 'Approve'
-                ? 'approved'
+                : actionInfo.action === 'Authorise'
+                ? 'authorised'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
                 : actionInfo.action === 'Revoke'
@@ -494,7 +494,7 @@ const ProgrammeView = () => {
           type="primary"
           onClick={() => {
             setActionInfo({
-              action: 'Approve',
+              action: 'Authorise',
               text: ``,
               type: 'primary',
               remark: false,
@@ -791,7 +791,7 @@ const ProgrammeView = () => {
         title={
           <div className="popup-header">
             <div className="icon">{actionInfo.icon}</div>
-            <div>{`Are you sure you want to ${actionInfo.action} programme ${data.title}?`}</div>
+            <div>{`Are you sure you want to ${actionInfo.action} the programme - ${data.title}?`}</div>
           </div>
         }
         className={'popup-' + actionInfo.type}
@@ -810,7 +810,7 @@ const ProgrammeView = () => {
         destroyOnClose={true}
       >
         <p>{actionInfo.text}</p>
-        <div className="form-label">
+        <div className="form-label remark">
           {'Remarks'}
           {actionInfo.remark && <span className="req-ast">*</span>}
         </div>
