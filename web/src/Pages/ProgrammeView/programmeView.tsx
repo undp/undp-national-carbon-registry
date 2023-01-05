@@ -791,9 +791,9 @@ const ProgrammeView = () => {
         title={
           <div className="popup-header">
             <div className="icon">{actionInfo.icon}</div>
-            <div>{`Are you sure you want to ${actionInfo.action ? actionInfo.action.toLowerCase() : actionInfo.action} the programme - ${
-              data.title
-            }?`}</div>
+            <div>{`Are you sure you want to ${
+              actionInfo.action ? actionInfo.action.toLowerCase() : actionInfo.action
+            } the programme - ${data.title}?`}</div>
           </div>
         }
         className={'popup-' + actionInfo.type}
