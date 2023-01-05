@@ -1,4 +1,15 @@
-import { Checkbox, Col, Empty, message, PaginationProps, Row, Table, Tag, Tooltip } from 'antd';
+import {
+  Checkbox,
+  Col,
+  Empty,
+  Input,
+  message,
+  PaginationProps,
+  Row,
+  Table,
+  Tag,
+  Tooltip,
+} from 'antd';
 import { useEffect, useState } from 'react';
 import './programmeManagement.scss';
 import '../Common/common.table.scss';
@@ -14,6 +25,9 @@ import {
   getStageTagType,
   ProgrammeStage,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+
+const { Search } = Input;
 
 const ProgrammeManagement = () => {
   const navigate = useNavigate();
@@ -23,8 +37,12 @@ const ProgrammeManagement = () => {
   const [tableData, setTableData] = useState<TableDataType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [filter, setFilter] = useState<any>([]);
+  // const [filter, setFilter] = useState<any>([]);
+  const [search, setSearch] = useState<string>();
+  const [statusFilter, setStatusFilter] = useState<any>();
   const { i18n, t } = useTranslation(['common', 'programme']);
+  const [sortOrder, setSortOrder] = useState<string>();
+  const [sortField, setSortField] = useState<string>();
 
   const statusOptions = Object.keys(ProgrammeStage).map((k, index) => ({
     label: Object.values(ProgrammeStage)[index],
@@ -32,6 +50,9 @@ const ProgrammeManagement = () => {
   }));
 
   const [selectedStatus, setSelectedStatus] = useState<any>(statusOptions.map((e) => e.value));
+
+  const [indeterminate, setIndeterminate] = useState(true);
+  const [checkAll, setCheckAll] = useState(false);
 
   const getCompanyBgColor = (item: string) => {
     if (item === 'Government') {
@@ -47,6 +68,11 @@ const ProgrammeManagement = () => {
 
     if (checkedValues !== selectedStatus) {
       setSelectedStatus(checkedValues);
+
+      setIndeterminate(
+        !!checkedValues.length && checkedValues.length < Object.keys(statusOptions).length
+      );
+      setCheckAll(checkedValues.length === Object.keys(statusOptions).length);
     }
 
     if (checkedValues.length === 0) {
@@ -54,13 +80,27 @@ const ProgrammeManagement = () => {
       setTotalProgramme(0);
       return;
     }
-    setFilter([
-      {
-        key: 'currentStage',
-        operation: 'in',
-        value: checkedValues,
-      },
-    ]);
+    // setFilter([
+    //   {
+    //     key: 'currentStage',
+    //     operation: 'in',
+    //     value: checkedValues,
+    //   },
+    // ]);
+
+    setStatusFilter({
+      key: 'currentStage',
+      operation: 'in',
+      value: checkedValues,
+    });
+  };
+
+  const onCheckAllChange = (e: CheckboxChangeEvent) => {
+    const nw = e.target.checked ? statusOptions.map((el) => el.value) : [];
+    setSelectedStatus(nw);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+    onStatusQuery(nw);
   };
 
   const columns = [
@@ -68,6 +108,7 @@ const ProgrammeManagement = () => {
       title: t('programme:title'),
       dataIndex: 'title',
       key: 'title',
+      sorter: true,
       align: 'left' as const,
       render: (item: any) => {
         return <span className="clickable">{item}</span>;
@@ -105,6 +146,7 @@ const ProgrammeManagement = () => {
     {
       title: t('programme:sector'),
       dataIndex: 'sector',
+      sorter: true,
       key: 'sector',
       align: 'left' as const,
     },
@@ -112,6 +154,7 @@ const ProgrammeManagement = () => {
       title: t('programme:status'),
       dataIndex: 'currentStage',
       key: 'currentStage',
+      sorter: true,
       align: 'center' as const,
       render: (item: any) => {
         return (
@@ -133,6 +176,7 @@ const ProgrammeManagement = () => {
       title: t('programme:issued'),
       dataIndex: 'creditIssued',
       key: 'creditIssued',
+      sorter: true,
       align: 'right' as const,
       render: (item: any) => {
         return item
@@ -146,6 +190,7 @@ const ProgrammeManagement = () => {
       title: t('programme:balance'),
       dataIndex: 'creditBalance',
       key: 'creditBalance',
+      sorter: true,
       align: 'right' as const,
       render: (item: any) => {
         return item
@@ -159,6 +204,7 @@ const ProgrammeManagement = () => {
       title: t('programme:transferred'),
       dataIndex: 'creditTransferred',
       key: 'creditTransferred',
+      sorter: true,
       align: 'right' as const,
       render: (item: any) => {
         return item
@@ -187,7 +233,7 @@ const ProgrammeManagement = () => {
             </Tooltip>
           );
         });
-        return <div style={{ display: 'flex', alignItems: 'center' }}>{elements}</div>;
+        return <div className="certify-list">{elements}</div>;
       },
     },
     {
@@ -201,11 +247,38 @@ const ProgrammeManagement = () => {
 
   const getAllProgramme = async () => {
     setLoading(true);
+
+    const filter: any[] = [];
+    if (statusFilter) {
+      filter.push(statusFilter);
+    }
+    if (search && search !== '') {
+      filter.push({
+        key: 'title',
+        operation: 'like',
+        value: `${search}%`,
+      });
+    }
+
+    let sort;
+    if (sortOrder && sortField) {
+      sort = {
+        key: sortField,
+        order: sortOrder,
+      };
+    } else {
+      sort = {
+        key: 'programmeId',
+        order: 'DESC',
+      };
+    }
+
     try {
       const response: any = await post('national/programme/query', {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
+        sort: sort,
       });
       setTableData(response.data);
       setTotalProgramme(response.response.data.total);
@@ -222,13 +295,26 @@ const ProgrammeManagement = () => {
     }
   };
 
+  const onSearch = async () => {
+    getAllProgramme();
+  };
+
   useEffect(() => {
     getAllProgramme();
-  }, [currentPage, pageSize, filter]);
+  }, [currentPage, pageSize, statusFilter, sortField, sortOrder]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
+  };
+
+  const handleTableChange = (pag: any, sorter: any) => {
+    console.log(pag, sorter);
+    setSortOrder(
+      sorter.order === 'ascend' ? 'ASC' : sorter.order === 'descend' ? 'DESC' : undefined
+    );
+    setSortField(sorter.columnKey);
+    // setCurrentPage(1);
   };
 
   return (
@@ -238,15 +324,39 @@ const ProgrammeManagement = () => {
         <div className="body-sub-title">{t('programme:desc')}</div>
       </div>
       <div className="content-card">
-        <Row>
-          <div className="action-bar">
-            <Checkbox.Group
-              options={statusOptions}
-              defaultValue={statusOptions.map((e) => e.value)}
-              value={selectedStatus}
-              onChange={onStatusQuery}
-            />
-          </div>
+        <Row className="table-actions-section">
+          <Col lg={{ span: 18 }} md={{ span: 12 }}>
+            <div className="action-bar">
+              <Checkbox
+                className="all-check"
+                indeterminate={indeterminate}
+                onChange={onCheckAllChange}
+                checked={checkAll}
+                defaultChecked={true}
+              >
+                All
+              </Checkbox>
+              <Checkbox.Group
+                options={statusOptions}
+                defaultValue={statusOptions.map((e) => e.value)}
+                value={selectedStatus}
+                onChange={onStatusQuery}
+              />
+            </div>
+          </Col>
+          <Col lg={{ span: 6 }} md={{ span: 12 }}>
+            <div className="filter-section">
+              <div className="search-bar">
+                <Search
+                  onPressEnter={onSearch}
+                  placeholder={'Search by programme name'}
+                  allowClear
+                  onChange={(e) => setSearch(e.target.value)}
+                  onSearch={onSearch}
+                />
+              </div>
+            </div>
+          </Col>
         </Row>
         <Row>
           <Col span={24}>
@@ -264,6 +374,7 @@ const ProgrammeManagement = () => {
                   showSizeChanger: true,
                   onChange: onChange,
                 }}
+                onChange={(val: any, filter: any, sorter: any) => handleTableChange(val, sorter)}
                 // scroll={{ x: 1500 }}
                 locale={{
                   emptyText: (
