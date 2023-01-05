@@ -326,7 +326,7 @@ const ProgrammeManagement = () => {
       </div>
       <div className="content-card">
         <Row className="table-actions-section">
-          <Col lg={{ span: 18 }} md={{ span: 12 }}>
+          <Col lg={{ span: 16 }} md={{ span: 16 }}>
             <div className="action-bar">
               <Checkbox
                 className="all-check"
@@ -345,7 +345,7 @@ const ProgrammeManagement = () => {
               />
             </div>
           </Col>
-          <Col lg={{ span: 6 }} md={{ span: 12 }}>
+          <Col lg={{ span: 8 }} md={{ span: 8 }}>
             <div className="filter-section">
               <div className="search-bar">
                 <Search
@@ -354,6 +354,7 @@ const ProgrammeManagement = () => {
                   allowClear
                   onChange={(e) => setSearchText(e.target.value)}
                   onSearch={setSearch}
+                  style={{ width: 265 }}
                 />
               </div>
             </div>
