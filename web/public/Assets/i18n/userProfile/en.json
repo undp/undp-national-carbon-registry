@@ -1,0 +1,13 @@
+{
+    "title": "User Profile",
+    "subTitle": "sub titile description",
+    "userDetailsHeading" : "User Details",
+    "organisationDetailsHeading" : "Organisation Details",
+    "name" : "Name",
+    "email" : "Email",
+    "role" : "Role",
+    "phoneNo" : "Phone",
+    "taxId" : "Tax ID",
+    "website" : "Website",
+    "address" : "Address"
+}
