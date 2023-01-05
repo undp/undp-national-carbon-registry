@@ -200,7 +200,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme certification revoked by ${getTxRefValues(
+            description: `The certificate of the programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
             )} of ${getTxRefValues(activity.data.txRef, 3)}`,
@@ -791,7 +791,7 @@ const ProgrammeView = () => {
         title={
           <div className="popup-header">
             <div className="icon">{actionInfo.icon}</div>
-            <div>{`Are you sure you want to ${actionInfo.action.toLowerCase()} the programme - ${
+            <div>{`Are you sure you want to ${actionInfo.action ? actionInfo.action.toLowerCase() : actionInfo.action} the programme - ${
               data.title
             }?`}</div>
           </div>
