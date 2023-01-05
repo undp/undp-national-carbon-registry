@@ -39,6 +39,7 @@ const ProgrammeManagement = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   // const [filter, setFilter] = useState<any>([]);
   const [search, setSearch] = useState<string>();
+  const [searchText, setSearchText] = useState<string>();
   const [statusFilter, setStatusFilter] = useState<any>();
   const { i18n, t } = useTranslation(['common', 'programme']);
   const [sortOrder, setSortOrder] = useState<string>();
@@ -296,12 +297,12 @@ const ProgrammeManagement = () => {
   };
 
   const onSearch = async () => {
-    getAllProgramme();
+    setSearch(searchText);
   };
 
   useEffect(() => {
     getAllProgramme();
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder]);
+  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
@@ -351,8 +352,8 @@ const ProgrammeManagement = () => {
                   onPressEnter={onSearch}
                   placeholder={'Search by programme name'}
                   allowClear
-                  onChange={(e) => setSearch(e.target.value)}
-                  onSearch={onSearch}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  onSearch={setSearch}
                 />
               </div>
             </div>
