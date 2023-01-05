@@ -7,6 +7,7 @@ import { Repository } from "typeorm";
 import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
 import { HelperService } from "../shared/util/helpers.service";
+import { ProgrammeStage } from "../shared/enum/programme-status.enum";
 
 @Injectable()
 export class AnalyticsAPIService {
@@ -14,24 +15,50 @@ export class AnalyticsAPIService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>
-  ) { }
+  ) {}
 
   async programmesStaticDetails(
     abilityCondition: string,
     query: StatList
   ): Promise<DataCountResponseDto> {
-
-    let results = {}
+    let results = {};
     for (const stat of query.stats) {
       switch (stat.type) {
         case StatType.TOTAL_PROGRAMS:
-        case StatType.PROGRAMS_BY_STATUS:
-        case StatType.CREDIT_CERTIFIED:
-          let resp = await this.programmeRepo
+          let totalProgrammesResponse = await this.programmeRepo
             .createQueryBuilder()
-            .where(abilityCondition ? this.helperService.parseMongoQueryToSQL(abilityCondition) : "")
+            .where(
+              abilityCondition
+                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
+                : ""
+            )
             .getCount();
-          results[stat.type] = resp
+          results[stat.type] = totalProgrammesResponse;
+          break;
+
+        case StatType.PROGRAMS_BY_STATUS:
+          let programmeByStatus = await this.programmeRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLStastics(
+                stat,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getCount();
+          results[ProgrammeStage[stat.value]] = programmeByStatus;
+          break;
+
+        case StatType.CREDIT_CERTIFIED:
+          let creditCertifiedResponse = await this.programmeRepo
+            .createQueryBuilder()
+            .where(
+              abilityCondition
+                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
+                : ""
+            )
+            .getCount();
+          results[stat.type] = creditCertifiedResponse;
           break;
       }
     }

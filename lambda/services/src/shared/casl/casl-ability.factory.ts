@@ -5,7 +5,7 @@ import { Action } from "./action.enum";
 import { Role } from "./role.enum";
 import { EntitySubject } from "../entities/entity.subject";
 import { Programme } from "../entities/programme.entity";
-import { ProgrammeStage } from "../programme-ledger/programme-status.enum";
+import { ProgrammeStage } from "../enum/programme-status.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { Company } from "../entities/company.entity";
 import { Stat } from "../dto/stat.dto";

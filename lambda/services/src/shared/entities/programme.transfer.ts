@@ -6,7 +6,7 @@ import { ProgrammeProperties } from '../dto/programme.properties';
 import { SolarProperties } from '../dto/solar.properties';
 import { Sector } from '../enum/sector.enum';
 import { TransferStatus } from '../enum/transform.status.enum';
-import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
+import { ProgrammeStage } from '../enum/programme-status.enum';
 import { EntitySubject } from './entity.subject';
 
 export const bigint: ValueTransformer = {

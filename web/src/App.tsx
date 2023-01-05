@@ -29,7 +29,7 @@ const App = () => {
         serverURL={
           process.env.REACT_APP_BACKEND
             ? process.env.REACT_APP_BACKEND
-            : 'https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api'
+            : 'http://localhost:3000/local/api'
         }
       >
         <UserInformationContextProvider>

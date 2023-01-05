@@ -6,3 +6,66 @@
     font-weight: 600;
   }
 }
+
+.delete-modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0 0 0;
+  width: 100%;
+
+  .confirm-message-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    .content {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 1.25rem;
+      line-height: 1.875rem;
+      padding: 0 2rem 0 2rem;
+      text-align: center;
+      color: $common-filter-color;
+    }
+
+    .sub-content {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.875rem;
+      line-height: 1.375rem;
+      text-align: center;
+      color: rgba(58, 53, 65, 0.5);
+    }
+  }
+
+  .remarks {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border: 1px solid 0 1rem;
+    padding: 0.5rem 2rem 0 2rem;
+
+    .ant-form {
+      width: 100%;
+      .ant-form-item-label > label {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 0.875rem;
+        color: rgba(58, 53, 65, 0.5);
+      }
+
+      .ant-input {
+        border: 1px solid #d9d9d9;
+        border-radius: 4px;
+        height: 55px;
+      }
+    }
+  }
+}
