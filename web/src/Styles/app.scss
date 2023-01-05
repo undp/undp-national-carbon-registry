@@ -191,6 +191,8 @@ body {
   background-color: $outside-background-color;
   border-radius: 10px;
   width: 100%;
+  // height: calc(100vh - 200px);
+  // overflow: auto;
   .action-bar {
     padding: 1.6rem 1.3rem 1.6rem 1.3rem;
 

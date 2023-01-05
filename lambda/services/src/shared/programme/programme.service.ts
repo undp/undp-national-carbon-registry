@@ -283,6 +283,10 @@ export class ProgrammeService {
 
         const sql = (await this.programmeRepo.createQueryBuilder("programme")
             .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
+            .orderBy(
+                query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+                query?.sort?.order
+            )
             .offset(skip)
             .limit(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
@@ -293,6 +297,10 @@ export class ProgrammeService {
 
         const resp = (await this.programmeRepo.createQueryBuilder("programme")
             .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
+            .orderBy(
+                query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+                query?.sort?.order
+            )
             .offset(skip)
             .limit(query.size)
             .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
