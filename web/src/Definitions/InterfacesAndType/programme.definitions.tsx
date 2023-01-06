@@ -91,6 +91,8 @@ export interface Programme {
   proponentPercentage: number[];
   creditOwnerPercentage: number[];
   certifierId: any[];
+  certifier: any[];
+  company: any[];
   creditUnit: string;
   programmeProperties: ProgrammeProperties;
   agricultureProperties: any;
