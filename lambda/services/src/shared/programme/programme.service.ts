@@ -294,8 +294,8 @@ export class ProgrammeService {
 
         if (resp.length > 0) {
             resp[0] = resp[0].map( e => {
-                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? null: e.certifier
-                e.company = e.company.length > 0 && e.company[0] === null ? null: e.company
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                e.company = e.company.length > 0 && e.company[0] === null ? []: e.company
                 return e;
             })
         }
