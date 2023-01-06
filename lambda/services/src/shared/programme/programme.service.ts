@@ -282,7 +282,7 @@ export class ProgrammeService {
 
     async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
         const skip = (query.size * query.page) - query.size;
-        const resp = (await this.programmeViewRepo.createQueryBuilder("programme")
+        let resp = (await this.programmeViewRepo.createQueryBuilder("programme")
             .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
             .orderBy(
                 query?.sort?.key && `"programme"."${query?.sort?.key}"`,
@@ -292,7 +292,13 @@ export class ProgrammeService {
             .limit(query.size)
             .getManyAndCount())
 
-        console.log(resp)
+        if (resp.length > 0) {
+            resp[0] = resp[0].map( e => {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? null: e.certifier
+                e.company = e.company.length > 0 && e.company[0] === null ? null: e.company
+                return e;
+            })
+        }
 
         return new DataListResponseDto(
             resp.length > 0 ? resp[0] : undefined,
