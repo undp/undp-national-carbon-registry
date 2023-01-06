@@ -104,7 +104,7 @@ const ProgrammeView = () => {
     if (d === undefined) {
       return;
     }
-    const c = d.certifierId.map((cert: any) => {
+    const c = d.certifier.map((cert: any) => {
       return (
         <div className="">
           <div className="cert-info">
@@ -294,8 +294,8 @@ const ProgrammeView = () => {
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
-          if (!response.data.certifierId) {
-            response.data.certifierId = [];
+          if (!response.data.certifier) {
+            response.data.certifier = [];
           }
 
           if (
@@ -437,7 +437,7 @@ const ProgrammeView = () => {
     return <div></div>;
   }
   const percentages: any[] = [];
-  data.companyId.forEach((obj: any, index: number) => {
+  data.company.forEach((obj: any, index: number) => {
     percentages.push({
       company: obj,
       percentage: data.proponentPercentage ? data.proponentPercentage[index] : 100,
@@ -548,7 +548,7 @@ const ProgrammeView = () => {
     }
 
     if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      if (!data.certifierId.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+      if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
         actionBtns.push(
           <Button
             type="primary"

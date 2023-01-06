@@ -10,12 +10,13 @@ import { CompanyModule } from '../company/company.module';
 import { EmailModule } from '../email/email.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { Company } from '../entities/company.entity';
+import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 
 @Module({
   imports: [
     ProgrammeLedgerModule, 
     CaslModule, 
-    TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company]), 
+    TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity]), 
     UtilModule, 
     CompanyModule, 
     EmailModule
