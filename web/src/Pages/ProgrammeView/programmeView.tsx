@@ -26,6 +26,7 @@ import {
   TransactionOutlined,
 } from '@ant-design/icons';
 import {
+  addCommSep,
   CompanyRole,
   getFinancialFields,
   getGeneralFields,
@@ -614,14 +615,18 @@ const ProgrammeView = () => {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {
       calculations.landArea =
-        data.agricultureProperties.landArea + ' ' + data.agricultureProperties.landAreaUnit;
+        addCommSep(data.agricultureProperties.landArea) +
+        ' ' +
+        data.agricultureProperties.landAreaUnit;
     }
     delete calculations.landAreaUnit;
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
     calculations = data.solarProperties;
     if (calculations.energyGenerationUnit) {
       calculations.energyGeneration =
-        data.solarProperties.energyGeneration + ' ' + data.solarProperties.energyGenerationUnit;
+        addCommSep(data.solarProperties.energyGeneration) +
+        ' ' +
+        data.solarProperties.energyGenerationUnit;
     }
     delete calculations.energyGenerationUnit;
   }

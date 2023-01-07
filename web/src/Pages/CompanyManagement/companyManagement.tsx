@@ -59,6 +59,7 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -244,24 +245,24 @@ const CompanyManagement = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return item ? item : '-';
+        return item ? addCommSep(item) : '-';
       },
     },
-    {
-      title: '',
-      width: 6,
-      align: 'right' as const,
-      render: (_: any, record: TableDataType) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-            <EllipsisOutlined
-              rotate={90}
-              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-            />
-          </Popover>
-        );
-      },
-    },
+    // {
+    //   title: '',
+    //   width: 6,
+    //   align: 'right' as const,
+    //   render: (_: any, record: TableDataType) => {
+    //     return (
+    //       <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+    //         <EllipsisOutlined
+    //           rotate={90}
+    //           style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+    //         />
+    //       </Popover>
+    //     );
+    //   },
+    // },
   ];
   // }
 

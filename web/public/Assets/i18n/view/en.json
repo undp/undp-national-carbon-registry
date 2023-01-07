@@ -7,7 +7,7 @@
     "name": "Programme Name",
     "serialNo": "Credit Issuance Serial Number",
     "currentStatus": "Current Status",
-    "applicationType": "Application Type",
+    "applicationType": "Applicant Type",
     "sector": "Sector",
     "sectoralScope": "Sectoral Scope",
     "startDate": "Programme Start Date",
