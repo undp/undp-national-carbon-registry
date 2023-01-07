@@ -448,6 +448,13 @@ body {
   border-color: $body-text-color;
 }
 
+.ant-tag-processing {
+  color: $primary-color;
+  background: rgba($color: #B9E2F4, $alpha: 0.4);
+  // border: none;
+    // border-color: #91d5ff;
+}
+
 // .apexcharts-tooltip.apexcharts-theme-dark{
 //   background: $primary-color !important;
 // }
