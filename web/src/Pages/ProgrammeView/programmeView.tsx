@@ -589,6 +589,13 @@ const ProgrammeView = () => {
     }
   }
 
+  const addSpaces = (text: string) => {
+    if (!text) {
+      return text;
+    }
+    return text.replace(/([A-Z])/g, ' $1').trim();
+  };
+
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
     const text = t('view:' + k);
@@ -627,6 +634,10 @@ const ProgrammeView = () => {
         addCommSep(data.solarProperties.energyGeneration) +
         ' ' +
         data.solarProperties.energyGenerationUnit;
+    } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
+      calculations.consumerGroup = (
+        <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
+      );
     }
     delete calculations.energyGenerationUnit;
   }
@@ -661,6 +672,9 @@ const ProgrammeView = () => {
                           position: 'bottom',
                         },
                         colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                        },
                         states: {
                           normal: {
                             filter: {

@@ -359,11 +359,11 @@ export class ProgrammeService {
 
         const company = await this.companyService.findByCompanyId(user.companyId);
         const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
-        updated.companyId = await this.companyRepo.find({
+        updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
         if (updated && updated.certifierId && updated.certifierId.length > 0) {
-            updated.certifierId = await this.companyRepo.find({
+            updated.certifier = await this.companyRepo.find({
                 where: { companyId: In(updated.certifierId) },
             })
         }
@@ -382,11 +382,11 @@ export class ProgrammeService {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }
 
-            updated.companyId = await this.companyRepo.find({
+            updated.company = await this.companyRepo.find({
                 where: { companyId: In(updated.companyId) },
             })
             if (updated.certifierId && updated.certifierId.length > 0) {
-                updated.certifierId = await this.companyRepo.find({
+                updated.certifier = await this.companyRepo.find({
                     where: { companyId: In(updated.certifierId) },
                 })
             }
