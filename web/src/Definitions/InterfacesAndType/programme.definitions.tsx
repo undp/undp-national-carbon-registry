@@ -3,9 +3,9 @@ import { DateTime } from 'luxon';
 export enum ProgrammeStage {
   AwaitingAuthorization = 'Pending',
   Issued = 'Issued',
-  Rejected = 'Rejected',
-  Retired = 'Retired',
   Transferred = 'Transferred',
+  Retired = 'Retired',
+  Rejected = 'Rejected',
   // Frozen = 'Frozen',
 }
 
@@ -120,11 +120,17 @@ export const getGeneralFields = (programme: Programme) => {
   };
 };
 
+export const addCommSep = (value: any) => {
+  return Number(value)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 export const getFinancialFields = (programme: Programme) => {
   return {
-    programmeCost: programme.programmeProperties.programmeCostUSD,
+    programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
     financingType: programme.programmeProperties.sourceOfFunding,
-    grantEquivalent: programme.programmeProperties.grantEquivalentAmount,
-    carbonPrice: programme.programmeProperties.carbonPriceUSDPerTon,
+    grantEquivalent: addCommSep(programme.programmeProperties.grantEquivalentAmount),
+    carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };
 };

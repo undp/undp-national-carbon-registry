@@ -52,8 +52,8 @@ const ProgrammeManagement = () => {
 
   const [selectedStatus, setSelectedStatus] = useState<any>(statusOptions.map((e) => e.value));
 
-  const [indeterminate, setIndeterminate] = useState(true);
-  const [checkAll, setCheckAll] = useState(false);
+  const [indeterminate, setIndeterminate] = useState(false);
+  const [checkAll, setCheckAll] = useState(true);
 
   const getCompanyBgColor = (item: string) => {
     if (item === 'Government') {
