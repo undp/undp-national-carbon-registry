@@ -2,6 +2,8 @@ export default () => ({
     stage: process.env.STAGE || 'local',
     systemCountry: process.env.systemCountryCode || 'NG',
     defaultCreditUnit: process.env.defaultCreditUnit || 'ITMO',
+    dateTimeFormat: 'DD LLLL yyyy @ HH:mm',
+    dateFormat: 'DD LLLL yyyy',
     database: {
         type: 'postgres',
         host: process.env.DB_HOST || 'localhost',

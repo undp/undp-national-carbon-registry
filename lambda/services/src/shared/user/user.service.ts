@@ -97,6 +97,15 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
+  async getUserProfileDetails(username: string) {
+    const userProfileDetails = await this.findOne(username);
+    const organisationDetails = await this.companyService.findByCompanyId(userProfileDetails.companyId);
+    return{
+      user: userProfileDetails,
+      Organisation: organisationDetails
+    }
+  }
+
   async findById(id: number): Promise<User | undefined> {
     return await this.userRepo.findOneBy({
       id: id,

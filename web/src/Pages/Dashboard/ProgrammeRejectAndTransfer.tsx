@@ -28,7 +28,7 @@ const ProgrammeRejectAndTransfer = () => {
         </div>
       </div>
       <div className="total-programme-extra-details">
-        <div className="rejected-details">
+        <div className="rejected-details margin-top-1">
           <div className="icon">
             <div className="icon-container reject">
               <CloseCircleOutlined
@@ -54,7 +54,7 @@ const ProgrammeRejectAndTransfer = () => {
             </div>
           </div>
         </div>
-        <div className="transfered-details">
+        <div className="transfered-details margin-top-1">
           <div className="icon">
             <div className="icon-container transfer">
               <CarOutlined
@@ -81,7 +81,7 @@ const ProgrammeRejectAndTransfer = () => {
           </div>
         </div>
       </div>
-      <div className="updated-on">
+      <div className="updated-on margin-top-4">
         <div className="updated-moment-container">
           {moment(parseInt('1672648015') * 1000).fromNow()}
         </div>

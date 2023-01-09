@@ -740,7 +740,7 @@ export const optionsP: any = {
     height: 400,
   },
   title: {
-    text: 'Overall Approved Programmes',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -763,7 +763,7 @@ export const optionsP: any = {
     showForSingleSeries: false,
     showForNullSeries: true,
     showForZeroSeries: true,
-    position: 'right',
+    position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
@@ -909,13 +909,103 @@ export const optionsQ: any = {
   colors: ['#A8006D', '#D3014C', '#FF3701', '#FFAB00', '#FDE725'],
 };
 
+export const optionDonutPieA: any = {
+  chart: {
+    type: 'donut',
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+  labels: ['Available', 'Rejected', 'Transfered'],
+  plotOptions: {
+    pie: {
+      donut: {
+        total: {
+          show: true,
+          showAlways: true,
+          label: 'Total',
+          fontSize: '0.875rem',
+          fontFamily: 'Inter',
+          fontWeight: 400,
+          color: 'black',
+          formatter: () => {
+            return 44000;
+          },
+        },
+      },
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200,
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    },
+  ],
+};
+
+export const seriesDonutPieA = [44, 55, 41];
+
 export const optionsR: any = {
   chart: {
     type: 'pie',
     height: 400,
   },
   title: {
-    text: 'Overall Programmes',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -938,8 +1028,8 @@ export const optionsR: any = {
     showForSingleSeries: false,
     showForNullSeries: true,
     showForZeroSeries: true,
-    position: 'right',
-    horizontalAlign: 'center',
+    position: 'bottom',
+    horizontalAlign: 'left',
     floating: false,
     fontSize: '14px',
     fontFamily: 'Inter-Regular',

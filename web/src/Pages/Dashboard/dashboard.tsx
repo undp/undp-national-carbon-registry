@@ -8,6 +8,7 @@ import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   DUmData,
+  optionDonutPieA,
   options,
   optionsA,
   optionsP,
@@ -18,6 +19,7 @@ import {
   optionsZ,
   series,
   seriesA,
+  seriesDonutPieA,
   seriesP,
   seriesQ,
   seriesR,
@@ -29,6 +31,7 @@ import HtmlCluster from './SampleMap';
 import fileText from '../../Assets/Images/fileText.svg';
 import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
+import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 
@@ -89,10 +92,40 @@ const Dashboard = () => {
             <ProgrammeRejectAndTransfer />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card"></div>
+            <div className="stastics-and-pie-card">
+              <div className="pie-charts-title">Credits</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionDonutPieA}
+                  series={seriesDonutPieA}
+                  type="donut"
+                  width="350px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(parseInt('1672648015') * 1000).fromNow()}
+                </div>
+              </div>
+            </div>
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card"></div>
+            <div className="stastics-and-pie-card">
+              <div className="pie-charts-title">Certified</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionDonutPieA}
+                  series={seriesDonutPieA}
+                  type="donut"
+                  width="350px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(parseInt('1672648015') * 1000).fromNow()}
+                </div>
+              </div>
+            </div>
           </Col>
         </Row>
       </div>

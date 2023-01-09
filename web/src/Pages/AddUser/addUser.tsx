@@ -128,8 +128,12 @@ const AddUser = () => {
   return (
     <div className="add-user-main-container">
       <div className="title-container">
-        <div className="main">{state?.record?.name ? 'Update User' : 'Add New User'}</div>
-        <div className="sub">Add new users to the Carbon Registry for your organisation</div>
+        <div className="main">{state?.record?.name ? 'Edit User' : 'Add New User'}</div>
+        <div className="sub">
+          {state?.record?.name
+            ? 'Edit the users of your organisation'
+            : 'Add new users to the Carbon Registry for your organisation'}
+        </div>
       </div>
       <div className="content-card user-content-card">
         <Form
@@ -199,7 +203,7 @@ const AddUser = () => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input disabled={state?.record?.email} size="large" />
                 </Form.Item>
               </div>
             </Col>
