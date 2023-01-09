@@ -22,6 +22,7 @@ import {
   Menu,
   MenuProps,
   message,
+  Modal,
   PaginationProps,
   Popconfirm,
   Popover,
@@ -31,6 +32,7 @@ import {
   Space,
   Table,
   Typography,
+  Form,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
@@ -65,6 +67,7 @@ const { Option } = Select;
 
 const UserManagement = () => {
   const navigate = useNavigate();
+  const [formModal] = Form.useForm();
   const { get, post, delete: del } = useConnection();
   const [totalUser, setTotalUser] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -79,6 +82,8 @@ const UserManagement = () => {
   const [filterByRole, setFilterByRole] = useState<string>('All');
   const [sortOrder, setSortOrder] = useState<string>('');
   const [sortField, setSortField] = useState<string>('');
+  const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
+  const [deleteUserModalRecord, setDeleteUserModalRecord] = useState<any>();
   const { i18n, t } = useTranslation(['user']);
 
   document.addEventListener('mousedown', (event: any) => {
@@ -172,6 +177,15 @@ const UserManagement = () => {
     }
   };
 
+  const handleOk = () => {
+    deleteUser(deleteUserModalRecord);
+    setDeleteUserModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setDeleteUserModalVisible(false);
+  };
+
   const actionMenu = (record: TableDataType) => {
     return (
       <List
@@ -189,7 +203,9 @@ const UserManagement = () => {
             text: 'Delete',
             icon: <DeleteOutlined />,
             click: () => {
-              deleteUser(record);
+              setDeleteUserModalRecord(record);
+              setDeleteUserModalVisible(true);
+              // deleteUser(record);
             },
           },
         ]}
@@ -570,6 +586,59 @@ const UserManagement = () => {
 
   return (
     <div className="content-container">
+      <Modal
+        centered
+        title=""
+        okText="DELETE"
+        open={deleteUserModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <div className="delete-modal-container">
+          <div className="confirm-message-details">
+            <div className="icon">
+              <Trash color="#FF4D4F" size={90} />
+            </div>
+            <div className="content">Are you sure you want to permanently delete this user?</div>
+            <div className="sub-content">You can’t undo this action</div>
+          </div>
+          <div className="remarks">
+            <Form
+              name="delete-modal-details"
+              className="delete-modal-form"
+              layout={'vertical'}
+              requiredMark={true}
+              form={formModal}
+              onFinish={handleOk}
+            >
+              <Form.Item
+                className="remarks-label"
+                label="Remarks"
+                name="remarks"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Remarks is required!',
+                  },
+                ]}
+              >
+                <Input.TextArea placeholder="" />
+              </Form.Item>
+              <Form.Item>
+                <div className="delete-modal-btns">
+                  <div className="center width-60">
+                    <Button onClick={handleCancel}>CANCEL</Button>
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                      DELETE
+                    </Button>
+                  </div>
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+      </Modal>
       <div className="title-bar">
         <div className="body-title">{t('user:viewUsers')}</div>
         <div className="body-sub-title">{t('user:viewDesc')}</div>
@@ -594,7 +663,7 @@ const UserManagement = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={searchByTermUser === 'email' ? 'Search by Email' : 'Search by Name'}
+                  placeholder={searchByTermUser === 'email' ? 'Search by email' : 'Search by name'}
                   allowClear
                   onChange={(e) =>
                     e.target.value === ''
@@ -613,6 +682,7 @@ const UserManagement = () => {
                   open={filterVisible}
                   onOpenChange={handleFilterVisibleChange}
                   overlayClassName="filter-dropdown"
+                  trigger={['click']}
                 >
                   <a
                     className="ant-dropdown-link"

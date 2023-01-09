@@ -34,6 +34,12 @@
 .ant-table-pagination.ant-pagination {
   margin: 16px 24px;
 }
+
+.ant-select-item-option-content {
+  font-family: $primary-font-family;
+  color: $title-text-color;
+}
+
 .ant-pagination-prev, .ant-pagination-next, .ant-pagination-jump-prev, .ant-pagination-jump-next, .ant-pagination-item {
   height: 28px;
   border-radius: 4px;
@@ -42,8 +48,22 @@
   font-family: $primary-font-family;
 }
 
+
 .ant-pagination-item-active:focus-visible {
   border-color: $primary-color;
+}
+
+.ant-pagination-options-quick-jumper {
+  font-size: 0.8rem;
+  font-family: $primary-font-family;
+  color: $title-text-color;
+
+  input {
+    height: 28px;
+    border-radius: 4px;
+    line-height: 26px;
+    color: $title-text-color;
+  }
 }
 
 .ant-pagination-options {
@@ -66,4 +86,9 @@
     color: $title-text-color;
     font-size: 0.8rem;
   }
+}
+
+.table-actions-section input {
+  font-family: "Inter";
+  font-size: 0.8rem;
 }

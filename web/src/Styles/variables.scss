@@ -2,12 +2,13 @@ $primary-font-family: 'Inter';
 $secondary-font-family: 'Sohne-Breit';
 $common-form-input-border: #d9d9d9;
 
-$primary-color: #16B1FF;
+$primary-color: #16b1ff;
 
 
 $nav-color: #282828;
-$text-color: #3A3541;
-$dark-text-color: #FFFFFF;
+$text-color: #3a3541;
+$dark-text-color: #ffffff;
+$common-filter-color: rgba(58, 53, 65, 0.8);
 
 $line-colors: #D9D9D9;
 $error-color: rgba(#FF4D4F, 0.8);
@@ -15,16 +16,17 @@ $background-color: #F4F5FA;
 $background-color-dark:#232E3D;
 $outside-background-color: #FFFFFF;
 
-$gradient-background-start: #6ACDFF;
-$gradient-background-end: rgba(#16B1FF, 0.94);
+$gradient-background-start: #6acdff;
+$gradient-background-end: rgba(#16b1ff, 0.94);
 
-$sep-line-color: #F0F0F0;
+$sep-line-color: #f0f0f0;
 
-$title-text-color: rgba($text-color, .8);
-$body-text-color: rgba($text-color, .6);
-$light-text-color: rgba($text-color, .3);
+$title-text-color: rgba($text-color, 0.8);
+$body-text-color: rgba($text-color, 0.6);
+$border-default-btn: rgba(140, 140, 140, 0.7);
+$light-text-color: rgba($text-color, 0.3);
 
-$success-color: #5DC380;
+$success-color: #5dc380;
 
 $lg-size: 992px;
 
