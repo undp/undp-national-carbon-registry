@@ -59,7 +59,10 @@ const App = () => {
                   <Route path="addUser" element={<AddUser />} />
                   <Route path="updateUser" element={<AddUser />} />
                 </Route>
-                <Route path="/userProfile" element={<CustomLayout selectedKey="userProfile" />}>
+                <Route
+                  path="/userProfile"
+                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                >
                   <Route path="userProfileDetails" element={<UserProfile />} />
                 </Route>
 

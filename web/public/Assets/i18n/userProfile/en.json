@@ -13,7 +13,7 @@
     "id" : "id",
     "country": "country",
     "companyId": "companyId",
-    "companyRole": "companyRole",
+    "companyRole": "Role",
     "logo": "logo",
     "state": "state",
     "delete": "DELETE",
@@ -21,5 +21,7 @@
     "deleteConfirmHeaderText": "Are you sure you want to permanently delete this user?",
     "deleteConfirmText":"You can’t undo this action",
     "cancel":"Cancel",
-    "remarks":"Remarks"
+    "remarks":"Remarks",
+    "creditBalance":"Credit Balance",
+    "programmeCount":"No of Programmes"
 }
