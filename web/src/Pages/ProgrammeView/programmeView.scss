@@ -37,6 +37,7 @@
     color: $dev-color;
     text-align: center;
     padding: 12px;
+    margin: auto;
   }
 
   .centered-card {
@@ -169,3 +170,6 @@
   color: $title-text-color !important;
 }
 
+.remark {
+  font-size: 0.8rem;
+}

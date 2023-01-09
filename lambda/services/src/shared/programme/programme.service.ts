@@ -32,6 +32,7 @@ import { Company } from '../entities/company.entity';
 import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
+import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -46,6 +47,7 @@ export class ProgrammeService {
         private emailService: EmailService,
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
+        @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
@@ -280,13 +282,23 @@ export class ProgrammeService {
 
     async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
         const skip = (query.size * query.page) - query.size;
-        const resp = (await this.programmeRepo.createQueryBuilder("programme")
+        let resp = (await this.programmeViewRepo.createQueryBuilder("programme")
             .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
+            .orderBy(
+                query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+                query?.sort?.order
+            )
             .offset(skip)
             .limit(query.size)
-            .leftJoinAndMapMany('programme.companyId', Company, 'company', 'company.companyId = ANY(programme.companyId)')
-            .leftJoinAndMapMany('programme.certifierId', Company, 'certcomp', 'certcomp.companyId = ANY(programme.certifierId)')
             .getManyAndCount())
+
+        if (resp.length > 0) {
+            resp[0] = resp[0].map( e => {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                e.company = e.company.length > 0 && e.company[0] === null ? []: e.company
+                return e;
+            })
+        }
 
         return new DataListResponseDto(
             resp.length > 0 ? resp[0] : undefined,
@@ -347,11 +359,11 @@ export class ProgrammeService {
 
         const company = await this.companyService.findByCompanyId(user.companyId);
         const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
-        updated.companyId = await this.companyRepo.find({
+        updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
         if (updated && updated.certifierId && updated.certifierId.length > 0) {
-            updated.certifierId = await this.companyRepo.find({
+            updated.certifier = await this.companyRepo.find({
                 where: { companyId: In(updated.certifierId) },
             })
         }
@@ -370,11 +382,11 @@ export class ProgrammeService {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }
 
-            updated.companyId = await this.companyRepo.find({
+            updated.company = await this.companyRepo.find({
                 where: { companyId: In(updated.companyId) },
             })
             if (updated.certifierId && updated.certifierId.length > 0) {
-                updated.certifierId = await this.companyRepo.find({
+                updated.certifier = await this.companyRepo.find({
                     where: { companyId: In(updated.certifierId) },
                 })
             }

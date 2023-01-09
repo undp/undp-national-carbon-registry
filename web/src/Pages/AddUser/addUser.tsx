@@ -68,7 +68,7 @@ const AddUser = () => {
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigate('/userManagement', { replace: true });
+        navigate('/userManagement/viewAll', { replace: true });
         setLoading(false);
       }
     } catch (error: any) {
@@ -81,7 +81,7 @@ const AddUser = () => {
       });
     } finally {
       setLoading(false);
-      navigate('/userManagement/viewAll', { replace: true });
+      // navigate('/userManagement/viewAll', { replace: true });
     }
   };
 

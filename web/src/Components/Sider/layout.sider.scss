@@ -2,7 +2,24 @@
 
 .layout-sider-container {
   background-color: $background-color;
+  height: 100vh;
 
+  .toggle-nav-btn {
+    cursor: pointer;
+    position: absolute;
+    bottom: 15px;
+    text-align: center;
+    width: calc(100% - 20px);
+    border: 1px solid $primary-color;
+    color: $primary-color;
+    border-radius: 5px;
+    height: 32px;
+    vertical-align: middle;
+    padding: 0px;
+    font-size: 25px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 
   .layout-sider-menu-container {
     background-color: $background-color;

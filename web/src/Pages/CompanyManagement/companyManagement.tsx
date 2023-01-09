@@ -59,6 +59,7 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -229,8 +230,8 @@ const CompanyManagement = () => {
     },
     {
       title: t('company:numberOfProgrammes'),
-      dataIndex: 'numberOfProgrammes',
-      key: 'numberOfProgrammes',
+      dataIndex: 'programmeCount',
+      key: 'programmeCount',
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
@@ -239,12 +240,12 @@ const CompanyManagement = () => {
     },
     {
       title: t('company:creditBalance'),
-      dataIndex: 'credit',
-      key: 'credit',
+      dataIndex: 'creditBalance',
+      key: 'creditBalance',
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return item ? item : '-';
+        return item ? addCommSep(item) : '-';
       },
     },
   ];

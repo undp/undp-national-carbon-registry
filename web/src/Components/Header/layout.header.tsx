@@ -7,8 +7,10 @@ import { HeaderProps } from '../../Definitions/InterfacesAndType/layout.header';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const LayoutHeader = (props: HeaderProps) => {
+  const navigate = useNavigate();
   const { title, onToggle } = props;
   const { updateToken } = useConnection();
   const { removeUserInfo } = useUserContext();
@@ -33,7 +35,7 @@ const LayoutHeader = (props: HeaderProps) => {
   return (
     <div className="header-container">
       <Row>
-        <Col span={1}>
+        {/* <Col span={1}>
           <div
             className="toggle-btn"
             onClick={() => {
@@ -43,12 +45,18 @@ const LayoutHeader = (props: HeaderProps) => {
           >
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </div>
-        </Col>
-        <Col span={1} offset={22}>
+        </Col> */}
+        <Col span={1} offset={23}>
           <Row>
             <Col>
               <div className="header-country-logo">
-                <img src={countryLogo} alt="country-logo" />
+                <img
+                  src={countryLogo}
+                  alt="country-logo"
+                  onClick={() => {
+                    navigate('/userProfile/userProfileDetails');
+                  }}
+                />
               </div>
               {/* <div className="header-menu-container">
                 <div className="header-signOut-container">

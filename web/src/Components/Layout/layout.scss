@@ -2,10 +2,14 @@
 
 .layout-main-container {
   background-color: $background-color;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.layout-content-container {
+.layout-container {
   background-color: $background-color;
+  height: 100vh;
+  overflow: auto;
 }
 // .layout-main-container {
 //   overflow: hidden;

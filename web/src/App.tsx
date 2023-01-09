@@ -18,6 +18,7 @@ import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement
 import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import UserProfile from './Pages/UserProfile/UserProfile';
 
 const App = () => {
   useEffect(() => {
@@ -57,6 +58,9 @@ const App = () => {
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
                   <Route path="updateUser" element={<AddUser />} />
+                </Route>
+                <Route path="/userProfile" element={<CustomLayout selectedKey="userProfile" />}>
+                  <Route path="userProfileDetails" element={<UserProfile />} />
                 </Route>
 
                 {/* <Route

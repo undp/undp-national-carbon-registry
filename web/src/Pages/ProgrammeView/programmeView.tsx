@@ -26,6 +26,7 @@ import {
   TransactionOutlined,
 } from '@ant-design/icons';
 import {
+  addCommSep,
   CompanyRole,
   getFinancialFields,
   getGeneralFields,
@@ -104,7 +105,7 @@ const ProgrammeView = () => {
     if (d === undefined) {
       return;
     }
-    const c = d.certifierId.map((cert: any) => {
+    const c = d.certifier.map((cert: any) => {
       return (
         <div className="">
           <div className="cert-info">
@@ -200,7 +201,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
-            description: `The programme was certification revoke by ${getTxRefValues(
+            description: `The certificate of the programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
             )} of ${getTxRefValues(activity.data.txRef, 3)}`,
@@ -280,7 +281,7 @@ const ProgrammeView = () => {
           `national/programme/${
             actionInfo.action === 'Reject'
               ? 'reject'
-              : actionInfo.action === 'Approve'
+              : actionInfo.action === 'Authorise'
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
@@ -294,16 +295,17 @@ const ProgrammeView = () => {
           }
         );
         if (response.statusCode === 200 || response.status === 200) {
-          if (!response.data.certifierId) {
-            response.data.certifierId = [];
+          if (!response.data.certifier) {
+            response.data.certifier = [];
           }
 
           if (
-            actionInfo.action === 'Approve' ||
+            actionInfo.action === 'Authorise' ||
             actionInfo.action === 'Certify' ||
             actionInfo.action === 'Revoke'
           ) {
             setData(response.data);
+            state.record = response.data;
             navigate('.', { state: { record: response.data } });
             genCerts(response.data, certTimes);
           } else if (actionInfo.action === 'Reject') {
@@ -319,8 +321,8 @@ const ProgrammeView = () => {
               'Successfully ' +
               (actionInfo.action === 'Reject'
                 ? 'rejected'
-                : actionInfo.action === 'Approve'
-                ? 'approved'
+                : actionInfo.action === 'Authorise'
+                ? 'authorised'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
                 : actionInfo.action === 'Revoke'
@@ -436,7 +438,7 @@ const ProgrammeView = () => {
     return <div></div>;
   }
   const percentages: any[] = [];
-  data.companyId.forEach((obj: any, index: number) => {
+  data.company.forEach((obj: any, index: number) => {
     percentages.push({
       company: obj,
       percentage: data.proponentPercentage ? data.proponentPercentage[index] : 100,
@@ -493,7 +495,7 @@ const ProgrammeView = () => {
           type="primary"
           onClick={() => {
             setActionInfo({
-              action: 'Approve',
+              action: 'Authorise',
               text: ``,
               type: 'primary',
               remark: false,
@@ -547,7 +549,7 @@ const ProgrammeView = () => {
     }
 
     if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      if (!data.certifierId.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+      if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
         actionBtns.push(
           <Button
             type="primary"
@@ -587,6 +589,13 @@ const ProgrammeView = () => {
     }
   }
 
+  const addSpaces = (text: string) => {
+    if (!text) {
+      return text;
+    }
+    return text.replace(/([A-Z])/g, ' $1').trim();
+  };
+
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
     const text = t('view:' + k);
@@ -613,14 +622,22 @@ const ProgrammeView = () => {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {
       calculations.landArea =
-        data.agricultureProperties.landArea + ' ' + data.agricultureProperties.landAreaUnit;
+        addCommSep(data.agricultureProperties.landArea) +
+        ' ' +
+        data.agricultureProperties.landAreaUnit;
     }
     delete calculations.landAreaUnit;
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
     calculations = data.solarProperties;
     if (calculations.energyGenerationUnit) {
       calculations.energyGeneration =
-        data.solarProperties.energyGeneration + ' ' + data.solarProperties.energyGenerationUnit;
+        addCommSep(data.solarProperties.energyGeneration) +
+        ' ' +
+        data.solarProperties.energyGenerationUnit;
+    } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
+      calculations.consumerGroup = (
+        <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
+      );
     }
     delete calculations.energyGenerationUnit;
   }
@@ -655,6 +672,9 @@ const ProgrammeView = () => {
                           position: 'bottom',
                         },
                         colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                        },
                         states: {
                           normal: {
                             filter: {
@@ -790,7 +810,9 @@ const ProgrammeView = () => {
         title={
           <div className="popup-header">
             <div className="icon">{actionInfo.icon}</div>
-            <div>{`Are you sure you want to ${actionInfo.action} programme ${data.title}?`}</div>
+            <div>{`Are you sure you want to ${
+              actionInfo.action ? actionInfo.action.toLowerCase() : actionInfo.action
+            } the programme - ${data.title}?`}</div>
           </div>
         }
         className={'popup-' + actionInfo.type}
@@ -809,7 +831,7 @@ const ProgrammeView = () => {
         destroyOnClose={true}
       >
         <p>{actionInfo.text}</p>
-        <div className="form-label">
+        <div className="form-label remark">
           {'Remarks'}
           {actionInfo.remark && <span className="req-ast">*</span>}
         </div>
