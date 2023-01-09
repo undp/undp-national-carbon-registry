@@ -44,17 +44,23 @@ const App = () => {
                 </Route>
                 <Route
                   path="/programmeManagement"
-                  element={<CustomLayout selectedKey="programme" />}
+                  element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                 >
                   <Route path="viewAll" element={<ProgrammeManagement />} />
                   <Route path="view" element={<ProgrammeView />} />
                 </Route>
-                <Route path="/companyManagement" element={<CustomLayout selectedKey="company" />}>
+                <Route
+                  path="/companyManagement"
+                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                >
                   <Route path="viewAll" element={<CompanyManagement />} />
                   <Route path="addCompany" element={<AddNewCompany />} />
                   <Route path="updateCompany" element={<AddNewCompany />} />
                 </Route>
-                <Route path="/userManagement" element={<CustomLayout selectedKey="user" />}>
+                <Route
+                  path="/userManagement"
+                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                >
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
                   <Route path="updateUser" element={<AddUser />} />
