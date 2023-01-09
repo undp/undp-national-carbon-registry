@@ -28,7 +28,7 @@
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-http-backend": "^2.0.1",
     "jwt-decode": "^3.1.2",
-    "luxon": "^3.1.1",
+    "luxon": "^3.2.1",
     "mapbox-gl": "^2.11.1",
     "node-sass": "^7.0.3",
     "react": "^18.2.0",
