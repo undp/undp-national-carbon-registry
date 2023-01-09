@@ -19,7 +19,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     userRole: '',
     companyRole: '',
     companyId: -1,
-    companyLogo: ''
+    companyLogo: '',
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
