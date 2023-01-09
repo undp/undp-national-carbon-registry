@@ -593,6 +593,7 @@ const UserManagement = () => {
         open={deleteUserModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        footer={null}
       >
         <div className="delete-modal-container">
           <div className="confirm-message-details">
@@ -604,16 +605,35 @@ const UserManagement = () => {
           </div>
           <div className="remarks">
             <Form
+              name="delete-modal-details"
+              className="delete-modal-form"
               layout={'vertical'}
-              onValuesChange={(val: any) => {}}
               requiredMark={true}
               form={formModal}
+              onFinish={handleOk}
             >
               <Form.Item
+                className="remarks-label"
                 label="Remarks"
-                rules={[{ required: true, message: 'Remarks is required' }]}
+                name="remarks"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Remarks is required!',
+                  },
+                ]}
               >
                 <Input.TextArea placeholder="" />
+              </Form.Item>
+              <Form.Item>
+                <div className="delete-modal-btns">
+                  <div className="center width-60">
+                    <Button onClick={handleCancel}>CANCEL</Button>
+                    <Button type="primary" htmlType="submit" loading={loading}>
+                      DELETE
+                    </Button>
+                  </div>
+                </div>
               </Form.Item>
             </Form>
           </div>

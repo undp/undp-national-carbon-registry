@@ -51,20 +51,37 @@
     border: 1px solid 0 1rem;
     padding: 0.5rem 2rem 0 2rem;
 
+    .ant-form-item-explain-error {
+      display: flex;
+      flex-direction: row;
+    }
+
     .ant-form {
       width: 100%;
-      .ant-form-item-label > label {
+      .remarks-label {
         font-family: 'Inter';
         font-style: normal;
         font-weight: 400;
-        font-size: 0.875rem;
         color: rgba(58, 53, 65, 0.5);
       }
+    }
 
-      .ant-input {
-        border: 1px solid #d9d9d9;
-        border-radius: 4px;
-        height: 55px;
+    .delete-modal-btns {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 1rem;
+
+      .center {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .width-60 {
+        width: 60%;
       }
     }
   }

@@ -18,17 +18,15 @@ export class HelperService {
   }
 
   public generateWhereSQLStastics(
-    query: Stat,
+    col: string,
+    value: string,
     extraSQL: string,
     table?: string
   ) {
     let sql = "";
-    if (query.type === "PROGRAMS_BY_STATUS") {
-      let value = query.value;
-      sql = `${table ? table + "." : ""}"currentStage" = ${this.prepareValue(
-        ProgrammeStage[value]
-      )}`;
-    }
+    sql = `${table ? table + "." : ""}"${col}" = ${this.prepareValue(
+      ProgrammeStage[value]
+    )}`;
 
     if (sql != "") {
       if (extraSQL) {

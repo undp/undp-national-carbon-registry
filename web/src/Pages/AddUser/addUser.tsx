@@ -203,7 +203,7 @@ const AddUser = () => {
                     },
                   ]}
                 >
-                  <Input disabled size="large" />
+                  <Input disabled={state?.record?.email} size="large" />
                 </Form.Item>
               </div>
             </Col>

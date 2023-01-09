@@ -37,11 +37,13 @@ export class AnalyticsAPIService {
           break;
 
         case StatType.PROGRAMS_BY_STATUS:
+          const type = "currentStage";
           let programmeByStatus = await this.programmeRepo
             .createQueryBuilder()
             .where(
               this.helperService.generateWhereSQLStastics(
-                stat,
+                type,
+                stat.value,
                 this.helperService.parseMongoQueryToSQL(abilityCondition)
               )
             )
