@@ -18,6 +18,7 @@ import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement
 import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import Homepage from './Pages/Homepage/homepage';
 
 const App = () => {
   useEffect(() => {
@@ -37,6 +38,7 @@ const App = () => {
             <Routes>
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
+              <Route path="/" element={<Homepage />} />
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                   <Route index element={<Dashboard />} />
@@ -68,7 +70,7 @@ const App = () => {
                   <Route path="updateUser" element={<UpdateUser />} />
                 </Route> */}
               </Route>
-              <Route path="/*" element={<Navigate to="login" replace />} />
+              <Route path="/*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </UserInformationContextProvider>
