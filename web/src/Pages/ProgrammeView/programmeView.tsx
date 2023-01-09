@@ -58,6 +58,7 @@ import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
+import { dateTimeFormat } from '../Common/configs';
 
 mapboxgl.accessToken =
   '';
@@ -140,7 +141,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: 'Programme Created',
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was created with a valuation of ${addCommasToNumber(
               activity.data.creditEst
             )} credits.`,
@@ -157,7 +158,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Authorised by ${getTxRefValues(activity.data.txRef, 1)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was issued ${addCommasToNumber(
               activity.data.creditIssued
             )} Credits with the Serial Number ${activity.data.serialNo}`,
@@ -171,7 +172,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Rejected by ${getTxRefValues(activity.data.txRef, 1)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was rejected`,
             icon: (
               <span
@@ -186,7 +187,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Credit Transferred`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditChange
             )} Credits were transferred to ${getTxRefValues(activity.data.txRef, 1)}`,
@@ -200,7 +201,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The certificate of the programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
@@ -218,7 +219,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was certified by ${getTxRefValues(
               activity.data.txRef,
               1
@@ -240,7 +241,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: activity.data.currentStage,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: ``,
             icon: (
               <span
@@ -696,8 +697,12 @@ const ProgrammeView = () => {
                             },
                           },
                         },
+                        stroke: {
+                          colors: ['#00'],
+                        },
                         plotOptions: {
                           pie: {
+                            expandOnClick: false,
                             donut: {
                               labels: {
                                 show: true,
