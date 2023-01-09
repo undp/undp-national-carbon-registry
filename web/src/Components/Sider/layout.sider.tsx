@@ -79,6 +79,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
           <Menu
             theme="light"
             defaultSelectedKeys={[selectedKey ?? 'dashboard']}
+            selectedKeys={[selectedKey ?? 'dashboard']}
             mode="inline"
             onClick={onClick}
             items={items}
