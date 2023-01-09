@@ -663,7 +663,7 @@ const UserManagement = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={searchByTermUser === 'email' ? 'Search by Email' : 'Search by Name'}
+                  placeholder={searchByTermUser === 'email' ? 'Search by email' : 'Search by name'}
                   allowClear
                   onChange={(e) =>
                     e.target.value === ''

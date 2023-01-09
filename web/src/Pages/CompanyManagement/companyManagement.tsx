@@ -432,7 +432,7 @@ const CompanyManagement = () => {
                 <Search
                   onPressEnter={onSearch}
                   placeholder={
-                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by Name'
+                    searchByTermOrganisation === 'email' ? 'Search by email' : 'Search by name'
                   }
                   allowClear
                   onChange={(e) =>
