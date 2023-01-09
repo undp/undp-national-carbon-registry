@@ -37,9 +37,10 @@
   margin-top: 14px;
   img {
     margin: -14px 5px 7px 5px;
-    object-fit: cover;
+    object-fit: contain;
     // height: auto;
     height: 30px;
+    width: 30px;
     cursor: pointer;
 
   }
