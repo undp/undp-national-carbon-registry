@@ -1,6 +1,7 @@
 import { Alert, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
+import { useTranslation } from 'react-i18next';
 
 export interface UserActionProps {
   actionInfo: any;
@@ -13,6 +14,7 @@ export interface UserActionProps {
 const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps) => {
   const { actionInfo, onActionConfirmed, onActionCanceled, openModal, errorMsg } = props;
   const [comment, setComment] = useState<any>('');
+  const { i18n, t } = useTranslation(['userProfile']);
   return (
     <Modal
       title={
@@ -33,14 +35,14 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
       }}
       okText={actionInfo.action}
       okButtonProps={{ disabled: comment === '' }}
-      cancelText="Cancel"
+      cancelText={t('userProfile:cancel')}
       width={Math.min(400, window.innerWidth)}
       centered={true}
       destroyOnClose={true}
     >
       <p>{actionInfo.text}</p>
       <div className="form-label">
-        {'Remarks'}
+        {t('userProfile:remarks')}
         <span className="req-ast">*</span>
       </div>
       <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />

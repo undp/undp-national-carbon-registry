@@ -64,8 +64,8 @@ const UserProfile = () => {
   const onDeleteProfileUser = () => {
     setActionInfo({
       action: 'Delete',
-      headerText: 'Are you sure you want to permanently delete this user?',
-      text: `You can’t undo this action`,
+      headerText: `${t('userProfile:deleteConfirmHeaderText')}`,
+      text: `${t('userProfile:deleteConfirmText')}`,
       type: 'danger',
       icon: <DeleteOutlined />,
     });
@@ -126,7 +126,7 @@ const UserProfile = () => {
         <Col md={24} lg={16}>
           <Row justify="end">
             <Button className="mg-left-1" onClick={() => onDeleteProfileUser()}>
-              DELETE
+              {t('userProfile:delete')}
             </Button>
             <Button
               className="mg-left-1"
@@ -142,7 +142,7 @@ const UserProfile = () => {
                 });
               }}
             >
-              EDIT
+              {t('userProfile:edit')}
             </Button>
             <div className="login-language-selection-container mg-left-1">
               <span className="login-language-selection-txt">
