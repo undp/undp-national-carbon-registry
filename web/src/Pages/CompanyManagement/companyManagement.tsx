@@ -59,6 +59,7 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -244,22 +245,7 @@ const CompanyManagement = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return item ? item : '-';
-      },
-    },
-    {
-      title: '',
-      width: 6,
-      align: 'right' as const,
-      render: (_: any, record: TableDataType) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-            <EllipsisOutlined
-              rotate={90}
-              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-            />
-          </Popover>
-        );
+        return item ? addCommSep(item) : '-';
       },
     },
   ];
@@ -446,7 +432,7 @@ const CompanyManagement = () => {
                 <Search
                   onPressEnter={onSearch}
                   placeholder={
-                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by Name'
+                    searchByTermOrganisation === 'email' ? 'Search by email' : 'Search by name'
                   }
                   allowClear
                   onChange={(e) =>
@@ -466,6 +452,7 @@ const CompanyManagement = () => {
                   open={filterVisible}
                   onOpenChange={handleFilterVisibleChange}
                   overlayClassName="filter-dropdown"
+                  trigger={['click']}
                 >
                   <a
                     className="ant-dropdown-link"

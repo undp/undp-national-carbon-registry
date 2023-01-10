@@ -22,10 +22,14 @@
 
   .all-check {
     .ant-checkbox-inner::after {
-      background-color: rgba($primary-color, 0.8);
+      background-color: rgba(#3a3541, 0.5);
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner::after {
+        background-color: transparent;
     }
     .ant-checkbox-checked .ant-checkbox-inner {
-      background-color: rgba($primary-color, 0.8);
+      background-color: rgba(#3a3541, 0.5);
       border: none;
     }
     margin-right: 10px;

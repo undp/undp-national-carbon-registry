@@ -19,6 +19,7 @@ import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Homepage from './Pages/Homepage/homepage';
+import UserProfile from './Pages/UserProfile/UserProfile';
 
 const App = () => {
   useEffect(() => {
@@ -30,7 +31,7 @@ const App = () => {
         serverURL={
           process.env.REACT_APP_BACKEND
             ? process.env.REACT_APP_BACKEND
-            : 'https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api'
+            : 'http://localhost:3000/local/api'
         }
       >
         <UserInformationContextProvider>
@@ -59,6 +60,12 @@ const App = () => {
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
                   <Route path="updateUser" element={<AddUser />} />
+                </Route>
+                <Route
+                  path="/userProfile"
+                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                >
+                  <Route path="userProfileDetails" element={<UserProfile />} />
                 </Route>
 
                 {/* <Route

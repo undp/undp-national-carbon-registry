@@ -1,14 +1,15 @@
 import { Col, MenuProps, Row } from 'antd';
 import { useState } from 'react';
 import './layout.header.scss';
-import countryLogo from '../../Assets/Images/nigeria.png';
 import { useTranslation } from 'react-i18next';
 import { HeaderProps } from '../../Definitions/InterfacesAndType/layout.header';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const LayoutHeader = (props: HeaderProps) => {
+  const navigate = useNavigate();
   const { title, onToggle } = props;
   const { updateToken } = useConnection();
   const { removeUserInfo } = useUserContext();
@@ -17,6 +18,7 @@ const LayoutHeader = (props: HeaderProps) => {
     i18n.changeLanguage(lang);
   };
   const [collapsed, setCollapsed] = useState(false);
+  const companyLogo = localStorage.getItem('companyLogo');
 
   const signOut = (): void => {
     updateToken();
@@ -48,7 +50,13 @@ const LayoutHeader = (props: HeaderProps) => {
           <Row>
             <Col>
               <div className="header-country-logo">
-                <img src={countryLogo} alt="country-logo" />
+                <img
+                  src={'data:image/jpeg;base64,' + companyLogo}
+                  alt="logo"
+                  onClick={() => {
+                    navigate('/userProfile/userProfileDetails');
+                  }}
+                />
               </div>
               {/* <div className="header-menu-container">
                 <div className="header-signOut-container">

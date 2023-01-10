@@ -52,8 +52,8 @@ const ProgrammeManagement = () => {
 
   const [selectedStatus, setSelectedStatus] = useState<any>(statusOptions.map((e) => e.value));
 
-  const [indeterminate, setIndeterminate] = useState(true);
-  const [checkAll, setCheckAll] = useState(false);
+  const [indeterminate, setIndeterminate] = useState(false);
+  const [checkAll, setCheckAll] = useState(true);
 
   const getCompanyBgColor = (item: string) => {
     if (item === 'Government') {
@@ -124,8 +124,8 @@ const ProgrammeManagement = () => {
     },
     {
       title: t('common:company'),
-      dataIndex: 'companyId',
-      key: 'companyId',
+      dataIndex: 'company',
+      key: 'company',
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         const elements = item.map((obj: any) => {
@@ -217,8 +217,8 @@ const ProgrammeManagement = () => {
     },
     {
       title: t('programme:certifiers'),
-      dataIndex: 'certifierId',
-      key: 'certifierId',
+      dataIndex: 'certifier',
+      key: 'certifier',
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         const elements = item.map((obj: any) => {
