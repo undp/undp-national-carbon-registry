@@ -21,16 +21,9 @@ import './addUser.scss';
 import '../../Styles/app.scss';
 import '../Common/common.form.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  ExperimentOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  SafetyOutlined,
-  StarOutlined,
-  ToolOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { EyeOutlined, StarOutlined, ToolOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/lib/upload';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
@@ -46,6 +39,7 @@ const AddUser = () => {
   const [contactNoInput, setContactNoInput] = useState<any>();
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const { i18n, t } = useTranslation(['addUser']);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -148,7 +142,7 @@ const AddUser = () => {
             <Col xl={12} md={24}>
               <div className="details-part-one">
                 <Form.Item
-                  label="Name"
+                  label={t('addUser:name')}
                   initialValue={state?.record?.name}
                   name="name"
                   rules={[
@@ -164,7 +158,7 @@ const AddUser = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Name is required!');
+                          throw new Error(`${t('addUser:name')} ${t('addUser:isRequired')}`);
                         }
                       },
                     },
@@ -173,7 +167,7 @@ const AddUser = () => {
                   <Input size="large" />
                 </Form.Item>
                 <Form.Item
-                  label="Email"
+                  label={t('addUser:email')}
                   name="email"
                   initialValue={state?.record?.email}
                   rules={[
@@ -189,14 +183,14 @@ const AddUser = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Email is required!');
+                          throw new Error(`${t('addUser:email')} ${t('addUser:isRequired')}`);
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error('Email is invalid!');
+                            throw new Error(`${t('addUser:email')} ${t('addUser:isInvalid')}`);
                           }
                         }
                       },
@@ -211,13 +205,13 @@ const AddUser = () => {
               <div className="details-part-two">
                 <Form.Item
                   className="role-group"
-                  label="Role"
+                  label={t('addUser:role')}
                   initialValue={state?.record?.role}
                   name="role"
                   rules={[
                     {
                       required: true,
-                      message: 'Role is required!',
+                      message: `${t('addUser:role')} ${t('addUser:isRequired')}`,
                     },
                   ]}
                 >
@@ -230,7 +224,7 @@ const AddUser = () => {
                       <Tooltip placement="top" title="Full access to all permitted functions">
                         <Radio.Button className="admin" value="Admin">
                           <StarOutlined className="role-icons" />
-                          Admin
+                          {t('addUser:admin')}
                         </Radio.Button>
                       </Tooltip>
                     </div>
@@ -241,7 +235,7 @@ const AddUser = () => {
                       >
                         <Radio.Button className="manager" value="Manager">
                           <ToolOutlined className="role-icons" />
-                          Manager
+                          {t('addUser:manager')}
                         </Radio.Button>
                       </Tooltip>
                     </div>
@@ -252,7 +246,7 @@ const AddUser = () => {
                       >
                         <Radio.Button className="view-only" value="ViewOnly">
                           <EyeOutlined className="role-icons" />
-                          Viewer
+                          {t('addUser:viewer')}
                         </Radio.Button>
                       </Tooltip>
                     </div>
@@ -260,7 +254,7 @@ const AddUser = () => {
                 </Form.Item>
                 <Form.Item
                   name="phoneNo"
-                  label="Phone Number"
+                  label={t('addUser:phoneNo')}
                   initialValue={state?.record?.phoneNo}
                   rules={[
                     {
@@ -269,7 +263,7 @@ const AddUser = () => {
                   ]}
                 >
                   <PhoneInput
-                    placeholder="Phone number"
+                    placeholder={t('addUser:phoneNo')}
                     international
                     // value={contactNoInput}
                     defaultCountry="LK"
@@ -285,11 +279,11 @@ const AddUser = () => {
               <div className="create-user-btn-container">
                 {state?.record ? (
                   <Button type="primary" onClick={onUpdateUser} loading={loading}>
-                    UPDATE
+                    {t('addUser:update')}
                   </Button>
                 ) : (
                   <Button type="primary" htmlType="submit" loading={loading}>
-                    SUBMIT
+                    {t('addUser:submit')}
                   </Button>
                 )}
               </div>
