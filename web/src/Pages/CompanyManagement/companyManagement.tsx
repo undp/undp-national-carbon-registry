@@ -205,10 +205,17 @@ const CompanyManagement = () => {
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }} className="clickable">
             <div style={{ fontWeight: 600 }}>{item}</div>
           </div>
         );
+      },
+      onCell: (record: any, rowIndex: any) => {
+        return {
+          onClick: (ev: any) => {
+            navigate('/companyProfile/view', { state: { record } });
+          },
+        };
       },
     },
     {

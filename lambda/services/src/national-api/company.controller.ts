@@ -42,4 +42,11 @@ export class CompanyController {
         }
         return this.companyService.activate(companyId, req.abilityCondition)
     }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    async getCompany(@Query('id') companyId: number,@Request() req) {
+        return await this.companyService.findByCompanyId(companyId)
+    }
 }
