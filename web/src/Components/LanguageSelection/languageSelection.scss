@@ -1,0 +1,11 @@
+@import '../../Styles/variables.scss';
+
+.login-language-selection-container {
+    font-weight: regular;
+    font-size: 0.8rem;
+
+    .ant-select-selector {
+        border: none;
+        color: #16B1FF;
+    }
+}

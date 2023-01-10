@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Row, Col, Card, Button, Modal, Select, Alert } from 'antd';
+import { Row, Col, Card, Button, Modal, Select, Alert, Skeleton } from 'antd';
 import { UserOutlined, BankOutlined, DeleteOutlined } from '@ant-design/icons';
 import './UserProfile.scss';
 import { useEffect, useState } from 'react';
@@ -10,13 +10,13 @@ import UserActionConfirmationModel from '../../Components/Models/UserActionConfi
 import ChangePasswordModel from '../../Components/Models/ChangePasswordModel';
 import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
+import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);
   const { get, delete: del, put } = useConnection();
   const [organisationDetails, setOrganisationDetails] = useState<any>([]);
   const [userDetails, setUserDetails] = useState<any>([]);
-  const [language, setLanguage] = useState<string>('');
   const navigate = useNavigate();
   const { updateToken } = useConnection();
   const { removeUserInfo } = useUserContext();
@@ -24,6 +24,7 @@ const UserProfile = () => {
   const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
   const [openPasswordChangeModal, setopenPasswordChangeModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const signOut = (): void => {
     updateToken();
@@ -32,10 +33,12 @@ const UserProfile = () => {
 
   const getUserProfileDetails = async () => {
     try {
+      setIsLoading(true);
       const response = await get('national/User/profile');
       if (response.data) {
         setOrganisationDetails(response.data.Organisation);
         setUserDetails(response.data.user);
+        setIsLoading(false);
       }
     } catch (exception) {}
   };
@@ -43,11 +46,6 @@ const UserProfile = () => {
   useEffect(() => {
     getUserProfileDetails();
   }, []);
-
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-    setLanguage(lang);
-  };
 
   const onDeleteProfileUser = () => {
     setActionInfo({
@@ -113,7 +111,7 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            <Button className="mg-left-1" onClick={() => onDeleteProfileUser()}>
+            <Button className="mg-left-1 btn-text-red" onClick={() => onDeleteProfileUser()}>
               {t('userProfile:delete')}
             </Button>
             <Button
@@ -132,41 +130,7 @@ const UserProfile = () => {
             >
               {t('userProfile:edit')}
             </Button>
-            <div className="login-language-selection-container mg-left-1">
-              <span className="login-language-selection-txt">
-                <Select
-                  placeholder="Search to Select"
-                  defaultValue={
-                    localStorage.getItem('i18nextLng') !== null
-                      ? localStorage.getItem('i18nextLng')
-                      : 'en'
-                  }
-                  placement="topRight"
-                  onChange={(lan: string) => handleLanguageChange(lan)}
-                  optionFilterProp="children"
-                  filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? '')
-                      .toLowerCase()
-                      .localeCompare((optionB?.label ?? '').toLowerCase())
-                  }
-                  options={[
-                    {
-                      value: 'en',
-                      label: 'English',
-                    },
-                    {
-                      value: 'es',
-                      label: 'Española',
-                    },
-                    {
-                      value: 'fr',
-                      label: 'française',
-                    },
-                  ]}
-                />
-              </span>
-            </div>
+            <LanguageSelection></LanguageSelection>
           </Row>
         </Col>
       </Row>
@@ -176,21 +140,23 @@ const UserProfile = () => {
           <Col md={24} lg={8}>
             <Card className="card-container">
               <Row justify="center">
-                <img
-                  className="profile-img"
-                  src={'data:image/jpeg;base64,' + organisationDetails.logo}
-                />
+                <Skeleton loading={isLoading} active>
+                  <img
+                    className="profile-img"
+                    src={'data:image/jpeg;base64,' + organisationDetails.logo}
+                  />
+                </Skeleton>
               </Row>
               <Row justify="center">
                 <div className="padding-top-1">{organisationDetails.name}</div>
               </Row>
             </Card>
             <Row justify="center">
-              <Button className="mg-left-1" onClick={() => signOut()}>
-                LOG OUT
+              <Button className="mg-left-1 btn-text-red" onClick={() => signOut()}>
+                {t('userProfile:logOut')}
               </Button>
               <Button className="mg-left-1" type="primary" onClick={onChangedPassword}>
-                CHANGE PASSWORD
+                {t('userProfile:changePassword')}
               </Button>
             </Row>
           </Col>
@@ -203,38 +169,40 @@ const UserProfile = () => {
                   </span>
                   <span className="title-text">{t('userProfile:userDetailsHeading')}</span>
                 </div>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:name')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {userDetails.name ? userDetails.name : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:email')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {userDetails.email ? userDetails.email : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:role')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    <UserRoleIcon role={userDetails.role} />
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:phoneNo')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {userDetails.phoneNo ? userDetails.phoneNo : '-'}
-                  </Col>
-                </Row>
+                <Skeleton loading={isLoading} active>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:name')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {userDetails.name ? userDetails.name : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:email')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {userDetails.email ? userDetails.email : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:role')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      <UserRoleIcon role={userDetails.role} />
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:phoneNo')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {userDetails.phoneNo ? userDetails.phoneNo : '-'}
+                    </Col>
+                  </Row>
+                </Skeleton>
               </div>
             </Card>
             <Card className="card-container">
@@ -245,83 +213,88 @@ const UserProfile = () => {
                   </span>
                   <span className="title-text">{t('userProfile:organisationDetailsHeading')}</span>
                 </div>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:name')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.name ? organisationDetails.name : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:taxId')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.taxId ? organisationDetails.taxId : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:companyRole')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    <CompanyRoleIcon role={organisationDetails.companyRole} />
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:email')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.email ? organisationDetails.email : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:phoneNo')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.phoneNo ? organisationDetails.phoneNo : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:website')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.website ? organisationDetails.website : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:address')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.address ? organisationDetails.address : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:programmeCount')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.programmeCount ? organisationDetails.programmeCount : '-'}
-                  </Col>
-                </Row>
-                <Row className="field">
-                  <Col span={12} className="field-key">
-                    {t('userProfile:creditBalance')}
-                  </Col>
-                  <Col span={12} className="field-value">
-                    {organisationDetails.creditBalance ? organisationDetails.creditBalance : '-'}
-                  </Col>
-                </Row>
+                <Skeleton loading={isLoading} active>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:name')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.name ? organisationDetails.name : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:taxId')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.taxId ? organisationDetails.taxId : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:companyRole')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      <CompanyRoleIcon role={organisationDetails.companyRole} />
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:email')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.email ? organisationDetails.email : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:phoneNo')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.phoneNo ? organisationDetails.phoneNo : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:website')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.website ? organisationDetails.website : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:address')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.address ? organisationDetails.address : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:programmeCount')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.programmeCount
+                        ? organisationDetails.programmeCount
+                        : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('userProfile:creditBalance')}
+                    </Col>
+                    <Col span={12} className="field-value">
+                      {organisationDetails.creditBalance ? organisationDetails.creditBalance : '-'}
+                    </Col>
+                  </Row>
+                </Skeleton>
               </div>
             </Card>
           </Col>
         </Row>
       </div>
+
       <UserActionConfirmationModel
         actionInfo={actionInfo}
         onActionConfirmed={onDeleteProfileUserConfirmed}
