@@ -11,13 +11,13 @@ import { EmailModule } from '../email/email.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { Company } from '../entities/company.entity';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
-import { ProgrammeTransferViewEntity } from '../entities/programmeTransfer.view.entity';
+import { ProgrammeTransferQueryViewEntity } from '../entities/programmeTransfer.view.entity';
 
 @Module({
   imports: [
     ProgrammeLedgerModule, 
     CaslModule, 
-    TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity, ProgrammeTransferViewEntity]), 
+    TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity, ProgrammeTransferQueryViewEntity]), 
     UtilModule, 
     CompanyModule, 
     EmailModule

@@ -8,10 +8,10 @@ import { ProgrammeTransfer } from "./programme.transfer";
     LEFT JOIN "company" "requester" ON "requester"."companyId" = "programme_transfer"."requesterCompanyId"
     LEFT JOIN "company" "sender" ON "sender"."companyId" = ANY("programme_transfer"."companyId")
     LEFT JOIN "company" "certifier" ON "certifier"."companyId" = ANY("prog"."certifierId")
-	group by "programme_transfer"."requestId", "requester"."logo", "certifier"."logo", "prog"."creditBalance", "prog"."title", "prog"."sector", "sender"."logo";	
+	group by "programme_transfer"."requestId", "requester"."logo", "certifier"."logo", "prog"."creditBalance", "prog"."title", "prog"."sector", "sender"."logo", "sender"."name", "requester"."name", "certifier"."name";	
     `,
 })
-export class ProgrammeTransferViewEntity extends ProgrammeTransfer {
+export class ProgrammeTransferQueryViewEntity extends ProgrammeTransfer {
 
     @ViewColumn()
     requester: string;

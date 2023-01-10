@@ -33,7 +33,7 @@ import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
-import { ProgrammeTransferViewEntity } from '../entities/programmeTransfer.view.entity';
+import { ProgrammeTransferQueryViewEntity } from '../entities/programmeTransfer.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -49,7 +49,7 @@ export class ProgrammeService {
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
-        @InjectRepository(ProgrammeTransferViewEntity) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntity>,
+        @InjectRepository(ProgrammeTransferQueryViewEntity) private programmeTransferViewRepo: Repository<ProgrammeTransferQueryViewEntity>,
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
@@ -211,19 +211,19 @@ export class ProgrammeService {
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
-        // for (const companyId of programme.companyId) {
-        //     const company = await this.companyService.findByCompanyId(companyId);
-        //     await this.emailService.sendEmail(
-        //         company.email,
-        //         EmailTemplates.TRANSFER_REQUEST,
-        //         {
-        //             "name": company.name,
-        //             "requestedCompany": requestedCompany.name,
-        //             "credits": req.creditAmount,
-        //             "serialNo": programme.serialNo,
-        //             "programmeName": programme.title
-        //         });
-        // }
+        for (const companyId of programme.companyId) {
+            const company = await this.companyService.findByCompanyId(companyId);
+            await this.emailService.sendEmail(
+                company.email,
+                EmailTemplates.TRANSFER_REQUEST,
+                {
+                    "name": company.name,
+                    "requestedCompany": requestedCompany.name,
+                    "credits": req.creditAmount,
+                    "serialNo": programme.serialNo,
+                    "programmeName": programme.title
+                });
+        }
 
         const transfer = plainToClass(ProgrammeTransfer, req)
         transfer.status = TransferStatus.PENDING;
