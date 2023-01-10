@@ -18,8 +18,8 @@ import { ProgrammeTransferRequest } from '../shared/dto/programme.transfer.reque
 import { ProgrammeTransfer } from '../shared/entities/programme.transfer';
 import { ProgrammeTransferApprove } from '../shared/dto/programme.transfer.approve';
 import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject';
+import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { ProgrammeCertify } from '../shared/dto/programme.certify';
-import { JwtAuthGuard } from 'src/shared/auth/guards/jwt-auth.guard';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -40,7 +40,7 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Programme, true))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
     @Post('queryProgrammeTransfers')
     queryUser(@Body()query: QueryDto, @Request() req) {
       console.log(req.abilityCondition)
