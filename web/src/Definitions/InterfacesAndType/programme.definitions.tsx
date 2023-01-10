@@ -9,6 +9,21 @@ export enum ProgrammeStage {
   // Frozen = 'Frozen',
 }
 
+export enum ProgrammeTransferStage {
+  PROCESSING = 'Process',
+  APPROVED = 'Approved',
+  REJECTED = 'Rejected',
+  PENDING = 'Pending',
+  // Frozen = 'Frozen',
+}
+
+export enum CreditTransferStage {
+  Pending = 'Pending',
+  Approved = 'Approved',
+  Rejected = 'Rejected',
+  Process = 'Process',
+}
+
 export enum TxType {
   CREATE = '0',
   REJECT = '1',
@@ -31,11 +46,11 @@ export enum TypeOfMitigation {
 }
 
 export const getStageEnumVal = (value: string) => {
-  const index = Object.keys(ProgrammeStage).indexOf(value);
+  const index = Object.keys(ProgrammeTransferStage).indexOf(value);
   if (index < 0) {
     return value;
   }
-  return Object.values(ProgrammeStage)[index];
+  return Object.values(ProgrammeTransferStage)[index];
 };
 
 export const getStageTagType = (stage: ProgrammeStage) => {
@@ -45,6 +60,21 @@ export const getStageTagType = (stage: ProgrammeStage) => {
     case ProgrammeStage.Issued:
       return 'processing';
     case ProgrammeStage.Transferred:
+      return 'success';
+    default:
+      return 'default';
+  }
+};
+
+export const getTransferStageTagType = (stage: ProgrammeTransferStage) => {
+  switch (getStageEnumVal(stage)) {
+    case ProgrammeTransferStage.REJECTED:
+      return 'error';
+    case ProgrammeTransferStage.PROCESSING:
+      return 'success';
+    case ProgrammeTransferStage.APPROVED:
+      return 'processing';
+    case ProgrammeTransferStage.PENDING:
       return 'success';
     default:
       return 'default';

@@ -27,14 +27,13 @@ export class ProgrammeLedgerService {
     this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;
     // if (programme) {
-    //   await this.entityManger
-    //     .save<Programme>(plainToClass(Programme, programme))
-    //     .then((res: any) => {
-    //       console.log("create programme in repo -- ", res);
-    //     })
-    //     .catch((e: any) => {
-    //       console.log("create programme in repo -- ", e);
-    //     });
+    //   await this.entityManger.save<Programme>(
+    //     plainToClass(Programme, programme)
+    //   ).then((res: any) => {
+    //     console.log("create programme in repo -- ", res)
+    //   }).catch((e: any) => {
+    //     console.log("create programme in repo -- ", e)
+    //   });
     // }
 
     const getQueries = {};
