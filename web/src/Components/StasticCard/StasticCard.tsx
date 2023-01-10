@@ -5,16 +5,18 @@ import { FieldTimeOutlined } from '@ant-design/icons';
 import clockHistory from '../../Assets/Images/clockHistory.svg';
 import envelopeCheck from '../../Assets/Images/envelopeCheck.svg';
 import coin from '../../Assets/Images/coin.svg';
+import { Skeleton } from 'antd';
 
 export interface StasticCardItemProps {
   value: number;
   title: string;
   updatedDate: any;
   icon: string;
+  loading: boolean;
 }
 
 const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
-  const { value, title, updatedDate, icon } = props;
+  const { value, title, updatedDate, icon, loading } = props;
 
   const cardBackgroundColor = (type: string) => {
     switch (type) {
@@ -37,22 +39,22 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
 
   return (
     <div className="stastic-card-main-container">
-      <div className="values-section">
-        <div className="title">{title}</div>
-        <div className="details-section value">{value}</div>
-        <div className="updated-on">{moment(parseInt(updatedDate) * 1000).fromNow()}</div>
-      </div>
-      <div className="icon-section">
-        {icon === 'clockHistory' && <img src={clockHistory} />}
-        {icon === 'envelopeCheck' && <img src={envelopeCheck} />}
-        {icon === 'coin' && <img src={coin} />}
-        {/* <FieldTimeOutlined
-          style={{
-            color: '#16B1FF',
-            fontSize: '100px',
-          }}
-        /> */}
-      </div>
+      {loading ? (
+        <Skeleton active />
+      ) : (
+        <>
+          <div className="values-section">
+            <div className="title">{title}</div>
+            <div className="details-section value">{value}</div>
+            <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
+          </div>
+          <div className="icon-section">
+            {icon === 'clockHistory' && <img src={clockHistory} />}
+            {icon === 'envelopeCheck' && <img src={envelopeCheck} />}
+            {icon === 'coin' && <img src={coin} />}
+          </div>
+        </>
+      )}
     </div>
   );
 };

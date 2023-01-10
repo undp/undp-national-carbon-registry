@@ -1,37 +1,15 @@
-import React from 'react';
-import { Col, DatePicker, Progress, Radio, Row } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Col, DatePicker, Progress, Radio, Row, message } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
-import {
-  DUmData,
-  optionDonutPieA,
-  options,
-  optionsA,
-  optionsP,
-  optionsQ,
-  optionsR,
-  optionsX,
-  optionsY,
-  optionsZ,
-  series,
-  seriesA,
-  seriesDonutPieA,
-  seriesP,
-  seriesQ,
-  seriesR,
-  seriesX,
-  seriesY,
-  seriesZ,
-} from './DUMMY_DATAS';
-import HtmlCluster from './SampleMap';
-import fileText from '../../Assets/Images/fileText.svg';
-import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { optionDonutPieA, seriesDonutPieA } from './DUMMY_DATAS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
 const { RangePicker } = DatePicker;
 
@@ -41,24 +19,97 @@ const Map = ReactMapboxGl({
 });
 
 const Dashboard = () => {
+  const { get, post, delete: del } = useConnection();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [totalProjects, setTotalProjects] = useState<number>(0);
+  const [pendingProjects, setPendingProjects] = useState<number>(0);
+  const [issuedProjects, setIssuedProjects] = useState<number>(0);
+  const [rejectedProjects, setRejectedProjects] = useState<number>(0);
+  const [transferedProjects, setTransferedProjects] = useState<number>(0);
+  const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
+  const [lastUpdate, setLastUpdate] = useState<any>();
+
+  const getAllProgrammeAnalyticsStatsParams = () => {
+    return {
+      stats: [
+        {
+          type: 'TOTAL_PROGRAMS',
+        },
+        {
+          type: 'PROGRAMS_BY_STATUS',
+          value: 'AWAITING_AUTHORIZATION',
+        },
+        {
+          type: 'PROGRAMS_BY_STATUS',
+          value: 'ISSUED',
+        },
+        {
+          type: 'PROGRAMS_BY_STATUS',
+          value: 'REJECTED',
+        },
+        {
+          type: 'PROGRAMS_BY_STATUS',
+          value: 'TRANSFERRED',
+        },
+        {
+          type: 'TRANSFER_REQUEST',
+        },
+      ],
+    };
+  };
+
+  const getAllProgrammeAnalyticsStats = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post(
+        'analytics/programme/stats',
+        getAllProgrammeAnalyticsStatsParams()
+      );
+      console.log('stats data  -- > ', response?.data);
+      setPendingProjects(response?.data?.stats?.AWAITING_AUTHORIZATION);
+      setIssuedProjects(response?.data?.stats?.ISSUED);
+      setRejectedProjects(response?.data?.stats?.REJECTED);
+      setTransferedProjects(response?.data?.stats?.TRANSFERRED);
+      setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
+      setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
+      setLastUpdate(response?.data?.lastUpdate);
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllProgrammeAnalyticsStats();
+  }, []);
+
   return (
     <div className="dashboard-main-container">
       <div className="stastics-cards-container">
         <Row gutter={[20, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={220}
+              value={pendingProjects}
               title={'Programmes Pending'}
-              updatedDate={'1669781334'}
+              updatedDate={lastUpdate}
               icon="clockHistory"
+              loading={loading}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={300}
+              value={transfererequestsSent}
               title={'Transfer Requests Sent'}
-              updatedDate={'1669781334'}
+              updatedDate={lastUpdate}
               icon="envelopeCheck"
+              loading={loading}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -67,6 +118,7 @@ const Dashboard = () => {
               title={'Credit Balance'}
               updatedDate={'1669781334'}
               icon="coin"
+              loading={loading}
             />
           </Col>
         </Row>
@@ -89,7 +141,14 @@ const Dashboard = () => {
       <div className="stastics-and-pie-container">
         <Row gutter={[20, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <ProgrammeRejectAndTransfer />
+            <ProgrammeRejectAndTransfer
+              totalPrgrammes={totalProjects}
+              issued={issuedProjects}
+              rejected={rejectedProjects}
+              transfered={transferedProjects}
+              updatedDate={lastUpdate}
+              loading={loading}
+            />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card">

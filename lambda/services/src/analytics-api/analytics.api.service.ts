@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataCountResponseDto } from "../shared/dto/data.count.response";
 import { Programme } from "../shared/entities/programme.entity";
+import { ProgrammeTransfer } from "../shared/entities/programme.transfer";
 import { Repository } from "typeorm";
 import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
@@ -14,7 +15,9 @@ export class AnalyticsAPIService {
   constructor(
     private configService: ConfigService,
     private helperService: HelperService,
-    @InjectRepository(Programme) private programmeRepo: Repository<Programme>
+    @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
+    @InjectRepository(ProgrammeTransfer)
+    private programmeTransferRepo: Repository<ProgrammeTransfer>
   ) {}
 
   async programmesStaticDetails(
@@ -48,7 +51,19 @@ export class AnalyticsAPIService {
               )
             )
             .getCount();
-          results[ProgrammeStage[stat.value]] = programmeByStatus;
+          results[stat.value] = programmeByStatus;
+          break;
+
+        case StatType.TRANSFER_REQUEST:
+          let transferRequest = await this.programmeTransferRepo
+            .createQueryBuilder()
+            .where(
+              abilityCondition
+                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
+                : ""
+            )
+            .getCount();
+          results[stat.type] = transferRequest;
           break;
 
         case StatType.CREDIT_CERTIFIED:
