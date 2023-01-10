@@ -7,5 +7,5 @@
     "role": "ROLE",
     "addUser": "Add User",
     "viewUsers": "View Users",
-    "viewDesc": "View all the visible users in the system based on your permissions"
+    "viewDesc": "View the users registered with the Carbon Registry based on your permissions"
 }

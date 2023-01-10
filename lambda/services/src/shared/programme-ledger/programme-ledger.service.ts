@@ -358,6 +358,13 @@ export class ProgrammeLedgerService {
           } else {
             programme.certifierId.push(certifierId);
           }
+
+          if (programme.currentStage != ProgrammeStage.ISSUED) {
+            throw new HttpException(
+              "Can certify only issued programmes",
+              HttpStatus.BAD_REQUEST
+            );
+          }
         } else {
           if (index < 0) {
             throw new HttpException(
@@ -367,20 +374,6 @@ export class ProgrammeLedgerService {
           }
 
           programme.certifierId.splice(index, 1);
-        }
-
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
-          throw new HttpException(
-            "Can certify only issued programmes",
-            HttpStatus.BAD_REQUEST
-          );
-        }
-
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
-          throw new HttpException(
-            "Can not certify only authorised programmes",
-            HttpStatus.BAD_REQUEST
-          );
         }
 
         programme.txRef = user;
