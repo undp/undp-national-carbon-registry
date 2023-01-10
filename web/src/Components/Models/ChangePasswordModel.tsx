@@ -36,7 +36,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           label="Old Password"
           rules={[{ required: true, message: 'Please input old Password!' }]}
         >
-          <Input.Password placeholder="input password" />
+          <Input.Password placeholder="" />
         </Form.Item>
 
         <Form.Item
@@ -44,7 +44,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           label="New Password"
           rules={[{ required: true, message: 'Please input new Password!' }]}
         >
-          <Input.Password placeholder="input password" />
+          <Input.Password placeholder="" />
         </Form.Item>
 
         <Form.Item
@@ -68,7 +68,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
             }),
           ]}
         >
-          <Input.Password placeholder="input password" />
+          <Input.Password placeholder="" />
         </Form.Item>
 
         {errorMsg ? <Alert className="mg-top-1" message={errorMsg} type="error" showIcon /> : ''}

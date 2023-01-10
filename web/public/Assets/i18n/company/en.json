@@ -4,7 +4,7 @@
     "taxId": "TAX ID",
     "companyRole": "ORGANISATION TYPE",
     "viewCompanies": "View Organisations",
-    "viewDesc": "View all the visible organisations in the system based on your permissions",
+    "viewDesc": "View the organisations available in the Carbon Registry based on your permissions",
     "addCompany": "Add organisation",
     "numberOfProgrammes": "NUMBER OF PROGRAMMES",
     "creditBalance": "CREDIT BALANCE"

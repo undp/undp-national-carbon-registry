@@ -50,6 +50,7 @@ export class AuthService {
       user.companyRole
     );
     const ability = this.caslAbilityFactory.createForUser(user);
+    const organisationDetails = await this.companyService.findByCompanyId(user.companyId);
     return {
       access_token: this.jwtService.sign(instanceToPlain(payload)),
       role: user.role,
@@ -57,6 +58,7 @@ export class AuthService {
       name: user.name,
       companyId: user.companyId,
       companyRole: user.companyRole,
+      companyLogo: organisationDetails.logo,
       ability: JSON.stringify(ability),
     };
   }

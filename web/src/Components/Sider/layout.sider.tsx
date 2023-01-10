@@ -55,7 +55,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   return (
     <Sider
-      width={280}
+      width={240}
       className="layout-sider-container"
       breakpoint={collapsed ? undefined : 'lg'}
       collapsed={collapsed}
@@ -78,7 +78,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
         <div className="layout-sider-menu-container">
           <Menu
             theme="light"
-            defaultSelectedKeys={[selectedKey ?? 'dashboard']}
+            //defaultSelectedKeys={[selectedKey ?? 'dashboard']}
+            selectedKeys={[selectedKey ? selectedKey : 'dashboard']}
             mode="inline"
             onClick={onClick}
             items={items}

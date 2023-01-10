@@ -1,7 +1,6 @@
 import { Col, MenuProps, Row } from 'antd';
 import { useState } from 'react';
 import './layout.header.scss';
-import countryLogo from '../../Assets/Images/nigeria.png';
 import { useTranslation } from 'react-i18next';
 import { HeaderProps } from '../../Definitions/InterfacesAndType/layout.header';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -19,6 +18,7 @@ const LayoutHeader = (props: HeaderProps) => {
     i18n.changeLanguage(lang);
   };
   const [collapsed, setCollapsed] = useState(false);
+  const companyLogo = localStorage.getItem('companyLogo');
 
   const signOut = (): void => {
     updateToken();
@@ -51,8 +51,8 @@ const LayoutHeader = (props: HeaderProps) => {
             <Col>
               <div className="header-country-logo">
                 <img
-                  src={countryLogo}
-                  alt="country-logo"
+                  src={'data:image/jpeg;base64,' + companyLogo}
+                  alt="logo"
                   onClick={() => {
                     navigate('/userProfile/userProfileDetails');
                   }}

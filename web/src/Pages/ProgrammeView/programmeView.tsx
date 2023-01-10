@@ -58,6 +58,7 @@ import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
+import { dateTimeFormat } from '../Common/configs';
 
 mapboxgl.accessToken =
   '';
@@ -140,7 +141,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: 'Programme Created',
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was created with a valuation of ${addCommasToNumber(
               activity.data.creditEst
             )} credits.`,
@@ -157,7 +158,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Authorised by ${getTxRefValues(activity.data.txRef, 1)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was issued ${addCommasToNumber(
               activity.data.creditIssued
             )} Credits with the Serial Number ${activity.data.serialNo}`,
@@ -171,7 +172,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Rejected by ${getTxRefValues(activity.data.txRef, 1)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was rejected`,
             icon: (
               <span
@@ -186,7 +187,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Credit Transferred`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditChange
             )} Credits were transferred to ${getTxRefValues(activity.data.txRef, 1)}`,
@@ -200,7 +201,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The certificate of the programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
@@ -218,7 +219,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was certified by ${getTxRefValues(
               activity.data.txRef,
               1
@@ -240,7 +241,7 @@ const ProgrammeView = () => {
           el = {
             status: 'process',
             title: activity.data.currentStage,
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy @ HH:mm'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: ``,
             icon: (
               <span
@@ -512,7 +513,7 @@ const ProgrammeView = () => {
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
-    if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
       actionBtns.push(
         <Button
           danger
@@ -530,64 +531,84 @@ const ProgrammeView = () => {
           {t('view:retire')}
         </Button>
       );
-    } else {
-      // actionBtns.push(
-      //   <Button
-      //     danger
-      //     onClick={() => {
-      //       setActionInfo({
-      //         action: 'Retire',
-      //         text: `You are going to transfer programme ${data.title}`,
-      //         type: 'danger',
-      //       });
-      //       showModal();
-      //     }}
-      //   >
-      //     {t('view:Transfer')}
-      //   </Button>
-      // );
-    }
-
-    if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
-        actionBtns.push(
-          <Button
-            type="primary"
-            onClick={() => {
-              setActionInfo({
-                action: 'Certify',
-                text: ``,
-                type: 'success',
-                remark: false,
-                icon: <ShieldCheck />,
-              });
-              showModal();
-            }}
-          >
-            {t('view:certify')}
-          </Button>
-        );
-      } else {
-        actionBtns.push(
-          <Button
-            danger
-            onClick={() => {
-              setActionInfo({
-                action: 'Revoke',
-                text: ``,
-                type: 'danger',
-                remark: true,
-                icon: <Icon.ShieldExclamation />,
-              });
-              showModal();
-            }}
-          >
-            {t('view:revoke')}
-          </Button>
-        );
-      }
     }
   }
+  //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+  //     actionBtns.push(
+  //       <Button
+  //         danger
+  //         onClick={() => {
+  //           setActionInfo({
+  //             action: 'Retire',
+  //             text: `You can’t undo this action`,
+  //             type: 'danger',
+  //             remark: true,
+  //             icon: <PoweroffOutlined />,
+  //           });
+  //           showModal();
+  //         }}
+  //       >
+  //         {t('view:retire')}
+  //       </Button>
+  //     );
+  //   } else {
+  // actionBtns.push(
+  //   <Button
+  //     danger
+  //     onClick={() => {
+  //       setActionInfo({
+  //         action: 'Retire',
+  //         text: `You are going to transfer programme ${data.title}`,
+  //         type: 'danger',
+  //       });
+  //       showModal();
+  //     }}
+  //   >
+  //     {t('view:Transfer')}
+  //   </Button>
+  // );
+  // }
+
+  if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+    if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+      actionBtns.push(
+        <Button
+          type="primary"
+          onClick={() => {
+            setActionInfo({
+              action: 'Certify',
+              text: ``,
+              type: 'success',
+              remark: false,
+              icon: <ShieldCheck />,
+            });
+            showModal();
+          }}
+        >
+          {t('view:certify')}
+        </Button>
+      );
+    } else {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Revoke',
+              text: ``,
+              type: 'danger',
+              remark: true,
+              icon: <Icon.ShieldExclamation />,
+            });
+            showModal();
+          }}
+        >
+          {t('view:revoke')}
+        </Button>
+      );
+    }
+  }
+  // }
 
   const addSpaces = (text: string) => {
     if (!text) {
@@ -651,7 +672,9 @@ const ProgrammeView = () => {
           <div className="body-title">{t('view:details')}</div>
           <div className="body-sub-title">{t('view:desc')}</div>
         </div>
-        <div className="flex-display action-btns">{actionBtns}</div>
+        <div className="flex-display action-btns">
+          {userInfoState?.userRole !== 'ViewOnly' && actionBtns}
+        </div>
       </div>
       <div className="content-body">
         <Row gutter={16}>
@@ -696,8 +719,12 @@ const ProgrammeView = () => {
                             },
                           },
                         },
+                        stroke: {
+                          colors: ['#00'],
+                        },
                         plotOptions: {
                           pie: {
+                            expandOnClick: false,
                             donut: {
                               labels: {
                                 show: true,
