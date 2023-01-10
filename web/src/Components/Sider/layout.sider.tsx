@@ -55,7 +55,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   return (
     <Sider
-      width={280}
+      width={240}
       className="layout-sider-container"
       breakpoint={collapsed ? undefined : 'lg'}
       collapsed={collapsed}

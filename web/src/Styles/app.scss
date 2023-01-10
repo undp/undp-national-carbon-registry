@@ -459,9 +459,11 @@ body {
   }
 }
 
-.ant-btn-default {
-  color: $border-default-btn !important;
-  border-color: $border-default-btn !important;
+.ant-modal-footer {
+  .ant-btn-default {
+    color: $border-default-btn !important;
+    border-color: $border-default-btn !important;
+  }
 }
 
 .ant-tag-processing {
@@ -475,8 +477,7 @@ body {
 //   background: $primary-color !important;
 // }
 
-
 .filter-section input {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-size: 0.8rem !important;
 }

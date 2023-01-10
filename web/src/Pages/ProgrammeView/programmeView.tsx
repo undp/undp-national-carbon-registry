@@ -513,7 +513,7 @@ const ProgrammeView = () => {
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
-    if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
       actionBtns.push(
         <Button
           danger
@@ -531,64 +531,84 @@ const ProgrammeView = () => {
           {t('view:retire')}
         </Button>
       );
-    } else {
-      // actionBtns.push(
-      //   <Button
-      //     danger
-      //     onClick={() => {
-      //       setActionInfo({
-      //         action: 'Retire',
-      //         text: `You are going to transfer programme ${data.title}`,
-      //         type: 'danger',
-      //       });
-      //       showModal();
-      //     }}
-      //   >
-      //     {t('view:Transfer')}
-      //   </Button>
-      // );
-    }
-
-    if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-      if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
-        actionBtns.push(
-          <Button
-            type="primary"
-            onClick={() => {
-              setActionInfo({
-                action: 'Certify',
-                text: ``,
-                type: 'success',
-                remark: false,
-                icon: <ShieldCheck />,
-              });
-              showModal();
-            }}
-          >
-            {t('view:certify')}
-          </Button>
-        );
-      } else {
-        actionBtns.push(
-          <Button
-            danger
-            onClick={() => {
-              setActionInfo({
-                action: 'Revoke',
-                text: ``,
-                type: 'danger',
-                remark: true,
-                icon: <Icon.ShieldExclamation />,
-              });
-              showModal();
-            }}
-          >
-            {t('view:revoke')}
-          </Button>
-        );
-      }
     }
   }
+  //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+  //     actionBtns.push(
+  //       <Button
+  //         danger
+  //         onClick={() => {
+  //           setActionInfo({
+  //             action: 'Retire',
+  //             text: `You can’t undo this action`,
+  //             type: 'danger',
+  //             remark: true,
+  //             icon: <PoweroffOutlined />,
+  //           });
+  //           showModal();
+  //         }}
+  //       >
+  //         {t('view:retire')}
+  //       </Button>
+  //     );
+  //   } else {
+  // actionBtns.push(
+  //   <Button
+  //     danger
+  //     onClick={() => {
+  //       setActionInfo({
+  //         action: 'Retire',
+  //         text: `You are going to transfer programme ${data.title}`,
+  //         type: 'danger',
+  //       });
+  //       showModal();
+  //     }}
+  //   >
+  //     {t('view:Transfer')}
+  //   </Button>
+  // );
+  // }
+
+  if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
+    if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+      actionBtns.push(
+        <Button
+          type="primary"
+          onClick={() => {
+            setActionInfo({
+              action: 'Certify',
+              text: ``,
+              type: 'success',
+              remark: false,
+              icon: <ShieldCheck />,
+            });
+            showModal();
+          }}
+        >
+          {t('view:certify')}
+        </Button>
+      );
+    } else {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Revoke',
+              text: ``,
+              type: 'danger',
+              remark: true,
+              icon: <Icon.ShieldExclamation />,
+            });
+            showModal();
+          }}
+        >
+          {t('view:revoke')}
+        </Button>
+      );
+    }
+  }
+  // }
 
   const addSpaces = (text: string) => {
     if (!text) {
@@ -652,7 +672,9 @@ const ProgrammeView = () => {
           <div className="body-title">{t('view:details')}</div>
           <div className="body-sub-title">{t('view:desc')}</div>
         </div>
-        <div className="flex-display action-btns">{actionBtns}</div>
+        <div className="flex-display action-btns">
+          {userInfoState?.userRole !== 'ViewOnly' && actionBtns}
+        </div>
       </div>
       <div className="content-body">
         <Row gutter={16}>

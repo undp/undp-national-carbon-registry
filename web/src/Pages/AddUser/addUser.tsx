@@ -131,7 +131,7 @@ const AddUser = () => {
         <div className="main">{state?.record?.name ? 'Edit User' : 'Add New User'}</div>
         <div className="sub">
           {state?.record?.name
-            ? 'Edit the users of your organisation'
+            ? 'Edit the user information'
             : 'Add new users to the Carbon Registry for your organisation'}
         </div>
       </div>

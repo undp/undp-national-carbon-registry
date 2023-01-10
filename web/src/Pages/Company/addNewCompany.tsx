@@ -540,7 +540,7 @@ const AddNewCompany = () => {
     <div className="add-company-main-container">
       <div className="title-container">
         <div className="main">Add New Organisation</div>
-        <div className="sub">Add new organisation to the Carbon Registry</div>
+        <div className="sub">Add a new organisation to the Carbon Registry</div>
       </div>
       <div className="adding-section">
         <div className="form-section">
