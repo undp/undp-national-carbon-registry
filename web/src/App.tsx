@@ -18,6 +18,7 @@ import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement
 import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import CreditTransfers from './Pages/Transfers/creditTransfers';
 import UserProfile from './Pages/UserProfile/UserProfile';
 
 const App = () => {
@@ -30,7 +31,7 @@ const App = () => {
         serverURL={
           process.env.REACT_APP_BACKEND
             ? process.env.REACT_APP_BACKEND
-            : 'https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api'
+            : 'http://localhost:3000/local/api'
         }
       >
         <UserInformationContextProvider>
@@ -57,12 +58,18 @@ const App = () => {
                 <Route path="/userManagement" element={<CustomLayout selectedKey="user" />}>
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<AddUser />} />
+                  <Route path="updateUser" element={<UpdateUser />} />
+                </Route>
+                <Route
+                  path="/creditTransfers"
+                  element={<CustomLayout selectedKey="creditTransfers" />}
+                >
+                  <Route path="viewAll" element={<CreditTransfers />} />
+                  {/* <Route path="view" element={<ProgrammeView />} /> */}
                 </Route>
                 <Route path="/userProfile" element={<CustomLayout selectedKey="userProfile" />}>
                   <Route path="userProfileDetails" element={<UserProfile />} />
                 </Route>
-
                 {/* <Route
                   path="/userManagement"
                   element={<CustomLayout selectedKey="userManagement" />}

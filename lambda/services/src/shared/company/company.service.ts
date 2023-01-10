@@ -149,6 +149,19 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
+  async findByCompaniesById(companyId: number[]): Promise<string[] | undefined> {
+    const companies = []
+    for(let i=0; i<companyId.length; i++){
+      let company = await this.companyRepo.find({
+        where: {
+          companyId: companyId[i],
+        },
+      });
+      companies.push(company[0].logo)
+    }
+    return companies && companies.length > 0 ? companies : undefined;
+  }
+
   async findGovByCountry(countryCode: string): Promise<Company | undefined> {
     const companies = await this.companyRepo.find({
       where: {

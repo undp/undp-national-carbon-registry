@@ -33,6 +33,7 @@ import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
+import { ProgrammeTransferViewEntity } from '../entities/programmeTransfer.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -48,6 +49,7 @@ export class ProgrammeService {
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
+        @InjectRepository(ProgrammeTransferViewEntity) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntity>,
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
@@ -112,6 +114,26 @@ export class ProgrammeService {
         throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
     }
 
+    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string): Promise<any> {
+        const resp = await this.programmeTransferViewRepo
+          .createQueryBuilder('programme_transfer')
+          .where(
+            this.helperService.generateWhereSQL(
+              query,
+              this.helperService.parseMongoQueryToSQLWithTable("programme_transfer", abilityCondition)
+            )
+          )
+          .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
+          .offset(query.size * query.page - query.size)
+          .limit(query.size)
+          .getManyAndCount();
+    
+        return new DataListResponseDto(
+          resp.length > 0 ? resp[0] : undefined,
+          resp.length > 1 ? resp[1] : undefined
+        );
+      }
+
     async transferApprove(req: ProgrammeTransferApprove, approverCompanyId: number) {
         // TODO: Handle transaction, can happen 
         const transfer = await this.programmeTransferRepo.findOneBy({
@@ -148,6 +170,7 @@ export class ProgrammeService {
         }
 
         const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
+        console.log(received,"lllllllll",transfer)
         const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
 
         if (!programme.companyId.includes(approverCompanyId)) {
@@ -188,19 +211,19 @@ export class ProgrammeService {
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
-        for (const companyId of programme.companyId) {
-            const company = await this.companyService.findByCompanyId(companyId);
-            await this.emailService.sendEmail(
-                company.email,
-                EmailTemplates.TRANSFER_REQUEST,
-                {
-                    "name": company.name,
-                    "requestedCompany": requestedCompany.name,
-                    "credits": req.creditAmount,
-                    "serialNo": programme.serialNo,
-                    "programmeName": programme.title
-                });
-        }
+        // for (const companyId of programme.companyId) {
+        //     const company = await this.companyService.findByCompanyId(companyId);
+        //     await this.emailService.sendEmail(
+        //         company.email,
+        //         EmailTemplates.TRANSFER_REQUEST,
+        //         {
+        //             "name": company.name,
+        //             "requestedCompany": requestedCompany.name,
+        //             "credits": req.creditAmount,
+        //             "serialNo": programme.serialNo,
+        //             "programmeName": programme.title
+        //         });
+        // }
 
         const transfer = plainToClass(ProgrammeTransfer, req)
         transfer.status = TransferStatus.PENDING;
