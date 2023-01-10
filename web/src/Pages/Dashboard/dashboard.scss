@@ -102,6 +102,11 @@
           width: 100%;
           height: 380px;
 
+          .margin-top-2 {
+            width: 100%;
+            margin-top: 2rem;
+          }
+
           .total-programme-details {
             display: flex;
             flex-direction: row;

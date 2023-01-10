@@ -3,7 +3,7 @@ import { ProgrammeDto } from '../dto/programme.dto';
 import { Programme } from '../entities/programme.entity';
 import { ProgrammeLedgerService } from '../programme-ledger/programme-ledger.service';
 import { instanceToPlain, plainToClass } from 'class-transformer';
-import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
+import { ProgrammeStage } from '../enum/programme-status.enum';
 import { AgricultureConstants, AgricultureCreationRequest, calculateCredit, SolarConstants, SolarCreationRequest } from 'carbon-credit-calculator';
 import { QueryDto } from '../dto/query.dto';
 import { InjectRepository } from '@nestjs/typeorm';

@@ -9,7 +9,7 @@ import { ProgrammeDto } from '../shared/dto/programme.dto';
 import { ProgrammeService } from '../shared/programme/programme.service';
 import { QueryDto } from '../shared/dto/query.dto';
 import { ConstantUpdateDto } from '../shared/dto/constants.update.dto';
-import { ProgrammeStage } from '../shared/programme-ledger/programme-status.enum';
+import { ProgrammeStage } from '../shared/enum/programme-status.enum';
 import { ProgrammeApprove } from '../shared/dto/programme.approve';
 import { ProgrammeReject } from '../shared/dto/programme.reject';
 import { ProgrammeRetire } from '../shared/dto/programme.retire';

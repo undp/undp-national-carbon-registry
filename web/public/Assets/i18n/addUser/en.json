@@ -1,0 +1,17 @@
+{
+    "editUser": "Edit User",
+    "addNewUser": "Add New User",
+    "editUserSub": "Edit the user information",
+    "addUserSub": "Add new users to the Carbon Registry for your organisation",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "admin": "Admin",
+    "manager": "Manager",
+    "viewer": "Viewer",
+    "phoneNo": "Phone Number",
+    "isRequired": "is required!",
+    "isInvalid": "is invalid!",
+    "update": "UPDATE",
+    "submit": "SUBMIT"
+}

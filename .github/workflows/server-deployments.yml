@@ -130,7 +130,7 @@ jobs:
           postman collection run "20428472-45dd524a-c260-44f4-b9c9-5f164db2264d" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/user_onboarding_company4.csv
       - name: Run User Password Reset Tests
         run: |
-          postman collection run "24647866-ba48ade2-732f-40c5-a304-509b44389ff6" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/reset_password_2.csv
+          postman collection run "24647866-ba48ade2-732f-40c5-a304-509b44389ff6" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/reset_password_3.csv
       - name: Run User View Tests
         run: |
           postman collection run "20428472-a9ecb4af-70a2-4997-a478-e554138ec3ea" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/view_user_company3.csv

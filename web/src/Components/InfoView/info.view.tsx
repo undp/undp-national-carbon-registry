@@ -2,6 +2,7 @@ import { Col, Row } from 'antd';
 import { DateTime } from 'luxon';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { dateFormat } from '../../Pages/Common/configs';
 import './info.view.scss';
 
 export interface InfoViewProps {
@@ -29,7 +30,7 @@ const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
                 </Col>
                 <Col span={12} className="field-value">
                   {data[k] instanceof DateTime
-                    ? data[k].toLocaleString(DateTime.DATE_FULL)
+                    ? data[k].toFormat(dateFormat)
                     : data[k] === '' || !data[k]
                     ? '-'
                     : data[k]}

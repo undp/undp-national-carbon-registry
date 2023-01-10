@@ -248,21 +248,6 @@ const CompanyManagement = () => {
         return item ? addCommSep(item) : '-';
       },
     },
-    // {
-    //   title: '',
-    //   width: 6,
-    //   align: 'right' as const,
-    //   render: (_: any, record: TableDataType) => {
-    //     return (
-    //       <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-    //         <EllipsisOutlined
-    //           rotate={90}
-    //           style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-    //         />
-    //       </Popover>
-    //     );
-    //   },
-    // },
   ];
   // }
 
@@ -447,7 +432,7 @@ const CompanyManagement = () => {
                 <Search
                   onPressEnter={onSearch}
                   placeholder={
-                    searchByTermOrganisation === 'email' ? 'Search by Email' : 'Search by Name'
+                    searchByTermOrganisation === 'email' ? 'Search by email' : 'Search by name'
                   }
                   allowClear
                   onChange={(e) =>
@@ -467,6 +452,7 @@ const CompanyManagement = () => {
                   open={filterVisible}
                   onOpenChange={handleFilterVisibleChange}
                   overlayClassName="filter-dropdown"
+                  trigger={['click']}
                 >
                   <a
                     className="ant-dropdown-link"

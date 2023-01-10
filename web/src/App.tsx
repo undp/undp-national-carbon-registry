@@ -19,6 +19,7 @@ import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import CreditTransfers from './Pages/Transfers/creditTransfers';
+import Homepage from './Pages/Homepage/homepage';
 import UserProfile from './Pages/UserProfile/UserProfile';
 
 const App = () => {
@@ -39,23 +40,30 @@ const App = () => {
             <Routes>
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
+              <Route path="/" element={<Homepage />} />
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                   <Route index element={<Dashboard />} />
                 </Route>
                 <Route
                   path="/programmeManagement"
-                  element={<CustomLayout selectedKey="programme" />}
+                  element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                 >
                   <Route path="viewAll" element={<ProgrammeManagement />} />
                   <Route path="view" element={<ProgrammeView />} />
                 </Route>
-                <Route path="/companyManagement" element={<CustomLayout selectedKey="company" />}>
+                <Route
+                  path="/companyManagement"
+                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                >
                   <Route path="viewAll" element={<CompanyManagement />} />
                   <Route path="addCompany" element={<AddNewCompany />} />
                   <Route path="updateCompany" element={<AddNewCompany />} />
                 </Route>
-                <Route path="/userManagement" element={<CustomLayout selectedKey="user" />}>
+                <Route
+                  path="/userManagement"
+                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                >
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
                   <Route path="updateUser" element={<UpdateUser />} />
@@ -67,7 +75,10 @@ const App = () => {
                   <Route path="viewAll" element={<CreditTransfers />} />
                   {/* <Route path="view" element={<ProgrammeView />} /> */}
                 </Route>
-                <Route path="/userProfile" element={<CustomLayout selectedKey="userProfile" />}>
+                <Route
+                  path="/userProfile"
+                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                >
                   <Route path="userProfileDetails" element={<UserProfile />} />
                 </Route>
                 {/* <Route
@@ -79,7 +90,7 @@ const App = () => {
                   <Route path="updateUser" element={<UpdateUser />} />
                 </Route> */}
               </Route>
-              <Route path="/*" element={<Navigate to="login" replace />} />
+              <Route path="/*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </UserInformationContextProvider>
