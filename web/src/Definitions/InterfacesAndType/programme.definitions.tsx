@@ -46,6 +46,14 @@ export enum TypeOfMitigation {
 }
 
 export const getStageEnumVal = (value: string) => {
+  const index = Object.keys(ProgrammeStage).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProgrammeStage)[index];
+};
+
+export const getStageTransferEnumVal = (value: string) => {
   const index = Object.keys(ProgrammeTransferStage).indexOf(value);
   if (index < 0) {
     return value;

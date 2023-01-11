@@ -1,13 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-  MoreOutlined,
-  PlusSquareOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
+import { EllipsisOutlined } from '@ant-design/icons';
 import {
   Row,
   Checkbox,
@@ -35,14 +27,17 @@ import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
   CreditTransferStage,
-  getStageEnumVal,
+  getStageTransferEnumVal,
   getTransferStageTagType,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import './programmeTransferManagement.scss';
 import '../Common/common.table.scss';
-import { TableDataType } from '../../Definitions/InterfacesAndType/userManagement.definitions';
-import { Trash } from 'react-bootstrap-icons';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+
+type CompanyInfo = {
+  name: string;
+  credit: number;
+};
 
 const CreditTransfer = () => {
   const navigate = useNavigate();
@@ -73,7 +68,10 @@ const CreditTransfer = () => {
   const [acceptModalVisible, setAcceptModalVisible] = useState<any>(false);
   const [rejectModalVisible, setRejectModalVisible] = useState<any>(false);
   const [selectedReqId, setSelectedReqId] = useState<number>();
-  const [rejectRemarks, setRejectRemarks] = useState<string>('');
+  const [companiesInfo, setCompaniesInfo] = useState<CompanyInfo[]>();
+  const [totalComCredits, setTotalComCredits] = useState<number>(0);
+  const [companyIdsVal, setCompanyIdsVal] = useState<number[]>();
+  const [creditAmount, setCreditAmount] = useState<number>(0);
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
     console.log(checkedValues);
@@ -190,6 +188,36 @@ const CreditTransfer = () => {
     }
   };
 
+  const acceptRequest = async (record: any) => {
+    setLoading(true);
+    try {
+      const response: any = await post('national/company/findByCompanyIds', {
+        companyIds: record.companyId,
+      });
+      console.log(response);
+      const info = [];
+      for (let i = 0; i < record.proponentPercentage.length; i++) {
+        info.push({
+          credit: (record.proponentPercentage[i] * parseInt(record.creditBalance)) / 100,
+          name: response.data.find((v: any) => v.taxId === record.proponentTaxVatId[i]).name,
+        });
+      }
+      setCompaniesInfo(info);
+      formModal.resetFields();
+      setLoading(false);
+    } catch (error: any) {
+      console.log('Error in getting companies', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      formModal.resetFields();
+      setLoading(false);
+    }
+  };
+
   const actionMenu = (record: any) => {
     return userInfoState?.id === record.requesterId.toString() ? (
       <List
@@ -220,6 +248,7 @@ const CreditTransfer = () => {
               setCancelModalVisible(true);
               setAcceptModalVisible(false);
               setRejectModalVisible(false);
+              setSelectedReqId(record.requesterId);
             },
           },
         ]}
@@ -254,7 +283,12 @@ const CreditTransfer = () => {
               setAcceptModalVisible(true);
               setRejectModalVisible(false);
               setCancelModalVisible(false);
-              // deleteUser(record);
+              console.log('kkkkkk', record.requestId);
+              setSelectedReqId(record.requestId);
+              setTotalComCredits(record.creditBalance);
+              setCompanyIdsVal(record.companyId);
+              setCreditAmount(record.creditAmount);
+              acceptRequest(record);
             },
           },
           {
@@ -277,7 +311,7 @@ const CreditTransfer = () => {
               setRejectModalVisible(true);
               setCancelModalVisible(false);
               setAcceptModalVisible(false);
-              setSelectedReqId(record.requesterId);
+              setSelectedReqId(record.requestId);
             },
           },
         ]}
@@ -338,47 +372,39 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <ProfileIcon
-              icon={itemObj.certifier}
-              bg="rgba(128, 255, 0, 0.12)"
-              name={itemObj.programmeTitle}
-            />
+            {itemObj.certifier.map((v: any, i: any) => {
+              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+            })}
           </div>
         );
       },
     },
     {
       title: t('creditTransfer:initiator'),
-      dataIndex: 'requester',
-      key: 'requester',
+      key: 'initiator',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <ProfileIcon
-              icon={itemObj.requester}
-              bg="rgba(128, 255, 0, 0.12)"
-              name={itemObj.programmeTitle}
-            />
+            {itemObj.requester.map((v: any, i: any) => {
+              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+            })}
           </div>
         );
       },
     },
     {
       title: t('creditTransfer:cSender'),
-      dataIndex: 'cSender',
       key: 'cSender',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <ProfileIcon
-              icon={itemObj.cSender}
-              bg="rgba(128, 255, 0, 0.12)"
-              name={itemObj.programmeTitle}
-            />
+            {itemObj.sender.map((v: any, i: any) => {
+              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+            })}
           </div>
         );
       },
@@ -392,11 +418,9 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <ProfileIcon
-              icon={itemObj.requester}
-              bg="rgba(128, 255, 0, 0.12)"
-              name={itemObj.programmeTitle}
-            />
+            {itemObj.requester.map((v: any, i: any) => {
+              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+            })}
           </div>
         );
       },
@@ -423,14 +447,13 @@ const CreditTransfer = () => {
     },
     {
       title: t('programme:status'),
-      dataIndex: 'currentStage',
       key: 'currentStage',
       sorter: true,
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
           <Tag className="clickable" color={getTransferStageTagType(Obj.status)}>
-            {getStageEnumVal(Obj.status)}
+            {getStageTransferEnumVal(Obj.status)}
           </Tag>
         );
       },
@@ -476,31 +499,90 @@ const CreditTransfer = () => {
   };
 
   const handleOk = (val: any) => {
-    console.log(val.remarks, 'lllll');
+    console.log(val);
     selectedReqId !== undefined && rejectTransfer(selectedReqId, val.remarks);
+    formModal.resetFields();
     setSelectedReqId(undefined);
   };
 
   const handleCancel = () => {
     setRejectModalVisible(false);
+    formModal.resetFields();
     setSelectedReqId(undefined);
   };
 
   const handleCancelOk = () => {
     // deleteUser(deleteUserModalRecord);
+    formModal.resetFields();
     setCancelModalVisible(false);
   };
 
   const handleCancelCancel = () => {
+    formModal.resetFields();
     setCancelModalVisible(false);
   };
 
-  const handleAcceptOk = () => {
-    // deleteUser(deleteUserModalRecord);
-    setAcceptModalVisible(false);
+  const acceptRequestApi = async (comCredits: any, remarks: any) => {
+    console.log(comCredits, 'lll', companyIdsVal, 'llllll', selectedReqId);
+    setLoading(true);
+    try {
+      const response: any = await post('national/programme/transferApprove', {
+        requestId: selectedReqId,
+        comment: remarks,
+        companyIds: companyIdsVal,
+        companyCredit: comCredits,
+      });
+      console.log(response);
+      message.open({
+        type: 'success',
+        content: response.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setAcceptModalVisible(false);
+      setLoading(false);
+      formModal.resetFields();
+    } catch (error: any) {
+      console.log('Error in approving credit transfers', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setAcceptModalVisible(false);
+      setLoading(false);
+      formModal.resetFields();
+    }
+  };
+
+  const handleAcceptOk = (val: any) => {
+    const arr = [];
+    for (const key in val) {
+      if (key.startsWith('credits') && val[key] !== undefined) {
+        arr.push(parseInt(val[key]));
+      } else if (key.startsWith('credits') && val[key] === undefined) {
+        arr.push(0);
+      }
+    }
+    const sum = arr.reduce((a, b) => a + b, 0);
+    if (sum === creditAmount) {
+      acceptRequestApi(arr, val.remarksApprove);
+      formModal.resetFields();
+      setAcceptModalVisible(false);
+    } else {
+      message.open({
+        type: 'error',
+        content: 'Sum of credits should be equal to total requested credits',
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
   const handleAcceptCancel = () => {
+    console.log(companiesInfo);
+    formModal.resetFields();
     setAcceptModalVisible(false);
   };
 
@@ -679,7 +761,7 @@ const CreditTransfer = () => {
               layout={'vertical'}
               requiredMark={true}
               form={formModal}
-              onFinish={handleOk}
+              onFinish={handleCancelOk}
             >
               <Form.Item
                 className="remarks-label"
@@ -719,11 +801,7 @@ const CreditTransfer = () => {
       >
         <div className="delete-modal-container">
           <div className="confirm-message-details">
-            <div className="icon">
-              <Trash color="#FF4D4F" size={90} />
-            </div>
-            <div className="content">Are you sure you want to reject this project?</div>
-            <div className="sub-content">You can’t undo this action</div>
+            <div className="content">Accept Transfer Request</div>
           </div>
           <div className="remarks">
             <Form
@@ -732,27 +810,118 @@ const CreditTransfer = () => {
               layout={'vertical'}
               requiredMark={true}
               form={formModal}
-              onFinish={handleOk}
+              onFinish={handleAcceptOk}
             >
-              <Form.Item
-                className="remarks-label"
-                label="Remarks"
-                name="remarks"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Remarks is required!',
-                  },
-                ]}
-              >
-                <Input.TextArea placeholder="" />
-              </Form.Item>
+              {companiesInfo?.length !== 0 &&
+                !loading &&
+                companiesInfo?.map((v: any, i: any) => {
+                  return (
+                    <Row>
+                      <Col offset={1} span={8}>
+                        <Form.Item className="remarks-label" name="companyName">
+                          {v.name}
+                        </Form.Item>
+                      </Col>
+                      <Col offset={1} span={5}>
+                        <Form.Item
+                          className="remarks-label"
+                          name={'credits' + i}
+                          rules={[
+                            {
+                              pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
+                              message: 'Credit Should be a positive number',
+                            },
+                            ({ getFieldValue }) => ({
+                              validator(rule, value) {
+                                if (getFieldValue('credits' + i) > v.credit) {
+                                  // eslint-disable-next-line prefer-promise-reject-errors
+                                  return Promise.reject(
+                                    'Credit amount should not be greater than company credit'
+                                  );
+                                } else if (getFieldValue('credits' + i) > creditAmount) {
+                                  // eslint-disable-next-line prefer-promise-reject-errors
+                                  return Promise.reject(
+                                    'Credit amount should not be greater than requested credit Amount'
+                                  );
+                                }
+                                return Promise.resolve();
+                              },
+                            }),
+                          ]}
+                        >
+                          <Input placeholder="" />
+                        </Form.Item>
+                      </Col>
+                      <Col span={2}>
+                        <div
+                          style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            display: 'flex',
+                          }}
+                        >
+                          <span>/</span>
+                        </div>
+                      </Col>
+                      <Col span={4}>
+                        <Form.Item className="remarks-label" name="totalCredit">
+                          <Input placeholder={v.credit} disabled />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  );
+                })}
+              <Row>
+                <Col offset={1} span={8}>
+                  <Form.Item className="remarks-label" name="companyName">
+                    Requested Amount
+                  </Form.Item>
+                </Col>
+                <Col offset={1} span={5}>
+                  <Form.Item className="remarks-label" name="totalRequest">
+                    <Input placeholder={creditAmount.toString()} disabled />
+                  </Form.Item>
+                </Col>
+                <Col span={2}>
+                  <div
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      display: 'flex',
+                    }}
+                  >
+                    <span>/</span>
+                  </div>
+                </Col>
+                <Col span={4}>
+                  <Form.Item className="remarks-label" name="totalCredit">
+                    <Input placeholder={parseInt(totalComCredits.toString()).toString()} disabled />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col offset={1} span={22}>
+                  <Form.Item
+                    className="remarks-label"
+                    label="Remarks"
+                    name="remarksApprove"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Remarks is required!',
+                      },
+                    ]}
+                  >
+                    <Input.TextArea placeholder="" />
+                  </Form.Item>
+                </Col>
+              </Row>
               <Form.Item>
                 <div className="delete-modal-btns">
                   <div className="center width-60">
                     <Button onClick={handleAcceptCancel}>CANCEL</Button>
                     <Button type="primary" htmlType="submit" loading={loading}>
-                      REJECT
+                      ACCEPT
                     </Button>
                   </div>
                 </div>
