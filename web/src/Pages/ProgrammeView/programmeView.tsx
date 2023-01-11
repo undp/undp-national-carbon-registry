@@ -1,5 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { Row, Col, Card, Progress, Tag, Steps, message, Skeleton, Button, Modal } from 'antd';
+import {
+  Row,
+  Col,
+  Card,
+  Progress,
+  Tag,
+  Steps,
+  message,
+  Skeleton,
+  Button,
+  Modal,
+  Select,
+} from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './programmeView.scss';
@@ -237,6 +249,37 @@ const ProgrammeView = () => {
           if (cid) {
             certifiedTime[cid] = DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy');
           }
+        } else if (activity.data.txType === TxType.RETIRE) {
+          el = {
+            status: 'process',
+            title: `Retired by ${getTxRefValues(activity.data.txRef, 1)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: `The programme containing a credit balance of ${addCommasToNumber(
+              activity.data.creditBalance
+            )} was retired.`,
+            icon: (
+              <span className="step-icon" style={{ backgroundColor: RootColor, color: RootColor }}>
+                <CloseCircleOutlined />
+              </span>
+            ),
+          };
+        } else if (activity.data.txType === TxType.FREEZE) {
+          el = {
+            status: 'process',
+            title: `Credits freezed by ${getTxRefValues(activity.data.txRef, 1)}`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: `${addCommasToNumber(
+              activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)
+            )} number of credits frozen`,
+            icon: (
+              <span
+                className="step-icon"
+                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
+              >
+                <CloseCircleOutlined />
+              </span>
+            ),
+          };
         } else {
           el = {
             status: 'process',
@@ -858,6 +901,30 @@ const ProgrammeView = () => {
         destroyOnClose={true}
       >
         <p>{actionInfo.text}</p>
+        {actionInfo.action === 'Retire' && (
+          <div>
+            <div className="form-label remark">
+              {'Reason'}
+              {actionInfo.remark && <span className="req-ast">*</span>}
+            </div>
+            <Select
+              options={[
+                {
+                  value: 'transfer',
+                  label: 'Cross-border transfer',
+                },
+                {
+                  value: 'legal',
+                  label: 'Legal Action',
+                },
+                {
+                  value: 'other',
+                  label: 'Other',
+                },
+              ]}
+            />
+          </div>
+        )}
         <div className="form-label remark">
           {'Remarks'}
           {actionInfo.remark && <span className="req-ast">*</span>}

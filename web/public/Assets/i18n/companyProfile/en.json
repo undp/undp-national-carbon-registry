@@ -1,0 +1,20 @@
+{
+    "title": "Organisation Details",
+    "subTitle": "sub titile description",
+    "deauthorise": "DEAUTHORISE",
+    "organisationDetailsHeading": "Organisation Details",
+    "name" : "Name",
+    "taxId" : "Tax ID",
+    "companyRole": "Role",
+    "email" : "Email",
+    "phoneNo" : "Phone",
+    "website" : "Website",
+    "address" : "Address",
+    "creditBalance":"Credit Balance",
+    "programmeCount":"No of Programmes",
+    "deauthoriseConfirmHeaderText": "Are you sure you want to deauthorise this organisation?",
+    "deauthoriseConfirmText":"You can’t undo this action",
+    "activeStatus": "Active",
+    "deauthorisedStatus": "Deauthorised",
+    "remarks": "Remarks"
+}

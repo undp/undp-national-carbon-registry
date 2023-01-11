@@ -47,52 +47,23 @@ const Homepage = () => {
               {t('homepage:carbon')} {t('homepage:credit')} <br />
               {t('homepage:management')}
             </span>
+            <div className="subhome">{t('homepage:lorem')}</div>
           </div>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
             <div className="title">Eligibility</div>
-            <div className="homepagebody">
-              Do eiusmod tempor incididunt ut labore et dolore magna aliqua. ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-              dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-              in culpa qui officia deserunt mollit anim id est laborum. Do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat. duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum. Do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-              non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </div>
+            <div className="homepagebody">{t('homepage:eligibilitybody')}</div>
           </div>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerblack">
             <div className="title">Resources</div>
-            <div className="homepagebody">
-              Do eiusmod tempor incididunt ut labore et dolore magna aliqua. ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-              dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-              in culpa qui officia deserunt mollit anim id est laborum. Do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat. duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum. Do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-              non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </div>
+            <div className="homepagebody">{t('homepage:resourcesbody')}</div>
           </div>
         </Col>
       </Row>
@@ -100,26 +71,20 @@ const Homepage = () => {
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
             <div className="title">About Us</div>
-            <div className="homepagebody">
-              Do eiusmod tempor incididunt ut labore et dolore magna aliqua. ut enim ad minim
-              veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-              consequat. duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-              dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-              in culpa qui officia deserunt mollit anim id est laborum. Do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat. duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum. Do eiusmod tempor incididunt ut labore et dolore magna
-              aliqua. ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-              aliquip ex ea commodo consequat. duis aute irure dolor in reprehenderit in voluptate
-              velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-              non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </div>
+            <div className="homepagebody">{t('homepage:aboutusbody')}</div>
           </div>
         </Col>
       </Row>
+      {/* <Row>
+        <Col md={24} lg={24} flex="auto">
+          <div className="homepage-content-containerwhite">
+            <div className="title">Contact Us</div>
+            <div className="homepagebody">{t('homepage:name')}</div>
+          </div>
+        </Col>
+      </Row> */}
     </div>
   );
 };
+
 export default Homepage;

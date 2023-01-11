@@ -1,0 +1,50 @@
+.card-container {
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.mg-left-1 {
+    margin-left: 1rem;
+}
+
+.mg-top-1 {
+    margin-top: 1rem;
+}
+
+.mg-right-5 {
+    margin-right: 5rem;
+}
+
+.padding-top-1 {
+    padding-top: 1rem;
+}
+
+.padding-top-2 {
+    padding-top: 2rem;
+}
+
+.profile-img{
+    width: 200px;
+}
+
+.btn-danger{
+    color: #ff4d4f !important; 
+    border-color: #ff4d4f !important;
+}
+
+.active{
+    border-radius: 20px;
+    background-color: #CCFFFF;
+    padding: 5px 15px;
+    height: 30px;
+    color: blue
+}
+
+.deauthorised{
+    border-radius: 20px;
+    background-color: #f08080;
+    padding: 5px 15px;
+    height: 30px;
+    color: red;
+}

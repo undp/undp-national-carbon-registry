@@ -39,24 +39,25 @@ export class EmailService {
 
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
         this.logger.log('Sending email', JSON.stringify(sendToEmail))
-        if (this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))) {
-            // return new Promise((resolve, reject) => {
-            //     this.transporter.sendMail({
-            //         from: this.sourceEmail,
-            //         to: sendToEmail,
-            //         subject: template["subject"],
-            //         text: this.getTemplateMessage(template["text"], templateData), // plain text body
-            //         html: this.getTemplateMessage(template["html"], templateData), // html body
-            //     }, function(error, info) {
-            //         if (error) {
-            //             console.log(error);
-            //             reject(error)
-            //         } else {
-            //             console.log('Email sent: ' + info);
-            //             resolve(info)
-            //         }
-            //     });
-            // })
+        // this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))
+        if (sendToEmail.endsWith('@undp.org')) {
+            return new Promise((resolve, reject) => {
+                this.transporter.sendMail({
+                    from: this.sourceEmail,
+                    to: sendToEmail,
+                    subject: template["subject"],
+                    text: this.getTemplateMessage(template["text"], templateData), // plain text body
+                    html: this.getTemplateMessage(template["html"], templateData), // html body
+                }, function(error, info) {
+                    if (error) {
+                        console.log(error);
+                        reject(error)
+                    } else {
+                        console.log('Email sent: ' + info);
+                        resolve(info)
+                    }
+                });
+            })
         } else {
             this.logger.log('Skipped email due to local email', sendToEmail);
         }

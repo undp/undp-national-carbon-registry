@@ -10,6 +10,11 @@ export class ProgrammeRetire {
 
     @ApiProperty()
     @IsString()
+    @IsNotEmpty()
+    reason: string;
+
+    @ApiProperty()
+    @IsString()
     @Length(0, 200)
     comment: string;
 }
