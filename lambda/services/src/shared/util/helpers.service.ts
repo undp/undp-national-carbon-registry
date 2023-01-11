@@ -25,13 +25,10 @@ export class HelperService {
   ) {
     let sql = "";
     let col = "";
-    let col2 = "";
-    let value = "";
-    if (data?.type === "PROGRAMME_BY_STATUS" && data?.value !== null) {
+    if (data?.type === "PROGRAMS_BY_STATUS") {
       col = "currentStage";
-      value = data?.value;
       sql = `${table ? table + "." : ""}"${col}" = ${this.prepareValue(
-        ProgrammeStage[value]
+        ProgrammeStage[data?.value]
       )}`;
     } else if (data?.type.includes("CREDIT_CERTIFIED")) {
       col = "certifierId";
