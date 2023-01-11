@@ -33,7 +33,7 @@ import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
-import { ProgrammeTransferQueryViewEntity } from '../entities/programmeTransfer.view.entity';
+import { ProgrammeTransferEntityView } from '../entities/programmeTransfer.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -49,7 +49,7 @@ export class ProgrammeService {
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
-        @InjectRepository(ProgrammeTransferQueryViewEntity) private programmeTransferViewRepo: Repository<ProgrammeTransferQueryViewEntity>,
+        @InjectRepository(ProgrammeTransferEntityView) private programmeTransferViewRepo: Repository<ProgrammeTransferEntityView>,
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
