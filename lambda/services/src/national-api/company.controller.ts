@@ -8,6 +8,7 @@ import { CompanyService } from '../shared/company/company.service';
 import { CaslAbilityFactory } from '../shared/casl/casl-ability.factory';
 import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { CompanySuspendDto } from '../shared/dto/company.suspend.dto';
+import { FindCompanyQueryDto } from 'src/shared/dto/findCompany.dto';
 
 @ApiTags('Company')
 @ApiBearerAuth()
@@ -42,5 +43,12 @@ export class CompanyController {
             throw new HttpException("Can not activate your own company", HttpStatus.FORBIDDEN)
         }
         return this.companyService.activate(companyId, req.abilityCondition)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company))
+    @Post('findByCompanyIds')
+    async findByCompanyId(@Body() body: FindCompanyQueryDto, @Request() req) {
+        return this.companyService.findByCompanyIds(body)
     }
 }
