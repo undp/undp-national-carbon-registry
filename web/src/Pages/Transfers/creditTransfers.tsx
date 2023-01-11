@@ -372,7 +372,7 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.certifier.map((v: any, i: any) => {
+            {itemObj.certifier && itemObj.certifier.map((v: any, i: any) => {
               return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
             })}
           </div>
