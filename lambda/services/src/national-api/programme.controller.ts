@@ -18,6 +18,7 @@ import { ProgrammeTransferRequest } from '../shared/dto/programme.transfer.reque
 import { ProgrammeTransfer } from '../shared/entities/programme.transfer';
 import { ProgrammeTransferApprove } from '../shared/dto/programme.transfer.approve';
 import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject';
+import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { ProgrammeCertify } from '../shared/dto/programme.certify';
 
 @ApiTags('Programme')
@@ -36,6 +37,14 @@ export class ProgrammeController {
     @Post('create')
     async addProgramme(@Body()programme: ProgrammeDto) {
       return this.programmeService.create(programme)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
+    @Post('transferQuery')
+    queryUser(@Body()query: QueryDto, @Request() req) {
+      console.log(req.abilityCondition)
+      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
     }
 
     @ApiBearerAuth()

@@ -126,25 +126,30 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
       - name: Run User Create Tests
-        continue-on-error: true
+        if: always()
         run: |
           postman collection run "20428472-45dd524a-c260-44f4-b9c9-5f164db2264d" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/user_onboarding_company4.csv
       - name: Run User Password Reset Tests
-        continue-on-error: true
+        if: always()
         run: |
-          postman collection run "24647866-ba48ade2-732f-40c5-a304-509b44389ff6" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/reset_password_2.csv
+          postman collection run "24647866-ba48ade2-732f-40c5-a304-509b44389ff6" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/reset_password_3.csv
       - name: Run User View Tests
-        continue-on-error: true
+        if: always()
         run: |
-          postman collection run "20428472-a9ecb4af-70a2-4997-a478-e554138ec3ea" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/view_user_company3.csv
+          postman collection run "20428472-a9ecb4af-70a2-4997-a478-e554138ec3ea" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/view_user_company4.csv
       - name: Run Programme Create Tests
-        continue-on-error: true
+        if: always()
         run: |
           postman collection run "24716950-471a5534-87f8-482d-93e2-6613e15d55e0" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/create_project_7.csv
       - name: Run Programme Authorisation and Credit Transfer Tests
-        continue-on-error: true
+        if: always()
         run: |
           postman collection run "20428472-140d1d13-d387-4952-b956-a1a5ff7b01af" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/credit_transfer_1.csv
+      - name: Run Programme Certification and Certification Revocation Tests
+        if: always()
+        run: |
+          postman collection run "20428472-d4e57d08-53ad-42a5-ba0e-3e85f449a1ed" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/credit_transfer_certify_1.csv
+          
           
           
           

@@ -40,6 +40,7 @@ const Login = () => {
           userRole: response.data.role,
           companyId: response.data.companyId,
           companyRole: response.data.companyRole,
+          companyLogo: response.data.companyLogo,
         });
         removeToken();
         return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');

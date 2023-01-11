@@ -13,7 +13,7 @@ import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
 import { LedgerDbService } from "../ledger-db/ledger-db.service";
-import { ProgrammeStage } from "../enum/programme-status.enum";
+import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -27,14 +27,13 @@ export class ProgrammeLedgerService {
     this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;
     if (programme) {
-      await this.entityManger
-        .save<Programme>(plainToClass(Programme, programme))
-        .then((res: any) => {
-          console.log("create programme in repo -- ", res);
-        })
-        .catch((e: any) => {
-          console.log("create programme in repo -- ", e);
-        });
+      await this.entityManger.save<Programme>(
+        plainToClass(Programme, programme)
+      ).then((res: any) => {
+        console.log("create programme in repo -- ", res)
+      }).catch((e: any) => {
+        console.log("create programme in repo -- ", e)
+      });
     }
 
     const getQueries = {};

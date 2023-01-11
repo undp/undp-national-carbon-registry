@@ -18,6 +18,6 @@ i18n
     //NOTE - Disabled in production
     debug: true,
     //separate name spaces for each pages
-    ns: ['common', 'login', 'dashboard', 'nav', 'company', 'user', 'programme', 'view'],
+    ns: ['common', 'login', 'dashboard', 'nav', 'company', 'user', 'programme', 'view', 'homepage'],
   });
 export default i18n;
