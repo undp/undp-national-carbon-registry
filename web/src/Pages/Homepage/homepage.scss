@@ -51,7 +51,6 @@
         height: auto;
         height: 70%;
         margin-top: 6px;
-        margin-right: 5px;
       }
     }
     .button {
@@ -80,11 +79,12 @@
     @media (max-width: $lg-size) {
       text-align: center;
       justify-content: center;
+      padding-top: 50vh;
     }
 
     span {
       margin-left: 2vw;
-      margin-bottom: 30px;
+      margin-bottom: 2vw;
       font-family: $secondary-font-family;
       font-size: 4rem;
       color: $outside-background-color;
@@ -106,13 +106,24 @@
       color: $outside-background-color;
       line-height: 1rem;
       text-transform: uppercase;
-      padding-left: 50px;
+      margin-left: 2vw;
+
+      @media (max-width: $lg-size) {
+        text-align: center;
+        justify-content: center;
+        margin-top: 20px;
+      }
     }
   }
   .homepage-content-containerwhite {
     background-color: $background-color;
-    height: 40vh;
-    padding-top: 60px;
+    // height: 35vh;
+    height: fit-content;
+    padding: 60px 60px 60px 60px;
+
+    @media (max-width: $lg-size) {
+      height: fit-content;
+    }
 
     .title {
       font-size: 3rem;
@@ -123,9 +134,9 @@
       justify-content: center;
 
       @media (max-width: $lg-size) {
-        font-size: 1rem;
+        font-size: 2rem;
         margin-top: 1rem;
-        color:red;
+        color: $title-text-color;
         // width: 100vw;
         line-height: 1.5em;
       }
@@ -136,13 +147,25 @@
       font-family: $primary-font-family;
       color: $body-text-color;
       justify-content: left;
-      margin: 60px;
+      margin: 20px 60px 60px 60px;
+
+      @media (max-width: $lg-size) {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        color: $title-text-color;
+        // width: 100vw;
+        line-height: 1.5em;
+      }
     }
   }
   .homepage-content-containerblack {
     background-color: $background-color-dark;
-    height: 40vh;
-    padding-top: 50px;
+    height: fit-content;
+    padding: 60px 60px 60px 60px;
+
+    @media (max-width: $lg-size) {
+      height: fit-content;
+    }
 
     .title {
       font-size: 3rem;
@@ -151,6 +174,13 @@
       color: $dark-text-color;
       text-align: center;
       justify-content: center;
+
+      @media (max-width: $lg-size) {
+        font-size: 2rem;
+        margin-top: 1rem;
+        // width: 100vw;
+        line-height: 1.5em;
+      }
     }
     .homepagebody {
       font-size: 1rem;
@@ -158,7 +188,7 @@
       font-family: $primary-font-family;
       color: $dark-text-color;
       justify-content: left;
-      margin: 60px;
+      margin: 20px 60px 60px 60px;
     }
   }
 }

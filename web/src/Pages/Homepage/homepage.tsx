@@ -51,7 +51,7 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
             <div className="title">Eligibility</div>
@@ -59,7 +59,7 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerblack">
             <div className="title">Resources</div>
@@ -75,7 +75,16 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
+      {/* <Row>
+        <Col md={24} lg={24} flex="auto">
+          <div className="homepage-content-containerwhite">
+            <div className="title">Contact Us</div>
+            <div className="homepagebody">{t('homepage:name')}</div>
+          </div>
+        </Col>
+      </Row> */}
     </div>
   );
 };
+
 export default Homepage;
