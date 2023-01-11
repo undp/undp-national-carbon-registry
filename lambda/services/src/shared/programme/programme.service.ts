@@ -33,8 +33,8 @@ import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
+import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
 import { ProgrammeRetire } from '../dto/programme.retire';
-import { ProgrammeTransferViewEntity } from '../entities/programmeTransfer.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -50,7 +50,7 @@ export class ProgrammeService {
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
-        @InjectRepository(ProgrammeTransferViewEntity) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntity>,
+        @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
@@ -171,7 +171,6 @@ export class ProgrammeService {
         }
 
         const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
-        console.log(received,"lllllllll",transfer)
         const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
 
         if (!programme.companyId.includes(approverCompanyId)) {

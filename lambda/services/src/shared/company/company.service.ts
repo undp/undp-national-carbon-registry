@@ -11,6 +11,7 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { CompanyState } from "../enum/company.state.enum";
 import { HelperService } from "../util/helpers.service";
+import { FindCompanyQueryDto } from "../dto/findCompany.dto";
 
 @Injectable()
 export class CompanyService {
@@ -148,6 +149,19 @@ export class CompanyService {
       },
     });
     return companies && companies.length > 0 ? companies[0] : undefined;
+  }
+
+  async findByCompanyIds(req: FindCompanyQueryDto): Promise<Company[] | undefined> {
+    const data: Company[] = []
+    for (let i = 0; i < req.companyIds.length; i++){
+      const companies = await this.companyRepo.find({
+        where: {
+          companyId: req.companyIds[i],
+        },
+      });
+      data.push(companies[0])
+    }
+    return data && data.length > 0 ? data : undefined;
   }
 
   async findGovByCountry(countryCode: string): Promise<Company | undefined> {
