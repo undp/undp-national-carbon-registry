@@ -33,6 +33,7 @@ import { HelperService } from '../util/helpers.service';
 import { CompanyRole } from '../enum/company.role.enum';
 import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
+import { ProgrammeRetire } from '../dto/programme.retire';
 import { ProgrammeTransferViewEntity } from '../entities/programmeTransfer.view.entity';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
@@ -202,7 +203,7 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        if (programme.creditBalance < req.creditAmount) {
+        if (programme.creditBalance - programme.creditFrozen.reduce((a, b) => a + b, 0) < req.creditAmount) {
             throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
         }
         if (programme.companyId.includes(requester.companyId)) {
@@ -386,6 +387,24 @@ export class ProgrammeService {
             where: { companyId: In(updated.companyId) },
         })
         if (updated && updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async retireProgramme(req: ProgrammeRetire, user: string) {
+        this.logger.log(`Programme ${req.programmeId} retiring Comment: ${req.comment}`)
+        const updated: any = await this.programmeLedger.retireProgramme(req.programmeId, req.reason, user)
+        if (!updated) {
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in issued status for the given programme id ${req.programmeId}`)
+        }
+
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated.certifierId && updated.certifierId.length > 0) {
             updated.certifier = await this.companyRepo.find({
                 where: { companyId: In(updated.certifierId) },
             })

@@ -32,6 +32,7 @@ export enum TxType {
   CERTIFY = '4',
   RETIRE = '5',
   REVOKE = '6',
+  FREEZE = '7'
 }
 
 export enum SectoralScope {
@@ -115,6 +116,8 @@ export interface Programme {
   creditIssued: number;
   creditBalance: number;
   creditTransferred: number;
+  creditRetired: number;
+  creditFrozen: number[];
   constantVersion: string;
   proponentTaxVatId: string[];
   companyId: number[];
