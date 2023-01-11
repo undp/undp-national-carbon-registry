@@ -916,8 +916,8 @@ export const optionDonutPieA: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
-  labels: ['Available', 'Rejected', 'Transfered'],
+  colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+  labels: ['Available', 'Transfered', 'Retired'],
   plotOptions: {
     pie: {
       donut: {
@@ -956,7 +956,7 @@ export const optionDonutPieA: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
       useSeriesColors: false,
     },
     markers: {
@@ -964,7 +964,7 @@ export const optionDonutPieA: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
