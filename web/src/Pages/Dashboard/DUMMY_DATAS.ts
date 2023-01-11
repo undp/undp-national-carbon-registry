@@ -126,7 +126,7 @@ export const options: any = {
     colors: ['#E83250', '#72B829', '#D7D8DB'],
   },
   title: {
-    text: 'Total Programmes',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -506,7 +506,7 @@ export const optionsY: any = {
     },
   ],
   xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
   },
   yaxis: {
     show: true,
@@ -526,10 +526,10 @@ export const optionsY: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+    colors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
   },
   title: {
-    text: 'Total Credits Issued',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -538,7 +538,7 @@ export const optionsY: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Inter-Regular',
+      fontFamily: 'Inter',
       color: '#263238',
     },
   },
@@ -551,7 +551,7 @@ export const optionsY: any = {
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -562,7 +562,7 @@ export const optionsY: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+      colors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
       useSeriesColors: false,
     },
     markers: {
@@ -570,7 +570,7 @@ export const optionsY: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+      fillColors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,

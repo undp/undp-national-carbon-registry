@@ -6,7 +6,14 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
-import { optionDonutPieA, seriesDonutPieA } from './DUMMY_DATAS';
+import {
+  optionDonutPieA,
+  options,
+  optionsY,
+  series,
+  seriesDonutPieA,
+  seriesY,
+} from './DUMMY_DATAS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -129,7 +136,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-main-container">
       <div className="stastics-cards-container">
-        <Row gutter={[20, 40]} className="stastic-card-row">
+        <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={pendingProjects}
@@ -174,8 +181,8 @@ const Dashboard = () => {
           </Radio.Group>
         </div>
       </div>
-      <div className="stastics-and-pie-container">
-        <Row gutter={[20, 40]} className="stastic-card-row">
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <ProgrammeRejectAndTransfer
               totalPrgrammes={totalProjects}
@@ -187,7 +194,7 @@ const Dashboard = () => {
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card">
+            <div className="stastics-and-pie-card height-pie-rem">
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />
@@ -214,7 +221,7 @@ const Dashboard = () => {
             </div>
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card">
+            <div className="stastics-and-pie-card height-pie-rem">
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />
@@ -238,6 +245,48 @@ const Dashboard = () => {
                   </div>
                 </>
               )}
+            </div>
+          </Col>
+        </Row>
+      </div>
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Programmes</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(lastUpdate * 1000).fromNow()}
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Programmes:Sector</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(lastUpdate * 1000).fromNow()}
+                </div>
+              </div>
             </div>
           </Col>
         </Row>
