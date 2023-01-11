@@ -76,3 +76,7 @@ CREATE OR REPLACE VIEW public.programme_transfer_view_entity
 ALTER TABLE public.programme_transfer_view_entity
     OWNER TO root;
 
+
+
+ALTER TABLE company
+  ADD remark text;
