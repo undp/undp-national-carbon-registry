@@ -84,8 +84,9 @@ const CompanyProfile = () => {
           <Row justify="end">
             {['Admin', 'Root', 'Manager'].includes(userRole) ? (
               <Button
+                danger
                 disabled={parseInt(companyDetails.state) === 0}
-                className="mg-right-5 btn-text-red"
+                className="mg-right-5 btn-danger"
                 onClick={onDeauthoriseOrganisation}
               >
                 {t('companyProfile:deauthorise')}
@@ -113,9 +114,9 @@ const CompanyProfile = () => {
                 </Row>
                 <Row justify="center">
                   {parseInt(companyDetails.state) === 1 ? (
-                    <div className="padding-top-1 active">{t('companyProfile:activeStatus')}</div>
+                    <div className="mg-top-1 active">{t('companyProfile:activeStatus')}</div>
                   ) : (
-                    <div className="padding-top-1 deauthorised">
+                    <div className="mg-top-1 deauthorised">
                       {t('companyProfile:deauthorisedStatus')}
                     </div>
                   )}
