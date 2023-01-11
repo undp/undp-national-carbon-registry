@@ -997,7 +997,7 @@ export const optionDonutPieA: any = {
   ],
 };
 
-export const seriesDonutPieA = [44, 55, 41];
+export const seriesDonutPieA = [3, 2, 1];
 
 export const optionsR: any = {
   chart: {

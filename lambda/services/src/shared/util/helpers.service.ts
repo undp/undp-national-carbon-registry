@@ -4,6 +4,7 @@ import { QueryDto } from "../dto/query.dto";
 import { StatList } from "../dto/stat.list.dto";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
+import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 
 @Injectable()
 export class HelperService {
@@ -18,15 +19,24 @@ export class HelperService {
   }
 
   public generateWhereSQLStastics(
-    col: string,
-    value: string,
+    data: programmeStatusRequestDto,
     extraSQL: string,
     table?: string
   ) {
     let sql = "";
-    sql = `${table ? table + "." : ""}"${col}" = ${this.prepareValue(
-      ProgrammeStage[value]
-    )}`;
+    let col = "";
+    let col2 = "";
+    let value = "";
+    if (data?.type === "PROGRAMME_BY_STATUS" && data?.value !== null) {
+      col = "currentStage";
+      value = data?.value;
+      sql = `${table ? table + "." : ""}"${col}" = ${this.prepareValue(
+        ProgrammeStage[value]
+      )}`;
+    } else if (data?.type.includes("CREDIT_CERTIFIED")) {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is not null`;
+    }
 
     if (sql != "") {
       if (extraSQL) {

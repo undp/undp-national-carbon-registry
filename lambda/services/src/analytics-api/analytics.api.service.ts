@@ -9,6 +9,8 @@ import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
 import { HelperService } from "../shared/util/helpers.service";
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { programmeStatusRequestDto } from "src/shared/dto/programmeStatus.request.dto";
+import { CreditStatType } from "../shared/enum/credit.stat.type.enum";
 
 @Injectable()
 export class AnalyticsAPIService {
@@ -40,13 +42,15 @@ export class AnalyticsAPIService {
           break;
 
         case StatType.PROGRAMS_BY_STATUS:
-          const type = "currentStage";
+          const values: programmeStatusRequestDto = {
+            type: "PROGRAMS_BY_STATUS",
+            value: stat.value,
+          };
           let programmeByStatus = await this.programmeRepo
             .createQueryBuilder()
             .where(
               this.helperService.generateWhereSQLStastics(
-                type,
-                stat.value,
+                values,
                 this.helperService.parseMongoQueryToSQL(abilityCondition)
               )
             )
@@ -66,15 +70,37 @@ export class AnalyticsAPIService {
           results[stat.type] = transferRequest;
           break;
 
-        case StatType.CREDIT_CERTIFIED:
-          let creditCertifiedResponse = await this.programmeRepo
+        case StatType.CREDIT_STATS_BALANCE:
+        case StatType.CREDIT_STATS_TRANSFERRED:
+        case StatType.CREDIT_STATS_RETIRED:
+          let creditStat = await this.programmeRepo
             .createQueryBuilder()
+            .select(`SUM("${CreditStatType[stat.type]}")`)
             .where(
               abilityCondition
                 ? this.helperService.parseMongoQueryToSQL(abilityCondition)
                 : ""
             )
-            .getCount();
+            .getRawOne();
+          results[stat.type] = creditStat;
+          break;
+
+        case StatType.CREDIT_CERTIFIED_BALANCE:
+        case StatType.CREDIT_CERTIFIED_TRANSFERRED:
+        case StatType.CREDIT_CERTIFIED_RETIRED:
+          const certifiedRequestParams: programmeStatusRequestDto = {
+            type: stat.type,
+          };
+          let creditCertifiedResponse = await this.programmeRepo
+            .createQueryBuilder()
+            .select(`SUM("${CreditStatType[stat.type]}")`)
+            .where(
+              this.helperService.generateWhereSQLStastics(
+                certifiedRequestParams,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawOne();
           results[stat.type] = creditCertifiedResponse;
           break;
       }
