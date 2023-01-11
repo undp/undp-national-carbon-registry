@@ -21,6 +21,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import CreditTransfers from './Pages/Transfers/creditTransfers';
 import Homepage from './Pages/Homepage/homepage';
 import UserProfile from './Pages/UserProfile/UserProfile';
+import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 
 const App = () => {
   useEffect(() => {
@@ -79,7 +80,13 @@ const App = () => {
                   path="/userProfile"
                   element={<CustomLayout selectedKey="userManagement/viewAll" />}
                 >
-                  <Route path="userProfileDetails" element={<UserProfile />} />
+                  <Route path="view" element={<UserProfile />} />
+                </Route>
+                <Route
+                  path="/companyProfile"
+                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                >
+                  <Route path="view" element={<CompanyProfile />} />
                 </Route>
                 {/* <Route
                   path="/userManagement"

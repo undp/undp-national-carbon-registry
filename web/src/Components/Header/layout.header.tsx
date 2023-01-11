@@ -54,7 +54,7 @@ const LayoutHeader = (props: HeaderProps) => {
                   src={'data:image/jpeg;base64,' + companyLogo}
                   alt="logo"
                   onClick={() => {
-                    navigate('/userProfile/userProfileDetails');
+                    navigate('/userProfile/view');
                   }}
                 />
               </div>

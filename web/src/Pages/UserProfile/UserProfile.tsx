@@ -111,7 +111,7 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            <Button className="mg-left-1 btn-text-red" onClick={() => onDeleteProfileUser()}>
+            <Button className="mg-left-1 btn-danger" onClick={() => onDeleteProfileUser()}>
               {t('userProfile:delete')}
             </Button>
             <Button
@@ -152,7 +152,7 @@ const UserProfile = () => {
               </Row>
             </Card>
             <Row justify="center">
-              <Button className="mg-left-1 btn-text-red" onClick={() => signOut()}>
+              <Button className="mg-left-1 btn-danger" onClick={() => signOut()}>
                 {t('userProfile:logOut')}
               </Button>
               <Button className="mg-left-1" type="primary" onClick={onChangedPassword}>

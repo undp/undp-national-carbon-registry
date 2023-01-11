@@ -13,6 +13,7 @@ export default () => ({
         database: (process.env.DB_NAME || 'carbondev'),
         synchronize: process.env.NODE_ENV == 'prod' ? true : true,
         autoLoadEntities: true,
+        logging: ["query", "error"]
     },
     jwt: {
         userSecret: process.env.USER_JWT_SECRET || '1324',

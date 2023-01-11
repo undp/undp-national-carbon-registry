@@ -81,12 +81,23 @@
     }
   }
 
-  .stastics-and-pie-container {
+  .center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .height-pie-rem {
+    height: 23.75rem;
+  }
+
+  .height-bar-rem {
+    height: 30rem;
+  }
+
+  .stastics-and-charts-container {
     display: flex;
     flex-direction: row;
     width: 100%;
-    align-items: center;
-    justify-content: center;
     margin-top: 2rem;
     margin-bottom: 2rem;
 
@@ -100,7 +111,6 @@
           border-radius: 10px;
           padding: 0 1rem 1rem 1rem;
           width: 100%;
-          height: 380px;
 
           .margin-top-2 {
             width: 100%;

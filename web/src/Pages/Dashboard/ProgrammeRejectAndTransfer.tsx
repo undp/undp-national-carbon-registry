@@ -28,7 +28,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
 ) => {
   const { totalPrgrammes, issued, rejected, transfered, updatedDate, loading } = props;
   return (
-    <div className="stastics-and-pie-card">
+    <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (
         <div className="margin-top-2">
           <Skeleton active />

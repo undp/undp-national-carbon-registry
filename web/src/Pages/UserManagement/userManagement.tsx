@@ -594,11 +594,12 @@ const UserManagement = () => {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null}
+        width="400px"
       >
         <div className="delete-modal-container">
           <div className="confirm-message-details">
             <div className="icon">
-              <Trash color="#FF4D4F" size={90} />
+              <Trash color="#FF4D4F" size={64} />
             </div>
             <div className="content">Are you sure you want to permanently delete this user?</div>
             <div className="sub-content">You can’t undo this action</div>
