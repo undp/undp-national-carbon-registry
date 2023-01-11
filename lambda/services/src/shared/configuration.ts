@@ -11,7 +11,7 @@ export default () => ({
         username: process.env.DB_USER || 'hquser',
         password: process.env.DB_PASSWORD || '',
         database: (process.env.DB_NAME || 'carbondev'),
-        synchronize: process.env.NODE_ENV == 'prod' ? true : true,
+        synchronize: process.env.NODE_ENV == 'prod' ? false : false,
         autoLoadEntities: true,
     },
     jwt: {
