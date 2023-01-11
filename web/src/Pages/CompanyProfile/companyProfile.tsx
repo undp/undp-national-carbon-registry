@@ -9,7 +9,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import './companyProfile.scss';
 
 const CompanyProfile = () => {
-  const { get } = useConnection();
+  const { get, put } = useConnection();
   const [companyDetails, setCompanyDetails] = useState<any>([]);
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -41,8 +41,16 @@ const CompanyProfile = () => {
     }
   }, []);
 
-  const onDeauthoriseOrgConfirmed = () => {
-    setOpenDeauthorisationModal(false);
+  const onDeauthoriseOrgConfirmed = async (remarks: string) => {
+    try {
+      const response: any = await put(`national/company/suspend?id=${companyDetails.companyId}`, {
+        remarks: remarks,
+      });
+      setOpenDeauthorisationModal(false);
+      getCompanyDetails(companyDetails.companyId);
+    } catch (exception: any) {
+      setErrorMsg(exception.message);
+    }
   };
 
   const onDeauthoriseOrgCanceled = () => {
@@ -199,6 +207,18 @@ const CompanyProfile = () => {
                       {companyDetails.creditBalance ? companyDetails.creditBalance : '-'}
                     </Col>
                   </Row>
+                  {parseInt(companyDetails.state) === 0 ? (
+                    <Row className="field">
+                      <Col span={12} className="field-key">
+                        {t('companyProfile:remarks')}
+                      </Col>
+                      <Col span={12} className="field-value">
+                        {companyDetails.remarks ? companyDetails.remarks : '-'}
+                      </Col>
+                    </Row>
+                  ) : (
+                    ''
+                  )}
                 </Skeleton>
               </div>
             </Card>

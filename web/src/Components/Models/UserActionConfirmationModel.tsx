@@ -26,7 +26,7 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
       className={'popup-' + actionInfo.type}
       open={openModal}
       onOk={() => {
-        onActionConfirmed();
+        onActionConfirmed(comment);
         setComment('');
       }}
       onCancel={() => {

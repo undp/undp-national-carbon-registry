@@ -38,7 +38,6 @@ import './companyManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
-import { TableDataType } from '../../Definitions/InterfacesAndType/userManagement.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
@@ -60,6 +59,7 @@ import {
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { CompanyTableDataType } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -69,7 +69,7 @@ const CompanyManagement = () => {
   const { get, delete: del, post } = useConnection();
   const [totalCompany, setTotalCompany] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [tableData, setTableData] = useState<TableDataType[]>([]);
+  const [tableData, setTableData] = useState<CompanyTableDataType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [searchByTermOrganisation, setSearchByTermOrganisation] = useState<any>('name');
@@ -141,7 +141,7 @@ const CompanyManagement = () => {
     }
   };
 
-  const actionMenu = (record: TableDataType) => {
+  const actionMenu = (record: CompanyTableDataType) => {
     return (
       <List
         className="action-menu"
@@ -485,6 +485,9 @@ const CompanyManagement = () => {
                 columns={columns}
                 className="common-table-class"
                 loading={loading}
+                rowClassName={(record) =>
+                  parseInt(record.state as string) === 0 ? 'table-row-gray' : ''
+                }
                 pagination={{
                   current: currentPage,
                   pageSize: pageSize,
