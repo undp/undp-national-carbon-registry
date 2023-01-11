@@ -51,4 +51,10 @@ export class CompanyController {
     async findByCompanyId(@Body() body: FindCompanyQueryDto, @Request() req) {
         return this.companyService.findByCompanyIds(body)
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('profile')
+    async getCompany(@Query('id') companyId: number,@Request() req) {
+        return await this.companyService.findByCompanyId(companyId)
+    }
 }
