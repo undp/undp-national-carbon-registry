@@ -41,7 +41,7 @@ export class ProgrammeController {
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
-    @Post('queryProgrammeTransfers')
+    @Post('transferQuery')
     queryUser(@Body()query: QueryDto, @Request() req) {
       console.log(req.abilityCondition)
       return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)

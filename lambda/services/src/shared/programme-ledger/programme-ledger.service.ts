@@ -26,15 +26,15 @@ export class ProgrammeLedgerService {
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;
-    // if (programme) {
-    //   await this.entityManger.save<Programme>(
-    //     plainToClass(Programme, programme)
-    //   ).then((res: any) => {
-    //     console.log("create programme in repo -- ", res)
-    //   }).catch((e: any) => {
-    //     console.log("create programme in repo -- ", e)
-    //   });
-    // }
+    if (programme) {
+      await this.entityManger.save<Programme>(
+        plainToClass(Programme, programme)
+      ).then((res: any) => {
+        console.log("create programme in repo -- ", res)
+      }).catch((e: any) => {
+        console.log("create programme in repo -- ", e)
+      });
+    }
 
     const getQueries = {};
     getQueries[this.ledger.tableName] = {

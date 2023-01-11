@@ -1,24 +1,19 @@
 import { ViewColumn, ViewEntity } from "typeorm"
+import { Company } from "./company.entity";
 import { ProgrammeTransfer } from "./programme.transfer";
 
 @ViewEntity({
     expression: `
-    SELECT programme_transfer.*, "requester"."logo" as "requester", "certifier"."logo" as "certifier", "prog"."creditBalance" as "creditBalance", "sender"."logo" as "senderLogo", "sender"."name" as "senderName", "requester"."name" as "requesterName", "certifier"."name" as "certifierName", "prog"."title" as "programmeTitle", "prog"."sector" as "programmeSector" FROM "programme_transfer" "programme_transfer" 
+    SELECT programme_transfer.*, JSON_AGG("requester".*) as "requester", "prog"."creditBalance" as creditBalance, "prog"."title" as "programmeTitle", "prog"."sector" as "programmeSector", JSON_AGG(distinct "certifier".*) as "certifier", JSON_AGG(distinct "sender".*) as "sender" 
+    FROM "programme_transfer" "programme_transfer" 
     LEFT JOIN "programme" "prog" ON "prog"."programmeId" = "programme_transfer"."programmeId"
     LEFT JOIN "company" "requester" ON "requester"."companyId" = "programme_transfer"."requesterCompanyId"
     LEFT JOIN "company" "sender" ON "sender"."companyId" = ANY("programme_transfer"."companyId")
     LEFT JOIN "company" "certifier" ON "certifier"."companyId" = ANY("prog"."certifierId")
-	group by "programme_transfer"."requestId", "requester"."logo", "certifier"."logo", "prog"."creditBalance", "prog"."title", "prog"."sector", "sender"."logo", "sender"."name", "requester"."name", "certifier"."name";	
+    group by "programme_transfer"."requestId", "requester"."companyId", "prog"."programmeId";	
     `,
 })
-export class ProgrammeTransferQueryViewEntity extends ProgrammeTransfer {
-
-    @ViewColumn()
-    requester: string;
-
-    @ViewColumn()
-    certifier: string;
-
+export class ProgrammeTransferViewEntity extends ProgrammeTransfer {
     @ViewColumn()
     creditBalance: number;
 
@@ -29,14 +24,11 @@ export class ProgrammeTransferQueryViewEntity extends ProgrammeTransfer {
     programmeSector: string;
 
     @ViewColumn()
-    senderLogo: string;
+    certifier: Company[];
 
     @ViewColumn()
-    senderName: string;
+    sender: Company[];
 
     @ViewColumn()
-    requesterName: string;
-
-    @ViewColumn()
-    certifierName: string;
+    requester: Company[];
 }
