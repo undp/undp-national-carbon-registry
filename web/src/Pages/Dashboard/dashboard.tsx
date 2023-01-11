@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Col, DatePicker, Progress, Radio, Row, message } from 'antd';
+import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
-import { optionDonutPieA, seriesDonutPieA } from './DUMMY_DATAS';
+import {
+  optionDonutPieA,
+  options,
+  optionsY,
+  series,
+  seriesDonutPieA,
+  seriesY,
+} from './DUMMY_DATAS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -27,6 +34,9 @@ const Dashboard = () => {
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
   const [transferedProjects, setTransferedProjects] = useState<number>(0);
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
+  const [creditBalance, setCreditBalance] = useState<number>(0);
+  const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0]);
+  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
 
   const getAllProgrammeAnalyticsStatsParams = () => {
@@ -54,12 +64,32 @@ const Dashboard = () => {
         {
           type: 'TRANSFER_REQUEST',
         },
+        {
+          type: 'CREDIT_STATS_BALANCE',
+        },
+        {
+          type: 'CREDIT_STATS_TRANSFERRED',
+        },
+        // {
+        //   type: 'CREDIT_STATS_RETIRED',
+        // },
+        {
+          type: 'CREDIT_CERTIFIED_BALANCE',
+        },
+        {
+          type: 'CREDIT_CERTIFIED_TRANSFERRED',
+        },
+        // {
+        //   type: 'CREDIT_CERTIFIED_RETIRED',
+        // },
       ],
     };
   };
 
   const getAllProgrammeAnalyticsStats = async () => {
     setLoading(true);
+    const pieSeriesCreditsData: any[] = [];
+    const pieSeriesCreditsCerifiedData: any[] = [];
     try {
       const response: any = await post(
         'analytics/programme/stats',
@@ -72,6 +102,19 @@ const Dashboard = () => {
       setTransferedProjects(response?.data?.stats?.TRANSFERRED);
       setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
       setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
+      setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
+      pieSeriesCreditsData.push(0);
+      pieSeriesCreditsCerifiedData.push(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_BALANCE?.sum)
+      );
+      pieSeriesCreditsCerifiedData.push(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_TRANSFERRED?.sum)
+      );
+      pieSeriesCreditsCerifiedData.push(0);
+      setCreditPieSeries(pieSeriesCreditsData);
+      setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
       setLastUpdate(response?.data?.lastUpdate);
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -93,7 +136,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-main-container">
       <div className="stastics-cards-container">
-        <Row gutter={[20, 40]} className="stastic-card-row">
+        <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={pendingProjects}
@@ -114,9 +157,9 @@ const Dashboard = () => {
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={42000}
+              value={creditBalance}
               title={'Credit Balance'}
-              updatedDate={'1669781334'}
+              updatedDate={lastUpdate}
               icon="coin"
               loading={loading}
             />
@@ -138,8 +181,8 @@ const Dashboard = () => {
           </Radio.Group>
         </div>
       </div>
-      <div className="stastics-and-pie-container">
-        <Row gutter={[20, 40]} className="stastic-card-row">
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <ProgrammeRejectAndTransfer
               totalPrgrammes={totalProjects}
@@ -151,37 +194,97 @@ const Dashboard = () => {
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card">
-              <div className="pie-charts-title">Credits</div>
+            <div className="stastics-and-pie-card height-pie-rem">
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="pie-charts-title">Credits</div>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={optionDonutPieA}
+                      series={creditsPieSeries}
+                      type="donut"
+                      width="350px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-pie-rem">
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="pie-charts-title">Certified Credits</div>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={optionDonutPieA}
+                      series={creditsCertifiedPieSeries}
+                      type="donut"
+                      width="350px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </div>
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Programmes</div>
               <div className="pie-charts-section">
                 <Chart
-                  options={optionDonutPieA}
-                  series={seriesDonutPieA}
-                  type="donut"
-                  width="350px"
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
                 />
               </div>
               <div className="updated-on">
                 <div className="updated-moment-container">
-                  {moment(parseInt('1672648015') * 1000).fromNow()}
+                  {moment(lastUpdate * 1000).fromNow()}
                 </div>
               </div>
             </div>
           </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card">
-              <div className="pie-charts-title">Certified</div>
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Programmes:Sector</div>
               <div className="pie-charts-section">
                 <Chart
-                  options={optionDonutPieA}
-                  series={seriesDonutPieA}
-                  type="donut"
-                  width="350px"
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
                 />
               </div>
               <div className="updated-on">
                 <div className="updated-moment-container">
-                  {moment(parseInt('1672648015') * 1000).fromNow()}
+                  {moment(lastUpdate * 1000).fromNow()}
                 </div>
               </div>
             </div>
