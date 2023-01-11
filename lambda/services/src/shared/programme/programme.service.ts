@@ -129,6 +129,12 @@ export class ProgrammeService {
           .limit(query.size)
           .getManyAndCount();
     
+        if (resp.length > 0) {
+            resp[0] = resp[0].map( e => {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                return e;
+            })
+        }
         return new DataListResponseDto(
           resp.length > 0 ? resp[0] : undefined,
           resp.length > 1 ? resp[1] : undefined
