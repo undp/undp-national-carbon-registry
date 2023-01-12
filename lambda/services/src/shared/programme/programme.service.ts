@@ -208,7 +208,7 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        if (programme.creditBalance - programme.creditFrozen.reduce((a, b) => a + b, 0) < req.creditAmount) {
+        if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
             throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
         }
         if (programme.companyId.includes(requester.companyId)) {
