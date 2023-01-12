@@ -29,8 +29,8 @@
 }
 
 .btn-danger{
-    color: #ff4d4f !important; 
-    border-color: #ff4d4f !important;
+    color: #FF4D4F !important; 
+    border-color: #FF8183 !important;
 }
 
 .ant-btn[disabled] {
@@ -41,16 +41,16 @@
 
 .active{
     border-radius: 20px;
-    background-color: #CCFFFF;
+    background-color: rgba(#B9E2F4, 0.4);
     padding: 5px 15px;
     height: 30px;
-    color: blue
+    color: #16B1FF;
 }
 
 .deauthorised{
     border-radius: 20px;
-    background-color: #f08080;
+    background-color: rgba(#FFA6A6,0.4);
     padding: 5px 15px;
     height: 30px;
-    color: red;
+    color: #FF4D4F;
 }
