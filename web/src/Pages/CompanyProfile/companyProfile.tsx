@@ -70,7 +70,7 @@ const CompanyProfile = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="content-container company-profile">
       <Row>
         <Col md={24} lg={8}>
           <div className="title-bar">
