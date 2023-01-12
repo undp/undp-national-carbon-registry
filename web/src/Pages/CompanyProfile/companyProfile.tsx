@@ -14,7 +14,7 @@ const CompanyProfile = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['companyProfile']);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [openDeauthorisationModal, setOpenDeauthorisationModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
