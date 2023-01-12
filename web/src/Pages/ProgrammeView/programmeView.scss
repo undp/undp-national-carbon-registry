@@ -173,3 +173,16 @@
 .remark {
   font-size: 0.8rem;
 }
+
+.footer-btn {
+  margin: 15px 20px;
+  display: flex;
+  justify-content: center;
+  column-gap: 30px;
+}
+
+.retire-form {
+  .ant-radio-group {
+    text-align: left;
+  }
+}

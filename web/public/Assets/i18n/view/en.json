@@ -27,7 +27,15 @@
     "location": "Geographical Location",
     "credits": "Credits",
     "certification": "Certification Details",
-    "authorise": "Authorise",
+    "authorise": "Approve",
     "reject": "Reject",
-    "revoke": "Revoke"
+    "revoke": "Revoke",
+    "cancel": "Cancel",
+    "remarks": "Remarks",
+    "popupText": "You can’t undo this action",
+    "rejectTitle": "Are you sure you want to reject the programme",
+    "authTitle": "Are you sure you want to approve the programme",
+    "certifyTitle": "Are you sure you want to certify the programme",
+    "retireTitle": "Are you sure you want to retire the credits?",
+    "revokeTitle": "Are you sure you want to revoke the certificate of this programme"
 }
