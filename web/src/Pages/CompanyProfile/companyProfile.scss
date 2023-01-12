@@ -33,6 +33,12 @@
     border-color: #ff4d4f !important;
 }
 
+.ant-btn[disabled] {
+    border-color: #d9d9d9 !important;
+    background: #f5f5f5 !important;
+    color: #d9d9d9 !important; 
+}
+
 .active{
     border-radius: 20px;
     background-color: #CCFFFF;
