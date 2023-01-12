@@ -173,7 +173,7 @@ export class ProgrammeLedgerService {
               (programme.creditBalance * programme.creditOwnerPercentage[i]) /
               100;
             
-            frozenCredit[programme.companyId[i]] = programme.creditFrozen[i]
+            frozenCredit[programme.companyId[i]] = programme.creditFrozen ? programme.creditFrozen[i] : 0;
           }
           for (const i in approve.companyCredit) {
             const changeCredit = approve.companyCredit[i];
