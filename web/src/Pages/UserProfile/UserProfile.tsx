@@ -99,7 +99,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="content-container user-profile">
       <Row>
         <Col md={24} lg={8}>
           <div className="title-bar">
@@ -111,11 +111,14 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            <Button className="mg-left-1 btn-danger" onClick={() => onDeleteProfileUser()}>
+            <Button
+              className="mg-left-1 btn-danger mg-bottom-1"
+              onClick={() => onDeleteProfileUser()}
+            >
               {t('userProfile:delete')}
             </Button>
             <Button
-              className="mg-left-1"
+              className="mg-left-1 mg-bottom-1"
               type="primary"
               onClick={() => {
                 navigate('/userManagement/updateUser', {
@@ -148,14 +151,14 @@ const UserProfile = () => {
                 </Skeleton>
               </Row>
               <Row justify="center">
-                <div className="padding-top-1">{organisationDetails.name}</div>
+                <div className=" company-name mg-top-1">{organisationDetails.name}</div>
               </Row>
             </Card>
             <Row justify="center">
-              <Button className="mg-left-1 btn-danger" onClick={() => signOut()}>
+              <Button className="mg-left-1 btn-danger mg-bottom-1" onClick={() => signOut()}>
                 {t('userProfile:logOut')}
               </Button>
-              <Button className="mg-left-1" type="primary" onClick={onChangedPassword}>
+              <Button className="mg-left-1 mg-bottom-1" type="primary" onClick={onChangedPassword}>
                 {t('userProfile:changePassword')}
               </Button>
             </Row>
