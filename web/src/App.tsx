@@ -9,7 +9,6 @@ import PrivateRoute from './Components/PrivateRoute/privateRoute';
 import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
 import AddUser from './Pages/AddUser/addUser';
-import UpdateUser from './Pages/UpdateUser/updateUser';
 import UserManagement from './Pages/UserManagement/userManagement';
 import Dashboard from './Pages/Dashboard/dashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
@@ -67,7 +66,7 @@ const App = () => {
                 >
                   <Route path="viewAll" element={<UserManagement />} />
                   <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<UpdateUser />} />
+                  <Route path="updateUser" element={<AddUser />} />
                 </Route>
                 <Route
                   path="/creditTransfers"
