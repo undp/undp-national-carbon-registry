@@ -27,7 +27,7 @@ export class CaslAbilityFactory {
       if (user.role == Role.Root) {
         can(Action.Manage, 'all');
 
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
+        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
         cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
       } else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
