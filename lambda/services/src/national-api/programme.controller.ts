@@ -41,14 +41,6 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
-    @Post('transferQuery')
-    queryUser(@Body()query: QueryDto, @Request() req) {
-      console.log(req.abilityCondition)
-      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
-    }
-
-    @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Programme, true))
     // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
     @Post('query')
@@ -133,5 +125,13 @@ export class ProgrammeController {
     @Post('transferCancel')
     async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
         return this.programmeService.transferCancel(body, req.user.companyId)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
+    @Post('transferQuery')
+    queryUser(@Body()query: QueryDto, @Request() req) {
+      console.log(req.abilityCondition)
+      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
     }
 }
