@@ -191,7 +191,7 @@ const CreditTransfer = () => {
   const acceptRequest = async (record: any) => {
     setLoading(true);
     try {
-      const response: any = await post('national/company/findByCompanyIds', {
+      const response: any = await post('national/organisation/findByIds', {
         companyIds: record.companyId,
       });
       console.log(response);

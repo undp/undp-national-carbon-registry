@@ -329,7 +329,7 @@ const CompanyManagement = () => {
   const getAllCompany = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/company/query', getAllOrganisationParams());
+      const response: any = await post('national/organisation/query', getAllOrganisationParams());
       setTableData(response.data);
       setTotalCompany(response.response.data.total);
       setLoading(false);

@@ -10,9 +10,9 @@ import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { CompanySuspendDto } from '../shared/dto/company.suspend.dto';
 import { FindCompanyQueryDto } from '../shared/dto/findCompany.dto';
 
-@ApiTags('Company')
+@ApiTags('Organisation')
 @ApiBearerAuth()
-@Controller('company')
+@Controller('organisation')
 export class CompanyController {
 
     constructor(private readonly companyService: CompanyService, private caslAbilityFactory: CaslAbilityFactory) {}
@@ -47,7 +47,7 @@ export class CompanyController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company))
-    @Post('findByCompanyIds')
+    @Post('findByIds')
     async findByCompanyId(@Body() body: FindCompanyQueryDto, @Request() req) {
         return this.companyService.findByCompanyIds(body)
     }
