@@ -43,9 +43,12 @@ const CompanyProfile = () => {
 
   const onDeauthoriseOrgConfirmed = async (remarks: string) => {
     try {
-      const response: any = await put(`national/organisation/suspend?id=${companyDetails.companyId}`, {
-        remarks: remarks,
-      });
+      const response: any = await put(
+        `national/organisation/suspend?id=${companyDetails.companyId}`,
+        {
+          remarks: remarks,
+        }
+      );
       setOpenDeauthorisationModal(false);
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
