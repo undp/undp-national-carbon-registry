@@ -839,6 +839,40 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
+            {data.programmeProperties.programmeMaterials && (
+              <Card className="card-container">
+                <div className="info-view only-head">
+                  <div className="title">
+                    <span className="title-icon">{<Icon.Grid />}</span>
+                    <span className="title-text">{t('view:programmeMaterial')}</span>
+                    <a
+                      target="_blank"
+                      href={data.programmeProperties.programmeMaterials}
+                      className="pull-right link"
+                    >
+                      {<Icon.Link45deg />}
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            )}
+            {data.programmeProperties.projectMaterial && (
+              <Card className="card-container">
+                <div className="info-view only-head">
+                  <div className="title">
+                    <span className="title-icon">{<Icon.FileEarmarkText />}</span>
+                    <span className="title-text">{t('view:projectMaterial')}</span>
+                    <a
+                      target="_blank"
+                      href={data.programmeProperties.projectMaterial}
+                      className="pull-right link"
+                    >
+                      {<Icon.Link45deg />}
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            )}
             <Card className="card-container">
               <div>
                 <InfoView
