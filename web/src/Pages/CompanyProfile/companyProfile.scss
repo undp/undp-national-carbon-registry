@@ -1,4 +1,14 @@
 .company-profile {
+  padding: 0px 50px;
+
+  .title-bar {
+    display: flex;
+    justify-content: space-between;
+
+    .flex-display {
+      margin-left: 15px;
+    }
+  }
   .card-container {
     margin-bottom: 20px;
     width: 100%;
