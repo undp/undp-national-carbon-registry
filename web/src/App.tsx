@@ -70,7 +70,7 @@ const App = () => {
                 </Route>
                 <Route
                   path="/creditTransfers"
-                  element={<CustomLayout selectedKey="creditTransfers" />}
+                  element={<CustomLayout selectedKey="creditTransfers/viewAll" />}
                 >
                   <Route path="viewAll" element={<CreditTransfers />} />
                   {/* <Route path="view" element={<ProgrammeView />} /> */}
