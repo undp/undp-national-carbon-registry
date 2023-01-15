@@ -8,7 +8,7 @@ import { CompanyService } from '../shared/company/company.service';
 import { CaslAbilityFactory } from '../shared/casl/casl-ability.factory';
 import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { CompanySuspendDto } from '../shared/dto/company.suspend.dto';
-import { FindCompanyQueryDto } from 'src/shared/dto/findCompany.dto';
+import { FindCompanyQueryDto } from '../shared/dto/findCompany.dto';
 
 @ApiTags('Company')
 @ApiBearerAuth()
