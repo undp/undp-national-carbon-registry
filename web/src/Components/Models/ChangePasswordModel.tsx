@@ -1,7 +1,9 @@
 import { LockOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal } from 'antd';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ChangePasswordModel.scss';
+import exclamationOctagon from '../../Assets/Images/exclamation-octagon.svg';
 
 export interface ChangePasswordProps {
   onPasswordChanged: any;
@@ -12,11 +14,21 @@ export interface ChangePasswordProps {
 
 const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
   const { onPasswordChanged, onCanceled, openModal, errorMsg } = props;
+  const { i18n, t } = useTranslation(['passwordReset']);
 
   return (
     <Modal
+      width={548}
+      title={
+        <div className="popup-header">
+          <div className="icon">
+            <img src={exclamationOctagon}></img>
+          </div>
+          <div>{t('passwordReset:changePassword')}</div>
+        </div>
+      }
       open={openModal}
-      width={Math.min(400, window.innerWidth)}
+      className={'popup-success password-reset-model'}
       centered={true}
       destroyOnClose={true}
       footer={null}
@@ -28,33 +40,41 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
         className="login-form"
         onFinish={onPasswordChanged}
       >
-        <Form.Item>
-          <div>Change Password</div>
-        </Form.Item>
         <Form.Item
+          className="mg-top-1"
           name="oldPassword"
-          label="Old Password"
-          rules={[{ required: true, message: 'Please input old Password!' }]}
+          label={t('passwordReset:oldPassword')}
+          rules={[
+            {
+              required: true,
+              message: `${t('passwordReset:oldPassword')} ${t('passwordReset:isRequired')}`,
+            },
+          ]}
         >
           <Input.Password placeholder="" />
         </Form.Item>
 
         <Form.Item
           name="newPassword"
-          label="New Password"
-          rules={[{ required: true, message: 'Please input new Password!' }]}
+          label={t('passwordReset:newPassword')}
+          rules={[
+            {
+              required: true,
+              message: `${t('passwordReset:newPassword')} ${t('passwordReset:isRequired')}`,
+            },
+          ]}
         >
           <Input.Password placeholder="" />
         </Form.Item>
 
         <Form.Item
           name="confirm_password"
-          label="Confirm New Password"
+          label={t('passwordReset:confirmNewPassword')}
           dependencies={['newPassword']}
           rules={[
             {
               required: true,
-              message: 'Please confirm your password!',
+              message: `${t('passwordReset:confirmNewPassword')} ${t('passwordReset:isRequired')}`,
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -62,7 +82,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
                   return Promise.resolve();
                 }
                 return Promise.reject(
-                  new Error('The two passwords that you entered do not match!')
+                  new Error(t('passwordReset:passwordsNotMatchedErr').toString())
                 );
               },
             }),
@@ -73,12 +93,12 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
 
         {errorMsg ? <Alert className="mg-top-1" message={errorMsg} type="error" showIcon /> : ''}
 
-        <Form.Item className="mg-top-1">
-          <Button className="mg-left-1" htmlType="button" onClick={onCanceled}>
-            CANCEL
+        <Form.Item className="mg-top-2">
+          <Button htmlType="button" onClick={onCanceled}>
+            {t('passwordReset:cancel')}
           </Button>
-          <Button className="mg-left-1" type="primary" htmlType="submit">
-            SET PASSWORD
+          <Button className="mg-left-3" type="primary" htmlType="submit">
+            {t('passwordReset:setPassword')}
           </Button>
         </Form.Item>
       </Form>

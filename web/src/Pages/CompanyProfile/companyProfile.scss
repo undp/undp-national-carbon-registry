@@ -1,56 +1,58 @@
-.card-container {
+.company-profile {
+  .card-container {
     margin-bottom: 20px;
     width: 100%;
     border-radius: 10px;
-}
+  }
 
-.mg-left-1 {
+  .mg-left-1 {
     margin-left: 1rem;
-}
+  }
 
-.mg-top-1 {
+  .mg-top-1 {
     margin-top: 1rem;
-}
+  }
 
-.mg-right-5 {
+  .mg-right-5 {
     margin-right: 5rem;
-}
+  }
 
-.padding-top-1 {
+  .padding-top-1 {
     padding-top: 1rem;
-}
+  }
 
-.padding-top-2 {
+  .padding-top-2 {
     padding-top: 2rem;
-}
+  }
 
-.profile-img{
+  .profile-img {
     width: 200px;
-}
+  }
 
-.btn-danger{
-    color: #FF4D4F !important; 
-    border-color: #FF8183 !important;
-}
+  .btn-danger {
+    color: #ff4d4f !important;
+    border-color: #ff8183 !important;
+  }
 
-.ant-btn[disabled] {
+  .ant-btn[disabled] {
     border-color: #d9d9d9 !important;
     background: #f5f5f5 !important;
-    color: #d9d9d9 !important; 
-}
+    color: #d9d9d9 !important;
+  }
 
-.active{
+  .active {
     border-radius: 20px;
-    background-color: rgba(#B9E2F4, 0.4);
+    background-color: rgba(#b9e2f4, 0.4);
     padding: 5px 15px;
     height: 30px;
-    color: #16B1FF;
-}
+    color: #16b1ff;
+  }
 
-.deauthorised{
+  .deauthorised {
     border-radius: 20px;
-    background-color: rgba(#FFA6A6,0.4);
+    background-color: rgba(#ffa6a6, 0.4);
     padding: 5px 15px;
     height: 30px;
-    color: #FF4D4F;
+    color: #ff4d4f;
+  }
 }

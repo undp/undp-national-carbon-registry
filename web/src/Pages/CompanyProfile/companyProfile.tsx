@@ -23,7 +23,7 @@ const CompanyProfile = () => {
   const getCompanyDetails = async (companyId: string) => {
     try {
       setIsLoading(true);
-      const response = await get(`national/company/profile?id=${companyId}`);
+      const response = await get(`national/organisation/profile?id=${companyId}`);
       if (response.data) {
         setCompanyDetails(response.data);
         setIsLoading(false);
@@ -43,9 +43,12 @@ const CompanyProfile = () => {
 
   const onDeauthoriseOrgConfirmed = async (remarks: string) => {
     try {
-      const response: any = await put(`national/company/suspend?id=${companyDetails.companyId}`, {
-        remarks: remarks,
-      });
+      const response: any = await put(
+        `national/organisation/suspend?id=${companyDetails.companyId}`,
+        {
+          remarks: remarks,
+        }
+      );
       setOpenDeauthorisationModal(false);
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
@@ -70,7 +73,7 @@ const CompanyProfile = () => {
   };
 
   return (
-    <div className="content-container">
+    <div className="content-container company-profile">
       <Row>
         <Col md={24} lg={8}>
           <div className="title-bar">

@@ -35,6 +35,7 @@ import { ProgrammeCertify } from '../dto/programme.certify';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
 import { ProgrammeRetire } from '../dto/programme.retire';
+import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -95,6 +96,14 @@ export class ProgrammeService {
             requestId: req.requestId,
         })
 
+        if (!pTransfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (pTransfer.status == TransferStatus.CANCELLED) {
+            throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
+        }
+
         if (!pTransfer.companyId.includes(approverCompanyId)) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
         }
@@ -147,6 +156,14 @@ export class ProgrammeService {
             requestId: req.requestId,
         });
 
+        if (!transfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (transfer.status == TransferStatus.CANCELLED) {
+            throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
+        }
+
         if (transfer.status == TransferStatus.APPROVED) {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
         }
@@ -198,6 +215,37 @@ export class ProgrammeService {
         }
 
         throw new HttpException("Internal error on status updating", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    async transferCancel(req: ProgrammeTransferCancel, requester: User) {
+        this.logger.log(`Programme transfer cancel by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
+
+        const transfer = await this.programmeTransferRepo.findOneBy({
+            requestId: req.requestId,
+        });
+        
+        if (!transfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (transfer.status != TransferStatus.PENDING) {
+            throw new HttpException("Transfer already processed", HttpStatus.BAD_REQUEST)
+        }
+
+        const result = await this.programmeTransferRepo.update({
+            requestId: req.requestId,
+            status: TransferStatus.PENDING
+        }, {
+            status: TransferStatus.CANCELLED
+        }).catch((err) => {
+            this.logger.error(err);
+            return err;
+        });
+
+        if (result.affected > 0) {
+            return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
+        }
+        return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
     }
 
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {

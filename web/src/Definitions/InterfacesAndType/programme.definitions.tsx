@@ -108,6 +108,8 @@ export interface ProgrammeProperties {
   geographicalLocation: string[];
   greenHouseGasses: any[];
   creditYear: number;
+  programmeMaterials: string;
+  projectMaterial: string;
 }
 
 export interface Programme {
