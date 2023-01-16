@@ -25,7 +25,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: start;
         width: 100%;
 
         .ant-upload {
@@ -204,4 +204,10 @@
       flex-direction: row-reverse;
     }
   }
+}
+
+
+.ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error {
+  height: auto;
+  max-height: 200px;
 }
