@@ -313,7 +313,11 @@ const CompanyManagement = () => {
         key: sortField,
         order: sortOrder,
       };
-    } else return undefined;
+    } else
+      return {
+        key: 'companyId',
+        order: 'DESC',
+      };
   };
 
   const getAllOrganisationParams = () => {
@@ -407,7 +411,8 @@ const CompanyManagement = () => {
         setSortField(sorter.columnKey);
       }
     } else {
-      setSortField('');
+      setSortField('companyId');
+      setSortOrder('DESC');
     }
     // setCurrentPage(1);
   };
