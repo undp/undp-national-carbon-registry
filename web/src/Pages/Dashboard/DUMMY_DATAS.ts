@@ -706,7 +706,7 @@ export const optionsZ: any = {
 
 export const seriesY = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [44, 55, 41, 67, 22, 43, 21, 49],
   },
   {
@@ -721,7 +721,7 @@ export const seriesY = [
 
 export const seriesZ = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [22, 31, 41, 67, 22, 40, 21, 11],
   },
   {

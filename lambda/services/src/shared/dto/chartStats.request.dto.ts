@@ -8,7 +8,9 @@ import {
   IsString,
 } from "class-validator";
 
-export class programmeStatusRequestDto {
-  type: any;
+export class chartStatsRequestDto {
+  type: string;
   value?: string;
+  startDate?: number;
+  endDate?: number;
 }

@@ -5,6 +5,7 @@ import { StatList } from "../dto/stat.list.dto";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
+import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
 
 @Injectable()
 export class HelperService {
@@ -16,6 +17,64 @@ export class HelperService {
       return "'" + value + "'";
     }
     return value;
+  }
+
+  public getMonth(index: number) {
+    let month: string;
+    if (index === 1) {
+      month = "jan";
+    } else if (index === 2) {
+      month = "feb";
+    } else if (index === 3) {
+      month = "mar";
+    } else if (index === 4) {
+      month = "apr";
+    } else if (index === 5) {
+      month = "may";
+    } else if (index === 6) {
+      month = "jun";
+    } else if (index === 7) {
+      month = "jul";
+    } else if (index === 4) {
+      month = "aug";
+    } else if (index === 5) {
+      month = "sep";
+    } else if (index === 6) {
+      month = "oct";
+    } else if (index === 7) {
+      month = "nov";
+    } else {
+      month = "dec";
+    }
+    return month;
+  }
+
+  public generateWhereSQLChartStastics(
+    data: chartStatsRequestDto,
+    extraSQL: string,
+    table?: string
+  ) {
+    let sql = "";
+    let col = "";
+    let colFilter = "createdTime";
+
+    if (data?.type === "TOTAL_PROGRAMS") {
+      col = "currentStage";
+      sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+        data?.startDate
+      )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+        data?.endDate
+      )}`;
+    }
+
+    if (sql != "") {
+      if (extraSQL) {
+        sql = `(${sql}) and (${extraSQL})`;
+      }
+    } else if (extraSQL) {
+      sql = extraSQL;
+    }
+    return sql;
   }
 
   public generateWhereSQLStastics(

@@ -168,7 +168,15 @@ const Dashboard = () => {
       </div>
       <div className="filter-container">
         <div className="date-filter">
-          <RangePicker />
+          <RangePicker
+            ranges={{
+              Today: [moment(), moment()],
+              'This Month': [moment().startOf('month'), moment().endOf('month')],
+            }}
+            showTime
+            format="YYYY/MM/DD"
+            onChange={() => {}}
+          />
         </div>
         <div className="radio-selection">
           <Radio.Group defaultValue="overall">
