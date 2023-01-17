@@ -688,7 +688,6 @@ export class ProgrammeLedgerService {
         programme.serialNo = serialNo;
         programme.txTime = new Date().getTime();
         programme.currentStage = ProgrammeStage.ISSUED;
-        programme.creditTransferred = 0;
         programme.creditIssued = programme.creditEst;
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
@@ -719,7 +718,6 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.tableName] = {
           currentStage: ProgrammeStage.ISSUED.valueOf(),
           serialNo: serialNo,
-          creditTransferred: 0,
           creditIssued: programme.creditIssued,
           creditBalance: programme.creditBalance,
           creditChange: programme.creditChange,

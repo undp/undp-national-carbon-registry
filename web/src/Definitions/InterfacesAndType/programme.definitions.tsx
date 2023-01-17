@@ -169,10 +169,17 @@ export const addCommSep = (value: any) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export const addSpaces = (text: string) => {
+  if (!text) {
+    return text;
+  }
+  return text.replace(/([A-Z])/g, ' $1').trim();
+};
+
 export const getFinancialFields = (programme: Programme) => {
   return {
     programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
-    financingType: programme.programmeProperties.sourceOfFunding,
+    financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: addCommSep(programme.programmeProperties.grantEquivalentAmount),
     carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };

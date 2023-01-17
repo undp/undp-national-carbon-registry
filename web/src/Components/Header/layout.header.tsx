@@ -46,7 +46,7 @@ const LayoutHeader = (props: HeaderProps) => {
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </div>
         </Col> */}
-        <Col span={1} offset={23}>
+        <Col className="header-prof">
           <Row>
             <Col>
               <div className="header-country-logo">

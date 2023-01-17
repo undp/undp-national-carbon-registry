@@ -41,6 +41,7 @@ import {
 } from '@ant-design/icons';
 import {
   addCommSep,
+  addSpaces,
   CompanyRole,
   getFinancialFields,
   getGeneralFields,
@@ -421,10 +422,11 @@ const ProgrammeView = () => {
       getProgrammeHistory(state.record.programmeId);
       setData(state.record);
 
+      const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
       setTimeout(() => {
         Geocoding({ accessToken: mapboxgl.accessToken })
           .forwardGeocode({
-            query: state.record?.programmeProperties.geographicalLocation.join(', ') || '',
+            query: address,
             autocomplete: false,
             limit: 1,
           })
@@ -449,7 +451,9 @@ const ProgrammeView = () => {
                 zoom: 5,
               });
 
-              new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+              const popup = new mapboxgl.Popup().setText(address).addTo(map);
+
+              new mapboxgl.Marker().setLngLat(feature.center).addTo(map).setPopup(popup);
 
               // map.on('load', () => {
               //   map.addSource('admin-1', {
@@ -682,14 +686,6 @@ const ProgrammeView = () => {
     }
   }
   // }
-
-  const addSpaces = (text: string) => {
-    if (!text) {
-      return text;
-    }
-    return text.replace(/([A-Z])/g, ' $1').trim();
-  };
-
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
     const text = t('view:' + k);
@@ -698,7 +694,9 @@ const ProgrammeView = () => {
         <Tag color={getStageTagType(v as ProgrammeStage)}>{getStageEnumVal(v as string)}</Tag>
       );
     } else if (k === 'sector') {
-      generalInfo[text] = <Tag color="processing">{v as string}</Tag>;
+      generalInfo[text] = (
+        <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
+      );
     } else if (k === 'applicationType') {
       generalInfo[text] = (
         <span>

@@ -1,4 +1,10 @@
 .user-profile {
+  padding: 0px 50px;
+
+  .login-language-selection-txt .ant-select {
+    width: 120px;
+  }
+
   .card-container {
     margin-bottom: 20px;
     width: 100%;
@@ -33,3 +39,4 @@
     border-color: #ff8183 !important;
   }
 }
+

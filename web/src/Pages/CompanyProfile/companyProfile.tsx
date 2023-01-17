@@ -74,16 +74,36 @@ const CompanyProfile = () => {
 
   return (
     <div className="content-container company-profile">
-      <Row>
-        <Col md={24} lg={8}>
+      {/* <Row> */}
+      {/* <Col md={24} lg={8}>
           <div className="title-bar">
             <div>
               <div className="body-title">{t('companyProfile:title')}</div>
               <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
             </div>
           </div>
-        </Col>
-        <Col md={24} lg={16}>
+        </Col> */}
+      <div className="title-bar">
+        <div>
+          <div className="body-title">{t('companyProfile:title')}</div>
+          <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
+        </div>
+        <div className="flex-display">
+          {['Admin', 'Root', 'Manager'].includes(userRole) ? (
+            <Button
+              danger
+              disabled={parseInt(companyDetails.state) === 0}
+              className="btn-danger"
+              onClick={onDeauthoriseOrganisation}
+            >
+              {t('companyProfile:deauthorise')}
+            </Button>
+          ) : (
+            ''
+          )}
+        </div>
+      </div>
+      {/* <Col md={24} lg={16}>
           <Row justify="end">
             {['Admin', 'Root', 'Manager'].includes(userRole) ? (
               <Button
@@ -98,8 +118,8 @@ const CompanyProfile = () => {
               ''
             )}
           </Row>
-        </Col>
-      </Row>
+        </Col> */}
+      {/* </Row> */}
 
       <div className="content-body">
         <Row gutter={16}>
