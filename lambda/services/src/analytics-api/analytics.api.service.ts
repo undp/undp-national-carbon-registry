@@ -42,90 +42,202 @@ export class AnalyticsAPIService {
     for (const stat of query.stats) {
       switch (stat.type) {
         case ChartType.TOTAL_PROGRAMS:
-          const startTime = 1672531200000;
-          const endTime = 1703894400000;
-          const duration = endTime - startTime;
-          const durationInDays = Math.ceil(duration / 1000 / 60 / 60 / 24);
-          let sTime = startTime;
-          let params: chartStatsRequestDto = {
+        const startTime = 1672531200000;
+        const endTime = 1703894400000;
+        const duration = endTime - startTime;
+        const durationInDays = Math.ceil(duration / 1000 / 60 / 60 / 24);
+        let sTime = startTime;
+        let params: chartStatsRequestDto = {
+          type: "TOTAL_PROGRAMS",
+          startDate: startTime,
+          endDate: endTime,
+        };
+        let totalProgrammesResponse = await this.programmeRepo
+          .createQueryBuilder()
+          .where(
+            this.helperService.generateWhereSQLChartStastics(
+              params,
+              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            )
+          )
+          .getMany();
+        let duraion: number;
+        let durationCounts: number;
+        if (durationInDays > 31) {
+          duraion = 2592000000;
+          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 30);
+        } else if (durationInDays > 7) {
+          duraion = 604800000;
+          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 7);
+        } else if (durationInDays > 1) {
+          duraion = 86400000;
+          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24);
+        }
+        let data = {
+          awaitingAuthorization: [],
+          issued: [],
+          rejected: [],
+          programmes: [],
+        };
+        for (let index = 1; index <= durationCounts; index++) {
+          let eTime = sTime + duraion;
+          let pendingC = 0;
+          let issuedC = 0;
+          let rejectedC = 0;
+          let programmesC = 0;
+          // console.log("week count ---- ", index, { sTime, eTime });
+          for (
+            let indexProgramme = 0;
+            indexProgramme < totalProgrammesResponse.length;
+            indexProgramme++
+          ) {
+            if (
+              totalProgrammesResponse[indexProgramme]?.createdTime >= sTime &&
+              totalProgrammesResponse[indexProgramme]?.createdTime < eTime
+            ) {
+              let prgramme =
+                totalProgrammesResponse[indexProgramme]?.programmeId;
+              programmesC++;
+              if (
+                totalProgrammesResponse[indexProgramme]?.currentStage ===
+                "AwaitingAuthorization"
+              ) {
+                pendingC++;
+              } else if (
+                totalProgrammesResponse[indexProgramme]?.currentStage ===
+                "Issued"
+              ) {
+                issuedC++;
+              } else if (
+                totalProgrammesResponse[indexProgramme]?.currentStage ===
+                "Rejected"
+              ) {
+                rejectedC++;
+              }
+            }
+            if (indexProgramme === totalProgrammesResponse.length - 1) {
+              data?.programmes.push(programmesC);
+              data?.awaitingAuthorization.push(pendingC);
+              data?.issued.push(issuedC);
+              data?.rejected.push(rejectedC);
+            }
+          }
+          sTime = eTime;
+        }
+        console.log("data ----------- > ", data);
+        results[stat.type] = data;
+        break;
+
+        case ChartType.TOTAL_PROGRAMS_SECTOR:
+          const startTimeSector = 1672531200000;
+          const endTimeSector = 1703894400000;
+          const durationSector = endTimeSector - startTimeSector;
+          const durationSectorInDays = Math.ceil(
+            durationSector / 1000 / 60 / 60 / 24
+          );
+          let sTimeSector = startTimeSector;
+          let paramsSector: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
-            startDate: startTime,
-            endDate: endTime,
+            startDate: startTimeSector,
+            endDate: endTimeSector,
           };
-          let totalProgrammesResponse = await this.programmeRepo
+          let totalProgrammesResponseSector = await this.programmeRepo
             .createQueryBuilder()
             .where(
               this.helperService.generateWhereSQLChartStastics(
-                params,
+                paramsSector,
                 this.helperService.parseMongoQueryToSQL(abilityCondition)
               )
             )
             .getMany();
-          let duraion: number;
-          let durationCounts: number;
-          if (durationInDays > 31) {
-            duraion = 2592000000;
-            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 30);
-          } else if (durationInDays > 7) {
-            duraion = 604800000;
-            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 7);
-          } else if (durationInDays > 1) {
-            duraion = 86400000;
-            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24);
+          let duraionSectorT: number;
+          let durationSectorCounts: number;
+          if (durationSectorInDays > 31) {
+            duraionSectorT = 2592000000;
+            durationSectorCounts = Math.ceil(
+              durationSector / 1000 / 60 / 60 / 24 / 30
+            );
+          } else if (durationSectorInDays > 7) {
+            duraionSectorT = 604800000;
+            durationSectorCounts = Math.ceil(
+              durationSector / 1000 / 60 / 60 / 24 / 7
+            );
+          } else if (durationSectorInDays > 1) {
+            duraionSectorT = 86400000;
+            durationSectorCounts = Math.ceil(
+              durationSector / 1000 / 60 / 60 / 24
+            );
           }
-          let data = {
-            awaitingAuthorization: [],
-            issued: [],
-            rejected: [],
+          let dataSector = {
+            energy: [],
+            health: [],
+            education: [],
+            transport: [],
+            manufacturing: [],
+            hospitality: [],
+            forestry: [],
+            waste: [],
+            agriculture: [],
+            other: [],
             programmes: [],
           };
-          for (let index = 1; index <= durationCounts; index++) {
-            let eTime = sTime + duraion;
-            let pendingC = 0;
-            let issuedC = 0;
-            let rejectedC = 0;
+          for (let index = 1; index <= durationSectorCounts; index++) {
+            let eTime = sTimeSector + duraionSectorT;
+            let energyC = 0;
+            let healthC = 0;
+            let educationC = 0;
+            let transportC = 0;
+            let manufacturingC = 0;
+            let hospitalityC = 0;
+            let forestryC = 0;
+            let wasteC = 0;
+            let agricultureC = 0;
+            let otherC = 0;
             let programmesC = 0;
-            // console.log("week count ---- ", index, { sTime, eTime });
+            // console.log("week count ---- ", index, { sTimeSector, eTime });
             for (
               let indexProgramme = 0;
-              indexProgramme < totalProgrammesResponse.length;
+              indexProgramme < totalProgrammesResponseSector.length;
               indexProgramme++
             ) {
               if (
-                totalProgrammesResponse[indexProgramme]?.createdTime >= sTime &&
-                totalProgrammesResponse[indexProgramme]?.createdTime < eTime
+                totalProgrammesResponseSector[indexProgramme]?.createdTime >=
+                  sTimeSector &&
+                totalProgrammesResponseSector[indexProgramme]?.createdTime <
+                  eTime
               ) {
                 let prgramme =
-                  totalProgrammesResponse[indexProgramme]?.programmeId;
+                  totalProgrammesResponseSector[indexProgramme]?.programmeId;
                 programmesC++;
-                if (
-                  totalProgrammesResponse[indexProgramme]?.currentStage ===
-                  "AwaitingAuthorization"
-                ) {
-                  pendingC++;
-                } else if (
-                  totalProgrammesResponse[indexProgramme]?.currentStage ===
-                  "Issued"
-                ) {
-                  issuedC++;
-                } else if (
-                  totalProgrammesResponse[indexProgramme]?.currentStage ===
-                  "Rejected"
-                ) {
-                  rejectedC++;
-                }
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Energy" && energyC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Health" && healthC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Education" && educationC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Transport" && transportC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Manufacturing" && manufacturingC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Hospitality" && hospitalityC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Forestry" && forestryC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Waste" && wasteC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Agriculture" && agricultureC++
+                totalProgrammesResponseSector[indexProgramme]?.sector === "Other" && otherC++
               }
-              if (indexProgramme === totalProgrammesResponse.length - 1) {
-                data?.programmes.push(programmesC);
-                data?.awaitingAuthorization.push(pendingC);
-                data?.issued.push(issuedC);
-                data?.rejected.push(rejectedC);
+              if (indexProgramme === totalProgrammesResponseSector.length - 1) {
+                dataSector?.programmes.push(programmesC);
+                dataSector?.energy.push(energyC);
+                dataSector?.health.push(healthC);
+                dataSector?.education.push(educationC);
+                dataSector?.transport.push(transportC);
+                dataSector?.manufacturing.push(manufacturingC);
+                dataSector?.hospitality.push(hospitalityC);
+                dataSector?.forestry.push(forestryC);
+                dataSector?.waste.push(wasteC);
+                dataSector?.agriculture.push(agricultureC);
+                dataSector?.other.push(otherC);
               }
             }
-            sTime = eTime;
+            sTimeSector = eTime;
           }
-          console.log("data ----------- > ", data);
-          results[stat.type] = data;
+          console.log("dataSector ----------- > ", dataSector);
+          results[stat.type] = dataSector;
           break;
       }
     }

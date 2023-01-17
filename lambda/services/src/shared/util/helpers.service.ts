@@ -19,36 +19,6 @@ export class HelperService {
     return value;
   }
 
-  public getMonth(index: number) {
-    let month: string;
-    if (index === 1) {
-      month = "jan";
-    } else if (index === 2) {
-      month = "feb";
-    } else if (index === 3) {
-      month = "mar";
-    } else if (index === 4) {
-      month = "apr";
-    } else if (index === 5) {
-      month = "may";
-    } else if (index === 6) {
-      month = "jun";
-    } else if (index === 7) {
-      month = "jul";
-    } else if (index === 4) {
-      month = "aug";
-    } else if (index === 5) {
-      month = "sep";
-    } else if (index === 6) {
-      month = "oct";
-    } else if (index === 7) {
-      month = "nov";
-    } else {
-      month = "dec";
-    }
-    return month;
-  }
-
   public generateWhereSQLChartStastics(
     data: chartStatsRequestDto,
     extraSQL: string,
