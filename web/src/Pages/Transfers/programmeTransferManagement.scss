@@ -62,126 +62,123 @@
       border: none;
     }
   }
+}
 
-  .ant-modal-body {
-    padding: 5px;
-    .credit-transfer-modal-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 2rem 0 0 0;
-      width: 100%;
-      .icon-credit {
-        margin-bottom: 15px;
-      }
-      .credit-transfer-details {
+.credit-transfer-modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0 0 0;
+  width: 100%;
+  .icon-credit {
+    margin-bottom: 15px;
+  }
+  .credit-transfer-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+    .content-credit-transfer {
+      font-family: 'Inter' !important;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.3rem;
+      padding: 0 1rem 0 1rem;
+      text-align: center;
+      color: $common-filter-color !important;
+    }
+
+    .sub-content-credit-transfer {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.8rem;
+      line-height: 1.375rem;
+      text-align: center;
+      color: rgba(58, 53, 65, 0.5);
+    }
+  }
+  .remarks-credit-transfer {
+    flex-direction: row;
+    width: 100%;
+    padding: 0.5rem 1rem 0 1rem;
+    .modal-form {
+      .ant-form-item-explain-error {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+      }
+
+      .ant-form {
+        width: 100%;
+        .ant-form-item-label > label {
+          font-size: 0.8rem;
+        }
+      }
+
+      .modal-credit-transfer-btns {
+        display: flex;
+        flex-direction: row;
         align-items: center;
         justify-content: center;
         width: 100%;
-        margin-bottom: 10px;
-        .content-credit-transfer {
-          font-family: 'Inter' !important;
-          font-style: normal;
-          font-weight: 600;
-          font-size: 0.9rem;
-          line-height: 1.3rem;
-          padding: 0 1rem 0 1rem;
-          text-align: center;
-          color: $common-filter-color !important;
-        }
+        margin-top: 1rem;
 
-        .sub-content-credit-transfer {
-          font-family: 'Inter';
-          font-style: normal;
-          font-weight: 600;
-          font-size: 0.8rem;
-          line-height: 1.375rem;
-          text-align: center;
-          color: rgba(58, 53, 65, 0.5);
+        .center {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .width-60 {
+          width: 60%;
         }
       }
-      .remarks-credit-transfer {
-        flex-direction: row;
-        width: 100%;
-        padding: 0.5rem 1rem 0 1rem;
-
-        .modal-form {
-          .ant-form-item-explain-error {
-            display: flex;
-            flex-direction: row;
-          }
-
-          .ant-form {
-            width: 100%;
-            .ant-form-item-label > label {
-              font-size: 0.8rem;
-            }
-          }
-
-          .modal-credit-transfer-btns {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            margin-top: 1rem;
-
-            .center {
-              display: flex;
-              flex-direction: row;
-              align-items: center;
-              justify-content: space-between;
-            }
-            .width-60 {
-              width: 60%;
-            }
-          }
-        }
-      }
-      // .remarks-credit-transfer-reject {
-      //   flex-direction: row;
-      //   width: 100%;
-      //   padding: 0.5rem 1rem 0 1rem;
-
-      //   .modal-form {
-      //     .ant-form-item-explain-error {
-      //       display: flex;
-      //       flex-direction: row;
-      //     }
-
-      //     .ant-form {
-      //       width: 100%;
-      //       .ant-form-item-label > label {
-      //         font-size: 0.8rem;
-      //       }
-      //     }
-
-      //     .modal-credit-transfer-btns {
-      //       display: flex;
-      //       flex-direction: row;
-      //       align-items: center;
-      //       justify-content: center;
-      //       width: 100%;
-      //       margin-top: 1rem;
-
-      //       .center {
-      //         display: flex;
-      //         flex-direction: row;
-      //         align-items: center;
-      //         justify-content: space-between;
-      //       }
-      //       .width-60 {
-      //         width: 60%;
-      //       }
-      //     }
-      //   }
-      // }
     }
   }
+  // .remarks-credit-transfer-reject {
+  //   flex-direction: row;
+  //   width: 100%;
+  //   padding: 0.5rem 1rem 0 1rem;
+
+  //   .modal-form {
+  //     .ant-form-item-explain-error {
+  //       display: flex;
+  //       flex-direction: row;
+  //     }
+
+  //     .ant-form {
+  //       width: 100%;
+  //       .ant-form-item-label > label {
+  //         font-size: 0.8rem;
+  //       }
+  //     }
+
+  //     .modal-credit-transfer-btns {
+  //       display: flex;
+  //       flex-direction: row;
+  //       align-items: center;
+  //       justify-content: center;
+  //       width: 100%;
+  //       margin-top: 1rem;
+
+  //       .center {
+  //         display: flex;
+  //         flex-direction: row;
+  //         align-items: center;
+  //         justify-content: space-between;
+  //       }
+  //       .width-60 {
+  //         width: 60%;
+  //       }
+  //     }
+  //   }
+  // }
 }
+
 .common-table-class .ant-table .ant-table-thead .ant-table-cell {
   font-size: 10px;
 }
