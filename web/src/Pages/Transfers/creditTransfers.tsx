@@ -188,6 +188,37 @@ const CreditTransfer = () => {
     }
   };
 
+  const cancelRequest = async (reqId: number, remarks: string) => {
+    setLoading(true);
+    try {
+      const response: any = await post('national/programme/transferCancel', {
+        requestId: reqId,
+        comment: remarks,
+      });
+      console.log(response);
+      message.open({
+        type: 'success',
+        content: response.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setCancelModalVisible(false);
+      setLoading(false);
+      formModal.resetFields();
+    } catch (error: any) {
+      console.log('Error in Cancelling transfer request', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setCancelModalVisible(false);
+      setLoading(false);
+      formModal.resetFields();
+    }
+  };
+
   const acceptRequest = async (record: any) => {
     setLoading(true);
     try {
@@ -248,7 +279,7 @@ const CreditTransfer = () => {
               setCancelModalVisible(true);
               setAcceptModalVisible(false);
               setRejectModalVisible(false);
-              setSelectedReqId(record.requesterId);
+              setSelectedReqId(record.requestId);
             },
           },
         ]}
@@ -283,7 +314,6 @@ const CreditTransfer = () => {
               setAcceptModalVisible(true);
               setRejectModalVisible(false);
               setCancelModalVisible(false);
-              console.log('kkkkkk', record.requestId);
               setSelectedReqId(record.requestId);
               setTotalComCredits(record.creditBalance);
               setCompanyIdsVal(record.companyId);
@@ -512,13 +542,15 @@ const CreditTransfer = () => {
     setSelectedReqId(undefined);
   };
 
-  const handleCancelOk = () => {
-    // deleteUser(deleteUserModalRecord);
+  const handleCancelOk = (val: any) => {
+    console.log(val);
+    selectedReqId !== undefined && cancelRequest(selectedReqId, val.remarks);
     formModal.resetFields();
     setCancelModalVisible(false);
   };
 
   const handleCancelCancel = () => {
+    setSelectedReqId(undefined);
     formModal.resetFields();
     setCancelModalVisible(false);
   };
@@ -582,7 +614,7 @@ const CreditTransfer = () => {
   };
 
   const handleAcceptCancel = () => {
-    console.log(companiesInfo);
+    setSelectedReqId(undefined);
     formModal.resetFields();
     setAcceptModalVisible(false);
   };
@@ -790,7 +822,7 @@ const CreditTransfer = () => {
                   <div className="center width-60">
                     <Button onClick={handleCancelCancel}>CANCEL</Button>
                     <Button type="primary" htmlType="submit" loading={loading}>
-                      REJECT
+                      CANCEL
                     </Button>
                   </div>
                 </div>
