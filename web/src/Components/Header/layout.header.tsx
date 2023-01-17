@@ -34,8 +34,8 @@ const LayoutHeader = (props: HeaderProps) => {
 
   return (
     <div className="header-container">
-      <Row>
-        {/* <Col span={1}>
+      {/* <Row> */}
+      {/* <Col span={1}>
           <div
             className="toggle-btn"
             onClick={() => {
@@ -46,29 +46,29 @@ const LayoutHeader = (props: HeaderProps) => {
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </div>
         </Col> */}
-        <Col className="header-prof">
-          <Row>
-            <Col>
-              <div className="header-country-logo">
-                <img
-                  src={'data:image/jpeg;base64,' + companyLogo}
-                  alt="logo"
-                  onClick={() => {
-                    navigate('/userProfile/view');
-                  }}
-                />
-              </div>
-              {/* <div className="header-menu-container">
+      <div className="header-prof">
+        {/* <Row> */}
+        {/* <Col> */}
+        <div className="header-country-logo">
+          <img
+            src={'data:image/jpeg;base64,' + companyLogo}
+            alt="logo"
+            onClick={() => {
+              navigate('/userProfile/view');
+            }}
+          />
+        </div>
+        {/* <div className="header-menu-container">
                 <div className="header-signOut-container">
                   <Dropdown menu={{ items }} placement="bottomLeft">
                     <PersonCircle size={25} />
                   </Dropdown>
                 </div>
               </div> */}
-            </Col>
-          </Row>
-        </Col>
-      </Row>
+        {/* </Col> */}
+        {/* </Row> */}
+      </div>
+      {/* </Row> */}
     </div>
   );
 };
