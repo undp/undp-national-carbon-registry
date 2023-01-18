@@ -74,20 +74,20 @@ exports.handler = async (event) => {
     }
 
     console.log('Creating countries')
-    const data = fs.readFileSync('countries.json', 'utf8')
-    const jsonData = JSON.parse(data)
+    // const data = fs.readFileSync('countries.json', 'utf8')
+    // const jsonData = JSON.parse(data)
 
-    const utils = await NestFactory.createApplicationContext(UtilModule)
-    const countryService = utils.get(CountryService)
-    for (const jsn of jsonData) {
-      if (jsn['ISO-alpha2 Code'] == undefined || jsn['ISO-alpha2 Code'] == "") {
-        continue;
-      }
-      const country = new Country()
-      country.alpha2 = jsn['ISO-alpha2 Code']
-      country.alpha3 = jsn['ISO-alpha3 Code']
-      country.name = jsn['Country or Area']
-      await countryService.insertCountry(country)
-      console.log('Country inserted', country)
-    }
+    // const utils = await NestFactory.createApplicationContext(UtilModule)
+    // const countryService = utils.get(CountryService)
+    // for (const jsn of jsonData) {
+    //   if (jsn['ISO-alpha2 Code'] == undefined || jsn['ISO-alpha2 Code'] == "") {
+    //     continue;
+    //   }
+    //   const country = new Country()
+    //   country.alpha2 = jsn['ISO-alpha2 Code']
+    //   country.alpha3 = jsn['ISO-alpha3 Code']
+    //   country.name = jsn['Country or Area']
+    //   await countryService.insertCountry(country)
+    //   console.log('Country inserted', country)
+    // }
 }

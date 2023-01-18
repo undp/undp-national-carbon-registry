@@ -606,6 +606,47 @@ const ProgrammeView = () => {
           {t('view:retire')}
         </Button>
       );
+    } else {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Transfer',
+              text: '',
+              title: t('view:transferTitle'),
+              type: 'primary',
+              remark: true,
+              icon: <Icon.BoxArrowInRight />,
+              contentComp: (
+                <div className="retire-form">
+                  <Radio.Group value={retireReason} onChange={setRetireReason}>
+                    <Space direction="vertical">
+                      <Radio value={'transfer'}>Cross-border transfer</Radio>
+                      <Radio value={'legal'}>Legal Action</Radio>
+                      <Radio value={'other'}>Other</Radio>
+                    </Space>
+                  </Radio.Group>
+                  <div>
+                    <div className="form-label remark">
+                      {'Remarks'}
+                      {actionInfo.remark && <span className="req-ast">*</span>}
+                    </div>
+                    <TextArea
+                      defaultValue={comment}
+                      rows={2}
+                      onChange={(v) => setComment(v.target.value)}
+                    />
+                  </div>
+                </div>
+              ),
+            });
+            showModal();
+          }}
+        >
+          {t('view:transfer')}
+        </Button>
+      );
     }
   }
   //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
