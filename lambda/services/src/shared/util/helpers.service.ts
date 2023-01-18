@@ -54,6 +54,8 @@ export class HelperService {
   ) {
     let sql = "";
     let col = "";
+    let colFilter = "createdTime";
+
     if (data?.type === "PROGRAMS_BY_STATUS") {
       col = "currentStage";
       sql = `${table ? table + "." : ""}"${col}" = ${this.prepareValue(
@@ -62,6 +64,24 @@ export class HelperService {
     } else if (data?.type.includes("CREDIT_CERTIFIED")) {
       col = "certifierId";
       sql = `${table ? table + "." : ""}"${col}" is not null`;
+    }
+
+    if (
+      data?.startTime &&
+      data?.endTime &&
+      data?.type.includes("CREDIT_STATS")
+    ) {
+      sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+        data?.startTime
+      )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+        data?.endTime
+      )}`;
+    } else if (data?.startTime && data?.endTime) {
+      sql = `(${sql}) and ${
+        table ? table + "." : ""
+      }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
+        table ? table + "." : ""
+      }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
     }
 
     if (sql != "") {

@@ -42,95 +42,84 @@ export class AnalyticsAPIService {
     for (const stat of query.stats) {
       switch (stat.type) {
         case ChartType.TOTAL_PROGRAMS:
-        const startTime = 1672531200000;
-        const endTime = 1703894400000;
-        const duration = endTime - startTime;
-        const durationInDays = Math.ceil(duration / 1000 / 60 / 60 / 24);
-        let sTime = startTime;
-        let params: chartStatsRequestDto = {
-          type: "TOTAL_PROGRAMS",
-          startDate: startTime,
-          endDate: endTime,
-        };
-        let totalProgrammesResponse = await this.programmeRepo
-          .createQueryBuilder()
-          .where(
-            this.helperService.generateWhereSQLChartStastics(
-              params,
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+          const startTime = query.startTime;
+          const endTime = query.endTime;
+          // const startTime = 1672531200000;
+          // const endTime = 1703894400000;
+          const duration = endTime - startTime;
+          const durationInDays = Math.ceil(duration / 1000 / 60 / 60 / 24);
+          let sTime = startTime;
+          let params: chartStatsRequestDto = {
+            type: "TOTAL_PROGRAMS",
+            startDate: startTime,
+            endDate: endTime,
+          };
+          let totalProgrammesResponse = await this.programmeRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                params,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
             )
-          )
-          .getMany();
-        let duraion: number;
-        let durationCounts: number;
-        if (durationInDays > 31) {
-          duraion = 2592000000;
-          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 30);
-        } else if (durationInDays > 7) {
-          duraion = 604800000;
-          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 7);
-        } else if (durationInDays > 1) {
-          duraion = 86400000;
-          durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24);
-        }
-        let data = {
-          awaitingAuthorization: [],
-          issued: [],
-          rejected: [],
-          programmes: [],
-        };
-        for (let index = 1; index <= durationCounts; index++) {
-          let eTime = sTime + duraion;
-          let pendingC = 0;
-          let issuedC = 0;
-          let rejectedC = 0;
-          let programmesC = 0;
-          // console.log("week count ---- ", index, { sTime, eTime });
-          for (
-            let indexProgramme = 0;
-            indexProgramme < totalProgrammesResponse.length;
-            indexProgramme++
-          ) {
-            if (
-              totalProgrammesResponse[indexProgramme]?.createdTime >= sTime &&
-              totalProgrammesResponse[indexProgramme]?.createdTime < eTime
+            .getMany();
+          let duraion: number;
+          let durationCounts: number;
+          if (durationInDays > 31) {
+            duraion = 2592000000;
+            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 30);
+          } else if (durationInDays > 7) {
+            duraion = 604800000;
+            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 7);
+          } else if (durationInDays > 1) {
+            duraion = 86400000;
+            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24);
+          }
+          let data = {
+            awaitingAuthorization: [],
+            issued: [],
+            rejected: [],
+            programmes: [],
+          };
+          for (let index = 1; index <= durationCounts; index++) {
+            let eTime = sTime + duraion;
+            let pendingC = 0;
+            let issuedC = 0;
+            let rejectedC = 0;
+            let programmesC = 0;
+            // console.log("week count ---- ", index, { sTime, eTime });
+            for (
+              let indexProgramme = 0;
+              indexProgramme < totalProgrammesResponse.length;
+              indexProgramme++
             ) {
-              let prgramme =
-                totalProgrammesResponse[indexProgramme]?.programmeId;
-              programmesC++;
               if (
-                totalProgrammesResponse[indexProgramme]?.currentStage ===
-                "AwaitingAuthorization"
+                totalProgrammesResponse[indexProgramme]?.createdTime >= sTime &&
+                totalProgrammesResponse[indexProgramme]?.createdTime < eTime
               ) {
-                pendingC++;
-              } else if (
+                programmesC++;
                 totalProgrammesResponse[indexProgramme]?.currentStage ===
-                "Issued"
-              ) {
-                issuedC++;
-              } else if (
+                  "AwaitingAuthorization" && pendingC++;
                 totalProgrammesResponse[indexProgramme]?.currentStage ===
-                "Rejected"
-              ) {
-                rejectedC++;
+                  "Issued" && issuedC++;
+                totalProgrammesResponse[indexProgramme]?.currentStage ===
+                  "Rejected" && rejectedC++;
+              }
+              if (indexProgramme === totalProgrammesResponse.length - 1) {
+                data?.awaitingAuthorization.push({ [sTime]: pendingC });
+                data?.issued.push({ [sTime]: issuedC });
+                data?.rejected.push({ [sTime]: rejectedC });
               }
             }
-            if (indexProgramme === totalProgrammesResponse.length - 1) {
-              data?.programmes.push(programmesC);
-              data?.awaitingAuthorization.push(pendingC);
-              data?.issued.push(issuedC);
-              data?.rejected.push(rejectedC);
-            }
+            sTime = eTime;
           }
-          sTime = eTime;
-        }
-        console.log("data ----------- > ", data);
-        results[stat.type] = data;
-        break;
+          console.log("data ----------- > ", data);
+          results[stat.type] = data;
+          break;
 
         case ChartType.TOTAL_PROGRAMS_SECTOR:
-          const startTimeSector = 1672531200000;
-          const endTimeSector = 1703894400000;
+          const startTimeSector = query.startTime;
+          const endTimeSector = query.endTime;
           const durationSector = endTimeSector - startTimeSector;
           const durationSectorInDays = Math.ceil(
             durationSector / 1000 / 60 / 60 / 24
@@ -209,35 +198,203 @@ export class AnalyticsAPIService {
                 let prgramme =
                   totalProgrammesResponseSector[indexProgramme]?.programmeId;
                 programmesC++;
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Energy" && energyC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Health" && healthC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Education" && educationC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Transport" && transportC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Manufacturing" && manufacturingC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Hospitality" && hospitalityC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Forestry" && forestryC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Waste" && wasteC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Agriculture" && agricultureC++
-                totalProgrammesResponseSector[indexProgramme]?.sector === "Other" && otherC++
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Energy" && energyC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Health" && healthC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Education" && educationC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Transport" && transportC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Manufacturing" && manufacturingC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Hospitality" && hospitalityC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Forestry" && forestryC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Waste" && wasteC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Agriculture" && agricultureC++;
+                totalProgrammesResponseSector[indexProgramme]?.sector ===
+                  "Other" && otherC++;
               }
               if (indexProgramme === totalProgrammesResponseSector.length - 1) {
-                dataSector?.programmes.push(programmesC);
-                dataSector?.energy.push(energyC);
-                dataSector?.health.push(healthC);
-                dataSector?.education.push(educationC);
-                dataSector?.transport.push(transportC);
-                dataSector?.manufacturing.push(manufacturingC);
-                dataSector?.hospitality.push(hospitalityC);
-                dataSector?.forestry.push(forestryC);
-                dataSector?.waste.push(wasteC);
-                dataSector?.agriculture.push(agricultureC);
-                dataSector?.other.push(otherC);
+                dataSector?.energy.push({ [sTimeSector]: energyC });
+                dataSector?.health.push({ [sTimeSector]: healthC });
+                dataSector?.education.push({ [sTimeSector]: educationC });
+                dataSector?.transport.push({ [sTimeSector]: transportC });
+                dataSector?.manufacturing.push({
+                  [sTimeSector]: manufacturingC,
+                });
+                dataSector?.hospitality.push({ [sTimeSector]: hospitalityC });
+                dataSector?.forestry.push({ [sTimeSector]: forestryC });
+                dataSector?.waste.push({ [sTimeSector]: wasteC });
+                dataSector?.agriculture.push({ [sTimeSector]: agricultureC });
+                dataSector?.other.push({ [sTimeSector]: otherC });
               }
             }
             sTimeSector = eTime;
           }
           console.log("dataSector ----------- > ", dataSector);
           results[stat.type] = dataSector;
+          break;
+
+        case ChartType.TOTAL_CREDITS:
+          const startTimeCredit = query.startTime;
+          const endTimeCredit = query.endTime;
+          const durationCredit = endTimeCredit - startTimeCredit;
+          const durationCreditInDays = Math.ceil(
+            durationCredit / 1000 / 60 / 60 / 24
+          );
+          let sTimeCredit = startTimeCredit;
+          let paramsCredit: chartStatsRequestDto = {
+            type: "TOTAL_PROGRAMS",
+            startDate: startTimeCredit,
+            endDate: endTimeCredit,
+          };
+          let totalResponseCredit = await this.programmeRepo
+            .createQueryBuilder()
+            .select([
+              `"programmeId"`,
+              `"creditIssued"`,
+              `"creditBalance"`,
+              `"creditTransferred"`,
+              `"creditRetired"`,
+              `"createdTime"`,
+            ])
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                paramsCredit,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawMany();
+          let duraionCreditT: number;
+          let durationCreditCounts: number;
+          if (durationCreditInDays > 31) {
+            duraionCreditT = 2592000000;
+            durationCreditCounts = Math.ceil(
+              durationCredit / 1000 / 60 / 60 / 24 / 30
+            );
+          } else if (durationCreditInDays > 7) {
+            duraionCreditT = 604800000;
+            durationCreditCounts = Math.ceil(
+              durationCredit / 1000 / 60 / 60 / 24 / 7
+            );
+          } else if (durationCreditInDays > 1) {
+            duraionCreditT = 86400000;
+            durationCreditCounts = Math.ceil(
+              durationCredit / 1000 / 60 / 60 / 24
+            );
+          }
+          let dataCredits = {
+            available: [],
+            issued: [],
+            transferred: [],
+            retired: [],
+          };
+          for (let index = 1; index <= durationCreditCounts; index++) {
+            let eTimeCredit = sTimeCredit + duraionCreditT;
+            let availableS = 0;
+            let issuedS = 0;
+            let transferredS = 0;
+            let retiredS = 0;
+            // console.log("week count ---- ", index, { sTime, eTime });
+            for (
+              let indexProgramme = 0;
+              indexProgramme < totalResponseCredit.length;
+              indexProgramme++
+            ) {
+              if (
+                totalResponseCredit[indexProgramme]?.createdTime >=
+                  sTimeCredit &&
+                totalResponseCredit[indexProgramme]?.createdTime < eTimeCredit
+              ) {
+                if (
+                  totalResponseCredit[indexProgramme]?.creditBalance !== null
+                ) {
+                  availableS =
+                    availableS +
+                    parseFloat(
+                      totalResponseCredit[indexProgramme]?.creditBalance
+                    );
+                }
+                if (
+                  totalResponseCredit[indexProgramme]?.creditIssued !== null
+                ) {
+                  issuedS =
+                    issuedS +
+                    parseFloat(
+                      totalResponseCredit[indexProgramme]?.creditIssued
+                    );
+                }
+                if (
+                  totalResponseCredit[indexProgramme]?.creditTransferred !==
+                  null
+                ) {
+                  transferredS =
+                    transferredS +
+                    parseFloat(
+                      totalResponseCredit[indexProgramme]?.creditTransferred
+                    );
+                }
+                if (
+                  totalResponseCredit[indexProgramme]?.creditRetired !== null
+                ) {
+                  retiredS =
+                    retiredS +
+                    parseFloat(
+                      totalResponseCredit[indexProgramme]?.creditRetired
+                    );
+                }
+              }
+              if (indexProgramme === totalResponseCredit.length - 1) {
+                dataCredits?.available.push({ [sTimeCredit]: availableS });
+                dataCredits?.issued.push({ [sTimeCredit]: issuedS });
+                dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
+                dataCredits?.retired.push({ [sTimeCredit]: retiredS });
+              }
+            }
+            sTimeCredit = eTimeCredit;
+          }
+          results[stat.type] = dataCredits;
+          break;
+
+        case ChartType.PROGRAMME_LOCATIONS:
+          const startTimeProgrammeLocations = query.startTime;
+          const endTimeProgrammeLocations = query.endTime;
+          let paramsProgrammeLocations: chartStatsRequestDto = {
+            type: "TOTAL_PROGRAMS",
+            startDate: startTimeProgrammeLocations,
+            endDate: endTimeProgrammeLocations,
+          };
+          let totalResponseProgrammeLocation = await this.programmeRepo
+            .createQueryBuilder()
+            .select([`"programmeId"`, `"countryCodeA2"`, `"createdTime"`])
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                paramsProgrammeLocations,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawMany();
+          let locations = [];
+          for (
+            let index = 0;
+            index < totalResponseProgrammeLocation.length;
+            index++
+          ) {
+            let include = locations.includes(
+              totalResponseProgrammeLocation[index]?.countryCodeA2
+            );
+            if (!include) {
+              locations.push(
+                totalResponseProgrammeLocation[index]?.countryCodeA2
+              );
+            }
+          }
+          results[stat.type] = locations;
           break;
       }
     }
@@ -264,9 +421,13 @@ export class AnalyticsAPIService {
           break;
 
         case StatType.PROGRAMS_BY_STATUS:
+          const startTimeProgrammeStatus = query.startTime;
+          const endTimeProgrammeStatus = query.endTime;
           const values: programmeStatusRequestDto = {
             type: "PROGRAMS_BY_STATUS",
             value: stat.value,
+            startTime: startTimeProgrammeStatus,
+            endTime: endTimeProgrammeStatus,
           };
           let programmeByStatus = await this.programmeRepo
             .createQueryBuilder()
@@ -295,13 +456,22 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_STATS_BALANCE:
         case StatType.CREDIT_STATS_TRANSFERRED:
         case StatType.CREDIT_STATS_RETIRED:
+        case StatType.CREDIT_STATS_ISSUED:
+          const startTimeProgrammeCredits = query.startTime;
+          const endTimeProgrammeCredits = query.endTime;
+          const valuesCreditRequest: programmeStatusRequestDto = {
+            type: stat.type,
+            startTime: startTimeProgrammeCredits,
+            endTime: endTimeProgrammeCredits,
+          };
           let creditStat = await this.programmeRepo
             .createQueryBuilder()
             .select(`SUM("${CreditStatType[stat.type]}")`)
             .where(
-              abilityCondition
-                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
-                : ""
+              this.helperService.generateWhereSQLStastics(
+                valuesCreditRequest,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
             )
             .getRawOne();
           results[stat.type] = creditStat;
@@ -310,8 +480,13 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_CERTIFIED_BALANCE:
         case StatType.CREDIT_CERTIFIED_TRANSFERRED:
         case StatType.CREDIT_CERTIFIED_RETIRED:
+        case StatType.CREDIT_CERTIFIED_ISSUED:
+          const startTimeProgrammeCreditsCertified = query.startTime;
+          const endTimeProgrammeCreditsCertified = query.endTime;
           const certifiedRequestParams: programmeStatusRequestDto = {
             type: stat.type,
+            startTime: startTimeProgrammeCreditsCertified,
+            endTime: endTimeProgrammeCreditsCertified,
           };
           let creditCertifiedResponse = await this.programmeRepo
             .createQueryBuilder()

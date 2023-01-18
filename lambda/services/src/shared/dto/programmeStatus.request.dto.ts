@@ -11,4 +11,6 @@ import {
 export class programmeStatusRequestDto {
   type: any;
   value?: string;
+  startTime?: any;
+  endTime?: any;
 }
