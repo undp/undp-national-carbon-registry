@@ -9,11 +9,9 @@ import './dashboard.scss';
 import {
   optionDonutPieA,
   optionDonutPieB,
-  options,
-  optionsY,
-  series,
-  seriesDonutPieA,
   seriesY,
+  totalProgrammesOptions,
+  totalProgrammesOptionsSub,
 } from './DUMMY_DATAS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
@@ -49,6 +47,18 @@ const Dashboard = () => {
   const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+
+  // states for totalProgrammes sub sector chart
+  const [energyProgrammes, setEnergyProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [healthProgrammes, setHealthProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [educationProgrammes, setEducationProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [transportProgrammes, setTransportProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [manufacturingProgrammes, setManufacturingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [hospitalityProgrammes, setHospitalityProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [forestryProgrammes, setForestryProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [wasteProgrammes, setWasteProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [agricultureProgrammes, setAgricultureProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
 
   const currentYear = new Date();
   const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
@@ -130,6 +140,9 @@ const Dashboard = () => {
         {
           type: 'TOTAL_PROGRAMS',
         },
+        {
+          type: 'TOTAL_PROGRAMS_SECTOR',
+        },
       ],
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
@@ -155,13 +168,6 @@ const Dashboard = () => {
   const onCalendarChange = (dateMoment: any, dateString: any) => {
     console.log(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
     console.log('****', dateString);
-    // if (dateMoment !== null && dateMoment[1] !== null) {
-    //   setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-    //   setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
-    // } else {
-    //   setStartTime(0);
-    //   setEndTime(0);
-    // }
   };
 
   const getAllProgrammeAnalyticsStatsCharts = async () => {
@@ -171,6 +177,18 @@ const Dashboard = () => {
       const issuedProgrames: any = [];
       const rejectedProgrames: any = [];
       const timeLabelsProgrames: any = [];
+
+      const energyProgrames: any = [];
+      const healthProgrames: any = [];
+      const educationProgrames: any = [];
+      const transportProgrames: any = [];
+      const manufacturingProgrames: any = [];
+      const hospitalityProgrames: any = [];
+      const forestryProgrames: any = [];
+      const wasteProgrames: any = [];
+      const agricultureProgrames: any = [];
+      const otherProgrames: any = [];
+
       const response: any = await post(
         'analytics/programme/chartStats',
         getAllProgrammeAnalyticsStatsChartsParams()
@@ -204,11 +222,96 @@ const Dashboard = () => {
           });
         }
       }
+      if (response?.data?.stats?.TOTAL_PROGRAMS_SECTOR) {
+        const totalProgrammesSector = response?.data?.stats?.TOTAL_PROGRAMS_SECTOR;
+        if (totalProgrammesSector?.agriculture) {
+          const agriculture = totalProgrammesSector?.agriculture;
+          agriculture?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            agricultureProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.education) {
+          const education = totalProgrammesSector?.education;
+          education?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            educationProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.energy) {
+          const energy = totalProgrammesSector?.energy;
+          energy?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            energyProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.forestry) {
+          const forestry = totalProgrammesSector?.forestry;
+          forestry?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            forestryProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.health) {
+          const health = totalProgrammesSector?.health;
+          health?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            healthProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.hospitality) {
+          const hospitality = totalProgrammesSector?.hospitality;
+          hospitality?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            hospitalityProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.manufacturing) {
+          const manufacturing = totalProgrammesSector?.manufacturing;
+          manufacturing?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            manufacturingProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.other) {
+          const other = totalProgrammesSector?.other;
+          other?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            otherProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.transport) {
+          const transport = totalProgrammesSector?.transport;
+          transport?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            transportProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammesSector?.waste) {
+          const waste = totalProgrammesSector?.waste;
+          waste?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            wasteProgrames.push(programesCount[0]);
+          });
+        }
+      }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
       setIssuedProgrammes(issuedProgrames);
       setRejectedProgrammes(rejectedProgrames);
-      optionsY.xaxis.categories = timeLabelsProgrames;
+
+      setEnergyProgrammes(energyProgrames);
+      setHealthProgrammes(healthProgrames);
+      setEducationProgrammes(educationProgrames);
+      setTransportProgrammes(transportProgrames);
+      setManufacturingProgrammes(manufacturingProgrames);
+      setHospitalityProgrammes(hospitalityProgrames);
+      setForestryProgrammes(forestryProgrames);
+      setWasteProgrammes(wasteProgrames);
+      setAgricultureProgrammes(agricultureProgrames);
+      setOtherProgrammes(otherProgrames);
+      totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
+      totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -345,6 +448,49 @@ const Dashboard = () => {
     {
       name: 'Pending',
       data: pendingProgrammes,
+    },
+  ];
+
+  const seriesTotalProgrammesSubY = [
+    {
+      name: 'Enery',
+      data: energyProgrammes,
+    },
+    {
+      name: 'Health',
+      data: healthProgrammes,
+    },
+    {
+      name: 'Education',
+      data: educationProgrammes,
+    },
+    {
+      name: 'Transport',
+      data: transportProgrammes,
+    },
+    {
+      name: 'Manufacturing',
+      data: manufacturingProgrammes,
+    },
+    {
+      name: 'Hospitality',
+      data: hospitalityProgrammes,
+    },
+    {
+      name: 'Forestry',
+      data: forestryProgrammes,
+    },
+    {
+      name: 'Waste',
+      data: wasteProgrammes,
+    },
+    {
+      name: 'Agriculture',
+      data: agricultureProgrammes,
+    },
+    {
+      name: 'Other',
+      data: otherProgrammes,
     },
   ];
 
@@ -491,7 +637,7 @@ const Dashboard = () => {
                 <>
                   <div className="pie-charts-section">
                     <Chart
-                      options={optionsY}
+                      options={totalProgrammesOptions}
                       series={seriesTotalProgrammesY}
                       type="bar"
                       height="350px"
@@ -510,20 +656,29 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-bar-rem">
               <div className="pie-charts-title">Total Programmes:Sector</div>
-              <div className="pie-charts-section">
-                <Chart
-                  options={optionsY}
-                  series={seriesY}
-                  type="bar"
-                  height="350px"
-                  width="450px"
-                />
-              </div>
-              <div className="updated-on">
-                <div className="updated-moment-container">
-                  {moment(lastUpdate * 1000).fromNow()}
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={totalProgrammesOptionsSub}
+                      series={seriesTotalProgrammesSubY}
+                      type="bar"
+                      height="350px"
+                      width="490px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </Col>
         </Row>
@@ -535,7 +690,7 @@ const Dashboard = () => {
               <div className="pie-charts-title">Total Credits</div>
               <div className="pie-charts-section">
                 <Chart
-                  options={optionsY}
+                  options={totalProgrammesOptions}
                   series={seriesY}
                   type="bar"
                   height="350px"
@@ -554,7 +709,7 @@ const Dashboard = () => {
               <div className="pie-charts-title">Total Credit Issued</div>
               <div className="pie-charts-section">
                 <Chart
-                  options={optionsY}
+                  options={totalProgrammesOptions}
                   series={seriesY}
                   type="bar"
                   height="350px"

@@ -476,7 +476,7 @@ export const seriesA = [
   },
 ];
 
-export const optionsY: any = {
+export const totalProgrammesOptions: any = {
   states: {
     active: {
       filter: {
@@ -589,8 +589,7 @@ export const optionsY: any = {
     },
   },
 };
-
-export const optionsZ: any = {
+export const totalProgrammesOptionsSub: any = {
   states: {
     active: {
       filter: {
@@ -620,19 +619,19 @@ export const optionsZ: any = {
     },
   ],
   xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
   },
   yaxis: {
     show: true,
     title: {
-      text: 'Credit count',
+      text: '',
       rotate: -90,
       offsetX: 0,
       offsetY: 0,
       style: {
         color: '#263238',
         fontSize: '12px',
-        fontFamily: 'Inter-Regular',
+        fontFamily: 'Inter',
         fontWeight: 500,
         cssClass: 'apexcharts-yaxis-title',
       },
@@ -640,10 +639,21 @@ export const optionsZ: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+    colors: [
+      '#16B1FF',
+      '#FF8183',
+      '#7FEABF',
+      '#FFB480',
+      '#666699',
+      '#009999',
+      '#c2c2d6',
+      '#ddddbb',
+      '#ff9900',
+      '#D8D8D8',
+    ],
   },
   title: {
-    text: 'Total Credits Certified',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -652,7 +662,7 @@ export const optionsZ: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Inter-Regular',
+      fontFamily: 'Inter',
       color: '#263238',
     },
   },
@@ -665,7 +675,7 @@ export const optionsZ: any = {
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -676,7 +686,18 @@ export const optionsZ: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+      colors: [
+        '#16B1FF',
+        '#FF8183',
+        '#7FEABF',
+        '#FFB480',
+        '#666699',
+        '#009999',
+        '#c2c2d6',
+        '#ddddbb',
+        '#ff9900',
+        '#D8D8D8',
+      ],
       useSeriesColors: false,
     },
     markers: {
@@ -684,7 +705,18 @@ export const optionsZ: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+      fillColors: [
+        '#16B1FF',
+        '#FF8183',
+        '#7FEABF',
+        '#FFB480',
+        '#666699',
+        '#009999',
+        '#c2c2d6',
+        '#ddddbb',
+        '#ff9900',
+        '#D8D8D8',
+      ],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
