@@ -1,5 +1,5 @@
 import { Button, Col, Form, Input, message, Row, Select } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
 // import sha1 from 'sha1';
@@ -10,6 +10,7 @@ import { useUserContext } from '../../Context/UserInformationContext/userInforma
 import { LoginProps } from '../../Definitions/InterfacesAndType/userLogin.definitions';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { AbilityContext } from '../../Casl/Can';
 
 const Login = () => {
   const { post, updateToken, removeToken } = useConnection();
@@ -18,6 +19,7 @@ const Login = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
   const navigate = useNavigate();
+  const ability = useContext(AbilityContext);
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -32,6 +34,8 @@ const Login = () => {
         username: email.trim(),
         password: values.password.trim(),
       });
+      ability.update(JSON.parse(response.data.ability));
+
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);

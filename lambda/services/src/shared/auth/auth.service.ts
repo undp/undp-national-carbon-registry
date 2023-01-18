@@ -59,7 +59,7 @@ export class AuthService {
       companyId: user.companyId,
       companyRole: user.companyRole,
       companyLogo: organisationDetails.logo,
-      ability: JSON.stringify(ability),
+      ability: JSON.stringify(ability.rules),
     };
   }
 }

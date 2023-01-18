@@ -34,7 +34,7 @@ import {
   Typography,
   Form,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './userManagement.scss';
 import '../Common/common.table.scss';
@@ -61,6 +61,8 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+import { AbilityContext } from '../../Casl/Can';
+import { Action } from '../../Casl/ability';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -85,6 +87,7 @@ const UserManagement = () => {
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
   const [deleteUserModalRecord, setDeleteUserModalRecord] = useState<any>();
   const { i18n, t } = useTranslation(['user']);
+  const ability = useContext(AbilityContext);
 
   document.addEventListener('mousedown', (event: any) => {
     const userFilterArea1 = document.querySelector('.filter-bar');
@@ -196,7 +199,9 @@ const UserManagement = () => {
             text: 'Edit',
             icon: <EditOutlined />,
             click: () => {
-              navigate('/userManagement/updateUser', { state: { record } });
+              if (ability.can(Action.Update, record)) {
+                navigate('/userManagement/updateUser', { state: { record } });
+              }
             },
           },
           {
