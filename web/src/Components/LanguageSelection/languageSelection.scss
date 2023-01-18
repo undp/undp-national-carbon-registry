@@ -8,17 +8,18 @@
 
     .ant-select {
         width: 183px;
-        text-align: center;
+        text-align: center;      
+        color: #16B1FF;  
         .ant-select-arrow{
             color: #16B1FF;
         }
     }
 
     .ant-select-selector {
-        border: 1px solid #16B1FF;
         color: #16B1FF;
-        border-radius: 5px !important;
         text-transform: uppercase;
+        border: 1px solid #16B1FF !important;
+        border-radius: 4px !important;
     }
 
     .ant-select-item {
@@ -26,6 +27,10 @@
         font-size: 14px;
         line-height: 22px;
         color:#16B1FF;
+    }
+
+    .ant-select-selection-item{
+        color: #16B1FF !important;
     }
 }
 
