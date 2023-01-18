@@ -56,11 +56,7 @@ export class AnalyticsAPIService {
           };
           let totalProgrammesResponse = await this.programmeRepo
             .createQueryBuilder()
-            .select([
-              `"programmeId"`,
-              `"currentStage"`,
-              `"createdTime"`,
-            ])
+            .select([`"programmeId"`, `"currentStage"`, `"createdTime"`])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 params,
@@ -137,11 +133,7 @@ export class AnalyticsAPIService {
           };
           let totalProgrammesResponseSector = await this.programmeRepo
             .createQueryBuilder()
-            .select([
-              `"programmeId"`,
-              `"sector"`,
-              `"createdTime"`,
-            ])
+            .select([`"programmeId"`, `"sector"`, `"createdTime"`])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsSector,
