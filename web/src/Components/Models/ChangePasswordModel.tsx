@@ -1,4 +1,4 @@
-import { LockOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, LockOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal } from 'antd';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,13 +7,14 @@ import exclamationOctagon from '../../Assets/Images/exclamation-octagon.svg';
 
 export interface ChangePasswordProps {
   onPasswordChanged: any;
+  onFieldsChanged: any;
   onCanceled: any;
   openModal: any;
   errorMsg: any;
 }
 
 const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
-  const { onPasswordChanged, onCanceled, openModal, errorMsg } = props;
+  const { onPasswordChanged, onFieldsChanged, onCanceled, openModal, errorMsg } = props;
   const { i18n, t } = useTranslation(['passwordReset']);
 
   return (
@@ -38,6 +39,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
         name="change_password"
         layout="vertical"
         className="login-form"
+        onFieldsChange={onFieldsChanged}
         onFinish={onPasswordChanged}
       >
         <Form.Item
@@ -91,7 +93,18 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           <Input.Password placeholder="" />
         </Form.Item>
 
-        {errorMsg ? <Alert className="mg-top-1" message={errorMsg} type="error" showIcon /> : ''}
+        {errorMsg && (
+          <div className="error-message-container">
+            <ExclamationCircleOutlined
+              style={{
+                color: 'rgba(255, 77, 79, 0.8)',
+                marginRight: '0.5rem',
+                fontSize: '1.1rem',
+              }}
+            />
+            <span className="error-message-txt">{errorMsg}</span>
+          </div>
+        )}
 
         <Form.Item className="mg-top-2">
           <Button htmlType="button" onClick={onCanceled}>
