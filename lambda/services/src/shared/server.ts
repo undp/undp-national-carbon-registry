@@ -76,7 +76,7 @@ export async function bootstrapServer(cachedServer: Server, module: any, httpBas
           })
         useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
         nestApp.setGlobalPrefix(httpBase)
-        nestApp.use(bodyParser.json({limit: '5mb'}));
+        nestApp.use(bodyParser.json({limit: '50mb'}));
         nestApp.enableCors();
         nestApp.useGlobalPipes(new TrimPipe());
         nestApp.useGlobalPipes(new ValidationPipe({
