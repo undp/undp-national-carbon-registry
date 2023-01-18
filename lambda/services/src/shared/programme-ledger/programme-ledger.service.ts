@@ -12,7 +12,7 @@ import { CreditOverall } from "../entities/credit.overall.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
-import { LedgerDbService } from "../ledger-db/ledger-db.service";
+import { ArrayIn, LedgerDbService } from "../ledger-db/ledger-db.service";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 
 @Injectable()
@@ -434,7 +434,7 @@ export class ProgrammeLedgerService {
     this.logger.log(`Freezing programme credits:${programmeId} reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
-      programmeId: programmeId,
+      companyId: new ArrayIn("companyId", companyId),
     };
 
     let updatedProgramme;
@@ -449,56 +449,51 @@ export class ProgrammeLedgerService {
             );
           }
         );
-        if (programmes.length <= 0) {
-          throw new HttpException(
-            "Programme does not exist",
-            HttpStatus.BAD_REQUEST
-          );
-        }
-
-        let programme = programmes[0];
-
-        const index = programme.companyId.indexOf(companyId)
-        if (index < 0) {
-          throw new HttpException(
-            "Programme does not own by the company",
-            HttpStatus.BAD_REQUEST
-          );
-        }
-
-        if (!programme.creditOwnerPercentage) {
-          throw new HttpException(
-            "Not ownership percentage for the company",
-            HttpStatus.BAD_REQUEST
-          );
-        }
-
-        const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
-        if (!programme.creditFrozen) {
-          programme.creditFrozen =  new Array(programme.creditOwnerPercentage.length).fill(0);
-        }
-
-        const prvTxTime = programme.txTime;
-        programme.txTime = new Date().getTime(),
-        programme.txRef = `${user}#${reason}`,
-        programme.txType = TxType.FREEZE
-        programme.creditFrozen[index] = freezeCredit;
 
         let updateMap = {};
         let updateWhere = {};
-        updateMap[this.ledger.tableName] = {
-          currentStage: programme.currentStage,
-          txType: programme.txType,
-          txTime: programme.txTime,
-          txRef: programme.txRef,
-          creditFrozen: programme.creditFrozen,
-        };
-        updateWhere[this.ledger.tableName] = {
-          programmeId: programme.programmeId,
-          txTime: prvTxTime
-        };
+        
+        for (const programme of programmes) {
+          const index = programme.companyId.indexOf(companyId)
+          if (index < 0) {
+            throw new HttpException(
+              "Programme does not own by the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+  
+          if (!programme.creditOwnerPercentage) {
+            throw new HttpException(
+              "Not ownership percentage for the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
 
-        updatedProgramme = programme;
+          const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
+          if (!programme.creditFrozen) {
+            programme.creditFrozen =  new Array(programme.creditOwnerPercentage.length).fill(0);
+          }
+
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime(),
+          programme.txRef = `${user}#${reason}`,
+          programme.txType = TxType.FREEZE
+          programme.creditFrozen[index] = freezeCredit;
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            currentStage: programme.currentStage,
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            creditFrozen: programme.creditFrozen,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+        }
+        // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
       }
     );

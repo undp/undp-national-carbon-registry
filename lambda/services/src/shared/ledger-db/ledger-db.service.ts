@@ -3,6 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { QldbDriver, Result, TransactionExecutor } from "amazon-qldb-driver-nodejs";
 import { dom } from "ion-js";
 
+export class ArrayIn {
+    constructor(public key: string, public value: any) {
+    }
+
+    public toString = () : string => {
+        return `${this.value}`;
+    }
+}
+
 @Injectable()
 export class LedgerDbService {
 
@@ -77,6 +86,8 @@ export class LedgerDbService {
                     const wc = Object.keys(getQueries[t]).map(k => {
                         if (getQueries[t][k] instanceof Array) {
                             return (`${k} in ?`)
+                        } else if (getQueries[t][k] instanceof ArrayIn) {
+                            return (`? IN "${getQueries[t][k].key}"`)
                         }
                         return (`${k} = ?`)
                     }).join(' and ')
