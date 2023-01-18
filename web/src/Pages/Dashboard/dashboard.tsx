@@ -29,16 +29,45 @@ const Map = ReactMapboxGl({
 const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [pendingProjects, setPendingProjects] = useState<number>(0);
+  const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
   const [issuedProjects, setIssuedProjects] = useState<number>(0);
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
   const [transferedProjects, setTransferedProjects] = useState<number>(0);
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
+  const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
+
+  const [startTime, setStartTime] = useState<number>(0);
+  const [endTime, setEndTime] = useState<number>(0);
+
+  const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+
+  const currentYear = new Date();
+  const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
+  const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
+  console.log({ currentYear, startOfTheYear, endOfTheYear });
+
+  const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
+    return {
+      stats: [
+        {
+          type: 'CREDIT_STATS_BALANCE',
+        },
+        {
+          type: 'PROGRAMS_BY_STATUS',
+          value: 'AWAITING_AUTHORIZATION',
+        },
+      ],
+    };
+  };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
     return {
@@ -90,7 +119,132 @@ const Dashboard = () => {
           type: 'CREDIT_CERTIFIED_ISSUED',
         },
       ],
+      startTime: startTime !== 0 ? startTime : startOfTheYear,
+      endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
+  };
+
+  const getAllProgrammeAnalyticsStatsChartsParams = () => {
+    return {
+      stats: [
+        {
+          type: 'TOTAL_PROGRAMS',
+        },
+      ],
+      startTime: startTime !== 0 ? startTime : startOfTheYear,
+      endTime: endTime !== 0 ? endTime : endOfTheYear,
+    };
+  };
+
+  const onChangeRange = (dateMoment: any, dateString: any) => {
+    console.log(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+    console.log('****', dateString);
+    if (!dateMoment) {
+      setStartTime(0);
+      setEndTime(0);
+    }
+    if (dateMoment !== null && dateMoment[1] !== null) {
+      setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+      setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+    } else {
+      setStartTime(0);
+      setEndTime(0);
+    }
+  };
+
+  const onCalendarChange = (dateMoment: any, dateString: any) => {
+    console.log(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+    console.log('****', dateString);
+    // if (dateMoment !== null && dateMoment[1] !== null) {
+    //   setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+    //   setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+    // } else {
+    //   setStartTime(0);
+    //   setEndTime(0);
+    // }
+  };
+
+  const getAllProgrammeAnalyticsStatsCharts = async () => {
+    setLoading(true);
+    try {
+      const pendingProgrames: any = [];
+      const issuedProgrames: any = [];
+      const rejectedProgrames: any = [];
+      const timeLabelsProgrames: any = [];
+      const response: any = await post(
+        'analytics/programme/chartStats',
+        getAllProgrammeAnalyticsStatsChartsParams()
+      );
+      console.log(response?.data?.stats);
+      if (response?.data?.stats?.TOTAL_PROGRAMS) {
+        const totalProgrammes = response?.data?.stats?.TOTAL_PROGRAMS;
+        if (totalProgrammes?.awaitingAuthorization) {
+          const pendings = totalProgrammes?.awaitingAuthorization;
+          pendings?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            const label = Object.getOwnPropertyNames(item);
+            const date = new Date(parseInt(label[0]));
+            const formattedDate = moment(date).format('DD-MM-YYYY');
+            pendingProgrames.push(programesCount[0]);
+            timeLabelsProgrames.push(formattedDate);
+          });
+        }
+        if (totalProgrammes?.issued) {
+          const issued = totalProgrammes?.issued;
+          issued?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            issuedProgrames.push(programesCount[0]);
+          });
+        }
+        if (totalProgrammes?.rejected) {
+          const rejected = totalProgrammes?.rejected;
+          rejected?.map((item: any, index: any) => {
+            const programesCount = Object.values(item);
+            rejectedProgrames.push(programesCount[0]);
+          });
+        }
+      }
+      console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
+      setPendingProgrammes(pendingProgrames);
+      setIssuedProgrammes(issuedProgrames);
+      setRejectedProgrammes(rejectedProgrames);
+      optionsY.xaxis.categories = timeLabelsProgrames;
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllProgrammeAnalyticsStatsWithoutTimeRange = async () => {
+    setLoadingWithoutTimeRange(true);
+    try {
+      const response: any = await post(
+        'analytics/programme/stats',
+        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
+      );
+      console.log('stats data  -- > ', response?.data);
+      setPendingProjectsWithoutTimeRange(response?.data?.stats?.AWAITING_AUTHORIZATION);
+      setCreditBalanceWithoutTimeRange(
+        parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
+      );
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
   };
 
   const getAllProgrammeAnalyticsStats = async () => {
@@ -171,8 +325,28 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getAllProgrammeAnalyticsStats();
+    getAllProgrammeAnalyticsStatsWithoutTimeRange();
   }, []);
+
+  useEffect(() => {
+    getAllProgrammeAnalyticsStats();
+    getAllProgrammeAnalyticsStatsCharts();
+  }, [startTime, endTime]);
+
+  const seriesTotalProgrammesY = [
+    {
+      name: 'Authorised',
+      data: issuedProgrammes,
+    },
+    {
+      name: 'Rejected',
+      data: rejectedProgrammes,
+    },
+    {
+      name: 'Pending',
+      data: pendingProgrammes,
+    },
+  ];
 
   return (
     <div className="dashboard-main-container">
@@ -180,11 +354,11 @@ const Dashboard = () => {
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={pendingProjects}
+              value={pendingProjectsWithoutTimeRange}
               title={'Programmes Pending'}
               updatedDate={lastUpdate}
               icon="clockHistory"
-              loading={loading}
+              loading={loadingWithoutTimeRange}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -193,16 +367,16 @@ const Dashboard = () => {
               title={'Transfer Requests Sent'}
               updatedDate={lastUpdate}
               icon="envelopeCheck"
-              loading={loading}
+              loading={loadingWithoutTimeRange}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={creditBalance}
+              value={creditBalanceWithoutTimeRange}
               title={'Credit Balance'}
               updatedDate={lastUpdate}
               icon="coin"
-              loading={loading}
+              loading={loadingWithoutTimeRange}
             />
           </Col>
         </Row>
@@ -212,11 +386,16 @@ const Dashboard = () => {
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
+              'Last 15 days': [
+                moment().startOf('month'),
+                moment().startOf('month').add('15', 'days'),
+              ],
               'This Month': [moment().startOf('month'), moment().endOf('month')],
             }}
             showTime
-            format="YYYY/MM/DD"
-            onChange={() => {}}
+            allowClear={true}
+            format="DD:MM:YYYY"
+            onChange={onChangeRange}
           />
         </div>
         <div className="radio-selection">
@@ -303,20 +482,29 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-bar-rem">
               <div className="pie-charts-title">Total Programmes</div>
-              <div className="pie-charts-section">
-                <Chart
-                  options={optionsY}
-                  series={seriesY}
-                  type="bar"
-                  height="350px"
-                  width="450px"
-                />
-              </div>
-              <div className="updated-on">
-                <div className="updated-moment-container">
-                  {moment(lastUpdate * 1000).fromNow()}
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={optionsY}
+                      series={seriesTotalProgrammesY}
+                      type="bar"
+                      height="350px"
+                      width="490px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">

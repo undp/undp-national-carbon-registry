@@ -5,10 +5,10 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  height: 10.625rem;
+  height: 11rem;
   background-color: white;
   border-radius: 0.625rem;
-  padding: 1.2rem 1.875rem 1.2rem 1.875rem;
+  padding: 0 1.875rem 0 1.875rem;
 
   .values-section {
     display: flex;
@@ -37,6 +37,20 @@
       color: rgba(58, 53, 65, 0.8);
     }
 
+    .unit {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      margin-bottom: -0.6rem;
+      margin-top: 0;
+      font-family: 'Inter';
+      font-size: 0.875rem;
+      font-weight: 500;
+      width: 100%;
+      color:  rgba(58, 53, 65, 0.5);
+    }
+
     .value {
       font-family: 'Inter';
       font-size: 2rem;
@@ -52,6 +66,7 @@
       font-size: 0.813rem;
       border-radius: 3.125rem;
       padding: 0 0.5rem 0 0.5rem;
+      margin-top: 1rem;
       color: $primary-blue;
       background-color: rgba($color: #b9e2f4, $alpha: 0.4);
     }

@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import fileText from '../../Assets/Images/fileText.svg';
 import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { ClockHistory, HandThumbsUp, XCircle } from 'react-bootstrap-icons';
+import { ClockHistory, HandThumbsUp, XCircle, Clipboard2Pulse } from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 
@@ -44,7 +44,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
               <div className="value">{totalPrgrammes}</div>
             </div>
             <div className="icon">
-              <img src={fileText} />
+              <Clipboard2Pulse color="#16B1FF" size={80} />
             </div>
           </div>
           <div className="total-programme-extra-details">

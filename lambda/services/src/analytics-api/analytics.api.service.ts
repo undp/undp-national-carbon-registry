@@ -66,7 +66,10 @@ export class AnalyticsAPIService {
             .getRawMany();
           let duraion: number;
           let durationCounts: number;
-          if (durationInDays > 31) {
+          if (durationInDays > 365) {
+            duraion = 31104000000;
+            durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 365);
+          } else if (durationInDays > 31) {
             duraion = 2592000000;
             durationCounts = Math.ceil(duration / 1000 / 60 / 60 / 24 / 30);
           } else if (durationInDays > 7) {
@@ -363,6 +366,27 @@ export class AnalyticsAPIService {
           results[stat.type] = dataCredits;
           break;
 
+        case ChartType.TOTAL_CREDITS_CERTIFIED:
+          const startTimeCreditsCertified = query.startTime;
+          const endTimeCreditsCertified = query.endTime;
+          let paramsCreditsCertified: chartStatsRequestDto = {
+            type: "TOTAL_CREDITS_CERTIFIED",
+            startDate: startTimeCreditsCertified,
+            endDate: endTimeCreditsCertified,
+          };
+          let totalResponseCreditsCertified = await this.programmeRepo
+            .createQueryBuilder()
+            .select([`"programmeId"`, `"countryCodeA2"`, `"createdTime"`])
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                paramsCreditsCertified,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawMany();
+          results[stat.type] = paramsCreditsCertified;
+          break;
+
         case ChartType.PROGRAMME_LOCATIONS:
           const startTimeProgrammeLocations = query.startTime;
           const endTimeProgrammeLocations = query.endTime;
@@ -411,12 +435,20 @@ export class AnalyticsAPIService {
     for (const stat of query.stats) {
       switch (stat.type) {
         case StatType.TOTAL_PROGRAMS:
+          const startTimeProgramme = query.startTime;
+          const endTimeProgramme = query.endTime;
+          const valuesProgrammes: programmeStatusRequestDto = {
+            type: "TOTAL_PROGRAMS",
+            startTime: startTimeProgramme,
+            endTime: endTimeProgramme,
+          };
           let totalProgrammesResponse = await this.programmeRepo
             .createQueryBuilder()
             .where(
-              abilityCondition
-                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
-                : ""
+              this.helperService.generateWhereSQLStastics(
+                valuesProgrammes,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
             )
             .getCount();
           results[stat.type] = totalProgrammesResponse;
@@ -453,6 +485,22 @@ export class AnalyticsAPIService {
             )
             .getCount();
           results[stat.type] = transferRequest;
+          break;
+
+        case StatType.TRANSFER_REQUEST_SENT:
+          const valuesTransferRequestSent: programmeStatusRequestDto = {
+            type: stat.type,
+          };
+          let transferRequestSent = await this.programmeTransferRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLChartStasticsWithoutTimeRange(
+                valuesTransferRequestSent,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getCount();
+          results[stat.type] = transferRequestSent;
           break;
 
         case StatType.CREDIT_STATS_BALANCE:

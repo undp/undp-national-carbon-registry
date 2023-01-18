@@ -511,7 +511,7 @@ export const optionsY: any = {
   yaxis: {
     show: true,
     title: {
-      text: 'Credit count',
+      text: '',
       rotate: -90,
       offsetX: 0,
       offsetY: 0,
