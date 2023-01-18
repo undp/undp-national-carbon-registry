@@ -43,11 +43,13 @@ const Homepage = () => {
       <Row>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-img-container">
-            <span>
-              {t('homepage:carbon')} {t('homepage:credit')} <br />
-              {t('homepage:management')}
-            </span>
-            <div className="subhome">{t('homepage:lorem')}</div>
+            <div className="text-ctn">
+              <span>
+                {t('homepage:carbon')} {t('homepage:credit')} <br />
+                {t('homepage:management')}
+              </span>
+              <div className="subhome">{t('homepage:lorem')}</div>
+            </div>
           </div>
         </Col>
       </Row>

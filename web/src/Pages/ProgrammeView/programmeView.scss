@@ -173,3 +173,44 @@
 .remark {
   font-size: 0.8rem;
 }
+
+.footer-btn {
+  margin: 15px 20px;
+  display: flex;
+  justify-content: center;
+  column-gap: 30px;
+}
+
+.retire-form {
+  .ant-radio-group {
+    text-align: left;
+  }
+}
+
+.only-head {
+  .title {
+    margin-bottom: 0px !important;
+
+    .link {
+      font-size: 1.2rem;
+      line-height: 0.5rem;
+      cursor: pointer;
+      color: $title-text-color;
+    }
+  }
+}
+
+.mapboxgl-popup-tip {
+  border-bottom-color: $primary-color !important;
+  border-top-color: $primary-color !important;
+}
+
+.mapboxgl-popup-content {
+  background-color: $primary-color;
+  color: white;
+  font-family: $primary-font-family;
+  font-weight: 500;
+  min-width: 60px;
+  height: 30px;
+  padding: 5px 20px;
+}

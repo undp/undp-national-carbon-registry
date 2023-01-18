@@ -15,11 +15,17 @@ export const UserContext = createContext<UserContextProps>({
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
   const { token } = useConnection();
   const initialUserProps: UserProps = {
-    id: '',
-    userRole: '',
-    companyRole: '',
-    companyId: -1,
-    companyLogo: '',
+    id: localStorage.getItem('userId') ? (localStorage.getItem('userId') as string) : '',
+    userRole: localStorage.getItem('userRole') ? (localStorage.getItem('userRole') as string) : '',
+    companyRole: localStorage.getItem('companyRole')
+      ? (localStorage.getItem('companyRole') as string)
+      : '',
+    companyId: localStorage.getItem('companyId')
+      ? parseInt(localStorage.getItem('companyId') as string)
+      : -1,
+    companyLogo: localStorage.getItem('companyLogo')
+      ? (localStorage.getItem('companyLogo') as string)
+      : '',
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
@@ -57,14 +63,6 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       tokenVal = token;
     } else {
       tokenVal = localStorage.getItem('token');
-
-      setUserInfoState({
-        id: localStorage.getItem('userId') as string,
-        userRole: localStorage.getItem('userRole') as string,
-        companyRole: localStorage.getItem('companyRole') as string,
-        companyId: parseInt(localStorage.getItem('companyId') as string),
-        companyLogo: localStorage.getItem('companyLogo') as string,
-      });
     }
     try {
       if (tokenVal) {

@@ -182,7 +182,7 @@ export class UserService {
       .addSelect(["User.password"])
       .getOne();
     if (!user || user.password != passwordResetDto.oldPassword) {
-      throw new HttpException("Password mismatched", HttpStatus.UNAUTHORIZED);
+      throw new HttpException("Old Password is incorrect", HttpStatus.UNAUTHORIZED);
     }
     const result = await this.userRepo
       .update(

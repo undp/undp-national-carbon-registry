@@ -20,6 +20,7 @@ import { ProgrammeTransferApprove } from '../shared/dto/programme.transfer.appro
 import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject';
 import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { ProgrammeCertify } from '../shared/dto/programme.certify';
+import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -37,14 +38,6 @@ export class ProgrammeController {
     @Post('create')
     async addProgramme(@Body()programme: ProgrammeDto) {
       return this.programmeService.create(programme)
-    }
-
-    @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
-    @Post('transferQuery')
-    queryUser(@Body()query: QueryDto, @Request() req) {
-      console.log(req.abilityCondition)
-      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
     }
 
     @ApiBearerAuth()
@@ -125,5 +118,20 @@ export class ProgrammeController {
     @Post('transferReject')
     async transferReject(@Body() body: ProgrammeTransferReject, @Request() req) {
         return this.programmeService.transferReject(body, req.user.companyId)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransfer))
+    @Post('transferCancel')
+    async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
+        return this.programmeService.transferCancel(body, req.user.companyId)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
+    @Post('transferQuery')
+    queryUser(@Body()query: QueryDto, @Request() req) {
+      console.log(req.abilityCondition)
+      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
     }
 }

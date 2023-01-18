@@ -14,7 +14,7 @@ const CompanyProfile = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation(['companyProfile']);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [openDeauthorisationModal, setOpenDeauthorisationModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
@@ -23,7 +23,7 @@ const CompanyProfile = () => {
   const getCompanyDetails = async (companyId: string) => {
     try {
       setIsLoading(true);
-      const response = await get(`national/company/profile?id=${companyId}`);
+      const response = await get(`national/organisation/profile?id=${companyId}`);
       if (response.data) {
         setCompanyDetails(response.data);
         setIsLoading(false);
@@ -43,9 +43,12 @@ const CompanyProfile = () => {
 
   const onDeauthoriseOrgConfirmed = async (remarks: string) => {
     try {
-      const response: any = await put(`national/company/suspend?id=${companyDetails.companyId}`, {
-        remarks: remarks,
-      });
+      const response: any = await put(
+        `national/organisation/suspend?id=${companyDetails.companyId}`,
+        {
+          remarks: remarks,
+        }
+      );
       setOpenDeauthorisationModal(false);
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
@@ -70,17 +73,37 @@ const CompanyProfile = () => {
   };
 
   return (
-    <div className="content-container">
-      <Row>
-        <Col md={24} lg={8}>
+    <div className="content-container company-profile">
+      {/* <Row> */}
+      {/* <Col md={24} lg={8}>
           <div className="title-bar">
             <div>
               <div className="body-title">{t('companyProfile:title')}</div>
               <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
             </div>
           </div>
-        </Col>
-        <Col md={24} lg={16}>
+        </Col> */}
+      <div className="title-bar">
+        <div>
+          <div className="body-title">{t('companyProfile:title')}</div>
+          <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
+        </div>
+        <div className="flex-display">
+          {['Admin', 'Root', 'Manager'].includes(userRole) ? (
+            <Button
+              danger
+              disabled={parseInt(companyDetails.state) === 0}
+              className="btn-danger"
+              onClick={onDeauthoriseOrganisation}
+            >
+              {t('companyProfile:deauthorise')}
+            </Button>
+          ) : (
+            ''
+          )}
+        </div>
+      </div>
+      {/* <Col md={24} lg={16}>
           <Row justify="end">
             {['Admin', 'Root', 'Manager'].includes(userRole) ? (
               <Button
@@ -95,8 +118,8 @@ const CompanyProfile = () => {
               ''
             )}
           </Row>
-        </Col>
-      </Row>
+        </Col> */}
+      {/* </Row> */}
 
       <div className="content-body">
         <Row gutter={16}>

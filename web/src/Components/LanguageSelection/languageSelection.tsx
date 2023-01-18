@@ -12,6 +12,7 @@ const LanguageSelection = () => {
       <span className="login-language-selection-txt">
         <Select
           placeholder="Search to Select"
+          popupClassName="login-language-selection"
           defaultValue={
             localStorage.getItem('i18nextLng') !== null ? localStorage.getItem('i18nextLng') : 'en'
           }
@@ -33,7 +34,7 @@ const LanguageSelection = () => {
             },
             {
               value: 'fr',
-              label: 'française',
+              label: 'Française',
             },
           ]}
         />

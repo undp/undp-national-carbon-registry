@@ -11,6 +11,8 @@ import {
   Button,
   Modal,
   Select,
+  Radio,
+  Space,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -39,6 +41,7 @@ import {
 } from '@ant-design/icons';
 import {
   addCommSep,
+  addSpaces,
   CompanyRole,
   getFinancialFields,
   getGeneralFields,
@@ -92,6 +95,7 @@ const ProgrammeView = () => {
   const [comment, setComment] = useState<any>(undefined);
   const [certs, setCerts] = useState<any>([]);
   const [certTimes, setCertTimes] = useState<any>({});
+  const [retireReason, setRetireReason] = useState<any>();
 
   const showModal = () => {
     setOpenModal(true);
@@ -418,10 +422,11 @@ const ProgrammeView = () => {
       getProgrammeHistory(state.record.programmeId);
       setData(state.record);
 
+      const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
       setTimeout(() => {
         Geocoding({ accessToken: mapboxgl.accessToken })
           .forwardGeocode({
-            query: state.record?.programmeProperties.geographicalLocation.join(', ') || '',
+            query: address,
             autocomplete: false,
             limit: 1,
           })
@@ -446,7 +451,9 @@ const ProgrammeView = () => {
                 zoom: 5,
               });
 
-              new mapboxgl.Marker().setLngLat(feature.center).addTo(map);
+              const popup = new mapboxgl.Popup().setText(address).addTo(map);
+
+              new mapboxgl.Marker().setLngLat(feature.center).addTo(map).setPopup(popup);
 
               // map.on('load', () => {
               //   map.addSource('admin-1', {
@@ -523,8 +530,9 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Reject',
-              text: `You can’t undo this action`,
+              text: t('view:popupText'),
               type: 'danger',
+              title: `${t('view:rejectTitle')} - ${data.title}?`,
               remark: true,
               icon: <CloseCircleOutlined />,
             });
@@ -541,6 +549,7 @@ const ProgrammeView = () => {
             setActionInfo({
               action: 'Authorise',
               text: ``,
+              title: `${t('view:authTitle')} - ${data.title}?`,
               type: 'primary',
               remark: false,
               icon: <LikeOutlined />,
@@ -563,10 +572,33 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Retire',
-              text: `You can’t undo this action`,
+              text: t('view:popupText'),
+              title: t('view:retireTitle'),
               type: 'danger',
               remark: true,
               icon: <PoweroffOutlined />,
+              contentComp: (
+                <div className="retire-form">
+                  <Radio.Group value={retireReason} onChange={setRetireReason}>
+                    <Space direction="vertical">
+                      <Radio value={'transfer'}>Cross-border transfer</Radio>
+                      <Radio value={'legal'}>Legal Action</Radio>
+                      <Radio value={'other'}>Other</Radio>
+                    </Space>
+                  </Radio.Group>
+                  <div>
+                    <div className="form-label remark">
+                      {'Remarks'}
+                      {actionInfo.remark && <span className="req-ast">*</span>}
+                    </div>
+                    <TextArea
+                      defaultValue={comment}
+                      rows={2}
+                      onChange={(v) => setComment(v.target.value)}
+                    />
+                  </div>
+                </div>
+              ),
             });
             showModal();
           }}
@@ -621,6 +653,7 @@ const ProgrammeView = () => {
             setActionInfo({
               action: 'Certify',
               text: ``,
+              title: `${t('view:certifyTitle')} - ${data.title}?`,
               type: 'success',
               remark: false,
               icon: <ShieldCheck />,
@@ -638,6 +671,7 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Revoke',
+              title: `${t('view:revokeTitle')} - ${data.title}?`,
               text: ``,
               type: 'danger',
               remark: true,
@@ -652,14 +686,6 @@ const ProgrammeView = () => {
     }
   }
   // }
-
-  const addSpaces = (text: string) => {
-    if (!text) {
-      return text;
-    }
-    return text.replace(/([A-Z])/g, ' $1').trim();
-  };
-
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
     const text = t('view:' + k);
@@ -668,7 +694,9 @@ const ProgrammeView = () => {
         <Tag color={getStageTagType(v as ProgrammeStage)}>{getStageEnumVal(v as string)}</Tag>
       );
     } else if (k === 'sector') {
-      generalInfo[text] = <Tag color="processing">{v as string}</Tag>;
+      generalInfo[text] = (
+        <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
+      );
     } else if (k === 'applicationType') {
       generalInfo[text] = (
         <span>
@@ -809,6 +837,40 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
+            {data.programmeProperties.programmeMaterials && (
+              <Card className="card-container">
+                <div className="info-view only-head">
+                  <div className="title">
+                    <span className="title-icon">{<Icon.Grid />}</span>
+                    <span className="title-text">{t('view:programmeMaterial')}</span>
+                    <a
+                      target="_blank"
+                      href={data.programmeProperties.programmeMaterials}
+                      className="pull-right link"
+                    >
+                      {<Icon.Link45deg />}
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            )}
+            {data.programmeProperties.projectMaterial && (
+              <Card className="card-container">
+                <div className="info-view only-head">
+                  <div className="title">
+                    <span className="title-icon">{<Icon.FileEarmarkText />}</span>
+                    <span className="title-text">{t('view:projectMaterial')}</span>
+                    <a
+                      target="_blank"
+                      href={data.programmeProperties.projectMaterial}
+                      className="pull-right link"
+                    >
+                      {<Icon.Link45deg />}
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            )}
             <Card className="card-container">
               <div>
                 <InfoView
@@ -880,56 +942,56 @@ const ProgrammeView = () => {
         title={
           <div className="popup-header">
             <div className="icon">{actionInfo.icon}</div>
-            <div>{`Are you sure you want to ${
-              actionInfo.action ? actionInfo.action.toLowerCase() : actionInfo.action
-            } the programme - ${data.title}?`}</div>
+            <div>{actionInfo.title}</div>
           </div>
         }
         className={'popup-' + actionInfo.type}
         open={openModal}
-        onOk={() => onAction(actionInfo.action)}
+        width={Math.min(400, window.innerWidth)}
+        centered={true}
+        footer={null}
         onCancel={() => {
           setOpenModal(false);
           setComment(undefined);
         }}
-        okText={actionInfo.action}
-        okButtonProps={{ disabled: actionInfo.remark && (!comment || comment.trim() === '') }}
-        confirmLoading={confirmLoading}
-        cancelText="Cancel"
-        width={Math.min(400, window.innerWidth)}
-        centered={true}
         destroyOnClose={true}
       >
-        <p>{actionInfo.text}</p>
-        {actionInfo.action === 'Retire' && (
+        {actionInfo.contentComp ? (
+          actionInfo.contentComp
+        ) : (
           <div>
+            <p>{actionInfo.text}</p>
             <div className="form-label remark">
-              {'Reason'}
+              {t('view:remarks')}
               {actionInfo.remark && <span className="req-ast">*</span>}
             </div>
-            <Select
-              options={[
-                {
-                  value: 'transfer',
-                  label: 'Cross-border transfer',
-                },
-                {
-                  value: 'legal',
-                  label: 'Legal Action',
-                },
-                {
-                  value: 'other',
-                  label: 'Other',
-                },
-              ]}
+            <TextArea
+              defaultValue={comment}
+              rows={2}
+              onChange={(v) => setComment(v.target.value)}
             />
+            <div>
+              <div className="footer-btn">
+                <Button
+                  onClick={() => {
+                    setOpenModal(false);
+                    setComment(undefined);
+                  }}
+                >
+                  {t('view:cancel')}
+                </Button>
+                <Button
+                  disabled={actionInfo.remark && (!comment || comment.trim() === '')}
+                  type="primary"
+                  loading={confirmLoading}
+                  onClick={() => onAction(actionInfo.action)}
+                >
+                  {actionInfo.action}
+                </Button>
+              </div>
+            </div>
           </div>
         )}
-        <div className="form-label remark">
-          {'Remarks'}
-          {actionInfo.remark && <span className="req-ast">*</span>}
-        </div>
-        <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
       </Modal>
     </div>
   );

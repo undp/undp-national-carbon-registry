@@ -313,7 +313,11 @@ const CompanyManagement = () => {
         key: sortField,
         order: sortOrder,
       };
-    } else return undefined;
+    } else
+      return {
+        key: 'companyId',
+        order: 'DESC',
+      };
   };
 
   const getAllOrganisationParams = () => {
@@ -329,7 +333,7 @@ const CompanyManagement = () => {
   const getAllCompany = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/company/query', getAllOrganisationParams());
+      const response: any = await post('national/organisation/query', getAllOrganisationParams());
       setTableData(response.data);
       setTotalCompany(response.response.data.total);
       setLoading(false);
@@ -407,7 +411,8 @@ const CompanyManagement = () => {
         setSortField(sorter.columnKey);
       }
     } else {
-      setSortField('');
+      setSortField('companyId');
+      setSortOrder('DESC');
     }
     // setCurrentPage(1);
   };

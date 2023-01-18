@@ -47,6 +47,14 @@ export enum TypeOfMitigation {
 }
 
 export const getStageEnumVal = (value: string) => {
+  const index = Object.keys(ProgrammeStage).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProgrammeStage)[index];
+};
+
+export const getStageTransferEnumVal = (value: string) => {
   const index = Object.keys(ProgrammeTransferStage).indexOf(value);
   if (index < 0) {
     return value;
@@ -100,6 +108,8 @@ export interface ProgrammeProperties {
   geographicalLocation: string[];
   greenHouseGasses: any[];
   creditYear: number;
+  programmeMaterials: string;
+  projectMaterial: string;
 }
 
 export interface Programme {
@@ -159,10 +169,17 @@ export const addCommSep = (value: any) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export const addSpaces = (text: string) => {
+  if (!text) {
+    return text;
+  }
+  return text.replace(/([A-Z])/g, ' $1').trim();
+};
+
 export const getFinancialFields = (programme: Programme) => {
   return {
     programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
-    financingType: programme.programmeProperties.sourceOfFunding,
+    financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: addCommSep(programme.programmeProperties.grantEquivalentAmount),
     carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };

@@ -6,6 +6,7 @@ import clockHistory from '../../Assets/Images/clockHistory.svg';
 import envelopeCheck from '../../Assets/Images/envelopeCheck.svg';
 import coin from '../../Assets/Images/coin.svg';
 import { Skeleton } from 'antd';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 
 export interface StasticCardItemProps {
   value: number;
@@ -45,7 +46,7 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
         <>
           <div className="values-section">
             <div className="title">{title}</div>
-            <div className="details-section value">{value}</div>
+            <div className="details-section value">{addCommSep(value)}</div>
             <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
           </div>
           <div className="icon-section">

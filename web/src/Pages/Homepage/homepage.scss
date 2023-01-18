@@ -82,14 +82,15 @@
       padding-top: 50vh;
     }
 
-    span {
+    .text-ctn {
       margin-left: 2vw;
-      margin-bottom: 2vw;
+      bottom: 50px;
       font-family: $secondary-font-family;
       font-size: 4rem;
       color: $outside-background-color;
       line-height: 1.2em;
       text-transform: uppercase;
+      position: relative;
 
       @media (max-width: $lg-size) {
         font-size: 2.2rem;
@@ -106,7 +107,7 @@
       color: $outside-background-color;
       line-height: 1rem;
       text-transform: uppercase;
-      margin-left: 2vw;
+      margin-top: 20px;
 
       @media (max-width: $lg-size) {
         text-align: center;

@@ -4,7 +4,6 @@
 
 .company-details-form-container {
   width: 100%;
-
   .company-details-form {
     .steps-actions {
       display: flex;
@@ -26,7 +25,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: start;
         width: 100%;
 
         .ant-upload {
@@ -157,7 +156,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 5px;
-  padding: 0 2rem 0 2rem;
+  padding: 0 50px;
 
   .title-container {
     display: flex;
@@ -205,4 +204,10 @@
       flex-direction: row-reverse;
     }
   }
+}
+
+
+.ant-upload-list-picture .ant-upload-list-item-error, .ant-upload-list-picture-card .ant-upload-list-item-error {
+  height: auto;
+  max-height: 200px;
 }

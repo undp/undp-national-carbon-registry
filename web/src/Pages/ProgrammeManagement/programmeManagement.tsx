@@ -330,6 +330,7 @@ const ProgrammeManagement = () => {
             <div className="action-bar">
               <Checkbox
                 className="all-check"
+                disabled={loading}
                 indeterminate={indeterminate}
                 onChange={onCheckAllChange}
                 checked={checkAll}
@@ -338,6 +339,7 @@ const ProgrammeManagement = () => {
                 All
               </Checkbox>
               <Checkbox.Group
+                disabled={loading}
                 options={statusOptions}
                 defaultValue={statusOptions.map((e) => e.value)}
                 value={selectedStatus}
