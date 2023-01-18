@@ -410,6 +410,21 @@ export class ProgrammeLedgerService {
     );
   }
 
+  public async freezeCompany(
+    companyId: string,
+    reason: string,
+    user: string
+  ){
+  }
+
+  public async revokeCompanyCertifications(
+    companyId: string,
+    reason: string,
+    user: string
+  ){
+
+  }
+
   public async freezeProgramme(
     programmeId: string,
     companyId: number,
