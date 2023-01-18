@@ -22,7 +22,11 @@ export class CompanyService {
     private helperService: HelperService
   ) {}
 
-  async suspend(companyId: number, remarks:string, abilityCondition: string): Promise<any> {
+  async suspend(
+    companyId: number,
+    remarks: string,
+    abilityCondition: string
+  ): Promise<any> {
     this.logger.verbose("Suspend company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -48,7 +52,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.SUSPENDED,
-          remarks:remarks
+          remarks: remarks,
         }
       )
       .catch((err: any) => {

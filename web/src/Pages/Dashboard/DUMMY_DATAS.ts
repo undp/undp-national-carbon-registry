@@ -706,7 +706,7 @@ export const optionsZ: any = {
 
 export const seriesY = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [44, 55, 41, 67, 22, 43, 21, 49],
   },
   {
@@ -721,7 +721,7 @@ export const seriesY = [
 
 export const seriesZ = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [22, 31, 41, 67, 22, 40, 21, 11],
   },
   {
@@ -916,21 +916,19 @@ export const optionDonutPieA: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
-  labels: ['Available', 'Transfered', 'Retired'],
+  colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+  labels: ['Available', 'Transfered', 'Retired', 'Issued'],
   plotOptions: {
     pie: {
+      expandOnClick: false,
       donut: {
-        total: {
+        labels: {
           show: true,
-          showAlways: true,
-          label: 'Total',
-          fontSize: '0.875rem',
-          fontFamily: 'Inter',
-          fontWeight: 400,
-          color: 'black',
-          formatter: () => {
-            return 44000;
+          total: {
+            showAlways: true,
+            show: true,
+            label: 'Total',
+            formatter: () => {},
           },
         },
       },
@@ -956,7 +954,7 @@ export const optionDonutPieA: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+      colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
       useSeriesColors: false,
     },
     markers: {
@@ -964,7 +962,92 @@ export const optionDonutPieA: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200,
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    },
+  ],
+};
+export const optionDonutPieB: any = {
+  chart: {
+    type: 'donut',
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+  labels: ['Available', 'Transfered', 'Retired', 'Issued'],
+  plotOptions: {
+    pie: {
+      expandOnClick: false,
+      donut: {
+        labels: {
+          show: true,
+          total: {
+            showAlways: true,
+            show: true,
+            label: 'Total',
+            formatter: () => {},
+          },
+        },
+      },
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
