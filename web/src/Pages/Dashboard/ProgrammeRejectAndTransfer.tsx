@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import fileText from '../../Assets/Images/fileText.svg';
 import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { ClockHistory, HandThumbsUp, XCircle } from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 
@@ -16,9 +17,9 @@ const Map = ReactMapboxGl({
 
 export interface ProgrammeRejectAndTransferCardItemProps {
   totalPrgrammes: number;
-  issued: number;
+  authorized: number;
+  pending: number;
   rejected: number;
-  transfered: number;
   updatedDate: any;
   loading: boolean;
 }
@@ -26,7 +27,7 @@ export interface ProgrammeRejectAndTransferCardItemProps {
 const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = (
   props: ProgrammeRejectAndTransferCardItemProps
 ) => {
-  const { totalPrgrammes, issued, rejected, transfered, updatedDate, loading } = props;
+  const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading } = props;
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (
@@ -39,8 +40,8 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
           <div className="total-programme-details">
             <div className="details">
               <div className="title">Programmes</div>
-              <div className="detail">Issued</div>
-              <div className="value">{issued}</div>
+              <div className="detail">Total</div>
+              <div className="value">{totalPrgrammes}</div>
             </div>
             <div className="icon">
               <img src={fileText} />
@@ -49,10 +50,31 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
           <div className="total-programme-extra-details">
             <div className="rejected-details margin-top-1">
               <div className="icon">
+                <div className="icon-container authorized">
+                  <HandThumbsUp color="#16B1FF" size={25} />
+                </div>
+              </div>
+              <div className="details">
+                <div className="label-and-value">
+                  <div className="label">Authorised</div>
+                  <div className="value">{authorized}</div>
+                </div>
+                <div className="stastic-bar">
+                  <Progress
+                    showInfo={false}
+                    percent={(authorized / totalPrgrammes) * 100}
+                    status="active"
+                    strokeColor={{ from: '#B9E2F4', to: '#6ACDFF' }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="transfered-details margin-top-1">
+              <div className="icon">
                 <div className="icon-container reject">
-                  <CloseCircleOutlined
+                  <XCircle
                     style={{
-                      color: '#FF4C51',
+                      color: '#6c6c6c',
                       fontSize: '25px',
                     }}
                   />
@@ -68,39 +90,34 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
                     showInfo={false}
                     percent={(rejected / totalPrgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#FFA6A6', to: '#FF4D4F' }}
+                    strokeColor={{ from: '#F0F0F0', to: '#D8D8D8' }}
                   />
                 </div>
               </div>
             </div>
             <div className="transfered-details margin-top-1">
               <div className="icon">
-                <div className="icon-container transfer">
-                  <CarOutlined
-                    style={{
-                      color: '#FF8F56',
-                      fontSize: '25px',
-                    }}
-                  />
+                <div className="icon-container pending">
+                  <ClockHistory color="#FF4D4F" size={25} />
                 </div>
               </div>
               <div className="details">
                 <div className="label-and-value">
-                  <div className="label">Transferred</div>
-                  <div className="value">{transfered}</div>
+                  <div className="label">Pending</div>
+                  <div className="value">{pending}</div>
                 </div>
                 <div className="stastic-bar">
                   <Progress
                     showInfo={false}
-                    percent={(transfered / totalPrgrammes) * 100}
+                    percent={(pending / totalPrgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#FAE07F', to: '#FF8F56' }}
+                    strokeColor={{ from: '#FFA6A6', to: '#FF8183' }}
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="updated-on margin-top-4">
+          <div className="updated-on margin-top-6">
             <div className="updated-moment-container">{moment(updatedDate * 1000).fromNow()}</div>
           </div>
         </>

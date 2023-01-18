@@ -56,13 +56,18 @@ export class AnalyticsAPIService {
           };
           let totalProgrammesResponse = await this.programmeRepo
             .createQueryBuilder()
+            .select([
+              `"programmeId"`,
+              `"currentStage"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 params,
                 this.helperService.parseMongoQueryToSQL(abilityCondition)
               )
             )
-            .getMany();
+            .getRawMany();
           let duraion: number;
           let durationCounts: number;
           if (durationInDays > 31) {
@@ -132,13 +137,18 @@ export class AnalyticsAPIService {
           };
           let totalProgrammesResponseSector = await this.programmeRepo
             .createQueryBuilder()
+            .select([
+              `"programmeId"`,
+              `"sector"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsSector,
                 this.helperService.parseMongoQueryToSQL(abilityCondition)
               )
             )
-            .getMany();
+            .getRawMany();
           let duraionSectorT: number;
           let durationSectorCounts: number;
           if (durationSectorInDays > 31) {

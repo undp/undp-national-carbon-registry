@@ -8,6 +8,7 @@ import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   optionDonutPieA,
+  optionDonutPieB,
   options,
   optionsY,
   series,
@@ -35,8 +36,8 @@ const Dashboard = () => {
   const [transferedProjects, setTransferedProjects] = useState<number>(0);
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
-  const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0]);
-  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
+  const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
+  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
 
   const getAllProgrammeAnalyticsStatsParams = () => {
@@ -70,18 +71,24 @@ const Dashboard = () => {
         {
           type: 'CREDIT_STATS_TRANSFERRED',
         },
-        // {
-        //   type: 'CREDIT_STATS_RETIRED',
-        // },
+        {
+          type: 'CREDIT_STATS_RETIRED',
+        },
+        {
+          type: 'CREDIT_STATS_ISSUED',
+        },
         {
           type: 'CREDIT_CERTIFIED_BALANCE',
         },
         {
           type: 'CREDIT_CERTIFIED_TRANSFERRED',
         },
-        // {
-        //   type: 'CREDIT_CERTIFIED_RETIRED',
-        // },
+        {
+          type: 'CREDIT_CERTIFIED_RETIRED',
+        },
+        {
+          type: 'CREDIT_CERTIFIED_ISSUED',
+        },
       ],
     };
   };
@@ -105,14 +112,48 @@ const Dashboard = () => {
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
-      pieSeriesCreditsData.push(0);
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum));
+
       pieSeriesCreditsCerifiedData.push(
         parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_BALANCE?.sum)
       );
       pieSeriesCreditsCerifiedData.push(
         parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_TRANSFERRED?.sum)
       );
-      pieSeriesCreditsCerifiedData.push(0);
+      pieSeriesCreditsCerifiedData.push(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_RETIRED?.sum)
+      );
+      pieSeriesCreditsCerifiedData.push(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
+      );
+      let totalCredits = 0;
+      let totalCreditsCertified = 0;
+      for (let i = 0; i < pieSeriesCreditsData.length; i++) {
+        if (String(pieSeriesCreditsData[i]) === 'NaN') {
+          if (i !== -1) {
+            pieSeriesCreditsData[i] = 0;
+          }
+          totalCredits = totalCredits + 0;
+        } else {
+          totalCredits = totalCredits + pieSeriesCreditsData[i];
+        }
+      }
+      for (let j = 0; j < pieSeriesCreditsCerifiedData.length; j++) {
+        if (String(pieSeriesCreditsCerifiedData[j]) === 'NaN') {
+          if (j !== -1) {
+            pieSeriesCreditsCerifiedData[j] = 0;
+          }
+          totalCreditsCertified = totalCreditsCertified + 0;
+        } else {
+          totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
+        }
+      }
+      optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () => '' + totalCredits;
+      optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+        '' + totalCreditsCertified;
+
+      console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
       setLastUpdate(response?.data?.lastUpdate);
@@ -194,9 +235,9 @@ const Dashboard = () => {
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <ProgrammeRejectAndTransfer
               totalPrgrammes={totalProjects}
-              issued={issuedProjects}
+              pending={pendingProjects}
               rejected={rejectedProjects}
-              transfered={transferedProjects}
+              authorized={issuedProjects}
               updatedDate={lastUpdate}
               loading={loading}
             />
@@ -219,7 +260,7 @@ const Dashboard = () => {
                       width="350px"
                     />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on margin-top-2">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
@@ -240,13 +281,13 @@ const Dashboard = () => {
                   <div className="pie-charts-title">Certified Credits</div>
                   <div className="pie-charts-section">
                     <Chart
-                      options={optionDonutPieA}
+                      options={optionDonutPieB}
                       series={creditsCertifiedPieSeries}
                       type="donut"
                       width="350px"
                     />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on margin-top-2">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
@@ -281,6 +322,48 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-bar-rem">
               <div className="pie-charts-title">Total Programmes:Sector</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(lastUpdate * 1000).fromNow()}
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </div>
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Credits</div>
+              <div className="pie-charts-section">
+                <Chart
+                  options={optionsY}
+                  series={seriesY}
+                  type="bar"
+                  height="350px"
+                  width="450px"
+                />
+              </div>
+              <div className="updated-on">
+                <div className="updated-moment-container">
+                  {moment(lastUpdate * 1000).fromNow()}
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-bar-rem">
+              <div className="pie-charts-title">Total Credit Issued</div>
               <div className="pie-charts-section">
                 <Chart
                   options={optionsY}
