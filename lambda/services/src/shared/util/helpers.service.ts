@@ -47,6 +47,32 @@ export class HelperService {
     return sql;
   }
 
+  public generateWhereSQLChartStasticsWithoutTimeRange(
+    data: programmeStatusRequestDto,
+    extraSQL: string,
+    table?: string
+  ) {
+    let sql = "";
+    let col = "";
+
+    if (data?.type === "TRANSFER_REQUEST_SENT") {
+      col = "requesterCompanyId";
+      sql = `${table ? table + "." : ""}"${col}" is not null`;
+    } else if (data?.type === "TRANSFER_REQUEST_RECEIVED") {
+      col = "companyId";
+      sql = `${table ? table + "." : ""}"${col}" is not null`;
+    }
+
+    if (sql != "") {
+      if (extraSQL) {
+        sql = `(${sql}) and (${extraSQL})`;
+      }
+    } else if (extraSQL) {
+      sql = extraSQL;
+    }
+    return sql;
+  }
+
   public generateWhereSQLStastics(
     data: programmeStatusRequestDto,
     extraSQL: string,
@@ -77,11 +103,19 @@ export class HelperService {
         data?.endTime
       )}`;
     } else if (data?.startTime && data?.endTime) {
-      sql = `(${sql}) and ${
-        table ? table + "." : ""
-      }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
-        table ? table + "." : ""
-      }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+      if (sql != "") {
+        sql = `(${sql}) and ${
+          table ? table + "." : ""
+        }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
+          table ? table + "." : ""
+        }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+      } else {
+        sql = sql = `${
+          table ? table + "." : ""
+        }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
+          table ? table + "." : ""
+        }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+      }
     }
 
     if (sql != "") {
