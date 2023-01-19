@@ -9,7 +9,7 @@ import { UtilModule } from '../util/util.module';
 import { ProgrammeLedgerService } from './programme-ledger.service';
 
 @Module({
-    imports: [LedgerDbModule, ProgrammeLedgerModule, CaslModule, TypeOrmModule.forFeature([Programme]), TypeOrmModule.forFeature([ConstantEntity]), UtilModule, CompanyModule],
+    imports: [LedgerDbModule, ProgrammeLedgerModule, CaslModule, TypeOrmModule.forFeature([Programme]), TypeOrmModule.forFeature([ConstantEntity]), UtilModule],
     providers: [ProgrammeLedgerService, Logger],
     exports: [ProgrammeLedgerService]
 })
