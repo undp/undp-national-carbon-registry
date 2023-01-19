@@ -6,10 +6,6 @@ import { dom } from "ion-js";
 export class ArrayIn {
     constructor(public key: string, public value: any) {
     }
-
-    public toString = () : string => {
-        return `${this.value}`;
-    }
 }
 
 export class ArrayLike {
@@ -85,6 +81,21 @@ export class LedgerDbService {
         return (await this.execute(`UPDATE ${this.tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update), ...Object.values(where)))?.getResultList();
     };
 
+    private getValuesList(filterObj: any): any {
+        const list = []
+        for (const k in filterObj) {
+            const v = filterObj[k];
+            if (v instanceof ArrayIn) {
+                list.push(v.value)
+            } else if (v instanceof ArrayLike) {
+                list.push(v.value)
+            } else {
+                list.push(v)
+            }
+        }
+        return list;
+    }
+
     public async getAndUpdateTx<TM>(getQueries: Record<string, Record<string, any>>, processGetFn: (results: Record<string, dom.Value[]>) => [Record<string, any>, Record<string, any>, Record<string, any>]): Promise<Record<string, dom.Value[]>> {
         this.logger.debug(``)
         this.driver = new QldbDriver(this.ledgerName);
@@ -102,7 +113,7 @@ export class LedgerDbService {
                         }
                         return (`${k} = ?`)
                     }).join(' and ')
-                    const r = (await this.execute(`SELECT * FROM ${t} WHERE ${wc}`, ...Object.values(getQueries[t])))?.getResultList();
+                    const r = (await this.execute(`SELECT * FROM ${t} WHERE ${wc}`, ...this.getValuesList(getQueries[t])))?.getResultList();
                     getResults[t] = r;
                 }
             }

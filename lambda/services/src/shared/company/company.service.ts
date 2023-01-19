@@ -59,11 +59,12 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      // TODO: Currently there can be unfreezed credits after company suspend if transactions failed
       if(company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        this.programmeLedgerService.freezeCompany(companyId, remarks, userId)
+        await this.programmeLedgerService.freezeCompany(companyId, remarks, userId)
       }
       else if(company.companyRole === CompanyRole.CERTIFIER) {
-        this.programmeLedgerService.revokeCompanyCertifications(companyId, remarks, userId)
+        await this.programmeLedgerService.revokeCompanyCertifications(companyId, remarks, userId)
       }
       return new BasicResponseDto(
         HttpStatus.OK,
