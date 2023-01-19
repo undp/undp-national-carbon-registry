@@ -2,8 +2,7 @@ import { ExclamationCircleOutlined, LockOutlined } from '@ant-design/icons';
 import { Alert, Button, Form, Input, Modal } from 'antd';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import './ChangePasswordModel.scss';
-import exclamationOctagon from '../../Assets/Images/exclamation-octagon.svg';
+import lockIcon from '../../Assets/Images/lock.svg';
 
 export interface ChangePasswordProps {
   onPasswordChanged: any;
@@ -19,11 +18,11 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
 
   return (
     <Modal
-      width={548}
+      width={450}
       title={
         <div className="popup-header">
           <div className="icon">
-            <img src={exclamationOctagon}></img>
+            <img src={lockIcon}></img>
           </div>
           <div>{t('passwordReset:changePassword')}</div>
         </div>
@@ -106,14 +105,14 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           </div>
         )}
 
-        <Form.Item className="mg-top-2">
+        <div className="mg-top-2 ant-modal-footer">
           <Button htmlType="button" onClick={onCanceled}>
             {t('passwordReset:cancel')}
           </Button>
-          <Button className="mg-left-3" type="primary" htmlType="submit">
+          <Button className="mg-left-2" type="primary" htmlType="submit">
             {t('passwordReset:setPassword')}
           </Button>
-        </Form.Item>
+        </div>
       </Form>
     </Modal>
   );
