@@ -94,6 +94,10 @@ const UserProfile = () => {
     }
   };
 
+  const onFormsValueChanged = async () => {
+    setErrorMsg('');
+  };
+
   const onPasswordChangeCanceled = () => {
     setopenPasswordChangeModal(false);
   };
@@ -308,6 +312,7 @@ const UserProfile = () => {
 
       <ChangePasswordModel
         onPasswordChanged={onPasswordChangeCompleted}
+        onFieldsChanged={onFormsValueChanged}
         onCanceled={onPasswordChangeCanceled}
         openModal={openPasswordChangeModal}
         errorMsg={errorMsg}
