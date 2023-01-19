@@ -12,6 +12,15 @@ export class ArrayIn {
     }
 }
 
+export class ArrayLike {
+    constructor(public key: string, public value: any) {
+    }
+
+    public toString = () : string => {
+        return `${this.value}`;
+    }
+}
+
 @Injectable()
 export class LedgerDbService {
 
@@ -88,6 +97,8 @@ export class LedgerDbService {
                             return (`${k} in ?`)
                         } else if (getQueries[t][k] instanceof ArrayIn) {
                             return (`? IN "${getQueries[t][k].key}"`)
+                        } else if (getQueries[t][k] instanceof ArrayLike) {
+                            return (`${k} LIKE ?`)
                         }
                         return (`${k} = ?`)
                     }).join(' and ')
