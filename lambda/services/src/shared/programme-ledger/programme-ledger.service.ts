@@ -417,6 +417,7 @@ export class ProgrammeLedgerService {
   ): Promise<number[]>{
     this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
+    companyId = Number(companyId);
     getQueries[this.ledger.tableName] = {
       certifierId: new ArrayIn("certifierId", companyId),
     };
@@ -477,6 +478,7 @@ export class ProgrammeLedgerService {
   ): Promise<number[]> {
     this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
+    companyId = Number(companyId);
     getQueries[this.ledger.tableName] = {
       companyId: new ArrayIn("companyId", companyId),
     };
