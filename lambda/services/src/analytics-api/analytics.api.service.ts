@@ -507,6 +507,22 @@ export class AnalyticsAPIService {
           results[stat.type] = transferRequestSent;
           break;
 
+        case StatType.TRANSFER_REQUEST_RECEIVED:
+          const valuesTransferRequestReceived: programmeStatusRequestDto = {
+            type: stat.type,
+          };
+          let transferRequestReceived = await this.programmeTransferRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLChartStasticsWithoutTimeRange(
+                valuesTransferRequestReceived,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getCount();
+          results[stat.type] = transferRequestReceived;
+          break;
+
         case StatType.CREDIT_STATS_BALANCE:
         case StatType.CREDIT_STATS_TRANSFERRED:
         case StatType.CREDIT_STATS_RETIRED:

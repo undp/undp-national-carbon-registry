@@ -58,6 +58,9 @@ export class HelperService {
     if (data?.type === "TRANSFER_REQUEST_SENT") {
       col = "requesterCompanyId";
       sql = `${table ? table + "." : ""}"${col}" is not null`;
+    } else if (data?.type === "TRANSFER_REQUEST_RECEIVED") {
+      col = "companyId";
+      sql = `${table ? table + "." : ""}"${col}" is not null`;
     }
 
     if (sql != "") {
