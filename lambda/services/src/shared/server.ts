@@ -19,6 +19,7 @@ import * as bodyParser from 'body-parser';
 
 const express = require('express');
 
+
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
 // by aws-serverless-express and/or API Gateway. Add the necessary MIME types to
@@ -76,7 +77,7 @@ export async function bootstrapServer(cachedServer: Server, module: any, httpBas
           })
         useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
         nestApp.setGlobalPrefix(httpBase)
-        nestApp.use(bodyParser.json({limit: '5mb'}));
+        nestApp.use(bodyParser.json({limit: '50mb'}));
         nestApp.enableCors();
         nestApp.useGlobalPipes(new TrimPipe());
         nestApp.useGlobalPipes(new ValidationPipe({

@@ -1,6 +1,10 @@
 .company-profile {
   padding: 0px 50px;
 
+  .company-name {
+    font-weight: 600;
+  }
+
   .title-bar {
     display: flex;
     justify-content: space-between;
