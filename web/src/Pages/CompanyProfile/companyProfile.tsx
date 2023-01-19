@@ -133,7 +133,7 @@ const CompanyProfile = () => {
                   />
                 </Row>
                 <Row justify="center">
-                  <div className="padding-top-1">{companyDetails.name}</div>
+                  <div className="padding-top-1 company-name">{companyDetails.name}</div>
                 </Row>
                 <Row justify="center">
                   {parseInt(companyDetails.state) === 1 ? (

@@ -162,7 +162,7 @@ const Login = () => {
                     </div>
                   )}
                   <div className="login-forget-pwd-container">
-                    <span className="login-forget-pwd-txt">{t('login:forgot-pwd')} ?</span>
+                    <span className="login-forget-pwd-txt">{t('login:forgot-pwd')}?</span>
                   </div>
                   <Form.Item>
                     <div className="login-submit-btn-container">

@@ -410,8 +410,8 @@ export class UserService {
         "company.companyId = user.companyId"
       )
       .orderBy(
-        query?.sort?.key && `"user"."${query?.sort?.key}"`,
-        query?.sort?.order
+        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"` ,
+        query?.sort?.order ? query?.sort?.order : "DESC"
       )
       .offset(query.size * query.page - query.size)
       .limit(query.size)

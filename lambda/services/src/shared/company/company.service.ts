@@ -50,7 +50,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.SUSPENDED,
-          remarks:remarks
+          remarks: remarks,
         }
       )
       .catch((err: any) => {

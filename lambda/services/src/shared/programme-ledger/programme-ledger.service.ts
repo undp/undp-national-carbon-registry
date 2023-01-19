@@ -227,9 +227,9 @@ export class ProgrammeLedgerService {
         }
         programme.creditTransferred += transfer.creditAmount;
 
-        if (programme.creditBalance <= 0) {
-          programme.currentStage = ProgrammeStage.TRANSFERRED;
-        }
+        // if (programme.creditBalance <= 0) {
+        //   programme.currentStage = ProgrammeStage.TRANSFERRED;
+        // }
 
         updatedProgramme = programme;
         const uPayload = {
