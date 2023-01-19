@@ -546,6 +546,89 @@ export class ProgrammeLedgerService {
     return programmesId;
   }
 
+  public async freezeProgramme(
+    programmeId: string,
+    companyId: number,
+    reason: string,
+    user: string
+  ): Promise<boolean> {
+    this.logger.log(`Freezing programme credits:${programmeId} reason:${reason} companyId:${companyId} user:${user}`);
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      companyId: new ArrayIn("companyId", companyId),
+    };
+
+    let updatedProgramme;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        let updateMap = {};
+        let updateWhere = {};
+        
+        for (const programme of programmes) {
+          const index = programme.companyId.indexOf(companyId)
+          if (index < 0) {
+            throw new HttpException(
+              "Programme does not own by the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+  
+          if (!programme.creditOwnerPercentage) {
+            throw new HttpException(
+              "Not ownership percentage for the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
+          if (!programme.creditFrozen) {
+            programme.creditFrozen =  new Array(programme.creditOwnerPercentage.length).fill(0);
+          }
+
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime(),
+          programme.txRef = `${user}#${reason}`,
+          programme.txType = TxType.FREEZE
+          programme.creditFrozen[index] = freezeCredit;
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            currentStage: programme.currentStage,
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            creditFrozen: programme.creditFrozen,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+        }
+        // updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    throw new HttpException(
+      "Programme failed to update",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
   public async retireProgramme(
     programmeId: string,
     reason: string,
