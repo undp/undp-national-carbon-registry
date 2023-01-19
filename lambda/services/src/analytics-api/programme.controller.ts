@@ -15,6 +15,7 @@ import { Action } from "../shared/casl/action.enum";
 import { PoliciesGuardEx } from "../shared/casl/policy.guard";
 import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "../shared/dto/stat.dto";
+import { ChartStatList } from "../shared/dto/chartStats.list.dto";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -32,8 +33,22 @@ export class ProgrammeController {
   )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("stats")
-  async programmesStaticDetails(@Body()query: StatList, @Request() req) {
+  async programmesStaticDetails(@Body() query: StatList, @Request() req) {
     return this.analyticsService.programmesStaticDetails(
+      req.abilityCondition,
+      query
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, Stat, true, true)
+  )
+  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
+  @Post("chartStats")
+  async programmesStaticChartDetails(@Body() query: ChartStatList, @Request() req) {
+    return this.analyticsService.programmesStaticChartsDetails(
       req.abilityCondition,
       query
     );

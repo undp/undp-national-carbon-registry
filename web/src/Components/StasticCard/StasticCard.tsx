@@ -7,6 +7,7 @@ import envelopeCheck from '../../Assets/Images/envelopeCheck.svg';
 import coin from '../../Assets/Images/coin.svg';
 import { Skeleton } from 'antd';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { ClockHistory, BoxArrowRight, Diamond, Gem } from 'react-bootstrap-icons';
 
 export interface StasticCardItemProps {
   value: number;
@@ -46,13 +47,14 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
         <>
           <div className="values-section">
             <div className="title">{title}</div>
+            {title.includes('Credit') && <div className="unit">ITMOs</div>}
             <div className="details-section value">{addCommSep(value)}</div>
             <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
           </div>
           <div className="icon-section">
-            {icon === 'clockHistory' && <img src={clockHistory} />}
-            {icon === 'envelopeCheck' && <img src={envelopeCheck} />}
-            {icon === 'coin' && <img src={coin} />}
+            {icon === 'clockHistory' && <ClockHistory color="#16B1FF" size={80} />}
+            {icon === 'envelopeCheck' && <BoxArrowRight color="#16B1FF" size={80} />}
+            {icon === 'coin' && <Gem color="#16B1FF" size={80} />}
           </div>
         </>
       )}

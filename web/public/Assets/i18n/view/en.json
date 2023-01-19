@@ -38,6 +38,9 @@
     "certifyTitle": "Are you sure you want to certify the programme",
     "retireTitle": "Are you sure you want to retire the credits?",
     "revokeTitle": "Are you sure you want to revoke the certificate of this programme",
+    "transferTitle": "Request Credits",
     "programmeMaterial": "Programme Materials",
-    "projectMaterial": "Project Material"
+    "projectMaterial": "Project Material",
+    "transfer": "Request",
+    "by": "By"
 }
