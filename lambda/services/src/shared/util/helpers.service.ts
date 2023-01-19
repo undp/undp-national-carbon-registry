@@ -61,6 +61,12 @@ export class HelperService {
     } else if (data?.type === "TRANSFER_REQUEST_RECEIVED") {
       col = "companyId";
       sql = `${table ? table + "." : ""}"${col}" is not null`;
+    } else if (data?.type === "PROGRAMS_CERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is not null`;
+    } else if (data?.type === "PROGRAMS_UNCERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is null`;
     }
 
     if (sql != "") {

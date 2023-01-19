@@ -507,6 +507,38 @@ export class AnalyticsAPIService {
           results[stat.type] = transferRequestSent;
           break;
 
+        case StatType.PROGRAMS_CERTIFIED:
+          const valuesProgrammesCertified: programmeStatusRequestDto = {
+            type: stat.type,
+          };
+          let programmesCertified = await this.programmeRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLChartStasticsWithoutTimeRange(
+                valuesProgrammesCertified,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getCount();
+          results[stat.type] = programmesCertified;
+          break;
+
+        case StatType.PROGRAMS_UNCERTIFIED:
+          const valuesProgrammesUnCertified: programmeStatusRequestDto = {
+            type: stat.type,
+          };
+          let programmesUnCertified = await this.programmeRepo
+            .createQueryBuilder()
+            .where(
+              this.helperService.generateWhereSQLChartStasticsWithoutTimeRange(
+                valuesProgrammesUnCertified,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getCount();
+          results[stat.type] = programmesUnCertified;
+          break;
+
         case StatType.TRANSFER_REQUEST_RECEIVED:
           const valuesTransferRequestReceived: programmeStatusRequestDto = {
             type: stat.type,
