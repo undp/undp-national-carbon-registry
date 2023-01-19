@@ -397,7 +397,12 @@ export class AnalyticsAPIService {
           };
           let totalResponseProgrammeLocation = await this.programmeRepo
             .createQueryBuilder()
-            .select([`"programmeId"`, `"countryCodeA2"`, `"createdTime"`])
+            .select([
+              `"programmeId"`,
+              `"countryCodeA2"`,
+              `"programmeProperties"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsProgrammeLocations,
@@ -405,22 +410,21 @@ export class AnalyticsAPIService {
               )
             )
             .getRawMany();
-          let locations = [];
+          let locationsGeo = [];
           for (
             let index = 0;
             index < totalResponseProgrammeLocation.length;
             index++
           ) {
-            let include = locations.includes(
-              totalResponseProgrammeLocation[index]?.countryCodeA2
-            );
-            if (!include) {
-              locations.push(
-                totalResponseProgrammeLocation[index]?.countryCodeA2
-              );
+            let locations =
+              totalResponseProgrammeLocation[index]?.programmeProperties
+                ?.geographicalLocation;
+            for (let geoLoc = 0; geoLoc < locations.length; geoLoc++) {
+              locationsGeo.push(locations[geoLoc]);
             }
           }
-          results[stat.type] = locations;
+          let uniqueLocationsGeo = [...new Set(locationsGeo)];
+          results[stat.type] = uniqueLocationsGeo;
           break;
       }
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
@@ -10,22 +10,24 @@ import {
   optionDonutPieA,
   optionDonutPieB,
   seriesY,
+  totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
 } from './DUMMY_DATAS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import mapboxgl from 'mapbox-gl';
+import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 
 const { RangePicker } = DatePicker;
 
-const Map = ReactMapboxGl({
-  accessToken:
-    'pk.eyJ1IjoiZmFicmljOCIsImEiOiJjaWc5aTV1ZzUwMDJwdzJrb2w0dXRmc2d0In0.p6GGlfyV-WksaDV_KdN27A',
-});
+mapboxgl.accessToken =
+  '';
 
 const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
+  const mapContainerRef = useRef(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
@@ -59,6 +61,15 @@ const Dashboard = () => {
   const [wasteProgrammes, setWasteProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [agricultureProgrammes, setAgricultureProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
+
+  // states for totalCredits chart
+  const [availableCredits, setAvailableCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+
+  // locations of programmes
+  const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
 
   const currentYear = new Date();
   const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
@@ -143,6 +154,12 @@ const Dashboard = () => {
         {
           type: 'TOTAL_PROGRAMS_SECTOR',
         },
+        {
+          type: 'TOTAL_CREDITS',
+        },
+        {
+          type: 'PROGRAMME_LOCATIONS',
+        },
       ],
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
@@ -188,6 +205,11 @@ const Dashboard = () => {
       const wasteProgrames: any = [];
       const agricultureProgrames: any = [];
       const otherProgrames: any = [];
+
+      const availableCredit: any = [];
+      const issuedCredit: any = [];
+      const retiredCredit: any = [];
+      const transferredCredit: any = [];
 
       const response: any = await post(
         'analytics/programme/chartStats',
@@ -295,6 +317,41 @@ const Dashboard = () => {
           });
         }
       }
+      if (response?.data?.stats?.TOTAL_CREDITS) {
+        const totalCredits = response?.data?.stats?.TOTAL_CREDITS;
+        if (totalCredits?.available) {
+          const available = totalCredits?.available;
+          available?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            availableCredit.push(credit[0]);
+          });
+        }
+        if (totalCredits?.issued) {
+          const issued = totalCredits?.issued;
+          issued?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            issuedCredit.push(credit[0]);
+          });
+        }
+        if (totalCredits?.retired) {
+          const retired = totalCredits?.retired;
+          retired?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            retiredCredit.push(credit[0]);
+          });
+        }
+        if (totalCredits?.transferred) {
+          const transferred = totalCredits?.transferred;
+          transferred?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            transferredCredit.push(credit[0]);
+          });
+        }
+      }
+      if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
+        const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
+        setProgrammeLocations(locations);
+      }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
       setIssuedProgrammes(issuedProgrames);
@@ -310,8 +367,14 @@ const Dashboard = () => {
       setWasteProgrammes(wasteProgrames);
       setAgricultureProgrammes(agricultureProgrames);
       setOtherProgrammes(otherProgrames);
+
+      setAvailableCredits(availableCredit);
+      setIssuedCredits(issuedCredit);
+      setRetiredCredits(retiredCredit);
+      setTransferredCredits(transferredCredit);
       totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
       totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
+      totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -493,6 +556,65 @@ const Dashboard = () => {
       data: otherProgrammes,
     },
   ];
+
+  const seriesTotalCreditsY = [
+    {
+      name: 'Available',
+      data: availableCredits,
+    },
+    {
+      name: 'Issued',
+      data: issuedCredits,
+    },
+    {
+      name: 'Retired',
+      data: retiredCredits,
+    },
+    {
+      name: 'Transferred',
+      data: transferredCredits,
+    },
+  ];
+
+  useEffect(() => {
+    console.log('transfr credit --- > ', transferredCredits);
+  }, [transferredCredits]);
+
+  useEffect(() => {
+    const address = programmeLocations[0];
+    setTimeout(() => {
+      Geocoding({ accessToken: mapboxgl.accessToken })
+        .forwardGeocode({
+          query: address,
+          autocomplete: false,
+          limit: 1,
+        })
+        .send()
+        .then((response: any) => {
+          if (
+            !response ||
+            !response.body ||
+            !response.body.features ||
+            !response.body.features.length
+          ) {
+            console.error('Invalid response:');
+            console.error(response);
+            return;
+          }
+          const feature = response.body.features[0];
+          if (mapContainerRef.current) {
+            const map = new mapboxgl.Map({
+              container: mapContainerRef.current || '',
+              style: 'mapbox://styles/mapbox/streets-v11',
+              center: feature.center,
+              zoom: 5,
+            });
+            const popup = new mapboxgl.Popup().setText(address).addTo(map);
+            new mapboxgl.Marker().setLngLat(feature.center).addTo(map).setPopup(popup);
+          }
+        });
+    }, 1000);
+  }, [programmeLocations]);
 
   return (
     <div className="dashboard-main-container">
@@ -688,125 +810,109 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-bar-rem">
               <div className="pie-charts-title">Total Credits</div>
-              <div className="pie-charts-section">
-                <Chart
-                  options={totalProgrammesOptions}
-                  series={seriesY}
-                  type="bar"
-                  height="350px"
-                  width="450px"
-                />
-              </div>
-              <div className="updated-on">
-                <div className="updated-moment-container">
-                  {moment(lastUpdate * 1000).fromNow()}
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={totalCreditsOptions}
+                      series={seriesTotalCreditsY}
+                      type="bar"
+                      height="350px"
+                      width="490px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-bar-rem">
-              <div className="pie-charts-title">Total Credit Issued</div>
-              <div className="pie-charts-section">
-                <Chart
-                  options={totalProgrammesOptions}
-                  series={seriesY}
-                  type="bar"
-                  height="350px"
-                  width="450px"
-                />
-              </div>
-              <div className="updated-on">
-                <div className="updated-moment-container">
-                  {moment(lastUpdate * 1000).fromNow()}
+              <div className="pie-charts-title">Total Credit Certified</div>
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="pie-charts-section">
+                    <Chart
+                      options={totalProgrammesOptions}
+                      series={seriesY}
+                      type="bar"
+                      height="350px"
+                      width="450px"
+                    />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </Col>
         </Row>
       </div>
-      {/* <div className="header-and-title">Overall</div>
-        <Row gutter={[16, 40]} className="stastic-card-row">
-          {DUmData?.map((cardItem: any, index: number) => {
-            return (
-              <Col xxl={6} xl={6} md={12} className="stastic-card-col">
-                <StasticCard
-                  value={cardItem?.value}
-                  title={cardItem?.title}
-                  updatedDate={cardItem?.updatedDate}
-                  level={cardItem?.level}
-                />
-              </Col>
-            );
-          })}
+      <div className="stastics-and-charts-container center">
+        <Row gutter={[40, 40]} className="stastic-card-row">
+          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-map-rem">
+              <div className="pie-charts-title">Programme Locations</div>
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="map-content">
+                    <div className="map-container" ref={mapContainerRef} />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Col>
+          {/* <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+            <div className="stastics-and-pie-card height-map-rem">
+              <div className="pie-charts-title">Transfer Locations International</div>
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="map-content">
+                    <div className="map-container" ref={mapContainerRef} />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </Col> */}
         </Row>
       </div>
-      <div className="stastics-charts-container-total-programmes">
-        <Row gutter={[16, 30]} justify="start" className="stastic-charts-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={options} series={series} type="bar" height="350px" width="450px" />
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsX} series={seriesX} type="bar" height="350px" width="450px" />
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} pull={6} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsA} series={seriesA} type="bar" height="350px" width="450px" />
-            </div>
-          </Col>
-        </Row>
-      </div>
-      <div className="stastics-charts-container-certified-programmes">
-        <Row gutter={[16, 30]} justify="start" className="stastic-charts-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsY} series={seriesY} type="bar" height="350px" width="450px" />
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsZ} series={seriesZ} type="bar" height="350px" width="450px" />
-            </div>
-          </Col>
-        </Row>
-      </div>
-
-      <div className="stastics-pie-charts-container">
-        <Row gutter={[16, 30]} justify="start" className="stastic-charts-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsP} series={seriesP} type="pie" height="350px" width="450px" />
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsQ} series={seriesQ} type="pie" height="350px" width="450px" />
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} pull={6} className="stastic-charts-col">
-            <div className="chart-card">
-              <Chart options={optionsR} series={seriesR} type="pie" height="350px" width="450px" />
-            </div>
-          </Col>
-        </Row>
-      </div>
-      <div className="maps-container">
-        <Row gutter={[16, 30]} justify="start" className="maps-container-row">
-          <Col xxl={12} xl={12} md={12} className="maps-container-col">
-            <MapCard title="Programmes Locations">&nbsp;</MapCard>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="maps-container-col">
-            <MapCard title="Transfer Locations">&nbsp;</MapCard>
-          </Col>
-          <Col xxl={12} xl={12} md={12} pull={6} className="maps-container-col">
-            <MapCard title="Transfer by Entity">&nbsp;</MapCard>
-          </Col>
-        </Row>
-      </div> */}
     </div>
   );
 };
