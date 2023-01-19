@@ -59,11 +59,12 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
-      if(company.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
-        this.programmeLedgerService.freezeCompany(companyId.toString(), remarks, userId)
-      else if(company.companyRole === CompanyRole.CERTIFIER)
-        this.programmeLedgerService.revokeCompanyCertifications(companyId.toString(), remarks, userId)
-
+      if(company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        this.programmeLedgerService.freezeCompany(companyId, remarks, userId)
+      }
+      else if(company.companyRole === CompanyRole.CERTIFIER) {
+        this.programmeLedgerService.revokeCompanyCertifications(companyId, remarks, userId)
+      }
       return new BasicResponseDto(
         HttpStatus.OK,
         "Successfully suspended company"

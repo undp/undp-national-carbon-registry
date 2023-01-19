@@ -410,34 +410,78 @@ export class ProgrammeLedgerService {
     );
   }
 
-  public async freezeCompany(
-    companyId: string,
-    reason: string,
-    user: string
-  ){
-  }
-
   public async revokeCompanyCertifications(
-    companyId: string,
-    reason: string,
-    user: string
-  ){
-
-  }
-
-  public async freezeProgramme(
-    programmeId: string,
     companyId: number,
     reason: string,
     user: string
-  ): Promise<boolean> {
-    this.logger.log(`Freezing programme credits:${programmeId} reason:${reason} companyId:${companyId} user:${user}`);
+  ): Promise<number[]>{
+    this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      certifierId: new ArrayIn("certifierId", companyId),
+    };
+
+    let programmesId = [];
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        let updateMap = {};
+        let updateWhere = {};
+        
+        for (const programme of programmes) {
+          const index = programme.certifierId.indexOf(companyId)
+          if (index < 0) {
+            continue;
+          }
+  
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime();
+          programme.txRef = `${user}#${reason}`;
+          programme.txType = TxType.REVOKE;
+          programme.certifierId.splice(index, 1);
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            certifierId: programme.certifierId,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+          programmesId.push(programme.programmeId);
+        }
+        // updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    return programmesId;
+  }
+
+  public async freezeCompany(
+    companyId: number,
+    reason: string,
+    user: string
+  ): Promise<number[]> {
+    this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
       companyId: new ArrayIn("companyId", companyId),
     };
 
-    let updatedProgramme;
+    let programmesId = [];
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
       (results: Record<string, dom.Value[]>) => {
@@ -492,20 +536,14 @@ export class ProgrammeLedgerService {
             txTime: prvTxTime
           };
 
+          programmesId.push(programme.programmeId);
         }
         // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
       }
     );
 
-    const affected = resp[this.ledger.tableName];
-    if (affected && affected.length > 0) {
-      return updatedProgramme;
-    }
-    throw new HttpException(
-      "Programme failed to update",
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
+    return programmesId;
   }
 
   public async retireProgramme(
