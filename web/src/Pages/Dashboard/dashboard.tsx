@@ -19,6 +19,16 @@ import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import mapboxgl from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import {
+  ClockHistory,
+  BoxArrowInRight,
+  ShieldX,
+  ShieldExclamation,
+  BoxArrowRight,
+  ShieldCheck,
+  Gem,
+} from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 
@@ -29,6 +39,8 @@ const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
   const mapContainerRef = useRef(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState<any>([]);
+  const [companyRole, setCompanyRole] = useState<any>();
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [pendingProjects, setPendingProjects] = useState<number>(0);
@@ -71,10 +83,33 @@ const Dashboard = () => {
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
 
+  //certifier view states
+  const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
+  const [programmesUnCertifed, setProgrammesUnCertifed] = useState<number>(0);
+  const [certifcationsRevoked, setCertifcationsRevoked] = useState<number>(20);
+
+  //programmeDeveloper
+  const [transferRequestSent, setTransferRequestSent] = useState<number>(0);
+  const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
+
   const currentYear = new Date();
   const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
   const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
   console.log({ currentYear, startOfTheYear, endOfTheYear });
+
+  const getUserProfileDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await get('national/User/profile');
+      if (response.data) {
+        setUserDetails(response.data.user);
+        setCompanyRole(response.data.user?.companyRole);
+      }
+    } catch (exception) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -85,6 +120,18 @@ const Dashboard = () => {
         {
           type: 'PROGRAMS_BY_STATUS',
           value: 'AWAITING_AUTHORIZATION',
+        },
+        {
+          type: 'TRANSFER_REQUEST_RECEIVED',
+        },
+        {
+          type: 'TRANSFER_REQUEST_SENT',
+        },
+        {
+          type: 'PROGRAMS_CERTIFIED',
+        },
+        {
+          type: 'PROGRAMS_UNCERTIFIED',
         },
       ],
     };
@@ -400,6 +447,10 @@ const Dashboard = () => {
       setCreditBalanceWithoutTimeRange(
         parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
       );
+      setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
+      setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
+      setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
+      setTransferRequestReceived(response?.data?.stats?.TRANSFER_REQUEST_RECEIVED);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -469,9 +520,10 @@ const Dashboard = () => {
           totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
         }
       }
-      optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () => '' + totalCredits;
+      optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
+        '' + addCommSep(totalCredits);
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + totalCreditsCertified;
+        '' + addCommSep(totalCreditsCertified);
 
       console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
@@ -491,8 +543,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getAllProgrammeAnalyticsStatsWithoutTimeRange();
+    getUserProfileDetails();
   }, []);
+
+  useEffect(() => {
+    getAllProgrammeAnalyticsStatsWithoutTimeRange();
+  }, [companyRole]);
 
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
@@ -622,28 +678,88 @@ const Dashboard = () => {
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={pendingProjectsWithoutTimeRange}
-              title={'Programmes Pending'}
+              value={
+                companyRole === 'Government'
+                  ? pendingProjectsWithoutTimeRange
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? transferRequestReceived
+                  : programmesUnCertifed
+              }
+              title={
+                companyRole === 'Government'
+                  ? 'Programmes Pending'
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? 'Transfer Requests Received'
+                  : 'Programmes Uncertified'
+              }
               updatedDate={lastUpdate}
-              icon="clockHistory"
+              icon={
+                companyRole === 'Government' ? (
+                  <ClockHistory color="#16B1FF" size={80} />
+                ) : companyRole === 'ProgrammeDeveloper' ? (
+                  <BoxArrowInRight color="#16B1FF" size={80} />
+                ) : (
+                  <ShieldX color="#16B1FF" size={80} />
+                )
+              }
               loading={loadingWithoutTimeRange}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={transfererequestsSent}
-              title={'Transfer Requests Sent'}
+              value={
+                companyRole === 'Government'
+                  ? transfererequestsSent
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? transferRequestSent
+                  : programmesCertifed
+              }
+              title={
+                companyRole === 'Government'
+                  ? 'Transfer Requests Sent'
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? 'Transfer Requests Sent'
+                  : 'Programmes Certified'
+              }
               updatedDate={lastUpdate}
-              icon="envelopeCheck"
+              icon={
+                companyRole === 'Government' ? (
+                  <BoxArrowInRight color="#16B1FF" size={80} />
+                ) : companyRole === 'ProgrammeDeveloper' ? (
+                  <BoxArrowInRight color="#16B1FF" size={80} />
+                ) : (
+                  <ShieldCheck color="#16B1FF" size={80} />
+                )
+              }
               loading={loadingWithoutTimeRange}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={creditBalanceWithoutTimeRange}
-              title={'Credit Balance'}
+              value={
+                companyRole === 'Government'
+                  ? creditBalanceWithoutTimeRange
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? creditBalanceWithoutTimeRange
+                  : certifcationsRevoked
+              }
+              title={
+                companyRole === 'Government'
+                  ? 'Credit Balance'
+                  : companyRole === 'ProgrammeDeveloper'
+                  ? 'Credit Balance'
+                  : 'Certification Revoked'
+              }
               updatedDate={lastUpdate}
-              icon="coin"
+              icon={
+                companyRole === 'Government' ? (
+                  <Gem color="#16B1FF" size={80} />
+                ) : companyRole === 'ProgrammeDeveloper' ? (
+                  <Gem color="#16B1FF" size={80} />
+                ) : (
+                  <ShieldExclamation color="#16B1FF" size={80} />
+                )
+              }
               loading={loadingWithoutTimeRange}
             />
           </Col>
