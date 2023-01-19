@@ -13,7 +13,7 @@ export interface StasticCardItemProps {
   value: number;
   title: string;
   updatedDate: any;
-  icon: string;
+  icon: any;
   loading: boolean;
 }
 
@@ -51,11 +51,7 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
             <div className="details-section value">{addCommSep(value)}</div>
             <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
           </div>
-          <div className="icon-section">
-            {icon === 'clockHistory' && <ClockHistory color="#16B1FF" size={80} />}
-            {icon === 'envelopeCheck' && <BoxArrowRight color="#16B1FF" size={80} />}
-            {icon === 'coin' && <Gem color="#16B1FF" size={80} />}
-          </div>
+          <div className="icon-section">{icon}</div>
         </>
       )}
     </div>
