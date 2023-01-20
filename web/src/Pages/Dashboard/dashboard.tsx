@@ -551,10 +551,10 @@ const Dashboard = () => {
   }, [companyRole]);
 
   useEffect(() => {
-     getAllProgrammeAnalyticsStats();
-     getAllProgrammeAnalyticsStatsCharts();
+    getAllProgrammeAnalyticsStats();
+    getAllProgrammeAnalyticsStatsCharts();
   }, [startTime, endTime]);
-  
+
   const seriesTotalProgrammesY = [
     {
       name: 'Authorised',
