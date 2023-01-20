@@ -34,12 +34,11 @@ import {
   Typography,
   Form,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './userManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
-import type { ColumnsType } from 'antd/es/table';
 import { TableDataType } from '../../Definitions/InterfacesAndType/userManagement.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
@@ -61,6 +60,10 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
+import { AbilityContext } from '../../Casl/Can';
+import { User } from '../../Casl/entities/User';
+import { plainToClass } from 'class-transformer';
+import { Action } from '../../Casl/enums/action.enum';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -85,6 +88,7 @@ const UserManagement = () => {
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
   const [deleteUserModalRecord, setDeleteUserModalRecord] = useState<any>();
   const { i18n, t } = useTranslation(['user']);
+  const ability = useContext(AbilityContext);
 
   document.addEventListener('mousedown', (event: any) => {
     const userFilterArea1 = document.querySelector('.filter-bar');
@@ -195,6 +199,7 @@ const UserManagement = () => {
           {
             text: 'Edit',
             icon: <EditOutlined />,
+            isDisabled: !ability.can(Action.Update, plainToClass(User, record)),
             click: () => {
               navigate('/userManagement/updateUser', { state: { record } });
             },
@@ -210,7 +215,10 @@ const UserManagement = () => {
           },
         ]}
         renderItem={(item) => (
-          <List.Item onClick={item.click}>
+          <List.Item
+            onClick={!item.isDisabled ? item.click : undefined}
+            className={item.isDisabled ? 'disabled' : ''}
+          >
             <Typography.Text className="action-icon">{item.icon}</Typography.Text>
             <span>{item.text}</span>
           </List.Item>

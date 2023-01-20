@@ -17,6 +17,6 @@
     "jsx": "react-jsx",
     "types": ["@types/mapbox__mapbox-sdk"],
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "@casl/react/contextAPIPatch.d.ts"],
   "exclude": ["node_modules"]
 }
