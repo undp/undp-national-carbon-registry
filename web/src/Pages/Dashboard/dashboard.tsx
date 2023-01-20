@@ -550,6 +550,11 @@ const Dashboard = () => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
   }, [companyRole]);
 
+  useEffect(() => {
+     getAllProgrammeAnalyticsStats();
+     getAllProgrammeAnalyticsStatsCharts();
+  }, [startTime, endTime]);
+  
   const seriesTotalProgrammesY = [
     {
       name: 'Authorised',
