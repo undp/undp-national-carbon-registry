@@ -89,13 +89,9 @@ const CompanyProfile = () => {
           <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
         </div>
         <div className="flex-display">
-          {['Admin', 'Root', 'Manager'].includes(userRole) ? (
-            <Button
-              danger
-              disabled={parseInt(companyDetails.state) === 0}
-              className="btn-danger"
-              onClick={onDeauthoriseOrganisation}
-            >
+          {['Admin', 'Root', 'Manager'].includes(userRole) &&
+          parseInt(companyDetails.state) !== 0 ? (
+            <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
               {t('companyProfile:deauthorise')}
             </Button>
           ) : (
