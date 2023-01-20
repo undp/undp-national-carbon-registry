@@ -24,10 +24,16 @@ export class ProgrammeTransfer implements EntitySubject {
     programmeId: string;
 
     @Column()
-    requesterId: number;
+    initiator: number;
 
     @Column()
-    requesterCompanyId: number;
+    initiatorCompanyId: number;
+
+    @Column()
+    toCompanyId: number;
+
+    @Column()
+    fromCompanyId: number;
 
     @Column("real")
     creditAmount: number;
@@ -37,10 +43,7 @@ export class ProgrammeTransfer implements EntitySubject {
 
     @Column({type: "bigint"})
     txTime: number;
-
-    @Column("bigint", { array: true, transformer: [bigint] })
-    companyId: number[];
-
+    
     @Column({
         type: "enum",
         enum: TransferStatus,

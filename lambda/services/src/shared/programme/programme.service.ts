@@ -107,9 +107,10 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (!pTransfer.companyId.includes(approverCompanyId)) {
+        if (pTransfer.fromCompanyId != approverCompanyId) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
         }
+
         const result = await this.programmeTransferRepo.update({
             requestId: req.requestId,
             status: TransferStatus.PENDING
@@ -187,25 +188,20 @@ export class ProgrammeService {
             }
         }
         
-
-        if (req.companyIds && req.companyIds.length > 1 && (!req.companyCredit || req.companyCredit.length != req.companyIds.length)) {
-            throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
-        }
-
-        if (req.companyCredit && transfer.creditAmount != req.companyCredit.reduce((a, b) => a + b, 0)) {
-            throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
-        }
-
-        const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
-        const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
-
-        if (!programme.companyId.includes(approverCompanyId)) {
+        if (transfer.fromCompanyId != approverCompanyId) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
         }
 
+        const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
+        return await this.doTransfer(transfer, received.name)
+    }
+
+    private async doTransfer(transfer: ProgrammeTransfer, user: string) {
+        const programme = await this.programmeLedger.transferProgramme(transfer, user);
+
         this.logger.log('Programme updated');
         const result = await this.programmeTransferRepo.update({
-            requestId: req.requestId
+            requestId: transfer.requestId
         }, {
             status: TransferStatus.APPROVED
         }).catch((err) => {
@@ -253,42 +249,114 @@ export class ProgrammeService {
 
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
+        
+        if (req.fromCompanyIds.length > 1 ) {
+            if (!req.companyCredit) {
+                throw new HttpException("Company credit needs to define for multiple companies", HttpStatus.BAD_REQUEST)
+            } else if (req.fromCompanyIds.length != req.companyCredit.length){
+                throw new HttpException("Invalid company credit for given companies", HttpStatus.BAD_REQUEST)
+            }
+        }
+
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
+
+        if (!programme) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST)
+        }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
         if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
-            throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
-        }
-        if (programme.companyId.includes(requester.companyId)) {
-            throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
-        }
+        // if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
+        //     throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
+        // }
+        // if (requester.companyRole != CompanyRole.GOVERNMENT && programme.companyId.includes(requester.companyId)) {
+        //     throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
+        // }
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
-        for (const companyId of programme.companyId) {
-            const company = await this.companyService.findByCompanyId(companyId);
-            await this.emailService.sendEmail(
-                company.email,
-                EmailTemplates.TRANSFER_REQUEST,
-                {
-                    "name": company.name,
-                    "requestedCompany": requestedCompany.name,
-                    "credits": req.creditAmount,
-                    "serialNo": programme.serialNo,
-                    "programmeName": programme.title
-                });
+        const allTransferList: ProgrammeTransfer[] = []
+        const autoApproveTransferList: ProgrammeTransfer[] = []
+        const ownershipMap = {}
+        const frozenCredit = {} 
+        if (!programme.creditOwnerPercentage) {
+            programme.creditOwnerPercentage = [100]
         }
+        for (const i in programme.companyId) {
+            ownershipMap[programme.companyId[i]] = programme.creditOwnerPercentage[i]
+            if (programme.creditFrozen) {
+                frozenCredit[programme.companyId[i]] = programme.creditFrozen[i]
+            }
+        }
+        
+        for (const j in req.fromCompanyIds) {
+            const fromCompanyId = req.fromCompanyIds[j]
+            this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
+            const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
 
-        const transfer = plainToClass(ProgrammeTransfer, req)
-        transfer.status = TransferStatus.PENDING;
-        transfer.txTime = new Date().getTime()
-        transfer.requesterId = requester.id;
-        transfer.requesterCompanyId = requester.companyId;
-        transfer.companyId = programme.companyId;
-        return await this.programmeTransferRepo.save(transfer);
+            if (!programme.companyId.includes(fromCompanyId)) {
+                throw new HttpException("Transfer request from company does own the programme", HttpStatus.BAD_REQUEST)
+            }
+
+            console.log(programme.creditBalance, ownershipMap[fromCompanyId], frozenCredit[fromCompanyId])
+            const companyAvailableCredit = (programme.creditBalance * ownershipMap[fromCompanyId] / 100) - (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0);
+
+            let transferCompanyCredit;
+            if (req.fromCompanyIds.length == 1 && !req.companyCredit) {
+                transferCompanyCredit = companyAvailableCredit;
+            } else {
+                transferCompanyCredit = req.companyCredit[j];
+            }
+
+            if (companyAvailableCredit < transferCompanyCredit) {
+                throw new HttpException(`Company ${fromCompany.name} does not have enough balance for the transfer. Available: ${companyAvailableCredit}`, HttpStatus.BAD_REQUEST)
+            }
+
+            if (transferCompanyCredit == 0) {
+                continue;
+            }
+
+            const transfer = new ProgrammeTransfer();
+            transfer.programmeId = req.programmeId;
+            transfer.fromCompanyId = fromCompanyId;
+            transfer.toCompanyId = req.toCompanyId;
+            transfer.initiator = requester.id;
+            transfer.initiatorCompanyId = requester.companyId;
+            transfer.txTime = new Date().getTime()
+            transfer.comment = req.comment;
+            transfer.creditAmount = transferCompanyCredit;
+            // await this.programmeTransferRepo.save(transfer);
+
+            if (requester.companyId != fromCompanyId) {
+                transfer.status = TransferStatus.PENDING;
+                await this.emailService.sendEmail(
+                    fromCompany.email,
+                    EmailTemplates.TRANSFER_REQUEST,
+                    {
+                        "name": fromCompany.name,
+                        "requestedCompany": requestedCompany.name,
+                        "credits": transfer.creditAmount,
+                        "serialNo": programme.serialNo,
+                        "programmeName": programme.title
+                    });
+            } else {
+                transfer.status = TransferStatus.PROCESSING;
+                autoApproveTransferList.push(transfer);
+            }
+            allTransferList.push(transfer);
+        }
+        const results = await this.programmeTransferRepo.insert(allTransferList)
+        console.log(results)
+        for (const i in allTransferList) {
+            allTransferList[i].requestId = results.identifiers[i].requestId;
+        }
+        for (const trf of autoApproveTransferList) {
+            this.logger.log(`Credit send received ${trf}`)
+            await this.doTransfer(trf, requestedCompany.name)
+        }
+        return new DataListResponseDto(allTransferList, allTransferList.length)
     }
 
     async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
