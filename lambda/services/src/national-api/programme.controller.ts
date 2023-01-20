@@ -21,6 +21,7 @@ import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject
 import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { ProgrammeCertify } from '../shared/dto/programme.certify';
 import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
+import { ProgrammeIssue } from '../shared/dto/programme.issue';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -53,8 +54,8 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Programme, true))
     @Get('getHistory')
-    async getHistory(@Query('programmeId') programmeId: string) {
-        return this.programmeService.getProgrammeEvents(programmeId)
+    async getHistory(@Query('programmeId') programmeId: string, @Request() req) {
+        return this.programmeService.getProgrammeEvents(programmeId, req.user.companyId)
     }
 
     @ApiBearerAuth()
@@ -68,14 +69,22 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('authorize')
     async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.ISSUED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.approveProgramme(body, `${req.user.id}#${req.user.name}`)
     }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
+    @Put('issue')
+    async programmeIssue(@Body() body: ProgrammeIssue, @Request() req) {
+        return this.programmeService.issueProgrammeCredit(body, `${req.user.id}#${req.user.name}`)
+    }
+
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('reject')
     async programmeReject(@Body() body: ProgrammeReject, @Request() req) {
-        return this.programmeService.updateProgrammeStatus(body, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.rejectProgramme(body, `${req.user.id}#${req.user.name}`)
     }
 
     @ApiBearerAuth()

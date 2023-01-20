@@ -37,6 +37,8 @@ import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.
 import { ProgrammeRetire } from '../dto/programme.retire';
 import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
 import { CompanyState } from '../enum/company.state.enum';
+import { ProgrammeReject } from '../dto/programme.reject';
+import { ProgrammeIssue } from '../dto/programme.issue';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -470,34 +472,71 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
-        this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
-        if (status == ProgrammeStage.ISSUED) {
-            const program = await this.programmeLedger.getProgrammeById(req.programmeId);
-            if (!program) {
-                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
-            }
-            const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
-            if (!updated) {
-                return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
-            }
-
-            updated.company = await this.companyRepo.find({
-                where: { companyId: In(updated.companyId) },
-            })
-            if (updated.certifierId && updated.certifierId.length > 0) {
-                updated.certifier = await this.companyRepo.find({
-                    where: { companyId: In(updated.certifierId) },
-                })
-            }
-            return new DataResponseDto(HttpStatus.OK, updated)
-        } else {
-            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
-            if (!updated) {
-                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
-            }
-            return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
+    async issueProgrammeCredit(req: ProgrammeIssue, user: string) {
+        this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
+        const program = await this.programmeLedger.getProgrammeById(req.programmeId);
+        if (!program) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
 
+        if (program.currentStage != ProgrammeStage.ISSUED) {
+            throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
+        }
+        if (program.creditEst - program.creditIssued < req.issueAmount) {
+            throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);
+        }
+        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
+        if (!updated) {
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
+        }
+
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async approveProgramme(req: ProgrammeApprove, user: string) {
+        this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
+        const program = await this.programmeLedger.getProgrammeById(req.programmeId);
+        if (!program) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
+        }
+
+        if (program.currentStage != ProgrammeStage.AWAITING_AUTHORIZATION) {
+            throw new HttpException("Programme is not in pending state", HttpStatus.BAD_REQUEST);
+        }
+        if (program.creditEst < req.issueAmount) {
+            throw new HttpException("Programme issue credit amount can not exceed estimated credit amount", HttpStatus.BAD_REQUEST);
+        }
+        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
+        if (!updated) {
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
+        }
+
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async rejectProgramme(req: ProgrammeReject, user: string) {
+        this.logger.log(`Programme ${req.programmeId} reject. Comment: ${req.comment}`)
+
+        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, user)
+        if (!updated) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
+        }
+        return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
     }
 }

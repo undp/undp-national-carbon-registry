@@ -7,7 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { ConfigService } from '@nestjs/config';
 import { CreditOverall } from '../shared/entities/credit.overall.entity';
 import { Company } from '../shared/entities/company.entity';
-import { TxType } from 'src/shared/enum/txtype.enum';
+import { TxType } from '../shared/enum/txtype.enum';
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";
