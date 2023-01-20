@@ -39,7 +39,6 @@ import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './userManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
-import type { ColumnsType } from 'antd/es/table';
 import { TableDataType } from '../../Definitions/InterfacesAndType/userManagement.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
@@ -62,7 +61,9 @@ import {
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
 import { AbilityContext } from '../../Casl/Can';
-import { Action } from '../../Casl/ability';
+import { User } from '../../Casl/entities/User';
+import { plainToClass } from 'class-transformer';
+import { Action } from '../../Casl/enums/action.enum';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -198,10 +199,9 @@ const UserManagement = () => {
           {
             text: 'Edit',
             icon: <EditOutlined />,
+            isDisabled: !ability.can(Action.Update, plainToClass(User, record)),
             click: () => {
-              if (ability.can(Action.Update, record)) {
-                navigate('/userManagement/updateUser', { state: { record } });
-              }
+              navigate('/userManagement/updateUser', { state: { record } });
             },
           },
           {
@@ -215,7 +215,10 @@ const UserManagement = () => {
           },
         ]}
         renderItem={(item) => (
-          <List.Item onClick={item.click}>
+          <List.Item
+            onClick={!item.isDisabled ? item.click : undefined}
+            className={item.isDisabled ? 'disabled' : ''}
+          >
             <Typography.Text className="action-icon">{item.icon}</Typography.Text>
             <span>{item.text}</span>
           </List.Item>

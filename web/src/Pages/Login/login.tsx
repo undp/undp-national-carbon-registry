@@ -11,6 +11,7 @@ import { LoginProps } from '../../Definitions/InterfacesAndType/userLogin.defini
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { AbilityContext } from '../../Casl/Can';
+import { updateUserAbility } from '../../Casl/ability';
 
 const Login = () => {
   const { post, updateToken, removeToken } = useConnection();
@@ -34,7 +35,12 @@ const Login = () => {
         username: email.trim(),
         password: values.password.trim(),
       });
-      ability.update(JSON.parse(response.data.ability));
+
+      updateUserAbility(ability, {
+        id: response.data.id,
+        role: response.data.role,
+        companyId: response.data.companyId,
+      });
 
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);

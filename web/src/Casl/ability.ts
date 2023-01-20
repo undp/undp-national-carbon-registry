@@ -6,18 +6,18 @@ import {
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import { EntitySubject } from './entities/EntitySubject';
+import { BaseEntity } from './entities/BaseEntity';
+import { Company } from './entities/Company';
+import { Programme } from './entities/Programme';
+import { ProgrammeCertify } from './entities/ProgrammeCertify';
+import { ProgrammeTransfer } from './entities/ProgrammeTransfer';
 import { User } from './entities/User';
+import { Action } from './enums/action.enum';
+import { CompanyRole } from './enums/company.role.enum';
+import { ProgrammeStage } from './enums/programme-status.enum';
+import { Role } from './enums/role.enum';
 
-export enum Action {
-  Manage = 'manage',
-  Create = 'create',
-  Read = 'read',
-  Update = 'update',
-  Delete = 'delete',
-}
-
-type Subjects = InferSubjects<typeof User> | 'all';
+type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>;
@@ -28,4 +28,76 @@ export const defineAbility = () => {
   return build({
     detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
   });
+};
+
+export const updateUserAbility = (ability: AppAbility, user: User) => {
+  const { can, cannot, rules } = new AbilityBuilder(createAppAbility);
+
+  if (user) {
+    if (user.role === Role.Root) {
+      can(Action.Manage, 'all');
+
+      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
+        id: { $eq: user.id },
+      });
+      cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
+    } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
+      can(Action.Manage, User, { role: { $ne: Role.Root } });
+      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], {
+        id: { $eq: user.id },
+      });
+      cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
+
+      can(Action.Manage, Company);
+    } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
+      can(Action.Read, User, { companyId: { $eq: user.companyId } });
+      can(Action.Delete, User, { companyId: { $eq: user.companyId } });
+      can(Action.Update, User, { companyId: { $eq: user.companyId } });
+      can(Action.Create, User); // Handling company id inside the service
+      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole'], {
+        id: { $eq: user.id },
+      });
+
+      can(Action.Read, Company);
+      can(Action.Update, Company, { companyId: { $eq: user.companyId } });
+      cannot(Action.Update, Company, ['taxId', 'companyRole']);
+    } else {
+      if (user.companyRole === CompanyRole.GOVERNMENT) {
+        can(Action.Read, User);
+      } else {
+        can(Action.Read, User, { companyId: { $eq: user.companyId } });
+      }
+      can(Action.Update, User, { id: { $eq: user.id } });
+      cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyRole']);
+      can(Action.Read, Company);
+    }
+
+    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      can(Action.Manage, ProgrammeTransfer);
+    }
+
+    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.GOVERNMENT) {
+      can(Action.Manage, ProgrammeTransfer);
+      can(Action.Manage, Programme);
+    }
+
+    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.CERTIFIER) {
+      can(Action.Manage, ProgrammeCertify);
+    }
+
+    if (user.role === Role.Admin && user.companyRole === CompanyRole.MRV) {
+      can([Action.Create, Action.Read], Programme);
+    } else if (user.companyRole === CompanyRole.CERTIFIER) {
+      can(Action.Read, Programme, { currentStage: { $in: [ProgrammeStage.ISSUED] } });
+      can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } } });
+    } else if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED } });
+      can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } } });
+    }
+
+    // cannot(Action.Delete, User, { id: { $eq: user.id } })
+    cannot(Action.Update, User, ['companyRole']);
+  }
+  
+  ability.update(rules);
 };
