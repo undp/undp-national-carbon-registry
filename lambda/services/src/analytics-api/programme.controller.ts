@@ -32,7 +32,7 @@ export class ProgrammeController {
     PoliciesGuardEx(true, Action.Read, Stat, true, true)
   )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post("stats")
+  @Post("dashboard")
   async programmesStaticDetails(@Body() query: StatList, @Request() req) {
     return this.analyticsService.programmesStaticDetails(
       req.abilityCondition,
@@ -46,8 +46,11 @@ export class ProgrammeController {
     PoliciesGuardEx(true, Action.Read, Stat, true, true)
   )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post("chartStats")
-  async programmesStaticChartDetails(@Body() query: ChartStatList, @Request() req) {
+  @Post("dashboardCharts")
+  async programmesStaticChartDetails(
+    @Body() query: ChartStatList,
+    @Request() req
+  ) {
     return this.analyticsService.programmesStaticChartsDetails(
       req.abilityCondition,
       query
