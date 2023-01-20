@@ -550,10 +550,10 @@ const Dashboard = () => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
   }, [companyRole]);
 
-  useEffect(() => {
-    getAllProgrammeAnalyticsStats();
-    getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime]);
+//   useEffect(() => {
+//     getAllProgrammeAnalyticsStats();
+//     getAllProgrammeAnalyticsStatsCharts();
+//   }, [startTime, endTime]);
 
   const seriesTotalProgrammesY = [
     {
