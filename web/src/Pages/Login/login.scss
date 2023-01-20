@@ -10,7 +10,7 @@
   .login-language-selection-container {
     position: absolute;
     bottom: 1rem;
-    right: 2rem;
+    left: 2rem;
     font-weight: regular;
     font-size: 0.8rem;
     color: $body-text-color;
@@ -18,6 +18,10 @@
     .ant-select-selector {
       border: none;
       color: $body-text-color;
+    }
+
+    .ant-select {
+      width: 120px;
     }
   }
 

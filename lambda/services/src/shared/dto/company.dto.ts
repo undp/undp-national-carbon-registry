@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEmail, IsEnum, isNotEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, ValidateIf } from "class-validator";
+import { IsEmail, IsEnum, isNotEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, MaxLength, ValidateIf } from "class-validator";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "../util/validcountry.decorator";
@@ -41,6 +41,7 @@ export class CompanyDto {
 
     @IsString()
     @ApiPropertyOptional()
+    @MaxLength(1048576, { message: "Logo cannot exceed 1MB" })
     logo: string;
 
     @IsValidCountry()

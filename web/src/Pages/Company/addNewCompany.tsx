@@ -278,9 +278,9 @@ const AddNewCompany = () => {
                             }
                             if (!isCorrectFormat) {
                               throw new Error('Unsupported file format!');
-                            } else if (file[0]?.size > 5000000) {
+                            } else if (file[0]?.size > 1048576) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error('Maximum upload file size is 5MB!');
+                              throw new Error('Maximum upload file size is 1MB!');
                             }
                           }
                         },

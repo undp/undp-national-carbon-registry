@@ -445,7 +445,11 @@ const UserManagement = () => {
         key: sortField,
         order: sortOrder,
       };
-    } else return undefined;
+    } else
+      return {
+        key: 'id',
+        order: 'DESC',
+      };
   };
 
   const getAllUserParams = () => {
@@ -587,7 +591,8 @@ const UserManagement = () => {
         setSortField(sorter.columnKey);
       }
     } else {
-      setSortField('');
+      setSortField('id');
+      setSortOrder('DESC');
     }
     // setCurrentPage(1);
   };

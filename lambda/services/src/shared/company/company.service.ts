@@ -12,6 +12,7 @@ import { BasicResponseDto } from "../dto/basic.response.dto";
 import { CompanyState } from "../enum/company.state.enum";
 import { HelperService } from "../util/helpers.service";
 import { FindCompanyQueryDto } from "../dto/findCompany.dto";
+import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 
 @Injectable()
 export class CompanyService {
@@ -19,10 +20,11 @@ export class CompanyService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     private logger: Logger,
     private configService: ConfigService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private programmeLedgerService: ProgrammeLedgerService
   ) {}
 
-  async suspend(companyId: number, remarks:string, abilityCondition: string): Promise<any> {
+  async suspend(companyId: number, userId: string, remarks:string, abilityCondition: string): Promise<any> {
     this.logger.verbose("Suspend company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -48,7 +50,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.SUSPENDED,
-          remarks:remarks
+          remarks: remarks,
         }
       )
       .catch((err: any) => {
@@ -57,6 +59,13 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      // TODO: Currently there can be unfreezed credits after company suspend if transactions failed
+      if(company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        await this.programmeLedgerService.freezeCompany(companyId, remarks, userId)
+      }
+      else if(company.companyRole === CompanyRole.CERTIFIER) {
+        await this.programmeLedgerService.revokeCompanyCertifications(companyId, remarks, userId)
+      }
       return new BasicResponseDto(
         HttpStatus.OK,
         "Successfully suspended company"

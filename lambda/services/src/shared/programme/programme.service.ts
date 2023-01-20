@@ -36,6 +36,7 @@ import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
 import { ProgrammeRetire } from '../dto/programme.retire';
 import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
+import { CompanyState } from '../enum/company.state.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -383,8 +384,12 @@ export class ProgrammeService {
         );
     }
 
-    async getProgrammeEvents(programmeId: string): Promise<any> {
+    async getProgrammeEvents(programmeId: string, companyId: number): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
+        // const comp = await this.companyService.findByCompanyId(companyId)
+        // if (resp.length > 0 && comp.state == CompanyState.SUSPENDED) {
+            
+        // }
         return resp == null ? [] : resp;
     }
 
