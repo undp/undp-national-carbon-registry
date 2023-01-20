@@ -21,87 +21,92 @@ import CreditTransfers from './Pages/Transfers/creditTransfers';
 import Homepage from './Pages/Homepage/homepage';
 import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
+import { AbilityContext } from './Casl/Can';
+import { defineAbility } from './Casl/ability';
 
 const App = () => {
+  const ability = defineAbility();
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
   }, []);
   return (
-    <Suspense fallback="loading...">
-      <ConnectionContextProvider
-        serverURL={
-          process.env.REACT_APP_BACKEND
-            ? process.env.REACT_APP_BACKEND
-            : 'http://localhost:3000/local/api'
-        }
-      >
-        <UserInformationContextProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="login" element={<Login />} />
-              <Route path="signUp" element={<SignUp />} />
-              <Route path="/" element={<Homepage />} />
-              <Route path="/" element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
-                  <Route index element={<Dashboard />} />
+    <AbilityContext.Provider value={ability}>
+      <Suspense fallback="loading...">
+        <ConnectionContextProvider
+          serverURL={
+            process.env.REACT_APP_BACKEND
+              ? process.env.REACT_APP_BACKEND
+              : 'http://localhost:3000/local/api'
+          }
+        >
+          <UserInformationContextProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="login" element={<Login />} />
+                <Route path="signUp" element={<SignUp />} />
+                <Route path="/" element={<Homepage />} />
+                <Route path="/" element={<PrivateRoute />}>
+                  <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
+                    <Route index element={<Dashboard />} />
+                  </Route>
+                  <Route
+                    path="/programmeManagement"
+                    element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<ProgrammeManagement />} />
+                    <Route path="view" element={<ProgrammeView />} />
+                  </Route>
+                  <Route
+                    path="/companyManagement"
+                    element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<CompanyManagement />} />
+                    <Route path="addCompany" element={<AddNewCompany />} />
+                    <Route path="updateCompany" element={<AddNewCompany />} />
+                  </Route>
+                  <Route
+                    path="/userManagement"
+                    element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<UserManagement />} />
+                    <Route path="addUser" element={<AddUser />} />
+                    <Route path="updateUser" element={<AddUser />} />
+                  </Route>
+                  <Route
+                    path="/creditTransfers"
+                    element={<CustomLayout selectedKey="creditTransfers/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<CreditTransfers />} />
+                    {/* <Route path="view" element={<ProgrammeView />} /> */}
+                  </Route>
+                  <Route
+                    path="/userProfile"
+                    element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                  >
+                    <Route path="view" element={<UserProfile />} />
+                  </Route>
+                  <Route
+                    path="/companyProfile"
+                    element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                  >
+                    <Route path="view" element={<CompanyProfile />} />
+                  </Route>
+                  {/* <Route
+                    path="/userManagement"
+                    element={<CustomLayout selectedKey="userManagement" />}
+                  >
+                    <Route index element={<UserManagement />} />
+                    <Route path="addUser" element={<AddUser />} />
+                    <Route path="updateUser" element={<UpdateUser />} />
+                  </Route> */}
                 </Route>
-                <Route
-                  path="/programmeManagement"
-                  element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<ProgrammeManagement />} />
-                  <Route path="view" element={<ProgrammeView />} />
-                </Route>
-                <Route
-                  path="/companyManagement"
-                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<CompanyManagement />} />
-                  <Route path="addCompany" element={<AddNewCompany />} />
-                  <Route path="updateCompany" element={<AddNewCompany />} />
-                </Route>
-                <Route
-                  path="/userManagement"
-                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<UserManagement />} />
-                  <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<AddUser />} />
-                </Route>
-                <Route
-                  path="/creditTransfers"
-                  element={<CustomLayout selectedKey="creditTransfers/viewAll" />}
-                >
-                  <Route path="viewAll" element={<CreditTransfers />} />
-                  {/* <Route path="view" element={<ProgrammeView />} /> */}
-                </Route>
-                <Route
-                  path="/userProfile"
-                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
-                >
-                  <Route path="view" element={<UserProfile />} />
-                </Route>
-                <Route
-                  path="/companyProfile"
-                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
-                >
-                  <Route path="view" element={<CompanyProfile />} />
-                </Route>
-                {/* <Route
-                  path="/userManagement"
-                  element={<CustomLayout selectedKey="userManagement" />}
-                >
-                  <Route index element={<UserManagement />} />
-                  <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<UpdateUser />} />
-                </Route> */}
-              </Route>
-              <Route path="/*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </BrowserRouter>
-        </UserInformationContextProvider>
-      </ConnectionContextProvider>
-    </Suspense>
+                <Route path="/*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </BrowserRouter>
+          </UserInformationContextProvider>
+        </ConnectionContextProvider>
+      </Suspense>
+    </AbilityContext.Provider>
   );
 };
 

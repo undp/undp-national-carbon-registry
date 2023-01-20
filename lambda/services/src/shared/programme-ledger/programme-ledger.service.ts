@@ -12,7 +12,7 @@ import { CreditOverall } from "../entities/credit.overall.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
-import { ArrayIn, LedgerDbService } from "../ledger-db/ledger-db.service";
+import { ArrayIn, ArrayLike, LedgerDbService } from "../ledger-db/ledger-db.service";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 
 @Injectable()
@@ -83,7 +83,7 @@ export class ProgrammeLedgerService {
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
       "data.programmeId": transfer.programmeId,
-      "data.txRef": transfer.requestId,
+      "data.txRef": new ArrayLike('data.txRef',  transfer.requestId + '%'),
     };
     getQueries[this.ledger.tableName] = {
       programmeId: transfer.programmeId,
@@ -92,7 +92,7 @@ export class ProgrammeLedgerService {
     getQueries[this.ledger.companyTableName] = {
       txId: transfer.companyId
         .map((e) => Number(e))
-        .concat([transfer.requesterId]),
+        .concat([transfer.requesterCompanyId]),
     };
     let updatedProgramme = undefined;
     const resp = await this.ledger.getAndUpdateTx(
@@ -214,7 +214,7 @@ export class ProgrammeLedgerService {
           );
         }
 
-        companyCreditDistribution[transfer.requesterId] = transfer.creditAmount;
+        companyCreditDistribution[transfer.requesterCompanyId] = transfer.creditAmount;
 
         programme.txTime = new Date().getTime();
         programme.txRef = `${transfer.requestId}#${name}`;
@@ -256,7 +256,7 @@ export class ProgrammeLedgerService {
           currentStage: ProgrammeStage.ISSUED.valueOf(),
         };
 
-        for (const com of programme.companyId.concat([transfer.requesterId])) {
+        for (const com of programme.companyId.concat([transfer.requesterCompanyId])) {
           if (companyCreditBalances[com]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
@@ -417,6 +417,7 @@ export class ProgrammeLedgerService {
   ): Promise<number[]>{
     this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
+    companyId = Number(companyId);
     getQueries[this.ledger.tableName] = {
       certifierId: new ArrayIn("certifierId", companyId),
     };
@@ -477,6 +478,7 @@ export class ProgrammeLedgerService {
   ): Promise<number[]> {
     this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
     const getQueries = {};
+    companyId = Number(companyId);
     getQueries[this.ledger.tableName] = {
       companyId: new ArrayIn("companyId", companyId),
     };

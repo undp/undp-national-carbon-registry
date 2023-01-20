@@ -22,6 +22,7 @@
     "bcrypt": "^5.1.0",
     "bootstrap-icons": "^1.10.2",
     "buffer": "^6.0.3",
+    "class-transformer": "^0.5.1",
     "craco-less": "^2.0.0",
     "env-cmd": "^10.1.0",
     "i18next": "^22.0.6",
@@ -45,7 +46,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start:dev": "PORT=3030 env-cmd -e development craco start",
+    "start:dev": "set PORT=3030 env-cmd -e development && craco start",
     "start:prod": "set PORT=3030 env-cmd -e production && craco start",
     "clean": "npx rimraf build",
     "build": "yarn run clean && craco build",
