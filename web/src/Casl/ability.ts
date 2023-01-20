@@ -43,7 +43,7 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
     } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
-      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], {
+      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
         id: { $eq: user.id },
       });
       cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
@@ -54,7 +54,7 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Delete, User, { companyId: { $eq: user.companyId } });
       can(Action.Update, User, { companyId: { $eq: user.companyId } });
       can(Action.Create, User); // Handling company id inside the service
-      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole'], {
+      cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
         id: { $eq: user.id },
       });
 
@@ -98,6 +98,6 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     // cannot(Action.Delete, User, { id: { $eq: user.id } })
     cannot(Action.Update, User, ['companyRole']);
   }
-  
+
   ability.update(rules);
 };

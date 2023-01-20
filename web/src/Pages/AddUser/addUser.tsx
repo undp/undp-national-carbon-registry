@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -24,6 +24,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { EyeOutlined, StarOutlined, ToolOutlined } from '@ant-design/icons';
 import type { RcFile, UploadProps } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
+import { AbilityContext } from '../../Casl/Can';
+import { User } from '../../Casl/entities/User';
+import { plainToClass } from 'class-transformer';
+import { Action } from '../../Casl/enums/action.enum';
 
 const { Option } = Select;
 
@@ -40,6 +44,8 @@ const AddUser = () => {
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const { i18n, t } = useTranslation(['addUser']);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const ability = useContext(AbilityContext);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -49,7 +55,7 @@ const AddUser = () => {
       reader.onerror = (error) => reject(error);
     });
 
-  const onSubmitData = async (values: any) => {
+  const onAddUser = async (values: any) => {
     setLoading(true);
     console.log({ ...values });
     try {
@@ -85,11 +91,18 @@ const AddUser = () => {
     const formOneValues = formOne.getFieldsValue();
     formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
     try {
-      const values = {
+      const values: any = {
         id: state?.record?.id,
         name: formOneValues?.name,
         phoneNo: formOneValues?.phoneNo,
       };
+
+      if (ability.can(Action.Update, plainToClass(User, state?.record), 'role'))
+        values.role = formOneValues?.role;
+
+      if (ability.can(Action.Update, plainToClass(User, state?.record), 'email'))
+        values.email = formOneValues?.email;
+
       console.log('form one values   -- > ', values, state.record);
       const response = await put('national/user/update', values);
       if (response.status === 200 || response.status === 201) {
@@ -115,14 +128,20 @@ const AddUser = () => {
     }
   };
 
+  const onSubmitData = async (values: any) => {
+    if (isUpdate) onUpdateUser();
+    else onAddUser(values);
+  };
+
   useEffect(() => {
     console.log('state -- val --- ', { ...state });
+    setIsUpdate(state?.record ? true : false);
   }, []);
 
   return (
     <div className="add-user-main-container">
       <div className="title-container">
-        <div className="main">{state?.record?.name ? 'Edit User' : 'Add New User'}</div>
+        <div className="main">{isUpdate ? 'Edit User' : 'Add New User'}</div>
         <div className="sub">
           {state?.record?.name
             ? 'Edit the user information'
@@ -197,7 +216,13 @@ const AddUser = () => {
                     },
                   ]}
                 >
-                  <Input disabled={state?.record?.email} size="large" />
+                  <Input
+                    disabled={
+                      isUpdate &&
+                      !ability.can(Action.Update, plainToClass(User, state?.record), 'email')
+                    }
+                    size="large"
+                  />
                 </Form.Item>
               </div>
             </Col>
@@ -218,7 +243,10 @@ const AddUser = () => {
                   <Radio.Group
                     value={state?.record?.role}
                     size="large"
-                    disabled={state?.record?.role}
+                    disabled={
+                      isUpdate &&
+                      !ability.can(Action.Update, plainToClass(User, state?.record), 'role')
+                    }
                   >
                     <div className="admin-radio-container">
                       <Tooltip placement="top" title="Full access to all permitted functions">
@@ -277,15 +305,9 @@ const AddUser = () => {
           <div className="actions">
             <Form.Item>
               <div className="create-user-btn-container">
-                {state?.record ? (
-                  <Button type="primary" onClick={onUpdateUser} loading={loading}>
-                    {t('addUser:update')}
-                  </Button>
-                ) : (
-                  <Button type="primary" htmlType="submit" loading={loading}>
-                    {t('addUser:submit')}
-                  </Button>
-                )}
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  {isUpdate ? t('addUser:update') : t('addUser:submit')}
+                </Button>
               </div>
             </Form.Item>
           </div>
