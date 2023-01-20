@@ -159,13 +159,19 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
         localStorage.removeItem('token');
         localStorage.removeItem('userRole');
         localStorage.removeItem('userId');
+        localStorage.removeItem('companyId');
+        localStorage.removeItem('companyRole');
       } else {
         const diff = exp * 1000 - Date.now();
         setTimeout(() => {
+          setToken(undefined);
           localStorage.removeItem('token');
           localStorage.removeItem('userRole');
           localStorage.removeItem('userId');
+          localStorage.removeItem('companyId');
+          localStorage.removeItem('companyRole');
         }, diff);
+        console.log(diff, 'Remaining Token expire time');
       }
     }
   };

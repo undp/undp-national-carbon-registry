@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, IsPositive, IsInt, IsNumber, IsEnum, MaxLength, IsOptional, ArrayMinSize, IsArray } from "class-validator";
+import { IsNotEmpty, IsString, IsPositive, IsInt, IsNumber, IsEnum, MaxLength, IsOptional, ArrayMinSize, IsArray, IsUrl } from "class-validator";
 import { GHGs } from "../enum/ghgs.enum";
 import { SourceOfFunding } from "../enum/sourceoffinding.enum";
 
@@ -65,5 +65,17 @@ export class ProgrammeProperties {
     @IsNotEmpty()
     greenHouseGasses: GHGs[];
 
-    creditYear: number
+    creditYear: number;
+
+    @ApiPropertyOptional()
+    @IsUrl()
+    @IsOptional()
+    @IsNotEmpty()
+    programmeMaterials: string;
+
+    @ApiPropertyOptional()
+    @IsUrl()
+    @IsOptional()
+    @IsNotEmpty()
+    projectMaterial: string;
 }

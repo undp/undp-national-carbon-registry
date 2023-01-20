@@ -5,6 +5,7 @@ import { Programme } from '../shared/entities/programme.entity';
 import configuration from '../shared/configuration';
 import { TypeOrmConfigService } from '../shared/typeorm.config.service';
 import { LedgerReplicatorService } from './ledger-replicator.service';
+import { Company } from '../shared/entities/company.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { LedgerReplicatorService } from './ledger-replicator.service';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    TypeOrmModule.forFeature([Programme])
+    TypeOrmModule.forFeature([Programme, Company])
   ],
   providers: [LedgerReplicatorService, Logger]
 })

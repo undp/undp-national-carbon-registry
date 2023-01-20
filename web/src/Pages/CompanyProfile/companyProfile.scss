@@ -1,0 +1,72 @@
+.company-profile {
+  padding: 0px 50px;
+
+  .company-name {
+    font-weight: 600;
+  }
+
+  .title-bar {
+    display: flex;
+    justify-content: space-between;
+
+    .flex-display {
+      margin-left: 15px;
+    }
+  }
+  .card-container {
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .mg-left-1 {
+    margin-left: 1rem;
+  }
+
+  .mg-top-1 {
+    margin-top: 1rem;
+  }
+
+  .mg-right-5 {
+    margin-right: 5rem;
+  }
+
+  .padding-top-1 {
+    padding-top: 1rem;
+  }
+
+  .padding-top-2 {
+    padding-top: 2rem;
+  }
+
+  .profile-img {
+    width: 200px;
+  }
+
+  .btn-danger {
+    color: #ff4d4f !important;
+    border-color: #ff8183 !important;
+  }
+
+  .ant-btn[disabled] {
+    border-color: #d9d9d9 !important;
+    background: #f5f5f5 !important;
+    color: #d9d9d9 !important;
+  }
+
+  .active {
+    border-radius: 20px;
+    background-color: rgba(#b9e2f4, 0.4);
+    padding: 5px 15px;
+    height: 30px;
+    color: #16b1ff;
+  }
+
+  .deauthorised {
+    border-radius: 20px;
+    background-color: rgba(#ffa6a6, 0.4);
+    padding: 5px 15px;
+    height: 30px;
+    color: #ff4d4f;
+  }
+}

@@ -1,16 +1,24 @@
 import React, { FC } from 'react';
 import moment from 'moment';
 import './stasticCard.scss';
+import { FieldTimeOutlined } from '@ant-design/icons';
+import clockHistory from '../../Assets/Images/clockHistory.svg';
+import envelopeCheck from '../../Assets/Images/envelopeCheck.svg';
+import coin from '../../Assets/Images/coin.svg';
+import { Skeleton } from 'antd';
+import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { ClockHistory, BoxArrowRight, Diamond, Gem } from 'react-bootstrap-icons';
 
 export interface StasticCardItemProps {
   value: number;
   title: string;
   updatedDate: any;
-  level: string;
+  icon: any;
+  loading: boolean;
 }
 
 const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
-  const { value, title, updatedDate, level } = props;
+  const { value, title, updatedDate, icon, loading } = props;
 
   const cardBackgroundColor = (type: string) => {
     switch (type) {
@@ -32,12 +40,20 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
   };
 
   return (
-    <div className="stastic-card-main-container" style={{ background: cardBackgroundColor(level) }}>
-      <div className="value-section">{value}</div>
-      <div className="title-section">{title}</div>
-      <div className="last-update-section">
-        Last updated on: {moment.unix(updatedDate).format('DD:MM:YYYY')}
-      </div>
+    <div className="stastic-card-main-container">
+      {loading ? (
+        <Skeleton active />
+      ) : (
+        <>
+          <div className="values-section">
+            <div className="title">{title}</div>
+            {title.includes('Credit') && <div className="unit">ITMOs</div>}
+            <div className="details-section value">{addCommSep(value)}</div>
+            <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
+          </div>
+          <div className="icon-section">{icon}</div>
+        </>
+      )}
     </div>
   );
 };

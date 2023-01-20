@@ -1,58 +1,103 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { InjectEntityManager } from "@nestjs/typeorm";
 import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
 import { plainToClass } from "class-transformer";
 import { dom } from "ion-js";
 import { generateSerialNumber } from "serial-number-gen";
+import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
 import { ProgrammeTransferApprove } from "../dto/programme.transfer.approve";
+import { Company } from "../entities/company.entity";
 import { CreditOverall } from "../entities/credit.overall.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
-import { LedgerDbService } from "../ledger-db/ledger-db.service";
-import { ProgrammeStage } from "./programme-status.enum";
+import { ArrayIn, ArrayLike, LedgerDbService } from "../ledger-db/ledger-db.service";
+import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 
 @Injectable()
 export class ProgrammeLedgerService {
   constructor(
     private readonly logger: Logger,
-    private ledger: LedgerDbService  ) {}
+    @InjectEntityManager() private entityManger: EntityManager,
+    private ledger: LedgerDbService
+  ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
+    programme.txType = TxType.CREATE;
+
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      externalId: programme.externalId,
+    };
+
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length > 0) {
+          throw new HttpException(
+            "Programme already exist with the given externalId",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let insertMap = {};
+        insertMap[this.ledger.tableName] = programme;
+
+        return [{}, {}, insertMap];
+      }
+    );
     // if (programme) {
-    //   await this.entityManger.save<Programme>(
-    //     plainToClass(Programme, programme)
-    //   ).then((res: any) => {
-    //     console.log("create programme in repo -- ", res)
-    //   }).catch((e: any) => {
-    //     console.log("create programme in repo -- ", e)
-    //   });
+    //   await this.entityManger
+    //     .save<Programme>(plainToClass(Programme, programme))
+    //     .then((res: any) => {
+    //       console.log("create programme in repo -- ", res);
+    //     })
+    //     .catch((e: any) => {
+    //       console.log("create programme in repo -- ", e);
+    //     });
     // }
-    await this.ledger.insertRecord(programme);
     return programme;
   }
 
-  public async transferProgramme(transfer: ProgrammeTransfer, approve: ProgrammeTransferApprove) {
-    this.logger.log(`Transfer programme ${JSON.stringify(transfer)} ${JSON.stringify(approve)}`);
+  public async transferProgramme(
+    transfer: ProgrammeTransfer,
+    approve: ProgrammeTransferApprove,
+    name: string
+  ) {
+    this.logger.log(
+      `Transfer programme ${JSON.stringify(transfer)} ${JSON.stringify(
+        approve
+      )}`
+    );
 
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
-      'data.programmeId': transfer.programmeId,
-      'data.txRef': transfer.requestId,
+      "data.programmeId": transfer.programmeId,
+      "data.txRef": new ArrayLike('data.txRef',  transfer.requestId + '%'),
     };
     getQueries[this.ledger.tableName] = {
       programmeId: transfer.programmeId,
     };
 
     getQueries[this.ledger.companyTableName] = {
-      txId: transfer.companyId.map(e => Number(e)).concat([transfer.requesterId]),
+      txId: transfer.companyId
+        .map((e) => Number(e))
+        .concat([transfer.requesterCompanyId]),
     };
     let updatedProgramme = undefined;
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
       (results: Record<string, dom.Value[]>) => {
-
         const alreadyProcessed = results[`history(${this.ledger.tableName})`];
         if (alreadyProcessed.length > 0) {
           throw new HttpException(
@@ -84,7 +129,10 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
 
         if (programme.creditOwnerPercentage && !approve.companyCredit) {
-          throw new HttpException(`Must define each company credit since the programme owned by multiple companies`, HttpStatus.BAD_REQUEST);
+          throw new HttpException(
+            `Must define each company credit since the programme owned by multiple companies`,
+            HttpStatus.BAD_REQUEST
+          );
         }
 
         if (programme.creditBalance < transfer.creditAmount) {
@@ -93,8 +141,8 @@ export class ProgrammeLedgerService {
             HttpStatus.BAD_REQUEST
           );
         }
-        
-        let companyCreditBalances = {}
+
+        let companyCreditBalances = {};
         const companies = results[this.ledger.companyTableName].map(
           (domValue) => {
             return plainToClass(
@@ -104,10 +152,10 @@ export class ProgrammeLedgerService {
           }
         );
         for (const company of companies) {
-          companyCreditBalances[company.txId] = company.credit
+          companyCreditBalances[company.txId] = company.credit;
         }
 
-        let companyCreditDistribution = {}
+        let companyCreditDistribution = {};
         if (approve.companyCredit && programme.creditOwnerPercentage) {
           if (programme.companyId.length != approve.companyIds.length) {
             throw new HttpException(
@@ -116,30 +164,49 @@ export class ProgrammeLedgerService {
             );
           }
 
-          const companyIds = []
-          const percentages = []
-          const currentCredit = {}
+          const companyIds = [];
+          const percentages = [];
+          const currentCredit = {};
+          const frozenCredit = {};
           for (const i in programme.creditOwnerPercentage) {
-            currentCredit[programme.companyId[i]] = programme.creditBalance * programme.creditOwnerPercentage[i]/100
+            currentCredit[programme.companyId[i]] =
+              (programme.creditBalance * programme.creditOwnerPercentage[i]) /
+              100;
+            
+            frozenCredit[programme.companyId[i]] = programme.creditFrozen ? programme.creditFrozen[i] : 0;
           }
           for (const i in approve.companyCredit) {
             const changeCredit = approve.companyCredit[i];
-            if (!currentCredit[approve.companyIds[i]] || currentCredit[approve.companyIds[i]] < changeCredit){
+            if (!currentCredit[approve.companyIds[i]]) {
               throw new HttpException(
                 `Company ${approve.companyIds[i]} is not an owner company of the programme`,
                 HttpStatus.BAD_REQUEST
               );
             }
-            companyIds.push(approve.companyIds[i])
-            companyCreditDistribution[approve.companyIds[i]] = -changeCredit
-            percentages.push(this.round2Precision((currentCredit[approve.companyIds[i]] - changeCredit)*100/(programme.creditBalance - transfer.creditAmount)))
+
+            if (currentCredit[approve.companyIds[i]] - frozenCredit[approve.companyIds[i]] < changeCredit) {
+              throw new HttpException(
+                `Company ${approve.companyIds[i]} does not have enough credits`,
+                HttpStatus.BAD_REQUEST
+              );
+            }
+
+            companyIds.push(approve.companyIds[i]);
+            companyCreditDistribution[approve.companyIds[i]] = -changeCredit;
+            percentages.push(
+              this.round2Precision(
+                ((currentCredit[approve.companyIds[i]] - changeCredit) * 100) /
+                  (programme.creditBalance - transfer.creditAmount)
+              )
+            );
           }
 
           programme.creditOwnerPercentage = percentages;
-          this.logger.verbose('Updated owner percentages', percentages)
+          this.logger.verbose("Updated owner percentages", percentages);
           programme.companyId = companyIds;
         } else if (programme.companyId.length == 1) {
-          companyCreditDistribution[programme.companyId[0]] = -transfer.creditAmount;
+          companyCreditDistribution[programme.companyId[0]] =
+            -transfer.creditAmount;
         } else {
           throw new HttpException(
             "Unexpected programme owner percentages",
@@ -147,52 +214,56 @@ export class ProgrammeLedgerService {
           );
         }
 
-        companyCreditDistribution[transfer.requesterId] = transfer.creditAmount;
-       
+        companyCreditDistribution[transfer.requesterCompanyId] = transfer.creditAmount;
+
         programme.txTime = new Date().getTime();
-        programme.txRef = `${transfer.requestId}`;
+        programme.txRef = `${transfer.requestId}#${name}`;
+        programme.txType = TxType.TRANSFER;
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
 
         if (!programme.creditTransferred) {
-          programme.creditTransferred = 0
+          programme.creditTransferred = 0;
         }
         programme.creditTransferred += transfer.creditAmount;
 
-        if (programme.creditBalance <= 0) {
-          programme.currentStage = ProgrammeStage.TRANSFERRED;
-        }
-        
+        // if (programme.creditBalance <= 0) {
+        //   programme.currentStage = ProgrammeStage.TRANSFERRED;
+        // }
+
         updatedProgramme = programme;
-        const uPayload  = {
+        const uPayload = {
           txTime: programme.txTime,
           txRef: programme.txRef,
+          txType: programme.txType,
           creditChange: programme.creditChange,
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
-          currentStage: programme.currentStage
-        }
+          currentStage: programme.currentStage,
+          creditTransferred: programme.creditTransferred,
+        };
 
         if (programme.creditOwnerPercentage) {
-          uPayload['creditOwnerPercentage'] = programme.creditOwnerPercentage
+          uPayload["creditOwnerPercentage"] = programme.creditOwnerPercentage;
         }
 
         let updateMap = {};
         let updateWhereMap = {};
-        let insertMap = {}
+        let insertMap = {};
         updateMap[this.ledger.tableName] = uPayload;
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programme.programmeId,
           currentStage: ProgrammeStage.ISSUED.valueOf(),
         };
 
-        for (const com of programme.companyId.concat([transfer.requesterId])) {
-
+        for (const com of programme.companyId.concat([transfer.requesterCompanyId])) {
           if (companyCreditBalances[com]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
-              credit: this.round2Precision(companyCreditBalances[com] + companyCreditDistribution[com]),
-              txRef: transfer.requestId + '#' + programme.serialNo,
-              txType: TxType.TRANSFER
+              credit: this.round2Precision(
+                companyCreditBalances[com] + companyCreditDistribution[com]
+              ),
+              txRef: transfer.requestId + "#" + programme.serialNo,
+              txType: TxType.TRANSFER,
             };
             updateWhereMap[this.ledger.companyTableName + "#" + com] = {
               txId: com,
@@ -200,13 +271,12 @@ export class ProgrammeLedgerService {
           } else {
             insertMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(companyCreditDistribution[com]),
-              txRef: transfer.requestId + '#' + programme.serialNo,
+              txRef: transfer.requestId + "#" + programme.serialNo,
               txType: TxType.TRANSFER,
-              txId: com
-            }
+              txId: com,
+            };
           }
         }
-
 
         return [updateMap, updateWhereMap, insertMap];
       }
@@ -245,16 +315,411 @@ export class ProgrammeLedgerService {
     });
   }
 
+  public async updateCertifier(
+    programmeId: string,
+    certifierId: number,
+    add: boolean,
+    user: string
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            "Programme does not exist",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let programme = programmes[0];
+        const index = programme.certifierId
+          ? programme.certifierId.indexOf(certifierId)
+          : -1;
+        if (add) {
+          if (index >= 0) {
+            throw new HttpException(
+              "Certifier already certified the programme",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          if (!programme.certifierId) {
+            programme.certifierId = [certifierId];
+          } else {
+            programme.certifierId.push(certifierId);
+          }
+
+          if (programme.currentStage != ProgrammeStage.ISSUED) {
+            throw new HttpException(
+              "Can certify only issued programmes",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+        } else {
+          if (index < 0) {
+            throw new HttpException(
+              "Certifier does not certified the programme",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          programme.certifierId.splice(index, 1);
+        }
+
+        programme.txRef = user;
+        programme.txTime = new Date().getTime();
+        programme.txType = add ? TxType.CERTIFY : TxType.REVOKE;
+
+        let updateMap = {};
+        let updateWhere = {};
+        updateMap[this.ledger.tableName] = {
+          certifierId: programme.certifierId,
+          txType: programme.txType,
+          txTime: programme.txTime,
+          txRef: programme.txRef,
+        };
+        updateWhere[this.ledger.tableName] = {
+          programmeId: programme.programmeId,
+        };
+
+        updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    throw new HttpException(
+      "Programme failed to update",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
+  public async revokeCompanyCertifications(
+    companyId: number,
+    reason: string,
+    user: string
+  ): Promise<number[]>{
+    this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
+    const getQueries = {};
+    companyId = Number(companyId);
+    getQueries[this.ledger.tableName] = {
+      certifierId: new ArrayIn("certifierId", companyId),
+    };
+
+    let programmesId = [];
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        let updateMap = {};
+        let updateWhere = {};
+        
+        for (const programme of programmes) {
+          const index = programme.certifierId.indexOf(companyId)
+          if (index < 0) {
+            continue;
+          }
+  
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime();
+          programme.txRef = `${user}#${reason}`;
+          programme.txType = TxType.REVOKE;
+          programme.certifierId.splice(index, 1);
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            certifierId: programme.certifierId,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+          programmesId.push(programme.programmeId);
+        }
+        // updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    return programmesId;
+  }
+
+  public async freezeCompany(
+    companyId: number,
+    reason: string,
+    user: string
+  ): Promise<number[]> {
+    this.logger.log(`Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`);
+    const getQueries = {};
+    companyId = Number(companyId);
+    getQueries[this.ledger.tableName] = {
+      companyId: new ArrayIn("companyId", companyId),
+    };
+
+    let programmesId = [];
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        let updateMap = {};
+        let updateWhere = {};
+        
+        for (const programme of programmes) {
+          const index = programme.companyId.indexOf(companyId)
+          if (index < 0) {
+            throw new HttpException(
+              "Programme does not own by the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+  
+          if (!programme.creditOwnerPercentage) {
+            throw new HttpException(
+              "Not ownership percentage for the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
+          if (!programme.creditFrozen) {
+            programme.creditFrozen =  new Array(programme.creditOwnerPercentage.length).fill(0);
+          }
+
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime(),
+          programme.txRef = `${user}#${reason}`,
+          programme.txType = TxType.FREEZE
+          programme.creditFrozen[index] = freezeCredit;
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            currentStage: programme.currentStage,
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            creditFrozen: programme.creditFrozen,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+          programmesId.push(programme.programmeId);
+        }
+        // updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    return programmesId;
+  }
+
+  public async freezeProgramme(
+    programmeId: string,
+    companyId: number,
+    reason: string,
+    user: string
+  ): Promise<boolean> {
+    this.logger.log(`Freezing programme credits:${programmeId} reason:${reason} companyId:${companyId} user:${user}`);
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      companyId: new ArrayIn("companyId", companyId),
+    };
+
+    let updatedProgramme;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        let updateMap = {};
+        let updateWhere = {};
+        
+        for (const programme of programmes) {
+          const index = programme.companyId.indexOf(companyId)
+          if (index < 0) {
+            throw new HttpException(
+              "Programme does not own by the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+  
+          if (!programme.creditOwnerPercentage) {
+            throw new HttpException(
+              "Not ownership percentage for the company",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
+          if (!programme.creditFrozen) {
+            programme.creditFrozen =  new Array(programme.creditOwnerPercentage.length).fill(0);
+          }
+
+          const prvTxTime = programme.txTime;
+          programme.txTime = new Date().getTime(),
+          programme.txRef = `${user}#${reason}`,
+          programme.txType = TxType.FREEZE
+          programme.creditFrozen[index] = freezeCredit;
+
+          updateMap[this.ledger.tableName + '#' + programme.programmeId] = {
+            currentStage: programme.currentStage,
+            txType: programme.txType,
+            txTime: programme.txTime,
+            txRef: programme.txRef,
+            creditFrozen: programme.creditFrozen,
+          };
+          updateWhere[this.ledger.tableName + '#' + programme.programmeId] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime
+          };
+
+        }
+        // updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    throw new HttpException(
+      "Programme failed to update",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
+  public async retireProgramme(
+    programmeId: string,
+    reason: string,
+    user: string
+  ): Promise<boolean> {
+    this.logger.log(`Retiring programme:${programmeId} reason:${reason} user:${user}`);
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            "Programme does not exist",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let programme = programmes[0];
+        const prvTxTime = programme.txTime;
+        programme.currentStage = ProgrammeStage.RETIRED,
+        programme.txTime = new Date().getTime(),
+        programme.txRef = `${user}#${reason}`,
+        programme.txType = TxType.RETIRE
+        programme.creditRetired = programme.creditBalance;
+        programme.creditBalance = 0;
+        programme.creditChange = programme.creditRetired;
+
+        let updateMap = {};
+        let updateWhere = {};
+        updateMap[this.ledger.tableName] = {
+          currentStage: programme.currentStage,
+          txType: programme.txType,
+          txTime: programme.txTime,
+          txRef: programme.txRef,
+          creditRetired: programme.creditRetired,
+          creditBalance: programme.creditBalance,
+          creditChange: programme.creditChange
+        };
+        updateWhere[this.ledger.tableName] = {
+          programmeId: programme.programmeId,
+          txTime: prvTxTime
+        };
+
+        updatedProgramme = programme;
+        return [updateMap, updateWhere, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    throw new HttpException(
+      "Programme failed to update",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+
   public async updateProgrammeStatus(
     programmeId: string,
     status: ProgrammeStage,
-    currentExpectedStatus: ProgrammeStage
+    currentExpectedStatus: ProgrammeStage,
+    user: string
   ): Promise<boolean> {
     this.logger.log(`Updating programme ${programmeId} status ${status}`);
     const affected = await this.ledger.updateRecords(
       {
         currentStage: status.valueOf(),
-        txTime: new Date().getTime()
+        txTime: new Date().getTime(),
+        txRef: user,
+        txType:
+          status == ProgrammeStage.REJECTED
+            ? TxType.REJECT
+            : status == ProgrammeStage.RETIRED
+            ? TxType.RETIRE
+            : null,
       },
       {
         programmeId: programmeId,
@@ -268,13 +733,14 @@ export class ProgrammeLedgerService {
   }
 
   private round2Precision(val) {
-    return parseFloat(val.toFixed(PRECISION))
+    return parseFloat(val.toFixed(PRECISION));
   }
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,
-    companyIds: number[]
-  ): Promise<boolean> {
+    companyIds: number[],
+    user: string
+  ): Promise<Programme> {
     this.logger.log(`Authorizing programme ${programmeId}`);
 
     const getQueries = {};
@@ -324,8 +790,7 @@ export class ProgrammeLedgerService {
           );
         }
 
-
-        let companyCreditBalances = {}
+        let companyCreditBalances = {};
         const companies = results[this.ledger.companyTableName].map(
           (domValue) => {
             return plainToClass(
@@ -334,16 +799,16 @@ export class ProgrammeLedgerService {
             );
           }
         );
-        this.logger.verbose(results[this.ledger.companyTableName])
+        this.logger.verbose(results[this.ledger.companyTableName]);
         for (const company of companies) {
-          companyCreditBalances[company.txId] = company.credit
+          companyCreditBalances[company.txId] = company.credit;
         }
 
         const programme = programmes[0];
         const overall = creditOveralls[0];
         const year = new Date(programme.startTime * 1000).getFullYear();
         const startBlock = overall.credit + 1;
-        const endBlock = overall.credit + programme.creditIssued;
+        const endBlock = overall.credit + programme.creditEst;
         const serialNo = generateSerialNumber(
           programme.countryCodeA2,
           programme.sectoralScope,
@@ -356,16 +821,23 @@ export class ProgrammeLedgerService {
         programme.serialNo = serialNo;
         programme.txTime = new Date().getTime();
         programme.currentStage = ProgrammeStage.ISSUED;
-        programme.creditTransferred = 0
+        programme.creditIssued = programme.creditEst;
+        programme.creditBalance = programme.creditIssued;
+        programme.creditChange = programme.creditIssued;
+        programme.txRef = user;
+        programme.txType = TxType.ISSUE;
         updatedProgramme = programme;
 
-        let companyCreditDistribution = {}
+        let companyCreditDistribution = {};
         if (programme.creditOwnerPercentage) {
           for (const j in programme.creditOwnerPercentage) {
-            companyCreditDistribution[programme.companyId[j]] = programme.creditIssued * programme.creditOwnerPercentage[j] / 100
+            companyCreditDistribution[programme.companyId[j]] =
+              (programme.creditIssued * programme.creditOwnerPercentage[j]) /
+              100;
           }
         } else if (programme.companyId.length == 1) {
-          companyCreditDistribution[programme.companyId[0]] = programme.creditIssued
+          companyCreditDistribution[programme.companyId[0]] =
+            programme.creditIssued;
         } else {
           throw new HttpException(
             "Unexpected programme owner percentages",
@@ -379,7 +851,12 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.tableName] = {
           currentStage: ProgrammeStage.ISSUED.valueOf(),
           serialNo: serialNo,
-          creditTransferred: 0
+          creditIssued: programme.creditIssued,
+          creditBalance: programme.creditBalance,
+          creditChange: programme.creditChange,
+          txRef: programme.txRef,
+          txTime: programme.txTime,
+          txType: programme.txType,
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
@@ -389,19 +866,20 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.overallTableName] = {
           credit: endBlock,
           txRef: serialNo,
-          txType: TxType.ISSUE
+          txType: TxType.ISSUE,
         };
         updateWhereMap[this.ledger.overallTableName] = {
           txId: countryCodeA2,
         };
 
         for (const com of programme.companyId) {
-
           if (companyCreditBalances[com]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
-              credit: this.round2Precision(companyCreditBalances[com] + companyCreditDistribution[com]),
+              credit: this.round2Precision(
+                companyCreditBalances[com] + companyCreditDistribution[com]
+              ),
               txRef: serialNo,
-              txType: TxType.ISSUE
+              txType: TxType.ISSUE,
             };
             updateWhereMap[this.ledger.companyTableName + "#" + com] = {
               txId: com,
@@ -411,10 +889,9 @@ export class ProgrammeLedgerService {
               credit: this.round2Precision(companyCreditDistribution[com]),
               txRef: serialNo,
               txType: TxType.ISSUE,
-              txId: com
-            }
+              txId: com,
+            };
           }
-         
         }
         return [updateMap, updateWhereMap, insertMap];
       }

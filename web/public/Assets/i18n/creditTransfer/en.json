@@ -1,0 +1,16 @@
+{
+  "viewCreditsTransfers": "Transfers",
+  "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+  "requestID": "REQUEST ID",
+  "certifier": "CERTIFIER",
+  "initiator": "INITIATOR",
+  "date": "DATE",
+  "pName": "PROGRAMME NAME",
+  "sector": "SECTOR",
+  "cSender": "CREDIT SENDER",
+  "cReceiver": "CREDIT RECEIVER",
+  "cRequested": "CREDIT REQUESTED",
+  "cBalance": "CREDIT BALANCE",
+  "status": "STATUS",
+  "noTransfer": "No Transfers Available"
+}

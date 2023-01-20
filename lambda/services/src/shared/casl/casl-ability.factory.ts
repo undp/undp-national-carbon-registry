@@ -5,11 +5,13 @@ import { Action } from "./action.enum";
 import { Role } from "./role.enum";
 import { EntitySubject } from "../entities/entity.subject";
 import { Programme } from "../entities/programme.entity";
-import { ProgrammeStage } from "../programme-ledger/programme-status.enum";
+import { ProgrammeStage } from "../enum/programme-status.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { Company } from "../entities/company.entity";
 import { Stat } from "../dto/stat.dto";
 import { StatType } from "../enum/stat.type.enum";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
+import { ProgrammeCertify } from "../dto/programme.certify";
 
 type Subjects = InferSubjects<typeof EntitySubject> | 'all';
 
@@ -25,15 +27,14 @@ export class CaslAbilityFactory {
       if (user.role == Role.Root) {
         can(Action.Manage, 'all');
 
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
-        cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
-      }
-      else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
+        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
+        cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
+      } else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
+        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
         cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
 
-        can(Action.Manage, Programme);
+        // can(Action.Manage, Programme);
 
         can(Action.Manage, Company);
 
@@ -42,24 +43,43 @@ export class CaslAbilityFactory {
         can(Action.Delete, User, { companyId: { $eq: user.companyId } });
         can(Action.Update, User, { companyId: { $eq: user.companyId } });
         can(Action.Create, User) // Handling company id inside the service
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyId', 'companyRole'], { id: { $eq: user.id } });
+        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
 
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, ['taxId', 'companyRole']);
       } else {
-        can([Action.Update, Action.Read], User, { id: { $eq: user.id } })
-        cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyId', 'companyRole']);
-
+        if (user.companyRole == CompanyRole.GOVERNMENT) {
+          can(Action.Read, User);
+        } else {
+          can(Action.Read, User, { companyId: { $eq: user.companyId } });
+        }
+        can(Action.Update, User, { id: { $eq: user.id } })
+        cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyRole']);
         can(Action.Read, Company);
+      }
+
+      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
+        can(Action.Manage, ProgrammeTransfer);
+      }
+
+      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.GOVERNMENT) {
+        can(Action.Manage, ProgrammeTransfer);
+        can(Action.Manage, Programme);
+      }
+
+      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {
+        can(Action.Manage, ProgrammeCertify);
       }
 
       if (user.role == Role.Admin && user.companyRole == CompanyRole.MRV) {
         can([Action.Create, Action.Read], Programme);
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
-        can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED, ProgrammeStage.RETIRED ]}});
+        can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED ]}});
+        can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED }});
+        can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
@@ -68,7 +88,7 @@ export class CaslAbilityFactory {
         can(Action.Read, Stat, { type: { $nin: [ ]}})
       }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
-      cannot(Action.Update, User, ['companyId', 'companyRole'])
+      cannot(Action.Update, User, ['companyRole'])
     }
 
     return build({

@@ -7,6 +7,8 @@ import configuration from '../configuration';
 import { EmailModule } from '../email/email.module';
 import { TypeOrmConfigService } from '../typeorm.config.service';
 import { CompanyService } from './company.service';
+import { UtilModule } from '../util/util.module';
+import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 
 @Module({
   imports: [
@@ -21,7 +23,9 @@ import { CompanyService } from './company.service';
     }),
     TypeOrmModule.forFeature([Company]),
     CaslModule,
-    EmailModule
+    EmailModule,
+    UtilModule,
+    ProgrammeLedgerModule
   ],
   providers: [CompanyService, Logger],
   exports: [CompanyService]

@@ -43,19 +43,23 @@ export class AuthService {
   async login(user: any) {
     const payload = new JWTPayload(
       user.email,
+      user.name,
       user.id,
       user.role,
       user.companyId,
       user.companyRole
     );
     const ability = this.caslAbilityFactory.createForUser(user);
+    const organisationDetails = await this.companyService.findByCompanyId(user.companyId);
     return {
       access_token: this.jwtService.sign(instanceToPlain(payload)),
       role: user.role,
       id: user.id,
+      name: user.name,
       companyId: user.companyId,
       companyRole: user.companyRole,
-      ability: JSON.stringify(ability),
+      companyLogo: organisationDetails.logo,
+      ability: JSON.stringify(ability.rules),
     };
   }
 }

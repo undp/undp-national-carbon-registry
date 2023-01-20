@@ -1,0 +1,25 @@
+@import '../../Styles/variables.scss';
+
+.creditTransfer-management {
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value='Rejected'] + .ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Cancelled'] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Accepted'] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Pending'] + .ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+  }
+}

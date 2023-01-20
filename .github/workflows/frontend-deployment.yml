@@ -11,7 +11,7 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api/national
+      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api
     steps:
       - uses: actions/checkout@v3
       - name: Cache modules
@@ -39,3 +39,5 @@ jobs:
         run: CI=false yarn build
       - name: Deploy
         run: aws s3 sync ./web/build s3://carbon-www-dev
+      - name: Deploy Test
+        run: aws s3 sync ./web/build s3://www-test-carbon

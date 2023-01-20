@@ -3,11 +3,11 @@ import { ProgrammeDto } from '../dto/programme.dto';
 import { Programme } from '../entities/programme.entity';
 import { ProgrammeLedgerService } from '../programme-ledger/programme-ledger.service';
 import { instanceToPlain, plainToClass } from 'class-transformer';
-import { ProgrammeStage } from '../programme-ledger/programme-status.enum';
+import { ProgrammeStage } from '../enum/programme-status.enum';
 import { AgricultureConstants, AgricultureCreationRequest, calculateCredit, SolarConstants, SolarCreationRequest } from 'carbon-credit-calculator';
 import { QueryDto } from '../dto/query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PrimaryGeneratedColumnType } from 'typeorm/driver/types/ColumnTypes';
 import { CounterService } from '../util/counter.service';
 import { CounterType } from '../util/counter.type.enum';
@@ -28,6 +28,15 @@ import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { TransferStatus } from '../enum/transform.status.enum';
 import { ProgrammeTransferApprove } from '../dto/programme.transfer.approve';
 import { ProgrammeTransferReject } from '../dto/programme.transfer.reject';
+import { Company } from '../entities/company.entity';
+import { HelperService } from '../util/helpers.service';
+import { CompanyRole } from '../enum/company.role.enum';
+import { ProgrammeCertify } from '../dto/programme.certify';
+import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
+import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
+import { ProgrammeRetire } from '../dto/programme.retire';
+import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
+import { CompanyState } from '../enum/company.state.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -40,7 +49,11 @@ export class ProgrammeService {
         private configService: ConfigService,
         private companyService: CompanyService,
         private emailService: EmailService,
+        private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
+        @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
+        @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
+        @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
         private logger: Logger) { }
@@ -76,8 +89,25 @@ export class ProgrammeService {
         throw Error("Not implemented for mitigation type " + programmeDto.typeOfMitigation)
     }
 
-    async transferReject(req: ProgrammeTransferReject) {
-        this.logger.log('Programme reject');
+    async transferReject(req: ProgrammeTransferReject, approverCompanyId: number) {
+
+        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approverCompanyId}`);
+
+        const pTransfer = await this.programmeTransferRepo.findOneBy({
+            requestId: req.requestId,
+        })
+
+        if (!pTransfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (pTransfer.status == TransferStatus.CANCELLED) {
+            throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
+        }
+
+        if (!pTransfer.companyId.includes(approverCompanyId)) {
+            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
+        }
         const result = await this.programmeTransferRepo.update({
             requestId: req.requestId,
             status: TransferStatus.PENDING
@@ -95,11 +125,45 @@ export class ProgrammeService {
         throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
     }
 
-    async transferApprove(req: ProgrammeTransferApprove) {
+    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string): Promise<any> {
+        const resp = await this.programmeTransferViewRepo
+          .createQueryBuilder('programme_transfer')
+          .where(
+            this.helperService.generateWhereSQL(
+              query,
+              this.helperService.parseMongoQueryToSQLWithTable("programme_transfer", abilityCondition)
+            )
+          )
+          .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
+          .offset(query.size * query.page - query.size)
+          .limit(query.size)
+          .getManyAndCount();
+    
+        if (resp.length > 0) {
+            resp[0] = resp[0].map( e => {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                return e;
+            })
+        }
+        return new DataListResponseDto(
+          resp.length > 0 ? resp[0] : undefined,
+          resp.length > 1 ? resp[1] : undefined
+        );
+      }
+
+    async transferApprove(req: ProgrammeTransferApprove, approverCompanyId: number) {
         // TODO: Handle transaction, can happen 
         const transfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
         });
+
+        if (!transfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (transfer.status == TransferStatus.CANCELLED) {
+            throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
+        }
 
         if (transfer.status == TransferStatus.APPROVED) {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
@@ -130,7 +194,13 @@ export class ProgrammeService {
             throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
         }
 
-        const programme = await this.programmeLedger.transferProgramme(transfer, req);
+        const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
+        const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
+
+        if (!programme.companyId.includes(approverCompanyId)) {
+            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
+        }
+
         this.logger.log('Programme updated');
         const result = await this.programmeTransferRepo.update({
             requestId: req.requestId
@@ -148,6 +218,37 @@ export class ProgrammeService {
         throw new HttpException("Internal error on status updating", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
+    async transferCancel(req: ProgrammeTransferCancel, requester: User) {
+        this.logger.log(`Programme transfer cancel by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
+
+        const transfer = await this.programmeTransferRepo.findOneBy({
+            requestId: req.requestId,
+        });
+        
+        if (!transfer) {
+            throw new HttpException("Transfer request does not exist", HttpStatus.BAD_REQUEST)
+        }
+
+        if (transfer.status != TransferStatus.PENDING) {
+            throw new HttpException("Transfer already processed", HttpStatus.BAD_REQUEST)
+        }
+
+        const result = await this.programmeTransferRepo.update({
+            requestId: req.requestId,
+            status: TransferStatus.PENDING
+        }, {
+            status: TransferStatus.CANCELLED
+        }).catch((err) => {
+            this.logger.error(err);
+            return err;
+        });
+
+        if (result.affected > 0) {
+            return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
+        }
+        return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
+    }
+
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
@@ -156,8 +257,11 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        if (programme.creditBalance < req.creditAmount) {
+        if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
             throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
+        }
+        if (programme.companyId.includes(requester.companyId)) {
+            throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
         }
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
@@ -180,6 +284,7 @@ export class ProgrammeService {
         transfer.status = TransferStatus.PENDING;
         transfer.txTime = new Date().getTime()
         transfer.requesterId = requester.id;
+        transfer.requesterCompanyId = requester.companyId;
         transfer.companyId = programme.companyId;
         return await this.programmeTransferRepo.save(transfer);
     }
@@ -193,8 +298,16 @@ export class ProgrammeService {
             throw new HttpException("Proponent percentage must defined for each proponent tax id", HttpStatus.BAD_REQUEST)
         }
 
+        if (programmeDto.proponentPercentage &&  programmeDto.proponentTaxVatId.length != programmeDto.proponentPercentage.length) {
+            throw new HttpException("Proponent percentage and number of tax ids does not match", HttpStatus.BAD_REQUEST)
+        }
+
         if (programmeDto.proponentPercentage &&  programmeDto.proponentPercentage.reduce((a, b) => a + b, 0) != 100) {
             throw new HttpException("Proponent percentage sum must be equals to 100", HttpStatus.BAD_REQUEST)
+        }
+
+        if (programmeDto.proponentTaxVatId.length !== new Set(programmeDto.proponentTaxVatId).size) {
+            throw new HttpException("Proponent tax id cannot be duplicated", HttpStatus.BAD_REQUEST)
         }
 
         const companyIds = []
@@ -203,6 +316,11 @@ export class ProgrammeService {
             if (!projectCompany) {
                 throw new HttpException("Proponent tax id does not exist in the system", HttpStatus.BAD_REQUEST)
             }
+
+            if (projectCompany.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+                throw new HttpException("Proponent is not a programme developer", HttpStatus.BAD_REQUEST)
+            }
+
             companyIds.push(projectCompany.companyId)
         }
 
@@ -213,17 +331,17 @@ export class ProgrammeService {
 
         const req = await this.getCreditRequest(programmeDto, constants);
         try {
-            programme.creditIssued = Math.round(await calculateCredit(req));
+            programme.creditEst = Math.round(await calculateCredit(req));
         } catch (err) {
             this.logger.log(`Credit calculate failed ${err.message}`)
             throw new HttpException(err.message, HttpStatus.BAD_REQUEST)
         }
 
-        if (programme.creditIssued <= 0) {
+        if (programme.creditEst <= 0) {
             throw new HttpException("Not enough credits to create the programme", HttpStatus.BAD_REQUEST)
         }
-        programme.creditBalance = programme.creditIssued;
-        programme.creditChange = programme.creditIssued;
+        // programme.creditBalance = programme.creditIssued;
+        // programme.creditChange = programme.creditIssued;
         programme.programmeProperties.creditYear = new Date(programme.startTime * 1000).getFullYear()
         programme.constantVersion = constants ? String(constants.version) : "default"
         programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
@@ -242,11 +360,23 @@ export class ProgrammeService {
 
     async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
         const skip = (query.size * query.page) - query.size;
-        const resp = (await this.programmeRepo.createQueryBuilder()
-            .where(abilityCondition ? abilityCondition : "")
-            .skip(skip)
-            .take(query.size)
+        let resp = (await this.programmeViewRepo.createQueryBuilder("programme")
+            .where(this.helperService.generateWhereSQL(query, this.helperService.parseMongoQueryToSQLWithTable("programme", abilityCondition), "programme"))
+            .orderBy(
+                query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+                query?.sort?.order
+            )
+            .offset(skip)
+            .limit(query.size)
             .getManyAndCount())
+
+        if (resp.length > 0) {
+            resp[0] = resp[0].map( e => {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                e.company = e.company.length > 0 && e.company[0] === null ? []: e.company
+                return e;
+            })
+        }
 
         return new DataListResponseDto(
             resp.length > 0 ? resp[0] : undefined,
@@ -254,8 +384,12 @@ export class ProgrammeService {
         );
     }
 
-    async getProgrammeEvents(programmeId: string): Promise<any> {
+    async getProgrammeEvents(programmeId: string, companyId: number): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
+        // const comp = await this.companyService.findByCompanyId(companyId)
+        // if (resp.length > 0 && comp.state == CompanyState.SUSPENDED) {
+            
+        // }
         return resp == null ? [] : resp;
     }
 
@@ -298,22 +432,69 @@ export class ProgrammeService {
         });
     }
 
-    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage) {
+    async certify(req: ProgrammeCertify, add: boolean, user: User) {
+        this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
+
+        if (user.companyRole != CompanyRole.CERTIFIER) {
+            throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
+        }
+
+        const company = await this.companyService.findByCompanyId(user.companyId);
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated && updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async retireProgramme(req: ProgrammeRetire, user: string) {
+        this.logger.log(`Programme ${req.programmeId} retiring Comment: ${req.comment}`)
+        const updated: any = await this.programmeLedger.retireProgramme(req.programmeId, req.reason, user)
+        if (!updated) {
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in issued status for the given programme id ${req.programmeId}`)
+        }
+
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
         this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
         if (status == ProgrammeStage.ISSUED) {
             const program = await this.programmeLedger.getProgrammeById(req.programmeId);
             if (!program) {
                 throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
-            const updated = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId)
+            const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
             if (!updated) {
                 return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
             }
+
+            updated.company = await this.companyRepo.find({
+                where: { companyId: In(updated.companyId) },
+            })
+            if (updated.certifierId && updated.certifierId.length > 0) {
+                updated.certifier = await this.companyRepo.find({
+                    where: { companyId: In(updated.certifierId) },
+                })
+            }
             return new DataResponseDto(HttpStatus.OK, updated)
         } else {
-            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus)
+            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
             if (!updated) {
-                return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
+                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
             }
             return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
         }

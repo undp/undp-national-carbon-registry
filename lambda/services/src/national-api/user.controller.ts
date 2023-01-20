@@ -24,7 +24,7 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Get('profile')
     async getProfile(@Request() req) {
-      return await this.userService.findOne(req.user.username);
+      return await this.userService.getUserProfileDetails(req.user.email);
     }
     
     @ApiBearerAuth()
@@ -65,8 +65,8 @@ export class UserController {
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-    @Get('query')
-    queryUser(@Query()query: QueryDto, @Request() req) {
+    @Post('query')
+    queryUser(@Body()query: QueryDto, @Request() req) {
       console.log(req.abilityCondition)
       return this.userService.query(query, req.abilityCondition)
     }
