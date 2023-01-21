@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min } from "class-validator";
 
 export class ProgrammeRetire {
 
@@ -8,13 +8,27 @@ export class ProgrammeRetire {
     @IsString()
     programmeId: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    reason: string;
+    @ApiPropertyOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @IsOptional()
+    fromCompanyIds: number[];
 
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsArray()
+    @IsNumber({},{each: true})
+    @Min(0, { each: true })
+    @IsOptional()
+    companyCredit: number[];
+
+    @ApiPropertyOptional()
+    @IsNotEmpty()
+    @IsNotEmpty()
+    @IsOptional()
+    toAccount: string;
+
+    @ApiPropertyOptional()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
 }

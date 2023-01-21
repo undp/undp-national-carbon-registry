@@ -51,6 +51,13 @@ export class Company implements EntitySubject{
     @Column("real", { nullable: true })
     creditBalance: number;
 
+    @Column({
+        type: 'jsonb',
+        array: false,
+        nullable: true
+    })
+    secondaryAccountBalance: any;
+
     @Column("bigint", { nullable: true })
     programmeCount: number;
 

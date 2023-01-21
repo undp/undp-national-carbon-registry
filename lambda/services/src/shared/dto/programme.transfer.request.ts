@@ -26,6 +26,11 @@ export class ProgrammeTransferRequest {
     @IsNumber()
     toCompanyId: number;
 
+    @ApiPropertyOptional()
+    @IsNotEmpty()
+    @IsNotEmpty()
+    @IsOptional()
+    toAccount: string;
 
     @ApiPropertyOptional()
     @IsString()

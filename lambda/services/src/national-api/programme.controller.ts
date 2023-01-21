@@ -88,10 +88,10 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransfer))
     @Put('retire')
     async programmeRetire(@Body() body: ProgrammeRetire, @Request() req) {
-        return this.programmeService.retireProgramme(body, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.retireProgramme(body, req.user, `${req.user.id}#${req.user.name}`)
     }
 
     @ApiBearerAuth()

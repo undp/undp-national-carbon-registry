@@ -32,6 +32,9 @@ export class ProgrammeTransfer implements EntitySubject {
     @Column()
     toCompanyId: number;
 
+    @Column({nullable: true})
+    toAccount: string;
+
     @Column()
     fromCompanyId: number;
 
@@ -50,4 +53,7 @@ export class ProgrammeTransfer implements EntitySubject {
         array: false
     })
     status: TransferStatus;
+
+    @Column({nullable: true, default: false})
+    isRetirement: boolean;
 }
