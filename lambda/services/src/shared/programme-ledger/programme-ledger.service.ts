@@ -197,7 +197,9 @@ export class ProgrammeLedgerService {
         programme.txRef = `${transfer.requestId}#${name}#${reason}`;
         
         if (isRetirement) {
-          programme.currentStage = ProgrammeStage.RETIRED,
+          if (programme.creditBalance == transfer.creditAmount) {
+            programme.currentStage = ProgrammeStage.RETIRED;
+          }
           programme.txType = TxType.RETIRE
           if (!programme.creditRetired) {
             programme.creditRetired = 0;
@@ -838,12 +840,12 @@ export class ProgrammeLedgerService {
         let companyCreditDistribution = {};
         if (programme.creditOwnerPercentage) {
           for (const j in programme.creditOwnerPercentage) {
-            companyCreditDistribution[programme.companyId[j]] =
+            companyCreditDistribution[String(programme.companyId[j])] =
               (programme.creditIssued * programme.creditOwnerPercentage[j]) /
               100;
           }
         } else if (programme.companyId.length == 1) {
-          companyCreditDistribution[programme.companyId[0]] =
+          companyCreditDistribution[String(programme.companyId[0])] =
             programme.creditIssued;
         } else {
           throw new HttpException(
@@ -880,10 +882,10 @@ export class ProgrammeLedgerService {
         };
 
         for (const com of programme.companyId) {
-          if (companyCreditBalances[com]) {
+          if (companyCreditBalances[String(com)]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
-                companyCreditBalances[com] + companyCreditDistribution[com]
+                companyCreditBalances[String(com)] + companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
               txType: TxType.ISSUE,
@@ -893,7 +895,7 @@ export class ProgrammeLedgerService {
             };
           } else {
             insertMap[this.ledger.companyTableName + "#" + com] = {
-              credit: this.round2Precision(companyCreditDistribution[com]),
+              credit: this.round2Precision(companyCreditDistribution[String(com)]),
               txRef: serialNo,
               txType: TxType.ISSUE,
               txId: String(com),
@@ -966,8 +968,8 @@ export class ProgrammeLedgerService {
         programme.txTime = new Date().getTime();
 
         if (!issueCredit) {
-          programme.creditIssued = programme.creditEst;
           programme.creditChange = programme.creditEst - programme.creditIssued;
+          programme.creditIssued = programme.creditEst;
           // programme.creditPending = 0
         } else {
           programme.creditIssued += issueCredit;
@@ -988,7 +990,7 @@ export class ProgrammeLedgerService {
             const currentCredit = (currentTotalBalance * programme.creditOwnerPercentage[i]) / 100;
             const changeCredit =  (programme.creditChange * programme.proponentPercentage[i]) / 100;
 
-            companyCreditDistribution[programme.companyId[0]] = changeCredit;
+            companyCreditDistribution[String(programme.companyId[i])] = changeCredit;
             percentages.push(
               this.round2Precision(
                 ((currentCredit + changeCredit) * 100) /
@@ -1000,7 +1002,7 @@ export class ProgrammeLedgerService {
           programme.creditOwnerPercentage = percentages;
           this.logger.verbose("Updated owner percentages", percentages);
         } else {
-          companyCreditDistribution[programme.companyId[0]] = programme.creditChange;
+          companyCreditDistribution[String(programme.companyId[0])] = programme.creditChange;
         }
 
         let updateMap = {};
@@ -1020,10 +1022,11 @@ export class ProgrammeLedgerService {
         };
 
         for (const com of programme.companyId) {
-          if (companyCreditBalances[com]) {
+          console.log('Credit issue', com, companyCreditBalances[String(com)], companyCreditDistribution[String(com)])
+          if (companyCreditBalances[String(com)]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
-                companyCreditBalances[com] + companyCreditDistribution[com]
+                companyCreditBalances[String(com)] + companyCreditDistribution[String(com)]
               ),
               txRef: programme.serialNo,
               txType: TxType.ISSUE,
