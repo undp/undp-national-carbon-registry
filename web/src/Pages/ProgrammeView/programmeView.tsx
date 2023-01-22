@@ -75,12 +75,13 @@ import { useUserContext } from '../../Context/UserInformationContext/userInforma
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
 import { dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
+import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 
 mapboxgl.accessToken =
   '';
 
 const ProgrammeView = () => {
-  const { get, put } = useConnection();
+  const { get, put, post } = useConnection();
 
   const { userInfoState } = useUserContext();
   const { state } = useLocation();
@@ -319,6 +320,49 @@ const ProgrammeView = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       setLoadingHistory(false);
+    }
+  };
+
+  const updateProgrammeData = (response: any) => {
+    setData(response.data);
+    state.record = response.data;
+    navigate('.', { state: { record: response.data } });
+    genCerts(response.data, certTimes);
+  };
+
+  const onPopupAction = async (
+    body: any,
+    endpoint: any,
+    successMsg: any,
+    httpMode: any,
+    successCB: any
+  ) => {
+    body.programmeId = data?.programmeId;
+    let error;
+    try {
+      const response: any = await httpMode(`national/programme/${endpoint}`, body);
+      if (response.statusCode === 200 || response.status === 200) {
+        if (!response.data.certifier) {
+          response.data.certifier = [];
+        }
+        setOpenModal(false);
+        setComment(undefined);
+        error = undefined;
+        successCB(response);
+        message.open({
+          type: 'success',
+          content: successMsg,
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        error = response.message;
+      }
+      await getProgrammeHistory(Number(data?.programmeId));
+      return error;
+    } catch (e: any) {
+      error = e.message;
+      return error;
     }
   };
 
@@ -579,7 +623,15 @@ const ProgrammeView = () => {
                     setComment(undefined);
                   }}
                   actionBtnText={t('view:authorise')}
-                  onFinish={(body: any) => onAction('Authorise', body)}
+                  onFinish={(body: any) =>
+                    onPopupAction(
+                      body,
+                      'authorize',
+                      t('view:successAuth'),
+                      put,
+                      updateProgrammeData
+                    )
+                  }
                 />
               ),
             });
@@ -595,38 +647,6 @@ const ProgrammeView = () => {
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      if (data.creditEst > data.creditIssued) {
-        actionBtns.push(
-          <Button
-            type="primary"
-            onClick={() => {
-              setActionInfo({
-                action: 'Issue',
-                text: t('view:popupText'),
-                title: `${t('view:issueTitle')} - ${data.title}?`,
-                type: 'primary',
-                remark: false,
-                icon: <Icon.Award />,
-                contentComp: (
-                  <ProgrammeIssueForm
-                    programme={data}
-                    subText={t('view:popupText')}
-                    onCancel={() => {
-                      setOpenModal(false);
-                      setComment(undefined);
-                    }}
-                    actionBtnText={t('view:issue')}
-                    onFinish={(body: any) => onAction('Issue', body)}
-                  />
-                ),
-              });
-              showModal();
-            }}
-          >
-            {t('view:authorise')}
-          </Button>
-        );
-      }
       actionBtns.push(
         <Button
           danger
@@ -667,47 +687,41 @@ const ProgrammeView = () => {
           {t('view:retire')}
         </Button>
       );
-    } else {
-      actionBtns.push(
-        <Button
-          danger
-          onClick={() => {
-            setActionInfo({
-              action: 'Transfer',
-              text: '',
-              title: t('view:transferTitle'),
-              type: 'primary',
-              remark: true,
-              icon: <Icon.BoxArrowInRight />,
-              contentComp: (
-                <div className="retire-form">
-                  <Radio.Group value={retireReason} onChange={setRetireReason}>
-                    <Space direction="vertical">
-                      <Radio value={'transfer'}>Cross-border transfer</Radio>
-                      <Radio value={'legal'}>Legal Action</Radio>
-                      <Radio value={'other'}>Other</Radio>
-                    </Space>
-                  </Radio.Group>
-                  <div>
-                    <div className="form-label remark">
-                      {'Remarks'}
-                      {actionInfo.remark && <span className="req-ast">*</span>}
-                    </div>
-                    <TextArea
-                      defaultValue={comment}
-                      rows={2}
-                      onChange={(v) => setComment(v.target.value)}
-                    />
-                  </div>
-                </div>
-              ),
-            });
-            showModal();
-          }}
-        >
-          {t('view:transfer')}
-        </Button>
-      );
+
+      if (Number(data.creditEst) > Number(data.creditIssued)) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Issue',
+                text: t('view:popupText'),
+                title: `${t('view:issueTitle')} - ${data.title}?`,
+                type: 'primary',
+                remark: false,
+                icon: <Icon.Award />,
+                contentComp: (
+                  <ProgrammeIssueForm
+                    programme={data}
+                    subText={t('view:popupText')}
+                    onCancel={() => {
+                      setOpenModal(false);
+                      setComment(undefined);
+                    }}
+                    actionBtnText={t('view:issue')}
+                    onFinish={(body: any) =>
+                      onPopupAction(body, 'issue', t('view:successIssue'), put, onPopupAction)
+                    }
+                  />
+                ),
+              });
+              showModal();
+            }}
+          >
+            {t('view:issue')}
+          </Button>
+        );
+      }
     }
   }
   //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
@@ -933,6 +947,54 @@ const ProgrammeView = () => {
                       width="100%"
                       fontFamily="inter"
                     />
+                    {userInfoState?.userRole !== 'ViewOnly' && (
+                      <div className="flex-display action-btns">
+                        {data.currentStage.toString() === ProgrammeStage.Issued && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              setActionInfo({
+                                action: 'Request',
+                                text: '',
+                                title: t('view:transferTitle'),
+                                type: 'primary',
+                                remark: true,
+                                icon: <Icon.BoxArrowInRight />,
+                                contentComp: (
+                                  <ProgrammeTransferForm
+                                    receiverLabelText={t('view:by')}
+                                    disableToCompany={true}
+                                    toCompanyDefault={{
+                                      label: userInfoState?.companyName,
+                                      value: userInfoState?.companyId,
+                                    }}
+                                    programme={data}
+                                    subText={t('view:popupText')}
+                                    onCancel={() => {
+                                      setOpenModal(false);
+                                      setComment(undefined);
+                                    }}
+                                    actionBtnText={t('view:request')}
+                                    onFinish={(body: any) =>
+                                      onPopupAction(
+                                        body,
+                                        'transferRequest',
+                                        t('view:successRequest'),
+                                        post,
+                                        () => {}
+                                      )
+                                    }
+                                  />
+                                ),
+                              });
+                              showModal();
+                            }}
+                          >
+                            {t('view:transfer')}
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card>
