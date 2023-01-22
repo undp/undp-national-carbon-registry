@@ -341,7 +341,7 @@ const ProgrammeView = () => {
     let error;
     try {
       const response: any = await httpMode(`national/programme/${endpoint}`, body);
-      if (response.statusCode === 200 || response.status === 200) {
+      if (response.statusCode < 300 || response.status < 300) {
         if (!response.data.certifier) {
           response.data.certifier = [];
         }

@@ -45,7 +45,9 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentSum, setCurrentSum] = useState<number>(0);
-  const [companyList, setCompanyList] = useState<SelectProps['options']>([]);
+  const [companyList, setCompanyList] = useState<SelectProps['options']>(
+    toCompanyDefault ? [toCompanyDefault] : []
+  );
   const [value, setValue] = useState<string>();
   const { get, delete: del, post } = useConnection();
 
@@ -58,19 +60,21 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
       const resp = await post('national/organisation/queryNames', {
         page: 1,
         size: 50,
-        filterAnd: {
-          key: 'name',
-          operation: 'like',
-          value: newValue + '%',
-        },
+        filterAnd: [
+          {
+            key: 'name',
+            operation: 'like',
+            value: newValue + '%',
+          },
+        ],
         sort: {
           key: 'name',
           order: 'ASC',
         },
       });
-      setCompanyList(resp.data);
+      setCompanyList(resp.data.map((d: any) => ({ label: d.name, value: d.companyId })));
     } else {
-      setCompanyList([]);
+      setCompanyList(toCompanyDefault ? [toCompanyDefault] : []);
     }
   };
 
@@ -88,7 +92,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
       <Form
         name="transfer_init_popup"
         layout="vertical"
-        initialValues={{ toCompanyId: toCompanyDefault.value }}
+        initialValues={{ toCompanyId: toCompanyDefault ? toCompanyDefault.value : undefined }}
         onChange={() => setPopupError(undefined)}
         onValuesChange={(v, allVal) => {
           setCurrentSum(
@@ -125,10 +129,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                 onSearch={handleSearch}
                 onChange={handleChange}
                 notFoundContent={null}
-                options={(companyList || []).map((d) => ({
-                  value: d.value,
-                  label: d.text,
-                }))}
+                options={companyList}
               />
               {/* <Select
                 showSearch
