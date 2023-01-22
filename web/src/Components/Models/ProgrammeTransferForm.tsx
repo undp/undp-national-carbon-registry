@@ -1,7 +1,19 @@
 import { LockOutlined } from '@ant-design/icons';
-import { Alert, Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  SelectProps,
+} from 'antd';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { addCommSep, Programme } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { creditUnit } from '../../Pages/Common/configs';
 
@@ -13,7 +25,6 @@ export interface ProgrammeTransferFormProps {
   subText: string;
   disableToCompany?: boolean;
   toCompanyDefault?: any;
-  companyList?: any[];
   receiverLabelText: string;
 }
 
@@ -28,20 +39,45 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     subText,
     toCompanyDefault,
     disableToCompany,
-    companyList,
     receiverLabelText,
   } = props;
   const { i18n, t } = useTranslation(['view']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentSum, setCurrentSum] = useState<number>(0);
+  const [companyList, setCompanyList] = useState<SelectProps['options']>([]);
+  const [value, setValue] = useState<string>();
+  const { get, delete: del, post } = useConnection();
 
   if (!programme.creditOwnerPercentage && programme.companyId.length === 1) {
     programme.creditOwnerPercentage = [100];
   }
 
-  if (toCompanyDefault) {
-  }
+  const handleSearch = async (newValue: string) => {
+    if (newValue) {
+      const resp = await post('national/organisation/queryNames', {
+        page: 1,
+        size: 50,
+        filterAnd: {
+          key: 'name',
+          operation: 'like',
+          value: newValue + '%',
+        },
+        sort: {
+          key: 'name',
+          order: 'ASC',
+        },
+      });
+      setCompanyList(resp.data);
+    } else {
+      setCompanyList([]);
+    }
+  };
+
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+  };
+
   return (
     <div className="transfer-form">
       {/* <Row>
@@ -83,13 +119,27 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
               <Select
                 showSearch
                 disabled={disableToCompany}
+                placeholder={t('view:searchCompany')}
+                showArrow={true}
+                filterOption={false}
+                onSearch={handleSearch}
+                onChange={handleChange}
+                notFoundContent={null}
+                options={(companyList || []).map((d) => ({
+                  value: d.value,
+                  label: d.text,
+                }))}
+              />
+              {/* <Select
+                showSearch
+                disabled={disableToCompany}
                 placeholder="Select a company"
                 optionFilterProp="label"
                 filterOption={(input, option) =>
                   (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                 }
                 options={companyList}
-              />
+              /> */}
             </Form.Item>
           </Col>
         </Row>
@@ -121,7 +171,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                       message: 'Credit Should be a positive number',
                     },
                     ({ getFieldValue }) => ({
-                      validator(rule, value) {
+                      validator(rule, v) {
                         if (
                           getFieldValue(['companyCredit', index]) &&
                           parseFloat(getFieldValue(['companyCredit', index])) >

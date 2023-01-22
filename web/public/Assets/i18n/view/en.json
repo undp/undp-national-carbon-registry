@@ -50,5 +50,10 @@
     "totalTransferCredit": "Total Amount",
     "successAuth": "Successfully authorised",
     "successIssue": "Successfully issued",
-    "successRequest": "Successfully initiated the transfer request"
+    "successRequest": "Successfully initiated the transfer request",
+    "sendCreditTitle": "Send Credits",
+    "to": "To",
+    "send": "Send",
+    "successSend": "Credit send successful",
+    "searchCompany": "Search company by name"
 }

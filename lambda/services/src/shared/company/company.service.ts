@@ -142,6 +142,31 @@ export class CompanyService {
     );
   }
 
+  async queryNames(query: QueryDto, abilityCondition: string): Promise<any> {
+    const resp = await this.companyRepo
+      .createQueryBuilder()
+      .select([
+        '"companyId"',
+        '"name"'
+      ])
+      .where(
+        this.helperService.generateWhereSQL(
+          query,
+          this.helperService.parseMongoQueryToSQL(abilityCondition)
+        )
+      )
+      .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
+      .getRawMany();
+    
+    console.log(resp)
+    return new DataListResponseDto(
+      resp,
+      undefined
+    );
+  }
+
   async findByTaxId(taxId: string): Promise<Company | undefined> {
     const companies = await this.companyRepo.find({
       where: {

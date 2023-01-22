@@ -950,48 +950,87 @@ const ProgrammeView = () => {
                     {userInfoState?.userRole !== 'ViewOnly' && (
                       <div className="flex-display action-btns">
                         {data.currentStage.toString() === ProgrammeStage.Issued && (
-                          <Button
-                            type="primary"
-                            onClick={() => {
-                              setActionInfo({
-                                action: 'Request',
-                                text: '',
-                                title: t('view:transferTitle'),
-                                type: 'primary',
-                                remark: true,
-                                icon: <Icon.BoxArrowInRight />,
-                                contentComp: (
-                                  <ProgrammeTransferForm
-                                    receiverLabelText={t('view:by')}
-                                    disableToCompany={true}
-                                    toCompanyDefault={{
-                                      label: userInfoState?.companyName,
-                                      value: userInfoState?.companyId,
-                                    }}
-                                    programme={data}
-                                    subText={t('view:popupText')}
-                                    onCancel={() => {
-                                      setOpenModal(false);
-                                      setComment(undefined);
-                                    }}
-                                    actionBtnText={t('view:request')}
-                                    onFinish={(body: any) =>
-                                      onPopupAction(
-                                        body,
-                                        'transferRequest',
-                                        t('view:successRequest'),
-                                        post,
-                                        () => {}
-                                      )
-                                    }
-                                  />
-                                ),
-                              });
-                              showModal();
-                            }}
-                          >
-                            {t('view:transfer')}
-                          </Button>
+                          <div>
+                            <Button
+                              type="primary"
+                              onClick={() => {
+                                setActionInfo({
+                                  action: 'Request',
+                                  text: '',
+                                  title: t('view:transferTitle'),
+                                  type: 'primary',
+                                  remark: true,
+                                  icon: <Icon.BoxArrowInRight />,
+                                  contentComp: (
+                                    <ProgrammeTransferForm
+                                      receiverLabelText={t('view:by')}
+                                      disableToCompany={true}
+                                      toCompanyDefault={{
+                                        label: userInfoState?.companyName,
+                                        value: userInfoState?.companyId,
+                                      }}
+                                      programme={data}
+                                      subText={t('view:popupText')}
+                                      onCancel={() => {
+                                        setOpenModal(false);
+                                        setComment(undefined);
+                                      }}
+                                      actionBtnText={t('view:request')}
+                                      onFinish={(body: any) =>
+                                        onPopupAction(
+                                          body,
+                                          'transferRequest',
+                                          t('view:successRequest'),
+                                          post,
+                                          () => {}
+                                        )
+                                      }
+                                    />
+                                  ),
+                                });
+                                showModal();
+                              }}
+                            >
+                              {t('view:transfer')}
+                            </Button>
+                            <Button
+                              type="primary"
+                              onClick={() => {
+                                setActionInfo({
+                                  action: 'Send',
+                                  text: '',
+                                  title: t('view:sendCreditTitle'),
+                                  type: 'primary',
+                                  remark: true,
+                                  icon: <Icon.BoxArrowRight />,
+                                  contentComp: (
+                                    <ProgrammeTransferForm
+                                      receiverLabelText={t('view:to')}
+                                      programme={data}
+                                      subText={t('view:popupText')}
+                                      onCancel={() => {
+                                        setOpenModal(false);
+                                        setComment(undefined);
+                                      }}
+                                      actionBtnText={t('view:send')}
+                                      onFinish={(body: any) =>
+                                        onPopupAction(
+                                          body,
+                                          'transferRequest',
+                                          t('view:successSend'),
+                                          post,
+                                          () => {}
+                                        )
+                                      }
+                                    />
+                                  ),
+                                });
+                                showModal();
+                              }}
+                            >
+                              {t('view:send')}
+                            </Button>
+                          </div>
                         )}
                       </div>
                     )}
