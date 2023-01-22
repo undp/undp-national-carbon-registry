@@ -26,11 +26,14 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     companyLogo: localStorage.getItem('companyLogo')
       ? (localStorage.getItem('companyLogo') as string)
       : '',
+    companyName: localStorage.getItem('companyName')
+      ? (localStorage.getItem('companyName') as string)
+      : '',
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
   const setUserInfo = (value: UserProps) => {
-    const { id, userRole, companyId, companyRole, companyLogo } = value;
+    const { id, userRole, companyId, companyRole, companyLogo, companyName } = value;
     if (id) {
       setUserInfoState((prev) => ({ ...prev, id }));
       localStorage.setItem('userId', id);
@@ -49,6 +52,11 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     if (companyLogo) {
       setUserInfoState((prev) => ({ ...prev, companyLogo }));
       localStorage.setItem('companyLogo', companyLogo);
+    }
+
+    if (companyName) {
+      setUserInfoState((prev) => ({ ...prev, companyName }));
+      localStorage.setItem('companyName', companyName);
     }
 
     if (userRole) {
@@ -80,6 +88,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.removeItem('userRole');
     localStorage.removeItem('companyId');
     localStorage.removeItem('companyRole');
+    localStorage.removeItem('companyName');
     setUserInfoState(initialUserProps);
   };
 

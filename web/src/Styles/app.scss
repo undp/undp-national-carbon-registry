@@ -374,6 +374,10 @@ body {
   color: $body-text-color;
   font-size: 0.8rem;
 
+  .ant-select-selector {
+    text-align: left;
+  }
+
   .form-label {
     text-align: left;
 

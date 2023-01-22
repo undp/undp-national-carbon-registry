@@ -1,5 +1,5 @@
 import { LockOutlined } from '@ant-design/icons';
-import { Alert, Button, Col, Form, Input, Modal, Row } from 'antd';
+import { Alert, Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { addCommSep, Programme } from '../../Definitions/InterfacesAndType/programme.definitions';
@@ -39,11 +39,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
       >
         <Row>
           <Col lg={11} md={24}>
-            <div className="label">
-              {t('view:issueCreditText')}
-              <br />
-              {`(${creditUnit})`}
-            </div>
+            <div className="label">{`${t('view:issueCreditText')} (${creditUnit})`}</div>
           </Col>
           <Col lg={6} md={12}>
             <Form.Item
@@ -58,7 +54,8 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                   validator(rule, value) {
                     if (
                       getFieldValue('issueAmount') &&
-                      parseFloat(getFieldValue('issueAmount')) > programme.creditEst
+                      parseFloat(getFieldValue('issueAmount')) >
+                        programme.creditEst - programme.creditIssued
                     ) {
                       // eslint-disable-next-line prefer-promise-reject-errors
                       return Promise.reject('> estimated');
@@ -68,7 +65,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                 }),
               ]}
             >
-              <Input placeholder="" />
+              <InputNumber placeholder="" controls={false} />
             </Form.Item>
           </Col>
           <Col lg={1} md={1} className="seperator">
@@ -76,7 +73,10 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
           </Col>
           <Col lg={6} md={12}>
             <Form.Item className="popup-credit-input">
-              <Input placeholder={addCommSep(programme.creditEst)} disabled />
+              <Input
+                placeholder={addCommSep(programme.creditEst - programme.creditIssued)}
+                disabled
+              />
             </Form.Item>
           </Col>
         </Row>

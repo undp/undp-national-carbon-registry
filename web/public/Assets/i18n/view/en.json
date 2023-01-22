@@ -45,5 +45,10 @@
     "projectMaterial": "Project Material",
     "transfer": "Request",
     "by": "By",
-    "issueCreditText": "Credits to be issued"
+    "programme": "Programme",
+    "issueCreditText": "Credits to be issued",
+    "totalTransferCredit": "Total Amount",
+    "successAuth": "Successfully authorised",
+    "successIssue": "Successfully issued",
+    "successRequest": "Successfully initiated the transfer request"
 }
