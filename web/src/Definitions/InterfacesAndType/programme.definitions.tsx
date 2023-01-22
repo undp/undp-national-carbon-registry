@@ -124,6 +124,7 @@ export interface Programme {
   endTime: number;
   creditChange: number;
   creditIssued: number;
+  creditEst: number;
   creditBalance: number;
   creditTransferred: number;
   creditRetired: number;

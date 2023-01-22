@@ -74,6 +74,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
 import { dateTimeFormat } from '../Common/configs';
+import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 
 mapboxgl.accessToken =
   '';
@@ -321,7 +322,16 @@ const ProgrammeView = () => {
     }
   };
 
-  const onAction = async (action: string) => {
+  const onAction = async (action: string, body: any = undefined) => {
+    let error = undefined;
+    if (body) {
+      body.programmeId = data?.programmeId;
+    } else {
+      body = {
+        comment: comment,
+        programmeId: data?.programmeId,
+      };
+    }
     try {
       if (actionInfo.action !== 'Transfer') {
         setConfirmLoading(true);
@@ -333,14 +343,13 @@ const ProgrammeView = () => {
               ? 'authorize'
               : actionInfo.action === 'Certify'
               ? 'certify'
+              : actionInfo.action === 'Issue'
+              ? 'issue'
               : actionInfo.action === 'Revoke'
               ? 'revoke'
               : 'retire'
           }`,
-          {
-            comment: comment,
-            programmeId: data?.programmeId,
-          }
+          body
         );
         if (response.statusCode === 200 || response.status === 200) {
           if (!response.data.certifier) {
@@ -350,7 +359,8 @@ const ProgrammeView = () => {
           if (
             actionInfo.action === 'Authorise' ||
             actionInfo.action === 'Certify' ||
-            actionInfo.action === 'Revoke'
+            actionInfo.action === 'Revoke' ||
+            actionInfo.action === 'Issue'
           ) {
             setData(response.data);
             state.record = response.data;
@@ -363,6 +373,7 @@ const ProgrammeView = () => {
 
           setOpenModal(false);
           setComment(undefined);
+          error = undefined;
           message.open({
             type: 'success',
             content:
@@ -371,6 +382,8 @@ const ProgrammeView = () => {
                 ? 'rejected'
                 : actionInfo.action === 'Authorise'
                 ? 'authorised'
+                : actionInfo.action === 'Issue'
+                ? 'issued'
                 : actionInfo.action === 'Certify'
                 ? 'certified'
                 : actionInfo.action === 'Revoke'
@@ -386,11 +399,13 @@ const ProgrammeView = () => {
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
+          error = response.message;
         }
 
         await getProgrammeHistory(Number(data?.programmeId));
 
         setConfirmLoading(false);
+        return error;
       }
     } catch (e: any) {
       message.open({
@@ -400,6 +415,8 @@ const ProgrammeView = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       setConfirmLoading(false);
+      error = e.message;
+      return error;
     }
   };
 
@@ -548,11 +565,23 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Authorise',
-              text: ``,
+              text: t('view:popupText'),
               title: `${t('view:authTitle')} - ${data.title}?`,
               type: 'primary',
               remark: false,
-              icon: <LikeOutlined />,
+              icon: <Icon.ClipboardCheck />,
+              contentComp: (
+                <ProgrammeIssueForm
+                  programme={data}
+                  subText={t('view:popupText')}
+                  onCancel={() => {
+                    setOpenModal(false);
+                    setComment(undefined);
+                  }}
+                  actionBtnText={t('view:authorise')}
+                  onFinish={(body: any) => onAction('Authorise', body)}
+                />
+              ),
             });
             showModal();
           }}
@@ -566,6 +595,38 @@ const ProgrammeView = () => {
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      if (data.creditEst > data.creditIssued) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Issue',
+                text: t('view:popupText'),
+                title: `${t('view:issueTitle')} - ${data.title}?`,
+                type: 'primary',
+                remark: false,
+                icon: <Icon.Award />,
+                contentComp: (
+                  <ProgrammeIssueForm
+                    programme={data}
+                    subText={t('view:popupText')}
+                    onCancel={() => {
+                      setOpenModal(false);
+                      setComment(undefined);
+                    }}
+                    actionBtnText={t('view:issue')}
+                    onFinish={(body: any) => onAction('Issue', body)}
+                  />
+                ),
+              });
+              showModal();
+            }}
+          >
+            {t('view:authorise')}
+          </Button>
+        );
+      }
       actionBtns.push(
         <Button
           danger
@@ -988,7 +1049,7 @@ const ProgrammeView = () => {
         }
         className={'popup-' + actionInfo.type}
         open={openModal}
-        width={Math.min(400, window.innerWidth)}
+        width={Math.min(430, window.innerWidth)}
         centered={true}
         footer={null}
         onCancel={() => {
