@@ -963,6 +963,7 @@ const ProgrammeView = () => {
                                   icon: <Icon.BoxArrowInRight />,
                                   contentComp: (
                                     <ProgrammeTransferForm
+                                      userCompanyId={userInfoState?.companyId}
                                       receiverLabelText={t('view:by')}
                                       disableToCompany={true}
                                       toCompanyDefault={{
@@ -1006,6 +1007,7 @@ const ProgrammeView = () => {
                                   contentComp: (
                                     <ProgrammeTransferForm
                                       receiverLabelText={t('view:to')}
+                                      userCompanyId={userInfoState?.companyId}
                                       programme={data}
                                       subText={t('view:popupText')}
                                       onCancel={() => {

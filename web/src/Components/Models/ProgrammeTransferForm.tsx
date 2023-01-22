@@ -11,7 +11,7 @@ import {
   Select,
   SelectProps,
 } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { addCommSep, Programme } from '../../Definitions/InterfacesAndType/programme.definitions';
@@ -26,6 +26,7 @@ export interface ProgrammeTransferFormProps {
   disableToCompany?: boolean;
   toCompanyDefault?: any;
   receiverLabelText: string;
+  userCompanyId: number | undefined;
 }
 
 const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
@@ -40,6 +41,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     toCompanyDefault,
     disableToCompany,
     receiverLabelText,
+    userCompanyId,
   } = props;
   const { i18n, t } = useTranslation(['view']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
@@ -51,12 +53,8 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
   const [value, setValue] = useState<string>();
   const { get, delete: del, post } = useConnection();
 
-  if (!programme.creditOwnerPercentage && programme.companyId.length === 1) {
-    programme.creditOwnerPercentage = [100];
-  }
-
   const handleSearch = async (newValue: string) => {
-    if (newValue) {
+    if (newValue !== undefined) {
       const resp = await post('national/organisation/queryNames', {
         page: 1,
         size: 50,
@@ -72,7 +70,13 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
           order: 'ASC',
         },
       });
-      setCompanyList(resp.data.map((d: any) => ({ label: d.name, value: d.companyId })));
+      setCompanyList(
+        resp.data
+          .map((d: any) => ({ label: d.name, value: d.companyId }))
+          .filter((d: any) => {
+            return d.companyId !== userCompanyId;
+          })
+      );
     } else {
       setCompanyList(toCompanyDefault ? [toCompanyDefault] : []);
     }
@@ -81,6 +85,22 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
   const handleChange = (newValue: string) => {
     setValue(newValue);
   };
+
+  if (!toCompanyDefault) {
+    const myIndex = programme.companyId.indexOf(userCompanyId!);
+    if (myIndex >= 0) {
+      programme.companyId.splice(myIndex, 1);
+      programme.creditOwnerPercentage.splice(myIndex, 1);
+    }
+  }
+
+  if (!programme.creditOwnerPercentage && programme.companyId.length === 1) {
+    programme.creditOwnerPercentage = [100];
+  }
+
+  useEffect(() => {
+    handleSearch('');
+  }, []);
 
   return (
     <div className="transfer-form">
