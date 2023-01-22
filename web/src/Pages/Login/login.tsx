@@ -40,6 +40,7 @@ const Login = () => {
         id: response.data.id,
         role: response.data.role,
         companyId: response.data.companyId,
+        companyState: response.data.companyState,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -51,6 +52,7 @@ const Login = () => {
           companyId: response.data.companyId,
           companyRole: response.data.companyRole,
           companyLogo: response.data.companyLogo,
+          companyState: response.data.companyState,
         });
         removeToken();
         return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');

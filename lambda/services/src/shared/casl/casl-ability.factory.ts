@@ -89,6 +89,12 @@ export class CaslAbilityFactory {
       }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
       cannot(Action.Update, User, ['companyRole'])
+
+      if(user.companyState === 0){
+        cannot(Action.Create, 'all');
+        cannot(Action.Delete, 'all');
+        cannot(Action.Update, 'all');
+      }
     }
 
     return build({

@@ -49,4 +49,6 @@ export class User  implements EntitySubject{
 
     @Column({nullable: true, select: false})
     apiKey: string;
+
+    companyState: number;
 }

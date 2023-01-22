@@ -16,4 +16,6 @@ export class User implements BaseEntity {
   companyId?: number;
 
   companyRole?: string;
+
+  companyState?: number;
 }
