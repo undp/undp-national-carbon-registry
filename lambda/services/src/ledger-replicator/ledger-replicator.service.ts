@@ -7,7 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { ConfigService } from '@nestjs/config';
 import { CreditOverall } from '../shared/entities/credit.overall.entity';
 import { Company } from '../shared/entities/company.entity';
-import { TxType } from 'src/shared/enum/txtype.enum';
+import { TxType } from '../shared/enum/txtype.enum';
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";
@@ -55,9 +55,16 @@ export class LedgerReplicatorService {
                         const payload = ionRecord.get("payload").get("revision").get("data");
 
                         const overall: CreditOverall = plainToClass(CreditOverall, JSON.parse(JSON.stringify(payload)));
+                        const parts = overall.txId.split('#');
+                        const companyId = parseInt(parts[0]);
+                        let account;
+                        if (parts.length > 1) {
+                            account = parts[1]
+                        }
                         const company = await this.companyRepo.findOneBy({
-                            companyId: parseInt(overall.txId),
-                          });
+                            companyId: companyId,
+                        });
+
                         const meta = JSON.parse(JSON.stringify(ionRecord.get("payload").get("revision").get("metadata")));
                         
                         if (company && meta["version"]) {
@@ -65,16 +72,34 @@ export class LedgerReplicatorService {
                                 return
                             }
                         }
+
+                        let updateObj;
+                        if (account) {
+                            if (company.secondaryAccountBalance) {
+                                company.secondaryAccountBalance[account]['total'] = overall.credit
+                                company.secondaryAccountBalance[account]['count'] += 1
+                            } else {
+                                company.secondaryAccountBalance = { account: { 'total': overall.credit, 'count': 1 }}
+                            }
+
+                            updateObj = {
+                                secondaryAccountBalance: company.secondaryAccountBalance,
+                                lastUpdateVersion: parseInt(meta["version"])
+                            }
+                        } else {
+                            updateObj = {
+                                creditBalance: overall.credit,
+                                programmeCount: Number(company.programmeCount) + (overall.txType == TxType.ISSUE ? 1 : 0),
+                                lastUpdateVersion: parseInt(meta["version"])
+                            }
+                        }
+                    
                         const response = await this.companyRepo
                         .update(
                             {
                                 companyId: parseInt(overall.txId),
                             },
-                            {
-                                creditBalance: overall.credit,
-                                programmeCount: Number(company.programmeCount) + (overall.txType == TxType.ISSUE ? 1 : 0),
-                                lastUpdateVersion: parseInt(meta["version"])
-                            }
+                            updateObj
                         )
                         .catch((err: any) => {
                             this.logger.error(err);

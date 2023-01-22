@@ -37,6 +37,8 @@ import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.
 import { ProgrammeRetire } from '../dto/programme.retire';
 import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
 import { CompanyState } from '../enum/company.state.enum';
+import { ProgrammeReject } from '../dto/programme.reject';
+import { ProgrammeIssue } from '../dto/programme.issue';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -105,9 +107,10 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (!pTransfer.companyId.includes(approverCompanyId)) {
+        if (pTransfer.fromCompanyId != approverCompanyId) {
             throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
         }
+
         const result = await this.programmeTransferRepo.update({
             requestId: req.requestId,
             status: TransferStatus.PENDING
@@ -185,25 +188,23 @@ export class ProgrammeService {
             }
         }
         
-
-        if (req.companyIds && req.companyIds.length > 1 && (!req.companyCredit || req.companyCredit.length != req.companyIds.length)) {
-            throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
+        if (!transfer.isRetirement && transfer.fromCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
+        }
+        if (transfer.isRetirement && transfer.toCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
-        if (req.companyCredit && transfer.creditAmount != req.companyCredit.reduce((a, b) => a + b, 0)) {
-            throw new HttpException("Incorrect company percentage", HttpStatus.BAD_REQUEST)
-        }
+        const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
+        return await this.doTransfer(transfer, received.name, req.comment, transfer.isRetirement)
+    }
 
-        const received = await this.companyService.findByCompanyId(transfer.requesterCompanyId);
-        const programme = await this.programmeLedger.transferProgramme(transfer, req, received.name);
-
-        if (!programme.companyId.includes(approverCompanyId)) {
-            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
-        }
+    private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
+        const programme = await this.programmeLedger.transferProgramme(transfer, user, reason, isRetirement);
 
         this.logger.log('Programme updated');
         const result = await this.programmeTransferRepo.update({
-            requestId: req.requestId
+            requestId: transfer.requestId
         }, {
             status: TransferStatus.APPROVED
         }).catch((err) => {
@@ -251,42 +252,123 @@ export class ProgrammeService {
 
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
+        
+        if (req.fromCompanyIds.length > 1 ) {
+            if (!req.companyCredit) {
+                throw new HttpException("Company credit needs to define for multiple companies", HttpStatus.BAD_REQUEST)
+            } else if (req.fromCompanyIds.length != req.companyCredit.length){
+                throw new HttpException("Invalid company credit for given companies", HttpStatus.BAD_REQUEST)
+            }
+        }
+
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
+
+        if (!programme) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST)
+        }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
         if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
-            throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
+        // if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
+        //     throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
+        // }
+        // if (requester.companyRole != CompanyRole.GOVERNMENT && programme.companyId.includes(requester.companyId)) {
+        //     throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
+        // }
+
+        if (!req.fromCompanyIds) {
+            req.fromCompanyIds = programme.companyId;
         }
-        if (programme.companyId.includes(requester.companyId)) {
-            throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
+        if (!programme.creditOwnerPercentage) {
+            programme.creditOwnerPercentage = [100]
+        }
+        if (!req.companyCredit) {
+            req.companyCredit = programme.creditOwnerPercentage.map((p, i) => (programme.creditBalance*p/100 - (programme.creditFrozen ? programme.creditFrozen[i]: 0)));
         }
 
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
 
-        for (const companyId of programme.companyId) {
-            const company = await this.companyService.findByCompanyId(companyId);
-            await this.emailService.sendEmail(
-                company.email,
-                EmailTemplates.TRANSFER_REQUEST,
-                {
-                    "name": company.name,
-                    "requestedCompany": requestedCompany.name,
-                    "credits": req.creditAmount,
-                    "serialNo": programme.serialNo,
-                    "programmeName": programme.title
-                });
+        const allTransferList: ProgrammeTransfer[] = []
+        const autoApproveTransferList: ProgrammeTransfer[] = []
+        const ownershipMap = {}
+        const frozenCredit = {} 
+       
+        for (const i in programme.companyId) {
+            ownershipMap[programme.companyId[i]] = programme.creditOwnerPercentage[i]
+            if (programme.creditFrozen) {
+                frozenCredit[programme.companyId[i]] = programme.creditFrozen[i]
+            }
         }
+        
+        for (const j in req.fromCompanyIds) {
+            const fromCompanyId = req.fromCompanyIds[j]
+            this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
+            const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
 
-        const transfer = plainToClass(ProgrammeTransfer, req)
-        transfer.status = TransferStatus.PENDING;
-        transfer.txTime = new Date().getTime()
-        transfer.requesterId = requester.id;
-        transfer.requesterCompanyId = requester.companyId;
-        transfer.companyId = programme.companyId;
-        return await this.programmeTransferRepo.save(transfer);
+            if (!programme.companyId.includes(fromCompanyId)) {
+                throw new HttpException("Transfer request from company does own the programme", HttpStatus.BAD_REQUEST)
+            }
+
+            console.log(programme.creditBalance, ownershipMap[fromCompanyId], frozenCredit[fromCompanyId])
+            const companyAvailableCredit = (programme.creditBalance * ownershipMap[fromCompanyId] / 100) - (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0);
+
+            let transferCompanyCredit;
+            if (req.fromCompanyIds.length == 1 && !req.companyCredit) {
+                transferCompanyCredit = companyAvailableCredit;
+            } else {
+                transferCompanyCredit = req.companyCredit[j];
+            }
+
+            if (companyAvailableCredit < transferCompanyCredit) {
+                throw new HttpException(`Company ${fromCompany.name} does not have enough balance for the transfer. Available: ${companyAvailableCredit}`, HttpStatus.BAD_REQUEST)
+            }
+
+            if (transferCompanyCredit == 0) {
+                continue;
+            }
+
+            const transfer = new ProgrammeTransfer();
+            transfer.programmeId = req.programmeId;
+            transfer.fromCompanyId = fromCompanyId;
+            transfer.toCompanyId = req.toCompanyId;
+            transfer.initiator = requester.id;
+            transfer.initiatorCompanyId = requester.companyId;
+            transfer.txTime = new Date().getTime()
+            transfer.comment = req.comment;
+            transfer.creditAmount = transferCompanyCredit;
+            transfer.toAccount = req.toAccount;
+            transfer.isRetirement = false;
+
+            if (requester.companyId != fromCompanyId) {
+                transfer.status = TransferStatus.PENDING;
+                await this.emailService.sendEmail(
+                    fromCompany.email,
+                    EmailTemplates.TRANSFER_REQUEST,
+                    {
+                        "name": fromCompany.name,
+                        "requestedCompany": requestedCompany.name,
+                        "credits": transfer.creditAmount,
+                        "serialNo": programme.serialNo,
+                        "programmeName": programme.title
+                    });
+            } else {
+                transfer.status = TransferStatus.PROCESSING;
+                autoApproveTransferList.push(transfer);
+            }
+            allTransferList.push(transfer);
+        }
+        const results = await this.programmeTransferRepo.insert(allTransferList)
+        console.log(results)
+        for (const i in allTransferList) {
+            allTransferList[i].requestId = results.identifiers[i].requestId;
+        }
+        for (const trf of autoApproveTransferList) {
+            this.logger.log(`Credit send received ${trf}`)
+            await this.doTransfer(trf, requestedCompany.name, req.comment, false)
+        }
+        return new DataListResponseDto(allTransferList, allTransferList.length)
     }
 
     async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
@@ -452,11 +534,139 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async retireProgramme(req: ProgrammeRetire, user: string) {
+    async retireProgramme(req: ProgrammeRetire, requester: User, user: string) {
         this.logger.log(`Programme ${req.programmeId} retiring Comment: ${req.comment}`)
-        const updated: any = await this.programmeLedger.retireProgramme(req.programmeId, req.reason, user)
+        
+        if (req.fromCompanyIds && req.fromCompanyIds.length > 1 ) {
+            if (req.companyCredit && req.fromCompanyIds.length != req.companyCredit.length){
+                throw new HttpException("Invalid company credit for given companies", HttpStatus.BAD_REQUEST)
+            }
+        }
+
+        const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
+
+        if (!programme) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST)
+        }
+        this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
+
+        if (programme.currentStage != ProgrammeStage.ISSUED) {
+            throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
+        }
+
+        if (!req.fromCompanyIds) {
+            req.fromCompanyIds = programme.companyId;
+        }
+        if (!programme.creditOwnerPercentage) {
+            programme.creditOwnerPercentage = [100]
+        }
+        if (!req.companyCredit) {
+            req.companyCredit = programme.creditOwnerPercentage.map((p, i) => (programme.creditBalance*p/100 - (programme.creditFrozen ? programme.creditFrozen[i]: 0)));
+        }
+
+        const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
+        const toCompany = await this.companyService.findGovByCountry(this.configService.get('systemCountry'))
+
+        if (requestedCompany.companyRole != CompanyRole.GOVERNMENT && !programme.companyId.includes(requester.companyId)) {
+            throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
+        }
+
+        const allTransferList: ProgrammeTransfer[] = []
+        const autoApproveTransferList: ProgrammeTransfer[] = []
+        const ownershipMap = {}
+        const frozenCredit = {} 
+
+        for (const i in programme.companyId) {
+            ownershipMap[programme.companyId[i]] = programme.creditOwnerPercentage[i]
+            if (programme.creditFrozen) {
+                frozenCredit[programme.companyId[i]] = programme.creditFrozen[i]
+            }
+        }
+        
+        for (const j in req.fromCompanyIds) {
+            const fromCompanyId = req.fromCompanyIds[j]
+            this.logger.log(`Retire request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
+            const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
+
+            if (!programme.companyId.includes(fromCompanyId)) {
+                throw new HttpException("Retire request from company does own the programme", HttpStatus.BAD_REQUEST)
+            }
+            const companyAvailableCredit = (programme.creditBalance * ownershipMap[fromCompanyId] / 100) - (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0);
+
+            let transferCompanyCredit;
+            if (req.fromCompanyIds.length == 1 && !req.companyCredit) {
+                transferCompanyCredit = companyAvailableCredit;
+            } else {
+                transferCompanyCredit = req.companyCredit[j];
+            }
+
+            if (companyAvailableCredit < transferCompanyCredit) {
+                throw new HttpException(`Company ${fromCompany.name} does not have enough balance for the transfer. Available: ${companyAvailableCredit}`, HttpStatus.BAD_REQUEST)
+            }
+
+            if (transferCompanyCredit == 0) {
+                continue;
+            }
+
+            const transfer = new ProgrammeTransfer();
+            transfer.programmeId = req.programmeId;
+            transfer.fromCompanyId = fromCompanyId;
+            transfer.toCompanyId = toCompany.companyId;
+            transfer.initiator = requester.id;
+            transfer.initiatorCompanyId = requester.companyId;
+            transfer.txTime = new Date().getTime()
+            transfer.comment = req.comment;
+            transfer.creditAmount = transferCompanyCredit;
+            transfer.toAccount = req.toAccount;
+            transfer.isRetirement = true;
+            // await this.programmeTransferRepo.save(transfer);
+
+            if (requester.companyId != toCompany.companyId) {
+                transfer.status = TransferStatus.PENDING;
+                await this.emailService.sendEmail(
+                    toCompany.email,
+                    EmailTemplates.RETIRE_REQUEST,
+                    {
+                        "name": fromCompany.name,
+                        "requestedCompany": requestedCompany.name,
+                        "credits": transfer.creditAmount,
+                        "serialNo": programme.serialNo,
+                        "programmeName": programme.title
+                    });
+            } else {
+                transfer.status = TransferStatus.PROCESSING;
+                autoApproveTransferList.push(transfer);
+            }
+            allTransferList.push(transfer);
+        }
+        const results = await this.programmeTransferRepo.insert(allTransferList)
+        console.log(results)
+        for (const i in allTransferList) {
+            allTransferList[i].requestId = results.identifiers[i].requestId;
+        }
+        for (const trf of autoApproveTransferList) {
+            this.logger.log(`Retire auto approve received ${trf}`)
+            await this.doTransfer(trf, requestedCompany.name, req.comment, true)
+        }
+        return new DataListResponseDto(allTransferList, allTransferList.length)
+    }
+
+    async issueProgrammeCredit(req: ProgrammeIssue, user: string) {
+        this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
+        const program = await this.programmeLedger.getProgrammeById(req.programmeId);
+        if (!program) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
+        }
+
+        if (program.currentStage != ProgrammeStage.ISSUED) {
+            throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
+        }
+        if (program.creditEst - program.creditIssued < req.issueAmount) {
+            throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);
+        }
+        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
         if (!updated) {
-            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in issued status for the given programme id ${req.programmeId}`)
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
         }
 
         updated.company = await this.companyRepo.find({
@@ -470,34 +680,42 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async updateProgrammeStatus(req: ProgrammeApprove, status: ProgrammeStage, expectedCurrentStatus: ProgrammeStage, user: string) {
-        this.logger.log(`Programme ${req.programmeId} status updating to ${status}. Comment: ${req.comment}`)
-        if (status == ProgrammeStage.ISSUED) {
-            const program = await this.programmeLedger.getProgrammeById(req.programmeId);
-            if (!program) {
-                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
-            }
-            const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, user)
-            if (!updated) {
-                return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a programme in ${expectedCurrentStatus} status for the given programme id ${req.programmeId}`)
-            }
-
-            updated.company = await this.companyRepo.find({
-                where: { companyId: In(updated.companyId) },
-            })
-            if (updated.certifierId && updated.certifierId.length > 0) {
-                updated.certifier = await this.companyRepo.find({
-                    where: { companyId: In(updated.certifierId) },
-                })
-            }
-            return new DataResponseDto(HttpStatus.OK, updated)
-        } else {
-            const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, status, expectedCurrentStatus, user)
-            if (!updated) {
-                throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
-            }
-            return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
+    async approveProgramme(req: ProgrammeApprove, user: string) {
+        this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
+        const program = await this.programmeLedger.getProgrammeById(req.programmeId);
+        if (!program) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
 
+        if (program.currentStage != ProgrammeStage.AWAITING_AUTHORIZATION) {
+            throw new HttpException("Programme is not in pending state", HttpStatus.BAD_REQUEST);
+        }
+        if (program.creditEst < req.issueAmount) {
+            throw new HttpException("Programme issue credit amount can not exceed estimated credit amount", HttpStatus.BAD_REQUEST);
+        }
+        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
+        if (!updated) {
+            return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
+        }
+
+        updated.company = await this.companyRepo.find({
+            where: { companyId: In(updated.companyId) },
+        })
+        if (updated.certifierId && updated.certifierId.length > 0) {
+            updated.certifier = await this.companyRepo.find({
+                where: { companyId: In(updated.certifierId) },
+            })
+        }
+        return new DataResponseDto(HttpStatus.OK, updated)
+    }
+
+    async rejectProgramme(req: ProgrammeReject, user: string) {
+        this.logger.log(`Programme ${req.programmeId} reject. Comment: ${req.comment}`)
+
+        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, user)
+        if (!updated) {
+            throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
+        }
+        return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
     }
 }

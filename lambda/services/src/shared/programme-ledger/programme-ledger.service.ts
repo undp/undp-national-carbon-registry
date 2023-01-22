@@ -71,14 +71,11 @@ export class ProgrammeLedgerService {
 
   public async transferProgramme(
     transfer: ProgrammeTransfer,
-    approve: ProgrammeTransferApprove,
-    name: string
+    name: string,
+    reason: string,
+    isRetirement: boolean = false
   ) {
-    this.logger.log(
-      `Transfer programme ${JSON.stringify(transfer)} ${JSON.stringify(
-        approve
-      )}`
-    );
+    this.logger.log(`Transfer programme ${JSON.stringify(transfer)}`);
 
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
@@ -89,10 +86,10 @@ export class ProgrammeLedgerService {
       programmeId: transfer.programmeId,
     };
 
+    const toAccountID = transfer.toAccount ? ( transfer.toCompanyId + '#' + transfer.toAccount ) : ( transfer.toCompanyId + '' );
+    const fromAccount = String(transfer.fromCompanyId)
     getQueries[this.ledger.companyTableName] = {
-      txId: transfer.companyId
-        .map((e) => Number(e))
-        .concat([transfer.requesterCompanyId]),
+      txId: [fromAccount, toAccountID],
     };
     let updatedProgramme = undefined;
     const resp = await this.ledger.getAndUpdateTx(
@@ -127,19 +124,8 @@ export class ProgrammeLedgerService {
           );
         }
         const programme = programmes[0];
-
-        if (programme.creditOwnerPercentage && !approve.companyCredit) {
-          throw new HttpException(
-            `Must define each company credit since the programme owned by multiple companies`,
-            HttpStatus.BAD_REQUEST
-          );
-        }
-
-        if (programme.creditBalance < transfer.creditAmount) {
-          throw new HttpException(
-            `Not enough credits to full fill the transfer request in project ${transfer.programmeId}. Requests: ${transfer.creditAmount} Available: ${programme.creditBalance}`,
-            HttpStatus.BAD_REQUEST
-          );
+        if (!transfer.creditAmount) {
+          transfer.creditAmount = programme.creditBalance;
         }
 
         let companyCreditBalances = {};
@@ -156,15 +142,7 @@ export class ProgrammeLedgerService {
         }
 
         let companyCreditDistribution = {};
-        if (approve.companyCredit && programme.creditOwnerPercentage) {
-          if (programme.companyId.length != approve.companyIds.length) {
-            throw new HttpException(
-              `Does not defined percentages for all companies`,
-              HttpStatus.BAD_REQUEST
-            );
-          }
-
-          const companyIds = [];
+        if (programme.creditOwnerPercentage) {
           const percentages = [];
           const currentCredit = {};
           const frozenCredit = {};
@@ -175,57 +153,67 @@ export class ProgrammeLedgerService {
             
             frozenCredit[programme.companyId[i]] = programme.creditFrozen ? programme.creditFrozen[i] : 0;
           }
-          for (const i in approve.companyCredit) {
-            const changeCredit = approve.companyCredit[i];
-            if (!currentCredit[approve.companyIds[i]]) {
-              throw new HttpException(
-                `Company ${approve.companyIds[i]} is not an owner company of the programme`,
-                HttpStatus.BAD_REQUEST
-              );
-            }
-
-            if (currentCredit[approve.companyIds[i]] - frozenCredit[approve.companyIds[i]] < changeCredit) {
-              throw new HttpException(
-                `Company ${approve.companyIds[i]} does not have enough credits`,
-                HttpStatus.BAD_REQUEST
-              );
-            }
-
-            companyIds.push(approve.companyIds[i]);
-            companyCreditDistribution[approve.companyIds[i]] = -changeCredit;
-            percentages.push(
-              this.round2Precision(
-                ((currentCredit[approve.companyIds[i]] - changeCredit) * 100) /
-                  (programme.creditBalance - transfer.creditAmount)
-              )
+          if (!currentCredit[transfer.fromCompanyId]) {
+            throw new HttpException(
+              `Company ${transfer.fromCompanyId} is not an owner company of the programme`,
+              HttpStatus.BAD_REQUEST
             );
           }
 
+          if (currentCredit[transfer.fromCompanyId] - frozenCredit[transfer.fromCompanyId] < transfer.creditAmount) {
+            throw new HttpException(
+              `Company ${transfer.fromCompanyId} does not have enough credits`,
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          
+          for (const i in programme.creditOwnerPercentage) {
+              if (programme.companyId[i] == transfer.fromCompanyId) {
+                percentages.push(
+                  programme.creditBalance - transfer.creditAmount != 0 ? this.round2Precision(
+                    ((currentCredit[transfer.fromCompanyId] - transfer.creditAmount) * 100) /
+                      (programme.creditBalance - transfer.creditAmount)
+                  ) : 0
+                );
+              } else {
+                percentages.push(
+                  programme.creditBalance - transfer.creditAmount != 0 ? this.round2Precision(
+                    ((currentCredit[programme.companyId[i]]) * 100) /
+                      (programme.creditBalance - transfer.creditAmount)
+                  ) : 0
+                );
+              }
+          }
           programme.creditOwnerPercentage = percentages;
           this.logger.verbose("Updated owner percentages", percentages);
-          programme.companyId = companyIds;
-        } else if (programme.companyId.length == 1) {
-          companyCreditDistribution[programme.companyId[0]] =
-            -transfer.creditAmount;
-        } else {
-          throw new HttpException(
-            "Unexpected programme owner percentages",
-            HttpStatus.BAD_REQUEST
-          );
         }
 
-        companyCreditDistribution[transfer.requesterCompanyId] = transfer.creditAmount;
+        companyCreditDistribution[fromAccount] = -transfer.creditAmount;
+        companyCreditDistribution[toAccountID] = transfer.creditAmount;
 
+        const prvTxTime = programme.txTime;
         programme.txTime = new Date().getTime();
-        programme.txRef = `${transfer.requestId}#${name}`;
-        programme.txType = TxType.TRANSFER;
+        programme.txRef = `${transfer.requestId}#${name}#${reason}`;
+        
+        if (isRetirement) {
+          if (programme.creditBalance == transfer.creditAmount) {
+            programme.currentStage = ProgrammeStage.RETIRED;
+          }
+          programme.txType = TxType.RETIRE
+          if (!programme.creditRetired) {
+            programme.creditRetired = 0;
+          }
+          programme.creditRetired += transfer.creditAmount;
+        } else {
+          programme.txType = TxType.TRANSFER;
+          if (!programme.creditTransferred) {
+            programme.creditTransferred = 0;
+          }
+          programme.creditTransferred += transfer.creditAmount;
+        }
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
-
-        if (!programme.creditTransferred) {
-          programme.creditTransferred = 0;
-        }
-        programme.creditTransferred += transfer.creditAmount;
 
         // if (programme.creditBalance <= 0) {
         //   programme.currentStage = ProgrammeStage.TRANSFERRED;
@@ -247,6 +235,10 @@ export class ProgrammeLedgerService {
           uPayload["creditOwnerPercentage"] = programme.creditOwnerPercentage;
         }
 
+        if (isRetirement) {
+          uPayload['creditRetired'] = programme.creditRetired;
+        }
+
         let updateMap = {};
         let updateWhereMap = {};
         let insertMap = {};
@@ -254,10 +246,11 @@ export class ProgrammeLedgerService {
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programme.programmeId,
           currentStage: ProgrammeStage.ISSUED.valueOf(),
+          txTime: prvTxTime
         };
 
-        for (const com of programme.companyId.concat([transfer.requesterCompanyId])) {
-          if (companyCreditBalances[com]) {
+        for (const com of [fromAccount, toAccountID]) {
+          if (companyCreditBalances[com] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
                 companyCreditBalances[com] + companyCreditDistribution[com]
@@ -508,12 +501,17 @@ export class ProgrammeLedgerService {
             );
           }
   
-          if (!programme.creditOwnerPercentage) {
-            throw new HttpException(
-              "Not ownership percentage for the company",
-              HttpStatus.BAD_REQUEST
-            );
+          if (programme.companyId.length > 1 ) {
+            if (!programme.creditOwnerPercentage) {
+              throw new HttpException(
+                "Not ownership percentage for the company",
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          } else {
+            programme.creditOwnerPercentage = [100]
           }
+          
 
           const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
           if (!programme.creditFrozen) {
@@ -585,11 +583,15 @@ export class ProgrammeLedgerService {
             );
           }
   
-          if (!programme.creditOwnerPercentage) {
-            throw new HttpException(
-              "Not ownership percentage for the company",
-              HttpStatus.BAD_REQUEST
-            );
+          if (programme.companyId.length > 1 ) {
+            if (!programme.creditOwnerPercentage) {
+              throw new HttpException(
+                "Not ownership percentage for the company",
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          } else {
+            programme.creditOwnerPercentage = [100]
           }
 
           const freezeCredit = programme.creditBalance * programme.creditOwnerPercentage[index] / 100;
@@ -631,76 +633,76 @@ export class ProgrammeLedgerService {
     );
   }
 
-  public async retireProgramme(
-    programmeId: string,
-    reason: string,
-    user: string
-  ): Promise<boolean> {
-    this.logger.log(`Retiring programme:${programmeId} reason:${reason} user:${user}`);
-    const getQueries = {};
-    getQueries[this.ledger.tableName] = {
-      programmeId: programmeId,
-    };
+  // public async retireProgramme(
+  //   programmeId: string,
+  //   reason: string,
+  //   user: string
+  // ): Promise<boolean> {
+  //   this.logger.log(`Retiring programme:${programmeId} reason:${reason} user:${user}`);
+  //   const getQueries = {};
+  //   getQueries[this.ledger.tableName] = {
+  //     programmeId: programmeId,
+  //   };
 
-    let updatedProgramme;
-    const resp = await this.ledger.getAndUpdateTx(
-      getQueries,
-      (results: Record<string, dom.Value[]>) => {
-        const programmes: Programme[] = results[this.ledger.tableName].map(
-          (domValue) => {
-            return plainToClass(
-              Programme,
-              JSON.parse(JSON.stringify(domValue))
-            );
-          }
-        );
-        if (programmes.length <= 0) {
-          throw new HttpException(
-            "Programme does not exist",
-            HttpStatus.BAD_REQUEST
-          );
-        }
+  //   let updatedProgramme;
+  //   const resp = await this.ledger.getAndUpdateTx(
+  //     getQueries,
+  //     (results: Record<string, dom.Value[]>) => {
+  //       const programmes: Programme[] = results[this.ledger.tableName].map(
+  //         (domValue) => {
+  //           return plainToClass(
+  //             Programme,
+  //             JSON.parse(JSON.stringify(domValue))
+  //           );
+  //         }
+  //       );
+  //       if (programmes.length <= 0) {
+  //         throw new HttpException(
+  //           "Programme does not exist",
+  //           HttpStatus.BAD_REQUEST
+  //         );
+  //       }
 
-        let programme = programmes[0];
-        const prvTxTime = programme.txTime;
-        programme.currentStage = ProgrammeStage.RETIRED,
-        programme.txTime = new Date().getTime(),
-        programme.txRef = `${user}#${reason}`,
-        programme.txType = TxType.RETIRE
-        programme.creditRetired = programme.creditBalance;
-        programme.creditBalance = 0;
-        programme.creditChange = programme.creditRetired;
+  //       let programme = programmes[0];
+  //       const prvTxTime = programme.txTime;
+  //       programme.currentStage = ProgrammeStage.RETIRED,
+  //       programme.txTime = new Date().getTime(),
+  //       programme.txRef = `${user}#${reason}`,
+  //       programme.txType = TxType.RETIRE
+  //       programme.creditRetired = programme.creditBalance;
+  //       programme.creditBalance = 0;
+  //       programme.creditChange = programme.creditRetired;
 
-        let updateMap = {};
-        let updateWhere = {};
-        updateMap[this.ledger.tableName] = {
-          currentStage: programme.currentStage,
-          txType: programme.txType,
-          txTime: programme.txTime,
-          txRef: programme.txRef,
-          creditRetired: programme.creditRetired,
-          creditBalance: programme.creditBalance,
-          creditChange: programme.creditChange
-        };
-        updateWhere[this.ledger.tableName] = {
-          programmeId: programme.programmeId,
-          txTime: prvTxTime
-        };
+  //       let updateMap = {};
+  //       let updateWhere = {};
+  //       updateMap[this.ledger.tableName] = {
+  //         currentStage: programme.currentStage,
+  //         txType: programme.txType,
+  //         txTime: programme.txTime,
+  //         txRef: programme.txRef,
+  //         creditRetired: programme.creditRetired,
+  //         creditBalance: programme.creditBalance,
+  //         creditChange: programme.creditChange
+  //       };
+  //       updateWhere[this.ledger.tableName] = {
+  //         programmeId: programme.programmeId,
+  //         txTime: prvTxTime
+  //       };
 
-        updatedProgramme = programme;
-        return [updateMap, updateWhere, {}];
-      }
-    );
+  //       updatedProgramme = programme;
+  //       return [updateMap, updateWhere, {}];
+  //     }
+  //   );
 
-    const affected = resp[this.ledger.tableName];
-    if (affected && affected.length > 0) {
-      return updatedProgramme;
-    }
-    throw new HttpException(
-      "Programme failed to update",
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
+  //   const affected = resp[this.ledger.tableName];
+  //   if (affected && affected.length > 0) {
+  //     return updatedProgramme;
+  //   }
+  //   throw new HttpException(
+  //     "Programme failed to update",
+  //     HttpStatus.INTERNAL_SERVER_ERROR
+  //   );
+  // }
 
   public async updateProgrammeStatus(
     programmeId: string,
@@ -739,21 +741,21 @@ export class ProgrammeLedgerService {
     programmeId: string,
     countryCodeA2: string,
     companyIds: number[],
+    issueCredit: number,
     user: string
   ): Promise<Programme> {
     this.logger.log(`Authorizing programme ${programmeId}`);
 
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
-      programmeId: programmeId,
-      currentStage: ProgrammeStage.AWAITING_AUTHORIZATION,
+      programmeId: programmeId
     };
     getQueries[this.ledger.overallTableName] = {
       txId: countryCodeA2,
     };
 
     getQueries[this.ledger.companyTableName] = {
-      txId: companyIds,
+      txId: companyIds.map(e => String(e)),
     };
 
     let updatedProgramme = undefined;
@@ -821,7 +823,14 @@ export class ProgrammeLedgerService {
         programme.serialNo = serialNo;
         programme.txTime = new Date().getTime();
         programme.currentStage = ProgrammeStage.ISSUED;
-        programme.creditIssued = programme.creditEst;
+
+        if (!issueCredit) {
+          programme.creditIssued = programme.creditEst;
+          // programme.creditPending = 0
+        } else {
+          programme.creditIssued = issueCredit;
+          // programme.creditPending = programme.creditEst - issueCredit;
+        }
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
         programme.txRef = user;
@@ -831,12 +840,12 @@ export class ProgrammeLedgerService {
         let companyCreditDistribution = {};
         if (programme.creditOwnerPercentage) {
           for (const j in programme.creditOwnerPercentage) {
-            companyCreditDistribution[programme.companyId[j]] =
+            companyCreditDistribution[String(programme.companyId[j])] =
               (programme.creditIssued * programme.creditOwnerPercentage[j]) /
               100;
           }
         } else if (programme.companyId.length == 1) {
-          companyCreditDistribution[programme.companyId[0]] =
+          companyCreditDistribution[String(programme.companyId[0])] =
             programme.creditIssued;
         } else {
           throw new HttpException(
@@ -873,23 +882,23 @@ export class ProgrammeLedgerService {
         };
 
         for (const com of programme.companyId) {
-          if (companyCreditBalances[com]) {
+          if (companyCreditBalances[String(com)]) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
-                companyCreditBalances[com] + companyCreditDistribution[com]
+                companyCreditBalances[String(com)] + companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
               txType: TxType.ISSUE,
             };
             updateWhereMap[this.ledger.companyTableName + "#" + com] = {
-              txId: com,
+              txId: String(com),
             };
           } else {
             insertMap[this.ledger.companyTableName + "#" + com] = {
-              credit: this.round2Precision(companyCreditDistribution[com]),
+              credit: this.round2Precision(companyCreditDistribution[String(com)]),
               txRef: serialNo,
               txType: TxType.ISSUE,
-              txId: com,
+              txId: String(com),
             };
           }
         }
@@ -903,4 +912,139 @@ export class ProgrammeLedgerService {
     }
     return updatedProgramme;
   }
+
+  public async issueProgrammeStatus(
+    programmeId: string,
+    countryCodeA2: string,
+    companyIds: number[],
+    issueCredit: number,
+    user: string
+  ): Promise<Programme> {
+    this.logger.log(`Authorizing programme ${programmeId}`);
+
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId
+    };
+
+    getQueries[this.ledger.companyTableName] = {
+      txId: companyIds.map(e => String(e)),
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            "Programme does not exist",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let companyCreditBalances = {};
+        const companies = results[this.ledger.companyTableName].map(
+          (domValue) => {
+            return plainToClass(
+              CreditOverall,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        this.logger.verbose(results[this.ledger.companyTableName]);
+        for (const company of companies) {
+          companyCreditBalances[company.txId] = company.credit;
+        }
+
+        const programme = programmes[0];
+        programme.txTime = new Date().getTime();
+
+        if (!issueCredit) {
+          programme.creditChange = programme.creditEst - programme.creditIssued;
+          programme.creditIssued = programme.creditEst;
+          // programme.creditPending = 0
+        } else {
+          programme.creditIssued += issueCredit;
+          programme.creditChange = issueCredit;
+          // programme.creditPending = programme.creditEst - issueCredit;
+        }
+        const currentTotalBalance = programme.creditBalance;
+        programme.creditBalance += programme.creditChange;
+        programme.txRef = user;
+        programme.txType = TxType.ISSUE;
+        updatedProgramme = programme;
+
+        let companyCreditDistribution = {};
+        if (programme.creditOwnerPercentage) {
+          const percentages = [];
+          
+          for (const i in programme.creditOwnerPercentage) {
+            const currentCredit = (currentTotalBalance * programme.creditOwnerPercentage[i]) / 100;
+            const changeCredit =  (programme.creditChange * programme.proponentPercentage[i]) / 100;
+
+            companyCreditDistribution[String(programme.companyId[i])] = changeCredit;
+            percentages.push(
+              this.round2Precision(
+                ((currentCredit + changeCredit) * 100) /
+                  (programme.creditBalance)
+              )
+            );
+
+          }
+          programme.creditOwnerPercentage = percentages;
+          this.logger.verbose("Updated owner percentages", percentages);
+        } else {
+          companyCreditDistribution[String(programme.companyId[0])] = programme.creditChange;
+        }
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        updateMap[this.ledger.tableName] = {
+          creditIssued: programme.creditIssued,
+          creditBalance: programme.creditBalance,
+          creditChange: programme.creditChange,
+          txRef: programme.txRef,
+          txTime: programme.txTime,
+          txType: programme.txType,
+          creditOwnerPercentage: programme.creditOwnerPercentage
+        };
+        updateWhereMap[this.ledger.tableName] = {
+          programmeId: programmeId,
+          currentStage: ProgrammeStage.ISSUED.valueOf(),
+        };
+
+        for (const com of programme.companyId) {
+          console.log('Credit issue', com, companyCreditBalances[String(com)], companyCreditDistribution[String(com)])
+          if (companyCreditBalances[String(com)]) {
+            updateMap[this.ledger.companyTableName + "#" + com] = {
+              credit: this.round2Precision(
+                companyCreditBalances[String(com)] + companyCreditDistribution[String(com)]
+              ),
+              txRef: programme.serialNo,
+              txType: TxType.ISSUE,
+            };
+            updateWhereMap[this.ledger.companyTableName + "#" + com] = {
+              txId: String(com),
+            };
+          }
+        }
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
+
+    const affected = resp[this.ledger.tableName];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    return updatedProgramme;
+  }
 }
+

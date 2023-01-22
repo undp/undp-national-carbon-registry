@@ -8,18 +8,18 @@ export class ProgrammeTransferApprove {
     @IsNumber()
     requestId: number;
 
-    @ApiPropertyOptional()
-    @IsArray()
-    @IsInt({ each: true })
-    @IsOptional()
-    companyIds: number[];
+    // @ApiPropertyOptional()
+    // @IsArray()
+    // @IsInt({ each: true })
+    // @IsOptional()
+    // companyIds: number[];
 
-    @ApiPropertyOptional()
-    @IsArray()
-    @IsNumber({},{each: true})
-    @Min(0, { each: true })
-    @IsOptional()
-    companyCredit: number[];
+    // @ApiPropertyOptional()
+    // @IsArray()
+    // @IsNumber({},{each: true})
+    // @Min(0, { each: true })
+    // @IsOptional()
+    // companyCredit: number[];
 
     @ApiPropertyOptional()
     @IsString()
