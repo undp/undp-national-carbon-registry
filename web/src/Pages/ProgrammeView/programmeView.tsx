@@ -333,19 +333,19 @@ const ProgrammeView = () => {
       };
     }
     try {
-      if (actionInfo.action !== 'Transfer') {
+      if (action !== 'Transfer') {
         setConfirmLoading(true);
         const response: any = await put(
           `national/programme/${
-            actionInfo.action === 'Reject'
+            action === 'Reject'
               ? 'reject'
-              : actionInfo.action === 'Authorise'
+              : action === 'Authorise'
               ? 'authorize'
-              : actionInfo.action === 'Certify'
+              : action === 'Certify'
               ? 'certify'
-              : actionInfo.action === 'Issue'
+              : action === 'Issue'
               ? 'issue'
-              : actionInfo.action === 'Revoke'
+              : action === 'Revoke'
               ? 'revoke'
               : 'retire'
           }`,
@@ -357,16 +357,16 @@ const ProgrammeView = () => {
           }
 
           if (
-            actionInfo.action === 'Authorise' ||
-            actionInfo.action === 'Certify' ||
-            actionInfo.action === 'Revoke' ||
-            actionInfo.action === 'Issue'
+            action === 'Authorise' ||
+            action === 'Certify' ||
+            action === 'Revoke' ||
+            action === 'Issue'
           ) {
             setData(response.data);
             state.record = response.data;
             navigate('.', { state: { record: response.data } });
             genCerts(response.data, certTimes);
-          } else if (actionInfo.action === 'Reject') {
+          } else if (action === 'Reject') {
             data!.currentStage = ProgrammeStage.Rejected;
             setData(data);
           }
@@ -378,15 +378,15 @@ const ProgrammeView = () => {
             type: 'success',
             content:
               'Successfully ' +
-              (actionInfo.action === 'Reject'
+              (action === 'Reject'
                 ? 'rejected'
-                : actionInfo.action === 'Authorise'
+                : action === 'Authorise'
                 ? 'authorised'
-                : actionInfo.action === 'Issue'
+                : action === 'Issue'
                 ? 'issued'
-                : actionInfo.action === 'Certify'
+                : action === 'Certify'
                 ? 'certified'
-                : actionInfo.action === 'Revoke'
+                : action === 'Revoke'
                 ? 'revoked'
                 : 'retired'),
             duration: 3,
