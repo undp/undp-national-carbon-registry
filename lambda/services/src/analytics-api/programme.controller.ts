@@ -16,6 +16,7 @@ import { PoliciesGuardEx } from "../shared/casl/policy.guard";
 import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "../shared/dto/stat.dto";
 import { ChartStatList } from "../shared/dto/chartStats.list.dto";
+import { Programme } from "../shared/entities/programme.entity";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -47,6 +48,10 @@ export class ProgrammeController {
   )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("dashboardCharts")
+  // @UseGuards(
+  //   ApiKeyJwtAuthGuard,
+  //   PoliciesGuardEx(true, Action.Read, Programme, true)
+  // )
   async programmesStaticChartDetails(
     @Body() query: ChartStatList,
     @Request() req

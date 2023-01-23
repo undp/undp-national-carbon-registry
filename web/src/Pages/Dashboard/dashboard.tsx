@@ -217,17 +217,20 @@ const Dashboard = () => {
     };
   };
 
-  const onChangeRange = (dateMoment: any, dateString: any) => {
-    console.log(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-    console.log('****', dateString);
-    if (!dateMoment) {
-      setStartTime(0);
-      setEndTime(0);
-    }
-    if (dateMoment !== null && dateMoment[1] !== null) {
-      setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-      setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
-    } else {
+  const onChangeRange = async (dateMoment: any, dateString: any) => {
+    try {
+      if (!dateMoment) {
+        setStartTime(0);
+        setEndTime(0);
+      }
+      if (dateMoment !== null && dateMoment[1] !== null) {
+        setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+      } else {
+        setStartTime(0);
+        setEndTime(0);
+      }
+    } catch (e: any) {
       setStartTime(0);
       setEndTime(0);
     }
@@ -769,11 +772,14 @@ const Dashboard = () => {
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 15 days': [
+              'Last 7 days': [
                 moment().startOf('month'),
-                moment().startOf('month').add('15', 'days'),
+                moment().startOf('month').add('7', 'days'),
               ],
-              'This Month': [moment().startOf('month'), moment().endOf('month')],
+              'Last 14 days': [
+                moment().startOf('month'),
+                moment().startOf('month').add('14', 'days'),
+              ],
             }}
             showTime
             allowClear={true}

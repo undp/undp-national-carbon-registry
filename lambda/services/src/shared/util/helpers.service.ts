@@ -35,6 +35,13 @@ export class HelperService {
       )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
         data?.endDate
       )}`;
+    } else if (data?.type === "TOTAL_CREDITS_CERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+        data?.startDate
+      )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+        data?.endDate
+      )}`;
     }
 
     if (sql != "") {

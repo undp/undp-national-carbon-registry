@@ -99,7 +99,7 @@ const TransferLocationsMap: FC<TransferLocationsMapProps> = (props: TransferLoca
       if (mapContainerInternationalRef.current) {
         const map = new mapboxgl.Map({
           container: mapContainerInternationalRef.current || '',
-          zoom: 0.5,
+          zoom: 5,
           center: [0, 20],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',

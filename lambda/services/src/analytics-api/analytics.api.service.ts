@@ -369,6 +369,12 @@ export class AnalyticsAPIService {
         case ChartType.TOTAL_CREDITS_CERTIFIED:
           const startTimeCreditsCertified = query.startTime;
           const endTimeCreditsCertified = query.endTime;
+          const durationCreditCertified =
+            endTimeCreditsCertified - startTimeCreditsCertified;
+          const durationCreditInDaysCertified = Math.ceil(
+            durationCreditCertified / 1000 / 60 / 60 / 24
+          );
+          let sTimeCreditCertified = startTimeCreditsCertified;
           let paramsCreditsCertified: chartStatsRequestDto = {
             type: "TOTAL_CREDITS_CERTIFIED",
             startDate: startTimeCreditsCertified,
@@ -376,7 +382,12 @@ export class AnalyticsAPIService {
           };
           let totalResponseCreditsCertified = await this.programmeRepo
             .createQueryBuilder()
-            .select([`"programmeId"`, `"countryCodeA2"`, `"createdTime"`])
+            .select([
+              `"programmeId"`,
+              `"creditBalance"`,
+              `"certifierId"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsCreditsCertified,
@@ -384,7 +395,84 @@ export class AnalyticsAPIService {
               )
             )
             .getRawMany();
-          results[stat.type] = paramsCreditsCertified;
+          let duraionCreditCertifiedT: number;
+          let durationCreditCertifiedCounts: number;
+          if (durationCreditInDaysCertified > 31) {
+            duraionCreditCertifiedT = 2592000000;
+            durationCreditCertifiedCounts = Math.ceil(
+              durationCreditCertified / 1000 / 60 / 60 / 24 / 30
+            );
+          } else if (durationCreditInDaysCertified > 8) {
+            duraionCreditCertifiedT = 604800000;
+            durationCreditCertifiedCounts = Math.ceil(
+              durationCreditCertified / 1000 / 60 / 60 / 24 / 7
+            );
+          } else if (durationCreditInDaysCertified > 1) {
+            duraionCreditCertifiedT = 86400000;
+            durationCreditCertifiedCounts = Math.ceil(
+              durationCreditCertified / 1000 / 60 / 60 / 24
+            );
+          }
+          let dataCreditsCertified = {
+            certified: [],
+            uncertified: [],
+          };
+          for (let index = 1; index <= durationCreditCertifiedCounts; index++) {
+            let eTimeCreditCertified =
+              sTimeCreditCertified + duraionCreditCertifiedT;
+            let certifiedS = 0;
+            let unCertifiedS = 0;
+            // console.log("week count ---- ", index, { sTime, eTime });
+            for (
+              let indexProgramme = 0;
+              indexProgramme < totalResponseCreditsCertified.length;
+              indexProgramme++
+            ) {
+              if (
+                totalResponseCreditsCertified[indexProgramme]?.createdTime >=
+                  sTimeCreditCertified &&
+                totalResponseCreditsCertified[indexProgramme]?.createdTime <
+                  eTimeCreditCertified
+              ) {
+                if (
+                  totalResponseCreditsCertified[indexProgramme]
+                    ?.creditBalance !== null &&
+                  totalResponseCreditsCertified[indexProgramme]?.certifierId !==
+                    null
+                ) {
+                  certifiedS =
+                    certifiedS +
+                    parseFloat(
+                      totalResponseCreditsCertified[indexProgramme]
+                        ?.creditBalance
+                    );
+                }
+                if (
+                  totalResponseCreditsCertified[indexProgramme]
+                    ?.creditBalance !== null &&
+                  totalResponseCreditsCertified[indexProgramme]?.certifierId ===
+                    null
+                ) {
+                  unCertifiedS =
+                    unCertifiedS +
+                    parseFloat(
+                      totalResponseCreditsCertified[indexProgramme]
+                        ?.creditBalance
+                    );
+                }
+              }
+              if (indexProgramme === totalResponseCreditsCertified.length - 1) {
+                dataCreditsCertified?.certified.push({
+                  [sTimeCreditCertified]: certifiedS,
+                });
+                dataCreditsCertified?.uncertified.push({
+                  [sTimeCreditCertified]: unCertifiedS,
+                });
+              }
+            }
+            sTimeCreditCertified = eTimeCreditCertified;
+          }
+          results[stat.type] = dataCreditsCertified;
           break;
 
         case ChartType.PROGRAMME_LOCATIONS:
