@@ -680,6 +680,7 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_STATS_TRANSFERRED:
         case StatType.CREDIT_STATS_RETIRED:
         case StatType.CREDIT_STATS_ISSUED:
+        case StatType.CREDIT_STATS_ESTIMATED:
           const startTimeProgrammeCredits = query.startTime;
           const endTimeProgrammeCredits = query.endTime;
           const valuesCreditRequest: programmeStatusRequestDto = {

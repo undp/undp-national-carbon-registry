@@ -59,6 +59,7 @@ const Dashboard = () => {
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
+  const [estimatedCredits, setEstimatedCredits] = useState<number>();
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
@@ -184,6 +185,9 @@ const Dashboard = () => {
         },
         {
           type: 'CREDIT_STATS_ISSUED',
+        },
+        {
+          type: 'CREDIT_STATS_ESTIMATED',
         },
         {
           type: 'CREDIT_CERTIFIED',
@@ -515,10 +519,13 @@ const Dashboard = () => {
       setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
       setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      const creditAuthorized =
+        parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) -
+        parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum);
+      pieSeriesCreditsData.push(creditAuthorized);
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum));
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
 
       pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
       pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_UNCERTIFIED?.sum));
@@ -526,16 +533,19 @@ const Dashboard = () => {
       // pieSeriesCreditsCerifiedData.push(
       //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
       // );
-      let totalCredits = 0;
+      const totalCredits =
+        String(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) !== 'NaN'
+          ? parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum)
+          : 0;
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
         if (String(pieSeriesCreditsData[i]) === 'NaN') {
           if (i !== -1) {
             pieSeriesCreditsData[i] = 0;
           }
-          totalCredits = totalCredits + 0;
+          // totalCredits = totalCredits + 0;
         } else {
-          totalCredits = totalCredits + pieSeriesCreditsData[i];
+          // totalCredits = totalCredits + pieSeriesCreditsData[i];
         }
       }
       for (let j = 0; j < pieSeriesCreditsCerifiedData.length; j++) {

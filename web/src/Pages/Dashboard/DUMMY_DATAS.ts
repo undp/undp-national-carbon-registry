@@ -744,7 +744,7 @@ export const optionDonutPieA: any = {
     enabled: false,
   },
   colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
-  labels: ['Available', 'Transfered', 'Retired', 'Issued'],
+  labels: ['Authorised', 'Transfered', 'Retired', 'Issued'],
   plotOptions: {
     pie: {
       expandOnClick: false,
@@ -821,6 +821,7 @@ export const optionDonutPieA: any = {
     },
   ],
 };
+
 export const optionDonutPieB: any = {
   chart: {
     type: 'donut',
