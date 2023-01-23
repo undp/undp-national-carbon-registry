@@ -402,7 +402,7 @@ export class AnalyticsAPIService {
             durationCreditCertifiedCounts = Math.ceil(
               durationCreditCertified / 1000 / 60 / 60 / 24 / 30
             );
-          } else if (durationCreditInDaysCertified > 8) {
+          } else if (durationCreditInDaysCertified > 7) {
             duraionCreditCertifiedT = 604800000;
             durationCreditCertifiedCounts = Math.ceil(
               durationCreditCertified / 1000 / 60 / 60 / 24 / 7

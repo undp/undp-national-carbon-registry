@@ -10,6 +10,7 @@ import {
   optionDonutPieA,
   optionDonutPieB,
   seriesY,
+  totalCreditsCertifiedOptions,
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
@@ -83,6 +84,10 @@ const Dashboard = () => {
   const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
   const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+
+  // states for totalCreditsCertified chart
+  const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
@@ -209,6 +214,9 @@ const Dashboard = () => {
           type: 'TOTAL_CREDITS',
         },
         {
+          type: 'TOTAL_CREDITS_CERTIFIED',
+        },
+        {
           type: 'PROGRAMME_LOCATIONS',
         },
       ],
@@ -259,6 +267,9 @@ const Dashboard = () => {
       const issuedCredit: any = [];
       const retiredCredit: any = [];
       const transferredCredit: any = [];
+
+      const certifiedCredit: any = [];
+      const unCertifiedCredit: any = [];
 
       const response: any = await post(
         'analytics/programme/dashboardCharts',
@@ -401,6 +412,23 @@ const Dashboard = () => {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
       }
+      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
+        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
+        if (totalCredits?.certified) {
+          const certified = totalCredits?.certified;
+          certified?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            certifiedCredit.push(credit[0]);
+          });
+        }
+        if (totalCredits?.uncertified) {
+          const uncertified = totalCredits?.uncertified;
+          uncertified?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            unCertifiedCredit.push(credit[0]);
+          });
+        }
+      }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
       setIssuedProgrammes(issuedProgrames);
@@ -421,9 +449,12 @@ const Dashboard = () => {
       setIssuedCredits(issuedCredit);
       setRetiredCredits(retiredCredit);
       setTransferredCredits(transferredCredit);
+      setCertifiedCredits(certifiedCredit);
+      setUnCertifiedCredits(unCertifiedCredit);
       totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
       totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
       totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
+      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -631,6 +662,17 @@ const Dashboard = () => {
     {
       name: 'Transferred',
       data: transferredCredits,
+    },
+  ];
+
+  const seriesTotalCreditsCertifiedY = [
+    {
+      name: 'Certified',
+      data: certifiedCredits,
+    },
+    {
+      name: 'UnCertified',
+      data: unCertifiedCredits,
     },
   ];
 
@@ -866,8 +908,8 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               title="Total Credit Certified"
-              options={totalProgrammesOptions}
-              series={seriesY}
+              options={totalCreditsCertifiedOptions}
+              series={seriesTotalCreditsCertifiedY}
               lastUpdate={lastUpdate}
               loading={loading}
             />
