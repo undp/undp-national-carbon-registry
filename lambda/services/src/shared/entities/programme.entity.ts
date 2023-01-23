@@ -68,6 +68,9 @@ export class Programme implements EntitySubject {
     @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
     creditIssued: number;
 
+    // @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
+    // creditPending: number;
+
     @Column({type: "decimal", precision: 10, scale: PRECISION, nullable: true})
     creditBalance: number;
 

@@ -90,6 +90,7 @@ const CompanyProfile = () => {
         </div>
         <div className="flex-display">
           {['Admin', 'Root', 'Manager'].includes(userRole) &&
+          !isLoading &&
           parseInt(companyDetails.state) !== 0 ? (
             <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
               {t('companyProfile:deauthorise')}

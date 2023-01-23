@@ -74,12 +74,14 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
 import { dateTimeFormat } from '../Common/configs';
+import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
+import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 
 mapboxgl.accessToken =
   '';
 
 const ProgrammeView = () => {
-  const { get, put } = useConnection();
+  const { get, put, post } = useConnection();
 
   const { userInfoState } = useUserContext();
   const { state } = useLocation();
@@ -321,26 +323,77 @@ const ProgrammeView = () => {
     }
   };
 
-  const onAction = async (action: string) => {
+  const updateProgrammeData = (response: any) => {
+    setData(response.data);
+    state.record = response.data;
+    navigate('.', { state: { record: response.data } });
+    genCerts(response.data, certTimes);
+  };
+
+  const onPopupAction = async (
+    body: any,
+    endpoint: any,
+    successMsg: any,
+    httpMode: any,
+    successCB: any
+  ) => {
+    body.programmeId = data?.programmeId;
+    let error;
     try {
-      if (actionInfo.action !== 'Transfer') {
+      const response: any = await httpMode(`national/programme/${endpoint}`, body);
+      if (response.statusCode < 300 || response.status < 300) {
+        if (!response.data.certifier) {
+          response.data.certifier = [];
+        }
+        setOpenModal(false);
+        setComment(undefined);
+        error = undefined;
+        successCB(response);
+        message.open({
+          type: 'success',
+          content: successMsg,
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        error = response.message;
+      }
+      await getProgrammeHistory(Number(data?.programmeId));
+      return error;
+    } catch (e: any) {
+      error = e.message;
+      return error;
+    }
+  };
+
+  const onAction = async (action: string, body: any = undefined) => {
+    let error = undefined;
+    if (body) {
+      body.programmeId = data?.programmeId;
+    } else {
+      body = {
+        comment: comment,
+        programmeId: data?.programmeId,
+      };
+    }
+    try {
+      if (action !== 'Transfer') {
         setConfirmLoading(true);
         const response: any = await put(
           `national/programme/${
-            actionInfo.action === 'Reject'
+            action === 'Reject'
               ? 'reject'
-              : actionInfo.action === 'Authorise'
+              : action === 'Authorise'
               ? 'authorize'
-              : actionInfo.action === 'Certify'
+              : action === 'Certify'
               ? 'certify'
-              : actionInfo.action === 'Revoke'
+              : action === 'Issue'
+              ? 'issue'
+              : action === 'Revoke'
               ? 'revoke'
               : 'retire'
           }`,
-          {
-            comment: comment,
-            programmeId: data?.programmeId,
-          }
+          body
         );
         if (response.statusCode === 200 || response.status === 200) {
           if (!response.data.certifier) {
@@ -348,32 +401,36 @@ const ProgrammeView = () => {
           }
 
           if (
-            actionInfo.action === 'Authorise' ||
-            actionInfo.action === 'Certify' ||
-            actionInfo.action === 'Revoke'
+            action === 'Authorise' ||
+            action === 'Certify' ||
+            action === 'Revoke' ||
+            action === 'Issue'
           ) {
             setData(response.data);
             state.record = response.data;
             navigate('.', { state: { record: response.data } });
             genCerts(response.data, certTimes);
-          } else if (actionInfo.action === 'Reject') {
+          } else if (action === 'Reject') {
             data!.currentStage = ProgrammeStage.Rejected;
             setData(data);
           }
 
           setOpenModal(false);
           setComment(undefined);
+          error = undefined;
           message.open({
             type: 'success',
             content:
               'Successfully ' +
-              (actionInfo.action === 'Reject'
+              (action === 'Reject'
                 ? 'rejected'
-                : actionInfo.action === 'Authorise'
+                : action === 'Authorise'
                 ? 'authorised'
-                : actionInfo.action === 'Certify'
+                : action === 'Issue'
+                ? 'issued'
+                : action === 'Certify'
                 ? 'certified'
-                : actionInfo.action === 'Revoke'
+                : action === 'Revoke'
                 ? 'revoked'
                 : 'retired'),
             duration: 3,
@@ -386,11 +443,13 @@ const ProgrammeView = () => {
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
+          error = response.message;
         }
 
         await getProgrammeHistory(Number(data?.programmeId));
 
         setConfirmLoading(false);
+        return error;
       }
     } catch (e: any) {
       message.open({
@@ -400,6 +459,8 @@ const ProgrammeView = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       setConfirmLoading(false);
+      error = e.message;
+      return error;
     }
   };
 
@@ -548,11 +609,31 @@ const ProgrammeView = () => {
           onClick={() => {
             setActionInfo({
               action: 'Authorise',
-              text: ``,
+              text: t('view:popupText'),
               title: `${t('view:authTitle')} - ${data.title}?`,
               type: 'primary',
               remark: false,
-              icon: <LikeOutlined />,
+              icon: <Icon.ClipboardCheck />,
+              contentComp: (
+                <ProgrammeIssueForm
+                  programme={data}
+                  subText={t('view:popupText')}
+                  onCancel={() => {
+                    setOpenModal(false);
+                    setComment(undefined);
+                  }}
+                  actionBtnText={t('view:authorise')}
+                  onFinish={(body: any) =>
+                    onPopupAction(
+                      body,
+                      'authorize',
+                      t('view:successAuth'),
+                      put,
+                      updateProgrammeData
+                    )
+                  }
+                />
+              ),
             });
             showModal();
           }}
@@ -606,6 +687,41 @@ const ProgrammeView = () => {
           {t('view:retire')}
         </Button>
       );
+
+      if (Number(data.creditEst) > Number(data.creditIssued)) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              setActionInfo({
+                action: 'Issue',
+                text: t('view:popupText'),
+                title: `${t('view:issueTitle')} - ${data.title}?`,
+                type: 'primary',
+                remark: false,
+                icon: <Icon.Award />,
+                contentComp: (
+                  <ProgrammeIssueForm
+                    programme={data}
+                    subText={t('view:popupText')}
+                    onCancel={() => {
+                      setOpenModal(false);
+                      setComment(undefined);
+                    }}
+                    actionBtnText={t('view:issue')}
+                    onFinish={(body: any) =>
+                      onPopupAction(body, 'issue', t('view:successIssue'), put, onPopupAction)
+                    }
+                  />
+                ),
+              });
+              showModal();
+            }}
+          >
+            {t('view:issue')}
+          </Button>
+        );
+      }
     }
   }
   //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
@@ -831,6 +947,95 @@ const ProgrammeView = () => {
                       width="100%"
                       fontFamily="inter"
                     />
+                    {userInfoState?.userRole !== 'ViewOnly' && (
+                      <div className="flex-display action-btns">
+                        {data.currentStage.toString() === ProgrammeStage.Issued && (
+                          <div>
+                            <Button
+                              type="primary"
+                              onClick={() => {
+                                setActionInfo({
+                                  action: 'Request',
+                                  text: '',
+                                  title: t('view:transferTitle'),
+                                  type: 'primary',
+                                  remark: true,
+                                  icon: <Icon.BoxArrowInRight />,
+                                  contentComp: (
+                                    <ProgrammeTransferForm
+                                      userCompanyId={userInfoState?.companyId}
+                                      receiverLabelText={t('view:by')}
+                                      disableToCompany={true}
+                                      toCompanyDefault={{
+                                        label: userInfoState?.companyName,
+                                        value: userInfoState?.companyId,
+                                      }}
+                                      programme={data}
+                                      subText={t('view:popupText')}
+                                      onCancel={() => {
+                                        setOpenModal(false);
+                                        setComment(undefined);
+                                      }}
+                                      actionBtnText={t('view:request')}
+                                      onFinish={(body: any) =>
+                                        onPopupAction(
+                                          body,
+                                          'transferRequest',
+                                          t('view:successRequest'),
+                                          post,
+                                          () => {}
+                                        )
+                                      }
+                                    />
+                                  ),
+                                });
+                                showModal();
+                              }}
+                            >
+                              {t('view:transfer')}
+                            </Button>
+                            <Button
+                              type="primary"
+                              onClick={() => {
+                                setActionInfo({
+                                  action: 'Send',
+                                  text: '',
+                                  title: t('view:sendCreditTitle'),
+                                  type: 'primary',
+                                  remark: true,
+                                  icon: <Icon.BoxArrowRight />,
+                                  contentComp: (
+                                    <ProgrammeTransferForm
+                                      receiverLabelText={t('view:to')}
+                                      userCompanyId={userInfoState?.companyId}
+                                      programme={data}
+                                      subText={t('view:popupText')}
+                                      onCancel={() => {
+                                        setOpenModal(false);
+                                        setComment(undefined);
+                                      }}
+                                      actionBtnText={t('view:send')}
+                                      onFinish={(body: any) =>
+                                        onPopupAction(
+                                          body,
+                                          'transferRequest',
+                                          t('view:successSend'),
+                                          post,
+                                          () => {}
+                                        )
+                                      }
+                                    />
+                                  ),
+                                });
+                                showModal();
+                              }}
+                            >
+                              {t('view:send')}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card>
@@ -947,7 +1152,7 @@ const ProgrammeView = () => {
         }
         className={'popup-' + actionInfo.type}
         open={openModal}
-        width={Math.min(400, window.innerWidth)}
+        width={Math.min(430, window.innerWidth)}
         centered={true}
         footer={null}
         onCancel={() => {

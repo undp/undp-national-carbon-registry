@@ -10,7 +10,6 @@ export enum ProgrammeStage {
 }
 
 export enum ProgrammeTransferStage {
-  PROCESSING = 'Process',
   APPROVED = 'Approved',
   REJECTED = 'Rejected',
   PENDING = 'Pending',
@@ -21,7 +20,6 @@ export enum CreditTransferStage {
   Pending = 'Pending',
   Approved = 'Approved',
   Rejected = 'Rejected',
-  Process = 'Process',
 }
 
 export enum TxType {
@@ -79,8 +77,6 @@ export const getTransferStageTagType = (stage: ProgrammeTransferStage) => {
   switch (getStageEnumVal(stage)) {
     case ProgrammeTransferStage.REJECTED:
       return 'error';
-    case ProgrammeTransferStage.PROCESSING:
-      return 'success';
     case ProgrammeTransferStage.APPROVED:
       return 'processing';
     case ProgrammeTransferStage.PENDING:
@@ -124,6 +120,7 @@ export interface Programme {
   endTime: number;
   creditChange: number;
   creditIssued: number;
+  creditEst: number;
   creditBalance: number;
   creditTransferred: number;
   creditRetired: number;

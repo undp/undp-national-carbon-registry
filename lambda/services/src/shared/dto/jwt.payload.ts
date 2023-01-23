@@ -8,7 +8,8 @@ export class JWTPayload {
         public sub: number,
         public r: Role,
         public cid: number,
-        public cr: CompanyRole
+        public cr: CompanyRole,
+        public s: number
     ) {
 
     }

@@ -829,14 +829,16 @@ const Dashboard = () => {
           />
         </div>
         <div className="radio-selection">
-          <Radio.Group value={categoryType} onChange={onChangeCategory}>
-            <Radio.Button className="overall" value="overall">
-              OVERALL
-            </Radio.Button>
-            <Radio.Button className="mine" value="mine">
-              MINE
-            </Radio.Button>
-          </Radio.Group>
+          {companyRole === 'Certifier' && (
+            <Radio.Group value={categoryType} onChange={onChangeCategory}>
+              <Radio.Button className="overall" value="overall">
+                OVERALL
+              </Radio.Button>
+              <Radio.Button className="mine" value="mine">
+                MINE
+              </Radio.Button>
+            </Radio.Group>
+          )}
         </div>
       </div>
       <div className="stastics-and-charts-container center">

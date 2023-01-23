@@ -79,10 +79,10 @@ export class HelperService {
     let col = "";
 
     if (data?.type === "TRANSFER_REQUEST_SENT") {
-      col = "requesterCompanyId";
+      col = "fromCompanyId";
       sql = `${table ? table + "." : ""}"${col}" is not null`;
     } else if (data?.type === "TRANSFER_REQUEST_RECEIVED") {
-      col = "companyId";
+      col = "toCompanyId";
       sql = `${table ? table + "." : ""}"${col}" is not null`;
     } else if (data?.type === "PROGRAMS_CERTIFIED") {
       col = "certifierId";
