@@ -14,7 +14,11 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { addCommSep, Programme } from '../../Definitions/InterfacesAndType/programme.definitions';
+import {
+  addCommSep,
+  CompanyRole,
+  Programme,
+} from '../../Definitions/InterfacesAndType/programme.definitions';
 import { creditUnit } from '../../Pages/Common/configs';
 
 export interface ProgrammeTransferFormProps {
@@ -27,6 +31,7 @@ export interface ProgrammeTransferFormProps {
   toCompanyDefault?: any;
   receiverLabelText: string;
   userCompanyId: number | undefined;
+  companyRole: string;
 }
 
 const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
@@ -42,6 +47,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     disableToCompany,
     receiverLabelText,
     userCompanyId,
+    companyRole,
   } = props;
   const { i18n, t } = useTranslation(['view']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
@@ -86,16 +92,39 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     setValue(newValue);
   };
 
-  if (!toCompanyDefault) {
-    const myIndex = programme.companyId.indexOf(userCompanyId!);
-    if (myIndex >= 0) {
-      programme.companyId.splice(myIndex, 1);
-      programme.creditOwnerPercentage.splice(myIndex, 1);
-    }
-  }
+  // if (!toCompanyDefault) {
+  //   const myIndex = programme.companyId.map(e => Number(e)).indexOf(userCompanyId!);
+  //   if (myIndex >= 0) {
+  //     programme.companyId.splice(myIndex, 1);
+  //     programme.creditOwnerPercentage.splice(myIndex, 1);
+  //   }
+  // }
 
   if (!programme.creditOwnerPercentage && programme.companyId.length === 1) {
     programme.creditOwnerPercentage = [100];
+  }
+
+  const validCompanies = [];
+  let totalCredits = 0;
+  for (const index in programme.creditOwnerPercentage) {
+    if (
+      (toCompanyDefault && userCompanyId !== programme.company[index].companyId) ||
+      (!toCompanyDefault &&
+        (userCompanyId === programme.company[index].companyId ||
+          companyRole === CompanyRole.GOVERNMENT))
+    ) {
+      const companyAvailableTotal =
+        ((programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *
+          programme.creditOwnerPercentage[index]) /
+        100;
+      validCompanies.push({
+        percentage: programme.creditOwnerPercentage[index],
+        name: programme.company[index].name,
+        available: companyAvailableTotal,
+      });
+
+      totalCredits += companyAvailableTotal;
+    }
   }
 
   useEffect(() => {
@@ -171,16 +200,11 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             </Form.Item>
           </Col>
         </Row>
-        {programme.creditOwnerPercentage.map((pert, index) => {
-          const companyAvailableTotal =
-            ((programme.creditBalance -
-              (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *
-              pert) /
-            100;
+        {validCompanies.map((pert, index) => {
           return (
             <Row>
               <Col lg={11} md={24}>
-                <div className="label">{programme.company[index].name}</div>
+                <div className="label">{pert.name}</div>
               </Col>
               <Col lg={6} md={12}>
                 <Form.Item
@@ -195,8 +219,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                       validator(rule, v) {
                         if (
                           getFieldValue(['companyCredit', index]) &&
-                          parseFloat(getFieldValue(['companyCredit', index])) >
-                            companyAvailableTotal
+                          parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                         ) {
                           // eslint-disable-next-line prefer-promise-reject-errors
                           return Promise.reject('> estimated');
@@ -214,13 +237,13 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
               </Col>
               <Col lg={6} md={12}>
                 <Form.Item className="popup-credit-input">
-                  <Input placeholder={addCommSep(companyAvailableTotal)} disabled />
+                  <Input placeholder={addCommSep(totalCredits)} disabled />
                 </Form.Item>
               </Col>
             </Row>
           );
         })}
-        {programme.creditOwnerPercentage.length > 1 && (
+        {validCompanies.length > 1 && (
           <Row>
             <Col lg={11} md={24}>
               <div className="label">{`${t('view:totalTransferCredit')} (${creditUnit})`}</div>
