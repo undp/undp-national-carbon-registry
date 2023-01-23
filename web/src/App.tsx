@@ -22,12 +22,24 @@ import Homepage from './Pages/Homepage/homepage';
 import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
-import { defineAbility } from './Casl/ability';
+import { defineAbility, updateUserAbility } from './Casl/ability';
 
 const App = () => {
   const ability = defineAbility();
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
+    if (
+      localStorage.getItem('companyId') &&
+      localStorage.getItem('userRole') &&
+      localStorage.getItem('userId') &&
+      localStorage.getItem('companyState')
+    )
+      updateUserAbility(ability, {
+        id: parseInt(localStorage.getItem('userId') as string),
+        role: localStorage.getItem('userRole') as string,
+        companyId: parseInt(localStorage.getItem('companyId') as string),
+        companyState: parseInt(localStorage.getItem('companyState') as string),
+      });
   }, []);
   return (
     <AbilityContext.Provider value={ability}>
