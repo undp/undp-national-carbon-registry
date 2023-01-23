@@ -710,7 +710,7 @@ const ProgrammeView = () => {
                     }}
                     actionBtnText={t('view:issue')}
                     onFinish={(body: any) =>
-                      onPopupAction(body, 'issue', t('view:successIssue'), put, onPopupAction)
+                      onPopupAction(body, 'issue', t('view:successIssue'), put, updateProgrammeData)
                     }
                   />
                 ),
