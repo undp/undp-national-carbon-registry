@@ -35,9 +35,12 @@ export class ProgrammeController {
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("dashboard")
   async programmesStaticDetails(@Body() query: StatList, @Request() req) {
+    const companyId =
+      req?.user?.companyId !== null ? req?.user?.companyId : null;
     return this.analyticsService.programmesStaticDetails(
       req.abilityCondition,
-      query
+      query,
+      companyId
     );
   }
 
@@ -48,17 +51,16 @@ export class ProgrammeController {
   )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("dashboardCharts")
-  // @UseGuards(
-  //   ApiKeyJwtAuthGuard,
-  //   PoliciesGuardEx(true, Action.Read, Programme, true)
-  // )
   async programmesStaticChartDetails(
     @Body() query: ChartStatList,
     @Request() req
   ) {
+    const companyId =
+      req?.user?.companyId !== null ? req?.user?.companyId : null;
     return this.analyticsService.programmesStaticChartsDetails(
       req.abilityCondition,
-      query
+      query,
+      companyId
     );
   }
 }

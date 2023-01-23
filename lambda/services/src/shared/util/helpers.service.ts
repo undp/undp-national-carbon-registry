@@ -45,6 +45,22 @@ export class HelperService {
     }
 
     if (sql != "") {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `(${sql}) and ${
+          table ? table + "." : ""
+        }"${colCheck}" @> '{${companyId}}'`;
+      }
+    } else {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `${table ? table + "." : ""}"${colCheck}" @> '{${companyId}}'`;
+      }
+    }
+
+    if (sql != "") {
       if (extraSQL) {
         sql = `(${sql}) and (${extraSQL})`;
       }
@@ -128,6 +144,22 @@ export class HelperService {
         }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
           table ? table + "." : ""
         }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+      }
+    }
+
+    if (sql != "") {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `(${sql}) and ${
+          table ? table + "." : ""
+        }"${colCheck}" @> '{${companyId}}'`;
+      }
+    } else {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `${table ? table + "." : ""}"${colCheck}" @> '{${companyId}}'`;
       }
     }
 

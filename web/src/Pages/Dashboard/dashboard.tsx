@@ -62,6 +62,7 @@ const Dashboard = () => {
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
+  const [categoryType, setCategoryType] = useState<string>('overall');
 
   const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
@@ -143,6 +144,7 @@ const Dashboard = () => {
           type: 'PROGRAMS_UNCERTIFIED',
         },
       ],
+      category: 'overall',
     };
   };
 
@@ -196,6 +198,7 @@ const Dashboard = () => {
           type: 'CREDIT_CERTIFIED_ISSUED',
         },
       ],
+      category: categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
@@ -220,6 +223,7 @@ const Dashboard = () => {
           type: 'PROGRAMME_LOCATIONS',
         },
       ],
+      category: categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
@@ -586,7 +590,7 @@ const Dashboard = () => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime]);
+  }, [startTime, endTime, categoryType]);
 
   const seriesTotalProgrammesY = [
     {
@@ -716,6 +720,11 @@ const Dashboard = () => {
     }, 1000);
   }, [programmeLocations]);
 
+  const onChangeCategory = (event: any) => {
+    console.log('val -- - - - -> ', event?.target?.value);
+    setCategoryType(event?.target?.value);
+  };
+
   return (
     <div className="dashboard-main-container">
       <div className="stastics-cards-container">
@@ -830,7 +839,7 @@ const Dashboard = () => {
           />
         </div>
         <div className="radio-selection">
-          <Radio.Group defaultValue="overall">
+          <Radio.Group value={categoryType} onChange={onChangeCategory}>
             <Radio.Button className="overall" value="overall">
               OVERALL
             </Radio.Button>

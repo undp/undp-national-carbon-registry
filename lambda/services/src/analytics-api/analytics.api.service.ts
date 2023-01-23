@@ -34,10 +34,13 @@ export class AnalyticsAPIService {
 
   async programmesStaticChartsDetails(
     abilityCondition: string,
-    query: ChartStatList
+    query: ChartStatList,
+    companyId: any
   ): Promise<ChartStatsResponseDto> {
     let result: chartStatsResultSend = chartStatsResultInitialValueSend;
     let resultsX: chartStatsResultSend = chartStatsResultInitialValueSend;
+    let userCompanyId = companyId;
+    let category = query?.category;
     let results = {};
     for (const stat of query.stats) {
       switch (stat.type) {
@@ -51,12 +54,19 @@ export class AnalyticsAPIService {
           let sTime = startTime;
           let params: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startDate: startTime,
             endDate: endTime,
           };
           let totalProgrammesResponse = await this.programmeRepo
             .createQueryBuilder()
-            .select([`"programmeId"`, `"currentStage"`, `"createdTime"`])
+            .select([
+              `"programmeId"`,
+              `"currentStage"`,
+              `"companyId"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 params,
@@ -131,12 +141,19 @@ export class AnalyticsAPIService {
           let sTimeSector = startTimeSector;
           let paramsSector: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startDate: startTimeSector,
             endDate: endTimeSector,
           };
           let totalProgrammesResponseSector = await this.programmeRepo
             .createQueryBuilder()
-            .select([`"programmeId"`, `"sector"`, `"createdTime"`])
+            .select([
+              `"programmeId"`,
+              `"sector"`,
+              `"companyId"`,
+              `"createdTime"`,
+            ])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsSector,
@@ -255,6 +272,8 @@ export class AnalyticsAPIService {
           let sTimeCredit = startTimeCredit;
           let paramsCredit: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startDate: startTimeCredit,
             endDate: endTimeCredit,
           };
@@ -262,6 +281,7 @@ export class AnalyticsAPIService {
             .createQueryBuilder()
             .select([
               `"programmeId"`,
+              `"companyId"`,
               `"creditIssued"`,
               `"creditBalance"`,
               `"creditTransferred"`,
@@ -377,6 +397,8 @@ export class AnalyticsAPIService {
           let sTimeCreditCertified = startTimeCreditsCertified;
           let paramsCreditsCertified: chartStatsRequestDto = {
             type: "TOTAL_CREDITS_CERTIFIED",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startDate: startTimeCreditsCertified,
             endDate: endTimeCreditsCertified,
           };
@@ -384,6 +406,7 @@ export class AnalyticsAPIService {
             .createQueryBuilder()
             .select([
               `"programmeId"`,
+              `"companyId"`,
               `"creditBalance"`,
               `"certifierId"`,
               `"createdTime"`,
@@ -480,6 +503,8 @@ export class AnalyticsAPIService {
           const endTimeProgrammeLocations = query.endTime;
           let paramsProgrammeLocations: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startDate: startTimeProgrammeLocations,
             endDate: endTimeProgrammeLocations,
           };
@@ -487,6 +512,7 @@ export class AnalyticsAPIService {
             .createQueryBuilder()
             .select([
               `"programmeId"`,
+              `"companyId"`,
               `"countryCodeA2"`,
               `"programmeProperties"`,
               `"createdTime"`,
@@ -521,8 +547,11 @@ export class AnalyticsAPIService {
 
   async programmesStaticDetails(
     abilityCondition: string,
-    query: StatList
+    query: StatList,
+    companyId: any
   ): Promise<DataCountResponseDto> {
+    let userCompanyId = companyId;
+    let category = query?.category;
     let results = {};
     for (const stat of query.stats) {
       switch (stat.type) {
@@ -531,6 +560,8 @@ export class AnalyticsAPIService {
           const endTimeProgramme = query.endTime;
           const valuesProgrammes: programmeStatusRequestDto = {
             type: "TOTAL_PROGRAMS",
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startTime: startTimeProgramme,
             endTime: endTimeProgramme,
           };
@@ -552,6 +583,8 @@ export class AnalyticsAPIService {
           const values: programmeStatusRequestDto = {
             type: "PROGRAMS_BY_STATUS",
             value: stat.value,
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startTime: startTimeProgrammeStatus,
             endTime: endTimeProgrammeStatus,
           };
@@ -651,6 +684,8 @@ export class AnalyticsAPIService {
           const endTimeProgrammeCredits = query.endTime;
           const valuesCreditRequest: programmeStatusRequestDto = {
             type: stat.type,
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startTime: startTimeProgrammeCredits,
             endTime: endTimeProgrammeCredits,
           };
@@ -675,6 +710,8 @@ export class AnalyticsAPIService {
           const endTimeProgrammeCreditsCertified = query.endTime;
           const certifiedRequestParams: programmeStatusRequestDto = {
             type: stat.type,
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
             startTime: startTimeProgrammeCreditsCertified,
             endTime: endTimeProgrammeCreditsCertified,
           };
