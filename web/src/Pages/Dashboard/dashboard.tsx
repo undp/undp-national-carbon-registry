@@ -10,6 +10,7 @@ import {
   optionDonutPieA,
   optionDonutPieB,
   seriesY,
+  totalCreditsCertifiedOptions,
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
@@ -56,11 +57,12 @@ const Dashboard = () => {
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
-  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0, 0]);
+  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
+  const [categoryType, setCategoryType] = useState<string>('overall');
 
   const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
@@ -83,6 +85,10 @@ const Dashboard = () => {
   const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
   const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+
+  // states for totalCreditsCertified chart
+  const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
@@ -138,6 +144,7 @@ const Dashboard = () => {
           type: 'PROGRAMS_UNCERTIFIED',
         },
       ],
+      category: 'overall',
     };
   };
 
@@ -179,18 +186,16 @@ const Dashboard = () => {
           type: 'CREDIT_STATS_ISSUED',
         },
         {
-          type: 'CREDIT_CERTIFIED_BALANCE',
+          type: 'CREDIT_CERTIFIED',
         },
         {
-          type: 'CREDIT_CERTIFIED_TRANSFERRED',
+          type: 'CREDIT_UNCERTIFIED',
         },
         {
-          type: 'CREDIT_CERTIFIED_RETIRED',
-        },
-        {
-          type: 'CREDIT_CERTIFIED_ISSUED',
+          type: 'CREDIT_REVOKED',
         },
       ],
+      category: categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
@@ -209,25 +214,32 @@ const Dashboard = () => {
           type: 'TOTAL_CREDITS',
         },
         {
+          type: 'TOTAL_CREDITS_CERTIFIED',
+        },
+        {
           type: 'PROGRAMME_LOCATIONS',
         },
       ],
+      category: categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
   };
 
-  const onChangeRange = (dateMoment: any, dateString: any) => {
-    console.log(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-    console.log('****', dateString);
-    if (!dateMoment) {
-      setStartTime(0);
-      setEndTime(0);
-    }
-    if (dateMoment !== null && dateMoment[1] !== null) {
-      setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-      setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
-    } else {
+  const onChangeRange = async (dateMoment: any, dateString: any) => {
+    try {
+      if (!dateMoment) {
+        setStartTime(0);
+        setEndTime(0);
+      }
+      if (dateMoment !== null && dateMoment[1] !== null) {
+        setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+      } else {
+        setStartTime(0);
+        setEndTime(0);
+      }
+    } catch (e: any) {
       setStartTime(0);
       setEndTime(0);
     }
@@ -256,6 +268,9 @@ const Dashboard = () => {
       const issuedCredit: any = [];
       const retiredCredit: any = [];
       const transferredCredit: any = [];
+
+      const certifiedCredit: any = [];
+      const unCertifiedCredit: any = [];
 
       const response: any = await post(
         'analytics/programme/dashboardCharts',
@@ -398,6 +413,23 @@ const Dashboard = () => {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
       }
+      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
+        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
+        if (totalCredits?.certified) {
+          const certified = totalCredits?.certified;
+          certified?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            certifiedCredit.push(credit[0]);
+          });
+        }
+        if (totalCredits?.uncertified) {
+          const uncertified = totalCredits?.uncertified;
+          uncertified?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            unCertifiedCredit.push(credit[0]);
+          });
+        }
+      }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
       setIssuedProgrammes(issuedProgrames);
@@ -418,9 +450,12 @@ const Dashboard = () => {
       setIssuedCredits(issuedCredit);
       setRetiredCredits(retiredCredit);
       setTransferredCredits(transferredCredit);
+      setCertifiedCredits(certifiedCredit);
+      setUnCertifiedCredits(unCertifiedCredit);
       totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
       totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
       totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
+      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -485,18 +520,12 @@ const Dashboard = () => {
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum));
 
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_BALANCE?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_TRANSFERRED?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_RETIRED?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
-      );
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_UNCERTIFIED?.sum));
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_REVOKED?.sum));
+      // pieSeriesCreditsCerifiedData.push(
+      //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
+      // );
       let totalCredits = 0;
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
@@ -552,7 +581,7 @@ const Dashboard = () => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime]);
+  }, [startTime, endTime, categoryType]);
 
   const seriesTotalProgrammesY = [
     {
@@ -631,6 +660,17 @@ const Dashboard = () => {
     },
   ];
 
+  const seriesTotalCreditsCertifiedY = [
+    {
+      name: 'Certified',
+      data: certifiedCredits,
+    },
+    {
+      name: 'UnCertified',
+      data: unCertifiedCredits,
+    },
+  ];
+
   useEffect(() => {
     console.log('transfr credit --- > ', transferredCredits);
   }, [transferredCredits]);
@@ -670,6 +710,10 @@ const Dashboard = () => {
         });
     }, 1000);
   }, [programmeLocations]);
+
+  const onChangeCategory = (event: any) => {
+    setCategoryType(event?.target?.value);
+  };
 
   return (
     <div className="dashboard-main-container">
@@ -769,11 +813,14 @@ const Dashboard = () => {
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 15 days': [
+              'Last 7 days': [
                 moment().startOf('month'),
-                moment().startOf('month').add('15', 'days'),
+                moment().startOf('month').add('7', 'days'),
               ],
-              'This Month': [moment().startOf('month'), moment().endOf('month')],
+              'Last 14 days': [
+                moment().startOf('month'),
+                moment().startOf('month').add('14', 'days'),
+              ],
             }}
             showTime
             allowClear={true}
@@ -782,14 +829,16 @@ const Dashboard = () => {
           />
         </div>
         <div className="radio-selection">
-          <Radio.Group defaultValue="overall">
-            <Radio.Button className="overall" value="overall">
-              OVERALL
-            </Radio.Button>
-            <Radio.Button className="mine" value="mine">
-              MINE
-            </Radio.Button>
-          </Radio.Group>
+          {companyRole === 'Certifier' && (
+            <Radio.Group value={categoryType} onChange={onChangeCategory}>
+              <Radio.Button className="overall" value="overall">
+                OVERALL
+              </Radio.Button>
+              <Radio.Button className="mine" value="mine">
+                MINE
+              </Radio.Button>
+            </Radio.Group>
+          )}
         </div>
       </div>
       <div className="stastics-and-charts-container center">
@@ -860,8 +909,8 @@ const Dashboard = () => {
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               title="Total Credit Certified"
-              options={totalProgrammesOptions}
-              series={seriesY}
+              options={totalCreditsCertifiedOptions}
+              series={seriesTotalCreditsCertifiedY}
               lastUpdate={lastUpdate}
               loading={loading}
             />

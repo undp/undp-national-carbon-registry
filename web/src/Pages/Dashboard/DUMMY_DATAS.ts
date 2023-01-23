@@ -417,6 +417,120 @@ export const totalCreditsOptions: any = {
   },
 };
 
+export const totalCreditsCertifiedOptions: any = {
+  states: {
+    active: {
+      filter: {
+        type: 'none',
+      },
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  chart: {
+    type: 'bar',
+    height: 400,
+    stacked: true,
+    stackType: 'normal',
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0,
+        },
+      },
+    },
+  ],
+  xaxis: {
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+  },
+  yaxis: {
+    show: true,
+    title: {
+      text: '',
+      rotate: -90,
+      offsetX: 0,
+      offsetY: 0,
+      style: {
+        color: '#263238',
+        fontSize: '12px',
+        fontFamily: 'Inter-Regular',
+        fontWeight: 500,
+        cssClass: 'apexcharts-yaxis-title',
+      },
+    },
+  },
+  fill: {
+    opacity: 1,
+    colors: ['#4FB8E7', '#FF8183'],
+  },
+  title: {
+    text: '',
+    align: 'left',
+    margin: 10,
+    offsetX: 0,
+    offsetY: 0,
+    floating: false,
+    style: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      fontFamily: 'Inter',
+      color: '#263238',
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: ['#4FB8E7', '#FF8183'],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: ['#4FB8E7', '#FF8183'],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+};
+
 export const seriesY = [
   {
     name: 'Authorised',
@@ -714,8 +828,8 @@ export const optionDonutPieB: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
-  labels: ['Available', 'Transfered', 'Retired', 'Issued'],
+  colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+  labels: ['Certified', 'Uncertified', 'Revoked'],
   plotOptions: {
     pie: {
       expandOnClick: false,
@@ -752,7 +866,7 @@ export const optionDonutPieB: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
       useSeriesColors: false,
     },
     markers: {
@@ -760,7 +874,7 @@ export const optionDonutPieB: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,

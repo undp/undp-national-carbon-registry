@@ -35,6 +35,29 @@ export class HelperService {
       )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
         data?.endDate
       )}`;
+    } else if (data?.type === "TOTAL_CREDITS_CERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+        data?.startDate
+      )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+        data?.endDate
+      )}`;
+    }
+
+    if (sql != "") {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `(${sql}) and ${
+          table ? table + "." : ""
+        }"${colCheck}" @> '{${companyId}}'`;
+      }
+    } else {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `${table ? table + "." : ""}"${colCheck}" @> '{${companyId}}'`;
+      }
     }
 
     if (sql != "") {
@@ -121,6 +144,22 @@ export class HelperService {
         }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
           table ? table + "." : ""
         }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+      }
+    }
+
+    if (sql != "") {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `(${sql}) and ${
+          table ? table + "." : ""
+        }"${colCheck}" @> '{${companyId}}'`;
+      }
+    } else {
+      if (data?.companyId !== "") {
+        let colCheck = "companyId";
+        let companyId = data?.companyId;
+        sql = `${table ? table + "." : ""}"${colCheck}" @> '{${companyId}}'`;
       }
     }
 

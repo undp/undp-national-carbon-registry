@@ -16,6 +16,7 @@ import { PoliciesGuardEx } from "../shared/casl/policy.guard";
 import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "../shared/dto/stat.dto";
 import { ChartStatList } from "../shared/dto/chartStats.list.dto";
+import { Programme } from "../shared/entities/programme.entity";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -34,9 +35,12 @@ export class ProgrammeController {
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("dashboard")
   async programmesStaticDetails(@Body() query: StatList, @Request() req) {
+    const companyId =
+      req?.user?.companyId !== null ? req?.user?.companyId : null;
     return this.analyticsService.programmesStaticDetails(
       req.abilityCondition,
-      query
+      query,
+      companyId
     );
   }
 
@@ -51,9 +55,12 @@ export class ProgrammeController {
     @Body() query: ChartStatList,
     @Request() req
   ) {
+    const companyId =
+      req?.user?.companyId !== null ? req?.user?.companyId : null;
     return this.analyticsService.programmesStaticChartsDetails(
       req.abilityCondition,
-      query
+      query,
+      companyId
     );
   }
 }
