@@ -250,7 +250,7 @@ const CreditTransfer = () => {
   };
 
   const actionMenu = (record: any) => {
-    return userInfoState?.id === record.requesterId.toString() ? (
+    return userInfoState?.companyId === record.initiatorCompanyId.toString() ? (
       <List
         className="action-menu"
         size="small"
@@ -356,29 +356,19 @@ const CreditTransfer = () => {
   };
 
   const columns = [
-    {
-      title: t('creditTransfer:requestID'),
-      dataIndex: 'requestId',
-      key: 'requestId',
-      sorter: true,
-      align: 'center' as const,
-      render: (item: any) => {
-        return <span className="clickable">{item}</span>;
-      },
-    },
-    {
-      title: t('creditTransfer:date'),
-      key: 'txTime',
-      sorter: true,
-      align: 'left' as const,
-      render: (item: any, itemObj: any) => {
-        return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {DateTime.fromMillis(parseInt(itemObj.txTime)).toFormat('dd LLLL yyyy')}
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: t('creditTransfer:date'),
+    //   key: 'txTime',
+    //   sorter: true,
+    //   align: 'left' as const,
+    //   render: (item: any, itemObj: any) => {
+    //     return (
+    //       <div style={{ display: 'flex', alignItems: 'center' }}>
+    //         {DateTime.fromMillis(parseInt(itemObj.txTime)).toFormat('dd LLLL yyyy')}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       title: t('creditTransfer:pName'),
       dataIndex: 'programmeTitle',
@@ -412,7 +402,7 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:initiator'),
-      key: 'initiator',
+      key: 'initiatorCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
@@ -427,7 +417,7 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:cSender'),
-      key: 'cSender',
+      key: 'fromCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
@@ -442,14 +432,14 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:cReceiver'),
-      dataIndex: 'requester',
-      key: 'requester',
+      dataIndex: 'toCompanyId',
+      key: 'toCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.requester.map((v: any, i: any) => {
+            {itemObj.receiver.map((v: any, i: any) => {
               return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
             })}
           </div>

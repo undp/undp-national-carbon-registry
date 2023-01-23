@@ -20,9 +20,17 @@ export class CompanyController {
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
     @Post('query')
-    queryUser(@Body()query: QueryDto, @Request() req) {
+    query(@Body()query: QueryDto, @Request() req) {
       console.log(req.abilityCondition)
       return this.companyService.query(query, req.abilityCondition)
+    }
+
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
+    @Post('queryNames')
+    queryNames(@Body()query: QueryDto, @Request() req) {
+      console.log(req.abilityCondition)
+      return this.companyService.queryNames(query, req.abilityCondition)
     }
 
     @ApiBearerAuth()

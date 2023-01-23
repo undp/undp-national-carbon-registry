@@ -61,6 +61,7 @@ export class AuthService {
       name: user.name,
       companyId: user.companyId,
       companyRole: user.companyRole,
+      companyName: organisationDetails.name,
       companyLogo: organisationDetails.logo,
       ability: JSON.stringify(ability),
       companyState: parseInt(organisationDetails.state),
