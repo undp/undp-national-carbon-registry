@@ -57,7 +57,7 @@ const Dashboard = () => {
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
-  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0, 0]);
+  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
 
   const [startTime, setStartTime] = useState<number>(0);
@@ -186,16 +186,13 @@ const Dashboard = () => {
           type: 'CREDIT_STATS_ISSUED',
         },
         {
-          type: 'CREDIT_CERTIFIED_BALANCE',
+          type: 'CREDIT_CERTIFIED',
         },
         {
-          type: 'CREDIT_CERTIFIED_TRANSFERRED',
+          type: 'CREDIT_UNCERTIFIED',
         },
         {
-          type: 'CREDIT_CERTIFIED_RETIRED',
-        },
-        {
-          type: 'CREDIT_CERTIFIED_ISSUED',
+          type: 'CREDIT_REVOKED',
         },
       ],
       category: categoryType,
@@ -523,18 +520,12 @@ const Dashboard = () => {
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum));
 
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_BALANCE?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_TRANSFERRED?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_RETIRED?.sum)
-      );
-      pieSeriesCreditsCerifiedData.push(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
-      );
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_UNCERTIFIED?.sum));
+      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_REVOKED?.sum));
+      // pieSeriesCreditsCerifiedData.push(
+      //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
+      // );
       let totalCredits = 0;
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
@@ -721,7 +712,6 @@ const Dashboard = () => {
   }, [programmeLocations]);
 
   const onChangeCategory = (event: any) => {
-    console.log('val -- - - - -> ', event?.target?.value);
     setCategoryType(event?.target?.value);
   };
 
