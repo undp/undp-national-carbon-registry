@@ -21,6 +21,7 @@ import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { useTranslation } from 'react-i18next';
 import {
+  getCompanyBgColor,
   getStageEnumVal,
   getStageTagType,
   ProgrammeStage,
@@ -54,15 +55,6 @@ const ProgrammeManagement = () => {
 
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
-
-  const getCompanyBgColor = (item: string) => {
-    if (item === 'Government') {
-      return GovBGColor;
-    } else if (item === 'Certifier') {
-      return CertBGColor;
-    }
-    return DevBGColor;
-  };
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
     console.log(checkedValues);

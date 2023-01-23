@@ -12,5 +12,11 @@
   "cRequested": "CREDIT REQUESTED",
   "cBalance": "CREDIT BALANCE",
   "status": "STATUS",
-  "noTransfer": "No Transfers Available"
+  "noTransfer": "No Transfers Available",
+  "cancelTitle": "Are you sure you want to cancel this request?",
+  "rejectTitle": "Are you sure you want to reject this  request?",
+  "acceptTitle": "Accept Transfer Request",
+  "proceed": "Proceed",
+  "cancel": "Cancel",
+  "reject": "Reject"
 }

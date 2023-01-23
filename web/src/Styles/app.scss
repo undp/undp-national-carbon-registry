@@ -419,7 +419,7 @@ body {
   font-weight: 600;
   font-family: $primary-font-family;
   font-size: 0.9rem;
-  margin: 25px 20px -25px 20px;
+  margin: 25px 20px -20px 20px;
 
   .icon {
     font-size: 4rem;
@@ -578,4 +578,20 @@ body {
   button {
     text-transform: uppercase;
   }
+}
+
+.color-error {
+    color: $error-color;
+}
+
+.color-primary {
+  color: $primary-color;
+}
+
+.ant-input-number-input {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
 }

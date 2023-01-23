@@ -172,6 +172,15 @@ export class ProgrammeService {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
         }
 
+        if (!transfer.isRetirement && transfer.fromCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
+        }
+        if (transfer.isRetirement && transfer.toCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
+        }
+
+        const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
+        
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({
                 requestId: req.requestId,
@@ -187,15 +196,7 @@ export class ProgrammeService {
                 throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
             }
         }
-        
-        if (!transfer.isRetirement && transfer.fromCompanyId != approverCompanyId) {
-            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
-        }
-        if (transfer.isRetirement && transfer.toCompanyId != approverCompanyId) {
-            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
-        }
 
-        const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
         return await this.doTransfer(transfer, received.name, req.comment, transfer.isRetirement)
     }
 

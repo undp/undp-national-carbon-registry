@@ -53,7 +53,11 @@
     "successRequest": "Successfully initiated the transfer request",
     "sendCreditTitle": "Send Credits",
     "to": "To",
+    "from": "From",
     "send": "Send",
     "successSend": "Credit send successful",
-    "searchCompany": "Search company by name"
+    "searchCompany": "Search company by name",
+    "serialNoField": "Serial Number",
+    "transferApproveTotal": "Credit Amount",
+    "confirmClosure": "I understand that this action cannot be undone"
 }
