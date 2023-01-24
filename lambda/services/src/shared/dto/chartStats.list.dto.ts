@@ -12,7 +12,8 @@ import { ChartStat } from "./chartStats.dto";
 
 export class ChartStatList {
   @ApiProperty({ isArray: true, type: ChartStat })
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => ChartStat)
   stats: ChartStat[];
 
   @ApiProperty()

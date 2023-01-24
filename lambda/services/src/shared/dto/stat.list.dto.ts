@@ -12,7 +12,8 @@ import { Stat } from "./stat.dto";
 
 export class StatList {
   @ApiProperty({ isArray: true, type: Stat })
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => Stat)
   stats: Stat[];
 
   @ApiProperty()

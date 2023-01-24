@@ -283,6 +283,7 @@ export class AnalyticsAPIService {
               `"programmeId"`,
               `"companyId"`,
               `"creditIssued"`,
+              `"creditEst"`,
               `"creditBalance"`,
               `"creditTransferred"`,
               `"creditRetired"`,
@@ -314,7 +315,7 @@ export class AnalyticsAPIService {
             );
           }
           let dataCredits = {
-            available: [],
+            authorized: [],
             issued: [],
             transferred: [],
             retired: [],
@@ -322,6 +323,7 @@ export class AnalyticsAPIService {
           for (let index = 1; index <= durationCreditCounts; index++) {
             let eTimeCredit = sTimeCredit + duraionCreditT;
             let availableS = 0;
+            let estimatedS = 0;
             let issuedS = 0;
             let transferredS = 0;
             let retiredS = 0;
@@ -373,10 +375,15 @@ export class AnalyticsAPIService {
                       totalResponseCredit[indexProgramme]?.creditRetired
                     );
                 }
+                if (totalResponseCredit[indexProgramme]?.creditEst !== null) {
+                  estimatedS =
+                    estimatedS +
+                    parseFloat(totalResponseCredit[indexProgramme]?.creditEst);
+                }
               }
               if (indexProgramme === totalResponseCredit.length - 1) {
-                dataCredits?.available.push({ [sTimeCredit]: availableS });
-                dataCredits?.issued.push({ [sTimeCredit]: issuedS });
+                dataCredits?.authorized.push({ [sTimeCredit]: estimatedS - issuedS });
+                dataCredits?.issued.push({ [sTimeCredit]: availableS });
                 dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
                 dataCredits?.retired.push({ [sTimeCredit]: retiredS });
               }
@@ -574,6 +581,7 @@ export class AnalyticsAPIService {
               )
             )
             .getCount();
+
           results[stat.type] = totalProgrammesResponse;
           break;
 
