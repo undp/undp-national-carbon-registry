@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min } from "class-validator";
+import { BasicCompany } from "./BasicCompany.dto";
 
 export class ProgrammeRetire {
 
@@ -26,6 +27,12 @@ export class ProgrammeRetire {
     @IsNotEmpty()
     @IsOptional()
     toAccount: string;
+
+    @ApiPropertyOptional()
+    @IsNotEmpty()
+    @IsNotEmpty()
+    @IsOptional()
+    toCompanyMeta: BasicCompany;
 
     @ApiPropertyOptional()
     @IsString()

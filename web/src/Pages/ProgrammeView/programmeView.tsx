@@ -616,6 +616,7 @@ const ProgrammeView = () => {
               icon: <Icon.ClipboardCheck />,
               contentComp: (
                 <ProgrammeIssueForm
+                  enableIssue={false}
                   programme={data}
                   subText={t('view:popupText')}
                   onCancel={() => {
@@ -702,6 +703,7 @@ const ProgrammeView = () => {
                 icon: <Icon.Award />,
                 contentComp: (
                   <ProgrammeIssueForm
+                    enableIssue={true}
                     programme={data}
                     subText={t('view:popupText')}
                     onCancel={() => {

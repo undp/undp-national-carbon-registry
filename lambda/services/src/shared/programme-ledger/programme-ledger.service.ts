@@ -825,7 +825,7 @@ export class ProgrammeLedgerService {
         programme.currentStage = ProgrammeStage.ISSUED;
 
         if (!issueCredit) {
-          programme.creditIssued = programme.creditEst;
+          programme.creditIssued = 0;
           // programme.creditPending = 0
         } else {
           programme.creditIssued = issueCredit;

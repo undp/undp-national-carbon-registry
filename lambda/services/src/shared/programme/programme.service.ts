@@ -180,7 +180,7 @@ export class ProgrammeService {
         }
 
         const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
-        
+
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({
                 requestId: req.requestId,
@@ -620,6 +620,7 @@ export class ProgrammeService {
             transfer.creditAmount = transferCompanyCredit;
             transfer.toAccount = req.toAccount;
             transfer.isRetirement = true;
+            transfer.toCompanyMeta = req.toCompanyMeta;
             // await this.programmeTransferRepo.save(transfer);
 
             if (requester.companyId != toCompany.companyId) {

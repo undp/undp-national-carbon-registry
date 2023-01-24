@@ -64,16 +64,16 @@
 
   .homepage-img-container {
     background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(4, 104, 177, 0.6) 0.01%),
-      url('../../Assets/Images/login.jpeg') left 10% bottom 20% / cover no-repeat border-box;
+      url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
     height: calc(100vh - 90px);
-    background-position-x: 75%;
-    background-position-y: 75%;
+    background-position-x: 100%;
+    background-position-y: 100%;
     flex-direction: column;
     justify-content: flex-start;
     display: flex;
     flex: 1;
     text-align: left;
-    background-size: 500vh;
+    // background-size: 500vh;
     padding-top: 60vh;
 
     @media (max-width: $lg-size) {

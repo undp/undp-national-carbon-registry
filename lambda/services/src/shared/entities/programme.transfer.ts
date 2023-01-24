@@ -8,6 +8,7 @@ import { Sector } from '../enum/sector.enum';
 import { TransferStatus } from '../enum/transform.status.enum';
 import { ProgrammeStage } from '../enum/programme-status.enum';
 import { EntitySubject } from './entity.subject';
+import { BasicCompany } from '../dto/BasicCompany.dto';
 
 export const bigint: ValueTransformer = {
     to: (entityValue: number) => entityValue,
@@ -34,6 +35,13 @@ export class ProgrammeTransfer implements EntitySubject {
 
     @Column({nullable: true})
     toAccount: string;
+
+    @Column({
+        type: 'jsonb',
+        array: false,
+        nullable: true
+    })
+    toCompanyMeta: BasicCompany;
 
     @Column()
     fromCompanyId: number;
