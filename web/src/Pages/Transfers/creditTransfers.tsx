@@ -201,77 +201,79 @@ const CreditTransfer = () => {
   };
 
   const actionMenu = (record: any) => {
-    return userInfoState?.companyId === record.initiatorCompanyId.toString() ? (
-      <List
-        className="action-menu"
-        size="small"
-        dataSource={[
-          {
-            text: 'Cancel',
-            icon: <Icon.ExclamationOctagon />,
-            click: () => {
-              showModalOnAction(record, {
-                title: t('creditTransfer:cancelTitle'),
-                icon: <Icon.ExclamationOctagon />,
-                actionBtnText: t('creditTransfer:cancel'),
-                okAction: (requestId: any, comment: any) =>
-                  handleRequestOk(requestId, comment, 'transferCancel'),
-                type: 'danger',
-              });
+    if (record.status === 'Pending') {
+      return userInfoState?.companyId === record.initiatorCompanyId ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: 'Cancel',
+              icon: <Icon.ExclamationOctagon />,
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:cancelTitle'),
+                  icon: <Icon.ExclamationOctagon />,
+                  actionBtnText: t('creditTransfer:cancel'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferCancel'),
+                  type: 'danger',
+                });
+              },
             },
-          },
-        ]}
-        renderItem={(item: any) => (
-          <List.Item onClick={item.click}>
-            <Typography.Text className="action-icon color-error">{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
-      />
-    ) : (
-      <List
-        className="action-menu"
-        size="small"
-        dataSource={[
-          {
-            text: 'Accept',
-            icon: <Icon.ClipboardCheck />,
-            style: 'color-primary',
-            click: () => {
-              showModalOnAction(record, {
-                title: t('creditTransfer:acceptTitle'),
-                icon: <Icon.ClipboardCheck />,
-                actionBtnText: t('creditTransfer:accept'),
-                okAction: (requestId: any, comment: any) =>
-                  handleRequestOk(requestId, comment, 'transferApprove'),
-                type: 'success',
-              });
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className="action-icon color-error">{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : !record.isRetirement && record.fromCompanyId === userInfoState?.companyId ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: 'Accept',
+              icon: <Icon.ClipboardCheck />,
+              style: 'color-primary',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:acceptTitle'),
+                  icon: <Icon.ClipboardCheck />,
+                  actionBtnText: t('creditTransfer:accept'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferApprove'),
+                  type: 'success',
+                });
+              },
             },
-          },
-          {
-            text: 'Reject',
-            icon: <Icon.XOctagon />,
-            style: 'color-error',
-            click: () => {
-              showModalOnAction(record, {
-                title: t('creditTransfer:rejectTitle'),
-                icon: <Icon.XOctagon />,
-                actionBtnText: t('creditTransfer:reject'),
-                okAction: (requestId: any, comment: any) =>
-                  handleRequestOk(requestId, comment, 'transferReject'),
-                type: 'danger',
-              });
+            {
+              text: 'Reject',
+              icon: <Icon.XOctagon />,
+              style: 'color-error',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:rejectTitle'),
+                  icon: <Icon.XOctagon />,
+                  actionBtnText: t('creditTransfer:reject'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferReject'),
+                  type: 'danger',
+                });
+              },
             },
-          },
-        ]}
-        renderItem={(item: any) => (
-          <List.Item onClick={item.click}>
-            <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
-      />
-    );
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : null;
+    }
   };
 
   const columns = [
