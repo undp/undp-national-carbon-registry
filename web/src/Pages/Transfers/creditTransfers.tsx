@@ -39,6 +39,7 @@ import TransferActionModel from '../../Components/Models/TransferActionModel';
 import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
+import { creditUnit } from '../Common/configs';
 
 type CompanyInfo = {
   name: string;
@@ -138,7 +139,7 @@ const CreditTransfer = () => {
     } else {
       sort = {
         key: 'requestId',
-        order: 'ASC',
+        order: 'DESC',
       };
     }
 
@@ -277,19 +278,25 @@ const CreditTransfer = () => {
   };
 
   const columns = [
-    // {
-    //   title: t('creditTransfer:date'),
-    //   key: 'txTime',
-    //   sorter: true,
-    //   align: 'left' as const,
-    //   render: (item: any, itemObj: any) => {
-    //     return (
-    //       <div style={{ display: 'flex', alignItems: 'center' }}>
-    //         {DateTime.fromMillis(parseInt(itemObj.txTime)).toFormat('dd LLLL yyyy')}
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      title: t('creditTransfer:requestID'),
+      dataIndex: 'requestId',
+      key: 'requestId',
+      sorter: true,
+    },
+    {
+      title: t('creditTransfer:date'),
+      key: 'txTime',
+      sorter: true,
+      align: 'left' as const,
+      render: (item: any, itemObj: any) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {DateTime.fromMillis(parseInt(itemObj.txTime)).toFormat('dd LLLL yyyy')}
+          </div>
+        );
+      },
+    },
     {
       title: t('creditTransfer:pName'),
       dataIndex: 'programmeTitle',
@@ -398,7 +405,7 @@ const CreditTransfer = () => {
       },
     },
     {
-      title: t('creditTransfer:cRequested'),
+      title: t('creditTransfer:cRequested') + ` (${creditUnit})`,
       dataIndex: 'creditAmount',
       key: 'creditAmount',
       sorter: true,
@@ -408,7 +415,7 @@ const CreditTransfer = () => {
       },
     },
     {
-      title: t('creditTransfer:cBalance'),
+      title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
       dataIndex: 'creditBalance',
       key: 'creditBalance',
       sorter: true,
