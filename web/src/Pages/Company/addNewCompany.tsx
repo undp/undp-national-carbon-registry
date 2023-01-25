@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Radio, Row, Steps, Tooltip, Upload, message } from 'antd';
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
-import { ExperimentOutlined, EyeOutlined, SafetyOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  ExperimentOutlined,
+  SafetyOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './addNewCompany.scss';
 import { RcFile } from 'antd/lib/upload';
+import { useTranslation } from 'react-i18next';
+import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -18,9 +25,13 @@ const AddNewCompany = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [contactNoInput, setContactNoInput] = useState<any>();
   const [current, setCurrent] = useState<number>(0);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const { i18n, t } = useTranslation(['addCompany']);
+  const { put } = useConnection();
 
   useEffect(() => {
     console.log('record data ---- > ', state);
+    setIsUpdate(state?.record ? true : false);
   }, []);
 
   const normFile = (e: any) => {
@@ -88,33 +99,42 @@ const AddNewCompany = () => {
 
   const onUpdateCompany = async () => {
     setLoading(true);
-    // values.id = state.record.id;
     const formOneValues = formOne.getFieldsValue();
-    const formTwoValues = formTwo.getFieldsValue();
     formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
+    const logoBase64 = await getBase64(formOneValues.logo[0]?.originFileObj as RcFile);
+    const logoUrls = logoBase64.split(',');
+    const logo = logoUrls[1];
     try {
-      const values = {
-        ...formOneValues,
-        ...formTwoValues,
+      const values: any = {
+        companyId: state?.record?.companyId,
+        name: formOneValues.name,
+        email: formOneValues.email,
+        website: formOneValues.website,
+        logo: logo,
+        phoneNo: formOneValues.phoneNo,
+        address: formOneValues.address,
+        companyRole: state?.record?.companyRole,
       };
-      console.log('form one values   -- > ', values, state.record);
-      // const response = await put('national/user/update', values);
-      // if (response.status === 200 || response.status === 201) {
-      //   message.open({
-      //     type: 'success',
-      //     content: 'User Updated Successfully!',
-      //     duration: 3,
-      //     style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      //   });
-      //   navigate('/userManagement/viewAll', { replace: true });
-      //   state.record = {};
-      //   setLoading(false);
-      // }
+
+      if (state?.record?.companyRole !== CompanyRole.GOVERNMENT) {
+        values.taxId = formOneValues.taxId;
+      }
+
+      const response = await put('national/organisation/update', values);
+      if (response.status === 200 || response.status === 201) {
+        message.open({
+          type: 'success',
+          content: 'Company updated Successfully!',
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate('/companyManagement/viewAll', { replace: true });
+      }
+      setLoading(false);
     } catch (error: any) {
-      console.log('Error in user update', error);
       message.open({
         type: 'error',
-        content: `Error in updating user! ${error.message}`,
+        content: `Error in updating company! ${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -144,6 +164,13 @@ const AddNewCompany = () => {
   };
 
   const CompanyDetailsForm = () => {
+    const companyRole = state?.record?.companyRole;
+    const companyRoleClassName =
+      companyRole === CompanyRole.CERTIFIER
+        ? 'certifier'
+        : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+        ? 'dev'
+        : 'gov';
     return (
       <div className="company-details-form-container">
         <div className="company-details-form">
@@ -153,7 +180,7 @@ const AddNewCompany = () => {
             layout="vertical"
             requiredMark={true}
             form={formOne}
-            onFinish={onFinishStepOne}
+            onFinish={isUpdate ? onUpdateCompany : onFinishStepOne}
           >
             <Row className="row" gutter={[16, 16]}>
               <Col xl={12} md={24}>
@@ -183,31 +210,33 @@ const AddNewCompany = () => {
                   >
                     <Input size="large" />
                   </Form.Item>
-                  <Form.Item
-                    label="Tax ID"
-                    initialValue={state?.record?.taxId}
-                    name="taxId"
-                    rules={[
-                      {
-                        required: true,
-                        message: '',
-                      },
-                      {
-                        validator: async (rule, value) => {
-                          if (
-                            String(value).trim() === '' ||
-                            String(value).trim() === undefined ||
-                            value === null ||
-                            value === undefined
-                          ) {
-                            throw new Error('Tax ID is required!');
-                          }
+                  {(!isUpdate || (isUpdate && companyRole !== CompanyRole.GOVERNMENT)) && (
+                    <Form.Item
+                      label="Tax ID"
+                      initialValue={state?.record?.taxId}
+                      name="taxId"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
                         },
-                      },
-                    ]}
-                  >
-                    <Input size="large" />
-                  </Form.Item>
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error('Tax ID is required!');
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  )}
                   <Form.Item
                     label="Email"
                     name="email"
@@ -310,7 +339,7 @@ const AddNewCompany = () => {
                     className="role-group"
                     label="Role"
                     name="companyRole"
-                    initialValue={state?.record?.companyRole}
+                    initialValue={companyRole}
                     rules={[
                       {
                         required: true,
@@ -318,29 +347,46 @@ const AddNewCompany = () => {
                       },
                     ]}
                   >
-                    <Radio.Group size="large" disabled={state?.record?.companyRole}>
-                      <div className="certifier-radio-container">
-                        <Tooltip
-                          placement="top"
-                          title="Permitted to certify and revoke certifications of programmes"
-                        >
-                          <Radio.Button className="certifier" value="Certifier">
-                            <SafetyOutlined className="role-icons" />
-                            Certifier
+                    <Radio.Group size="large" disabled={isUpdate}>
+                      {isUpdate ? (
+                        <div className={`${companyRoleClassName}-radio-container`}>
+                          <Radio.Button className={companyRoleClassName} value={companyRole}>
+                            {companyRole === CompanyRole.CERTIFIER ? (
+                              <SafetyOutlined className="role-icons" />
+                            ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                              <ExperimentOutlined className="role-icons" />
+                            ) : (
+                              <BankOutlined className="role-icons" />
+                            )}
+                            {companyRole}
                           </Radio.Button>
-                        </Tooltip>
-                      </div>
-                      <div className="dev-radio-container">
-                        <Tooltip
-                          placement="top"
-                          title="Permitted to own programmes and transfer carbon credits"
-                        >
-                          <Radio.Button className="dev" value="ProgrammeDeveloper">
-                            <ExperimentOutlined className="role-icons" />
-                            Programme Developer
-                          </Radio.Button>
-                        </Tooltip>
-                      </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="certifier-radio-container">
+                            <Tooltip
+                              placement="top"
+                              title="Permitted to certify and revoke certifications of programmes"
+                            >
+                              <Radio.Button className="certifier" value="Certifier">
+                                <SafetyOutlined className="role-icons" />
+                                Certifier
+                              </Radio.Button>
+                            </Tooltip>
+                          </div>
+                          <div className="dev-radio-container">
+                            <Tooltip
+                              placement="top"
+                              title="Permitted to own programmes and transfer carbon credits"
+                            >
+                              <Radio.Button className="dev" value="ProgrammeDeveloper">
+                                <ExperimentOutlined className="role-icons" />
+                                Programme Developer
+                              </Radio.Button>
+                            </Tooltip>
+                          </div>
+                        </>
+                      )}
                     </Radio.Group>
                   </Form.Item>
                   <Form.Item
@@ -403,10 +449,19 @@ const AddNewCompany = () => {
               </Col>
             </Row>
             <div className="steps-actions">
-              {current === 0 && (
-                <Button type="primary" htmlType="submit">
-                  Next
-                </Button>
+              {isUpdate ? (
+                <Row>
+                  <Button>{t('addCompany:cancel')}</Button>
+                  <Button className="mg-left-1" type="primary" htmlType="submit">
+                    {t('addCompany:submit')}
+                  </Button>
+                </Row>
+              ) : (
+                current === 0 && (
+                  <Button type="primary" htmlType="submit">
+                    Next
+                  </Button>
+                )
               )}
             </div>
           </Form>
@@ -539,36 +594,49 @@ const AddNewCompany = () => {
   return (
     <div className="add-company-main-container">
       <div className="title-container">
-        <div className="main">Add New Organisation</div>
-        <div className="sub">Add a new organisation to the Carbon Registry</div>
+        <div className="main">
+          {isUpdate ? t('addCompany:editCompany') : t('addCompany:addNewCompany')}
+        </div>
+        <div className="sub">
+          {isUpdate ? t('addCompany:editCompanySub') : t('addCompany:addCompanySub')}
+        </div>
       </div>
       <div className="adding-section">
         <div className="form-section">
-          <Steps
-            progressDot
-            direction="vertical"
-            current={current}
-            items={[
-              {
-                title: (
-                  <div className="step-title-container">
-                    <div className="step-count">01</div>
-                    <div className="title">Organisation Details</div>
-                  </div>
-                ),
-                description: current === 0 && <CompanyDetailsForm />,
-              },
-              {
-                title: (
-                  <div className="step-title-container">
-                    <div className="step-count">02</div>
-                    <div className="title">Organisation Admin Details</div>
-                  </div>
-                ),
-                description: current === 1 && <CompanyAdminDetailsForm />,
-              },
-            ]}
-          />
+          {isUpdate ? (
+            <>
+              {/* <div className="step-title-container">
+                <div className="title">{t('addCompany:companyDetailsTitle')}</div>
+              </div> */}
+              <CompanyDetailsForm />
+            </>
+          ) : (
+            <Steps
+              progressDot
+              direction="vertical"
+              current={current}
+              items={[
+                {
+                  title: (
+                    <div className="step-title-container">
+                      <div className="step-count">01</div>
+                      <div className="title">{t('addCompany:companyDetailsTitle')}</div>
+                    </div>
+                  ),
+                  description: current === 0 && <CompanyDetailsForm />,
+                },
+                {
+                  title: (
+                    <div className="step-title-container">
+                      <div className="step-count">02</div>
+                      <div className="title">{t('addCompany:companyAdminDetailsTitle')}</div>
+                    </div>
+                  ),
+                  description: current === 1 && <CompanyAdminDetailsForm />,
+                },
+              ]}
+            />
+          )}
         </div>
       </div>
     </div>
