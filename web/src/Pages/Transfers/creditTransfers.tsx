@@ -251,7 +251,7 @@ const CreditTransfer = () => {
                   icon: <Icon.ClipboardCheck />,
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferApprove'),
+                    handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
                   type: 'primary',
                 });
               },
