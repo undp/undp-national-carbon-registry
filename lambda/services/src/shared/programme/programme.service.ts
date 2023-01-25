@@ -110,8 +110,11 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (pTransfer.fromCompanyId != approverCompanyId) {
-            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
+        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
+        }
+        if (pTransfer.isRetirement && pTransfer.toCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
         const result = await this.programmeTransferRepo.update({

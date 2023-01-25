@@ -52,7 +52,7 @@ type PopupInfo = {
   icon: any;
   actionBtnText: string;
   okAction: any;
-  type: 'success' | 'danger';
+  type: 'primary' | 'danger';
 };
 
 const CreditTransfer = () => {
@@ -247,7 +247,7 @@ const CreditTransfer = () => {
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferApprove'),
-                  type: 'success',
+                  type: 'primary',
                 });
               },
             },
@@ -290,7 +290,7 @@ const CreditTransfer = () => {
                   actionBtnText: t('creditTransfer:recognise'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferApprove'),
-                  type: 'success',
+                  type: 'primary',
                 });
               },
             },
@@ -302,7 +302,7 @@ const CreditTransfer = () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:notRecogniseTitle'),
                   icon: <Icon.XOctagon />,
-                  actionBtnText: t('creditTransfer:reject'),
+                  actionBtnText: t('creditTransfer:notrecognise'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferReject'),
                   type: 'danger',
@@ -475,8 +475,8 @@ const CreditTransfer = () => {
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
-          <Tag className="clickable" color={getTransferStageTagType(Obj.status)}>
-            {getStageTransferEnumVal(Obj.status)}
+          <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+            {getStageTransferEnumVal(Obj.status, Obj)}
           </Tag>
         );
       },

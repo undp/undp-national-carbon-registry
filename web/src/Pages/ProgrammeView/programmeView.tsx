@@ -51,6 +51,7 @@ import {
   ProgrammeStage,
   TxType,
   TypeOfMitigation,
+  UnitField,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import i18next from 'i18next';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
@@ -527,7 +528,11 @@ const ProgrammeView = () => {
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
-      info[text] = v;
+      if (v instanceof UnitField) {
+        info[text + ` (${v.unit})`] = v.value;
+      } else {
+        info[text] = v;
+      }
     });
     return info;
   };
@@ -1052,7 +1057,7 @@ const ProgrammeView = () => {
                                               'retire',
                                               t('view:successRetire'),
                                               put,
-                                              updateProgrammeData
+                                              () => {}
                                             )
                                           }
                                         />

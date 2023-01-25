@@ -58,7 +58,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           order: 'ASC',
         },
       });
-      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.alpha2 })));
+      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.name })));
     }
   };
 
@@ -115,12 +115,14 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
-          d.fromCompanyIds = programme.companyId.map((n) => Number(n));
-          d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
-          d.toCompanyMeta = {
-            name: d.company,
-            country: d.country,
-          };
+          if (d.type === '0') {
+            d.fromCompanyIds = programme.companyId.map((n) => Number(n));
+            d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
+            d.toCompanyMeta = {
+              name: d.company,
+              country: d.country,
+            };
+          }
           const res = await onFinish(d);
           setPopupError(res);
           setLoading(false);

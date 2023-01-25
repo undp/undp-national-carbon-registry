@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.color.constants';
 
 export enum ProgrammeStage {
@@ -54,7 +55,16 @@ export const getStageEnumVal = (value: string) => {
   return Object.values(ProgrammeStage)[index];
 };
 
-export const getStageTransferEnumVal = (value: string) => {
+export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransfer) => {
+  if (transfer.isRetirement) {
+    if (value === ProgrammeTransferStage.APPROVED) {
+      return 'Recongnised';
+    }
+    if (value === ProgrammeTransferStage.REJECTED) {
+      return 'Not Recongnised';
+    }
+  }
+
   const index = Object.keys(ProgrammeTransferStage).indexOf(value);
   if (index < 0) {
     return value;
@@ -75,7 +85,18 @@ export const getStageTagType = (stage: ProgrammeStage) => {
   }
 };
 
-export const getTransferStageTagType = (stage: ProgrammeTransferStage) => {
+export const getTransferStageTagType = (
+  stage: ProgrammeTransferStage,
+  transfer: ProgrammeTransfer
+) => {
+  if (transfer.isRetirement) {
+    switch (getStageEnumVal(stage)) {
+      case ProgrammeTransferStage.APPROVED:
+        return 'purple';
+      case ProgrammeTransferStage.REJECTED:
+        return 'orange';
+    }
+  }
   switch (getStageEnumVal(stage)) {
     case ProgrammeTransferStage.REJECTED:
       return 'error';
@@ -87,6 +108,10 @@ export const getTransferStageTagType = (stage: ProgrammeTransferStage) => {
       return 'default';
   }
 };
+
+export class UnitField {
+  constructor(public unit: string, public value: any) {}
+}
 
 export enum CompanyRole {
   CERTIFIER = 'Certifier',
@@ -179,7 +204,10 @@ export const getFinancialFields = (programme: Programme) => {
   return {
     programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
     financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
-    grantEquivalent: addCommSep(programme.programmeProperties.grantEquivalentAmount),
+    grantEquivalent: new UnitField(
+      'USD',
+      addCommSep(programme.programmeProperties.grantEquivalentAmount)
+    ),
     carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };
 };
