@@ -97,8 +97,8 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
-  async getUserProfileDetails(username: string) {
-    const userProfileDetails = await this.findOne(username);
+  async getUserProfileDetails(id: number) {
+    const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(userProfileDetails.companyId);
     return{
       user: userProfileDetails,
