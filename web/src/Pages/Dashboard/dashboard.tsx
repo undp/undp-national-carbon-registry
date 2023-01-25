@@ -686,6 +686,76 @@ const Dashboard = () => {
   }, [transferredCredits]);
 
   useEffect(() => {
+    const geojson: any = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: {
+            message: 'Foo',
+            iconSize: [30, 30],
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [-66.324462, -16.024695],
+          },
+        },
+        {
+          type: 'Feature',
+          properties: {
+            message: 'Bar',
+            iconSize: [30, 30],
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [7.61767, 80.69863],
+          },
+        },
+        {
+          type: 'Feature',
+          properties: {
+            message: 'Baz',
+            iconSize: [30, 30],
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [15.1168, -101.01223],
+          },
+        },
+      ],
+    };
+    setTimeout(() => {
+      const map = new mapboxgl.Map({
+        container: mapContainerInternationalRef.current || '',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/streets-v10',
+        center: [-65.017, -16.457],
+        zoom: 0,
+      });
+
+      // Add markers to the map.
+      for (const marker of geojson.features) {
+        // Create a DOM element for each marker.
+        const el = document.createElement('div');
+        const width = marker.properties.iconSize[0];
+        const height = marker.properties.iconSize[1];
+        el.className = 'marker';
+        el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/25/25613.png)`;
+        el.style.width = `${width}px`;
+        el.style.height = `${height}px`;
+        el.style.backgroundSize = '100%';
+
+        el.addEventListener('click', () => {
+          window.alert(marker.properties.message);
+        });
+
+        // Add markers to the map.
+        new mapboxgl.Marker(el).setLngLat(marker?.geometry?.coordinates).addTo(map);
+      }
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
     // const address = programmeLocations[0];
     const count1 = ['<', ['get', 'count'], 2];
     const count2 = ['all', ['>=', ['get', 'count'], 2], ['<', ['get', 'count'], 3]];
@@ -773,44 +843,6 @@ const Dashboard = () => {
           map.addSource('earthquakes', {
             type: 'geojson',
             data: programmeLocations,
-            // data: {
-            //   type: 'FeatureCollection',
-            //   features: [
-            //     {
-            //       type: 'Feature',
-            //       properties: {
-            //         id: 'ak16994521',
-            //         count: 2,
-            //       },
-            //       geometry: {
-            //         type: 'Point',
-            //         coordinates: [-77.0323, 38.9131],
-            //       },
-            //     },
-            //     {
-            //       type: 'Feature',
-            //       properties: {
-            //         id: 'ak16994519',
-            //         count: 2,
-            //       },
-            //       geometry: {
-            //         type: 'Point',
-            //         coordinates: [-77.0323, 38.9131],
-            //       },
-            //     },
-            //     {
-            //       type: 'Feature',
-            //       properties: {
-            //         id: 'ak16994517',
-            //         count: 1,
-            //       },
-            //       geometry: {
-            //         type: 'Point',
-            //         coordinates: [-150.4048, 63.1224],
-            //       },
-            //     },
-            //   ],
-            // },
             cluster: true,
             clusterRadius: 80,
             clusterProperties: {
@@ -1139,11 +1171,26 @@ const Dashboard = () => {
             </div>
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <TransferLocationsMap
-              programmeLocations={programmeLocations}
-              lastUpdate={lastUpdate}
-              loading={loading}
-            />
+            <div className="stastics-and-pie-card height-map-rem">
+              <div className="pie-charts-title">Transfer Locations International</div>
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="map-content">
+                    <div className="map-container" ref={mapContainerInternationalRef} />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </Col>
         </Row>
       </div>

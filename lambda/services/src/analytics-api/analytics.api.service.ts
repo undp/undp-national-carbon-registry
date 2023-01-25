@@ -585,6 +585,24 @@ export class AnalyticsAPIService {
               }
             }
           }
+          // for (let i = 0; i < features.length; i++) {
+          //   for (let j = i + 1; i < features.length; j++) {
+          //     if (
+          //       features[i]?.geometry?.coordinates &&
+          //       features[j]?.geometry?.coordinates
+          //     ) {
+          //       if (
+          //         features[i]?.geometry?.coordinates ===
+          //         features[j]?.geometry?.coordinates
+          //       ) {
+          //         features[i].properties.count =
+          //           features[i]?.properties?.count + 1;
+          //         features[j].properties.count =
+          //           features[j]?.properties?.count + 1;
+          //       }
+          //     }
+          //   }
+          // }
           locationsGeoData.features = [...features];
 
           results[stat.type] = locationsGeoData;
