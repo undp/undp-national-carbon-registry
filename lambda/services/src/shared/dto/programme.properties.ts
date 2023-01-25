@@ -57,6 +57,13 @@ export class ProgrammeProperties {
     @IsNotEmpty({ each: true })
     geographicalLocation: string[];
 
+    @ApiProperty()
+    @IsArray()
+    @ArrayMinSize(1)
+    @MaxLength(100, { each: true })
+    @IsNotEmpty({ each: true })
+    geographicalLocationCordintes: string[];
+
     @ApiProperty({ enum: GHGs, isArray: true })
     @IsEnum(GHGs, {
         message: 'Invalid green house gas. Supported following values:' + Object.values(GHGs),

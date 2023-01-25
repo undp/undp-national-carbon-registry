@@ -13,7 +13,7 @@ mapboxgl.accessToken =
   '';
 
 export interface TransferLocationsMapProps {
-  programmeLocations: any[];
+  programmeLocations: any;
   lastUpdate: number;
   loading: boolean;
 }
@@ -22,7 +22,6 @@ const TransferLocationsMap: FC<TransferLocationsMapProps> = (props: TransferLoca
   const { programmeLocations, lastUpdate, loading } = props;
   const mapContainerInternationalRef = useRef(null);
   useEffect(() => {
-    const address = programmeLocations[0];
     // filters for classifying earthquakes into five categories based on magnitude
     const mag1 = ['<', ['get', 'mag'], 2];
     const mag2 = ['all', ['>=', ['get', 'mag'], 2], ['<', ['get', 'mag'], 3]];

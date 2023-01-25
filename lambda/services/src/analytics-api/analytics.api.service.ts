@@ -382,7 +382,9 @@ export class AnalyticsAPIService {
                 }
               }
               if (indexProgramme === totalResponseCredit.length - 1) {
-                dataCredits?.authorized.push({ [sTimeCredit]: estimatedS - issuedS });
+                dataCredits?.authorized.push({
+                  [sTimeCredit]: estimatedS - issuedS,
+                });
                 dataCredits?.issued.push({ [sTimeCredit]: availableS });
                 dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
                 dataCredits?.retired.push({ [sTimeCredit]: retiredS });
@@ -508,6 +510,26 @@ export class AnalyticsAPIService {
         case ChartType.PROGRAMME_LOCATIONS:
           const startTimeProgrammeLocations = query.startTime;
           const endTimeProgrammeLocations = query.endTime;
+          interface ProgrammeLocationFeatureGeometry {
+            type: string;
+            coordinates: any[];
+          }
+
+          interface ProgrammeLocationFeatureProperties {
+            id: string;
+            count: number;
+          }
+
+          interface ProgrammeLocationFeature {
+            type: string;
+            properties: ProgrammeLocationFeatureProperties;
+            geometry: ProgrammeLocationFeatureGeometry;
+          }
+
+          interface ProgrammeLocationData {
+            type: string;
+            features: ProgrammeLocationFeature[];
+          }
           let paramsProgrammeLocations: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
             companyId:
@@ -520,7 +542,6 @@ export class AnalyticsAPIService {
             .select([
               `"programmeId"`,
               `"companyId"`,
-              `"countryCodeA2"`,
               `"programmeProperties"`,
               `"createdTime"`,
             ])
@@ -531,21 +552,42 @@ export class AnalyticsAPIService {
               )
             )
             .getRawMany();
-          let locationsGeo = [];
-          for (
-            let index = 0;
-            index < totalResponseProgrammeLocation.length;
-            index++
-          ) {
-            let locations =
-              totalResponseProgrammeLocation[index]?.programmeProperties
-                ?.geographicalLocation;
-            for (let geoLoc = 0; geoLoc < locations.length; geoLoc++) {
-              locationsGeo.push(locations[geoLoc]);
+          let locationsGeoData: any = {};
+          let features: any[] = [];
+          locationsGeoData.type = "FeatureCollection";
+          for (let i = 0; i < totalResponseProgrammeLocation.length; i++) {
+            let programme: any =
+              totalResponseProgrammeLocation[i]?.programmeProperties;
+            let programmePropertiesGeoCordinates: any[] =
+              programme?.geographicalLocationCordintes;
+            if (programmePropertiesGeoCordinates) {
+              for (
+                let j = 0;
+                j < programmePropertiesGeoCordinates?.length;
+                j++
+              ) {
+                console.log(
+                  "cordinates ---- > ",
+                  programmePropertiesGeoCordinates[j]
+                );
+                let programmeGeoData: any = {};
+                let location: any = programmePropertiesGeoCordinates[j];
+                programmeGeoData.type = "Feature";
+                let properties: any = {};
+                let geometry: any = {};
+                properties.id = String(i) + String(j);
+                properties.count = 1;
+                geometry.type = "Point";
+                geometry.coordinates = location;
+                programmeGeoData.properties = properties;
+                programmeGeoData.geometry = geometry;
+                features.push(programmeGeoData);
+              }
             }
           }
-          let uniqueLocationsGeo = [...new Set(locationsGeo)];
-          results[stat.type] = uniqueLocationsGeo;
+          locationsGeoData.features = [...features];
+
+          results[stat.type] = locationsGeoData;
           break;
       }
     }

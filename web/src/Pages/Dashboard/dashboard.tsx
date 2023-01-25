@@ -92,7 +92,7 @@ const Dashboard = () => {
   const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
-  const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
+  const [programmeLocations, setProgrammeLocations] = useState<any>();
 
   //certifier view states
   const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
@@ -686,12 +686,12 @@ const Dashboard = () => {
   }, [transferredCredits]);
 
   useEffect(() => {
-    const address = programmeLocations[0];
-    const mag1 = ['<', ['get', 'mag'], 2];
-    const mag2 = ['all', ['>=', ['get', 'mag'], 2], ['<', ['get', 'mag'], 3]];
-    const mag3 = ['all', ['>=', ['get', 'mag'], 3], ['<', ['get', 'mag'], 4]];
-    const mag4 = ['all', ['>=', ['get', 'mag'], 4], ['<', ['get', 'mag'], 5]];
-    const mag5 = ['>=', ['get', 'mag'], 5];
+    // const address = programmeLocations[0];
+    const count1 = ['<', ['get', 'count'], 2];
+    const count2 = ['all', ['>=', ['get', 'count'], 2], ['<', ['get', 'count'], 3]];
+    const count3 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 4]];
+    const count4 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 5]];
+    const count5 = ['>=', ['get', 'count'], 5];
 
     // colors to use for the categories
     const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
@@ -716,13 +716,14 @@ const Dashboard = () => {
 
     // code for creating an SVG donut chart from feature properties
     function createDonutChart(properties: any) {
+      console.log('properties of donut creator --- > ', properties);
       const offsets = [];
       const counts = [
-        properties.mag1,
-        properties.mag2,
-        properties.mag3,
-        properties.mag4,
-        properties.mag5,
+        properties.count1,
+        properties.count2,
+        properties.count3,
+        properties.count4,
+        properties.count5,
       ];
       let total = 0;
       for (const count of counts) {
@@ -762,8 +763,8 @@ const Dashboard = () => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
           container: mapContainerRef.current || '',
-          zoom: 0.5,
-          center: [0, 20],
+          zoom: 3,
+          center: [54.44073, 16.39371],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',
         });
@@ -771,16 +772,54 @@ const Dashboard = () => {
           // add a clustered GeoJSON source for a sample set of earthquakes
           map.addSource('earthquakes', {
             type: 'geojson',
-            data: 'https://docs.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson',
+            data: programmeLocations,
+            // data: {
+            //   type: 'FeatureCollection',
+            //   features: [
+            //     {
+            //       type: 'Feature',
+            //       properties: {
+            //         id: 'ak16994521',
+            //         count: 2,
+            //       },
+            //       geometry: {
+            //         type: 'Point',
+            //         coordinates: [-77.0323, 38.9131],
+            //       },
+            //     },
+            //     {
+            //       type: 'Feature',
+            //       properties: {
+            //         id: 'ak16994519',
+            //         count: 2,
+            //       },
+            //       geometry: {
+            //         type: 'Point',
+            //         coordinates: [-77.0323, 38.9131],
+            //       },
+            //     },
+            //     {
+            //       type: 'Feature',
+            //       properties: {
+            //         id: 'ak16994517',
+            //         count: 1,
+            //       },
+            //       geometry: {
+            //         type: 'Point',
+            //         coordinates: [-150.4048, 63.1224],
+            //       },
+            //     },
+            //   ],
+            // },
             cluster: true,
             clusterRadius: 80,
             clusterProperties: {
-              // keep separate counts for each magnitude category in a cluster
-              mag1: ['+', ['case', mag1, 1, 0]],
-              mag2: ['+', ['case', mag2, 1, 0]],
-              mag3: ['+', ['case', mag3, 1, 0]],
-              mag4: ['+', ['case', mag4, 1, 0]],
-              mag5: ['+', ['case', mag5, 1, 0]],
+              // keep separate counts for each countnitude category in a cluster
+              count1: ['+', ['case', count1, 1, 0]],
+              count2: ['+', ['case', count2, 1, 0]],
+              count3: ['+', ['case', count3, 1, 0]],
+              count4: ['+', ['case', count4, 1, 0]],
+              count5: ['+', ['case', count5, 1, 0]],
             },
           });
           // circle and symbol layers for rendering individual earthquakes (unclustered points)
@@ -792,13 +831,13 @@ const Dashboard = () => {
             paint: {
               'circle-color': [
                 'case',
-                mag1,
+                count1,
                 colors[0],
-                mag2,
+                count2,
                 colors[1],
-                mag3,
+                count3,
                 colors[2],
-                mag4,
+                count4,
                 colors[3],
                 colors[4],
               ],
@@ -814,14 +853,14 @@ const Dashboard = () => {
             layout: {
               'text-field': [
                 'number-format',
-                ['get', 'mag'],
+                ['get', 'count'],
                 { 'min-fraction-digits': 1, 'max-fraction-digits': 1 },
               ],
               'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
               'text-size': 10,
             },
             paint: {
-              'text-color': ['case', ['<', ['get', 'mag'], 3], 'black', 'white'],
+              'text-color': ['case', ['<', ['get', 'count'], 3], 'black', 'white'],
             },
           });
 
