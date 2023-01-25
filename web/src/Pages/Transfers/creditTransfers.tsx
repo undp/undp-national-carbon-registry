@@ -215,7 +215,7 @@ const CreditTransfer = () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:cancelTitle'),
                   icon: <Icon.ExclamationOctagon />,
-                  actionBtnText: t('creditTransfer:cancel'),
+                  actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferCancel'),
                   type: 'danger',
@@ -243,7 +243,7 @@ const CreditTransfer = () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:acceptTitle'),
                   icon: <Icon.ClipboardCheck />,
-                  actionBtnText: t('creditTransfer:accept'),
+                  actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferApprove'),
                   type: 'success',
@@ -440,13 +440,16 @@ const CreditTransfer = () => {
     {
       align: 'right' as const,
       render: (_: any, record: any) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+        const menu = actionMenu(record);
+        return menu ? (
+          <Popover placement="bottomRight" content={menu} trigger="click">
             <EllipsisOutlined
               rotate={90}
               style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
             />
           </Popover>
+        ) : (
+          <span></span>
         );
       },
       // render: () => {

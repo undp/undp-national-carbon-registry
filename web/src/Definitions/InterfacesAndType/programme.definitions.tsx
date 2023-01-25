@@ -32,6 +32,7 @@ export enum TxType {
   RETIRE = '5',
   REVOKE = '6',
   FREEZE = '7',
+  AUTH = '8',
 }
 
 export enum SectoralScope {

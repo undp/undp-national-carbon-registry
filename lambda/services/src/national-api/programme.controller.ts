@@ -69,14 +69,14 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('authorize')
     async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
-        return this.programmeService.approveProgramme(body, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.approveProgramme(body, req.user)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('issue')
     async programmeIssue(@Body() body: ProgrammeIssue, @Request() req) {
-        return this.programmeService.issueProgrammeCredit(body, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.issueProgrammeCredit(body, req.user)
     }
 
 
@@ -84,14 +84,14 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Programme))
     @Put('reject')
     async programmeReject(@Body() body: ProgrammeReject, @Request() req) {
-        return this.programmeService.rejectProgramme(body, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.rejectProgramme(body, req.user)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransfer))
     @Put('retire')
     async programmeRetire(@Body() body: ProgrammeRetire, @Request() req) {
-        return this.programmeService.retireProgramme(body, req.user, `${req.user.id}#${req.user.name}`)
+        return this.programmeService.retireProgramme(body, req.user)
     }
 
     @ApiBearerAuth()

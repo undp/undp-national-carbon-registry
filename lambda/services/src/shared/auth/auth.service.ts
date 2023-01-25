@@ -45,7 +45,7 @@ export class AuthService {
       user.companyId
     );
     const payload = new JWTPayload(
-      user.email,
+      organisationDetails.name,
       user.name,
       user.id,
       user.role,

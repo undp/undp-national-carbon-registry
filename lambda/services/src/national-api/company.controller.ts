@@ -10,13 +10,14 @@ import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { CompanySuspendDto } from '../shared/dto/company.suspend.dto';
 import { FindCompanyQueryDto } from '../shared/dto/findCompany.dto';
 import { CompanyUpdateDto } from '../shared/dto/companyUpdate.dto';
+import { CountryService } from '../shared/util/country.service';
 
 @ApiTags('Organisation')
 @ApiBearerAuth()
 @Controller('organisation')
 export class CompanyController {
 
-    constructor(private readonly companyService: CompanyService, private caslAbilityFactory: CaslAbilityFactory) {}
+    constructor(private readonly companyService: CompanyService, private readonly countryService: CountryService, private caslAbilityFactory: CaslAbilityFactory) {}
 
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
@@ -72,5 +73,11 @@ export class CompanyController {
     @Put("update")
     async updateCompany(@Body() company: CompanyUpdateDto, @Request() req) {
         return await this.companyService.update(company, req.abilityCondition);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Post('countries')
+    async getCountries(@Body()query: QueryDto, @Request() req) {
+        return await this.countryService.getCountryList(query);
     }
 }
