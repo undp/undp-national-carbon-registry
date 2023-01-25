@@ -221,7 +221,7 @@ const ProgrammeView = () => {
             title: `Issued`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was issued ${addCommasToNumber(
-              activity.data.creditEst
+              activity.data.creditChange
             )} ${creditUnit} credits by the ${getTxRefValues(
               activity.data.txRef,
               1
@@ -313,7 +313,7 @@ const ProgrammeView = () => {
             title: `Retired`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
-              activity.data.creditBalance
+              activity.data.creditChange
             )} ${creditUnit} credits of this programme were retired by ${getTxRefValues(
               activity.data.txRef,
               1
