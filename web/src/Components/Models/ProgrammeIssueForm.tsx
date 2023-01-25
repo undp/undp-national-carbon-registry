@@ -68,7 +68,15 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                   }),
                 ]}
               >
-                <InputNumber placeholder="" controls={false} />
+                <InputNumber
+                  placeholder=""
+                  controls={false}
+                  onKeyPress={(event) => {
+                    if (!/[0-9\.]/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
+                />
               </Form.Item>
             </Col>
             <Col lg={1} md={1} className="seperator">
@@ -76,7 +84,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
             </Col>
             <Col lg={6} md={12}>
               <Form.Item className="popup-credit-input">
-                <Input
+                <InputNumber
                   placeholder={addCommSep(programme.creditEst - programme.creditIssued)}
                   disabled
                 />
@@ -90,7 +98,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
             </Col>
             <Col lg={6} md={6}>
               <Form.Item className="popup-credit-input">
-                <Input
+                <InputNumber
                   placeholder={addCommSep(programme.creditEst - programme.creditIssued)}
                   disabled
                 />

@@ -12,6 +12,7 @@ import { Stat } from "../dto/stat.dto";
 import { StatType } from "../enum/stat.type.enum";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
+import { TransferStatus } from "../enum/transform.status.enum";
 
 type Subjects = InferSubjects<typeof EntitySubject> | 'all';
 
@@ -61,13 +62,14 @@ export class CaslAbilityFactory {
         can(Action.Read, Company);
       }
 
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
-        can(Action.Manage, ProgrammeTransfer);
-      }
-
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.GOVERNMENT) {
-        can(Action.Manage, ProgrammeTransfer);
-        can(Action.Manage, Programme);
+      if (user.companyRole == CompanyRole.GOVERNMENT) {
+        if (user.role != Role.ViewOnly){
+          can(Action.Manage, ProgrammeTransfer);
+          can(Action.Manage, Programme);
+        } else {
+          can(Action.Read, ProgrammeTransfer);
+          can(Action.Read, Programme);
+        }
       }
 
       if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {
@@ -79,9 +81,14 @@ export class CaslAbilityFactory {
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
         can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED ]}});
         can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
+        can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED }});
-        can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+        can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+        can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
+        can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
+        can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
+        can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
