@@ -9,6 +9,7 @@ import { CaslAbilityFactory } from '../shared/casl/casl-ability.factory';
 import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { CompanySuspendDto } from '../shared/dto/company.suspend.dto';
 import { FindCompanyQueryDto } from '../shared/dto/findCompany.dto';
+import { CompanyUpdateDto } from '../shared/dto/companyUpdate.dto';
 
 @ApiTags('Organisation')
 @ApiBearerAuth()
@@ -64,5 +65,11 @@ export class CompanyController {
     @Get('profile')
     async getCompany(@Query('id') companyId: number,@Request() req) {
         return await this.companyService.findByCompanyId(companyId)
+    }
+
+    @ApiBearerAuth()
+    @Put("update")
+    async updateCompany(@Body() company: CompanyUpdateDto, @Request() req) {
+        return await this.companyService.update(company, req.abilityCondition);
     }
 }

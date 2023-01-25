@@ -13,6 +13,7 @@ import { CompanyState } from "../enum/company.state.enum";
 import { HelperService } from "../util/helpers.service";
 import { FindCompanyQueryDto } from "../dto/findCompany.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
+import { CompanyUpdateDto } from "../dto/companyUpdate.dto";
 
 @Injectable()
 export class CompanyService {
@@ -223,5 +224,42 @@ export class CompanyService {
       }
       return err;
     });
+  }
+
+  async update(
+    companyUpdateDto: CompanyUpdateDto,
+    abilityCondition: string
+  ): Promise<any> {
+    //return await this.findByCompanyId(companyUpdateDto.companyId);
+    const result = await this.companyRepo
+      .update(
+        {
+          companyId: companyUpdateDto.companyId,
+        },
+        {
+          name: companyUpdateDto.name,
+          email: companyUpdateDto.email,
+          website: companyUpdateDto.website,
+          logo: companyUpdateDto.logo,
+          phoneNo: companyUpdateDto.phoneNo,
+          address: companyUpdateDto.address,
+        }
+      )
+      .catch((err: any) => {
+        this.logger.error(err);
+        return err;
+      });
+
+    if (result.affected > 0) {
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        "Successfully updated company"
+      );
+    }
+
+    throw new HttpException(
+      "Company update failed. Please try again",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
   }
 }

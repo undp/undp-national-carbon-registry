@@ -1,8 +1,8 @@
 {
     "editCompany": "Edit Organisation",
     "addNewCompany": "Add New Organisation",
-    "editCompanySub": "Edit the Organisation information",
-    "addCompanySub": "Add new Organisations to the Carbon Registry for your organisation",
+    "editCompanySub": "Edit Organisation information",
+    "addCompanySub": " Add a new organisation to the Carbon Registry",
     "name": "Name",
     "email": "Email",
     "taxId": "Tax Id",
@@ -24,5 +24,8 @@
     "next": "NEXT",
     "back": "BACK",
     "update": "UPDATE",
-    "submit": "SUBMIT"
+    "submit": "SUBMIT",
+    "companyDetailsTitle": "Organisation Details",
+    "companyAdminDetailsTitle": "Organisation Admin Details",
+    "cancel": "CANCEL"
 }
