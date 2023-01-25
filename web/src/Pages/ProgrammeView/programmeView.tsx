@@ -319,7 +319,10 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: RootColor, color: RootColor }}>
+              <span
+                className="step-icon"
+                style={{ backgroundColor: RootBGColor, color: RootColor }}
+              >
                 <Icon.Save />
               </span>
             ),
@@ -387,6 +390,18 @@ const ProgrammeView = () => {
     navigate('.', { state: { record: response.data } });
     genCerts(response.data, certTimes);
     genPieData(response.data);
+  };
+
+  const updateCreditInfo = (response: any) => {
+    if (!(response.data instanceof Array) && response.data && data) {
+      response.data.company = data.company;
+      response.data.certifier = data.certifier;
+      setData(response.data);
+      state.record = response.data;
+      navigate('.', { state: { record: response.data } });
+      genCerts(response.data, certTimes);
+      genPieData(response.data);
+    }
   };
 
   const onPopupAction = async (
@@ -1016,7 +1031,7 @@ const ProgrammeView = () => {
                                             'transferRequest',
                                             t('view:successRequest'),
                                             post,
-                                            () => {}
+                                            updateCreditInfo
                                           )
                                         }
                                       />
@@ -1057,7 +1072,7 @@ const ProgrammeView = () => {
                                               'retire',
                                               t('view:successRetire'),
                                               put,
-                                              () => {}
+                                              updateCreditInfo
                                             )
                                           }
                                         />
@@ -1096,7 +1111,7 @@ const ProgrammeView = () => {
                                               'transferRequest',
                                               t('view:successSend'),
                                               post,
-                                              () => {}
+                                              updateCreditInfo
                                             )
                                           }
                                         />

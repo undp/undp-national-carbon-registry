@@ -172,7 +172,12 @@ const CreditTransfer = () => {
     getAllTransfers();
   }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
 
-  const handleRequestOk = async (reqId: number, remarks: string, endpoint: string) => {
+  const handleRequestOk = async (
+    reqId: number,
+    remarks: string,
+    endpoint: string,
+    successText?: string
+  ) => {
     setLoading(true);
     try {
       const response: any = await post('national/programme/' + endpoint, {
@@ -182,7 +187,7 @@ const CreditTransfer = () => {
       console.log(response);
       message.open({
         type: 'success',
-        content: response.message,
+        content: successText ? successText : response.message,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -289,7 +294,12 @@ const CreditTransfer = () => {
                   icon: <Icon.Save />,
                   actionBtnText: t('creditTransfer:recognise'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferApprove'),
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferApprove',
+                      'Successfully recongnised'
+                    ),
                   type: 'primary',
                 });
               },
@@ -304,7 +314,12 @@ const CreditTransfer = () => {
                   icon: <Icon.XOctagon />,
                   actionBtnText: t('creditTransfer:notrecognise'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferReject'),
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferReject',
+                      'Successfully not recongnised'
+                    ),
                   type: 'danger',
                 });
               },

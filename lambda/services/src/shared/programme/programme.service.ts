@@ -372,9 +372,14 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Credit send received ${trf}`)
-            await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)
+            updateProgramme  = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
@@ -652,9 +657,14 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+        
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Retire auto approve received ${trf}`)
-            await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)
+            updateProgramme = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
