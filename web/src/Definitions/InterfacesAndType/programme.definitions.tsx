@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.color.constants';
 
 export enum ProgrammeStage {
   AwaitingAuthorization = 'Pending',
@@ -31,6 +32,7 @@ export enum TxType {
   RETIRE = '5',
   REVOKE = '6',
   FREEZE = '7',
+  AUTH = '8',
 }
 
 export enum SectoralScope {
@@ -180,4 +182,13 @@ export const getFinancialFields = (programme: Programme) => {
     grantEquivalent: addCommSep(programme.programmeProperties.grantEquivalentAmount),
     carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };
+};
+
+export const getCompanyBgColor = (item: string) => {
+  if (item === 'Government') {
+    return GovBGColor;
+  } else if (item === 'Certifier') {
+    return CertBGColor;
+  }
+  return DevBGColor;
 };

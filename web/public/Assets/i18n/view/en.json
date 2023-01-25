@@ -49,11 +49,20 @@
     "issueCreditText": "Credits to be issued",
     "totalTransferCredit": "Total Amount",
     "successAuth": "Successfully authorised",
+    "successRetire": "Successfully retired",
     "successIssue": "Successfully issued",
     "successRequest": "Successfully initiated the transfer request",
     "sendCreditTitle": "Send Credits",
     "to": "To",
+    "from": "From",
     "send": "Send",
     "successSend": "Credit send successful",
-    "searchCompany": "Search company by name"
+    "searchCompany": "Search company by name",
+    "serialNoField": "Serial Number",
+    "transferApproveTotal": "Credit Amount",
+    "confirmClosure": "I understand that this action cannot be undone",
+    "confirmRetire": "This transfer is pending government approval",
+    "searchCountry": "Search country",
+    "country": "Country",
+    "company": "Company"
 }

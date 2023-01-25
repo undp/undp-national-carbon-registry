@@ -197,7 +197,7 @@ const Login = () => {
           <Row>
             <div className="login-language-selection-container">
               <span className="login-language-selection-txt">
-                {t('common:language')} :
+                {t('common:language')}
                 <Select
                   placeholder="Search to Select"
                   defaultValue={
