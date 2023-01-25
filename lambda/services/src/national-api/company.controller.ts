@@ -68,7 +68,7 @@ export class CompanyController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('countries')
+    @Post('countries')
     async getCountries(@Body()query: QueryDto, @Request() req) {
         return await this.countryService.getCountryList(query);
     }

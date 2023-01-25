@@ -440,13 +440,16 @@ const CreditTransfer = () => {
     {
       align: 'right' as const,
       render: (_: any, record: any) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+        const menu = actionMenu(record);
+        return menu ? (
+          <Popover placement="bottomRight" content={menu} trigger="click">
             <EllipsisOutlined
               rotate={90}
               style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
             />
           </Popover>
+        ) : (
+          <span></span>
         );
       },
       // render: () => {
