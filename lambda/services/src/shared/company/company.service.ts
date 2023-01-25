@@ -14,6 +14,7 @@ import { HelperService } from "../util/helpers.service";
 import { FindCompanyQueryDto } from "../dto/findCompany.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { CompanyUpdateDto } from "../dto/companyUpdate.dto";
+import { DataResponseDto } from "../dto/data.response.dto";
 
 @Injectable()
 export class CompanyService {
@@ -229,7 +230,7 @@ export class CompanyService {
   async update(
     companyUpdateDto: CompanyUpdateDto,
     abilityCondition: string
-  ): Promise<any> {
+  ): Promise<DataResponseDto | undefined> {
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
@@ -241,7 +242,7 @@ export class CompanyService {
     if (!company) {
       throw new HttpException(
         "No active company found",
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.BAD_REQUEST
       );
     }
     const { companyId, ...companyUpdateFields } = companyUpdateDto;
@@ -258,9 +259,9 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
-      return new BasicResponseDto(
+      return new DataResponseDto(
         HttpStatus.OK,
-        "Successfully updated company"
+        await this.findByCompanyId(company.companyId)
       );
     }
 
