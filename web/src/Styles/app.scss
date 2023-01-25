@@ -387,13 +387,13 @@ body {
     }
   }
 
-  .ant-form{
+  .ant-form {
     .ant-input-password {
       padding: 6.5px 11px;
-      font-size: 16px;  
+      font-size: 16px;
     }
 
-    .ant-form-item-explain-error{
+    .ant-form-item-explain-error {
       font-size: 13px;
       text-align: start;
     }
@@ -404,7 +404,7 @@ body {
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-  
+
       .error-message-txt {
         font-size: 0.9rem;
         color: $error-color;
@@ -547,6 +547,7 @@ body {
 }
 
 .transfer-form {
+  padding: 0px 15px;
   .sub-text {
     margin-bottom: 35px;
     font-size: 0.9rem;
@@ -570,6 +571,9 @@ body {
   label {
     font-size: 0.8rem;
   }
+  .ant-radio-wrapper {
+    font-size: 0.9rem;
+  }
 
   input {
     color: $body-text-color;
@@ -581,7 +585,7 @@ body {
 }
 
 .color-error {
-    color: $error-color;
+  color: $error-color;
 }
 
 .color-primary {
@@ -594,4 +598,10 @@ body {
 
 .text-left {
   text-align: left;
+}
+
+.ant-form-item {
+  .ant-radio-group {
+    text-align: left;
+  }
 }

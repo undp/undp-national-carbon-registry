@@ -215,7 +215,7 @@ const CreditTransfer = () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:cancelTitle'),
                   icon: <Icon.ExclamationOctagon />,
-                  actionBtnText: t('creditTransfer:cancel'),
+                  actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferCancel'),
                   type: 'danger',
@@ -243,7 +243,7 @@ const CreditTransfer = () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:acceptTitle'),
                   icon: <Icon.ClipboardCheck />,
-                  actionBtnText: t('creditTransfer:accept'),
+                  actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferApprove'),
                   type: 'success',

@@ -194,7 +194,7 @@ export class ProgrammeLedgerService {
 
         const prvTxTime = programme.txTime;
         programme.txTime = new Date().getTime();
-        programme.txRef = `${transfer.requestId}#${name}#${reason}`;
+        programme.txRef = `${name}#${transfer.requestId}#${reason}`;
         
         if (isRetirement) {
           if (programme.creditBalance == transfer.creditAmount) {
@@ -834,7 +834,7 @@ export class ProgrammeLedgerService {
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
         programme.txRef = user;
-        programme.txType = TxType.ISSUE;
+        programme.txType = TxType.AUTH;
         updatedProgramme = programme;
 
         let companyCreditDistribution = {};

@@ -160,6 +160,15 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                     required: true,
                     message: 'Required field',
                   },
+                  ({ getFieldValue }) => ({
+                    validator(rule, v) {
+                      if (v === false) {
+                        // eslint-disable-next-line prefer-promise-reject-errors
+                        return Promise.reject('Required field');
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
                 ]}
               >
                 <Checkbox className="label">{t('view:confirmClosure')}</Checkbox>

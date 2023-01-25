@@ -6,5 +6,6 @@ export enum TxType {
     CERTIFY = '4',
     RETIRE = '5',
     REVOKE = '6',
-    FREEZE = '7'
+    FREEZE = '7',
+    AUTH = '8',
 }
