@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
+  CompanyRole,
   CreditTransferStage,
   getCompanyBgColor,
   getStageTransferEnumVal,
@@ -209,7 +210,7 @@ const CreditTransfer = () => {
           size="small"
           dataSource={[
             {
-              text: 'Cancel',
+              text: t('creditTransfer:cancel'),
               icon: <Icon.ExclamationOctagon />,
               click: () => {
                 showModalOnAction(record, {
@@ -236,7 +237,7 @@ const CreditTransfer = () => {
           size="small"
           dataSource={[
             {
-              text: 'Accept',
+              text: t('creditTransfer:accept'),
               icon: <Icon.ClipboardCheck />,
               style: 'color-primary',
               click: () => {
@@ -251,12 +252,55 @@ const CreditTransfer = () => {
               },
             },
             {
-              text: 'Reject',
+              text: t('creditTransfer:reject'),
               icon: <Icon.XOctagon />,
               style: 'color-error',
               click: () => {
                 showModalOnAction(record, {
                   title: t('creditTransfer:rejectTitle'),
+                  icon: <Icon.XOctagon />,
+                  actionBtnText: t('creditTransfer:reject'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferReject'),
+                  type: 'danger',
+                });
+              },
+            },
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : record.isRetirement && userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: t('creditTransfer:recognise'),
+              icon: <Icon.Save />,
+              style: 'color-primary',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:recogniseTitle'),
+                  icon: <Icon.Save />,
+                  actionBtnText: t('creditTransfer:recognise'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferApprove'),
+                  type: 'success',
+                });
+              },
+            },
+            {
+              text: t('creditTransfer:notrecognise'),
+              icon: <Icon.XOctagon />,
+              style: 'color-error',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:notRecogniseTitle'),
                   icon: <Icon.XOctagon />,
                   actionBtnText: t('creditTransfer:reject'),
                   okAction: (requestId: any, comment: any) =>

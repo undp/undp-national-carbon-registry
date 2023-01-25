@@ -18,5 +18,10 @@
   "acceptTitle": "Accept Transfer Request",
   "proceed": "Proceed",
   "cancel": "Cancel",
-  "reject": "Reject"
+  "reject": "Reject",
+  "recognise": "Recognise",
+  "notrecognise": "Not Recognise",
+  "accept": "Accept",
+  "recogniseTitle": "Retire Credits",
+  "notRecogniseTitle": "Are you sure you do not want to recognise this international transfer retire request?"
 }

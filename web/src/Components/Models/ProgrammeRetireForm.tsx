@@ -107,6 +107,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           </Col>
         </Row>
       )}
+
       <Form
         name="transfer_init_popup"
         layout="vertical"
@@ -114,6 +115,12 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
+          d.fromCompanyIds = programme.companyId.map((n) => Number(n));
+          d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
+          d.toCompanyMeta = {
+            name: d.company,
+            country: d.country,
+          };
           const res = await onFinish(d);
           setPopupError(res);
           setLoading(false);
@@ -155,7 +162,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 <Form.Item
                   className="remarks-label"
                   label={t('view:country')}
-                  name="toCompanyId"
+                  name="country"
                   // rules={[
                   //   {
                   //     required: true,
