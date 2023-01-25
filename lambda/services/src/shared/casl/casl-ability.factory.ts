@@ -39,7 +39,6 @@ export class CaslAbilityFactory {
 
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
-        cannot(Action.Update, Company, ['companyRole']);
 
       } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
         can(Action.Read, User, { companyId: { $eq: user.companyId } });
@@ -51,7 +50,6 @@ export class CaslAbilityFactory {
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
-        cannot(Action.Update, Company, ['companyRole']);
       } else {
         if (user.companyRole == CompanyRole.GOVERNMENT) {
           can(Action.Read, User);

@@ -68,6 +68,7 @@ export class CompanyController {
     }
 
     @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, Company))
     @Put("update")
     async updateCompany(@Body() company: CompanyUpdateDto, @Request() req) {
         return await this.companyService.update(company, req.abilityCondition);

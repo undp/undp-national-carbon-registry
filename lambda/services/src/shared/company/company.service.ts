@@ -230,20 +230,27 @@ export class CompanyService {
     companyUpdateDto: CompanyUpdateDto,
     abilityCondition: string
   ): Promise<any> {
-    //return await this.findByCompanyId(companyUpdateDto.companyId);
+    const company = await this.companyRepo
+      .createQueryBuilder()
+      .where(
+        `"companyId" = '${
+          companyUpdateDto.companyId
+        }' AND ${this.helperService.parseMongoQueryToSQL(abilityCondition)}`
+      )
+      .getOne();
+    if (!company) {
+      throw new HttpException(
+        "No active company found",
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+    const { companyId, ...companyUpdateFields } = companyUpdateDto;
     const result = await this.companyRepo
       .update(
         {
-          companyId: companyUpdateDto.companyId,
+          companyId: company.companyId,
         },
-        {
-          name: companyUpdateDto.name,
-          email: companyUpdateDto.email,
-          website: companyUpdateDto.website,
-          logo: companyUpdateDto.logo,
-          phoneNo: companyUpdateDto.phoneNo,
-          address: companyUpdateDto.address,
-        }
+        companyUpdateFields
       )
       .catch((err: any) => {
         this.logger.error(err);
