@@ -510,26 +510,6 @@ export class AnalyticsAPIService {
         case ChartType.PROGRAMME_LOCATIONS:
           const startTimeProgrammeLocations = query.startTime;
           const endTimeProgrammeLocations = query.endTime;
-          interface ProgrammeLocationFeatureGeometry {
-            type: string;
-            coordinates: any[];
-          }
-
-          interface ProgrammeLocationFeatureProperties {
-            id: string;
-            count: number;
-          }
-
-          interface ProgrammeLocationFeature {
-            type: string;
-            properties: ProgrammeLocationFeatureProperties;
-            geometry: ProgrammeLocationFeatureGeometry;
-          }
-
-          interface ProgrammeLocationData {
-            type: string;
-            features: ProgrammeLocationFeature[];
-          }
           let paramsProgrammeLocations: chartStatsRequestDto = {
             type: "TOTAL_PROGRAMS",
             companyId:
@@ -585,27 +565,58 @@ export class AnalyticsAPIService {
               }
             }
           }
-          // for (let i = 0; i < features.length; i++) {
-          //   for (let j = i + 1; i < features.length; j++) {
-          //     if (
-          //       features[i]?.geometry?.coordinates &&
-          //       features[j]?.geometry?.coordinates
-          //     ) {
-          //       if (
-          //         features[i]?.geometry?.coordinates ===
-          //         features[j]?.geometry?.coordinates
-          //       ) {
-          //         features[i].properties.count =
-          //           features[i]?.properties?.count + 1;
-          //         features[j].properties.count =
-          //           features[j]?.properties?.count + 1;
-          //       }
-          //     }
-          //   }
-          // }
           locationsGeoData.features = [...features];
 
           results[stat.type] = locationsGeoData;
+          break;
+
+        case ChartType.TRANSFER_LOCATIONS:
+          const startTimeTransferLocations = query.startTime;
+          const endTimeTransferLocations = query.endTime;
+          let paramsTransferLocations: chartStatsRequestDto = {
+            type: stat.type,
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
+            startDate: startTimeTransferLocations,
+            endDate: endTimeTransferLocations,
+          };
+          let totalResponseTransferLocation = await this.programmeTransferRepo
+            .createQueryBuilder()
+            .select([`"requestId"`, `"toCompanyMeta"`])
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                paramsTransferLocations,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawMany();
+          let countries: any[] = [];
+          let locationsTransferGeoData: any = {};
+          let featuresTransfer: any[] = [];
+          locationsTransferGeoData.type = "FeatureCollection";
+          for (
+            let index = 0;
+            index < totalResponseTransferLocation.length;
+            index++
+          ) {
+            let programmeTransferGeoData: any = {};
+            let geometryTransfer: any = {};
+            if (totalResponseTransferLocation[index]?.toCompanyMeta) {
+              let toCompanyMeta =
+                totalResponseTransferLocation[index]?.toCompanyMeta;
+              if (toCompanyMeta?.coordinates) {
+                if (!countries.includes(toCompanyMeta?.coordinates))
+                  programmeTransferGeoData.type = "Feature";
+                  geometryTransfer.type = "Point";
+                  geometryTransfer.coordinates = toCompanyMeta?.coordinates;
+                  programmeTransferGeoData.geometry = geometryTransfer;
+                featuresTransfer.push(programmeTransferGeoData);
+              }
+            }
+          }
+          locationsTransferGeoData.features = [...featuresTransfer];
+
+          results[stat.type] = locationsTransferGeoData;
           break;
       }
     }

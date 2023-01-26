@@ -93,6 +93,7 @@ const Dashboard = () => {
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
+  const [programmeTransferLocations, setProgrammeTransferLocations] = useState<any>();
 
   //certifier view states
   const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
@@ -222,6 +223,9 @@ const Dashboard = () => {
         },
         {
           type: 'PROGRAMME_LOCATIONS',
+        },
+        {
+          type: 'TRANSFER_LOCATIONS',
         },
       ],
       category: categoryType,
@@ -416,6 +420,10 @@ const Dashboard = () => {
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
+      }
+      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
+        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
+        setProgrammeTransferLocations(locations);
       }
       if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
         const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
@@ -686,44 +694,6 @@ const Dashboard = () => {
   }, [transferredCredits]);
 
   useEffect(() => {
-    const geojson: any = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: {
-            message: 'Foo',
-            iconSize: [30, 30],
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [-66.324462, -16.024695],
-          },
-        },
-        {
-          type: 'Feature',
-          properties: {
-            message: 'Bar',
-            iconSize: [30, 30],
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [7.61767, 80.69863],
-          },
-        },
-        {
-          type: 'Feature',
-          properties: {
-            message: 'Baz',
-            iconSize: [30, 30],
-          },
-          geometry: {
-            type: 'Point',
-            coordinates: [15.1168, -101.01223],
-          },
-        },
-      ],
-    };
     setTimeout(() => {
       const map = new mapboxgl.Map({
         container: mapContainerInternationalRef.current || '',
@@ -734,34 +704,30 @@ const Dashboard = () => {
       });
 
       // Add markers to the map.
-      for (const marker of geojson.features) {
+      for (const marker of programmeTransferLocations.features) {
         // Create a DOM element for each marker.
         const el = document.createElement('div');
-        const width = marker.properties.iconSize[0];
-        const height = marker.properties.iconSize[1];
+        const width = 30;
+        const height = 30;
         el.className = 'marker';
         el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/25/25613.png)`;
         el.style.width = `${width}px`;
         el.style.height = `${height}px`;
         el.style.backgroundSize = '100%';
 
-        el.addEventListener('click', () => {
-          window.alert(marker.properties.message);
-        });
-
         // Add markers to the map.
         new mapboxgl.Marker(el).setLngLat(marker?.geometry?.coordinates).addTo(map);
       }
     }, 1000);
-  }, []);
+  }, [programmeTransferLocations]);
 
   useEffect(() => {
     // const address = programmeLocations[0];
-    const count1 = ['<', ['get', 'count'], 2];
-    const count2 = ['all', ['>=', ['get', 'count'], 2], ['<', ['get', 'count'], 3]];
-    const count3 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 4]];
-    const count4 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 5]];
-    const count5 = ['>=', ['get', 'count'], 5];
+    const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 3]];
+    const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
+    const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
+    const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
+    const count5 = ['>=', ['get', 'count'], 16];
 
     // colors to use for the categories
     const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
