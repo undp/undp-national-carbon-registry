@@ -67,6 +67,7 @@ export class CaslAbilityFactory {
         if (user.role != Role.ViewOnly){
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
+          can(Action.Manage, ProgrammeTransferRequest);
         } else {
           can(Action.Read, ProgrammeTransfer);
           can(Action.Read, Programme);
@@ -91,11 +92,12 @@ export class CaslAbilityFactory {
           can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
           can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
           can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, ProgrammeTransferRequest);
         } else {
-            can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
-            can(Action.Read, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
-            can(Action.Read, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
-            can(Action.Read, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+          can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+          can(Action.Read, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
+          can(Action.Read, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
+          can(Action.Read, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
         }
       }
 
@@ -107,11 +109,11 @@ export class CaslAbilityFactory {
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
       cannot(Action.Update, User, ['companyRole'])
 
-      if(user.companyState === 0){
-        cannot(Action.Create, 'all');
-        cannot(Action.Delete, 'all');
-        cannot(Action.Update, 'all');
-      }
+      // if(user.companyState === 0){
+      //   cannot(Action.Create, 'all');
+      //   cannot(Action.Delete, 'all');
+      //   cannot(Action.Update, 'all');
+      // }
     }
 
     return build({

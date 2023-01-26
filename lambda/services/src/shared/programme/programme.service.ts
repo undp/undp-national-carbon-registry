@@ -263,8 +263,16 @@ export class ProgrammeService {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
         
         // TODO: Move this to casl factory
-        if (requester.role == Role.ViewOnly) {
-            throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
+        // if (requester.role == Role.ViewOnly) {
+        //     throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
+        // }
+
+        // if (![CompanyRole.GOVERNMENT, CompanyRole.PROGRAMME_DEVELOPER].includes(requester.companyRole)) {
+        //     throw new HttpException("Unsupported company role", HttpStatus.FORBIDDEN)
+        // }
+
+        if (req.companyCredit && req.companyCredit.reduce((a, b) => a + b, 0) <= 0) {
+            throw new HttpException("Total Amount should be greater than 0", HttpStatus.BAD_REQUEST)
         }
 
         if (req.fromCompanyIds.length > 1 ) {
