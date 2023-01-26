@@ -228,7 +228,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                           parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                         ) {
                           // eslint-disable-next-line prefer-promise-reject-errors
-                          return Promise.reject('Request Amount > Credit Balance');
+                          return Promise.reject('Great than the available');
                         }
                         return Promise.resolve();
                       },
@@ -251,7 +251,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
               </Col>
               <Col lg={6} md={12}>
                 <Form.Item className="popup-credit-input">
-                  <InputNumber placeholder={addCommSep(totalCredits)} disabled />
+                  <InputNumber placeholder={addCommSep(pert.available)} disabled />
                 </Form.Item>
               </Col>
             </Row>

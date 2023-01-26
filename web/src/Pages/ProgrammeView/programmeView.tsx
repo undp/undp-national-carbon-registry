@@ -203,12 +203,14 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was authorised for ${addCommasToNumber(
               activity.data.creditEst
-            )} ${creditUnit} credits until ${DateTime.fromMillis(activity.data.endTime).toFormat(
-              dateTimeFormat
-            )} with the Serial Number ${activity.data.serialNo} by the ${getTxRefValues(
+            )} ${creditUnit} credits until ${DateTime.fromMillis(
+              activity.data.endTime * 1000
+            ).toFormat(dateTimeFormat)} with the Serial Number ${
+              activity.data.serialNo
+            } by the ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              3
+            )}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
                 <LikeOutlined />

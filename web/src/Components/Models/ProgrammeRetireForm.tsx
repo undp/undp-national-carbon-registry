@@ -231,7 +231,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                               parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                             ) {
                               // eslint-disable-next-line prefer-promise-reject-errors
-                              return Promise.reject('> estimated');
+                              return Promise.reject('Great than the available');
                             }
                             return Promise.resolve();
                           },
@@ -254,7 +254,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   </Col>
                   <Col lg={6} md={12}>
                     <Form.Item className="popup-credit-input">
-                      <InputNumber placeholder={addCommSep(totalCredits)} disabled />
+                      <InputNumber placeholder={addCommSep(pert.available)} disabled />
                     </Form.Item>
                   </Col>
                 </Row>
