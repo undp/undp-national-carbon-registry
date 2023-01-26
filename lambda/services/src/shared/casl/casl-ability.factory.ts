@@ -13,6 +13,7 @@ import { StatType } from "../enum/stat.type.enum";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";
+import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
 
 type Subjects = InferSubjects<typeof EntitySubject> | 'all';
 
@@ -66,6 +67,7 @@ export class CaslAbilityFactory {
         if (user.role != Role.ViewOnly){
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
+          can(Action.Manage, ProgrammeTransferRequest);
         } else {
           can(Action.Read, ProgrammeTransfer);
           can(Action.Read, Programme);
@@ -84,11 +86,13 @@ export class CaslAbilityFactory {
         can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED }});
-        can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
         can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
-        can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
-        can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
-        can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+        if (user.role != Role.ViewOnly) {
+          can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+          can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+        }
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
