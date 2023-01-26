@@ -190,10 +190,14 @@
 }
 
 .footer-btn {
-  margin: 15px 20px;
+  margin: 39px 20px 0px 20px;
   display: flex;
   justify-content: center;
   column-gap: 30px;
+
+  button {
+    text-transform: uppercase;
+  }
 }
 
 .retire-form {

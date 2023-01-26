@@ -41,6 +41,7 @@ import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
 import { RetireType } from '../enum/retire.type.enum';
 import { UserService } from '../user/user.service';
+import { Role } from '../casl/role.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -261,6 +262,11 @@ export class ProgrammeService {
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
         
+        // TODO: Move this to casl factory
+        if (requester.role == Role.ViewOnly) {
+            throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
+        }
+
         if (req.fromCompanyIds.length > 1 ) {
             if (!req.companyCredit) {
                 throw new HttpException("Company credit needs to define for multiple companies", HttpStatus.BAD_REQUEST)
@@ -321,7 +327,7 @@ export class ProgrammeService {
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
 
             if (!programme.companyId.includes(fromCompanyId)) {
-                throw new HttpException("Transfer request from company does own the programme", HttpStatus.BAD_REQUEST)
+                throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
             }
 
             console.log(programme.creditBalance, ownershipMap[fromCompanyId], frozenCredit[fromCompanyId])
