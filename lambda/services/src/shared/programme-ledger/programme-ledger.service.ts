@@ -245,7 +245,6 @@ export class ProgrammeLedgerService {
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
           currentStage: programme.currentStage,
-          creditTransferred: programme.creditTransferred,
         };
 
         if (programme.creditOwnerPercentage) {
@@ -253,7 +252,13 @@ export class ProgrammeLedgerService {
         }
 
         if (isRetirement) {
+<<<<<<< HEAD
           uPayload["creditRetired"] = programme.creditRetired;
+=======
+          uPayload['creditRetired'] = programme.creditRetired;
+        } else {
+          uPayload['creditTransferred'] =  programme.creditTransferred;
+>>>>>>> 744908558aa601d7ad9877877174a51cbc01bdab
         }
 
         let updateMap = {};

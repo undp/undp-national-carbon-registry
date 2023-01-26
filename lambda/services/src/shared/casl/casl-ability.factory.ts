@@ -12,6 +12,8 @@ import { Stat } from "../dto/stat.dto";
 import { StatType } from "../enum/stat.type.enum";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
+import { TransferStatus } from "../enum/transform.status.enum";
+import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
 
 type Subjects = InferSubjects<typeof EntitySubject> | 'all';
 
@@ -29,6 +31,7 @@ export class CaslAbilityFactory {
 
         cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
         cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
+        cannot([Action.Update], Company);
       } else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
         cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
@@ -36,7 +39,8 @@ export class CaslAbilityFactory {
 
         // can(Action.Manage, Programme);
 
-        can(Action.Manage, Company);
+        can(Action.Update, Company, { companyId: { $eq: user.companyId } });
+        cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
 
       } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
         can(Action.Read, User, { companyId: { $eq: user.companyId } });
@@ -47,7 +51,7 @@ export class CaslAbilityFactory {
 
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
-        cannot(Action.Update, Company, ['taxId', 'companyRole']);
+        cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
       } else {
         if (user.companyRole == CompanyRole.GOVERNMENT) {
           can(Action.Read, User);
@@ -59,13 +63,15 @@ export class CaslAbilityFactory {
         can(Action.Read, Company);
       }
 
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
-        can(Action.Manage, ProgrammeTransfer);
-      }
-
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.GOVERNMENT) {
-        can(Action.Manage, ProgrammeTransfer);
-        can(Action.Manage, Programme);
+      if (user.companyRole == CompanyRole.GOVERNMENT) {
+        if (user.role != Role.ViewOnly){
+          can(Action.Manage, ProgrammeTransfer);
+          can(Action.Manage, Programme);
+          can(Action.Manage, ProgrammeTransferRequest);
+        } else {
+          can(Action.Read, ProgrammeTransfer);
+          can(Action.Read, Programme);
+        }
       }
 
       if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {
@@ -77,9 +83,16 @@ export class CaslAbilityFactory {
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
         can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.ISSUED ]}});
         can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
+        can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED }});
-        can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+        can(Action.Read, ProgrammeTransfer, { status: { $eq: TransferStatus.APPROVED }});
+        if (user.role != Role.ViewOnly) {
+          can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+          can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+        }
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {

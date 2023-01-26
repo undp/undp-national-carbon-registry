@@ -376,6 +376,8 @@ body {
 
   .ant-select-selector {
     text-align: left;
+    border-radius: 5px !important;
+    height: 32px;
   }
 
   .form-label {
@@ -538,6 +540,10 @@ body {
   margin-left: 2rem !important;
 }
 
+.mg-left-1 {
+  margin-left: 1rem;
+}
+
 .mg-top-1 {
   margin-top: 1rem;
 }
@@ -604,4 +610,21 @@ body {
   .ant-radio-group {
     text-align: left;
   }
+}
+
+.loading-center {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.ant-tag-purple {
+  color: #976ED7;
+}
+
+.ant-tag-orange {
+  color: #FF8F56;
+}
+
+.ant-tag-default {
+  color: rgba(#3A3541, 0.5);
 }

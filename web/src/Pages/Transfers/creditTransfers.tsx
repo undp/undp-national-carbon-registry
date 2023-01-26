@@ -27,6 +27,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
+  CompanyRole,
   CreditTransferStage,
   getCompanyBgColor,
   getStageTransferEnumVal,
@@ -51,7 +52,7 @@ type PopupInfo = {
   icon: any;
   actionBtnText: string;
   okAction: any;
-  type: 'success' | 'danger';
+  type: 'primary' | 'danger';
 };
 
 const CreditTransfer = () => {
@@ -171,7 +172,12 @@ const CreditTransfer = () => {
     getAllTransfers();
   }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
 
-  const handleRequestOk = async (reqId: number, remarks: string, endpoint: string) => {
+  const handleRequestOk = async (
+    reqId: number,
+    remarks: string,
+    endpoint: string,
+    successText?: string
+  ) => {
     setLoading(true);
     try {
       const response: any = await post('national/programme/' + endpoint, {
@@ -181,7 +187,7 @@ const CreditTransfer = () => {
       console.log(response);
       message.open({
         type: 'success',
-        content: response.message,
+        content: successText ? successText : response.message,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -209,7 +215,7 @@ const CreditTransfer = () => {
           size="small"
           dataSource={[
             {
-              text: 'Cancel',
+              text: t('creditTransfer:cancel'),
               icon: <Icon.ExclamationOctagon />,
               click: () => {
                 showModalOnAction(record, {
@@ -236,7 +242,7 @@ const CreditTransfer = () => {
           size="small"
           dataSource={[
             {
-              text: 'Accept',
+              text: t('creditTransfer:accept'),
               icon: <Icon.ClipboardCheck />,
               style: 'color-primary',
               click: () => {
@@ -245,13 +251,13 @@ const CreditTransfer = () => {
                   icon: <Icon.ClipboardCheck />,
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferApprove'),
-                  type: 'success',
+                    handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
+                  type: 'primary',
                 });
               },
             },
             {
-              text: 'Reject',
+              text: t('creditTransfer:reject'),
               icon: <Icon.XOctagon />,
               style: 'color-error',
               click: () => {
@@ -261,6 +267,59 @@ const CreditTransfer = () => {
                   actionBtnText: t('creditTransfer:reject'),
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferReject'),
+                  type: 'danger',
+                });
+              },
+            },
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : record.isRetirement && userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: t('creditTransfer:recognise'),
+              icon: <Icon.Save />,
+              style: 'color-primary',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:recogniseTitle'),
+                  icon: <Icon.Save />,
+                  actionBtnText: t('creditTransfer:recognise'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferApprove',
+                      'Successfully recongnised'
+                    ),
+                  type: 'primary',
+                });
+              },
+            },
+            {
+              text: t('creditTransfer:notrecognise'),
+              icon: <Icon.XOctagon />,
+              style: 'color-error',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:notRecogniseTitle'),
+                  icon: <Icon.XOctagon />,
+                  actionBtnText: t('creditTransfer:notrecognise'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferReject',
+                      'Successfully not recongnised'
+                    ),
                   type: 'danger',
                 });
               },
@@ -431,8 +490,8 @@ const CreditTransfer = () => {
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
-          <Tag className="clickable" color={getTransferStageTagType(Obj.status)}>
-            {getStageTransferEnumVal(Obj.status)}
+          <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+            {getStageTransferEnumVal(Obj.status, Obj)}
           </Tag>
         );
       },

@@ -13,6 +13,8 @@ import { CompanyState } from "../enum/company.state.enum";
 import { HelperService } from "../util/helpers.service";
 import { FindCompanyQueryDto } from "../dto/findCompany.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
+import { CompanyUpdateDto } from "../dto/companyUpdate.dto";
+import { DataResponseDto } from "../dto/data.response.dto";
 
 @Injectable()
 export class CompanyService {
@@ -223,5 +225,49 @@ export class CompanyService {
       }
       return err;
     });
+  }
+
+  async update(
+    companyUpdateDto: CompanyUpdateDto,
+    abilityCondition: string
+  ): Promise<DataResponseDto | undefined> {
+    const company = await this.companyRepo
+      .createQueryBuilder()
+      .where(
+        `"companyId" = '${
+          companyUpdateDto.companyId
+        }' AND ${this.helperService.parseMongoQueryToSQL(abilityCondition)}`
+      )
+      .getOne();
+    if (!company) {
+      throw new HttpException(
+        "No active company found",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const { companyId, ...companyUpdateFields } = companyUpdateDto;
+    const result = await this.companyRepo
+      .update(
+        {
+          companyId: company.companyId,
+        },
+        companyUpdateFields
+      )
+      .catch((err: any) => {
+        this.logger.error(err);
+        return err;
+      });
+
+    if (result.affected > 0) {
+      return new DataResponseDto(
+        HttpStatus.OK,
+        await this.findByCompanyId(company.companyId)
+      );
+    }
+
+    throw new HttpException(
+      "Company update failed. Please try again",
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
   }
 }

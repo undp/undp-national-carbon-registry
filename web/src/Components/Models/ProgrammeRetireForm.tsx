@@ -58,7 +58,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           order: 'ASC',
         },
       });
-      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.alpha2 })));
+      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.name })));
     }
   };
 
@@ -78,7 +78,8 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
     programme.creditOwnerPercentage = [100];
   }
 
-  const validCompanies = [];
+  const validCompanies: { percentage: number; name: any; available: number; companyId: any }[] = [];
+  const companyCredit = [];
   let totalCredits = 0;
   for (const index in programme.creditOwnerPercentage) {
     const companyAvailableTotal =
@@ -89,7 +90,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
       percentage: programme.creditOwnerPercentage[index],
       name: programme.company[index].name,
       available: companyAvailableTotal,
+      companyId: programme.company[index].companyId,
     });
+    companyCredit.push(0);
 
     totalCredits += companyAvailableTotal;
   }
@@ -107,13 +110,26 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           </Col>
         </Row>
       )}
+
       <Form
         name="transfer_init_popup"
         layout="vertical"
         form={form}
+        initialValues={{
+          companyCredit: companyCredit,
+        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
+          if (d.type === '0') {
+            d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
+            // programme.companyId.map((n) => Number(n));
+            // d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
+            d.toCompanyMeta = {
+              name: d.company,
+              country: d.country,
+            };
+          }
           const res = await onFinish(d);
           setPopupError(res);
           setLoading(false);
@@ -155,7 +171,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 <Form.Item
                   className="remarks-label"
                   label={t('view:country')}
-                  name="toCompanyId"
+                  name="country"
                   // rules={[
                   //   {
                   //     required: true,
@@ -215,14 +231,22 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                               parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                             ) {
                               // eslint-disable-next-line prefer-promise-reject-errors
-                              return Promise.reject('> estimated');
+                              return Promise.reject('Great than the available');
                             }
                             return Promise.resolve();
                           },
                         }),
                       ]}
                     >
-                      <InputNumber placeholder="" controls={false} />
+                      <InputNumber
+                        placeholder=""
+                        controls={false}
+                        onKeyPress={(event) => {
+                          if (!/[0-9\.]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={1} md={1} className="seperator">
@@ -230,7 +254,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   </Col>
                   <Col lg={6} md={12}>
                     <Form.Item className="popup-credit-input">
-                      <Input placeholder={addCommSep(totalCredits)} disabled />
+                      <InputNumber placeholder={addCommSep(pert.available)} disabled />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -243,7 +267,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Col>
                 <Col lg={6} md={12}>
                   <Form.Item className="popup-credit-input">
-                    <Input placeholder={addCommSep(currentSum)} disabled />
+                    <InputNumber placeholder={addCommSep(currentSum)} disabled />
                   </Form.Item>
                 </Col>
                 <Col lg={1} md={1} className="seperator">
@@ -251,7 +275,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Col>
                 <Col lg={6} md={12}>
                   <Form.Item className="popup-credit-input">
-                    <Input placeholder={addCommSep(programme.creditBalance)} disabled />
+                    <InputNumber placeholder={addCommSep(programme.creditBalance)} disabled />
                   </Form.Item>
                 </Col>
               </Row>

@@ -109,28 +109,28 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransfer))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest, true))
     @Post('transferRequest')
     async transferRequest(@Body() body: ProgrammeTransferRequest, @Request() req) {
         return this.programmeService.transferRequest(body, req.user)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransfer))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransfer))
     @Post('transferApprove')
     async transferApprove(@Body() body: ProgrammeTransferApprove, @Request() req) {
         return this.programmeService.transferApprove(body, req.user.companyId)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransfer))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferReject')
     async transferReject(@Body() body: ProgrammeTransferReject, @Request() req) {
         return this.programmeService.transferReject(body, req.user.companyId)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransfer))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferCancel')
     async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
         return this.programmeService.transferCancel(body, req.user.companyId)

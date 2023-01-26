@@ -64,5 +64,7 @@
     "confirmRetire": "This transfer is pending government approval",
     "searchCountry": "Search country",
     "country": "Country",
-    "company": "Company"
+    "company": "Company",
+    "accept": "Accept"
+
 }
