@@ -9,6 +9,8 @@ import { ConfigService } from "@nestjs/config";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
 import { Company } from "../shared/entities/company.entity";
 import { TxType } from "../shared/enum/txtype.enum";
+import { add } from "winston";
+import { response } from "express";
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";
@@ -22,6 +24,37 @@ export class LedgerReplicatorService {
     private logger: Logger,
     private configService: ConfigService
   ) {}
+
+  async forwardGeocoding(address: any) {
+    let geoCodinates: any[] = [];
+    const ACCESS_TOKEN =
+      "";
+
+    for (let index = 0; index < address.length; index++) {
+      const url =
+        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+        encodeURIComponent(address[index]) +
+        ".json?access_token=" +
+        ACCESS_TOKEN +
+        "&limit=1";
+      axios
+        .get(url)
+        .then(function (response) {
+          // handle success
+          console.log(
+            "cordinates data in replicator -> ",
+            response?.data?.features?.center
+          );
+          geoCodinates.push(response?.data?.features?.center);
+        })
+        .catch((err) => {
+          this.logger.error(err);
+          return err;
+        });
+    }
+
+    return geoCodinates;
+  }
 
   async processRecords(records) {
     return await Promise.all(
@@ -55,35 +88,7 @@ export class LedgerReplicatorService {
               Programme,
               JSON.parse(JSON.stringify(payload))
             );
-
-            let geoCodinates: any[] = [];
-            const forwardGeocoding = async (address) => {
-              const ACCESS_TOKEN =
-                "";
-
-              const url =
-                "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-                encodeURIComponent(address) +
-                ".json?access_token=" +
-                ACCESS_TOKEN +
-                "&limit=1";
-
-              axios
-                .get(url)
-                .then(function (response) {
-                  // handle success
-                  console.log(
-                    "cordinates data in replicator -> ",
-                    response?.data?.features?.center
-                  );
-                  geoCodinates.push(response?.data?.features?.center);
-                })
-                .catch((err) => {
-                  this.logger.error(err);
-                  return err;
-                });
-            };
-
+            let address: any[] = [];
             if (programme && programme.programmeProperties) {
               if (programme.currentStage === "AwaitingAuthorization") {
                 const programmeProperties = programme.programmeProperties;
@@ -93,17 +98,17 @@ export class LedgerReplicatorService {
                     index < programmeProperties.geographicalLocation.length;
                     index++
                   ) {
-                    forwardGeocoding(
+                    address.push(
                       programmeProperties.geographicalLocation[index]
                     );
                   }
                 }
+                this.forwardGeocoding([...address]).then((response: any) => {
+                  programme.programmeProperties.geographicalLocationCordintes =
+                    [...response];
+                });
               }
             }
-
-            programme.programmeProperties.geographicalLocationCordintes = [
-              ...geoCodinates,
-            ];
 
             const columns =
               this.programmeRepo.manager.connection.getMetadata(
