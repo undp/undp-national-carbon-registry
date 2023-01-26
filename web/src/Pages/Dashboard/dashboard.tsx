@@ -90,6 +90,7 @@ const Dashboard = () => {
   // states for totalCreditsCertified chart
   const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
@@ -279,6 +280,7 @@ const Dashboard = () => {
 
       const certifiedCredit: any = [];
       const unCertifiedCredit: any = [];
+      const revokedCredit: any = [];
 
       const response: any = await post(
         'analytics/programme/dashboardCharts',
@@ -687,6 +689,10 @@ const Dashboard = () => {
       name: 'UnCertified',
       data: unCertifiedCredits,
     },
+    {
+      name: 'Revoked',
+      data: revokedCredits,
+    },
   ];
 
   useEffect(() => {
@@ -699,7 +705,7 @@ const Dashboard = () => {
         container: mapContainerInternationalRef.current || '',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v10',
-        center: [-65.017, -16.457],
+        center: [79.861244, 6.927079],
         zoom: 0,
       });
 
@@ -707,8 +713,8 @@ const Dashboard = () => {
       for (const marker of programmeTransferLocations.features) {
         // Create a DOM element for each marker.
         const el = document.createElement('div');
-        const width = 30;
-        const height = 30;
+        const width = 20;
+        const height = 20;
         el.className = 'marker';
         el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/25/25613.png)`;
         el.style.width = `${width}px`;
@@ -1008,14 +1014,8 @@ const Dashboard = () => {
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 7 days': [
-                moment().startOf('month'),
-                moment().startOf('month').add('7', 'days'),
-              ],
-              'Last 14 days': [
-                moment().startOf('month'),
-                moment().startOf('month').add('14', 'days'),
-              ],
+              'Last 7 days': [moment().subtract('7', 'days'), moment()],
+              'Last 14 days': [moment().subtract('14', 'days'), moment()],
             }}
             showTime
             allowClear={true}

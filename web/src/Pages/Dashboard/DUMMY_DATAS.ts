@@ -467,7 +467,7 @@ export const totalCreditsCertifiedOptions: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#4FB8E7', '#FF8183'],
+    colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
   },
   title: {
     text: '',
@@ -503,7 +503,7 @@ export const totalCreditsCertifiedOptions: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#4FB8E7', '#FF8183'],
+      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       useSeriesColors: false,
     },
     markers: {
@@ -511,7 +511,7 @@ export const totalCreditsCertifiedOptions: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#4FB8E7', '#FF8183'],
+      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
@@ -829,7 +829,7 @@ export const optionDonutPieB: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+  colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
   labels: ['Certified', 'Uncertified', 'Revoked'],
   plotOptions: {
     pie: {
@@ -867,7 +867,7 @@ export const optionDonutPieB: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       useSeriesColors: false,
     },
     markers: {
@@ -875,7 +875,7 @@ export const optionDonutPieB: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183'],
+      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,

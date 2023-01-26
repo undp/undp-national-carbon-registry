@@ -14,8 +14,6 @@ import {
 import { QueryDto } from "../dto/query.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
-import mbxClient from "@mapbox/mapbox-sdk/lib/classes/mapi-client";
-import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import { PrimaryGeneratedColumnType } from "typeorm/driver/types/ColumnTypes";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
@@ -49,7 +47,6 @@ import { ProgrammeReject } from "../dto/programme.reject";
 import { ProgrammeIssue } from "../dto/programme.issue";
 import { RetireType } from "../enum/retire.type.enum";
 import { UserService } from "../user/user.service";
-import mapboxgl from "mapbox-gl";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -541,10 +538,6 @@ export class ProgrammeService {
   }
 
   async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
-    // const baseClient = new mbxClient({
-    //   accessToken:
-    //     "",
-    // });
     this.logger.verbose("ProgrammeDTO received", programmeDto);
     const programme: Programme = this.toProgramme(programmeDto);
     this.logger.verbose("Programme create", programme);
@@ -637,25 +630,6 @@ export class ProgrammeService {
     }
     // programme.creditBalance = programme.creditIssued;
     // programme.creditChange = programme.creditIssued;
-    // if (programme.programmeProperties.geographicalLocation) {
-    //   geoCodingClient
-    //     .forwardGeocode({
-    //       query: programme.programmeProperties.geographicalLocation[0],
-    //       autocomplete: false,
-    //       limit: 1,
-    //     })
-    //     .send()
-    //     .then((response: any) => {
-    //       if (
-    //         !response ||
-    //         !response.body ||
-    //         !response.body.features ||
-    //         !response.body.features.length
-    //       ) {
-    //         console.log("response geo coding ---- > ", response.body);
-    //       }
-    //     });
-    // }
     programme.programmeProperties.creditYear = new Date(
       programme.startTime * 1000
     ).getFullYear();
