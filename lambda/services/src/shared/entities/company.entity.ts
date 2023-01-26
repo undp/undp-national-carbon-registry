@@ -6,7 +6,7 @@ import { EntitySubject } from "./entity.subject";
 @Entity()
 export class Company implements EntitySubject{
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     companyId: number;
 
     @Column({ unique: true, nullable: true })

@@ -281,4 +281,36 @@ export class HelperService {
     }
     return final;
   }
+
+  public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
+    var AWS = require("aws-sdk");
+    const s3 = new AWS.S3();
+
+    const imgBuffer = Buffer.from(companyLogo, "base64");
+    var uploadParams = {
+      Bucket: "carbon-www-common",
+      Key: "",
+      Body: imgBuffer,
+      ContentEncoding: "base64",
+      ContentType: "image/png",
+    };
+    uploadParams.Key = `ProfileImages/${companyId}.png`;
+
+    return await s3
+      .upload(uploadParams, function (err, data) {
+        if (err) {
+          return {
+            status: false,
+            statusText: err,
+          };
+        }
+        if (data) {
+          return {
+            status: true,
+            statusText: data.Location,
+          };
+        }
+      })
+      .promise();
+  }
 }

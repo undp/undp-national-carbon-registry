@@ -451,8 +451,8 @@ const AddNewCompany = () => {
             <div className="steps-actions">
               {isUpdate ? (
                 <Row>
-                  <Button>{t('addCompany:cancel')}</Button>
-                  <Button className="mg-left-1" type="primary" htmlType="submit">
+                  <Button loading={loading}>{t('addCompany:cancel')}</Button>
+                  <Button loading={loading} className="mg-left-1" type="primary" htmlType="submit">
                     {t('addCompany:submit')}
                   </Button>
                 </Row>
