@@ -59,6 +59,7 @@ const Dashboard = () => {
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
+  const [estimatedCredits, setEstimatedCredits] = useState<number>();
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
@@ -81,7 +82,7 @@ const Dashboard = () => {
   const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
 
   // states for totalCredits chart
-  const [availableCredits, setAvailableCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [authorizedCredits, setAuthorizedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
   const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
@@ -89,9 +90,11 @@ const Dashboard = () => {
   // states for totalCreditsCertified chart
   const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
   const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
-  const [programmeLocations, setProgrammeLocations] = useState<string[]>(['']);
+  const [programmeLocations, setProgrammeLocations] = useState<any>();
+  const [programmeTransferLocations, setProgrammeTransferLocations] = useState<any>();
 
   //certifier view states
   const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
@@ -186,6 +189,9 @@ const Dashboard = () => {
           type: 'CREDIT_STATS_ISSUED',
         },
         {
+          type: 'CREDIT_STATS_ESTIMATED',
+        },
+        {
           type: 'CREDIT_CERTIFIED',
         },
         {
@@ -218,6 +224,9 @@ const Dashboard = () => {
         },
         {
           type: 'PROGRAMME_LOCATIONS',
+        },
+        {
+          type: 'TRANSFER_LOCATIONS',
         },
       ],
       category: categoryType,
@@ -264,13 +273,14 @@ const Dashboard = () => {
       const agricultureProgrames: any = [];
       const otherProgrames: any = [];
 
-      const availableCredit: any = [];
+      const authorizedCredit: any = [];
       const issuedCredit: any = [];
       const retiredCredit: any = [];
       const transferredCredit: any = [];
 
       const certifiedCredit: any = [];
       const unCertifiedCredit: any = [];
+      const revokedCredit: any = [];
 
       const response: any = await post(
         'analytics/programme/dashboardCharts',
@@ -380,11 +390,11 @@ const Dashboard = () => {
       }
       if (response?.data?.stats?.TOTAL_CREDITS) {
         const totalCredits = response?.data?.stats?.TOTAL_CREDITS;
-        if (totalCredits?.available) {
-          const available = totalCredits?.available;
-          available?.map((item: any, index: any) => {
+        if (totalCredits?.authorized) {
+          const authorized = totalCredits?.authorized;
+          authorized?.map((item: any, index: any) => {
             const credit = Object.values(item);
-            availableCredit.push(credit[0]);
+            authorizedCredit.push(credit[0]);
           });
         }
         if (totalCredits?.issued) {
@@ -412,6 +422,10 @@ const Dashboard = () => {
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
+      }
+      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
+        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
+        setProgrammeTransferLocations(locations);
       }
       if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
         const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
@@ -446,7 +460,7 @@ const Dashboard = () => {
       setAgricultureProgrammes(agricultureProgrames);
       setOtherProgrammes(otherProgrames);
 
-      setAvailableCredits(availableCredit);
+      setAuthorizedCredits(authorizedCredit);
       setIssuedCredits(issuedCredit);
       setRetiredCredits(retiredCredit);
       setTransferredCredits(transferredCredit);
@@ -515,10 +529,13 @@ const Dashboard = () => {
       setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
       setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      const creditAuthorized =
+        parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) -
+        parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum);
+      pieSeriesCreditsData.push(creditAuthorized);
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum));
+      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
 
       pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
       pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_UNCERTIFIED?.sum));
@@ -526,16 +543,19 @@ const Dashboard = () => {
       // pieSeriesCreditsCerifiedData.push(
       //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
       // );
-      let totalCredits = 0;
+      const totalCredits =
+        String(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) !== 'NaN'
+          ? parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum)
+          : 0;
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
         if (String(pieSeriesCreditsData[i]) === 'NaN') {
           if (i !== -1) {
             pieSeriesCreditsData[i] = 0;
           }
-          totalCredits = totalCredits + 0;
+          // totalCredits = totalCredits + 0;
         } else {
-          totalCredits = totalCredits + pieSeriesCreditsData[i];
+          // totalCredits = totalCredits + pieSeriesCreditsData[i];
         }
       }
       for (let j = 0; j < pieSeriesCreditsCerifiedData.length; j++) {
@@ -643,8 +663,8 @@ const Dashboard = () => {
 
   const seriesTotalCreditsY = [
     {
-      name: 'Available',
-      data: availableCredits,
+      name: 'Authorised',
+      data: authorizedCredits,
     },
     {
       name: 'Issued',
@@ -669,6 +689,10 @@ const Dashboard = () => {
       name: 'UnCertified',
       data: unCertifiedCredits,
     },
+    {
+      name: 'Revoked',
+      data: revokedCredits,
+    },
   ];
 
   useEffect(() => {
@@ -676,38 +700,215 @@ const Dashboard = () => {
   }, [transferredCredits]);
 
   useEffect(() => {
-    const address = programmeLocations[0];
     setTimeout(() => {
-      Geocoding({ accessToken: mapboxgl.accessToken })
-        .forwardGeocode({
-          query: address,
-          autocomplete: false,
-          limit: 1,
-        })
-        .send()
-        .then((response: any) => {
-          if (
-            !response ||
-            !response.body ||
-            !response.body.features ||
-            !response.body.features.length
-          ) {
-            console.error('Invalid response:');
-            console.error(response);
-            return;
-          }
-          const feature = response.body.features[0];
-          if (mapContainerRef.current) {
-            const map = new mapboxgl.Map({
-              container: mapContainerRef.current || '',
-              style: 'mapbox://styles/mapbox/streets-v11',
-              center: feature.center,
-              zoom: 5,
-            });
-            const popup = new mapboxgl.Popup().setText(address).addTo(map);
-            new mapboxgl.Marker().setLngLat(feature.center).addTo(map).setPopup(popup);
-          }
+      const map = new mapboxgl.Map({
+        container: mapContainerInternationalRef.current || '',
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/streets-v10',
+        center: [79.861244, 6.927079],
+        zoom: 0,
+      });
+
+      // Add markers to the map.
+      for (const marker of programmeTransferLocations.features) {
+        // Create a DOM element for each marker.
+        const el = document.createElement('div');
+        const width = 20;
+        const height = 20;
+        el.className = 'marker';
+        el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/25/25613.png)`;
+        el.style.width = `${width}px`;
+        el.style.height = `${height}px`;
+        el.style.backgroundSize = '100%';
+
+        // Add markers to the map.
+        new mapboxgl.Marker(el).setLngLat(marker?.geometry?.coordinates).addTo(map);
+      }
+    }, 1000);
+  }, [programmeTransferLocations]);
+
+  useEffect(() => {
+    // const address = programmeLocations[0];
+    const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 3]];
+    const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
+    const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
+    const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
+    const count5 = ['>=', ['get', 'count'], 16];
+
+    // colors to use for the categories
+    const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+
+    function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
+      if (end - start === 1) end -= 0.00001;
+      const a0 = 2 * Math.PI * (start - 0.25);
+      const a1 = 2 * Math.PI * (end - 0.25);
+      const x0 = Math.cos(a0),
+        y0 = Math.sin(a0);
+      const x1 = Math.cos(a1),
+        y1 = Math.sin(a1);
+      const largeArc = end - start > 0.5 ? 1 : 0;
+
+      // draw an SVG path
+      return `<path d="M ${r + r0 * x0} ${r + r0 * y0} L ${r + r * x0} ${
+        r + r * y0
+      } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
+        r + r0 * y1
+      } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
+    }
+
+    // code for creating an SVG donut chart from feature properties
+    function createDonutChart(properties: any) {
+      console.log('properties of donut creator --- > ', properties);
+      const offsets = [];
+      const counts = [
+        properties.count1,
+        properties.count2,
+        properties.count3,
+        properties.count4,
+        properties.count5,
+      ];
+      let total = 0;
+      for (const count of counts) {
+        offsets.push(total);
+        total += count;
+      }
+      const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
+      const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+      const r0 = Math.round(r * 0.6);
+      const w = r * 2;
+
+      let html = `<div>
+  <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
+
+      for (let i = 0; i < counts.length; i++) {
+        html += donutSegment(
+          offsets[i] / total,
+          (offsets[i] + counts[i]) / total,
+          r,
+          r0,
+          colors[i]
+        );
+      }
+      html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
+  <text dominant-baseline="central" transform="translate(${r}, ${r})">
+  ${total.toLocaleString()}
+  </text>
+  </svg>
+  </div>`;
+
+      const el = document.createElement('div');
+      el.innerHTML = html;
+      return el.firstChild;
+    }
+
+    setTimeout(() => {
+      if (mapContainerRef.current) {
+        const map = new mapboxgl.Map({
+          container: mapContainerRef.current || '',
+          zoom: 3,
+          center: [54.44073, 16.39371],
+          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+          style: 'mapbox://styles/mapbox/light-v11',
         });
+        map.on('load', () => {
+          // add a clustered GeoJSON source for a sample set of earthquakes
+          map.addSource('earthquakes', {
+            type: 'geojson',
+            data: programmeLocations,
+            cluster: true,
+            clusterRadius: 80,
+            clusterProperties: {
+              // keep separate counts for each countnitude category in a cluster
+              count1: ['+', ['case', count1, 1, 0]],
+              count2: ['+', ['case', count2, 1, 0]],
+              count3: ['+', ['case', count3, 1, 0]],
+              count4: ['+', ['case', count4, 1, 0]],
+              count5: ['+', ['case', count5, 1, 0]],
+            },
+          });
+          // circle and symbol layers for rendering individual earthquakes (unclustered points)
+          map.addLayer({
+            id: 'earthquake_circle',
+            type: 'circle',
+            source: 'earthquakes',
+            filter: ['!=', 'cluster', true],
+            paint: {
+              'circle-color': [
+                'case',
+                count1,
+                colors[0],
+                count2,
+                colors[1],
+                count3,
+                colors[2],
+                count4,
+                colors[3],
+                colors[4],
+              ],
+              'circle-opacity': 0.6,
+              'circle-radius': 12,
+            },
+          });
+          map.addLayer({
+            id: 'earthquake_label',
+            type: 'symbol',
+            source: 'earthquakes',
+            filter: ['!=', 'cluster', true],
+            layout: {
+              'text-field': [
+                'number-format',
+                ['get', 'count'],
+                { 'min-fraction-digits': 1, 'max-fraction-digits': 1 },
+              ],
+              'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+              'text-size': 10,
+            },
+            paint: {
+              'text-color': ['case', ['<', ['get', 'count'], 3], 'black', 'white'],
+            },
+          });
+
+          // objects for caching and keeping track of HTML marker objects (for performance)
+          const markers: any = {};
+          let markersOnScreen: any = {};
+
+          function updateMarkers() {
+            const newMarkers: any = {};
+            const features: any = map.querySourceFeatures('earthquakes');
+
+            // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+            // and add it to the map if it's not there already
+            for (const feature of features) {
+              const coords = feature.geometry.coordinates;
+              const properties = feature.properties;
+              if (!properties.cluster) continue;
+              const id = properties.cluster_id;
+
+              let marker: any = markers[id];
+              if (!marker) {
+                const el: any = createDonutChart(properties);
+                marker = markers[id] = new mapboxgl.Marker({
+                  element: el,
+                }).setLngLat(coords);
+              }
+              newMarkers[id] = marker;
+
+              if (!markersOnScreen[id]) marker.addTo(map);
+            }
+            // for every marker we've added previously, remove those that are no longer visible
+            for (const id in markersOnScreen) {
+              if (!newMarkers[id]) markersOnScreen[id].remove();
+            }
+            markersOnScreen = newMarkers;
+          }
+
+          // after the GeoJSON data is loaded, update markers on the screen on every frame
+          map.on('render', () => {
+            if (!map.isSourceLoaded('earthquakes')) return;
+            updateMarkers();
+          });
+        });
+      }
     }, 1000);
   }, [programmeLocations]);
 
@@ -813,14 +1014,8 @@ const Dashboard = () => {
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 7 days': [
-                moment().startOf('month'),
-                moment().startOf('month').add('7', 'days'),
-              ],
-              'Last 14 days': [
-                moment().startOf('month'),
-                moment().startOf('month').add('14', 'days'),
-              ],
+              'Last 7 days': [moment().subtract('7', 'days'), moment()],
+              'Last 14 days': [moment().subtract('14', 'days'), moment()],
             }}
             showTime
             allowClear={true}
@@ -942,11 +1137,26 @@ const Dashboard = () => {
             </div>
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <TransferLocationsMap
-              programmeLocations={programmeLocations}
-              lastUpdate={lastUpdate}
-              loading={loading}
-            />
+            <div className="stastics-and-pie-card height-map-rem">
+              <div className="pie-charts-title">Transfer Locations International</div>
+              {loading ? (
+                <div className="margin-top-2">
+                  <Skeleton active />
+                  <Skeleton active />
+                </div>
+              ) : (
+                <>
+                  <div className="map-content">
+                    <div className="map-container" ref={mapContainerInternationalRef} />
+                  </div>
+                  <div className="updated-on">
+                    <div className="updated-moment-container">
+                      {moment(lastUpdate * 1000).fromNow()}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </Col>
         </Row>
       </div>
