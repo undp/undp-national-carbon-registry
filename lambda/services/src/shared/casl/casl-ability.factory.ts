@@ -67,7 +67,6 @@ export class CaslAbilityFactory {
         if (user.role != Role.ViewOnly){
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
-          can(Action.Manage, ProgrammeTransferRequest);
         } else {
           can(Action.Read, ProgrammeTransfer);
           can(Action.Read, Programme);
