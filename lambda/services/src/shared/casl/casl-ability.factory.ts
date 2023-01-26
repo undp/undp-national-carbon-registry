@@ -91,6 +91,11 @@ export class CaslAbilityFactory {
           can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
           can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
           can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+        } else {
+            can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
+            can(Action.Read, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
+            can(Action.Read, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
+            can(Action.Read, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
         }
       }
 
