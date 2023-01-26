@@ -60,16 +60,17 @@ export class ProgrammeLedgerService {
         return [{}, {}, insertMap];
       }
     );
-    // if (programme) {
-    //   await this.entityManger
-    //     .save<Programme>(plainToClass(Programme, programme))
-    //     .then((res: any) => {
-    //       console.log("create programme in repo -- ", res);
-    //     })
-    //     .catch((e: any) => {
-    //       console.log("create programme in repo -- ", e);
-    //     });
-    // }
+
+    if (programme) {
+      await this.entityManger
+        .save<Programme>(plainToClass(Programme, programme))
+        .then((res: any) => {
+          console.log("create programme in repo -- ", res);
+        })
+        .catch((e: any) => {
+          console.log("create programme in repo -- ", e);
+        });
+    }
     return programme;
   }
 
@@ -252,13 +253,9 @@ export class ProgrammeLedgerService {
         }
 
         if (isRetirement) {
-<<<<<<< HEAD
           uPayload["creditRetired"] = programme.creditRetired;
-=======
-          uPayload['creditRetired'] = programme.creditRetired;
         } else {
-          uPayload['creditTransferred'] =  programme.creditTransferred;
->>>>>>> 744908558aa601d7ad9877877174a51cbc01bdab
+          uPayload["creditTransferred"] = programme.creditTransferred;
         }
 
         let updateMap = {};
