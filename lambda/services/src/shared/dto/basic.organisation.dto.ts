@@ -8,7 +8,7 @@ import {
   IsString,
 } from "class-validator";
 
-export class BasicCompany {
+export class BasicOrgInfo {
   @IsEmail()
   @IsNotEmpty()
   @ApiPropertyOptional()

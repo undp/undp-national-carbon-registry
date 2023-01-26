@@ -2,7 +2,7 @@ import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CompanyDto } from "../dto/company.dto";
+import { OrganisationDto } from "../dto/organisation.dto";
 import { QueryFailedError, Repository } from "typeorm";
 import { Company } from "../entities/company.entity";
 import { CompanyRole } from "../enum/company.role.enum";
@@ -11,9 +11,9 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { CompanyState } from "../enum/company.state.enum";
 import { HelperService } from "../util/helpers.service";
-import { FindCompanyQueryDto } from "../dto/findCompany.dto";
+import { FindOrganisationQueryDto } from "../dto/find.organisation.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
-import { CompanyUpdateDto } from "../dto/companyUpdate.dto";
+import { OrganisationUpdateDto } from "../dto/organisation.update.dto";
 import { DataResponseDto } from "../dto/data.response.dto";
 
 @Injectable()
@@ -187,7 +187,7 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async findByCompanyIds(req: FindCompanyQueryDto): Promise<Company[] | undefined> {
+  async findByCompanyIds(req: FindOrganisationQueryDto): Promise<Company[] | undefined> {
     const data: Company[] = []
     for (let i = 0; i < req.companyIds.length; i++){
       const companies = await this.companyRepo.find({
@@ -210,7 +210,7 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async create(companyDto: CompanyDto): Promise<Company | undefined> {
+  async create(companyDto: OrganisationDto): Promise<Company | undefined> {
     this.logger.verbose("Company create received", companyDto.email);
 
     return await this.companyRepo.save(companyDto).catch((err: any) => {
@@ -228,7 +228,7 @@ export class CompanyService {
   }
 
   async update(
-    companyUpdateDto: CompanyUpdateDto,
+    companyUpdateDto: OrganisationUpdateDto,
     abilityCondition: string
   ): Promise<DataResponseDto | undefined> {
     const company = await this.companyRepo

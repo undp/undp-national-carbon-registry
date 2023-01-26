@@ -11,7 +11,7 @@ import {
 } from "class-validator";
 import { CompanyRole } from "../enum/company.role.enum";
 
-export class CompanyUpdateDto {
+export class OrganisationUpdateDto {
   @IsNotEmpty()
   @ApiProperty()
   companyId: number;
