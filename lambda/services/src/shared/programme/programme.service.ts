@@ -270,7 +270,7 @@ export class ProgrammeService {
         }
 
         const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
-        if (indexTo > 0 && req.companyCredit[indexTo] > 0) {
+        if (indexTo >= 0 && req.companyCredit[indexTo] > 0) {
             throw new HttpException("Cannot transfer credit within the same company", HttpStatus.BAD_REQUEST)
         }
 
