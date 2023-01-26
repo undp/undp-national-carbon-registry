@@ -73,29 +73,30 @@ export class LedgerReplicatorService {
                 .then(function (response) {
                   // handle success
                   console.log(
-                    "cordinates data -> ",
+                    "cordinates data in replicator -> ",
                     response?.data?.features?.center
                   );
                   geoCodinates.push(response?.data?.features?.center);
                 })
-                .catch(function (error) {
-                  // handle error
-                  console.log(error);
-                })
-                .finally(function () {
-                  // always executed
+                .catch((err) => {
+                  this.logger.error(err);
+                  return err;
                 });
             };
 
             if (programme && programme.programmeProperties) {
-              const programmeProperties = programme.programmeProperties;
-              if (programmeProperties.geographicalLocation) {
-                for (
-                  let index = 0;
-                  index < programmeProperties.geographicalLocation.length;
-                  index++
-                ) {
-                  forwardGeocoding("Colombo");
+              if (programme.currentStage === "AwaitingAuthorization") {
+                const programmeProperties = programme.programmeProperties;
+                if (programmeProperties.geographicalLocation) {
+                  for (
+                    let index = 0;
+                    index < programmeProperties.geographicalLocation.length;
+                    index++
+                  ) {
+                    forwardGeocoding(
+                      programmeProperties.geographicalLocation[index]
+                    );
+                  }
                 }
               }
             }
