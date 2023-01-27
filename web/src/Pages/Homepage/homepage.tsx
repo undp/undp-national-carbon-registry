@@ -46,7 +46,7 @@ const Homepage = () => {
             <div className="text-ctn">
               <span>
                 {t('homepage:carbon')} {t('homepage:credit')} <br />
-                {t('homepage:management')}
+                {t('homepage:registry')}
               </span>
               <div className="subhome">{t('homepage:lorem')}</div>
             </div>
@@ -56,6 +56,14 @@ const Homepage = () => {
       <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
+            <div className="title">About Us</div>
+            <div className="homepagebody">{t('homepage:aboutusbody')}</div>
+          </div>
+        </Col>
+      </Row>
+      <Row gutter={[8, 8]}>
+        <Col md={24} lg={24} flex="auto">
+          <div className="homepage-content-containerblack">
             <div className="title">Eligibility</div>
             <div className="homepagebody">{t('homepage:eligibilitybody')}</div>
           </div>
@@ -63,17 +71,9 @@ const Homepage = () => {
       </Row>
       <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
-          <div className="homepage-content-containerblack">
+          <div className="homepage-content-containerwhite">
             <div className="title">Resources</div>
             <div className="homepagebody">{t('homepage:resourcesbody')}</div>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={24} lg={24} flex="auto">
-          <div className="homepage-content-containerwhite">
-            <div className="title">About Us</div>
-            <div className="homepagebody">{t('homepage:aboutusbody')}</div>
           </div>
         </Col>
       </Row>
