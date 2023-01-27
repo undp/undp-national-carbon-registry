@@ -67,4 +67,7 @@ export class Company implements EntitySubject{
     @Column({nullable:true})
     remarks: string;
 
+    @Column({type: "bigint", nullable: true})
+    createdTime: number;
+
 }
