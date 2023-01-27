@@ -74,7 +74,7 @@ import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
-import { creditUnit, dateTimeFormat } from '../Common/configs';
+import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
@@ -127,12 +127,18 @@ const ProgrammeView = () => {
   };
 
   const getPieChartData = (d: Programme) => {
+    const frozen = d.creditFrozen
+      ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
+      : 0;
     const dt = [
       numIsExist(d.creditEst) - numIsExist(d.creditIssued),
-      numIsExist(d.creditIssued) - numIsExist(d.creditTransferred) - numIsExist(d.creditRetired),
+      numIsExist(d.creditIssued) -
+        numIsExist(d.creditTransferred) -
+        numIsExist(d.creditRetired) -
+        frozen,
       numIsExist(d.creditTransferred),
       numIsExist(d.creditRetired),
-      d.creditFrozen ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0) : 0,
+      frozen,
     ];
     return dt;
   };
@@ -205,7 +211,7 @@ const ProgrammeView = () => {
               activity.data.creditEst
             )} ${creditUnit} credits until ${DateTime.fromMillis(
               activity.data.endTime * 1000
-            ).toFormat(dateTimeFormat)} with the Serial Number ${
+            ).toFormat(dateFormat)} with the Serial Number ${
               activity.data.serialNo
             } by the ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,

@@ -123,6 +123,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
+          if (d.comment) {
+            d.comment = d.comment.trim();
+          }
           if (d.type === '0') {
             d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
             // programme.companyId.map((n) => Number(n));
@@ -291,12 +294,21 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
               className="remarks-label"
               label="Remarks"
               name="comment"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: 'Required field',
-              //   },
-              // ]}
+              rules={[
+                {
+                  required: true,
+                  message: 'Required field',
+                },
+                ({ getFieldValue }) => ({
+                  validator(rule, v) {
+                    if (v !== undefined && v.trim() === '') {
+                      // eslint-disable-next-line prefer-promise-reject-errors
+                      return Promise.reject('Required field');
+                    }
+                    return Promise.resolve();
+                  },
+                }),
+              ]}
             >
               <Input.TextArea placeholder="" />
             </Form.Item>

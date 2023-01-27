@@ -17,11 +17,22 @@ export interface TransferActionModelProps {
   toCompanyDefault?: any;
   openModal: boolean;
   type: string;
+  remarkRequired: boolean;
 }
 
 const TransferActionModel: FC<TransferActionModelProps> = (props: TransferActionModelProps) => {
-  const { transfer, onFinish, onCancel, actionBtnText, subText, openModal, title, icon, type } =
-    props;
+  const {
+    transfer,
+    onFinish,
+    onCancel,
+    actionBtnText,
+    subText,
+    openModal,
+    title,
+    icon,
+    type,
+    remarkRequired,
+  } = props;
   const { i18n, t } = useTranslation(['view', 'creditTransfer']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
@@ -71,6 +82,9 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
           onChange={() => setPopupError(undefined)}
           onFinish={async (d) => {
             setLoading(true);
+            if (d.comment) {
+              d.comment = d.comment.trim();
+            }
             const res = await onFinish(transfer.requestId, d.comment);
             setPopupError(res);
             setLoading(false);
@@ -162,12 +176,21 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                 className="remarks-label"
                 label="Remarks"
                 name="comment"
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: 'Required field',
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: remarkRequired,
+                    message: 'Required field',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(rule, v) {
+                      if (remarkRequired && v !== undefined && v.trim() === '') {
+                        // eslint-disable-next-line prefer-promise-reject-errors
+                        return Promise.reject('Required field');
+                      }
+                      return Promise.resolve();
+                    },
+                  }),
+                ]}
               >
                 <Input.TextArea placeholder="" />
               </Form.Item>
