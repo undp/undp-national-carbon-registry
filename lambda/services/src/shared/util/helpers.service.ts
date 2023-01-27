@@ -6,9 +6,12 @@ import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class HelperService {
+  constructor(private configService: ConfigService) {}
+
   private prepareValue(value: any) {
     console.log(value.constructor);
     if (value instanceof Array) {
@@ -288,7 +291,7 @@ export class HelperService {
 
     const imgBuffer = Buffer.from(companyLogo, "base64");
     var uploadParams = {
-      Bucket: process.env.carbon_dev_common,
+      Bucket: this.configService.get<string>("s3CommonBucket"),
       Key: "",
       Body: imgBuffer,
       ContentEncoding: "base64",
