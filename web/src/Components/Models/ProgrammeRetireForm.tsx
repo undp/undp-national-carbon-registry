@@ -39,6 +39,8 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
   const [currentSum, setCurrentSum] = useState<number>(0);
   const [countryList, setCountryList] = useState<SelectProps['options']>([]);
   const [value, setValue] = useState<string>();
+  const [checked, setChecked] = useState<boolean>(false);
+
   const { get, delete: del, post } = useConnection();
 
   const handleSearch = async (newValue: string) => {
@@ -58,7 +60,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           order: 'ASC',
         },
       });
-      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.alpha2 })));
+      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.name })));
     }
   };
 
@@ -78,7 +80,8 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
     programme.creditOwnerPercentage = [100];
   }
 
-  const validCompanies = [];
+  const validCompanies: { percentage: number; name: any; available: number; companyId: any }[] = [];
+  const companyCredit = [];
   let totalCredits = 0;
   for (const index in programme.creditOwnerPercentage) {
     const companyAvailableTotal =
@@ -89,7 +92,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
       percentage: programme.creditOwnerPercentage[index],
       name: programme.company[index].name,
       available: companyAvailableTotal,
+      companyId: programme.company[index].companyId,
     });
+    companyCredit.push(0);
 
     totalCredits += companyAvailableTotal;
   }
@@ -112,15 +117,21 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
         name="transfer_init_popup"
         layout="vertical"
         form={form}
+        initialValues={{
+          companyCredit: companyCredit,
+        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
-          d.fromCompanyIds = programme.companyId.map((n) => Number(n));
-          d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
-          d.toCompanyMeta = {
-            name: d.company,
-            country: d.country,
-          };
+          if (d.type === '0') {
+            d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
+            // programme.companyId.map((n) => Number(n));
+            // d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
+            d.toCompanyMeta = {
+              name: d.company,
+              country: d.country,
+            };
+          }
           const res = await onFinish(d);
           setPopupError(res);
           setLoading(false);
@@ -222,14 +233,22 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                               parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                             ) {
                               // eslint-disable-next-line prefer-promise-reject-errors
-                              return Promise.reject('> estimated');
+                              return Promise.reject('Great than the available');
                             }
                             return Promise.resolve();
                           },
                         }),
                       ]}
                     >
-                      <InputNumber placeholder="" controls={false} />
+                      <InputNumber
+                        placeholder=""
+                        controls={false}
+                        onKeyPress={(event) => {
+                          if (!/[0-9\.]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                      />
                     </Form.Item>
                   </Col>
                   <Col lg={1} md={1} className="seperator">
@@ -237,7 +256,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   </Col>
                   <Col lg={6} md={12}>
                     <Form.Item className="popup-credit-input">
-                      <Input placeholder={addCommSep(totalCredits)} disabled />
+                      <InputNumber placeholder={addCommSep(pert.available)} disabled />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -250,7 +269,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Col>
                 <Col lg={6} md={12}>
                   <Form.Item className="popup-credit-input">
-                    <Input placeholder={addCommSep(currentSum)} disabled />
+                    <InputNumber placeholder={addCommSep(currentSum)} disabled />
                   </Form.Item>
                 </Col>
                 <Col lg={1} md={1} className="seperator">
@@ -258,7 +277,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Col>
                 <Col lg={6} md={12}>
                   <Form.Item className="popup-credit-input">
-                    <Input placeholder={addCommSep(programme.creditBalance)} disabled />
+                    <InputNumber placeholder={addCommSep(programme.creditBalance)} disabled />
                   </Form.Item>
                 </Col>
               </Row>
@@ -290,23 +309,25 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
               valuePropName="checked"
               label=""
               name="confirm"
-              rules={[
-                {
-                  required: true,
-                  message: 'Required field',
-                },
-                ({ getFieldValue }) => ({
-                  validator(rule, v) {
-                    if (v === false) {
-                      // eslint-disable-next-line prefer-promise-reject-errors
-                      return Promise.reject('Required field');
-                    }
-                    return Promise.resolve();
-                  },
-                }),
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: 'Required field',
+              //   },
+              //   ({ getFieldValue }) => ({
+              //     validator(rule, v) {
+              //       if (v === false) {
+              //         // eslint-disable-next-line prefer-promise-reject-errors
+              //         return Promise.reject('Required field');
+              //       }
+              //       return Promise.resolve();
+              //     },
+              //   }),
+              // ]}
             >
-              <Checkbox className="label">{t('view:confirmRetire')}</Checkbox>
+              <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
+                {t('view:confirmRetire')}
+              </Checkbox>
             </Form.Item>
           </Col>
         </Row>
@@ -317,7 +338,13 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           <Button htmlType="button" onClick={onCancel}>
             {t('view:cancel')}
           </Button>
-          <Button className="mg-left-2" type="primary" htmlType="submit" loading={loading}>
+          <Button
+            className="mg-left-2"
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            disabled={!checked}
+          >
             {actionBtnText}
           </Button>
         </Form.Item>

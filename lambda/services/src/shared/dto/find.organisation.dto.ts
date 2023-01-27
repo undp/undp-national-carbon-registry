@@ -6,7 +6,7 @@ import {
     IsInt,
   } from "class-validator";
   
-  export class FindCompanyQueryDto {
+  export class FindOrganisationQueryDto {
     @ApiProperty()
     @IsArray()
     @IsInt({ each: true })

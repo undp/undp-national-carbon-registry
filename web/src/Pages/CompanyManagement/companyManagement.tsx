@@ -531,7 +531,7 @@ const CompanyManagement = () => {
                   emptyText: (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={tableData.length === 0 ? 'No Companies' : null}
+                      description={tableData.length === 0 ? 'No data' : null}
                     />
                   ),
                 }}

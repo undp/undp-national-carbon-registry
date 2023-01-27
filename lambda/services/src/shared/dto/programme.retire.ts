@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min } from "class-validator";
 import { RetireType } from "../enum/retire.type.enum";
-import { BasicCompany } from "./BasicCompany.dto";
+import { BasicOrgInfo } from "./basic.organisation.dto";
 
 export class ProgrammeRetire {
 
@@ -33,7 +33,7 @@ export class ProgrammeRetire {
     @IsNotEmpty()
     @IsNotEmpty()
     @IsOptional()
-    toCompanyMeta: BasicCompany;
+    toCompanyMeta: BasicOrgInfo;
 
     @ApiPropertyOptional()
     @IsString()

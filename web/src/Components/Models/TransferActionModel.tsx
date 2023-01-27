@@ -22,9 +22,10 @@ export interface TransferActionModelProps {
 const TransferActionModel: FC<TransferActionModelProps> = (props: TransferActionModelProps) => {
   const { transfer, onFinish, onCancel, actionBtnText, subText, openModal, title, icon, type } =
     props;
-  const { i18n, t } = useTranslation(['view']);
+  const { i18n, t } = useTranslation(['view', 'creditTransfer']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(false);
 
   const companyList = !transfer.isRetirement
     ? [
@@ -64,6 +65,8 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
             programmeName: transfer.programmeTitle,
             serialNo: transfer.serialNo,
             creditAmount: transfer.creditAmount,
+            company: transfer.toCompanyMeta ? transfer.toCompanyMeta.name : null,
+            country: transfer.toCompanyMeta ? transfer.toCompanyMeta.country : null,
           }}
           onChange={() => setPopupError(undefined)}
           onFinish={async (d) => {
@@ -75,17 +78,7 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
         >
           <Row>
             <Col span={24}>
-              <Form.Item
-                className="remarks-label"
-                label={t('view:from')}
-                name="toCompanyId"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Required field',
-                  },
-                ]}
-              >
+              <Form.Item className="remarks-label" label={t('view:from')} name="toCompanyId">
                 <Select
                   showSearch
                   disabled={true}
@@ -114,13 +107,45 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
               </Form.Item>
             </Col>
           </Row>
-          <Row>
-            <Col span={24}>
-              <Form.Item className="remarks-label" label={t('view:serialNoField')} name="serialNo">
-                <Input disabled />
-              </Form.Item>
-            </Col>
-          </Row>
+          {!transfer.isRetirement && (
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  className="remarks-label"
+                  label={t('view:serialNoField')}
+                  name="serialNo"
+                >
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+          {transfer.toCompanyMeta && transfer.toCompanyMeta.country && (
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  className="remarks-label"
+                  label={t('creditTransfer:country')}
+                  name="country"
+                >
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+          {transfer.toCompanyMeta && transfer.toCompanyMeta.name && (
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  className="remarks-label"
+                  label={t('creditTransfer:company')}
+                  name="company"
+                >
+                  <Input disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
           <Row>
             <Col lg={18} md={20}>
               <div className="label">{`${t('view:transferApproveTotal')} (${creditUnit})`}</div>
@@ -155,23 +180,25 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                 valuePropName="checked"
                 label=""
                 name="confirm"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Required field',
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(rule, v) {
-                      if (v === false) {
-                        // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('Required field');
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: 'Required field',
+                //   },
+                //   ({ getFieldValue }) => ({
+                //     validator(rule, v) {
+                //       if (v === false) {
+                //         // eslint-disable-next-line prefer-promise-reject-errors
+                //         return Promise.reject('Required field');
+                //       }
+                //       return Promise.resolve();
+                //     },
+                //   }),
+                // ]}
               >
-                <Checkbox className="label">{t('view:confirmClosure')}</Checkbox>
+                <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
+                  {t('view:confirmClosure')}
+                </Checkbox>
               </Form.Item>
             </Col>
           </Row>
@@ -182,7 +209,13 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
             <Button htmlType="button" onClick={onCancel}>
               {t('view:cancel')}
             </Button>
-            <Button className="mg-left-2" type="primary" htmlType="submit" loading={loading}>
+            <Button
+              className="mg-left-2"
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={!checked}
+            >
               {actionBtnText}
             </Button>
           </Form.Item>

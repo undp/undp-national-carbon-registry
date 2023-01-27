@@ -41,6 +41,7 @@ import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
 import { RetireType } from '../enum/retire.type.enum';
 import { UserService } from '../user/user.service';
+import { Role } from '../casl/role.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -110,8 +111,11 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (pTransfer.fromCompanyId != approverCompanyId) {
-            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
+        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
+        }
+        if (pTransfer.isRetirement && pTransfer.toCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
         const result = await this.programmeTransferRepo.update({
@@ -258,12 +262,30 @@ export class ProgrammeService {
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
         
+        // TODO: Move this to casl factory
+        // if (requester.role == Role.ViewOnly) {
+        //     throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
+        // }
+
+        // if (![CompanyRole.GOVERNMENT, CompanyRole.PROGRAMME_DEVELOPER].includes(requester.companyRole)) {
+        //     throw new HttpException("Unsupported company role", HttpStatus.FORBIDDEN)
+        // }
+
+        if (req.companyCredit && req.companyCredit.reduce((a, b) => a + b, 0) <= 0) {
+            throw new HttpException("Total Amount should be greater than 0", HttpStatus.BAD_REQUEST)
+        }
+
         if (req.fromCompanyIds.length > 1 ) {
             if (!req.companyCredit) {
                 throw new HttpException("Company credit needs to define for multiple companies", HttpStatus.BAD_REQUEST)
             } else if (req.fromCompanyIds.length != req.companyCredit.length){
                 throw new HttpException("Invalid company credit for given companies", HttpStatus.BAD_REQUEST)
             }
+        }
+
+        const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
+        if (indexTo >= 0 && req.companyCredit[indexTo] > 0) {
+            throw new HttpException("Cannot transfer credit within the same company", HttpStatus.BAD_REQUEST)
         }
 
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
@@ -313,7 +335,7 @@ export class ProgrammeService {
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
 
             if (!programme.companyId.includes(fromCompanyId)) {
-                throw new HttpException("Transfer request from company does own the programme", HttpStatus.BAD_REQUEST)
+                throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
             }
 
             console.log(programme.creditBalance, ownershipMap[fromCompanyId], frozenCredit[fromCompanyId])
@@ -369,9 +391,14 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Credit send received ${trf}`)
-            await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)
+            updateProgramme  = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
@@ -649,9 +676,14 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+        
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Retire auto approve received ${trf}`)
-            await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)
+            updateProgramme = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }

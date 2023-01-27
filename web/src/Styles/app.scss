@@ -275,6 +275,7 @@ body {
 
   .action-icon {
     margin-right: 12px;
+    display: flex;
   }
 
   .anticon-edit {
@@ -376,6 +377,8 @@ body {
 
   .ant-select-selector {
     text-align: left;
+    border-radius: 5px !important;
+    height: 32px;
   }
 
   .form-label {
@@ -498,6 +501,7 @@ body {
     height: 32px;
     border-radius: 4px;
     padding: 6px 16px;
+    font-weight: 500;
   }
 
   .ant-btn-default {
@@ -551,6 +555,9 @@ body {
 }
 
 .transfer-form {
+  .ant-row {
+    align-items: baseline;
+  }
   padding: 0px 15px;
   .sub-text {
     margin-bottom: 35px;
@@ -585,6 +592,7 @@ body {
 
   button {
     text-transform: uppercase;
+    font-weight: 500;
   }
 }
 
@@ -610,8 +618,23 @@ body {
   }
 }
 
-.center {
+.loading-center {
   margin: auto;
   width: 50%;
   text-align: center;
+}
+.ant-tag-purple {
+  color: #976ed7;
+}
+
+.ant-tag-orange {
+  color: #ff8f56;
+}
+
+.ant-tag-default {
+  color: rgba(#3a3541, 0.5);
+}
+
+.ant-popover-inner {
+  border-radius: 4px;
 }

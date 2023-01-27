@@ -51,6 +51,7 @@ import {
   ProgrammeStage,
   TxType,
   TypeOfMitigation,
+  UnitField,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import i18next from 'i18next';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
@@ -202,12 +203,14 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was authorised for ${addCommasToNumber(
               activity.data.creditEst
-            )} ${creditUnit} credits until ${DateTime.fromMillis(activity.data.endTime).toFormat(
-              dateTimeFormat
-            )} with the Serial Number ${activity.data.serialNo} by the ${getTxRefValues(
+            )} ${creditUnit} credits until ${DateTime.fromMillis(
+              activity.data.endTime * 1000
+            ).toFormat(dateTimeFormat)} with the Serial Number ${
+              activity.data.serialNo
+            } by the ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              3
+            )}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
                 <LikeOutlined />
@@ -220,7 +223,7 @@ const ProgrammeView = () => {
             title: `Issued`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was issued ${addCommasToNumber(
-              activity.data.creditEst
+              activity.data.creditChange
             )} ${creditUnit} credits by the ${getTxRefValues(
               activity.data.txRef,
               1
@@ -312,13 +315,16 @@ const ProgrammeView = () => {
             title: `Retired`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
-              activity.data.creditBalance
+              activity.data.creditChange
             )} ${creditUnit} credits of this programme were retired by ${getTxRefValues(
               activity.data.txRef,
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: RootColor, color: RootColor }}>
+              <span
+                className="step-icon"
+                style={{ backgroundColor: RootBGColor, color: RootColor }}
+              >
                 <Icon.Save />
               </span>
             ),
@@ -386,6 +392,18 @@ const ProgrammeView = () => {
     navigate('.', { state: { record: response.data } });
     genCerts(response.data, certTimes);
     genPieData(response.data);
+  };
+
+  const updateCreditInfo = (response: any) => {
+    if (!(response.data instanceof Array) && response.data && data) {
+      response.data.company = data.company;
+      response.data.certifier = data.certifier;
+      setData(response.data);
+      state.record = response.data;
+      navigate('.', { state: { record: response.data } });
+      genCerts(response.data, certTimes);
+      genPieData(response.data);
+    }
   };
 
   const onPopupAction = async (
@@ -527,7 +545,11 @@ const ProgrammeView = () => {
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
-      info[text] = v;
+      if (v instanceof UnitField) {
+        info[text + ` (${v.unit})`] = v.value;
+      } else {
+        info[text] = v;
+      }
     });
     return info;
   };
@@ -851,19 +873,25 @@ const ProgrammeView = () => {
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {
-      calculations.landArea =
-        addCommSep(data.agricultureProperties.landArea) +
-        ' ' +
-        data.agricultureProperties.landAreaUnit;
+      calculations.landArea = new UnitField(
+        data.agricultureProperties.landAreaUnit,
+        addCommSep(data.agricultureProperties.landArea)
+      );
+      // addCommSep(data.agricultureProperties.landArea) +
+      // ' ' +
+      // data.agricultureProperties.landAreaUnit;
     }
     delete calculations.landAreaUnit;
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
     calculations = data.solarProperties;
     if (calculations.energyGenerationUnit) {
-      calculations.energyGeneration =
-        addCommSep(data.solarProperties.energyGeneration) +
-        ' ' +
-        data.solarProperties.energyGenerationUnit;
+      calculations.energyGeneration = new UnitField(
+        data.solarProperties.energyGenerationUnit,
+        addCommSep(data.solarProperties.energyGeneration)
+      );
+      // addCommSep(data.solarProperties.energyGeneration) +
+      // ' ' +
+      // data.solarProperties.energyGenerationUnit;
     } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
       calculations.consumerGroup = (
         <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
@@ -970,144 +998,152 @@ const ProgrammeView = () => {
                       width="100%"
                       fontFamily="inter"
                     />
-                    {userInfoState?.userRole !== 'ViewOnly' && (
-                      <div className="flex-display action-btns">
-                        {data.currentStage.toString() === ProgrammeStage.Issued && (
-                          <div>
-                            {(data.companyId.length !== 1 ||
-                              !data.companyId
-                                .map((e) => Number(e))
-                                .includes(userInfoState!.companyId)) && (
-                              <Button
-                                type="primary"
-                                onClick={() => {
-                                  setActionInfo({
-                                    action: 'Request',
-                                    text: '',
-                                    title: t('view:transferTitle'),
-                                    type: 'primary',
-                                    remark: true,
-                                    icon: <Icon.BoxArrowInRight />,
-                                    contentComp: (
-                                      <ProgrammeTransferForm
-                                        companyRole={userInfoState!.companyRole}
-                                        userCompanyId={userInfoState?.companyId}
-                                        receiverLabelText={t('view:by')}
-                                        disableToCompany={true}
-                                        toCompanyDefault={{
-                                          label: userInfoState?.companyName,
-                                          value: userInfoState?.companyId,
-                                        }}
-                                        programme={data}
-                                        subText={t('view:popupText')}
-                                        onCancel={() => {
-                                          setOpenModal(false);
-                                          setComment(undefined);
-                                        }}
-                                        actionBtnText={t('view:request')}
-                                        onFinish={(body: any) =>
-                                          onPopupAction(
-                                            body,
-                                            'transferRequest',
-                                            t('view:successRequest'),
-                                            post,
-                                            () => {}
-                                          )
-                                        }
-                                      />
-                                    ),
-                                  });
-                                  showModal();
-                                }}
-                              >
-                                {t('view:transfer')}
-                              </Button>
+                    {userInfoState?.userRole !== 'ViewOnly' &&
+                      userInfoState?.companyRole !== 'Certifier' && (
+                        <div className="flex-display action-btns">
+                          {data.currentStage.toString() === ProgrammeStage.Issued &&
+                            data.creditBalance -
+                              (data.creditFrozen
+                                ? data.creditFrozen.reduce(
+                                    (a, b) => numIsExist(a) + numIsExist(b),
+                                    0
+                                  )
+                                : 0) && (
+                              <div>
+                                {(data.companyId.length !== 1 ||
+                                  !data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
+                                {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                  data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <span>
+                                    <Button
+                                      danger
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Retire',
+                                          text: t('view:popupText'),
+                                          title: t('view:retireTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.Save />,
+                                          contentComp: (
+                                            <ProgrammeRetireForm
+                                              programme={data}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:retire')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'retire',
+                                                  t('view:successRetire'),
+                                                  put,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:retire')}
+                                    </Button>
+                                    <Button
+                                      type="primary"
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Send',
+                                          text: '',
+                                          title: t('view:sendCreditTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.BoxArrowRight />,
+                                          contentComp: (
+                                            <ProgrammeTransferForm
+                                              companyRole={userInfoState!.companyRole}
+                                              receiverLabelText={t('view:to')}
+                                              userCompanyId={userInfoState?.companyId}
+                                              programme={data}
+                                              subText={t('view:popupText')}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:send')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'transferRequest',
+                                                  t('view:successSend'),
+                                                  post,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:send')}
+                                    </Button>
+                                  </span>
+                                )}
+                              </div>
                             )}
-                            {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                              data.companyId
-                                .map((e) => Number(e))
-                                .includes(userInfoState!.companyId)) && (
-                              <span>
-                                <Button
-                                  danger
-                                  onClick={() => {
-                                    setActionInfo({
-                                      action: 'Retire',
-                                      text: t('view:popupText'),
-                                      title: t('view:retireTitle'),
-                                      type: 'primary',
-                                      remark: true,
-                                      icon: <Icon.Save />,
-                                      contentComp: (
-                                        <ProgrammeRetireForm
-                                          programme={data}
-                                          onCancel={() => {
-                                            setOpenModal(false);
-                                            setComment(undefined);
-                                          }}
-                                          actionBtnText={t('view:retire')}
-                                          onFinish={(body: any) =>
-                                            onPopupAction(
-                                              body,
-                                              'retire',
-                                              t('view:successRetire'),
-                                              put,
-                                              updateProgrammeData
-                                            )
-                                          }
-                                        />
-                                      ),
-                                    });
-                                    showModal();
-                                  }}
-                                >
-                                  {t('view:retire')}
-                                </Button>
-                                <Button
-                                  type="primary"
-                                  onClick={() => {
-                                    setActionInfo({
-                                      action: 'Send',
-                                      text: '',
-                                      title: t('view:sendCreditTitle'),
-                                      type: 'primary',
-                                      remark: true,
-                                      icon: <Icon.BoxArrowRight />,
-                                      contentComp: (
-                                        <ProgrammeTransferForm
-                                          companyRole={userInfoState!.companyRole}
-                                          receiverLabelText={t('view:to')}
-                                          userCompanyId={userInfoState?.companyId}
-                                          programme={data}
-                                          subText={t('view:popupText')}
-                                          onCancel={() => {
-                                            setOpenModal(false);
-                                            setComment(undefined);
-                                          }}
-                                          actionBtnText={t('view:send')}
-                                          onFinish={(body: any) =>
-                                            onPopupAction(
-                                              body,
-                                              'transferRequest',
-                                              t('view:successSend'),
-                                              post,
-                                              () => {}
-                                            )
-                                          }
-                                        />
-                                      ),
-                                    });
-                                    showModal();
-                                  }}
-                                >
-                                  {t('view:send')}
-                                </Button>
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                      )}
                   </div>
                 </div>
               </Card>
