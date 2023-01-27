@@ -132,9 +132,7 @@ const AddNewCompany = () => {
       }
 
       if (formOneValues.logo) {
-        if (formOneValues.logo.length === 0) {
-          values.logo = '';
-        } else {
+        if (formOneValues.logo.length !== 0) {
           const logoBase64 = await getBase64(formOneValues.logo[0]?.originFileObj as RcFile);
           const logoUrls = logoBase64.split(',');
           values.logo = logoUrls[1];
@@ -291,28 +289,27 @@ const AddNewCompany = () => {
                     rules={[
                       {
                         validator: async (rule, file) => {
-                          if (
-                            String(file).trim() === '' ||
-                            String(file).trim() === undefined ||
-                            file === null ||
-                            file === undefined
-                          ) {
+                          if (file === null || file === undefined) {
                             if (!state?.record?.logo)
                               throw new Error('Organisation Logo is required!');
                           } else {
-                            let isCorrectFormat = false;
-                            if (file[0]?.type === 'image/png') {
-                              isCorrectFormat = true;
-                            } else if (file[0]?.type === 'image/jpeg') {
-                              isCorrectFormat = true;
-                            } else if (file[0]?.type === 'image/svg') {
-                              isCorrectFormat = true;
-                            }
-                            if (!isCorrectFormat) {
-                              throw new Error('Unsupported file format!');
-                            } else if (file[0]?.size > 1048576) {
-                              // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error('Maximum upload file size is 1MB!');
+                            if (file.length === 0) {
+                              throw new Error('Organisation Logo is required!');
+                            } else {
+                              let isCorrectFormat = false;
+                              if (file[0]?.type === 'image/png') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/jpeg') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/svg') {
+                                isCorrectFormat = true;
+                              }
+                              if (!isCorrectFormat) {
+                                throw new Error('Unsupported file format!');
+                              } else if (file[0]?.size > 1048576) {
+                                // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                throw new Error('Maximum upload file size is 1MB!');
+                              }
                             }
                           }
                         },
