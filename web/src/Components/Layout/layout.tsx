@@ -1,8 +1,9 @@
-import { Layout, Radio } from 'antd';
-import { useState } from 'react';
+import { Layout } from 'antd';
+import { Suspense, useState } from 'react';
 const { Header, Sider, Content } = Layout;
 import { Outlet } from 'react-router-dom';
 import LayoutHeader from '../Header/layout.header';
+import Loading from '../Loading/Loading';
 import LayoutSider from '../Sider/layout.sider';
 import './layout.scss';
 
@@ -20,7 +21,9 @@ const CustomLayout = (props: any) => {
           </Header>
           <Content>
             <div className="layout-content-container">
-              <Outlet />
+              <Suspense fallback={<Loading />}>
+                <Outlet />
+              </Suspense>
             </div>
           </Content>
         </Layout>

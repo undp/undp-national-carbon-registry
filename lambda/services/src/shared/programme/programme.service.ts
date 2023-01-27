@@ -39,6 +39,9 @@ import { ProgrammeTransferCancel } from '../dto/programme.transfer.cancel';
 import { CompanyState } from '../enum/company.state.enum';
 import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
+import { RetireType } from '../enum/retire.type.enum';
+import { UserService } from '../user/user.service';
+import { Role } from '../casl/role.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -50,6 +53,7 @@ export class ProgrammeService {
         private counterService: CounterService,
         private configService: ConfigService,
         private companyService: CompanyService,
+        private userService: UserService,
         private emailService: EmailService,
         private helperService: HelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
@@ -107,8 +111,11 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (pTransfer.fromCompanyId != approverCompanyId) {
-            throw new HttpException("No ownership to the programme", HttpStatus.FORBIDDEN)
+        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
+        }
+        if (pTransfer.isRetirement && pTransfer.toCompanyId != approverCompanyId) {
+            throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
         const result = await this.programmeTransferRepo.update({
@@ -180,7 +187,8 @@ export class ProgrammeService {
         }
 
         const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
-        
+        const user = await this.userService.findById(transfer.initiator);
+
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({
                 requestId: req.requestId,
@@ -197,7 +205,7 @@ export class ProgrammeService {
             }
         }
 
-        return await this.doTransfer(transfer, received.name, req.comment, transfer.isRetirement)
+        return await this.doTransfer(transfer, `${received.companyId}#${received.name}#${user.id}#${user.name}`, req.comment, transfer.isRetirement)
     }
 
     private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
@@ -254,12 +262,30 @@ export class ProgrammeService {
     async transferRequest(req: ProgrammeTransferRequest, requester: User) {
         this.logger.log(`Programme transfer request by ${requester.companyId}-${requester.id} received ${JSON.stringify(req)}`)
         
+        // TODO: Move this to casl factory
+        // if (requester.role == Role.ViewOnly) {
+        //     throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
+        // }
+
+        // if (![CompanyRole.GOVERNMENT, CompanyRole.PROGRAMME_DEVELOPER].includes(requester.companyRole)) {
+        //     throw new HttpException("Unsupported company role", HttpStatus.FORBIDDEN)
+        // }
+
+        if (req.companyCredit && req.companyCredit.reduce((a, b) => a + b, 0) <= 0) {
+            throw new HttpException("Total Amount should be greater than 0", HttpStatus.BAD_REQUEST)
+        }
+
         if (req.fromCompanyIds.length > 1 ) {
             if (!req.companyCredit) {
                 throw new HttpException("Company credit needs to define for multiple companies", HttpStatus.BAD_REQUEST)
             } else if (req.fromCompanyIds.length != req.companyCredit.length){
                 throw new HttpException("Invalid company credit for given companies", HttpStatus.BAD_REQUEST)
             }
+        }
+
+        const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
+        if (indexTo >= 0 && req.companyCredit[indexTo] > 0) {
+            throw new HttpException("Cannot transfer credit within the same company", HttpStatus.BAD_REQUEST)
         }
 
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
@@ -309,7 +335,7 @@ export class ProgrammeService {
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
 
             if (!programme.companyId.includes(fromCompanyId)) {
-                throw new HttpException("Transfer request from company does own the programme", HttpStatus.BAD_REQUEST)
+                throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
             }
 
             console.log(programme.creditBalance, ownershipMap[fromCompanyId], frozenCredit[fromCompanyId])
@@ -365,9 +391,14 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Credit send received ${trf}`)
-            await this.doTransfer(trf, requestedCompany.name, req.comment, false)
+            updateProgramme  = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
@@ -522,8 +553,7 @@ export class ProgrammeService {
             throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
         }
 
-        const company = await this.companyService.findByCompanyId(user.companyId);
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, `${user.id}#${user.name}#${user.companyId}#${company.name}`)
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, this.getUserRef(user))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
@@ -535,8 +565,8 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async retireProgramme(req: ProgrammeRetire, requester: User, user: string) {
-        this.logger.log(`Programme ${req.programmeId} retiring Comment: ${req.comment}`)
+    async retireProgramme(req: ProgrammeRetire, requester: User) {
+        this.logger.log(`Programme ${req.programmeId} retiring Comment: ${req.comment} type: ${req.type}`)
         
         if (req.fromCompanyIds && req.fromCompanyIds.length > 1 ) {
             if (req.companyCredit && req.fromCompanyIds.length != req.companyCredit.length){
@@ -618,8 +648,9 @@ export class ProgrammeService {
             transfer.txTime = new Date().getTime()
             transfer.comment = req.comment;
             transfer.creditAmount = transferCompanyCredit;
-            transfer.toAccount = req.toAccount;
+            transfer.toAccount = req.type == RetireType.CROSS_BORDER ? 'international': 'local';
             transfer.isRetirement = true;
+            transfer.toCompanyMeta = req.toCompanyMeta;
             // await this.programmeTransferRepo.save(transfer);
 
             if (requester.companyId != toCompany.companyId) {
@@ -645,14 +676,19 @@ export class ProgrammeService {
         for (const i in allTransferList) {
             allTransferList[i].requestId = results.identifiers[i].requestId;
         }
+        
+        let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Retire auto approve received ${trf}`)
-            await this.doTransfer(trf, requestedCompany.name, req.comment, true)
+            updateProgramme = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)).data;
+        }
+        if (updateProgramme) {
+            return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
 
-    async issueProgrammeCredit(req: ProgrammeIssue, user: string) {
+    async issueProgrammeCredit(req: ProgrammeIssue, user: User) {
         this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
         const program = await this.programmeLedger.getProgrammeById(req.programmeId);
         if (!program) {
@@ -665,7 +701,7 @@ export class ProgrammeService {
         if (program.creditEst - program.creditIssued < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);
         }
-        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
+        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRef(user))
         if (!updated) {
             return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
         }
@@ -681,7 +717,7 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async approveProgramme(req: ProgrammeApprove, user: string) {
+    async approveProgramme(req: ProgrammeApprove, user: User) {
         this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`)
         const program = await this.programmeLedger.getProgrammeById(req.programmeId);
         if (!program) {
@@ -694,7 +730,7 @@ export class ProgrammeService {
         if (program.creditEst < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed estimated credit amount", HttpStatus.BAD_REQUEST);
         }
-        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, user)
+        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRef(user))
         if (!updated) {
             return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
         }
@@ -710,13 +746,17 @@ export class ProgrammeService {
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
-    async rejectProgramme(req: ProgrammeReject, user: string) {
+    async rejectProgramme(req: ProgrammeReject, user: User) {
         this.logger.log(`Programme ${req.programmeId} reject. Comment: ${req.comment}`)
 
-        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, user)
+        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, this.getUserRef(user))
         if (!updated) {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
         return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
+    }
+
+    private getUserRef = (user: any) => {
+        return `${user.companyId}#${user.companyName}#${user.id}#${user.name}`;
     }
 }

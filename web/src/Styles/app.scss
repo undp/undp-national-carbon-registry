@@ -275,6 +275,7 @@ body {
 
   .action-icon {
     margin-right: 12px;
+    display: flex;
   }
 
   .anticon-edit {
@@ -376,6 +377,8 @@ body {
 
   .ant-select-selector {
     text-align: left;
+    border-radius: 5px !important;
+    height: 32px;
   }
 
   .form-label {
@@ -387,13 +390,13 @@ body {
     }
   }
 
-  .ant-form{
+  .ant-form {
     .ant-input-password {
       padding: 6.5px 11px;
-      font-size: 16px;  
+      font-size: 16px;
     }
 
-    .ant-form-item-explain-error{
+    .ant-form-item-explain-error {
       font-size: 13px;
       text-align: start;
     }
@@ -404,7 +407,7 @@ body {
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-  
+
       .error-message-txt {
         font-size: 0.9rem;
         color: $error-color;
@@ -498,6 +501,7 @@ body {
     height: 32px;
     border-radius: 4px;
     padding: 6px 16px;
+    font-weight: 500;
   }
 
   .ant-btn-default {
@@ -538,6 +542,10 @@ body {
   margin-left: 2rem !important;
 }
 
+.mg-left-1 {
+  margin-left: 1rem;
+}
+
 .mg-top-1 {
   margin-top: 1rem;
 }
@@ -547,6 +555,10 @@ body {
 }
 
 .transfer-form {
+  .ant-row {
+    align-items: baseline;
+  }
+  padding: 0px 15px;
   .sub-text {
     margin-bottom: 35px;
     font-size: 0.9rem;
@@ -570,6 +582,9 @@ body {
   label {
     font-size: 0.8rem;
   }
+  .ant-radio-wrapper {
+    font-size: 0.9rem;
+  }
 
   input {
     color: $body-text-color;
@@ -577,11 +592,12 @@ body {
 
   button {
     text-transform: uppercase;
+    font-weight: 500;
   }
 }
 
 .color-error {
-    color: $error-color;
+  color: $error-color;
 }
 
 .color-primary {
@@ -594,4 +610,31 @@ body {
 
 .text-left {
   text-align: left;
+}
+
+.ant-form-item {
+  .ant-radio-group {
+    text-align: left;
+  }
+}
+
+.loading-center {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.ant-tag-purple {
+  color: #976ed7;
+}
+
+.ant-tag-orange {
+  color: #ff8f56;
+}
+
+.ant-tag-default {
+  color: rgba(#3a3541, 0.5);
+}
+
+.ant-popover-inner {
+  border-radius: 4px;
 }

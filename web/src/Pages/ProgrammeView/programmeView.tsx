@@ -51,6 +51,7 @@ import {
   ProgrammeStage,
   TxType,
   TypeOfMitigation,
+  UnitField,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import i18next from 'i18next';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
@@ -73,9 +74,10 @@ import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
-import { dateTimeFormat } from '../Common/configs';
+import { creditUnit, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
+import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 
 mapboxgl.accessToken =
   '';
@@ -120,6 +122,28 @@ const ProgrammeView = () => {
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  const numIsExist = (n: any) => {
+    return n ? Number(n) : 0;
+  };
+
+  const getPieChartData = (d: Programme) => {
+    const dt = [
+      numIsExist(d.creditEst) - numIsExist(d.creditIssued),
+      numIsExist(d.creditIssued) - numIsExist(d.creditTransferred) - numIsExist(d.creditRetired),
+      numIsExist(d.creditTransferred),
+      numIsExist(d.creditRetired),
+      d.creditFrozen ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0) : 0,
+    ];
+    return dt;
+  };
+  const genPieData = (d: Programme) => {
+    // ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen']
+
+    const dt = getPieChartData(d);
+    ApexCharts.exec('creditChart', 'updateSeries', {
+      series: dt,
+    });
+  };
   const genCerts = (d: any, certifiedTime: any) => {
     if (d === undefined) {
       return;
@@ -162,42 +186,69 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was created with a valuation of ${addCommasToNumber(
               activity.data.creditEst
-            )} credits.`,
+            )} ${creditUnit} credits.`,
             icon: (
               <span
                 className="step-icon"
                 style={{ backgroundColor: ViewBGColor, color: ViewColor }}
               >
-                <PlusOutlined />
+                <Icon.CaretRight />
               </span>
             ),
           };
-        } else if (activity.data.txType === TxType.ISSUE) {
+        } else if (activity.data.txType === TxType.AUTH) {
           el = {
             status: 'process',
-            title: `Authorised by ${getTxRefValues(activity.data.txRef, 1)}`,
+            title: `Authorised`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was issued ${addCommasToNumber(
-              activity.data.creditIssued
-            )} Credits with the Serial Number ${activity.data.serialNo}`,
+            description: `The programme was authorised for ${addCommasToNumber(
+              activity.data.creditEst
+            )} ${creditUnit} credits until ${DateTime.fromMillis(
+              activity.data.endTime * 1000
+            ).toFormat(dateTimeFormat)} with the Serial Number ${
+              activity.data.serialNo
+            } by the ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+              activity.data.txRef,
+              3
+            )}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
                 <LikeOutlined />
               </span>
             ),
           };
+        } else if (activity.data.txType === TxType.ISSUE) {
+          el = {
+            status: 'process',
+            title: `Issued`,
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: `The programme was issued ${addCommasToNumber(
+              activity.data.creditChange
+            )} ${creditUnit} credits by the ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+            icon: (
+              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
+                <Icon.Award />
+              </span>
+            ),
+          };
         } else if (activity.data.txType === TxType.REJECT) {
           el = {
             status: 'process',
-            title: `Rejected by ${getTxRefValues(activity.data.txRef, 1)}`,
+            title: `Rejected`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was rejected`,
+            description: `The programme was rejected by the ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span
                 className="step-icon"
                 style={{ backgroundColor: RootBGColor, color: RootColor }}
               >
-                <DislikeOutlined />
+                <Icon.XOctagon />
               </span>
             ),
           };
@@ -208,46 +259,49 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditChange
-            )} Credits were transferred to ${getTxRefValues(activity.data.txRef, 1)}`,
+            )} ${creditUnit} credits of this programme were transferred to ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
-                <TransactionOutlined />
+                <Icon.BoxArrowRight />
               </span>
             ),
           };
         } else if (activity.data.txType === TxType.REVOKE) {
           el = {
             status: 'process',
-            title: `Certification revoked by ${getTxRefValues(activity.data.txRef, 3)}`,
+            title: `Certification Revoked`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The certificate of the programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
-            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span
                 className="step-icon"
                 style={{ backgroundColor: ViewBGColor, color: ViewColor }}
               >
-                <CloseCircleOutlined />
+                <Icon.ShieldExclamation />
               </span>
             ),
           };
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
-            title: `Certified by ${getTxRefValues(activity.data.txRef, 3)}`,
+            title: `Certified`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `The programme was certified by ${getTxRefValues(
               activity.data.txRef,
               1
-            )} of ${getTxRefValues(activity.data.txRef, 3)}`,
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span
                 className="step-icon"
                 style={{ backgroundColor: CertBGColor, color: CertColor }}
               >
-                <SafetyOutlined />
+                <Icon.Shield />
               </span>
             ),
           };
@@ -258,25 +312,34 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.RETIRE) {
           el = {
             status: 'process',
-            title: `Retired by ${getTxRefValues(activity.data.txRef, 1)}`,
+            title: `Retired`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme containing a credit balance of ${addCommasToNumber(
-              activity.data.creditBalance
-            )} was retired.`,
+            description: `${addCommasToNumber(
+              activity.data.creditChange
+            )} ${creditUnit} credits of this programme were retired by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: RootColor, color: RootColor }}>
-                <CloseCircleOutlined />
+              <span
+                className="step-icon"
+                style={{ backgroundColor: RootBGColor, color: RootColor }}
+              >
+                <Icon.Save />
               </span>
             ),
           };
         } else if (activity.data.txType === TxType.FREEZE) {
           el = {
             status: 'process',
-            title: `Credits freezed by ${getTxRefValues(activity.data.txRef, 1)}`,
+            title: `Credits freezed`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)
-            )} number of credits frozen`,
+            )} number of credits frozen by ${getTxRefValues(
+              activity.data.txRef,
+              1
+            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
               <span
                 className="step-icon"
@@ -328,6 +391,19 @@ const ProgrammeView = () => {
     state.record = response.data;
     navigate('.', { state: { record: response.data } });
     genCerts(response.data, certTimes);
+    genPieData(response.data);
+  };
+
+  const updateCreditInfo = (response: any) => {
+    if (!(response.data instanceof Array) && response.data && data) {
+      response.data.company = data.company;
+      response.data.certifier = data.certifier;
+      setData(response.data);
+      state.record = response.data;
+      navigate('.', { state: { record: response.data } });
+      genCerts(response.data, certTimes);
+      genPieData(response.data);
+    }
   };
 
   const onPopupAction = async (
@@ -410,6 +486,7 @@ const ProgrammeView = () => {
             state.record = response.data;
             navigate('.', { state: { record: response.data } });
             genCerts(response.data, certTimes);
+            genPieData(response.data);
           } else if (action === 'Reject') {
             data!.currentStage = ProgrammeStage.Rejected;
             setData(data);
@@ -468,7 +545,11 @@ const ProgrammeView = () => {
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
-      info[text] = v;
+      if (v instanceof UnitField) {
+        info[text + ` (${v.unit})`] = v.value;
+      } else {
+        info[text] = v;
+      }
     });
     return info;
   };
@@ -549,6 +630,8 @@ const ProgrammeView = () => {
   if (!data) {
     return <div></div>;
   }
+
+  const pieChartData = getPieChartData(data);
   const percentages: any[] = [];
   data.company.forEach((obj: any, index: number) => {
     percentages.push({
@@ -616,6 +699,7 @@ const ProgrammeView = () => {
               icon: <Icon.ClipboardCheck />,
               contentComp: (
                 <ProgrammeIssueForm
+                  enableIssue={false}
                   programme={data}
                   subText={t('view:popupText')}
                   onCancel={() => {
@@ -647,47 +731,6 @@ const ProgrammeView = () => {
     data.currentStage.toString() !== ProgrammeStage.Retired
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      actionBtns.push(
-        <Button
-          danger
-          onClick={() => {
-            setActionInfo({
-              action: 'Retire',
-              text: t('view:popupText'),
-              title: t('view:retireTitle'),
-              type: 'danger',
-              remark: true,
-              icon: <PoweroffOutlined />,
-              contentComp: (
-                <div className="retire-form">
-                  <Radio.Group value={retireReason} onChange={setRetireReason}>
-                    <Space direction="vertical">
-                      <Radio value={'transfer'}>Cross-border transfer</Radio>
-                      <Radio value={'legal'}>Legal Action</Radio>
-                      <Radio value={'other'}>Other</Radio>
-                    </Space>
-                  </Radio.Group>
-                  <div>
-                    <div className="form-label remark">
-                      {'Remarks'}
-                      {actionInfo.remark && <span className="req-ast">*</span>}
-                    </div>
-                    <TextArea
-                      defaultValue={comment}
-                      rows={2}
-                      onChange={(v) => setComment(v.target.value)}
-                    />
-                  </div>
-                </div>
-              ),
-            });
-            showModal();
-          }}
-        >
-          {t('view:retire')}
-        </Button>
-      );
-
       if (Number(data.creditEst) > Number(data.creditIssued)) {
         actionBtns.push(
           <Button
@@ -702,6 +745,7 @@ const ProgrammeView = () => {
                 icon: <Icon.Award />,
                 contentComp: (
                   <ProgrammeIssueForm
+                    enableIssue={true}
                     programme={data}
                     subText={t('view:popupText')}
                     onCancel={() => {
@@ -829,19 +873,25 @@ const ProgrammeView = () => {
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {
-      calculations.landArea =
-        addCommSep(data.agricultureProperties.landArea) +
-        ' ' +
-        data.agricultureProperties.landAreaUnit;
+      calculations.landArea = new UnitField(
+        data.agricultureProperties.landAreaUnit,
+        addCommSep(data.agricultureProperties.landArea)
+      );
+      // addCommSep(data.agricultureProperties.landArea) +
+      // ' ' +
+      // data.agricultureProperties.landAreaUnit;
     }
     delete calculations.landAreaUnit;
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
     calculations = data.solarProperties;
     if (calculations.energyGenerationUnit) {
-      calculations.energyGeneration =
-        addCommSep(data.solarProperties.energyGeneration) +
-        ' ' +
-        data.solarProperties.energyGenerationUnit;
+      calculations.energyGeneration = new UnitField(
+        data.solarProperties.energyGenerationUnit,
+        addCommSep(data.solarProperties.energyGeneration)
+      );
+      // addCommSep(data.solarProperties.energyGeneration) +
+      // ' ' +
+      // data.solarProperties.energyGenerationUnit;
     } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
       calculations.consumerGroup = (
         <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
@@ -867,7 +917,7 @@ const ProgrammeView = () => {
         <Row gutter={16}>
           <Col md={24} lg={10}>
             <Card className="card-container centered-card">{elements}</Card>
-            {data.creditIssued ? (
+            {data.currentStage !== ProgrammeStage.AwaitingAuthorization ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
@@ -876,12 +926,13 @@ const ProgrammeView = () => {
                   </div>
                   <div className="map-content">
                     <Chart
+                      id={'creditChart'}
                       options={{
-                        labels: ['Transferred', 'Balance', 'Frozen', 'Retired'],
+                        labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
                         legend: {
                           position: 'bottom',
                         },
-                        colors: ['#D2FDBB', '#CDCDCD', '#FF8183', '#6ACDFF'],
+                        colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
                         tooltip: {
                           fillSeriesColor: false,
                         },
@@ -894,12 +945,12 @@ const ProgrammeView = () => {
                           },
                           hover: {
                             filter: {
-                              type: 'darken',
-                              value: 0.9,
+                              type: 'none',
+                              value: 0,
                             },
                           },
                           active: {
-                            allowMultipleDataPointsSelection: false,
+                            allowMultipleDataPointsSelection: true,
                             filter: {
                               type: 'darken',
                               value: 0.7,
@@ -919,7 +970,7 @@ const ProgrammeView = () => {
                                   showAlways: true,
                                   show: true,
                                   label: 'Total',
-                                  formatter: () => '' + data.creditIssued,
+                                  formatter: () => '' + data.creditEst,
                                 },
                               },
                             },
@@ -942,112 +993,157 @@ const ProgrammeView = () => {
                           },
                         ],
                       }}
-                      series={[Number(data.creditTransferred), Number(data.creditBalance), 0, 0]}
+                      series={pieChartData}
                       type="donut"
                       width="100%"
                       fontFamily="inter"
                     />
-                    {userInfoState?.userRole !== 'ViewOnly' && (
-                      <div className="flex-display action-btns">
-                        {data.currentStage.toString() === ProgrammeStage.Issued && (
-                          <div>
-                            {(data.companyId.length !== 1 ||
-                              !data.companyId
-                                .map((e) => Number(e))
-                                .includes(userInfoState!.companyId)) && (
-                              <Button
-                                type="primary"
-                                onClick={() => {
-                                  setActionInfo({
-                                    action: 'Request',
-                                    text: '',
-                                    title: t('view:transferTitle'),
-                                    type: 'primary',
-                                    remark: true,
-                                    icon: <Icon.BoxArrowInRight />,
-                                    contentComp: (
-                                      <ProgrammeTransferForm
-                                        companyRole={userInfoState!.companyRole}
-                                        userCompanyId={userInfoState?.companyId}
-                                        receiverLabelText={t('view:by')}
-                                        disableToCompany={true}
-                                        toCompanyDefault={{
-                                          label: userInfoState?.companyName,
-                                          value: userInfoState?.companyId,
-                                        }}
-                                        programme={data}
-                                        subText={t('view:popupText')}
-                                        onCancel={() => {
-                                          setOpenModal(false);
-                                          setComment(undefined);
-                                        }}
-                                        actionBtnText={t('view:request')}
-                                        onFinish={(body: any) =>
-                                          onPopupAction(
-                                            body,
-                                            'transferRequest',
-                                            t('view:successRequest'),
-                                            post,
-                                            () => {}
-                                          )
-                                        }
-                                      />
-                                    ),
-                                  });
-                                  showModal();
-                                }}
-                              >
-                                {t('view:transfer')}
-                              </Button>
+                    {userInfoState?.userRole !== 'ViewOnly' &&
+                      userInfoState?.companyRole !== 'Certifier' && (
+                        <div className="flex-display action-btns">
+                          {data.currentStage.toString() === ProgrammeStage.Issued &&
+                            data.creditBalance -
+                              (data.creditFrozen
+                                ? data.creditFrozen.reduce(
+                                    (a, b) => numIsExist(a) + numIsExist(b),
+                                    0
+                                  )
+                                : 0) && (
+                              <div>
+                                {(data.companyId.length !== 1 ||
+                                  !data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
+                                {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                  data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <span>
+                                    <Button
+                                      danger
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Retire',
+                                          text: t('view:popupText'),
+                                          title: t('view:retireTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.Save />,
+                                          contentComp: (
+                                            <ProgrammeRetireForm
+                                              programme={data}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:retire')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'retire',
+                                                  t('view:successRetire'),
+                                                  put,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:retire')}
+                                    </Button>
+                                    <Button
+                                      type="primary"
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Send',
+                                          text: '',
+                                          title: t('view:sendCreditTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.BoxArrowRight />,
+                                          contentComp: (
+                                            <ProgrammeTransferForm
+                                              companyRole={userInfoState!.companyRole}
+                                              receiverLabelText={t('view:to')}
+                                              userCompanyId={userInfoState?.companyId}
+                                              programme={data}
+                                              subText={t('view:popupText')}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:send')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'transferRequest',
+                                                  t('view:successSend'),
+                                                  post,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:send')}
+                                    </Button>
+                                  </span>
+                                )}
+                              </div>
                             )}
-                            {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                              data.companyId
-                                .map((e) => Number(e))
-                                .includes(userInfoState!.companyId)) && (
-                              <Button
-                                type="primary"
-                                onClick={() => {
-                                  setActionInfo({
-                                    action: 'Send',
-                                    text: '',
-                                    title: t('view:sendCreditTitle'),
-                                    type: 'primary',
-                                    remark: true,
-                                    icon: <Icon.BoxArrowRight />,
-                                    contentComp: (
-                                      <ProgrammeTransferForm
-                                        companyRole={userInfoState!.companyRole}
-                                        receiverLabelText={t('view:to')}
-                                        userCompanyId={userInfoState?.companyId}
-                                        programme={data}
-                                        subText={t('view:popupText')}
-                                        onCancel={() => {
-                                          setOpenModal(false);
-                                          setComment(undefined);
-                                        }}
-                                        actionBtnText={t('view:send')}
-                                        onFinish={(body: any) =>
-                                          onPopupAction(
-                                            body,
-                                            'transferRequest',
-                                            t('view:successSend'),
-                                            post,
-                                            () => {}
-                                          )
-                                        }
-                                      />
-                                    ),
-                                  });
-                                  showModal();
-                                }}
-                              >
-                                {t('view:send')}
-                              </Button>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                      )}
                   </div>
                 </div>
               </Card>

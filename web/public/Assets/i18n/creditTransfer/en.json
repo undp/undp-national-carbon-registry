@@ -1,6 +1,6 @@
 {
   "viewCreditsTransfers": "Transfers",
-  "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+  "desc": "View the transfers in the Carbon Registry based on your permissions",
   "requestID": "REQUEST ID",
   "certifier": "CERTIFIER",
   "initiator": "INITIATOR",
@@ -18,5 +18,10 @@
   "acceptTitle": "Accept Transfer Request",
   "proceed": "Proceed",
   "cancel": "Cancel",
-  "reject": "Reject"
+  "reject": "Reject",
+  "recognise": "Recognise",
+  "notrecognise": "Not Recognise",
+  "accept": "Accept",
+  "recogniseTitle": "Retire Credits",
+  "notRecogniseTitle": "Are you sure you do not want to recognise this international transfer retire request?"
 }

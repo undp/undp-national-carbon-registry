@@ -41,14 +41,16 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
         id: { $eq: user.id },
       });
       cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
+      cannot([Action.Update], Company);
     } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
         id: { $eq: user.id },
       });
       cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
-
-      can(Action.Manage, Company);
+      can(Action.Update, Company, { companyId: { $eq: user.companyId } });
+      cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
+      cannot(Action.Update, Company, ['companyRole']);
     } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
       can(Action.Read, User, { companyId: { $eq: user.companyId } });
       can(Action.Delete, User, { companyId: { $eq: user.companyId } });
@@ -60,7 +62,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
       can(Action.Read, Company);
       can(Action.Update, Company, { companyId: { $eq: user.companyId } });
-      cannot(Action.Update, Company, ['taxId', 'companyRole']);
+      cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
+      cannot(Action.Update, Company, ['companyRole']);
     } else {
       if (user.companyRole === CompanyRole.GOVERNMENT) {
         can(Action.Read, User);

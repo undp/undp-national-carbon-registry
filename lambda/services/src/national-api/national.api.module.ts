@@ -15,6 +15,7 @@ import { UserModule } from '../shared/user/user.module';
 import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
+import { UtilModule } from '../shared/util/util.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { ProgrammeController } from './programme.controller';
     UserModule,
     CaslModule,
     ProgrammeModule,
-    CompanyModule
+    CompanyModule,
+    UtilModule
   ],
   controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController ],
   providers: [

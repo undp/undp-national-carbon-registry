@@ -104,8 +104,9 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     programme.creditOwnerPercentage = [100];
   }
 
-  const validCompanies = [];
+  const validCompanies: { percentage: number; name: any; companyId: any; available: number }[] = [];
   let totalCredits = 0;
+  const companyCredit = [];
   for (const index in programme.creditOwnerPercentage) {
     if (
       (toCompanyDefault && userCompanyId !== programme.company[index].companyId) ||
@@ -120,8 +121,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
       validCompanies.push({
         percentage: programme.creditOwnerPercentage[index],
         name: programme.company[index].name,
+        companyId: programme.company[index].companyId,
         available: companyAvailableTotal,
       });
+      companyCredit.push(0);
 
       totalCredits += companyAvailableTotal;
     }
@@ -141,7 +144,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
       <Form
         name="transfer_init_popup"
         layout="vertical"
-        initialValues={{ toCompanyId: toCompanyDefault ? toCompanyDefault.value : undefined }}
+        initialValues={{
+          toCompanyId: toCompanyDefault ? toCompanyDefault.value : undefined,
+          companyCredit: companyCredit,
+        }}
         onChange={() => setPopupError(undefined)}
         onValuesChange={(v, allVal) => {
           setCurrentSum(
@@ -149,8 +155,12 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
           );
         }}
         onFinish={async (d) => {
+          if (currentSum === 0) {
+            setPopupError('Total Amount should be greater than 0');
+            return;
+          }
           setLoading(true);
-          d.fromCompanyIds = programme.companyId.map((e: any) => parseInt(e));
+          d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
           const res = await onFinish(d);
           setPopupError(res);
           setLoading(false);
@@ -164,7 +174,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
               name="toCompanyId"
               rules={[
                 {
-                  required: true,
+                  required: !disableToCompany,
                   message: 'Required field',
                 },
               ]}
@@ -222,14 +232,22 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                           parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                         ) {
                           // eslint-disable-next-line prefer-promise-reject-errors
-                          return Promise.reject('> estimated');
+                          return Promise.reject('Great than the available');
                         }
                         return Promise.resolve();
                       },
                     }),
                   ]}
                 >
-                  <InputNumber placeholder="" controls={false} />
+                  <InputNumber
+                    placeholder=""
+                    controls={false}
+                    onKeyPress={(event) => {
+                      if (!/[0-9\.]/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={1} md={1} className="seperator">
@@ -237,7 +255,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
               </Col>
               <Col lg={6} md={12}>
                 <Form.Item className="popup-credit-input">
-                  <Input placeholder={addCommSep(totalCredits)} disabled />
+                  <InputNumber placeholder={addCommSep(pert.available)} disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -250,7 +268,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             </Col>
             <Col lg={6} md={12}>
               <Form.Item className="popup-credit-input">
-                <Input placeholder={addCommSep(currentSum)} disabled />
+                <InputNumber placeholder={addCommSep(currentSum)} disabled />
               </Form.Item>
             </Col>
             <Col lg={1} md={1} className="seperator">
@@ -258,7 +276,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             </Col>
             <Col lg={6} md={12}>
               <Form.Item className="popup-credit-input">
-                <Input placeholder={addCommSep(programme.creditBalance)} disabled />
+                <InputNumber placeholder={addCommSep(programme.creditBalance)} disabled />
               </Form.Item>
             </Col>
           </Row>

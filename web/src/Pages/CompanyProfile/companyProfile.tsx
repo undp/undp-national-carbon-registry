@@ -3,6 +3,7 @@ import { Button, Card, Col, Row, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -74,15 +75,6 @@ const CompanyProfile = () => {
 
   return (
     <div className="content-container company-profile">
-      {/* <Row> */}
-      {/* <Col md={24} lg={8}>
-          <div className="title-bar">
-            <div>
-              <div className="body-title">{t('companyProfile:title')}</div>
-              <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
-            </div>
-          </div>
-        </Col> */}
       <div className="title-bar">
         <div>
           <div className="body-title">{t('companyProfile:title')}</div>
@@ -91,7 +83,8 @@ const CompanyProfile = () => {
         <div className="flex-display">
           {['Admin', 'Root', 'Manager'].includes(userRole) &&
           !isLoading &&
-          parseInt(companyDetails.state) !== 0 ? (
+          parseInt(companyDetails.state) !== 0 &&
+          companyDetails.companyRole !== CompanyRole.GOVERNMENT ? (
             <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
               {t('companyProfile:deauthorise')}
             </Button>
@@ -100,23 +93,6 @@ const CompanyProfile = () => {
           )}
         </div>
       </div>
-      {/* <Col md={24} lg={16}>
-          <Row justify="end">
-            {['Admin', 'Root', 'Manager'].includes(userRole) ? (
-              <Button
-                danger
-                disabled={parseInt(companyDetails.state) === 0}
-                className="mg-right-5 btn-danger"
-                onClick={onDeauthoriseOrganisation}
-              >
-                {t('companyProfile:deauthorise')}
-              </Button>
-            ) : (
-              ''
-            )}
-          </Row>
-        </Col> */}
-      {/* </Row> */}
 
       <div className="content-body">
         <Row gutter={16}>

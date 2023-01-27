@@ -283,6 +283,7 @@ export class AnalyticsAPIService {
               `"programmeId"`,
               `"companyId"`,
               `"creditIssued"`,
+              `"creditEst"`,
               `"creditBalance"`,
               `"creditTransferred"`,
               `"creditRetired"`,
@@ -314,7 +315,7 @@ export class AnalyticsAPIService {
             );
           }
           let dataCredits = {
-            available: [],
+            authorized: [],
             issued: [],
             transferred: [],
             retired: [],
@@ -322,6 +323,7 @@ export class AnalyticsAPIService {
           for (let index = 1; index <= durationCreditCounts; index++) {
             let eTimeCredit = sTimeCredit + duraionCreditT;
             let availableS = 0;
+            let estimatedS = 0;
             let issuedS = 0;
             let transferredS = 0;
             let retiredS = 0;
@@ -373,10 +375,17 @@ export class AnalyticsAPIService {
                       totalResponseCredit[indexProgramme]?.creditRetired
                     );
                 }
+                if (totalResponseCredit[indexProgramme]?.creditEst !== null) {
+                  estimatedS =
+                    estimatedS +
+                    parseFloat(totalResponseCredit[indexProgramme]?.creditEst);
+                }
               }
               if (indexProgramme === totalResponseCredit.length - 1) {
-                dataCredits?.available.push({ [sTimeCredit]: availableS });
-                dataCredits?.issued.push({ [sTimeCredit]: issuedS });
+                dataCredits?.authorized.push({
+                  [sTimeCredit]: estimatedS - issuedS,
+                });
+                dataCredits?.issued.push({ [sTimeCredit]: availableS });
                 dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
                 dataCredits?.retired.push({ [sTimeCredit]: retiredS });
               }
@@ -513,7 +522,6 @@ export class AnalyticsAPIService {
             .select([
               `"programmeId"`,
               `"companyId"`,
-              `"countryCodeA2"`,
               `"programmeProperties"`,
               `"createdTime"`,
             ])
@@ -524,21 +532,91 @@ export class AnalyticsAPIService {
               )
             )
             .getRawMany();
-          let locationsGeo = [];
-          for (
-            let index = 0;
-            index < totalResponseProgrammeLocation.length;
-            index++
-          ) {
-            let locations =
-              totalResponseProgrammeLocation[index]?.programmeProperties
-                ?.geographicalLocation;
-            for (let geoLoc = 0; geoLoc < locations.length; geoLoc++) {
-              locationsGeo.push(locations[geoLoc]);
+          let locationsGeoData: any = {};
+          let features: any[] = [];
+          locationsGeoData.type = "FeatureCollection";
+          for (let i = 0; i < totalResponseProgrammeLocation.length; i++) {
+            let programme: any =
+              totalResponseProgrammeLocation[i]?.programmeProperties;
+            let programmePropertiesGeoCordinates: any[] =
+              programme?.geographicalLocationCordintes;
+            if (programmePropertiesGeoCordinates) {
+              for (
+                let j = 0;
+                j < programmePropertiesGeoCordinates?.length;
+                j++
+              ) {
+                console.log(
+                  "cordinates ---- > ",
+                  programmePropertiesGeoCordinates[j]
+                );
+                let programmeGeoData: any = {};
+                let location: any = programmePropertiesGeoCordinates[j];
+                programmeGeoData.type = "Feature";
+                let properties: any = {};
+                let geometry: any = {};
+                properties.id = String(i) + String(j);
+                properties.count = 1;
+                geometry.type = "Point";
+                geometry.coordinates = location;
+                programmeGeoData.properties = properties;
+                programmeGeoData.geometry = geometry;
+                features.push(programmeGeoData);
+              }
             }
           }
-          let uniqueLocationsGeo = [...new Set(locationsGeo)];
-          results[stat.type] = uniqueLocationsGeo;
+          locationsGeoData.features = [...features];
+
+          results[stat.type] = locationsGeoData;
+          break;
+
+        case ChartType.TRANSFER_LOCATIONS:
+          const startTimeTransferLocations = query.startTime;
+          const endTimeTransferLocations = query.endTime;
+          let paramsTransferLocations: chartStatsRequestDto = {
+            type: stat.type,
+            companyId:
+              userCompanyId !== null && category === "mine" ? companyId : "",
+            startDate: startTimeTransferLocations,
+            endDate: endTimeTransferLocations,
+          };
+          let totalResponseTransferLocation = await this.programmeTransferRepo
+            .createQueryBuilder()
+            .select([`"requestId"`, `"toCompanyMeta"`])
+            .where(
+              this.helperService.generateWhereSQLChartStastics(
+                paramsTransferLocations,
+                this.helperService.parseMongoQueryToSQL(abilityCondition)
+              )
+            )
+            .getRawMany();
+          let countries: any[] = [];
+          let locationsTransferGeoData: any = {};
+          let featuresTransfer: any[] = [];
+          locationsTransferGeoData.type = "FeatureCollection";
+          for (
+            let index = 0;
+            index < totalResponseTransferLocation.length;
+            index++
+          ) {
+            let programmeTransferGeoData: any = {};
+            let geometryTransfer: any = {};
+            if (totalResponseTransferLocation[index]?.toCompanyMeta) {
+              let toCompanyMeta =
+                totalResponseTransferLocation[index]?.toCompanyMeta;
+              if (toCompanyMeta?.coordinates) {
+                if (!countries.includes(toCompanyMeta?.coordinates))
+                  programmeTransferGeoData.type = "Feature";
+                  geometryTransfer.type = "Point";
+                  geometryTransfer.coordinates = toCompanyMeta?.coordinates;
+                  programmeTransferGeoData.geometry = geometryTransfer;
+                featuresTransfer.push(programmeTransferGeoData);
+              }
+            }
+          }
+          locationsTransferGeoData.features = [...featuresTransfer];
+
+          results[stat.type] = locationsTransferGeoData;
           break;
       }
     }
@@ -574,6 +652,7 @@ export class AnalyticsAPIService {
               )
             )
             .getCount();
+
           results[stat.type] = totalProgrammesResponse;
           break;
 
@@ -680,6 +759,7 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_STATS_TRANSFERRED:
         case StatType.CREDIT_STATS_RETIRED:
         case StatType.CREDIT_STATS_ISSUED:
+        case StatType.CREDIT_STATS_ESTIMATED:
           const startTimeProgrammeCredits = query.startTime;
           const endTimeProgrammeCredits = query.endTime;
           const valuesCreditRequest: programmeStatusRequestDto = {
