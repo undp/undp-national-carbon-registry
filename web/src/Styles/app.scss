@@ -500,6 +500,7 @@ body {
     height: 32px;
     border-radius: 4px;
     padding: 6px 16px;
+    font-weight: 500;
   }
 
   .ant-btn-default {
@@ -553,6 +554,10 @@ body {
 }
 
 .transfer-form {
+
+  .ant-row {
+    align-items: baseline;
+  }
   padding: 0px 15px;
   .sub-text {
     margin-bottom: 35px;
@@ -587,6 +592,7 @@ body {
 
   button {
     text-transform: uppercase;
+    font-weight: 500;
   }
 }
 
@@ -627,4 +633,8 @@ body {
 
 .ant-tag-default {
   color: rgba(#3A3541, 0.5);
+}
+
+.ant-popover-inner {
+  border-radius: 4px;
 }

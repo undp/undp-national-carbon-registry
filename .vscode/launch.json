@@ -5,19 +5,16 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Launch Chrome",
+        "name": "Launch Serverless",
         "request": "launch",
-        "type": "pwa-chrome",
-        "url": "http://localhost:3000",
-        "webRoot": "${workspaceFolder}/web/"
-      },
-      {
-        "name": "Attach to Chrome",
-        "port": 9222,
-        "request": "attach",
-        "type": "pwa-chrome",
-        "urlFilter": "http://localhost:3000/*", // use urlFilter instead of url!
-        "webRoot": "${workspaceFolder}/web/"
+        "type": "pwa-node",
+        "cwd": "${workspaceFolder}/lambda/services/",
+        "program": "/usr/local/bin/serverless",
+        "args": [
+          "offline",
+          "--stage",
+          "local"
+        ]
       }
     ]
   }

@@ -155,6 +155,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
           );
         }}
         onFinish={async (d) => {
+          if (currentSum === 0) {
+            setPopupError('Total Amount should be greater than 0');
+            return;
+          }
           setLoading(true);
           d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
           const res = await onFinish(d);

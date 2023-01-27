@@ -8,7 +8,7 @@ import { Sector } from '../enum/sector.enum';
 import { TransferStatus } from '../enum/transform.status.enum';
 import { ProgrammeStage } from '../enum/programme-status.enum';
 import { EntitySubject } from './entity.subject';
-import { BasicCompany } from '../dto/BasicCompany.dto';
+import { BasicOrgInfo } from '../dto/basic.organisation.dto';
 import { RetireType } from '../enum/retire.type.enum';
 
 export const bigint: ValueTransformer = {
@@ -42,7 +42,7 @@ export class ProgrammeTransfer implements EntitySubject {
         array: false,
         nullable: true
     })
-    toCompanyMeta: BasicCompany;
+    toCompanyMeta: BasicOrgInfo;
 
     @Column({
         type: "enum",
