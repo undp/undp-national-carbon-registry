@@ -25,7 +25,7 @@ export class LedgerReplicatorService {
     private configService: ConfigService
   ) {}
 
-  async forwardGeocoding(address: any) {
+  async forwardGeocoding(address: any[]) {
     let geoCodinates: any[] = [];
     const ACCESS_TOKEN =
       "";
