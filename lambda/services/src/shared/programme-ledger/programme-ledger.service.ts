@@ -60,7 +60,6 @@ export class ProgrammeLedgerService {
         return [{}, {}, insertMap];
       }
     );
-
     // if (programme) {
     //   await this.entityManger
     //     .save<Programme>(plainToClass(Programme, programme))
@@ -255,7 +254,7 @@ export class ProgrammeLedgerService {
         if (isRetirement) {
           uPayload["creditRetired"] = programme.creditRetired;
         } else {
-          uPayload["creditTransferred"] = programme.creditTransferred;
+          uPayload['creditTransferred'] =  programme.creditTransferred;
         }
 
         let updateMap = {};

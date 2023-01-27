@@ -103,10 +103,12 @@ export class LedgerReplicatorService {
                     );
                   }
                 }
-                this.forwardGeocoding([...address]).then((response: any) => {
-                  programme.programmeProperties.geographicalLocationCordintes =
-                    [...response];
-                });
+                await this.forwardGeocoding([...address]).then(
+                  (response: any) => {
+                    programme.programmeProperties.geographicalLocationCordintes =
+                      [...response];
+                  }
+                );
               }
             }
 
