@@ -45,7 +45,9 @@ export class CompanyUpdateDto {
   @ApiPropertyOptional()
   website: string;
 
-  @IsString()
+  @ValidateIf(
+    (c) => c.logo
+  )
   @ApiPropertyOptional()
   @MaxLength(1048576, { message: "Logo cannot exceed 1MB" })
   logo: string;
