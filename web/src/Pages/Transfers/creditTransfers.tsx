@@ -466,7 +466,7 @@ const CreditTransfer = () => {
                     />
                   </div>
                 </Tooltip>
-              ) : itemObj.type === '0' ? (
+              ) : itemObj.retirementType === '0' ? (
                 <ReactCountryFlag
                   className="profile-icon flag-ret-icon"
                   countryCode={itemObj.toCompanyMeta.country}
