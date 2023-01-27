@@ -275,6 +275,7 @@ body {
 
   .action-icon {
     margin-right: 12px;
+    display: flex;
   }
 
   .anticon-edit {
@@ -554,7 +555,6 @@ body {
 }
 
 .transfer-form {
-
   .ant-row {
     align-items: baseline;
   }
@@ -624,15 +624,15 @@ body {
   text-align: center;
 }
 .ant-tag-purple {
-  color: #976ED7;
+  color: #976ed7;
 }
 
 .ant-tag-orange {
-  color: #FF8F56;
+  color: #ff8f56;
 }
 
 .ant-tag-default {
-  color: rgba(#3A3541, 0.5);
+  color: rgba(#3a3541, 0.5);
 }
 
 .ant-popover-inner {

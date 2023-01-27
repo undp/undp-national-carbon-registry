@@ -39,6 +39,8 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
   const [currentSum, setCurrentSum] = useState<number>(0);
   const [countryList, setCountryList] = useState<SelectProps['options']>([]);
   const [value, setValue] = useState<string>();
+  const [checked, setChecked] = useState<boolean>(false);
+
   const { get, delete: del, post } = useConnection();
 
   const handleSearch = async (newValue: string) => {
@@ -307,23 +309,25 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
               valuePropName="checked"
               label=""
               name="confirm"
-              rules={[
-                {
-                  required: true,
-                  message: 'Required field',
-                },
-                ({ getFieldValue }) => ({
-                  validator(rule, v) {
-                    if (v === false) {
-                      // eslint-disable-next-line prefer-promise-reject-errors
-                      return Promise.reject('Required field');
-                    }
-                    return Promise.resolve();
-                  },
-                }),
-              ]}
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: 'Required field',
+              //   },
+              //   ({ getFieldValue }) => ({
+              //     validator(rule, v) {
+              //       if (v === false) {
+              //         // eslint-disable-next-line prefer-promise-reject-errors
+              //         return Promise.reject('Required field');
+              //       }
+              //       return Promise.resolve();
+              //     },
+              //   }),
+              // ]}
             >
-              <Checkbox className="label">{t('view:confirmRetire')}</Checkbox>
+              <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
+                {t('view:confirmRetire')}
+              </Checkbox>
             </Form.Item>
           </Col>
         </Row>
@@ -334,7 +338,13 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           <Button htmlType="button" onClick={onCancel}>
             {t('view:cancel')}
           </Button>
-          <Button className="mg-left-2" type="primary" htmlType="submit" loading={loading}>
+          <Button
+            className="mg-left-2"
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            disabled={!checked}
+          >
             {actionBtnText}
           </Button>
         </Form.Item>

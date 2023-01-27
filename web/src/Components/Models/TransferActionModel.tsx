@@ -25,6 +25,7 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
   const { i18n, t } = useTranslation(['view', 'creditTransfer']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const [checked, setChecked] = useState<boolean>(false);
 
   const companyList = !transfer.isRetirement
     ? [
@@ -179,23 +180,25 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                 valuePropName="checked"
                 label=""
                 name="confirm"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Required field',
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(rule, v) {
-                      if (v === false) {
-                        // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('Required field');
-                      }
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
+                // rules={[
+                //   {
+                //     required: true,
+                //     message: 'Required field',
+                //   },
+                //   ({ getFieldValue }) => ({
+                //     validator(rule, v) {
+                //       if (v === false) {
+                //         // eslint-disable-next-line prefer-promise-reject-errors
+                //         return Promise.reject('Required field');
+                //       }
+                //       return Promise.resolve();
+                //     },
+                //   }),
+                // ]}
               >
-                <Checkbox className="label">{t('view:confirmClosure')}</Checkbox>
+                <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
+                  {t('view:confirmClosure')}
+                </Checkbox>
               </Form.Item>
             </Col>
           </Row>
@@ -206,7 +209,13 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
             <Button htmlType="button" onClick={onCancel}>
               {t('view:cancel')}
             </Button>
-            <Button className="mg-left-2" type="primary" htmlType="submit" loading={loading}>
+            <Button
+              className="mg-left-2"
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={!checked}
+            >
               {actionBtnText}
             </Button>
           </Form.Item>
