@@ -651,6 +651,7 @@ export class ProgrammeService {
             transfer.toAccount = req.type == RetireType.CROSS_BORDER ? 'international': 'local';
             transfer.isRetirement = true;
             transfer.toCompanyMeta = req.toCompanyMeta;
+            transfer.retirementType = req.type;
             // await this.programmeTransferRepo.save(transfer);
 
             if (requester.companyId != toCompany.companyId) {

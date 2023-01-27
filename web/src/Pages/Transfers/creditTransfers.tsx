@@ -43,6 +43,7 @@ import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
+import ReactCountryFlag from 'react-country-flag';
 
 type CompanyInfo = {
   name: string;
@@ -455,7 +456,7 @@ const CreditTransfer = () => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {itemObj.receiver.map((v: any, i: any) => {
-              return (
+              return !itemObj.isRetirement ? (
                 <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                   <div>
                     <ProfileIcon
@@ -465,6 +466,15 @@ const CreditTransfer = () => {
                     />
                   </div>
                 </Tooltip>
+              ) : itemObj.type === '0' ? (
+                <ReactCountryFlag
+                  className="profile-icon flag-ret-icon"
+                  countryCode={itemObj.toCompanyMeta.country}
+                />
+              ) : (
+                <div className="ret-icon profile-icon">
+                  <Icon.Save />
+                </div>
               );
             })}
           </div>
