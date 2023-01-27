@@ -37,7 +37,7 @@ export class LedgerReplicatorService {
         ".json?access_token=" +
         ACCESS_TOKEN +
         "&limit=1";
-      axios
+      await axios
         .get(url)
         .then(function (response) {
           // handle success
