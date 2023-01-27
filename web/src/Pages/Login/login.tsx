@@ -198,6 +198,7 @@ const Login = () => {
             <div className="login-language-selection-container">
               <span className="login-language-selection-txt">
                 {t('common:language')}
+                <span className="sep">{':'}</span>
                 <Select
                   placeholder="Search to Select"
                   defaultValue={

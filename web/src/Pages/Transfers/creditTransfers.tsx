@@ -53,6 +53,7 @@ type PopupInfo = {
   actionBtnText: string;
   okAction: any;
   type: 'primary' | 'danger';
+  remarkRequired: boolean;
 };
 
 const CreditTransfer = () => {
@@ -225,6 +226,7 @@ const CreditTransfer = () => {
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferCancel'),
                   type: 'danger',
+                  remarkRequired: true,
                 });
               },
             },
@@ -253,6 +255,7 @@ const CreditTransfer = () => {
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
                   type: 'primary',
+                  remarkRequired: false,
                 });
               },
             },
@@ -268,6 +271,7 @@ const CreditTransfer = () => {
                   okAction: (requestId: any, comment: any) =>
                     handleRequestOk(requestId, comment, 'transferReject'),
                   type: 'danger',
+                  remarkRequired: true,
                 });
               },
             },
@@ -301,6 +305,7 @@ const CreditTransfer = () => {
                       'Successfully recongnised'
                     ),
                   type: 'primary',
+                  remarkRequired: false,
                 });
               },
             },
@@ -321,6 +326,7 @@ const CreditTransfer = () => {
                       'Successfully not recongnised'
                     ),
                   type: 'danger',
+                  remarkRequired: true,
                 });
               },
             },
@@ -681,6 +687,7 @@ const CreditTransfer = () => {
           icon={popupInfo!.icon}
           title={popupInfo!.title}
           type={popupInfo!.type}
+          remarkRequired={popupInfo.remarkRequired}
         />
       )}
       {/* <Modal
