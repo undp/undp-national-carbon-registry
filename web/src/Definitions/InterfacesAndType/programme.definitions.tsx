@@ -193,6 +193,12 @@ export const addCommSep = (value: any) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export const addCommSepRound = (value: any) => {
+  return Number(value)
+    .toFixed(2)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 export const addSpaces = (text: string) => {
   if (!text) {
     return text;

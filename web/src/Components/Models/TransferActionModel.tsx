@@ -183,7 +183,7 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                   },
                   ({ getFieldValue }) => ({
                     validator(rule, v) {
-                      if (remarkRequired && v !== undefined && v.trim() === '') {
+                      if (remarkRequired && v !== undefined && v !== '' && v.trim() === '') {
                         // eslint-disable-next-line prefer-promise-reject-errors
                         return Promise.reject('Required field');
                       }

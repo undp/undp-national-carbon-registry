@@ -7,6 +7,30 @@
   overflow-x: hidden;
   background-color: $outside-background-color;
 
+  .title {
+    font-family: 'MuseoSans';
+    font-size: 0.7rem;
+    color: $logo-text-color;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    margin-top: -10px;
+  }
+
+  .title-sub {
+    font-weight: 100 !important;
+    font-family: 'MuseoSans';
+    font-size: 0.7rem;
+    color: $logo-text-color;
+    padding-left: 6px;
+    // padding-bottom: 3px;
+  }
+
+  .country-name {
+    font-size: 0.6rem;
+    font-family: 'MuseoSans';
+    margin-top: -3px;
+  }
+
   .login-language-selection-container {
     
     position: absolute;
@@ -96,7 +120,7 @@
       margin-top: 20px;
       object-fit: cover;
       height: auto;
-      width: 5rem;
+      width: 3.7rem;
     }
   }
 

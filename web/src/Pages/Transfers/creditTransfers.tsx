@@ -27,6 +27,8 @@ import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
+  addCommSep,
+  addCommSepRound,
   CompanyRole,
   CreditTransferStage,
   getCompanyBgColor,
@@ -476,7 +478,7 @@ const CreditTransfer = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return <span className="clickable">{item}</span>;
+        return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
     {
@@ -486,7 +488,7 @@ const CreditTransfer = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return <span>{item}</span>;
+        return <span>{addCommSepRound(item)}</span>;
       },
     },
     {

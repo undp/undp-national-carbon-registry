@@ -367,11 +367,6 @@ export class ProgrammeLedgerService {
               HttpStatus.BAD_REQUEST
             );
           }
-          if (!programme.certifierId) {
-            programme.certifierId = [certifierId];
-          } else {
-            programme.certifierId.push(certifierId);
-          }
 
           if (programme.currentStage != ProgrammeStage.ISSUED) {
             throw new HttpException(
@@ -379,6 +374,20 @@ export class ProgrammeLedgerService {
               HttpStatus.BAD_REQUEST
             );
           }
+
+          if (!programme.certifierId) {
+            programme.certifierId = [certifierId];
+          } else {
+            programme.certifierId.push(certifierId);
+          }
+
+          const reIndex = programme.revokedCertifierId
+          ? programme.revokedCertifierId.indexOf(certifierId)
+          : -1;
+          if (reIndex >= 0) {
+            programme.revokedCertifierId.splice(reIndex, 1);
+          }
+
         } else {
           if (index < 0) {
             throw new HttpException(
@@ -386,8 +395,16 @@ export class ProgrammeLedgerService {
               HttpStatus.BAD_REQUEST
             );
           }
-
           programme.certifierId.splice(index, 1);
+
+          if (!programme.revokedCertifierId) {
+            programme.revokedCertifierId = [certifierId]
+          } else {
+            const reIndex = programme.revokedCertifierId.indexOf(certifierId);
+            if (reIndex < 0) {
+              programme.revokedCertifierId.push(certifierId);
+            }
+          }
         }
 
         programme.txRef = user;
@@ -398,6 +415,7 @@ export class ProgrammeLedgerService {
         let updateWhere = {};
         updateMap[this.ledger.tableName] = {
           certifierId: programme.certifierId,
+          revokedCertifierId: programme.revokedCertifierId,
           txType: programme.txType,
           txTime: programme.txTime,
           txRef: programme.txRef,

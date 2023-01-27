@@ -101,6 +101,9 @@ export class Programme implements EntitySubject {
     @Column("bigint", { array: true, nullable: true })
     certifierId: number[];
 
+    @Column("bigint", { array: true, nullable: true })
+    revokedCertifierId: number[];
+
     @Column()
     creditUnit: string;
 

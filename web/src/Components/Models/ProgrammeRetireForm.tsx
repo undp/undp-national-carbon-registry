@@ -60,7 +60,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           order: 'ASC',
         },
       });
-      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.name })));
+      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.alpha2 })));
     }
   };
 
@@ -301,7 +301,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 },
                 ({ getFieldValue }) => ({
                   validator(rule, v) {
-                    if (v !== undefined && v.trim() === '') {
+                    if (v !== undefined && v !== '' && v.trim() === '') {
                       // eslint-disable-next-line prefer-promise-reject-errors
                       return Promise.reject('Required field');
                     }
