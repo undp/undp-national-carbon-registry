@@ -288,7 +288,7 @@ export class HelperService {
 
     const imgBuffer = Buffer.from(companyLogo, "base64");
     var uploadParams = {
-      Bucket: "carbon-www-common",
+      Bucket: process.env.carbon_dev_common,
       Key: "",
       Body: imgBuffer,
       ContentEncoding: "base64",

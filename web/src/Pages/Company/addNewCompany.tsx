@@ -29,6 +29,9 @@ const AddNewCompany = () => {
   const { i18n, t } = useTranslation(['addCompany']);
   const { put } = useConnection();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const maximumImageSize = process.env.MAXIMUM_IMAGE_SIZE
+    ? parseInt(process.env.MAXIMUM_IMAGE_SIZE)
+    : 3145728;
 
   useEffect(() => {
     setIsUpdate(state?.record ? true : false);
@@ -306,9 +309,9 @@ const AddNewCompany = () => {
                               }
                               if (!isCorrectFormat) {
                                 throw new Error('Unsupported file format!');
-                              } else if (file[0]?.size > 1048576) {
+                              } else if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error('Maximum upload file size is 1MB!');
+                                throw new Error('Maximum upload file size is 3MB!');
                               }
                             }
                           }

@@ -338,9 +338,6 @@ Resources:
     Properties:
       AccessControl: PublicRead
       BucketName: !Sub 'carbon-www-common'
-      WebsiteConfiguration:
-        ErrorDocument: 'index.html'
-        IndexDocument: 'index.html'
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
