@@ -486,7 +486,7 @@ const CreditTransfer = () => {
       dataIndex: 'creditAmount',
       key: 'creditAmount',
       sorter: true,
-      align: 'left' as const,
+      align: 'right' as const,
       render: (item: any) => {
         return <span className="clickable">{addCommSepRound(item)}</span>;
       },
@@ -496,7 +496,7 @@ const CreditTransfer = () => {
       dataIndex: 'creditBalance',
       key: 'creditBalance',
       sorter: true,
-      align: 'left' as const,
+      align: 'right' as const,
       render: (item: any) => {
         return <span>{addCommSepRound(item)}</span>;
       },
