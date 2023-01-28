@@ -6,9 +6,12 @@ import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class HelperService {
+  constructor(private configService: ConfigService) {}
+
   private prepareValue(value: any) {
     console.log(value.constructor);
     if (value instanceof Array) {
@@ -280,5 +283,36 @@ export class HelperService {
       }
     }
     return final;
+  }
+
+  public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
+    var AWS = require("aws-sdk");
+    const s3 = new AWS.S3();
+    const imgBuffer = Buffer.from(companyLogo, "base64");
+    var uploadParams = {
+      Bucket: this.configService.get<string>("s3CommonBucket.name"),
+      Key: "",
+      Body: imgBuffer,
+      ContentEncoding: "base64",
+      ContentType: "image/png",
+    };
+    uploadParams.Key = `profile_images/${companyId}.png`;
+
+    return await s3
+      .upload(uploadParams, function (err, data) {
+        if (err) {
+          return {
+            status: false,
+            statusText: err,
+          };
+        }
+        if (data) {
+          return {
+            status: true,
+            statusText: data.Location,
+          };
+        }
+      })
+      .promise();
   }
 }

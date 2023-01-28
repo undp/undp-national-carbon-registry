@@ -332,6 +332,13 @@ Resources:
         ErrorDocument: 'index.html'
         IndexDocument: 'index.html'
 
+  S3BucketCommonWeb:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Sub 'carbon-common-dev'
+
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
