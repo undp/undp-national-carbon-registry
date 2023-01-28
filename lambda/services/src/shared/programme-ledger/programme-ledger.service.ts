@@ -214,9 +214,9 @@ export class ProgrammeLedgerService {
         programme.txRef = `${name}#${transfer.requestId}#${transfer.retirementType}#${reason}`;
 
         if (isRetirement) {
-          if (programme.creditBalance == transfer.creditAmount) {
-            programme.currentStage = ProgrammeStage.RETIRED;
-          }
+          // if (programme.creditBalance == transfer.creditAmount) {
+          //   programme.currentStage = ProgrammeStage.RETIRED;
+          // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
             programme.creditRetired = 0;
@@ -771,8 +771,6 @@ export class ProgrammeLedgerService {
         txType:
           status == ProgrammeStage.REJECTED
             ? TxType.REJECT
-            : status == ProgrammeStage.RETIRED
-            ? TxType.RETIRE
             : null,
       },
       {

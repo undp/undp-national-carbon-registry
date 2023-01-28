@@ -508,9 +508,11 @@ const CreditTransfer = () => {
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
-          <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
-            {getStageTransferEnumVal(Obj.status, Obj)}
-          </Tag>
+          <Tooltip title={Obj.serialNo} color={TooltipColor} key={TooltipColor}>
+            <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+              {getStageTransferEnumVal(Obj.status, Obj)}
+            </Tag>
+          </Tooltip>
         );
       },
     },

@@ -733,7 +733,7 @@ const ProgrammeView = () => {
     }
   } else if (
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
-    data.currentStage.toString() !== ProgrammeStage.Retired
+    data.creditEst > data.creditIssued
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
       if (Number(data.creditEst) > Number(data.creditIssued)) {

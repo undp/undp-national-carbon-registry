@@ -5,8 +5,8 @@ import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.col
 export enum ProgrammeStage {
   AwaitingAuthorization = 'Pending',
   Issued = 'Authorised',
-  Transferred = 'Transferred',
-  Retired = 'Retired',
+  // Transferred = 'Transferred',
+  // Retired = 'Retired',
   Rejected = 'Rejected',
   // Frozen = 'Frozen',
 }
@@ -78,8 +78,8 @@ export const getStageTagType = (stage: ProgrammeStage) => {
       return 'error';
     case ProgrammeStage.Issued:
       return 'processing';
-    case ProgrammeStage.Transferred:
-      return 'success';
+    // case ProgrammeStage.Transferred:
+    //   return 'success';
     default:
       return 'default';
   }
