@@ -263,7 +263,7 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.tableName] = uPayload;
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programme.programmeId,
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
           txTime: prvTxTime,
         };
 
@@ -368,7 +368,7 @@ export class ProgrammeLedgerService {
             );
           }
 
-          if (programme.currentStage != ProgrammeStage.ISSUED) {
+          if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException(
               "Can certify only issued programmes",
               HttpStatus.BAD_REQUEST
@@ -872,7 +872,7 @@ export class ProgrammeLedgerService {
         );
         programme.serialNo = serialNo;
         programme.txTime = new Date().getTime();
-        programme.currentStage = ProgrammeStage.ISSUED;
+        programme.currentStage = ProgrammeStage.AUTHORISED;
 
         if (!issueCredit) {
           programme.creditIssued = 0;
@@ -908,7 +908,7 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
         let insertMap = {};
         updateMap[this.ledger.tableName] = {
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
           serialNo: serialNo,
           creditIssued: programme.creditIssued,
           creditBalance: programme.creditBalance,
@@ -1073,7 +1073,7 @@ export class ProgrammeLedgerService {
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
         };
 
         for (const com of programme.companyId) {

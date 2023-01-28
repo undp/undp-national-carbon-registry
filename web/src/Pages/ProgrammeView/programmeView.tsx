@@ -1024,7 +1024,7 @@ const ProgrammeView = () => {
                     {userInfoState?.userRole !== 'ViewOnly' &&
                       userInfoState?.companyRole !== 'Certifier' && (
                         <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStage.Issued &&
+                          {data.currentStage.toString() === ProgrammeStage.Authorised &&
                             data.creditBalance -
                               (data.creditFrozen
                                 ? data.creditFrozen.reduce(

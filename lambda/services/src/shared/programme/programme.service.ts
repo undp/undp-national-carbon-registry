@@ -295,7 +295,7 @@ export class ProgrammeService {
         }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
+        if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
         // if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
@@ -581,7 +581,7 @@ export class ProgrammeService {
         }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
+        if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
 
@@ -696,7 +696,7 @@ export class ProgrammeService {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
 
-        if (program.currentStage != ProgrammeStage.ISSUED) {
+        if (program.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
         }
         if (program.creditEst - program.creditIssued < req.issueAmount) {
