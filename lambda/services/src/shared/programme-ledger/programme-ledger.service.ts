@@ -415,11 +415,15 @@ export class ProgrammeLedgerService {
         let updateWhere = {};
         updateMap[this.ledger.tableName] = {
           certifierId: programme.certifierId,
-          revokedCertifierId: programme.revokedCertifierId,
           txType: programme.txType,
           txTime: programme.txTime,
           txRef: programme.txRef,
         };
+
+        if (programme.revokedCertifierId) {
+          updateMap[this.ledger.tableName]['revokedCertifierId'] = programme.revokedCertifierId;
+        }
+
         updateWhere[this.ledger.tableName] = {
           programmeId: programme.programmeId,
         };
