@@ -116,6 +116,21 @@ const ProgrammeView = () => {
     return parts[position];
   };
 
+  const getRetirementTypeString = (retirementType: string | null) => {
+    if (retirementType === null) {
+      return '-';
+    }
+
+    switch (retirementType) {
+      case '0':
+        return 'CROSS BORDER TRANSFER';
+      case '1':
+        return 'LEGAL ACTION';
+      case '2':
+        return 'OTHER';
+    }
+  };
+
   const addCommasToNumber = (value: any) => {
     return Number(value)
       .toFixed(2)
@@ -194,10 +209,7 @@ const ProgrammeView = () => {
               activity.data.creditEst
             )} ${creditUnit} credits.`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon created-step">
                 <Icon.CaretRight />
               </span>
             ),
@@ -218,8 +230,8 @@ const ProgrammeView = () => {
               3
             )}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
-                <LikeOutlined />
+              <span className="step-icon auth-step">
+                <Icon.ClipboardCheck />
               </span>
             ),
           };
@@ -235,7 +247,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
+              <span className="step-icon issue-step">
                 <Icon.Award />
               </span>
             ),
@@ -250,10 +262,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
+              <span className="step-icon reject-step">
                 <Icon.XOctagon />
               </span>
             ),
@@ -270,7 +279,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
+              <span className="step-icon transfer-step">
                 <Icon.BoxArrowRight />
               </span>
             ),
@@ -285,10 +294,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon revoke-step">
                 <Icon.ShieldExclamation />
               </span>
             ),
@@ -303,11 +309,8 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: CertBGColor, color: CertColor }}
-              >
-                <Icon.Shield />
+              <span className="step-icon cert-step">
+                <Icon.ShieldCheck />
               </span>
             ),
           };
@@ -322,15 +325,14 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditChange
-            )} ${creditUnit} credits of this programme were retired by ${getTxRefValues(
+            )} ${creditUnit} credits of this programme were retired as ${getRetirementTypeString(
+              getTxRefValues(activity.data.txRef, 5)
+            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              3
+            )}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
+              <span className="step-icon retire-step">
                 <Icon.Save />
               </span>
             ),
@@ -347,10 +349,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon freeze-step">
                 <CloseCircleOutlined />
               </span>
             ),
@@ -684,7 +683,7 @@ const ProgrammeView = () => {
               type: 'danger',
               title: `${t('view:rejectTitle')} - ${data.title}?`,
               remark: true,
-              icon: <CloseCircleOutlined />,
+              icon: <Icon.ClipboardX />,
             });
             showModal();
           }}
@@ -922,7 +921,21 @@ const ProgrammeView = () => {
       <div className="content-body">
         <Row gutter={16}>
           <Col md={24} lg={10}>
-            <Card className="card-container centered-card">{elements}</Card>
+            <Card className="card-container">
+              <div className="info-view">
+                <div className="title">
+                  <span className="title-icon">
+                    {
+                      <span className="b-icon">
+                        <Icon.Building />
+                      </span>
+                    }
+                  </span>
+                  <span className="title-text">{t('view:programmeOwner')}</span>
+                </div>
+                <div className="centered-card">{elements}</div>
+              </div>
+            </Card>
             {data.currentStage !== ProgrammeStage.AwaitingAuthorization ? (
               <Card className="card-container">
                 <div className="info-view">
@@ -1016,55 +1029,6 @@ const ProgrammeView = () => {
                                   )
                                 : 0) && (
                               <div>
-                                {(data.companyId.length !== 1 ||
-                                  !data.companyId
-                                    .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
-                                  <Button
-                                    type="primary"
-                                    onClick={() => {
-                                      setActionInfo({
-                                        action: 'Request',
-                                        text: '',
-                                        title: t('view:transferTitle'),
-                                        type: 'primary',
-                                        remark: true,
-                                        icon: <Icon.BoxArrowInRight />,
-                                        contentComp: (
-                                          <ProgrammeTransferForm
-                                            companyRole={userInfoState!.companyRole}
-                                            userCompanyId={userInfoState?.companyId}
-                                            receiverLabelText={t('view:by')}
-                                            disableToCompany={true}
-                                            toCompanyDefault={{
-                                              label: userInfoState?.companyName,
-                                              value: userInfoState?.companyId,
-                                            }}
-                                            programme={data}
-                                            subText={t('view:popupText')}
-                                            onCancel={() => {
-                                              setOpenModal(false);
-                                              setComment(undefined);
-                                            }}
-                                            actionBtnText={t('view:request')}
-                                            onFinish={(body: any) =>
-                                              onPopupAction(
-                                                body,
-                                                'transferRequest',
-                                                t('view:successRequest'),
-                                                post,
-                                                updateCreditInfo
-                                              )
-                                            }
-                                          />
-                                        ),
-                                      });
-                                      showModal();
-                                    }}
-                                  >
-                                    {t('view:transfer')}
-                                  </Button>
-                                )}
                                 {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
                                   data.companyId
                                     .map((e) => Number(e))
@@ -1146,6 +1110,55 @@ const ProgrammeView = () => {
                                     </Button>
                                   </span>
                                 )}
+                                {(data.companyId.length !== 1 ||
+                                  !data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
                               </div>
                             )}
                         </div>
@@ -1195,7 +1208,11 @@ const ProgrammeView = () => {
                 <InfoView
                   data={mapArrayToi18n(getFinancialFields(data))}
                   title={t('view:financial')}
-                  icon={<BuildOutlined />}
+                  icon={
+                    <span className="b-icon">
+                      <Icon.Cash />
+                    </span>
+                  }
                 />
               </div>
             </Card>

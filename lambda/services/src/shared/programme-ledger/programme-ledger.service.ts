@@ -84,7 +84,7 @@ export class ProgrammeLedgerService {
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
       "data.programmeId": transfer.programmeId,
-      "data.txRef": new ArrayLike("data.txRef", transfer.requestId + "%"),
+      "data.txRef": new ArrayLike("data.txRef", "%#" + transfer.requestId + "#%"),
     };
     getQueries[this.ledger.tableName] = {
       programmeId: transfer.programmeId,
@@ -211,7 +211,7 @@ export class ProgrammeLedgerService {
 
         const prvTxTime = programme.txTime;
         programme.txTime = new Date().getTime();
-        programme.txRef = `${name}#${transfer.requestId}#${reason}`;
+        programme.txRef = `${name}#${transfer.requestId}#${transfer.retirementType}#${reason}`;
 
         if (isRetirement) {
           if (programme.creditBalance == transfer.creditAmount) {

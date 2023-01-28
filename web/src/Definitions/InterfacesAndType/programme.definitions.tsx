@@ -4,7 +4,7 @@ import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.col
 
 export enum ProgrammeStage {
   AwaitingAuthorization = 'Pending',
-  Issued = 'Issued',
+  Issued = 'Authorised',
   Transferred = 'Transferred',
   Retired = 'Retired',
   Rejected = 'Rejected',
