@@ -32,5 +32,7 @@ export default () => ({
         password: process.env.SES_PASSWORD,
         skipSuffix: '@xeptagon.com'
     },
-    s3CommonBucket: process.env.COMMON_BUCKET || "carbon-www-common"
+    s3CommonBucket: {
+        name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),
+    }
 });
