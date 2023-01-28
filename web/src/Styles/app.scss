@@ -649,16 +649,42 @@ body {
 }
 
 .ret-icon {
-  background-color: rgba(#FEF1AD, 0.5);
-  color: #FF8F56;
+  background-color: rgba(#fef1ad, 0.5);
+  color: #ff8f56;
 }
 
 .flag-ret-icon {
   display: flex !important;
-  background-color: #F4F5FA;
+  background-color: #f4f5fa;
   font-size: 1.1rem !important;
 }
 
 .b-icon {
   vertical-align: middle;
+}
+
+.ant-message-notice-content {
+  // border-radius: 5px;
+  // font-family: $primary-font-family;
+  // font-size: 0.8rem;
+  // height: 100%;
+  // vertical-align: middle;
+  padding: 0px;
+  border-radius: 5px;
+
+  .ant-message-custom-content {
+    font-size: 0.8rem;
+    border-radius: 5px;
+    padding: 17px 24px;
+  }
+
+  .ant-message-error {
+    color: $error-color;
+    border: 1px solid $error-color;
+  }
+
+  .ant-message-success {
+    color: #5BCE00;
+    border: 1px solid #5BCE00;
+  }
 }

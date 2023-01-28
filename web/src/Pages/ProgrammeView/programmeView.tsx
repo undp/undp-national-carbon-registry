@@ -1031,7 +1031,8 @@ const ProgrammeView = () => {
                                     (a, b) => numIsExist(a) + numIsExist(b),
                                     0
                                   )
-                                : 0) && (
+                                : 0) >
+                              0 && (
                               <div>
                                 {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
                                   data.companyId
