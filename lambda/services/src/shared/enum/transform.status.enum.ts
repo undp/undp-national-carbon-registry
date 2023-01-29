@@ -4,6 +4,6 @@ export enum TransferStatus {
     REJECTED = 'Rejected',
     PENDING = 'Pending',
     CANCELLED = 'Cancelled',
-    RECOGNISE = 'Recognise',
-    NOTRECOGNISE = 'NotRecognise'
+    RECOGNISED = 'Recognised',
+    NOTRECOGNISED = 'NotRecognised'
 }

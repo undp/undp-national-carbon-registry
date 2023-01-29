@@ -11,20 +11,20 @@ export enum ProgrammeStage {
   // Frozen = 'Frozen',
 }
 
-export enum ProgrammeTransferStage {
-  APPROVED = 'Approved',
-  REJECTED = 'Rejected',
-  PENDING = 'Pending',
-  // Frozen = 'Frozen',
-}
+// export enum ProgrammeTransferStage {
+//   APPROVED = 'Approved',
+//   REJECTED = 'Rejected',
+//   PENDING = 'Pending',
+//   // Frozen = 'Frozen',
+// }
 
 export enum CreditTransferStage {
   Pending = 'Pending',
   Approved = 'Approved',
   Rejected = 'Rejected',
   Cancelled = 'Cancelled',
-  Recognise = 'Recognise',
-  NotRecognise = 'NotRecognise',
+  Recognised = 'Recognised',
+  NotRecognised = 'NotRecognised',
 }
 
 export enum TxType {
@@ -68,11 +68,11 @@ export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransf
   //   }
   // }
 
-  const index = Object.keys(ProgrammeTransferStage).indexOf(value);
+  const index = Object.keys(CreditTransferStage).indexOf(value);
   if (index < 0) {
     return value;
   }
-  return Object.values(ProgrammeTransferStage)[index];
+  return Object.values(CreditTransferStage)[index];
 };
 
 export const getStageTagType = (stage: ProgrammeStage) => {
@@ -89,24 +89,28 @@ export const getStageTagType = (stage: ProgrammeStage) => {
 };
 
 export const getTransferStageTagType = (
-  stage: ProgrammeTransferStage,
+  stage: CreditTransferStage,
   transfer: ProgrammeTransfer
 ) => {
-  if (transfer.isRetirement) {
-    switch (getStageEnumVal(stage)) {
-      case ProgrammeTransferStage.APPROVED:
-        return 'purple';
-      case ProgrammeTransferStage.REJECTED:
-        return 'orange';
-    }
-  }
+  // if (transfer.isRetirement) {
+  //   switch (getStageEnumVal(stage)) {
+  //     case ProgrammeTransferStage.APPROVED:
+  //       return 'purple';
+  //     case ProgrammeTransferStage.REJECTED:
+  //       return 'orange';
+  //   }
+  // }
   switch (getStageEnumVal(stage)) {
-    case ProgrammeTransferStage.REJECTED:
+    case CreditTransferStage.Rejected:
       return 'error';
-    case ProgrammeTransferStage.APPROVED:
+    case CreditTransferStage.Approved:
       return 'processing';
-    case ProgrammeTransferStage.PENDING:
+    case CreditTransferStage.Pending:
       return 'success';
+    case CreditTransferStage.Recognised:
+      return 'purple';
+    case CreditTransferStage.NotRecognised:
+      return 'orange';
     default:
       return 'default';
   }

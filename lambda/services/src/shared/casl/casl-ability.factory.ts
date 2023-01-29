@@ -83,10 +83,10 @@ export class CaslAbilityFactory {
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
         can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.AUTHORISED ]}});
         can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
-        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISE] }});
+        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] }});
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.AUTHORISED }});
-        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISE] }});
+        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] }});
         if (user.role != Role.ViewOnly) {
           can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
           can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});

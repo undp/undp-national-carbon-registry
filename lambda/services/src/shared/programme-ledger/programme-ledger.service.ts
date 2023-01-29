@@ -932,7 +932,7 @@ export class ProgrammeLedgerService {
         };
 
         for (const com of programme.companyId) {
-          if (companyCreditBalances[String(com)]) {
+          if (companyCreditBalances[String(com)] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
                 companyCreditBalances[String(com)] +
@@ -1083,7 +1083,7 @@ export class ProgrammeLedgerService {
             companyCreditBalances[String(com)],
             companyCreditDistribution[String(com)]
           );
-          if (companyCreditBalances[String(com)]) {
+          if (companyCreditBalances[String(com)] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
                 companyCreditBalances[String(com)] +
