@@ -50,4 +50,10 @@ export class ProgrammeTransferViewEntityQuery extends ProgrammeTransfer {
     @ViewColumn()
     proponentPercentage: number[];
 
+    @ViewColumn()
+    companyId: string[];
+
+    @ViewColumn()
+    creditOwnerPercentage: number[];
+
 }
