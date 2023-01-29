@@ -925,7 +925,7 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.overallTableName] = {
           credit: endBlock,
           txRef: serialNo,
-          txType: TxType.ISSUE,
+          txType: TxType.AUTH,
         };
         updateWhereMap[this.ledger.overallTableName] = {
           txId: countryCodeA2,
@@ -939,7 +939,7 @@ export class ProgrammeLedgerService {
                   companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
-              txType: TxType.ISSUE,
+              txType: TxType.AUTH,
             };
             updateWhereMap[this.ledger.companyTableName + "#" + com] = {
               txId: String(com),
@@ -950,7 +950,7 @@ export class ProgrammeLedgerService {
                 companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
-              txType: TxType.ISSUE,
+              txType: TxType.AUTH,
               txId: String(com),
             };
           }
