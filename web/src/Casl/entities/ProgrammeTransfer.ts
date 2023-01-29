@@ -27,4 +27,8 @@ export class ProgrammeTransfer implements BaseEntity {
   status?: CreditTransferStage;
 
   isRetirement?: boolean;
+
+  companyId?: number[];
+
+  creditOwnerPercentage?: number[];
 }

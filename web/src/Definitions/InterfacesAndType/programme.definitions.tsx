@@ -20,7 +20,7 @@ export enum ProgrammeStage {
 
 export enum CreditTransferStage {
   Pending = 'Pending',
-  Approved = 'Approved',
+  Approved = 'Accepted',
   Rejected = 'Rejected',
   Cancelled = 'Cancelled',
   Recognised = 'Recognised',
@@ -56,6 +56,14 @@ export const getStageEnumVal = (value: string) => {
     return value;
   }
   return Object.values(ProgrammeStage)[index];
+};
+
+export const getCreditStageVal = (value: string) => {
+  const index = Object.keys(CreditTransferStage).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(CreditTransferStage)[index];
 };
 
 export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransfer) => {
@@ -100,7 +108,7 @@ export const getTransferStageTagType = (
   //       return 'orange';
   //   }
   // }
-  switch (getStageEnumVal(stage)) {
+  switch (getCreditStageVal(stage)) {
     case CreditTransferStage.Rejected:
       return 'error';
     case CreditTransferStage.Approved:
@@ -195,9 +203,12 @@ export const getGeneralFields = (programme: Programme) => {
 };
 
 export const addCommSep = (value: any) => {
-  return Number(value)
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return (
+    Number(value)
+      // .toString()
+      .toFixed(2)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  );
 };
 
 export const addCommSepRound = (value: any) => {

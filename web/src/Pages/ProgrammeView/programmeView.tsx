@@ -387,6 +387,10 @@ const ProgrammeView = () => {
     genPieData(response.data);
   };
 
+  const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
+    return response.data instanceof Array ? initMsg : successMsg;
+  };
+
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
       response.data.company = data.company;
@@ -420,7 +424,7 @@ const ProgrammeView = () => {
         successCB(response);
         message.open({
           type: 'success',
-          content: successMsg,
+          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -1047,7 +1051,12 @@ const ProgrammeView = () => {
                                                 onPopupAction(
                                                   body,
                                                   'retire',
-                                                  t('view:successRetire'),
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('view:successRetireInit'),
+                                                      t('view:successRetire')
+                                                    ),
                                                   put,
                                                   updateCreditInfo
                                                 )
@@ -1086,7 +1095,12 @@ const ProgrammeView = () => {
                                                 onPopupAction(
                                                   body,
                                                   'transferRequest',
-                                                  t('view:successSend'),
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('view:successSendInit'),
+                                                      t('view:successSend')
+                                                    ),
                                                   post,
                                                   updateCreditInfo
                                                 )

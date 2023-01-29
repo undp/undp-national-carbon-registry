@@ -38,6 +38,7 @@ import {
   getTransferStageTagType,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import './programmeTransferManagement.scss';
+import './creditTransfer.scss';
 import '../Common/common.table.scss';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import TransferActionModel from '../../Components/Models/TransferActionModel';
@@ -211,6 +212,17 @@ const CreditTransfer = () => {
     setSelectedReq(record);
     setModalVisible(true);
     setPopupInfo(info);
+  };
+
+  const getSendCreditBalance = (record: ProgrammeTransfer) => {
+    const idx = record.companyId!.map((e) => Number(e)).indexOf(record.fromCompanyId!);
+    if (idx < 0) {
+      return 0;
+    }
+    if (!record.creditOwnerPercentage) {
+      return record.creditBalance;
+    }
+    return (Number(record.creditBalance!) * Number(record.creditOwnerPercentage![idx])) / 100;
   };
 
   const actionMenu = (record: any) => {
@@ -511,8 +523,8 @@ const CreditTransfer = () => {
       key: 'creditBalance',
       sorter: true,
       align: 'right' as const,
-      render: (item: any) => {
-        return <span>{addCommSepRound(item)}</span>;
+      render: (item: any, Obj: any) => {
+        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
       },
     },
     {
