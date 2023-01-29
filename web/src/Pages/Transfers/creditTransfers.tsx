@@ -29,9 +29,11 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import {
   addCommSep,
   addCommSepRound,
+  addSpaces,
   CompanyRole,
   CreditTransferStage,
   getCompanyBgColor,
+  getRetirementTypeString,
   getStageTransferEnumVal,
   getTransferStageTagType,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
@@ -65,7 +67,7 @@ const CreditTransfer = () => {
   const { i18n, t } = useTranslation(['common', 'creditTransfer', 'programme']);
 
   const statusOptions = Object.keys(CreditTransferStage).map((k, index) => ({
-    label: Object.values(CreditTransferStage)[index],
+    label: addSpaces(Object.values(CreditTransferStage)[index]),
     value: k,
   }));
 
@@ -467,14 +469,26 @@ const CreditTransfer = () => {
                   </div>
                 </Tooltip>
               ) : itemObj.retirementType === '0' ? (
-                <ReactCountryFlag
-                  className="profile-icon flag-ret-icon"
-                  countryCode={itemObj.toCompanyMeta.country}
-                />
+                <Tooltip
+                  title={t('creditTransfer:iaccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  <ReactCountryFlag
+                    className="profile-icon flag-ret-icon"
+                    countryCode={itemObj.toCompanyMeta.country}
+                  />
+                </Tooltip>
               ) : (
-                <div className="ret-icon profile-icon">
-                  <Icon.Save />
-                </div>
+                <Tooltip
+                  title={t('creditTransfer:laccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  <div className="ret-icon profile-icon">
+                    <Icon.Save />
+                  </div>
+                </Tooltip>
               );
             })}
           </div>
@@ -510,7 +524,7 @@ const CreditTransfer = () => {
         return (
           <Tooltip title={Obj.serialNo} color={TooltipColor} key={TooltipColor}>
             <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
-              {getStageTransferEnumVal(Obj.status, Obj)}
+              {addSpaces(getStageTransferEnumVal(Obj.status, Obj))}
             </Tag>
           </Tooltip>
         );

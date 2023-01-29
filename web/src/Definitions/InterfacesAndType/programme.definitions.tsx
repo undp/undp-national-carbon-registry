@@ -233,3 +233,18 @@ export const getCompanyBgColor = (item: string) => {
   }
   return DevBGColor;
 };
+
+export const getRetirementTypeString = (retirementType: string | null) => {
+  if (retirementType === null) {
+    return '-';
+  }
+
+  switch (retirementType) {
+    case '0':
+      return 'CROSS BORDER TRANSFER';
+    case '1':
+      return 'LEGAL ACTION';
+    case '2':
+      return 'OTHER';
+  }
+};
