@@ -52,7 +52,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           {
             key: 'name',
             operation: 'like',
-            value: newValue + '%',
+            value: newValue.charAt(0).toUpperCase() + newValue.slice(1) + '%',
           },
         ],
         sort: {

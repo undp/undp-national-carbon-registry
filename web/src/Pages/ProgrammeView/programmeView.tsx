@@ -291,7 +291,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Certification Revoked`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The certificate of the programme was revoked by ${getTxRefValues(
+            description: `The certification of this programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,

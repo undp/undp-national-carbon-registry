@@ -122,7 +122,7 @@ export class ProgrammeService {
             requestId: req.requestId,
             status: TransferStatus.PENDING
         }, {
-            status: TransferStatus.REJECTED
+            status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISE : TransferStatus.REJECTED
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -175,7 +175,7 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (transfer.status == TransferStatus.APPROVED) {
+        if (transfer.status == TransferStatus.APPROVED || transfer.status == TransferStatus.RECOGNISE) {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
         }
 
@@ -215,7 +215,7 @@ export class ProgrammeService {
         const result = await this.programmeTransferRepo.update({
             requestId: transfer.requestId
         }, {
-            status: TransferStatus.APPROVED
+            status: transfer.isRetirement ? TransferStatus.RECOGNISE : TransferStatus.APPROVED
         }).catch((err) => {
             this.logger.error(err);
             return err;

@@ -22,6 +22,9 @@ export enum CreditTransferStage {
   Pending = 'Pending',
   Approved = 'Approved',
   Rejected = 'Rejected',
+  Cancelled = 'Cancelled',
+  Recognise = 'Recognise',
+  NotRecognise = 'NotRecognise',
 }
 
 export enum TxType {
@@ -56,14 +59,14 @@ export const getStageEnumVal = (value: string) => {
 };
 
 export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransfer) => {
-  if (transfer.isRetirement) {
-    if (value === ProgrammeTransferStage.APPROVED) {
-      return 'Recongnised';
-    }
-    if (value === ProgrammeTransferStage.REJECTED) {
-      return 'Not Recongnised';
-    }
-  }
+  // if (transfer.isRetirement) {
+  //   if (value === ProgrammeTransferStage.APPROVED) {
+  //     return 'Recongnised';
+  //   }
+  //   if (value === ProgrammeTransferStage.REJECTED) {
+  //     return 'Not Recongnised';
+  //   }
+  // }
 
   const index = Object.keys(ProgrammeTransferStage).indexOf(value);
   if (index < 0) {
