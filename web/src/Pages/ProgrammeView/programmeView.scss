@@ -59,6 +59,8 @@
     display: flex;
     justify-content: center;
     text-align: center;
+    flex-direction: column;
+    width: 100%;
   }
 
   .separator {
@@ -111,10 +113,10 @@
     }
 
     .progress-bar {
-      width: calc(max(200px, 100%));
+      width: calc(max(200px, 60%));
       font-size: 0.8rem;
       color: $body-text-color;
-      margin-top: 15px;
+      margin: 15px auto 0px;
     }
 
     .ant-progress-success-bg,
