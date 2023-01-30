@@ -13,7 +13,6 @@ export class HelperService {
   constructor(private configService: ConfigService) {}
 
   private prepareValue(value: any, table?: string) {
-    console.log(value.constructor);
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
     } else if (typeof value === "string") {
@@ -130,7 +129,15 @@ export class HelperService {
       )}`;
     } else if (data?.type.includes("CREDIT_CERTIFIED")) {
       col = "certifierId";
-      sql = `${table ? table + "." : ""}"${col}" is not null`;
+      sql = `${
+        table ? table + "." : ""
+      }"${col}" is not null and "${col}" != '{}'`;
+    } else if (data?.type === "CREDIT_UNCERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is null`;
+    } else if (data?.type === "CREDIT_REVOKED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" = '{}'`;
     }
 
     if (
