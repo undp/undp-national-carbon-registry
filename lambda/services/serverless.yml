@@ -60,7 +60,7 @@ functions:
     events:
       - http:
           method: any
-          path: /api/analytics/{any+}
+          path: /api/stats/{any+}
     ssmToEnvironment:
       - DB_PASSWORD
       - USER_JWT_SECRET
