@@ -612,6 +612,7 @@ export class AnalyticsAPIService {
             )
             .getRawMany();
           let featuresTransfer: any[] = [];
+          let locations: any[] = [];
           for (
             let index = 0;
             index < totalResponseTransferLocation.length;
@@ -621,13 +622,16 @@ export class AnalyticsAPIService {
               let toCompanyMeta =
                 totalResponseTransferLocation[index]?.toCompanyMeta;
               if (toCompanyMeta?.country) {
-                featuresTransfer.push({
-                  code: toCompanyMeta?.country,
-                  hdi:
-                    index === 0
-                      ? 1
-                      : index / totalResponseTransferLocation.length,
-                });
+                if (!locations?.includes(toCompanyMeta?.country)) {
+                  locations.push(toCompanyMeta?.country);
+                  featuresTransfer.push({
+                    code: toCompanyMeta?.country,
+                    hdi:
+                      index === 0
+                        ? 1
+                        : index / totalResponseTransferLocation.length,
+                  });
+                }
               }
             }
           }

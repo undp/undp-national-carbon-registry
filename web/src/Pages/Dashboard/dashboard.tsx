@@ -714,8 +714,22 @@ const Dashboard = () => {
       });
 
       const data = [
-        { code: 'DE', hdi: 0.811 },
-        { code: 'NG', hdi: 1 },
+        {
+          code: 'AL',
+          hdi: 1,
+        },
+        {
+          code: 'LK',
+          hdi: 0.09523809523809523,
+        },
+        {
+          code: 'CN',
+          hdi: 0.23809523809523808,
+        },
+        {
+          code: 'TD',
+          hdi: 0.5,
+        },
       ];
 
       // Add markers to the map.
@@ -732,7 +746,7 @@ const Dashboard = () => {
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
+        for (const row of data) {
           // Convert the range of data values to a suitable color
           const blue = row.hdi * 255;
           const color = `rgb(0, 50, ${blue})`;
@@ -838,7 +852,9 @@ const Dashboard = () => {
         const map = new mapboxgl.Map({
           container: mapContainerRef.current || '',
           zoom: 3,
-          center: [54.44073, 16.39371],
+          center: programmeLocations?.features[0]?.geometry?.coordinates
+            ? programmeLocations?.features[0]?.geometry?.coordinates
+            : [54.44073, 16.39371],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',
         });
