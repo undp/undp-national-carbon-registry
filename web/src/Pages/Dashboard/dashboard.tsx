@@ -443,6 +443,13 @@ const Dashboard = () => {
             unCertifiedCredit.push(credit[0]);
           });
         }
+        if (totalCredits?.revoked) {
+          const revoked = totalCredits?.revoked;
+          revoked?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            revokedCredit.push(credit[0]);
+          });
+        }
       }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
@@ -466,6 +473,7 @@ const Dashboard = () => {
       setTransferredCredits(transferredCredit);
       setCertifiedCredits(certifiedCredit);
       setUnCertifiedCredits(unCertifiedCredit);
+      setRevokedCredits(revokedCredit);
       totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
       totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
       totalCreditsOptions.xaxis.categories = timeLabelsProgrames;

@@ -118,7 +118,15 @@ export class HelperService {
       )}`;
     } else if (data?.type.includes("CREDIT_CERTIFIED")) {
       col = "certifierId";
-      sql = `${table ? table + "." : ""}"${col}" is not null`;
+      sql = `${
+        table ? table + "." : ""
+      }"${col}" is not null and "${col}" != '{}'`;
+    } else if (data?.type === "CREDIT_UNCERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is null`;
+    } else if (data?.type === "CREDIT_REVOKED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" = '{}'`;
     }
 
     if (

@@ -43,9 +43,10 @@ export class LedgerReplicatorService {
           // handle success
           console.log(
             "cordinates data in replicator -> ",
-            response?.data?.features?.center
+            response?.data?.features[0],
+            response?.data?.features[0]?.center
           );
-          geoCodinates.push(response?.data?.features?.center);
+          geoCodinates.push([...response?.data?.features[0]?.center]);
         })
         .catch((err) => {
           this.logger.error(err);

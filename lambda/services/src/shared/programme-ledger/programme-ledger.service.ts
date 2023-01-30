@@ -3,6 +3,7 @@ import { InjectEntityManager } from "@nestjs/typeorm";
 import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
 import { plainToClass } from "class-transformer";
 import { dom } from "ion-js";
+import axios from "axios";
 import { generateSerialNumber } from "serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
@@ -254,7 +255,7 @@ export class ProgrammeLedgerService {
         if (isRetirement) {
           uPayload["creditRetired"] = programme.creditRetired;
         } else {
-          uPayload['creditTransferred'] =  programme.creditTransferred;
+          uPayload["creditTransferred"] = programme.creditTransferred;
         }
 
         let updateMap = {};
