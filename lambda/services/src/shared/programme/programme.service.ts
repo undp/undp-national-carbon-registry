@@ -700,7 +700,7 @@ export class ProgrammeService {
         }
 
         if (program.currentStage != ProgrammeStage.AUTHORISED) {
-            throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Programme is not in authorised state", HttpStatus.BAD_REQUEST);
         }
         if (program.creditEst - program.creditIssued < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);

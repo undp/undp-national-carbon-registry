@@ -1304,7 +1304,7 @@ const ProgrammeView = () => {
           actionInfo.contentComp
         ) : (
           <div>
-            <p>{actionInfo.text}</p>
+            <p className="sub-text">{actionInfo.text}</p>
             <div className="form-label remark">
               {t('view:remarks')}
               {actionInfo.remark && <span className="req-ast">*</span>}
