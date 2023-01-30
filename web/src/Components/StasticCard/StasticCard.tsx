@@ -52,7 +52,9 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
             ) : (
               <>
                 {title.includes('Credit') && <div className="unit">ITMOs</div>}
-                <div className="details-section value">{addCommSep(value)}</div>
+                <div className="details-section value">
+                  {title.includes('Credit') ? addCommSep(value) : value}
+                </div>
               </>
             )}
             <div className="updated-on">{moment(updatedDate * 1000).fromNow()}</div>
