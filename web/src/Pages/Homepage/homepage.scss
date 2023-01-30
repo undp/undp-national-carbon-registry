@@ -2,10 +2,10 @@
 @import '../../Styles/variables.scss';
 
 .homepage-container {
-  height: 500vh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: $outside-background-color;
+  background-color: $background-color;
 
   .homepage-header-container {
     background-color: $background-color;
@@ -63,7 +63,7 @@
   }
 
   .homepage-img-container {
-    background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(4, 104, 177, 0.6) 0.01%),
+    background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(22, 177, 255, 0.5) 0.01%),
       url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
     height: calc(100vh - 90px);
     background-position-x: 100%;
@@ -117,22 +117,25 @@
     }
   }
   .homepage-content-containerwhite {
-    background-color: $background-color;
+    background-color: $outside-background-color;
     // height: 35vh;
     height: fit-content;
-    padding: 60px 60px 60px 60px;
+    padding: 10px 60px 10px 60px;
+    text-align: center;
 
     @media (max-width: $lg-size) {
       height: fit-content;
     }
 
     .title {
-      font-size: 3rem;
+      font-size: 2rem;
       font-weight: 700;
       font-family: $primary-font-family;
       color: $title-text-color;
       text-align: center;
       justify-content: center;
+      text-transform: uppercase;
+      padding: 50px 50px 10px 50px;
 
       @media (max-width: $lg-size) {
         font-size: 2rem;
@@ -143,12 +146,13 @@
       }
     }
     .homepagebody {
-      font-size: 1rem;
+      text-align: center;
+      font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
       color: $body-text-color;
-      justify-content: left;
-      margin: 20px 60px 60px 60px;
+      justify-content: center;
+      margin: 20px 60px 20px 60px;
 
       @media (max-width: $lg-size) {
         font-size: 0.8rem;
@@ -157,39 +161,86 @@
         // width: 100vw;
         line-height: 1.5em;
       }
-    }
-  }
-  .homepage-content-containerblack {
-    background-color: $background-color-dark;
-    height: fit-content;
-    padding: 60px 60px 60px 60px;
-
-    @media (max-width: $lg-size) {
-      height: fit-content;
-    }
-
-    .title {
-      font-size: 3rem;
-      font-weight: 700;
-      font-family: $primary-font-family;
-      color: $dark-text-color;
-      text-align: center;
-      justify-content: center;
-
-      @media (max-width: $lg-size) {
-        font-size: 2rem;
+      .homepagebody_aboutusline1 {
+        font-size: 1.125rem;
         margin-top: 1rem;
-        // width: 100vw;
-        line-height: 1.5em;
+        color: $title-text-color;
+
+        @media (max-width: $lg-size) {
+          font-size: 1rem;
+          margin-top: 1rem;
+          color: $title-text-color;
+          line-height: 1.5em;
+        }
+      }
+      .homepagebody_aboutuslines {
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+      }
+
+      .homepagebody_subtitle {
+        font-size: 1.25rem;
+        font-weight: 700;
+        font-family: $primary-font-family;
+        color: $title-text-color;
+        text-align: center;
+        justify-content: center;
+        margin-top: 2rem;
       }
     }
-    .homepagebody {
-      font-size: 1rem;
-      font-weight: 400;
-      font-family: $primary-font-family;
-      color: $dark-text-color;
-      justify-content: left;
-      margin: 20px 60px 60px 60px;
+    .aboutus-card-main-container {
+      display: flex;
+
+      justify-content: center;
+      width: 100%;
+      height: 20rem;
+      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+      border-radius: 0.625rem;
+      margin: 60px;
+      padding: 40px;
+      text-align: center;
+    }
+    .aboutus_cards-container {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+
+      .aboutus_card-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .aboutus_card-col {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex;
+          align-items: center;
+        }
+      }
+      .aboutusIcon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .aboutus-card-text {
+        color: $dark-text-color;
+        line-height: 2;
+      }
+      .aboutus-card-title {
+        font-weight: 700;
+        display: flex;
+        color: $dark-text-color;
+        line-height: 2;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-top: 20px;
+      }
+    }
+    .undplogocontainer{
+      display: flex;
+      justify-content: center;
+      padding:20px;
     }
   }
 }
