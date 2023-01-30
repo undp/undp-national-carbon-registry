@@ -119,7 +119,7 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest))
     @Post('transferApprove')
     async transferApprove(@Body() body: ProgrammeTransferApprove, @Request() req) {
-        return this.programmeService.transferApprove(body, req.user.companyId)
+        return this.programmeService.transferApprove(body, req.user.companyId, req.user)
     }
 
     @ApiBearerAuth()

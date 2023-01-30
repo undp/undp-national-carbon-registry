@@ -161,7 +161,7 @@ export class ProgrammeService {
         );
       }
 
-    async transferApprove(req: ProgrammeTransferApprove, approverCompanyId: number) {
+    async transferApprove(req: ProgrammeTransferApprove, approver: User) {
         // TODO: Handle transaction, can happen 
         const transfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
@@ -179,15 +179,15 @@ export class ProgrammeService {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
         }
 
-        if (!transfer.isRetirement && transfer.fromCompanyId != approverCompanyId) {
+        if (!transfer.isRetirement && transfer.fromCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
         }
-        if (transfer.isRetirement && transfer.toCompanyId != approverCompanyId) {
+        if (transfer.isRetirement && transfer.toCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
-        const received = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
-        const user = await this.userService.findById(transfer.initiator);
+        const receiver = await this.companyService.findByCompanyId(transfer.toCompanyId);
+        // const user = await this.userService.findById(transfer.initiator);
 
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({
@@ -205,7 +205,7 @@ export class ProgrammeService {
             }
         }
 
-        return await this.doTransfer(transfer, `${received.companyId}#${received.name}#${user.id}#${user.name}`, req.comment, transfer.isRetirement)
+        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
     }
 
     private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
@@ -395,7 +395,8 @@ export class ProgrammeService {
         let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Credit send received ${trf}`)
-            updateProgramme  = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, false)).data;
+            const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
+            updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}`, req.comment, false)).data;
         }
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
