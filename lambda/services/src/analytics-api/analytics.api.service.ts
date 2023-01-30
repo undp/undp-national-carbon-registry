@@ -448,13 +448,15 @@ export class AnalyticsAPIService {
           let dataCreditsCertified = {
             certified: [],
             uncertified: [],
+            revoked: [],
           };
           for (let index = 1; index <= durationCreditCertifiedCounts; index++) {
             let eTimeCreditCertified =
               sTimeCreditCertified + duraionCreditCertifiedT;
             let certifiedS = 0;
             let unCertifiedS = 0;
-            // console.log("week count ---- ", index, { sTime, eTime });
+            let revokedS = 0;
+            // console.log(week count ---- ", index, { sTime, eTime });
             for (
               let indexProgramme = 0;
               indexProgramme < totalResponseCreditsCertified.length;
@@ -470,10 +472,24 @@ export class AnalyticsAPIService {
                   totalResponseCreditsCertified[indexProgramme]
                     ?.creditBalance !== null &&
                   totalResponseCreditsCertified[indexProgramme]?.certifierId !==
-                    null
+                    null &&
+                  totalResponseCreditsCertified[indexProgramme]?.certifierId
+                    ?.length > 0
                 ) {
                   certifiedS =
                     certifiedS +
+                    parseFloat(
+                      totalResponseCreditsCertified[indexProgramme]
+                        ?.creditBalance
+                    );
+                } else if (
+                  totalResponseCreditsCertified[indexProgramme]
+                    ?.creditBalance !== null &&
+                  totalResponseCreditsCertified[indexProgramme]?.certifierId !==
+                    null
+                ) {
+                  revokedS =
+                    revokedS +
                     parseFloat(
                       totalResponseCreditsCertified[indexProgramme]
                         ?.creditBalance
@@ -499,6 +515,9 @@ export class AnalyticsAPIService {
                 });
                 dataCreditsCertified?.uncertified.push({
                   [sTimeCreditCertified]: unCertifiedS,
+                });
+                dataCreditsCertified?.revoked.push({
+                  [sTimeCreditCertified]: revokedS,
                 });
               }
             }
@@ -607,9 +626,9 @@ export class AnalyticsAPIService {
               if (toCompanyMeta?.coordinates) {
                 if (!countries.includes(toCompanyMeta?.coordinates))
                   programmeTransferGeoData.type = "Feature";
-                  geometryTransfer.type = "Point";
-                  geometryTransfer.coordinates = toCompanyMeta?.coordinates;
-                  programmeTransferGeoData.geometry = geometryTransfer;
+                geometryTransfer.type = "Point";
+                geometryTransfer.coordinates = toCompanyMeta?.coordinates;
+                programmeTransferGeoData.geometry = geometryTransfer;
                 featuresTransfer.push(programmeTransferGeoData);
               }
             }

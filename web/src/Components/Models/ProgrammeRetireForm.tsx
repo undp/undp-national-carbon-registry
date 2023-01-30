@@ -52,7 +52,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           {
             key: 'name',
             operation: 'like',
-            value: newValue + '%',
+            value: newValue.charAt(0).toUpperCase() + newValue.slice(1) + '%',
           },
         ],
         sort: {
@@ -60,7 +60,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           order: 'ASC',
         },
       });
-      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.name })));
+      setCountryList(resp.data.map((d: any) => ({ label: d.name, value: d.alpha2 })));
     }
   };
 
@@ -121,12 +121,24 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           companyCredit: companyCredit,
         }}
         onChange={() => setPopupError(undefined)}
+        onValuesChange={(v, allVal) => {
+          if (allVal.companyCredit) {
+            setCurrentSum(
+              allVal.companyCredit.reduce((a: any, b: any) => (a ? a : 0) + (b ? b : 0), 0)
+            );
+          }
+        }}
         onFinish={async (d) => {
           setLoading(true);
           if (d.comment) {
             d.comment = d.comment.trim();
           }
           if (d.type === '0') {
+            if (currentSum === 0) {
+              setPopupError('Total Amount should be greater than 0');
+              setLoading(false);
+              return;
+            }
             d.fromCompanyIds = validCompanies.map((e) => Number(e.companyId));
             // programme.companyId.map((n) => Number(n));
             // d.companyCredit = d.companyCredit.map((n: any) => (n === undefined ? 0 : n));
@@ -301,7 +313,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 },
                 ({ getFieldValue }) => ({
                   validator(rule, v) {
-                    if (v !== undefined && v.trim() === '') {
+                    if (v !== undefined && v !== '' && v.trim() === '') {
                       // eslint-disable-next-line prefer-promise-reject-errors
                       return Promise.reject('Required field');
                     }

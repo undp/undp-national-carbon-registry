@@ -122,7 +122,7 @@ export class ProgrammeService {
             requestId: req.requestId,
             status: TransferStatus.PENDING
         }, {
-            status: TransferStatus.REJECTED
+            status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISED : TransferStatus.REJECTED
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -175,7 +175,7 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (transfer.status == TransferStatus.APPROVED) {
+        if (transfer.status == TransferStatus.APPROVED || transfer.status == TransferStatus.RECOGNISED) {
             throw new HttpException("Transfer already approved", HttpStatus.BAD_REQUEST)
         }
 
@@ -215,7 +215,7 @@ export class ProgrammeService {
         const result = await this.programmeTransferRepo.update({
             requestId: transfer.requestId
         }, {
-            status: TransferStatus.APPROVED
+            status: transfer.isRetirement ? TransferStatus.RECOGNISED : TransferStatus.APPROVED
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -295,7 +295,7 @@ export class ProgrammeService {
         }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
+        if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
         // if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
@@ -581,7 +581,7 @@ export class ProgrammeService {
         }
         this.logger.verbose(`Transfer programme ${JSON.stringify(programme)}`)
 
-        if (programme.currentStage != ProgrammeStage.ISSUED) {
+        if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
 
@@ -651,6 +651,7 @@ export class ProgrammeService {
             transfer.toAccount = req.type == RetireType.CROSS_BORDER ? 'international': 'local';
             transfer.isRetirement = true;
             transfer.toCompanyMeta = req.toCompanyMeta;
+            transfer.retirementType = req.type;
             // await this.programmeTransferRepo.save(transfer);
 
             if (requester.companyId != toCompany.companyId) {
@@ -695,7 +696,7 @@ export class ProgrammeService {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
 
-        if (program.currentStage != ProgrammeStage.ISSUED) {
+        if (program.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
         }
         if (program.creditEst - program.creditIssued < req.issueAmount) {

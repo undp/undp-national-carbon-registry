@@ -100,10 +100,7 @@ const CompanyProfile = () => {
             <Card className="card-container">
               <Skeleton loading={isLoading} active>
                 <Row justify="center">
-                  <img
-                    className="profile-img"
-                    src={'data:image/jpeg;base64,' + companyDetails.logo}
-                  />
+                  <img className="profile-img" src={companyDetails.logo} />
                 </Row>
                 <Row justify="center">
                   <div className="padding-top-1 company-name">{companyDetails.name}</div>

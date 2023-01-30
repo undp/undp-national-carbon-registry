@@ -174,7 +174,7 @@ const ProgrammeManagement = () => {
       render: (item: any) => {
         return item
           ? Number(item)
-              .toFixed(0)
+              .toFixed(2)
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
           : '-';
       },
@@ -188,7 +188,7 @@ const ProgrammeManagement = () => {
       render: (item: any) => {
         return item
           ? Number(item)
-              .toFixed(0)
+              .toFixed(2)
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
           : '-';
       },
@@ -202,7 +202,7 @@ const ProgrammeManagement = () => {
       render: (item: any) => {
         return item
           ? Number(item)
-              .toFixed(0)
+              .toFixed(2)
               .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
           : '-';
       },

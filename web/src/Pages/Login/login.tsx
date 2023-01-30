@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
 // import sha1 from 'sha1';
-import countryLogo from '../../Assets/Images/nigeria.png';
+import countryLogo from '../../Assets/Images/logo-slider.png';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -92,7 +92,12 @@ const Login = () => {
                     <img src={countryLogo} alt="country-logo" />
                   </div>
                   <div className="login-country-name">
-                    <span>{t('common:nigeria')}</span>
+                    <div className="title">
+                      {'CARBON'}
+                      <span className="title-sub">{'REGISTRY'}</span>
+                    </div>
+
+                    <span className="country-name">{t('common:country')}</span>
                   </div>
                 </Col>
               </Row>

@@ -36,6 +36,8 @@ import { plainToClass } from "class-transformer";
 import { Company } from "../../shared/entities/company.entity";
 import { CompanyService } from "../company/company.service";
 import { HelperService } from "../util/helpers.service";
+import { CounterService } from "../util/counter.service";
+import { CounterType } from "../util/counter.type.enum";
 
 @Injectable()
 export class UserService {
@@ -46,7 +48,8 @@ export class UserService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectEntityManager() private entityManger: EntityManager,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private counterService: CounterService
   ) {}
 
   private generateRandomPassword() {
@@ -338,6 +341,24 @@ export class UserService {
     u.password = this.generateRandomPassword();
     if (userDto.role == Role.Admin && u.companyRole == CompanyRole.MRV) {
       u.apiKey = await this.generateApiKey(userDto.email);
+    }
+
+    if (company) {
+      company.companyId = parseInt(
+        await this.counterService.incrementCount(CounterType.COMPANY, 3)
+      );
+      const response: any = await this.helperService.uploadCompanyLogoS3(
+        company.companyId,
+        company.logo
+      );
+      if (response.Location) {
+        company.logo = response.Location;
+      } else {
+        throw new HttpException(
+          "Company update failed. Please try again",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
     }
 
     await this.emailService.sendEmail(u.email, EmailTemplates.REGISTER_EMAIL, {

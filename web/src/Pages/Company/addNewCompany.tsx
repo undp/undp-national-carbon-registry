@@ -10,7 +10,7 @@ import {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './addNewCompany.scss';
-import { RcFile } from 'antd/lib/upload';
+import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
 import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
 
@@ -28,10 +28,24 @@ const AddNewCompany = () => {
   const [isUpdate, setIsUpdate] = useState(false);
   const { i18n, t } = useTranslation(['addCompany']);
   const { put } = useConnection();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const maximumImageSize = process.env.MAXIMUM_IMAGE_SIZE
+    ? parseInt(process.env.MAXIMUM_IMAGE_SIZE)
+    : 3145728;
 
   useEffect(() => {
-    console.log('record data ---- > ', state);
     setIsUpdate(state?.record ? true : false);
+    if (state?.record?.logo) {
+      setFileList([
+        {
+          uid: '1',
+          name: `${state?.record?.name}.png`,
+          status: 'done',
+          url: state?.record?.logo,
+          type: 'image/png',
+        },
+      ]);
+    }
   }, []);
 
   const normFile = (e: any) => {
@@ -68,7 +82,8 @@ const AddNewCompany = () => {
     try {
       requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
-      requestData.company.website = 'https://' + requestData.company.website;
+      if (requestData.company.website)
+        requestData.company.website = 'https://' + requestData.company.website;
       const logoBase64 = await getBase64(requestData?.company?.logo[0]?.originFileObj as RcFile);
       const logoUrls = logoBase64.split(',');
       requestData.company.logo = logoUrls[1];
@@ -84,7 +99,6 @@ const AddNewCompany = () => {
         setLoading(false);
       }
     } catch (error: any) {
-      console.log('Error in user creation', error);
       message.open({
         type: 'error',
         content: `Error in adding user! ${error.message}`,
@@ -93,7 +107,7 @@ const AddNewCompany = () => {
       });
     } finally {
       setLoading(false);
-      navigate('/companyManagement/viewAll', { replace: true });
+      //navigate('/companyManagement/viewAll', { replace: true });
     }
   };
 
@@ -101,16 +115,12 @@ const AddNewCompany = () => {
     setLoading(true);
     const formOneValues = formOne.getFieldsValue();
     formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
-    const logoBase64 = await getBase64(formOneValues.logo[0]?.originFileObj as RcFile);
-    const logoUrls = logoBase64.split(',');
-    const logo = logoUrls[1];
+
     try {
       const values: any = {
         companyId: state?.record?.companyId,
         name: formOneValues.name,
         email: formOneValues.email,
-        website: formOneValues.website,
-        logo: logo,
         phoneNo: formOneValues.phoneNo,
         address: formOneValues.address,
         companyRole: state?.record?.companyRole,
@@ -118,6 +128,18 @@ const AddNewCompany = () => {
 
       if (state?.record?.companyRole !== CompanyRole.GOVERNMENT) {
         values.taxId = formOneValues.taxId;
+      }
+
+      if (formOneValues.website) {
+        values.website = 'https://' + formOneValues.website;
+      }
+
+      if (formOneValues.logo) {
+        if (formOneValues.logo.length !== 0) {
+          const logoBase64 = await getBase64(formOneValues.logo[0]?.originFileObj as RcFile);
+          const logoUrls = logoBase64.split(',');
+          values.logo = logoUrls[1];
+        }
       }
 
       const response = await put('national/organisation/update', values);
@@ -142,25 +164,8 @@ const AddNewCompany = () => {
     }
   };
 
-  const convertBase64 = (file: any) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-
-  const getImage = (base64: string) => {
-    const image = new Image();
-    image.src = 'data:image/png;base64,' + base64;
-    console.log('image --- > ', image);
+  const onCancel = () => {
+    navigate('/companyManagement/viewAll', { replace: true });
   };
 
   const CompanyDetailsForm = () => {
@@ -283,33 +288,31 @@ const AddNewCompany = () => {
                     name="logo"
                     label="Organisation Logo (File Type : JPEG , PNG , SVG )"
                     valuePropName="fileList"
-                    initialValue={getImage(state?.record?.logo)}
                     getValueFromEvent={normFile}
                     rules={[
-                      { required: true, message: '' },
                       {
                         validator: async (rule, file) => {
-                          if (
-                            String(file).trim() === '' ||
-                            String(file).trim() === undefined ||
-                            file === null ||
-                            file === undefined
-                          ) {
-                            throw new Error('Organisation Logo is required!');
+                          if (file === null || file === undefined) {
+                            if (!state?.record?.logo)
+                              throw new Error('Organisation Logo is required!');
                           } else {
-                            let isCorrectFormat = false;
-                            if (file[0]?.type === 'image/png') {
-                              isCorrectFormat = true;
-                            } else if (file[0]?.type === 'image/jpeg') {
-                              isCorrectFormat = true;
-                            } else if (file[0]?.type === 'image/svg') {
-                              isCorrectFormat = true;
-                            }
-                            if (!isCorrectFormat) {
-                              throw new Error('Unsupported file format!');
-                            } else if (file[0]?.size > 1048576) {
-                              // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error('Maximum upload file size is 1MB!');
+                            if (file.length === 0) {
+                              throw new Error('Organisation Logo is required!');
+                            } else {
+                              let isCorrectFormat = false;
+                              if (file[0]?.type === 'image/png') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/jpeg') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/svg') {
+                                isCorrectFormat = true;
+                              }
+                              if (!isCorrectFormat) {
+                                throw new Error('Unsupported file format!');
+                              } else if (file[0]?.size > maximumImageSize) {
+                                // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                throw new Error('Maximum upload file size is 3MB!');
+                              }
                             }
                           }
                         },
@@ -317,14 +320,16 @@ const AddNewCompany = () => {
                     ]}
                   >
                     <Upload
+                      beforeUpload={(file) => {
+                        return false;
+                      }}
                       className="logo-upload-section"
                       name="logo"
                       action="/upload.do"
                       listType="picture"
+                      multiple={false}
+                      defaultFileList={fileList}
                       maxCount={1}
-                      onChange={(file: any) => {
-                        console.log('ogo upload -------- ', file);
-                      }}
                     >
                       <Button size="large" icon={<UploadOutlined />}>
                         Upload
@@ -400,7 +405,6 @@ const AddNewCompany = () => {
                       },
                       {
                         validator: async (rule, value) => {
-                          console.log('val - phone no --- ', value);
                           if (
                             String(value).trim() === '' ||
                             String(value).trim() === undefined ||
@@ -430,7 +434,6 @@ const AddNewCompany = () => {
                       { required: true, message: '' },
                       {
                         validator: async (rule, value) => {
-                          console.log('val - phone no --- ', value);
                           if (
                             String(value).trim() === '' ||
                             String(value).trim() === undefined ||
@@ -451,8 +454,10 @@ const AddNewCompany = () => {
             <div className="steps-actions">
               {isUpdate ? (
                 <Row>
-                  <Button>{t('addCompany:cancel')}</Button>
-                  <Button className="mg-left-1" type="primary" htmlType="submit">
+                  <Button loading={loading} onClick={onCancel}>
+                    {t('addCompany:cancel')}
+                  </Button>
+                  <Button loading={loading} className="mg-left-1" type="primary" htmlType="submit">
                     {t('addCompany:submit')}
                   </Button>
                 </Row>

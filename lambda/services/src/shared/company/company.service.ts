@@ -245,6 +245,23 @@ export class CompanyService {
         HttpStatus.BAD_REQUEST
       );
     }
+
+    if (companyUpdateDto.logo) {
+    const response: any = await this.helperService.uploadCompanyLogoS3(
+      companyUpdateDto.companyId,
+      companyUpdateDto.logo
+    );
+
+    if (response.Location) {
+      companyUpdateDto.logo = response.Location;
+    } else {
+      throw new HttpException(
+        "Company update failed. Please try again",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+      }
+    }
+
     const { companyId, ...companyUpdateFields } = companyUpdateDto;
     const result = await this.companyRepo
       .update(

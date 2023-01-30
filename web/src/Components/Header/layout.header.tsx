@@ -51,7 +51,7 @@ const LayoutHeader = (props: HeaderProps) => {
         {/* <Col> */}
         <div className="header-country-logo">
           <img
-            src={'data:image/jpeg;base64,' + companyLogo}
+            src={companyLogo as string}
             alt="logo"
             onClick={() => {
               navigate('/userProfile/view');

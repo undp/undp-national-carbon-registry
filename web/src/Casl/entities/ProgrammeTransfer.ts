@@ -1,4 +1,4 @@
-import { ProgrammeTransferStage } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { CreditTransferStage } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { BaseEntity } from './BaseEntity';
 
 export class ProgrammeTransfer implements BaseEntity {
@@ -24,7 +24,11 @@ export class ProgrammeTransfer implements BaseEntity {
 
   txTime?: number;
 
-  status?: ProgrammeTransferStage;
+  status?: CreditTransferStage;
 
   isRetirement?: boolean;
+
+  companyId?: number[];
+
+  creditOwnerPercentage?: number[];
 }

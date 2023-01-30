@@ -52,7 +52,7 @@ const Dashboard = () => {
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
   const [issuedProjects, setIssuedProjects] = useState<number>(0);
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
-  const [transferedProjects, setTransferedProjects] = useState<number>(0);
+  const [authorisedProjects, setAuthorisedProjects] = useState<number>(0);
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
@@ -163,15 +163,11 @@ const Dashboard = () => {
         },
         {
           type: 'PROGRAMS_BY_STATUS',
-          value: 'ISSUED',
+          value: 'AUTHORISED',
         },
         {
           type: 'PROGRAMS_BY_STATUS',
           value: 'REJECTED',
-        },
-        {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'TRANSFERRED',
         },
         {
           type: 'TRANSFER_REQUEST',
@@ -443,6 +439,13 @@ const Dashboard = () => {
             unCertifiedCredit.push(credit[0]);
           });
         }
+        if (totalCredits?.revoked) {
+          const revoked = totalCredits?.revoked;
+          revoked?.map((item: any, index: any) => {
+            const credit = Object.values(item);
+            revokedCredit.push(credit[0]);
+          });
+        }
       }
       console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
       setPendingProgrammes(pendingProgrames);
@@ -466,6 +469,7 @@ const Dashboard = () => {
       setTransferredCredits(transferredCredit);
       setCertifiedCredits(certifiedCredit);
       setUnCertifiedCredits(unCertifiedCredit);
+      setRevokedCredits(revokedCredit);
       totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
       totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
       totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
@@ -523,9 +527,8 @@ const Dashboard = () => {
       );
       console.log('stats data  -- > ', response?.data);
       setPendingProjects(response?.data?.stats?.AWAITING_AUTHORIZATION);
-      setIssuedProjects(response?.data?.stats?.ISSUED);
       setRejectedProjects(response?.data?.stats?.REJECTED);
-      setTransferedProjects(response?.data?.stats?.TRANSFERRED);
+      setAuthorisedProjects(response?.data?.stats?.AUTHORISED);
       setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
       setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
@@ -1043,7 +1046,7 @@ const Dashboard = () => {
               totalPrgrammes={totalProjects}
               pending={pendingProjects}
               rejected={rejectedProjects}
-              authorized={issuedProjects}
+              authorized={authorisedProjects}
               updatedDate={lastUpdate}
               loading={loading}
             />

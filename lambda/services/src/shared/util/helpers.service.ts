@@ -6,15 +6,19 @@ import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class HelperService {
-  private prepareValue(value: any) {
-    console.log(value.constructor);
+  constructor(private configService: ConfigService) {}
+
+  private prepareValue(value: any, table?: string) {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
     } else if (typeof value === "string") {
       return "'" + value + "'";
+    } else if (this.isQueryDto(value)) {
+      return this.generateWhereSQL(value, undefined, table);
     }
     return value;
   }
@@ -70,6 +74,13 @@ export class HelperService {
     return sql;
   }
 
+  private isQueryDto(obj) {
+    if (typeof obj === 'object' && (obj['filterAnd'] || obj['filterOr'])){
+      return true;
+    }
+    return false
+  }
+
   public generateWhereSQLChartStasticsWithoutTimeRange(
     data: programmeStatusRequestDto,
     extraSQL: string,
@@ -118,7 +129,15 @@ export class HelperService {
       )}`;
     } else if (data?.type.includes("CREDIT_CERTIFIED")) {
       col = "certifierId";
-      sql = `${table ? table + "." : ""}"${col}" is not null`;
+      sql = `${
+        table ? table + "." : ""
+      }"${col}" is not null and "${col}" != '{}'`;
+    } else if (data?.type === "CREDIT_UNCERTIFIED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" is null`;
+    } else if (data?.type === "CREDIT_REVOKED") {
+      col = "certifierId";
+      sql = `${table ? table + "." : ""}"${col}" = '{}'`;
     }
 
     if (
@@ -180,20 +199,30 @@ export class HelperService {
     if (query.filterAnd) {
       sql += query.filterAnd
         .map(
-          (e) =>
-            `${table ? table + "." : ""}"${e.key}" ${
-              e.operation
-            } ${this.prepareValue(e.value)}`
+          (e) => {
+            if (this.isQueryDto(e.value)) {
+              return `(${this.prepareValue(e.value, table)})`
+            } else {
+              return `${table ? table + "." : ""}"${e.key}" ${
+                e.operation
+              } ${this.prepareValue(e.value, table)}`
+            }
+          }
         )
         .join(" and ");
     }
     if (query.filterOr) {
       const orSQl = query.filterOr
         .map(
-          (e) =>
-            `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
-              typeof e.value === "string" ? "'" + e.value + "'" : e.value
-            }`
+          (e) => {
+            if (this.isQueryDto(e.value)) {
+              return `(${this.prepareValue(e.value, table)})`
+            } else {
+              return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
+                typeof e.value === "string" ? "'" + e.value + "'" : e.value
+              }`
+            }
+          }
         )
         .join(" or ");
       if (sql != "") {
@@ -280,5 +309,36 @@ export class HelperService {
       }
     }
     return final;
+  }
+
+  public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
+    var AWS = require("aws-sdk");
+    const s3 = new AWS.S3();
+    const imgBuffer = Buffer.from(companyLogo, "base64");
+    var uploadParams = {
+      Bucket: this.configService.get<string>("s3CommonBucket.name"),
+      Key: "",
+      Body: imgBuffer,
+      ContentEncoding: "base64",
+      ContentType: "image/png",
+    };
+    uploadParams.Key = `profile_images/${companyId}.png`;
+
+    return await s3
+      .upload(uploadParams, function (err, data) {
+        if (err) {
+          return {
+            status: false,
+            statusText: err,
+          };
+        }
+        if (data) {
+          return {
+            status: true,
+            statusText: data.Location,
+          };
+        }
+      })
+      .promise();
   }
 }

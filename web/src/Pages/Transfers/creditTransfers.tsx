@@ -27,13 +27,18 @@ import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
+  addCommSep,
+  addCommSepRound,
+  addSpaces,
   CompanyRole,
   CreditTransferStage,
   getCompanyBgColor,
+  getRetirementTypeString,
   getStageTransferEnumVal,
   getTransferStageTagType,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import './programmeTransferManagement.scss';
+import './creditTransfer.scss';
 import '../Common/common.table.scss';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import TransferActionModel from '../../Components/Models/TransferActionModel';
@@ -41,6 +46,7 @@ import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
+import ReactCountryFlag from 'react-country-flag';
 
 type CompanyInfo = {
   name: string;
@@ -62,7 +68,7 @@ const CreditTransfer = () => {
   const { i18n, t } = useTranslation(['common', 'creditTransfer', 'programme']);
 
   const statusOptions = Object.keys(CreditTransferStage).map((k, index) => ({
-    label: Object.values(CreditTransferStage)[index],
+    label: addSpaces(Object.values(CreditTransferStage)[index]),
     value: k,
   }));
 
@@ -206,6 +212,17 @@ const CreditTransfer = () => {
     setSelectedReq(record);
     setModalVisible(true);
     setPopupInfo(info);
+  };
+
+  const getSendCreditBalance = (record: ProgrammeTransfer) => {
+    const idx = record.companyId!.map((e) => Number(e)).indexOf(record.fromCompanyId!);
+    if (idx < 0) {
+      return 0;
+    }
+    if (!record.creditOwnerPercentage) {
+      return record.creditBalance;
+    }
+    return (Number(record.creditBalance!) * Number(record.creditOwnerPercentage![idx])) / 100;
   };
 
   const actionMenu = (record: any) => {
@@ -453,7 +470,7 @@ const CreditTransfer = () => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {itemObj.receiver.map((v: any, i: any) => {
-              return (
+              return !itemObj.isRetirement ? (
                 <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                   <div>
                     <ProfileIcon
@@ -461,6 +478,27 @@ const CreditTransfer = () => {
                       bg={getCompanyBgColor(v.companyRole)}
                       name={v.name}
                     />
+                  </div>
+                </Tooltip>
+              ) : itemObj.retirementType === '0' ? (
+                <Tooltip
+                  title={t('creditTransfer:iaccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  <ReactCountryFlag
+                    className="profile-icon flag-ret-icon"
+                    countryCode={itemObj.toCompanyMeta.country}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  title={t('creditTransfer:laccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  <div className="ret-icon profile-icon">
+                    <Icon.Save />
                   </div>
                 </Tooltip>
               );
@@ -474,9 +512,9 @@ const CreditTransfer = () => {
       dataIndex: 'creditAmount',
       key: 'creditAmount',
       sorter: true,
-      align: 'left' as const,
+      align: 'right' as const,
       render: (item: any) => {
-        return <span className="clickable">{item}</span>;
+        return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
     {
@@ -484,9 +522,9 @@ const CreditTransfer = () => {
       dataIndex: 'creditBalance',
       key: 'creditBalance',
       sorter: true,
-      align: 'left' as const,
-      render: (item: any) => {
-        return <span>{item}</span>;
+      align: 'right' as const,
+      render: (item: any, Obj: any) => {
+        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
       },
     },
     {
@@ -496,9 +534,11 @@ const CreditTransfer = () => {
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
-          <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
-            {getStageTransferEnumVal(Obj.status, Obj)}
-          </Tag>
+          <Tooltip title={Obj.serialNo} color={TooltipColor} key={TooltipColor}>
+            <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+              {addSpaces(getStageTransferEnumVal(Obj.status, Obj))}
+            </Tag>
+          </Tooltip>
         );
       },
     },
