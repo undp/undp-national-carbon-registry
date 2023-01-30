@@ -264,8 +264,11 @@ const ProgrammeView = () => {
               activity.data.creditChange
             )} ${creditUnit} credits of this programme were transferred to ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              5
+            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+              activity.data.txRef,
+              3
+            )}`,
             icon: (
               <span className="step-icon transfer-step">
                 <Icon.BoxArrowRight />
@@ -727,7 +730,7 @@ const ProgrammeView = () => {
     }
   } else if (
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
-    data.creditEst > data.creditIssued
+    Number(data.creditEst) > Number(data.creditIssued)
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
       if (Number(data.creditEst) > Number(data.creditIssued)) {

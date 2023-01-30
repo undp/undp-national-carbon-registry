@@ -46,7 +46,7 @@ import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
-import ReactCountryFlag from 'react-country-flag';
+import { CircleFlag } from 'react-circle-flags';
 
 type CompanyInfo = {
   name: string;
@@ -486,10 +486,12 @@ const CreditTransfer = () => {
                   color={TooltipColor}
                   key={TooltipColor}
                 >
-                  <ReactCountryFlag
-                    className="profile-icon flag-ret-icon"
-                    countryCode={itemObj.toCompanyMeta.country}
-                  />
+                  {itemObj.toCompanyMeta.country && (
+                    <CircleFlag
+                      className="profile-icon flag-ret-icon"
+                      countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
+                    />
+                  )}
                 </Tooltip>
               ) : (
                 <Tooltip

@@ -9746,10 +9746,10 @@ react-bootstrap-icons@^1.10.2:
   dependencies:
     prop-types "^15.7.2"
 
-react-country-flag@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/react-country-flag/-/react-country-flag-3.0.2.tgz#54c37abe2c87251e95b0f40bb4c09b000f4669e7"
-  integrity sha512-JPaz+q3QD0/nZtHBKj5x3O7r/SgSG9kxbymdaIU0RqlDAcorJIe4KV0DFhWIdKh69q5cPVkIVERcMYGZdvXgAA==
+react-circle-flags@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/react-circle-flags/-/react-circle-flags-0.0.18.tgz#ab48b410435dd2bb4419cda6f59b4378019fbbec"
+  integrity sha512-3taT04bifZ2oSARDfoO4bMDfdIDfAxW6MeOaJ6fR17OcEn+/dGivE/nrtUYwfGKFp9/Sq92yo4FTT2I+DqAIqA==
 
 react-dev-utils@^12.0.1:
   version "12.0.1"
