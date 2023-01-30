@@ -13,7 +13,6 @@ export class HelperService {
   constructor(private configService: ConfigService) {}
 
   private prepareValue(value: any, table?: string) {
-    console.log(value.constructor);
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
     } else if (typeof value === "string") {
