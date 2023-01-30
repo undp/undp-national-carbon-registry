@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import undpLogo from '../../Assets/Images/undp.png';
+import forest from '../../Assets/Images/forest.png';
+import resources from '../../Assets/Images/resources.png';
 import './homepage.scss';
 import { BarChart, Gem, Calculator } from 'react-bootstrap-icons';
 const Homepage = () => {
@@ -36,7 +38,7 @@ const Homepage = () => {
           <div className="homepage-header-container">
             <div className="button">
               <Button type="primary" onClick={() => navigate('/login')}>
-                Sign In
+                SIGN IN
               </Button>
             </div>
           </div>
@@ -65,7 +67,7 @@ const Homepage = () => {
 
               <div className="aboutus_cards-container">
                 <Row gutter={[8, 8]} className="aboutus_card-row">
-                  <Col xxl={8} xl={12} md={12} className="aboutus_card-col">
+                  <Col xxl={8} xl={8} md={8} className="aboutus_card-col">
                     <div className="aboutus-card-main-container">
                       <Col>
                         <Row className="aboutus_card-row">
@@ -82,7 +84,7 @@ const Homepage = () => {
                       </Col>
                     </div>
                   </Col>
-                  <Col xxl={8} xl={12} md={12} className="aboutus_card-col">
+                  <Col xxl={8} xl={8} md={8} className="aboutus_card-col">
                     <div className="aboutus-card-main-container">
                       <Col>
                         <Row className="aboutus_card-row">
@@ -99,7 +101,7 @@ const Homepage = () => {
                       </Col>
                     </div>
                   </Col>
-                  <Col xxl={8} xl={12} md={12} className="aboutus_card-col">
+                  <Col xxl={8} xl={8} md={8} className="aboutus_card-col">
                     <div className="aboutus-card-main-container">
                       <Col>
                         <Row className="aboutus_card-row">
@@ -130,9 +132,48 @@ const Homepage = () => {
       </Row>
       <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
-          <div className="homepage-content-containerwhite">
-            <div className="title">Resources</div>
-            <div className="homepagebody">{t('homepage:resourcesbody')}</div>
+          <div className="homepage-image-content-container">
+            <Row>
+              <Col flex={2} md={12} lg={12}>
+                <div className="title">Eligibility</div>
+                <div className="homepagebody">
+                  {t('homepage:eligibilitybody')}
+                  <ul>
+                    <li>
+                      The project should be in Nationally Determined Contributions (NDCs) programs
+                      of action
+                    </li>
+                    <li>The project should be in conditional NDCs programs of action</li>
+                    <li>The project should be in the whitelist.</li>
+                    <li>The project should meet the criteria of the buyer</li>
+                  </ul>
+                </div>
+              </Col>
+              <Col flex={3} md={12} lg={12}>
+                <img className="image" src={forest} alt="forest" />
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
+      <Row gutter={[8, 8]}>
+        <Col md={24} lg={24} flex="auto">
+          <div className="homepage-resources-content-container">
+            <Row>
+              <Col md={12} lg={12}>
+                <img className="image" src={resources} alt="resources" />
+              </Col>
+              <Col md={12} lg={12}>
+                <div className="title">Resources</div>
+                <div className="homepagebody">
+                  <ul>
+                    <li>Application form</li>
+                    <li>Fees schedule</li>
+                    <li>Request for Letter of Authorization</li>
+                  </ul>
+                </div>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
