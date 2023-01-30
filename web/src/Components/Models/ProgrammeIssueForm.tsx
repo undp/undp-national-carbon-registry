@@ -94,7 +94,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
         ) : (
           <Row>
             <Col lg={18} md={20}>
-              <div className="label">{`${t('view:issueCreditText')} (${creditUnit})`}</div>
+              <div className="label">{`${t('view:authCreditText')} (${creditUnit})`}</div>
             </Col>
             <Col lg={6} md={6}>
               <Form.Item className="popup-credit-input">

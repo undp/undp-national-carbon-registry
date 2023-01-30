@@ -560,13 +560,20 @@ body {
 }
 
 .transfer-form {
+  .popup-credit-input {
+    .ant-form-item-explain-error {
+      width: 200px;
+    }
+  }
+
   .ant-row {
-    align-items: baseline;
+    align-items: unset;
   }
   padding: 0px 15px;
   .sub-text {
     margin-bottom: 35px;
     font-size: 0.9rem;
+    font-weight: 500;
   }
   .label {
     text-align: left;
@@ -685,8 +692,8 @@ body {
   }
 
   .ant-message-success {
-    color: #5BCE00;
-    border: 1px solid #5BCE00;
+    color: #5bce00;
+    border: 1px solid #5bce00;
   }
 }
 
