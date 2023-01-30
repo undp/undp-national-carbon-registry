@@ -565,22 +565,24 @@ export class AnalyticsAPIService {
                 j < programmePropertiesGeoCordinates?.length;
                 j++
               ) {
-                console.log(
-                  "cordinates ---- > ",
-                  programmePropertiesGeoCordinates[j]
-                );
-                let programmeGeoData: any = {};
-                let location: any = programmePropertiesGeoCordinates[j];
-                programmeGeoData.type = "Feature";
-                let properties: any = {};
-                let geometry: any = {};
-                properties.id = String(i) + String(j);
-                properties.count = 1;
-                geometry.type = "Point";
-                geometry.coordinates = location;
-                programmeGeoData.properties = properties;
-                programmeGeoData.geometry = geometry;
-                features.push(programmeGeoData);
+                if (programmePropertiesGeoCordinates[j] !== null) {
+                  console.log(
+                    "cordinates ---- > ",
+                    programmePropertiesGeoCordinates[j]
+                  );
+                  let programmeGeoData: any = {};
+                  let location: any = programmePropertiesGeoCordinates[j];
+                  programmeGeoData.type = "Feature";
+                  let properties: any = {};
+                  let geometry: any = {};
+                  properties.id = String(i) + String(j);
+                  properties.count = 1;
+                  geometry.type = "Point";
+                  geometry.coordinates = location;
+                  programmeGeoData.properties = properties;
+                  programmeGeoData.geometry = geometry;
+                  features.push(programmeGeoData);
+                }
               }
             }
           }
