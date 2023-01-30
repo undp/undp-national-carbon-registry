@@ -29,6 +29,7 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
+  BoxArrowInLeft,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
@@ -707,26 +708,54 @@ const Dashboard = () => {
       const map = new mapboxgl.Map({
         container: mapContainerInternationalRef.current || '',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v10',
-        center: [79.861244, 6.927079],
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [12, 50],
         zoom: 0,
       });
 
-      // Add markers to the map.
-      for (const marker of programmeTransferLocations.features) {
-        // Create a DOM element for each marker.
-        const el = document.createElement('div');
-        const width = 20;
-        const height = 20;
-        el.className = 'marker';
-        el.style.backgroundImage = `url(https://cdn-icons-png.flaticon.com/512/25/25613.png)`;
-        el.style.width = `${width}px`;
-        el.style.height = `${height}px`;
-        el.style.backgroundSize = '100%';
+      const data = [
+        { code: 'DE', hdi: 0.811 },
+        { code: 'NG', hdi: 1 },
+      ];
 
-        // Add markers to the map.
-        new mapboxgl.Marker(el).setLngLat(marker?.geometry?.coordinates).addTo(map);
-      }
+      // Add markers to the map.
+      map.on('load', () => {
+        map.addSource('countries', {
+          type: 'vector',
+          url: 'mapbox://mapbox.country-boundaries-v1',
+        });
+
+        // Build a GL match expression that defines the color for every vector tile feature
+        // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+        const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+
+        const transferLocations: any = [...programmeTransferLocations];
+
+        // Calculate color values for each country based on 'hdi' value
+        for (const row of transferLocations) {
+          // Convert the range of data values to a suitable color
+          const blue = row.hdi * 255;
+          const color = `rgb(0, 50, ${blue})`;
+
+          matchExpression.push(row.code, color);
+        }
+
+        // Last value is the default, used where there is no data
+        matchExpression.push('rgba(0, 0, 0, 0)');
+
+        map.addLayer(
+          {
+            id: 'countries-join',
+            type: 'fill',
+            source: 'countries',
+            'source-layer': 'country_boundaries',
+            paint: {
+              'fill-color': matchExpression,
+            },
+          },
+          'admin-1-boundary-bg'
+        );
+      });
     }, 1000);
   }, [programmeTransferLocations]);
 
@@ -971,9 +1000,9 @@ const Dashboard = () => {
               updatedDate={lastUpdate}
               icon={
                 companyRole === 'Government' ? (
-                  <BoxArrowInRight color="#16B1FF" size={80} />
+                  <BoxArrowRight color="#16B1FF" size={80} />
                 ) : companyRole === 'ProgrammeDeveloper' ? (
-                  <BoxArrowInRight color="#16B1FF" size={80} />
+                  <BoxArrowRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldCheck color="#16B1FF" size={80} />
                 )
