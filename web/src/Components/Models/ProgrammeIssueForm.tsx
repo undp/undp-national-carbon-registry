@@ -30,8 +30,16 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
       <Form
         name="transfer_init_popup"
         layout="vertical"
+        initialValues={{
+          issueAmount: 0,
+        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
+          if (d.issueAmount === 0) {
+            setPopupError('Issue amount should be greater than 0');
+            setLoading(false);
+            return;
+          }
           setLoading(true);
           const res = await onFinish(d);
           setPopupError(res);
@@ -53,6 +61,10 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                     pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
                     message: 'Credit Should be a positive number',
                   },
+                  {
+                    required: true,
+                    message: 'Required field',
+                  },
                   ({ getFieldValue }) => ({
                     validator(rule, value) {
                       if (
@@ -61,7 +73,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                           programme.creditEst - programme.creditIssued
                       ) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('> estimated');
+                        return Promise.reject('Amount > authorised');
                       }
                       return Promise.resolve();
                     },
@@ -94,7 +106,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
         ) : (
           <Row>
             <Col lg={18} md={20}>
-              <div className="label">{`${t('view:issueCreditText')} (${creditUnit})`}</div>
+              <div className="label">{`${t('view:authCreditText')} (${creditUnit})`}</div>
             </Col>
             <Col lg={6} md={6}>
               <Form.Item className="popup-credit-input">

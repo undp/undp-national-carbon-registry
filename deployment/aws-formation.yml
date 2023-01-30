@@ -345,7 +345,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       AccessControl: PublicRead
-      BucketName: !Sub 'carbon-common-dev'
+      BucketName: !Sub 'carbon-common-${EnvironmentName}'
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy

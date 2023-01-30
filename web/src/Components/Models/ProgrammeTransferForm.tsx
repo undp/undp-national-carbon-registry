@@ -225,6 +225,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                       pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
                       message: 'Credit Should be a positive number',
                     },
+                    {
+                      required: true,
+                      message: 'Required field',
+                    },
                     ({ getFieldValue }) => ({
                       validator(rule, v) {
                         if (
@@ -232,7 +236,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                           parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                         ) {
                           // eslint-disable-next-line prefer-promise-reject-errors
-                          return Promise.reject('Great than the available');
+                          return Promise.reject('Amount > available');
                         }
                         return Promise.resolve();
                       },

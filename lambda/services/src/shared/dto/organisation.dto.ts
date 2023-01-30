@@ -6,8 +6,6 @@ import { IsValidCountry } from "../util/validcountry.decorator";
 
 export class OrganisationDto {
 
-    @IsOptional()
-    @ApiPropertyOptional()
     companyId: number;
 
     @ValidateIf( c => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole))
