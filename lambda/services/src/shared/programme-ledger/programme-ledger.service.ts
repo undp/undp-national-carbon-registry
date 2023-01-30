@@ -28,37 +28,37 @@ export class ProgrammeLedgerService {
     private ledger: LedgerDbService
   ) {}
 
-  async forwardGeocoding(address: any[]) {
-    let geoCodinates: any[] = [];
-    const ACCESS_TOKEN =
-      "";
+  // async forwardGeocoding(address: any[]) {
+  //   let geoCodinates: any[] = [];
+  //   const ACCESS_TOKEN =
+  //     "";
 
-    for (let index = 0; index < address.length; index++) {
-      const url =
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-        encodeURIComponent(address[index]) +
-        ".json?access_token=" +
-        ACCESS_TOKEN +
-        "&limit=1";
-      await axios
-        .get(url)
-        .then(function (response) {
-          // handle success
-          console.log(
-            "cordinates data in replicator -> ",
-            response?.data?.features[0],
-            response?.data?.features[0]?.center
-          );
-          geoCodinates.push([...response?.data?.features[0]?.center]);
-        })
-        .catch((err) => {
-          this.logger.error(err);
-          return err;
-        });
-    }
+  //   for (let index = 0; index < address.length; index++) {
+  //     const url =
+  //       "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+  //       encodeURIComponent(address[index]) +
+  //       ".json?access_token=" +
+  //       ACCESS_TOKEN +
+  //       "&limit=1";
+  //     await axios
+  //       .get(url)
+  //       .then(function (response) {
+  //         // handle success
+  //         console.log(
+  //           "cordinates data in replicator -> ",
+  //           response?.data?.features[0],
+  //           response?.data?.features[0]?.center
+  //         );
+  //         geoCodinates.push([...response?.data?.features[0]?.center]);
+  //       })
+  //       .catch((err) => {
+  //         this.logger.error(err);
+  //         return err;
+  //       });
+  //   }
 
-    return geoCodinates;
-  }
+  //   return geoCodinates;
+  // }
 
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
@@ -93,36 +93,36 @@ export class ProgrammeLedgerService {
         return [{}, {}, insertMap];
       }
     );
-    let address: any[] = [];
-    if (programme && programme.programmeProperties) {
-      if (programme.currentStage === "AwaitingAuthorization") {
-        const programmeProperties = programme.programmeProperties;
-        if (programmeProperties.geographicalLocation) {
-          for (
-            let index = 0;
-            index < programmeProperties.geographicalLocation.length;
-            index++
-          ) {
-            address.push(programmeProperties.geographicalLocation[index]);
-          }
-        }
-        await this.forwardGeocoding([...address]).then((response: any) => {
-          programme.programmeProperties.geographicalLocationCordintes = [
-            ...response,
-          ];
-        });
-      }
-    }
-    if (programme) {
-      await this.entityManger
-        .save<Programme>(plainToClass(Programme, programme))
-        .then((res: any) => {
-          console.log("create programme in repo -- ", res);
-        })
-        .catch((e: any) => {
-          console.log("create programme in repo -- ", e);
-        });
-    }
+    // let address: any[] = [];
+    // if (programme && programme.programmeProperties) {
+    //   if (programme.currentStage === "AwaitingAuthorization") {
+    //     const programmeProperties = programme.programmeProperties;
+    //     if (programmeProperties.geographicalLocation) {
+    //       for (
+    //         let index = 0;
+    //         index < programmeProperties.geographicalLocation.length;
+    //         index++
+    //       ) {
+    //         address.push(programmeProperties.geographicalLocation[index]);
+    //       }
+    //     }
+    //     await this.forwardGeocoding([...address]).then((response: any) => {
+    //       programme.programmeProperties.geographicalLocationCordintes = [
+    //         ...response,
+    //       ];
+    //     });
+    //   }
+    // }
+    // if (programme) {
+    //   await this.entityManger
+    //     .save<Programme>(plainToClass(Programme, programme))
+    //     .then((res: any) => {
+    //       console.log("create programme in repo -- ", res);
+    //     })
+    //     .catch((e: any) => {
+    //       console.log("create programme in repo -- ", e);
+    //     });
+    // }
     return programme;
   }
 
