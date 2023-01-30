@@ -241,6 +241,10 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                           pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
                           message: 'Credit Should be a positive number',
                         },
+                        {
+                          required: true,
+                          message: 'Required field',
+                        },
                         ({ getFieldValue }) => ({
                           validator(rule, v) {
                             if (

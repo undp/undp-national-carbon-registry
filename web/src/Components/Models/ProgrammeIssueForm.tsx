@@ -30,8 +30,16 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
       <Form
         name="transfer_init_popup"
         layout="vertical"
+        initialValues={{
+          issueAmount: 0,
+        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
+          if (d.issueAmount === 0) {
+            setPopupError('Issue amount should be greater than 0');
+            setLoading(false);
+            return;
+          }
           setLoading(true);
           const res = await onFinish(d);
           setPopupError(res);
@@ -52,6 +60,10 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                   {
                     pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
                     message: 'Credit Should be a positive number',
+                  },
+                  {
+                    required: true,
+                    message: 'Required field',
                   },
                   ({ getFieldValue }) => ({
                     validator(rule, value) {
