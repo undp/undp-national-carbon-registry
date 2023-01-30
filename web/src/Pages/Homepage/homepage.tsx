@@ -139,13 +139,10 @@ const Homepage = () => {
                 <div className="homepagebody">
                   {t('homepage:eligibilitybody')}
                   <ul>
-                    <li>
-                      The project should be in Nationally Determined Contributions (NDCs) programs
-                      of action
-                    </li>
-                    <li>The project should be in conditional NDCs programs of action</li>
-                    <li>The project should be in the whitelist.</li>
-                    <li>The project should meet the criteria of the buyer</li>
+                    <li>{t('homepage:eliglist1')}</li>
+                    <li>{t('homepage:eliglist2')}</li>
+                    <li>{t('homepage:eliglist3')}</li>
+                    <li>{t('homepage:eliglist4')}</li>
                   </ul>
                 </div>
               </Col>
@@ -164,12 +161,12 @@ const Homepage = () => {
                 <img className="image" src={resources} alt="resources" />
               </Col>
               <Col md={12} lg={12}>
-                <div className="title">Resources</div>
+                <div className="title">{t('homepage:resource')}</div>
                 <div className="homepagebody">
                   <ul>
-                    <li>Application form</li>
-                    <li>Fees schedule</li>
-                    <li>Request for Letter of Authorization</li>
+                    <li>{t('homepage:reslist1')}</li>
+                    <li>{t('homepage:reslist2')}</li>
+                    <li>{t('homepage:reslist3')}</li>
                   </ul>
                 </div>
               </Col>
