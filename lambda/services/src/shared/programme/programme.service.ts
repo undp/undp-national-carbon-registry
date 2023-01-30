@@ -163,6 +163,7 @@ export class ProgrammeService {
 
     async transferApprove(req: ProgrammeTransferApprove, approver: User) {
         // TODO: Handle transaction, can happen 
+        console.log('Approver', approver)
         const transfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
         });
@@ -396,6 +397,7 @@ export class ProgrammeService {
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Credit send received ${trf}`)
             const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
+            console.log('To Company', toCompany)
             updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}`, req.comment, false)).data;
         }
         if (updateProgramme) {
