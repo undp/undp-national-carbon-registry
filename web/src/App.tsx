@@ -23,6 +23,11 @@ import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
+import { message } from 'antd';
+
+// message.config({
+//   duration: 60,
+// });
 
 const App = () => {
   const ability = defineAbility();

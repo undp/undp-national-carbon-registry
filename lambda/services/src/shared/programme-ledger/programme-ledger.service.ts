@@ -85,7 +85,7 @@ export class ProgrammeLedgerService {
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
       "data.programmeId": transfer.programmeId,
-      "data.txRef": new ArrayLike("data.txRef", transfer.requestId + "%"),
+      "data.txRef": new ArrayLike("data.txRef", "%#" + transfer.requestId + "#%"),
     };
     getQueries[this.ledger.tableName] = {
       programmeId: transfer.programmeId,
@@ -212,12 +212,12 @@ export class ProgrammeLedgerService {
 
         const prvTxTime = programme.txTime;
         programme.txTime = new Date().getTime();
-        programme.txRef = `${name}#${transfer.requestId}#${reason}`;
+        programme.txRef = `${name}#${transfer.requestId}#${transfer.retirementType}#${reason}`;
 
         if (isRetirement) {
-          if (programme.creditBalance == transfer.creditAmount) {
-            programme.currentStage = ProgrammeStage.RETIRED;
-          }
+          // if (programme.creditBalance == transfer.creditAmount) {
+          //   programme.currentStage = ProgrammeStage.RETIRED;
+          // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
             programme.creditRetired = 0;
@@ -264,7 +264,7 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.tableName] = uPayload;
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programme.programmeId,
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
           txTime: prvTxTime,
         };
 
@@ -368,18 +368,27 @@ export class ProgrammeLedgerService {
               HttpStatus.BAD_REQUEST
             );
           }
+
+          if (programme.currentStage != ProgrammeStage.AUTHORISED) {
+            throw new HttpException(
+              "Can certify only issued programmes",
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
           if (!programme.certifierId) {
             programme.certifierId = [certifierId];
           } else {
             programme.certifierId.push(certifierId);
           }
 
-          if (programme.currentStage != ProgrammeStage.ISSUED) {
-            throw new HttpException(
-              "Can certify only issued programmes",
-              HttpStatus.BAD_REQUEST
-            );
+          const reIndex = programme.revokedCertifierId
+          ? programme.revokedCertifierId.indexOf(certifierId)
+          : -1;
+          if (reIndex >= 0) {
+            programme.revokedCertifierId.splice(reIndex, 1);
           }
+
         } else {
           if (index < 0) {
             throw new HttpException(
@@ -387,8 +396,16 @@ export class ProgrammeLedgerService {
               HttpStatus.BAD_REQUEST
             );
           }
-
           programme.certifierId.splice(index, 1);
+
+          if (!programme.revokedCertifierId) {
+            programme.revokedCertifierId = [certifierId]
+          } else {
+            const reIndex = programme.revokedCertifierId.indexOf(certifierId);
+            if (reIndex < 0) {
+              programme.revokedCertifierId.push(certifierId);
+            }
+          }
         }
 
         programme.txRef = user;
@@ -403,6 +420,11 @@ export class ProgrammeLedgerService {
           txTime: programme.txTime,
           txRef: programme.txRef,
         };
+
+        if (programme.revokedCertifierId) {
+          updateMap[this.ledger.tableName]['revokedCertifierId'] = programme.revokedCertifierId;
+        }
+
         updateWhere[this.ledger.tableName] = {
           programmeId: programme.programmeId,
         };
@@ -750,8 +772,6 @@ export class ProgrammeLedgerService {
         txType:
           status == ProgrammeStage.REJECTED
             ? TxType.REJECT
-            : status == ProgrammeStage.RETIRED
-            ? TxType.RETIRE
             : null,
       },
       {
@@ -853,7 +873,7 @@ export class ProgrammeLedgerService {
         );
         programme.serialNo = serialNo;
         programme.txTime = new Date().getTime();
-        programme.currentStage = ProgrammeStage.ISSUED;
+        programme.currentStage = ProgrammeStage.AUTHORISED;
 
         if (!issueCredit) {
           programme.creditIssued = 0;
@@ -889,7 +909,7 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
         let insertMap = {};
         updateMap[this.ledger.tableName] = {
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
           serialNo: serialNo,
           creditIssued: programme.creditIssued,
           creditBalance: programme.creditBalance,
@@ -906,21 +926,21 @@ export class ProgrammeLedgerService {
         updateMap[this.ledger.overallTableName] = {
           credit: endBlock,
           txRef: serialNo,
-          txType: TxType.ISSUE,
+          txType: TxType.AUTH,
         };
         updateWhereMap[this.ledger.overallTableName] = {
           txId: countryCodeA2,
         };
 
         for (const com of programme.companyId) {
-          if (companyCreditBalances[String(com)]) {
+          if (companyCreditBalances[String(com)] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
                 companyCreditBalances[String(com)] +
                   companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
-              txType: TxType.ISSUE,
+              txType: TxType.AUTH,
             };
             updateWhereMap[this.ledger.companyTableName + "#" + com] = {
               txId: String(com),
@@ -931,7 +951,7 @@ export class ProgrammeLedgerService {
                 companyCreditDistribution[String(com)]
               ),
               txRef: serialNo,
-              txType: TxType.ISSUE,
+              txType: TxType.AUTH,
               txId: String(com),
             };
           }
@@ -1054,7 +1074,7 @@ export class ProgrammeLedgerService {
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
-          currentStage: ProgrammeStage.ISSUED.valueOf(),
+          currentStage: ProgrammeStage.AUTHORISED.valueOf(),
         };
 
         for (const com of programme.companyId) {
@@ -1064,7 +1084,7 @@ export class ProgrammeLedgerService {
             companyCreditBalances[String(com)],
             companyCreditDistribution[String(com)]
           );
-          if (companyCreditBalances[String(com)]) {
+          if (companyCreditBalances[String(com)] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.round2Precision(
                 companyCreditBalances[String(com)] +

@@ -45,6 +45,7 @@ import {
   CompanyRole,
   getFinancialFields,
   getGeneralFields,
+  getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
   Programme,
@@ -118,7 +119,7 @@ const ProgrammeView = () => {
 
   const addCommasToNumber = (value: any) => {
     return Number(value)
-      .toFixed(0)
+      .toFixed(2)
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
@@ -160,6 +161,8 @@ const ProgrammeView = () => {
           <div className="cert-info">
             {isBase64(cert.logo) ? (
               <img src={'data:image/jpeg;base64,' + cert.logo} />
+            ) : cert.logo ? (
+              <img src={cert.logo} />
             ) : cert.name ? (
               <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
             ) : (
@@ -194,10 +197,7 @@ const ProgrammeView = () => {
               activity.data.creditEst
             )} ${creditUnit} credits.`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon created-step">
                 <Icon.CaretRight />
               </span>
             ),
@@ -218,8 +218,8 @@ const ProgrammeView = () => {
               3
             )}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
-                <LikeOutlined />
+              <span className="step-icon auth-step">
+                <Icon.ClipboardCheck />
               </span>
             ),
           };
@@ -235,7 +235,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: GovBGColor, color: GovColor }}>
+              <span className="step-icon issue-step">
                 <Icon.Award />
               </span>
             ),
@@ -250,10 +250,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
+              <span className="step-icon reject-step">
                 <Icon.XOctagon />
               </span>
             ),
@@ -270,7 +267,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span className="step-icon" style={{ backgroundColor: DevBGColor, color: DevColor }}>
+              <span className="step-icon transfer-step">
                 <Icon.BoxArrowRight />
               </span>
             ),
@@ -280,15 +277,12 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Certification Revoked`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The certificate of the programme was revoked by ${getTxRefValues(
+            description: `The certification of this programme was revoked by ${getTxRefValues(
               activity.data.txRef,
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon revoke-step">
                 <Icon.ShieldExclamation />
               </span>
             ),
@@ -303,11 +297,8 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: CertBGColor, color: CertColor }}
-              >
-                <Icon.Shield />
+              <span className="step-icon cert-step">
+                <Icon.ShieldCheck />
               </span>
             ),
           };
@@ -322,15 +313,14 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommasToNumber(
               activity.data.creditChange
-            )} ${creditUnit} credits of this programme were retired by ${getTxRefValues(
+            )} ${creditUnit} credits of this programme were retired as ${getRetirementTypeString(
+              getTxRefValues(activity.data.txRef, 5)
+            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              3
+            )}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: RootBGColor, color: RootColor }}
-              >
+              <span className="step-icon retire-step">
                 <Icon.Save />
               </span>
             ),
@@ -347,10 +337,7 @@ const ProgrammeView = () => {
               1
             )} via ${getTxRefValues(activity.data.txRef, 3)}`,
             icon: (
-              <span
-                className="step-icon"
-                style={{ backgroundColor: ViewBGColor, color: ViewColor }}
-              >
+              <span className="step-icon freeze-step">
                 <CloseCircleOutlined />
               </span>
             ),
@@ -400,6 +387,10 @@ const ProgrammeView = () => {
     genPieData(response.data);
   };
 
+  const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
+    return response.data instanceof Array ? initMsg : successMsg;
+  };
+
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
       response.data.company = data.company;
@@ -433,7 +424,7 @@ const ProgrammeView = () => {
         successCB(response);
         message.open({
           type: 'success',
-          content: successMsg,
+          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -653,6 +644,8 @@ const ProgrammeView = () => {
         <div className="company-info">
           {isBase64(ele.company.logo) ? (
             <img src={'data:image/jpeg;base64,' + ele.company.logo} />
+          ) : ele.company.logo ? (
+            <img src={ele.company.logo} />
           ) : ele.company.name ? (
             <div className="programme-logo">{ele.company.name.charAt(0).toUpperCase()}</div>
           ) : (
@@ -684,7 +677,7 @@ const ProgrammeView = () => {
               type: 'danger',
               title: `${t('view:rejectTitle')} - ${data.title}?`,
               remark: true,
-              icon: <CloseCircleOutlined />,
+              icon: <Icon.ClipboardX />,
             });
             showModal();
           }}
@@ -734,7 +727,7 @@ const ProgrammeView = () => {
     }
   } else if (
     data.currentStage.toString() !== ProgrammeStage.Rejected &&
-    data.currentStage.toString() !== ProgrammeStage.Retired
+    data.creditEst > data.creditIssued
   ) {
     if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
       if (Number(data.creditEst) > Number(data.creditIssued)) {
@@ -922,7 +915,21 @@ const ProgrammeView = () => {
       <div className="content-body">
         <Row gutter={16}>
           <Col md={24} lg={10}>
-            <Card className="card-container centered-card">{elements}</Card>
+            <Card className="card-container">
+              <div className="info-view">
+                <div className="title">
+                  <span className="title-icon">
+                    {
+                      <span className="b-icon">
+                        <Icon.Building />
+                      </span>
+                    }
+                  </span>
+                  <span className="title-text">{t('view:programmeOwner')}</span>
+                </div>
+                <div className="centered-card">{elements}</div>
+              </div>
+            </Card>
             {data.currentStage !== ProgrammeStage.AwaitingAuthorization ? (
               <Card className="card-container">
                 <div className="info-view">
@@ -1007,15 +1014,107 @@ const ProgrammeView = () => {
                     {userInfoState?.userRole !== 'ViewOnly' &&
                       userInfoState?.companyRole !== 'Certifier' && (
                         <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStage.Issued &&
+                          {data.currentStage.toString() === ProgrammeStage.Authorised &&
                             data.creditBalance -
                               (data.creditFrozen
                                 ? data.creditFrozen.reduce(
                                     (a, b) => numIsExist(a) + numIsExist(b),
                                     0
                                   )
-                                : 0) && (
+                                : 0) >
+                              0 && (
                               <div>
+                                {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                  data.companyId
+                                    .map((e) => Number(e))
+                                    .includes(userInfoState!.companyId)) && (
+                                  <span>
+                                    <Button
+                                      danger
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Retire',
+                                          text: t('view:popupText'),
+                                          title: t('view:retireTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.Save />,
+                                          contentComp: (
+                                            <ProgrammeRetireForm
+                                              programme={data}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:retire')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'retire',
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('view:successRetireInit'),
+                                                      t('view:successRetire')
+                                                    ),
+                                                  put,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:retire')}
+                                    </Button>
+                                    <Button
+                                      type="primary"
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Send',
+                                          text: '',
+                                          title: t('view:sendCreditTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.BoxArrowRight />,
+                                          contentComp: (
+                                            <ProgrammeTransferForm
+                                              companyRole={userInfoState!.companyRole}
+                                              receiverLabelText={t('view:to')}
+                                              userCompanyId={userInfoState?.companyId}
+                                              programme={data}
+                                              subText={t('view:popupText')}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('view:send')}
+                                              onFinish={(body: any) =>
+                                                onPopupAction(
+                                                  body,
+                                                  'transferRequest',
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('view:successSendInit'),
+                                                      t('view:successSend')
+                                                    ),
+                                                  post,
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('view:send')}
+                                    </Button>
+                                  </span>
+                                )}
                                 {(data.companyId.length !== 1 ||
                                   !data.companyId
                                     .map((e) => Number(e))
@@ -1064,87 +1163,6 @@ const ProgrammeView = () => {
                                   >
                                     {t('view:transfer')}
                                   </Button>
-                                )}
-                                {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                                  data.companyId
-                                    .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
-                                  <span>
-                                    <Button
-                                      danger
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Retire',
-                                          text: t('view:popupText'),
-                                          title: t('view:retireTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.Save />,
-                                          contentComp: (
-                                            <ProgrammeRetireForm
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('view:retire')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'retire',
-                                                  t('view:successRetire'),
-                                                  put,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('view:retire')}
-                                    </Button>
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Send',
-                                          text: '',
-                                          title: t('view:sendCreditTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowRight />,
-                                          contentComp: (
-                                            <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              receiverLabelText={t('view:to')}
-                                              userCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              subText={t('view:popupText')}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('view:send')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'transferRequest',
-                                                  t('view:successSend'),
-                                                  post,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('view:send')}
-                                    </Button>
-                                  </span>
                                 )}
                               </div>
                             )}
@@ -1195,7 +1213,11 @@ const ProgrammeView = () => {
                 <InfoView
                   data={mapArrayToi18n(getFinancialFields(data))}
                   title={t('view:financial')}
-                  icon={<BuildOutlined />}
+                  icon={
+                    <span className="b-icon">
+                      <Icon.Cash />
+                    </span>
+                  }
                 />
               </div>
             </Card>

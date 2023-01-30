@@ -89,29 +89,29 @@ export class LedgerReplicatorService {
               Programme,
               JSON.parse(JSON.stringify(payload))
             );
-            let address: any[] = [];
-            if (programme && programme.programmeProperties) {
-              if (programme.currentStage === "AwaitingAuthorization") {
-                const programmeProperties = programme.programmeProperties;
-                if (programmeProperties.geographicalLocation) {
-                  for (
-                    let index = 0;
-                    index < programmeProperties.geographicalLocation.length;
-                    index++
-                  ) {
-                    address.push(
-                      programmeProperties.geographicalLocation[index]
-                    );
-                  }
-                }
-                await this.forwardGeocoding([...address]).then(
-                  (response: any) => {
-                    programme.programmeProperties.geographicalLocationCordintes =
-                      [...response];
-                  }
-                );
-              }
-            }
+//             let address: any[] = [];
+//             if (programme && programme.programmeProperties) {
+//               if (programme.currentStage === "AwaitingAuthorization") {
+//                 const programmeProperties = programme.programmeProperties;
+//                 if (programmeProperties.geographicalLocation) {
+//                   for (
+//                     let index = 0;
+//                     index < programmeProperties.geographicalLocation.length;
+//                     index++
+//                   ) {
+//                     address.push(
+//                       programmeProperties.geographicalLocation[index]
+//                     );
+//                   }
+//                 }
+//                 await this.forwardGeocoding([...address]).then(
+//                   (response: any) => {
+//                     programme.programmeProperties.geographicalLocationCordintes =
+//                       [...response];
+//                   }
+//                 );
+//               }
+//             }
 
             const columns =
               this.programmeRepo.manager.connection.getMetadata(
@@ -184,7 +184,7 @@ export class LedgerReplicatorService {
                 creditBalance: overall.credit,
                 programmeCount:
                   Number(company.programmeCount) +
-                  (overall.txType == TxType.ISSUE ? 1 : 0),
+                  (overall.txType == TxType.AUTH ? 1 : 0),
                 lastUpdateVersion: parseInt(meta["version"]),
               };
             }

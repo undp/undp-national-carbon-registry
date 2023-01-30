@@ -4,7 +4,12 @@ import { ProgrammeTransfer } from "./programme.transfer";
 
 @ViewEntity({
     expression: `
-        SELECT programme_transfer.*, JSON_AGG("requester".*) as "requester", JSON_AGG("receiver".*) as "receiver", "prog"."creditBalance" as "creditBalance", "prog"."title" as "programmeTitle", "prog"."sector" as "programmeSector", JSON_AGG(distinct "certifier".*) as "certifier", JSON_AGG(distinct "sender".*) as "sender", "prog"."proponentTaxVatId" as "proponentTaxVatId", "prog"."proponentPercentage" as "proponentPercentage", "prog"."serialNo" as "serialNo"
+        SELECT programme_transfer.*, JSON_AGG("requester".*) as "requester", JSON_AGG("receiver".*) as "receiver", 
+        "prog"."creditBalance" as "creditBalance", "prog"."title" as "programmeTitle", 
+        "prog"."sector" as "programmeSector", JSON_AGG(distinct "certifier".*) as "certifier", 
+        JSON_AGG(distinct "sender".*) as "sender", "prog"."proponentTaxVatId" as "proponentTaxVatId", 
+        "prog"."proponentPercentage" as "proponentPercentage", "prog"."creditOwnerPercentage" as "creditOwnerPercentage",
+        "prog"."companyId" as "companyId", "prog"."serialNo" as "serialNo"
         FROM "programme_transfer" "programme_transfer"
         LEFT JOIN "programme" "prog" ON "prog"."programmeId" = "programme_transfer"."programmeId"
         LEFT JOIN "company" "requester" ON "requester"."companyId" = "programme_transfer"."initiatorCompanyId"
@@ -44,5 +49,11 @@ export class ProgrammeTransferViewEntityQuery extends ProgrammeTransfer {
 
     @ViewColumn()
     proponentPercentage: number[];
+
+    @ViewColumn()
+    companyId: string[];
+
+    @ViewColumn()
+    creditOwnerPercentage: number[];
 
 }

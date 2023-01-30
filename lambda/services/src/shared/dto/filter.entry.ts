@@ -1,11 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsInt, IsNotEmpty, IsNumber, IsPositive, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
 export class FilterEntry {
 
     @IsNotEmpty()
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsOptional()
     key: any;
 
     @IsNotEmpty()
@@ -14,6 +15,7 @@ export class FilterEntry {
 
     @IsNotEmpty()
     @IsString()
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsOptional()
     operation: any;
 }
