@@ -746,7 +746,7 @@ const Dashboard = () => {
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of data) {
+        for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
           const blue = row.hdi * 255;
           const color = `rgb(0, 50, ${blue})`;
