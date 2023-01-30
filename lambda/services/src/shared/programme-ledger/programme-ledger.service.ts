@@ -28,6 +28,38 @@ export class ProgrammeLedgerService {
     private ledger: LedgerDbService
   ) {}
 
+  // async forwardGeocoding(address: any[]) {
+  //   let geoCodinates: any[] = [];
+  //   const ACCESS_TOKEN =
+  //     "";
+
+  //   for (let index = 0; index < address.length; index++) {
+  //     const url =
+  //       "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+  //       encodeURIComponent(address[index]) +
+  //       ".json?access_token=" +
+  //       ACCESS_TOKEN +
+  //       "&limit=1";
+  //     await axios
+  //       .get(url)
+  //       .then(function (response) {
+  //         // handle success
+  //         console.log(
+  //           "cordinates data in replicator -> ",
+  //           response?.data?.features[0],
+  //           response?.data?.features[0]?.center
+  //         );
+  //         geoCodinates.push([...response?.data?.features[0]?.center]);
+  //       })
+  //       .catch((err) => {
+  //         this.logger.error(err);
+  //         return err;
+  //       });
+  //   }
+
+  //   return geoCodinates;
+  // }
+
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;
@@ -61,6 +93,26 @@ export class ProgrammeLedgerService {
         return [{}, {}, insertMap];
       }
     );
+    // let address: any[] = [];
+    // if (programme && programme.programmeProperties) {
+    //   if (programme.currentStage === "AwaitingAuthorization") {
+    //     const programmeProperties = programme.programmeProperties;
+    //     if (programmeProperties.geographicalLocation) {
+    //       for (
+    //         let index = 0;
+    //         index < programmeProperties.geographicalLocation.length;
+    //         index++
+    //       ) {
+    //         address.push(programmeProperties.geographicalLocation[index]);
+    //       }
+    //     }
+    //     await this.forwardGeocoding([...address]).then((response: any) => {
+    //       programme.programmeProperties.geographicalLocationCordintes = [
+    //         ...response,
+    //       ];
+    //     });
+    //   }
+    // }
     // if (programme) {
     //   await this.entityManger
     //     .save<Programme>(plainToClass(Programme, programme))
@@ -85,7 +137,10 @@ export class ProgrammeLedgerService {
     const getQueries = {};
     getQueries[`history(${this.ledger.tableName})`] = {
       "data.programmeId": transfer.programmeId,
-      "data.txRef": new ArrayLike("data.txRef", "%#" + transfer.requestId + "#%"),
+      "data.txRef": new ArrayLike(
+        "data.txRef",
+        "%#" + transfer.requestId + "#%"
+      ),
     };
     getQueries[this.ledger.tableName] = {
       programmeId: transfer.programmeId,
@@ -383,12 +438,11 @@ export class ProgrammeLedgerService {
           }
 
           const reIndex = programme.revokedCertifierId
-          ? programme.revokedCertifierId.indexOf(certifierId)
-          : -1;
+            ? programme.revokedCertifierId.indexOf(certifierId)
+            : -1;
           if (reIndex >= 0) {
             programme.revokedCertifierId.splice(reIndex, 1);
           }
-
         } else {
           if (index < 0) {
             throw new HttpException(
@@ -399,7 +453,7 @@ export class ProgrammeLedgerService {
           programme.certifierId.splice(index, 1);
 
           if (!programme.revokedCertifierId) {
-            programme.revokedCertifierId = [certifierId]
+            programme.revokedCertifierId = [certifierId];
           } else {
             const reIndex = programme.revokedCertifierId.indexOf(certifierId);
             if (reIndex < 0) {
@@ -422,7 +476,8 @@ export class ProgrammeLedgerService {
         };
 
         if (programme.revokedCertifierId) {
-          updateMap[this.ledger.tableName]['revokedCertifierId'] = programme.revokedCertifierId;
+          updateMap[this.ledger.tableName]["revokedCertifierId"] =
+            programme.revokedCertifierId;
         }
 
         updateWhere[this.ledger.tableName] = {
@@ -769,10 +824,7 @@ export class ProgrammeLedgerService {
         currentStage: status.valueOf(),
         txTime: new Date().getTime(),
         txRef: user,
-        txType:
-          status == ProgrammeStage.REJECTED
-            ? TxType.REJECT
-            : null,
+        txType: status == ProgrammeStage.REJECTED ? TxType.REJECT : null,
       },
       {
         programmeId: programmeId,

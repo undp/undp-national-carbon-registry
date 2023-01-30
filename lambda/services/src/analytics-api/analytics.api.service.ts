@@ -611,33 +611,28 @@ export class AnalyticsAPIService {
               )
             )
             .getRawMany();
-          let countries: any[] = [];
-          let locationsTransferGeoData: any = {};
           let featuresTransfer: any[] = [];
-          locationsTransferGeoData.type = "FeatureCollection";
           for (
             let index = 0;
             index < totalResponseTransferLocation.length;
             index++
           ) {
-            let programmeTransferGeoData: any = {};
-            let geometryTransfer: any = {};
             if (totalResponseTransferLocation[index]?.toCompanyMeta) {
               let toCompanyMeta =
                 totalResponseTransferLocation[index]?.toCompanyMeta;
-              if (toCompanyMeta?.coordinates) {
-                if (!countries.includes(toCompanyMeta?.coordinates))
-                  programmeTransferGeoData.type = "Feature";
-                geometryTransfer.type = "Point";
-                geometryTransfer.coordinates = toCompanyMeta?.coordinates;
-                programmeTransferGeoData.geometry = geometryTransfer;
-                featuresTransfer.push(programmeTransferGeoData);
+              if (toCompanyMeta?.country) {
+                featuresTransfer.push({
+                  code: toCompanyMeta?.country,
+                  hdi:
+                    index === 0
+                      ? 1
+                      : index / totalResponseTransferLocation.length,
+                });
               }
             }
           }
-          locationsTransferGeoData.features = [...featuresTransfer];
 
-          results[stat.type] = locationsTransferGeoData;
+          results[stat.type] = featuresTransfer;
           break;
       }
     }

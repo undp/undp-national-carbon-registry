@@ -20,8 +20,4 @@ export class BasicOrgInfo {
   @ApiPropertyOptional()
   @IsOptional()
   country: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  coordinates?: any[];
 }

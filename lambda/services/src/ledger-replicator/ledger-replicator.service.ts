@@ -26,6 +26,7 @@ export class LedgerReplicatorService {
   ) {}
 
   async forwardGeocoding(address: any[]) {
+    console.log("addresses passed to forwardGeocoding function -> ", address);
     let geoCodinates: any[] = [];
     const ACCESS_TOKEN =
       "";
@@ -37,6 +38,7 @@ export class LedgerReplicatorService {
         ".json?access_token=" +
         ACCESS_TOKEN +
         "&limit=1";
+      console.log("geocoding request urls -> ", index, url);
       await axios
         .get(url)
         .then(function (response) {
@@ -49,7 +51,7 @@ export class LedgerReplicatorService {
           geoCodinates.push([...response?.data?.features[0]?.center]);
         })
         .catch((err) => {
-          this.logger.error(err);
+          this.logger.error("Geocoding failed - ", err);
           return err;
         });
     }
@@ -89,46 +91,53 @@ export class LedgerReplicatorService {
               Programme,
               JSON.parse(JSON.stringify(payload))
             );
-            let address: any[] = [];
-            if (programme && programme.programmeProperties) {
-              if (programme.currentStage === "AwaitingAuthorization") {
-                const programmeProperties = programme.programmeProperties;
-                if (programmeProperties.geographicalLocation) {
-                  for (
-                    let index = 0;
-                    index < programmeProperties.geographicalLocation.length;
-                    index++
-                  ) {
-                    address.push(
-                      programmeProperties.geographicalLocation[index]
-                    );
+            try {
+              let address: any[] = [];
+              if (programme && programme.programmeProperties) {
+                if (programme.currentStage === "AwaitingAuthorization") {
+                  const programmeProperties = programme.programmeProperties;
+                  if (programmeProperties.geographicalLocation) {
+                    for (
+                      let index = 0;
+                      index < programmeProperties.geographicalLocation.length;
+                      index++
+                    ) {
+                      address.push(
+                        programmeProperties.geographicalLocation[index]
+                      );
+                    }
                   }
+                  await this.forwardGeocoding([...address]).then(
+                    (response: any) => {
+                      programme.programmeProperties.geographicalLocationCordintes =
+                        [...response];
+                    }
+                  );
                 }
-                await this.forwardGeocoding([...address]).then(
-                  (response: any) => {
-                    programme.programmeProperties.geographicalLocationCordintes =
-                      [...response];
-                  }
-                );
               }
+            } catch (error) {
+              console.log(
+                "Getting cordinates with forward geocoding failed -> ",
+                error
+              );
+            } finally {
+              const columns =
+                this.programmeRepo.manager.connection.getMetadata(
+                  "Programme"
+                ).columns;
+              const columnNames = columns
+                .filter(function (item) {
+                  return item.propertyName !== "programmeId";
+                })
+                .map((e) => e.propertyName);
+              this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
+              return await this.programmeRepo
+                .createQueryBuilder()
+                .insert()
+                .values(programme)
+                .orUpdate(columnNames, ["programmeId"])
+                .execute();
             }
-
-            const columns =
-              this.programmeRepo.manager.connection.getMetadata(
-                "Programme"
-              ).columns;
-            const columnNames = columns
-              .filter(function (item) {
-                return item.propertyName !== "programmeId";
-              })
-              .map((e) => e.propertyName);
-            this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
-            return await this.programmeRepo
-              .createQueryBuilder()
-              .insert()
-              .values(programme)
-              .orUpdate(columnNames, ["programmeId"])
-              .execute();
           } else if (
             tableName == this.configService.get("ledger.companyTable")
           ) {
