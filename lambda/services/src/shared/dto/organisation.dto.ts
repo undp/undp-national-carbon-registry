@@ -4,7 +4,9 @@ import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "../util/validcountry.decorator";
 
-export class CompanyDto {
+export class OrganisationDto {
+
+    companyId: number;
 
     @ValidateIf( c => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole))
     @IsNotEmpty()
@@ -54,4 +56,6 @@ export class CompanyDto {
         message: 'Invalid role. Supported following roles:' + Object.values(CompanyRole)
     })
     companyRole: CompanyRole;
+
+    createdTime: number;
 }

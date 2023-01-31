@@ -4,6 +4,18 @@
   background-color: $background-color;
   height: 100vh;
 
+  .country-flag {
+    margin-top: 27px;
+    margin-left: -8px;
+  }
+
+  .country-name {
+    font-size: 0.65rem;
+    color: $logo-text-color;
+    margin-top: -5px;
+    font-family: 'MuseoSans';
+  }
+
   .toggle-nav-btn {
     cursor: pointer;
     position: absolute;
@@ -66,7 +78,7 @@
         // flex-direction: row;
         // justify-content: flex-start;
         // align-items: center;
-        height: 50px;
+        height: 52px;
         // overflow: hidden;
         // margin-right: 0.8rem;
 
@@ -74,7 +86,7 @@
         img {
           object-fit: cover;
           height: auto;
-          height: 70%;
+          height: 78%;
           margin-top: 6px;
           margin-right: 5px;
         }

@@ -76,6 +76,21 @@
               color: $dev-color;
             }
           }
+          .gov-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+              color: $gov-color !important;
+              border-color: $gov-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $gov-color;
+            }
+          }
           .observer-radio-container {
             width: 25%;
             .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
@@ -113,6 +128,13 @@
             .ant-radio-button-checked {
               background: $dev-bg-color;
               color: $dev-color;
+            }
+          }
+          .gov {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $gov-bg-color;
+              color: $gov-color;
             }
           }
           .observer {

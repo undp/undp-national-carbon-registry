@@ -9,7 +9,7 @@ import { Country } from "../shared/entities/country.entity";
 import { CountryService } from "../shared/util/country.service";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
 import { CompanyModule } from "../shared/company/company.module";
-import { CompanyDto } from "../shared/dto/company.dto";
+import { OrganisationDto as OrganisationDto } from "../shared/dto/organisation.dto";
 import { CompanyRole } from "../shared/enum/company.role.enum";
 import { CompanyService } from "../shared/company/company.service";
 import { UserModule } from "../shared/user/user.module";
@@ -55,7 +55,7 @@ exports.handler = async (event) => {
 
     try {
 
-      const company = new CompanyDto()
+      const company = new OrganisationDto()
       company.country = event['systemCountryCode']
       company.name = event['name']
       company.logo = event['logoBase64']

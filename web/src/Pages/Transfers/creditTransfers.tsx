@@ -16,6 +16,7 @@ import {
   Modal,
   Button,
   Form,
+  Tooltip,
 } from 'antd';
 // import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
@@ -26,17 +27,40 @@ import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import {
+  addCommSep,
+  addCommSepRound,
+  addSpaces,
+  CompanyRole,
   CreditTransferStage,
+  getCompanyBgColor,
+  getRetirementTypeString,
   getStageTransferEnumVal,
   getTransferStageTagType,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import './programmeTransferManagement.scss';
+import './creditTransfer.scss';
 import '../Common/common.table.scss';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import TransferActionModel from '../../Components/Models/TransferActionModel';
+import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import * as Icon from 'react-bootstrap-icons';
+import { TooltipColor } from '../Common/role.color.constants';
+import { creditUnit } from '../Common/configs';
+import { CircleFlag } from 'react-circle-flags';
+import { Role } from '../../Casl/enums/role.enum';
 
 type CompanyInfo = {
   name: string;
   credit: number;
+};
+
+type PopupInfo = {
+  title: string;
+  icon: any;
+  actionBtnText: string;
+  okAction: any;
+  type: 'primary' | 'danger';
+  remarkRequired: boolean;
 };
 
 const CreditTransfer = () => {
@@ -45,7 +69,7 @@ const CreditTransfer = () => {
   const { i18n, t } = useTranslation(['common', 'creditTransfer', 'programme']);
 
   const statusOptions = Object.keys(CreditTransferStage).map((k, index) => ({
-    label: Object.values(CreditTransferStage)[index],
+    label: addSpaces(Object.values(CreditTransferStage)[index]),
     value: k,
   }));
 
@@ -64,10 +88,9 @@ const CreditTransfer = () => {
   const [statusFilter, setStatusFilter] = useState<any>();
   const [sortOrder, setSortOrder] = useState<string>();
   const [sortField, setSortField] = useState<string>();
-  const [cancelModalVisible, setCancelModalVisible] = useState<boolean>(false);
-  const [acceptModalVisible, setAcceptModalVisible] = useState<any>(false);
-  const [rejectModalVisible, setRejectModalVisible] = useState<any>(false);
-  const [selectedReqId, setSelectedReqId] = useState<number>();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedReq, setSelectedReq] = useState<ProgrammeTransfer>();
+  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
   const [companiesInfo, setCompaniesInfo] = useState<CompanyInfo[]>();
   const [totalComCredits, setTotalComCredits] = useState<number>(0);
   const [companyIdsVal, setCompanyIdsVal] = useState<number[]>();
@@ -102,7 +125,7 @@ const CreditTransfer = () => {
     onStatusQuery(nw);
   };
 
-  const getAllProgramme = async () => {
+  const getAllTransfers = async () => {
     setLoading(true);
     const filter: any[] = [];
     if (statusFilter) {
@@ -125,7 +148,7 @@ const CreditTransfer = () => {
     } else {
       sort = {
         key: 'requestId',
-        order: 'ASC',
+        order: 'DESC',
       };
     }
 
@@ -154,205 +177,187 @@ const CreditTransfer = () => {
   };
 
   useEffect(() => {
-    getAllProgramme();
+    getAllTransfers();
   }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
 
-  const rejectTransfer = async (reqId: number, remarks: string) => {
+  const handleRequestOk = async (
+    reqId: number,
+    remarks: string,
+    endpoint: string,
+    successText?: string
+  ) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/transferReject', {
+      const response: any = await post('national/programme/' + endpoint, {
         requestId: reqId,
         comment: remarks,
       });
       console.log(response);
       message.open({
         type: 'success',
-        content: response.message,
+        content: successText ? successText : response.message,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-      setRejectModalVisible(false);
       setLoading(false);
-      formModal.resetFields();
-    } catch (error: any) {
-      console.log('Error in getting programme transfers', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setRejectModalVisible(false);
-      setLoading(false);
-      formModal.resetFields();
-    }
-  };
-
-  const cancelRequest = async (reqId: number, remarks: string) => {
-    setLoading(true);
-    try {
-      const response: any = await post('national/programme/transferCancel', {
-        requestId: reqId,
-        comment: remarks,
-      });
-      console.log(response);
-      message.open({
-        type: 'success',
-        content: response.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setCancelModalVisible(false);
-      setLoading(false);
-      formModal.resetFields();
+      getAllTransfers();
+      setModalVisible(false);
     } catch (error: any) {
       console.log('Error in Cancelling transfer request', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setCancelModalVisible(false);
       setLoading(false);
-      formModal.resetFields();
+      return error.message;
     }
   };
 
-  const acceptRequest = async (record: any) => {
-    setLoading(true);
-    try {
-      const response: any = await post('national/organisation/findByIds', {
-        companyIds: record.companyId,
-      });
-      console.log(response);
-      const info = [];
-      for (let i = 0; i < record.proponentPercentage.length; i++) {
-        info.push({
-          credit: (record.proponentPercentage[i] * parseInt(record.creditBalance)) / 100,
-          name: response.data.find((v: any) => v.taxId === record.proponentTaxVatId[i]).name,
-        });
-      }
-      setCompaniesInfo(info);
-      formModal.resetFields();
-      setLoading(false);
-    } catch (error: any) {
-      console.log('Error in getting companies', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      formModal.resetFields();
-      setLoading(false);
+  const showModalOnAction = (record: any, info: PopupInfo) => {
+    setSelectedReq(record);
+    setModalVisible(true);
+    setPopupInfo(info);
+  };
+
+  const getSendCreditBalance = (record: ProgrammeTransfer) => {
+    const idx = record.companyId!.map((e) => Number(e)).indexOf(record.fromCompanyId!);
+    if (idx < 0) {
+      return 0;
     }
+    if (!record.creditOwnerPercentage) {
+      return record.creditBalance;
+    }
+    return (Number(record.creditBalance!) * Number(record.creditOwnerPercentage![idx])) / 100;
   };
 
   const actionMenu = (record: any) => {
-    return userInfoState?.id === record.requesterId.toString() ? (
-      <List
-        className="action-menu"
-        size="small"
-        dataSource={[
-          {
-            text: 'Cancel',
-            icon: (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-clipboard-x"
-                viewBox="0 0 16 16"
-                color="#FF4C51"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M6.146 7.146a.5.5 0 0 1 .708 0L8 8.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 9l1.147 1.146a.5.5 0 0 1-.708.708L8 9.707l-1.146 1.147a.5.5 0 0 1-.708-.708L7.293 9 6.146 7.854a.5.5 0 0 1 0-.708z"
-                />
-                <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z" />
-                <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z" />
-              </svg>
-            ),
-            click: () => {
-              setCancelModalVisible(true);
-              setAcceptModalVisible(false);
-              setRejectModalVisible(false);
-              setSelectedReqId(record.requestId);
+    if (record.status === 'Pending' && userInfoState?.userRole !== Role.ViewOnly) {
+      return userInfoState?.companyId === record.initiatorCompanyId ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: t('creditTransfer:cancel'),
+              icon: <Icon.ExclamationOctagon />,
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:cancelTitle'),
+                  icon: <Icon.ExclamationOctagon />,
+                  actionBtnText: t('creditTransfer:proceed'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferCancel'),
+                  type: 'danger',
+                  remarkRequired: true,
+                });
+              },
             },
-          },
-        ]}
-        renderItem={(item: any) => (
-          <List.Item onClick={item.click}>
-            <Typography.Text className="action-icon">{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
-      />
-    ) : (
-      <List
-        className="action-menu"
-        size="small"
-        dataSource={[
-          {
-            text: 'Accept',
-            icon: (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-hand-thumbs-up"
-                viewBox="0 0 16 16"
-                color="#16B1FF"
-              >
-                <path d="M8.864.046C7.908-.193 7.02.53 6.956 1.466c-.072 1.051-.23 2.016-.428 2.59-.125.36-.479 1.013-1.04 1.639-.557.623-1.282 1.178-2.131 1.41C2.685 7.288 2 7.87 2 8.72v4.001c0 .845.682 1.464 1.448 1.545 1.07.114 1.564.415 2.068.723l.048.03c.272.165.578.348.97.484.397.136.861.217 1.466.217h3.5c.937 0 1.599-.477 1.934-1.064a1.86 1.86 0 0 0 .254-.912c0-.152-.023-.312-.077-.464.201-.263.38-.578.488-.901.11-.33.172-.762.004-1.149.069-.13.12-.269.159-.403.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2.144 2.144 0 0 0-.138-.362 1.9 1.9 0 0 0 .234-1.734c-.206-.592-.682-1.1-1.2-1.272-.847-.282-1.803-.276-2.516-.211a9.84 9.84 0 0 0-.443.05 9.365 9.365 0 0 0-.062-4.509A1.38 1.38 0 0 0 9.125.111L8.864.046zM11.5 14.721H8c-.51 0-.863-.069-1.14-.164-.281-.097-.506-.228-.776-.393l-.04-.024c-.555-.339-1.198-.731-2.49-.868-.333-.036-.554-.29-.554-.55V8.72c0-.254.226-.543.62-.65 1.095-.3 1.977-.996 2.614-1.708.635-.71 1.064-1.475 1.238-1.978.243-.7.407-1.768.482-2.85.025-.362.36-.594.667-.518l.262.066c.16.04.258.143.288.255a8.34 8.34 0 0 1-.145 4.725.5.5 0 0 0 .595.644l.003-.001.014-.003.058-.014a8.908 8.908 0 0 1 1.036-.157c.663-.06 1.457-.054 2.11.164.175.058.45.3.57.65.107.308.087.67-.266 1.022l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.414-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.047.047.109.177.005.488a2.224 2.224 0 0 1-.505.805l-.353.353.353.354c.006.005.041.05.041.17a.866.866 0 0 1-.121.416c-.165.288-.503.56-1.066.56z" />
-              </svg>
-            ),
-            click: () => {
-              setAcceptModalVisible(true);
-              setRejectModalVisible(false);
-              setCancelModalVisible(false);
-              setSelectedReqId(record.requestId);
-              setTotalComCredits(record.creditBalance);
-              setCompanyIdsVal(record.companyId);
-              setCreditAmount(record.creditAmount);
-              acceptRequest(record);
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className="action-icon color-error">{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : !record.isRetirement && record.fromCompanyId === userInfoState?.companyId ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: t('creditTransfer:accept'),
+              icon: <Icon.ClipboardCheck />,
+              style: 'color-primary',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:acceptTitle'),
+                  icon: <Icon.ClipboardCheck />,
+                  actionBtnText: t('creditTransfer:proceed'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
+                  type: 'primary',
+                  remarkRequired: false,
+                });
+              },
             },
-          },
-          {
-            text: 'Reject',
-            icon: (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-x-circle"
-                viewBox="0 0 16 16"
-                color="#FF4C51"
-              >
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-              </svg>
-            ),
-            click: () => {
-              setRejectModalVisible(true);
-              setCancelModalVisible(false);
-              setAcceptModalVisible(false);
-              setSelectedReqId(record.requestId);
+            {
+              text: t('creditTransfer:reject'),
+              icon: <Icon.XOctagon />,
+              style: 'color-error',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:rejectTitle'),
+                  icon: <Icon.XOctagon />,
+                  actionBtnText: t('creditTransfer:reject'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(requestId, comment, 'transferReject'),
+                  type: 'danger',
+                  remarkRequired: true,
+                });
+              },
             },
-          },
-        ]}
-        renderItem={(item: any) => (
-          <List.Item onClick={item.click}>
-            <Typography.Text className="action-icon">{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
-      />
-    );
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : record.isRetirement && userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+        <List
+          className="action-menu"
+          size="small"
+          dataSource={[
+            {
+              text: t('creditTransfer:recognise'),
+              icon: <Icon.Save />,
+              style: 'color-primary',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:recogniseTitle'),
+                  icon: <Icon.Save />,
+                  actionBtnText: t('creditTransfer:recognise'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferApprove',
+                      'Successfully recongnised'
+                    ),
+                  type: 'primary',
+                  remarkRequired: false,
+                });
+              },
+            },
+            {
+              text: t('creditTransfer:notrecognise'),
+              icon: <Icon.XOctagon />,
+              style: 'color-error',
+              click: () => {
+                showModalOnAction(record, {
+                  title: t('creditTransfer:notRecogniseTitle'),
+                  icon: <Icon.XOctagon />,
+                  actionBtnText: t('creditTransfer:notrecognise'),
+                  okAction: (requestId: any, comment: any) =>
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferReject',
+                      'Successfully not recongnised'
+                    ),
+                  type: 'danger',
+                  remarkRequired: true,
+                });
+              },
+            },
+          ]}
+          renderItem={(item: any) => (
+            <List.Item onClick={item.click}>
+              <Typography.Text className={`action-icon ${item.style}`}>{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )}
+        />
+      ) : null;
+    }
   };
 
   const columns = [
@@ -361,10 +366,6 @@ const CreditTransfer = () => {
       dataIndex: 'requestId',
       key: 'requestId',
       sorter: true,
-      align: 'center' as const,
-      render: (item: any) => {
-        return <span className="clickable">{item}</span>;
-      },
     },
     {
       title: t('creditTransfer:date'),
@@ -412,14 +413,24 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:initiator'),
-      key: 'initiator',
+      key: 'initiatorCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {itemObj.requester.map((v: any, i: any) => {
-              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+              return (
+                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                  <div>
+                    <ProfileIcon
+                      icon={v.logo}
+                      bg={getCompanyBgColor(v.companyRole)}
+                      name={v.name}
+                    />
+                  </div>
+                </Tooltip>
+              );
             })}
           </div>
         );
@@ -427,14 +438,24 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:cSender'),
-      key: 'cSender',
+      key: 'fromCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {itemObj.sender.map((v: any, i: any) => {
-              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+              return (
+                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                  <div>
+                    <ProfileIcon
+                      icon={v.logo}
+                      bg={getCompanyBgColor(v.companyRole)}
+                      name={v.name}
+                    />
+                  </div>
+                </Tooltip>
+              );
             })}
           </div>
         );
@@ -442,63 +463,101 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:cReceiver'),
-      dataIndex: 'requester',
-      key: 'requester',
+      dataIndex: 'toCompanyId',
+      key: 'toCompanyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.requester.map((v: any, i: any) => {
-              return <ProfileIcon icon={v.logo} bg="rgba(128, 255, 0, 0.12)" name={v.name} />;
+            {itemObj.receiver.map((v: any, i: any) => {
+              return !itemObj.isRetirement ? (
+                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                  <div>
+                    <ProfileIcon
+                      icon={v.logo}
+                      bg={getCompanyBgColor(v.companyRole)}
+                      name={v.name}
+                    />
+                  </div>
+                </Tooltip>
+              ) : itemObj.retirementType === '0' ? (
+                <Tooltip
+                  title={t('creditTransfer:iaccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  {itemObj.toCompanyMeta.country && (
+                    <CircleFlag
+                      className="profile-icon flag-ret-icon"
+                      countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
+                    />
+                  )}
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  title={t('creditTransfer:laccount')}
+                  color={TooltipColor}
+                  key={TooltipColor}
+                >
+                  <div className="ret-icon profile-icon">
+                    <Icon.Save />
+                  </div>
+                </Tooltip>
+              );
             })}
           </div>
         );
       },
     },
     {
-      title: t('creditTransfer:cRequested'),
+      title: t('creditTransfer:cRequested') + ` (${creditUnit})`,
       dataIndex: 'creditAmount',
       key: 'creditAmount',
       sorter: true,
-      align: 'left' as const,
+      align: 'right' as const,
       render: (item: any) => {
-        return <span className="clickable">{item}</span>;
+        return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
     {
-      title: t('creditTransfer:cBalance'),
+      title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
       dataIndex: 'creditBalance',
       key: 'creditBalance',
       sorter: true,
-      align: 'left' as const,
-      render: (item: any) => {
-        return <span>{item}</span>;
+      align: 'right' as const,
+      render: (item: any, Obj: any) => {
+        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
       },
     },
     {
       title: t('programme:status'),
-      key: 'currentStage',
+      key: 'status',
       sorter: true,
       align: 'center' as const,
       render: (item: any, Obj: any) => {
         return (
-          <Tag className="clickable" color={getTransferStageTagType(Obj.status)}>
-            {getStageTransferEnumVal(Obj.status)}
-          </Tag>
+          <Tooltip title={Obj.serialNo} color={TooltipColor} key={TooltipColor}>
+            <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+              {addSpaces(getStageTransferEnumVal(Obj.status, Obj))}
+            </Tag>
+          </Tooltip>
         );
       },
     },
     {
       align: 'right' as const,
       render: (_: any, record: any) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+        const menu = actionMenu(record);
+        return menu ? (
+          <Popover placement="bottomRight" content={menu} trigger="click">
             <EllipsisOutlined
               rotate={90}
               style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
             />
           </Popover>
+        ) : (
+          <span></span>
         );
       },
       // render: () => {
@@ -529,95 +588,61 @@ const CreditTransfer = () => {
     // setCurrentPage(1);
   };
 
-  const handleOk = (val: any) => {
-    console.log(val);
-    selectedReqId !== undefined && rejectTransfer(selectedReqId, val.remarks);
-    formModal.resetFields();
-    setSelectedReqId(undefined);
-  };
+  // const handleOk = (val: any) => {
+  //   console.log(val);
+  //   selectedReqId !== undefined && rejectTransfer(selectedReqId, val.remarks);
+  //   formModal.resetFields();
+  //   setSelectedReqId(undefined);
+  // };
 
-  const handleCancel = () => {
-    setRejectModalVisible(false);
-    formModal.resetFields();
-    setSelectedReqId(undefined);
-  };
+  // const handleCancel = () => {
+  //   setRejectModalVisible(false);
+  //   formModal.resetFields();
+  //   setSelectedReqId(undefined);
+  // };
 
-  const handleCancelOk = (val: any) => {
-    console.log(val);
-    selectedReqId !== undefined && cancelRequest(selectedReqId, val.remarks);
-    formModal.resetFields();
-    setCancelModalVisible(false);
-  };
+  // const handleCancelOk = (val: any) => {
+  //   console.log(val);
+  //   selectedReqId !== undefined && cancelRequest(selectedReqId, val.remarks);
+  //   formModal.resetFields();
+  //   setCancelModalVisible(false);
+  // };
 
-  const handleCancelCancel = () => {
-    setSelectedReqId(undefined);
-    formModal.resetFields();
-    setCancelModalVisible(false);
-  };
+  // const handleCancelCancel = () => {
+  //   setSelectedReqId(undefined);
+  //   formModal.resetFields();
+  //   setCancelModalVisible(false);
+  // };
 
-  const acceptRequestApi = async (comCredits: any, remarks: any) => {
-    console.log(comCredits, 'lll', companyIdsVal, 'llllll', selectedReqId);
-    setLoading(true);
-    try {
-      const response: any = await post('national/programme/transferApprove', {
-        requestId: selectedReqId,
-        comment: remarks,
-        companyIds: companyIdsVal,
-        companyCredit: comCredits,
-      });
-      console.log(response);
-      message.open({
-        type: 'success',
-        content: response.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setAcceptModalVisible(false);
-      setLoading(false);
-      formModal.resetFields();
-    } catch (error: any) {
-      console.log('Error in approving credit transfers', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setAcceptModalVisible(false);
-      setLoading(false);
-      formModal.resetFields();
-    }
-  };
+  // const handleAcceptOk = (val: any) => {
+  //   const arr = [];
+  //   for (const key in val) {
+  //     if (key.startsWith('credits') && val[key] !== undefined) {
+  //       arr.push(parseInt(val[key]));
+  //     } else if (key.startsWith('credits') && val[key] === undefined) {
+  //       arr.push(0);
+  //     }
+  //   }
+  //   const sum = arr.reduce((a, b) => a + b, 0);
+  //   if (sum === creditAmount) {
+  //     acceptRequestApi(arr, val.remarksApprove);
+  //     formModal.resetFields();
+  //     setAcceptModalVisible(false);
+  //   } else {
+  //     message.open({
+  //       type: 'error',
+  //       content: 'Sum of credits should be equal to total requested credits',
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   }
+  // };
 
-  const handleAcceptOk = (val: any) => {
-    const arr = [];
-    for (const key in val) {
-      if (key.startsWith('credits') && val[key] !== undefined) {
-        arr.push(parseInt(val[key]));
-      } else if (key.startsWith('credits') && val[key] === undefined) {
-        arr.push(0);
-      }
-    }
-    const sum = arr.reduce((a, b) => a + b, 0);
-    if (sum === creditAmount) {
-      acceptRequestApi(arr, val.remarksApprove);
-      formModal.resetFields();
-      setAcceptModalVisible(false);
-    } else {
-      message.open({
-        type: 'error',
-        content: 'Sum of credits should be equal to total requested credits',
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    }
-  };
-
-  const handleAcceptCancel = () => {
-    setSelectedReqId(undefined);
-    formModal.resetFields();
-    setAcceptModalVisible(false);
-  };
+  // const handleAcceptCancel = () => {
+  //   setSelectedReqId(undefined);
+  //   formModal.resetFields();
+  //   setAcceptModalVisible(false);
+  // };
 
   return (
     <div className="credit-transfer-management content-container">
@@ -691,7 +716,24 @@ const CreditTransfer = () => {
           </Col>
         </Row>
       </div>
-      <Modal
+      {popupInfo && selectedReq && (
+        <TransferActionModel
+          transfer={selectedReq!}
+          onCancel={() => {
+            setModalVisible(false);
+            setSelectedReq(undefined);
+          }}
+          actionBtnText={popupInfo!.actionBtnText}
+          onFinish={popupInfo?.okAction}
+          subText={''}
+          openModal={modalVisible}
+          icon={popupInfo!.icon}
+          title={popupInfo!.title}
+          type={popupInfo!.type}
+          remarkRequired={popupInfo.remarkRequired}
+        />
+      )}
+      {/* <Modal
         centered
         title=""
         okText="REJECT"
@@ -983,7 +1025,7 @@ const CreditTransfer = () => {
             </Form>
           </div>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };

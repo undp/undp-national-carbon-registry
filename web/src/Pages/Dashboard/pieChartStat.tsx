@@ -1,12 +1,7 @@
 import React, { FC } from 'react';
-import { DatePicker, Progress, Skeleton } from 'antd';
+import { DatePicker, Skeleton } from 'antd';
 import Chart from 'react-apexcharts';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import fileText from '../../Assets/Images/fileText.svg';
-import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { ClockHistory, HandThumbsUp, XCircle, Clipboard2Pulse } from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 

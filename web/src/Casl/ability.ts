@@ -41,14 +41,20 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
         id: { $eq: user.id },
       });
       cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
+      cannot([Action.Update], Company);
+      can([Action.Delete], Company);
     } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
         id: { $eq: user.id },
       });
       cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
-
-      can(Action.Manage, Company);
+      can(Action.Update, Company, { companyId: { $eq: user.companyId } });
+      cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
+      cannot(Action.Update, Company, ['companyRole']);
+      can([Action.Delete], Company);
+    } else if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
+      can([Action.Delete], Company);
     } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
       can(Action.Read, User, { companyId: { $eq: user.companyId } });
       can(Action.Delete, User, { companyId: { $eq: user.companyId } });
@@ -60,7 +66,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
       can(Action.Read, Company);
       can(Action.Update, Company, { companyId: { $eq: user.companyId } });
-      cannot(Action.Update, Company, ['taxId', 'companyRole']);
+      cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
+      cannot(Action.Update, Company, ['companyRole']);
     } else {
       if (user.companyRole === CompanyRole.GOVERNMENT) {
         can(Action.Read, User);
@@ -88,15 +95,23 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     if (user.role === Role.Admin && user.companyRole === CompanyRole.MRV) {
       can([Action.Create, Action.Read], Programme);
     } else if (user.companyRole === CompanyRole.CERTIFIER) {
-      can(Action.Read, Programme, { currentStage: { $in: [ProgrammeStage.ISSUED] } });
+      can(Action.Read, Programme, { currentStage: { $in: [ProgrammeStage.AUTHORISED] } });
       can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } } });
     } else if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.ISSUED } });
+      can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.AUTHORISED } });
       can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } } });
     }
 
     // cannot(Action.Delete, User, { id: { $eq: user.id } })
     cannot(Action.Update, User, ['companyRole']);
+
+    if (user.companyState === 0) {
+      cannot(Action.Create, 'all');
+      cannot(Action.Delete, 'all');
+      cannot(Action.Update, 'all');
+    }
+
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
   }
 
   ability.update(rules);

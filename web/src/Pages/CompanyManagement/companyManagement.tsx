@@ -32,7 +32,7 @@ import {
   Table,
   Typography,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './companyManagement.scss';
 import '../Common/common.table.scss';
@@ -60,6 +60,10 @@ import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CompanyTableDataType } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
+import { AbilityContext } from '../../Casl/Can';
+import { Action } from '../../Casl/enums/action.enum';
+import { Company } from '../../Casl/entities/Company';
+import { plainToClass } from 'class-transformer';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -80,6 +84,7 @@ const CompanyManagement = () => {
   const [sortOrder, setSortOrder] = useState<string>('');
   const [sortField, setSortField] = useState<string>('');
   const { i18n, t } = useTranslation(['company']);
+  const ability = useContext(AbilityContext);
 
   document.addEventListener('mousedown', (event: any) => {
     const organisationFilterArea1 = document.querySelector('.filter-bar');
@@ -150,18 +155,22 @@ const CompanyManagement = () => {
           {
             text: 'Edit',
             icon: <EditOutlined />,
+            isDisabled: !ability.can(Action.Update, plainToClass(Company, record)),
             click: () => {
               navigate('/companyManagement/updateCompany', { state: { record } });
             },
           },
-          {
-            text: 'Delete',
-            icon: <DeleteOutlined />,
-            click: () => {},
-          },
+          // {
+          //   text: 'Delete',
+          //   icon: <DeleteOutlined />,
+          //   click: () => {},
+          // },
         ]}
         renderItem={(item) => (
-          <List.Item onClick={() => item.click()}>
+          <List.Item
+            onClick={!item.isDisabled ? item.click : undefined}
+            className={item.isDisabled ? 'disabled' : ''}
+          >
             <Typography.Text className="action-icon">{item.icon}</Typography.Text>
             <span>{item.text}</span>
           </List.Item>
@@ -253,6 +262,21 @@ const CompanyManagement = () => {
       align: 'left' as const,
       render: (item: any) => {
         return item ? addCommSep(item) : '-';
+      },
+    },
+    {
+      title: '',
+      width: 6,
+      align: 'right' as const,
+      render: (_: any, record: CompanyTableDataType) => {
+        return (
+          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+            <EllipsisOutlined
+              rotate={90}
+              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+            />
+          </Popover>
+        );
       },
     },
   ];
@@ -507,7 +531,7 @@ const CompanyManagement = () => {
                   emptyText: (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={tableData.length === 0 ? 'No Companies' : null}
+                      description={tableData.length === 0 ? 'No data' : null}
                     />
                   ),
                 }}

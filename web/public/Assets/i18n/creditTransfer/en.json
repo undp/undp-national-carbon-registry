@@ -1,6 +1,6 @@
 {
   "viewCreditsTransfers": "Transfers",
-  "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+  "desc": "View the transfers in the Carbon Registry based on your permissions",
   "requestID": "REQUEST ID",
   "certifier": "CERTIFIER",
   "initiator": "INITIATOR",
@@ -12,5 +12,18 @@
   "cRequested": "CREDIT REQUESTED",
   "cBalance": "CREDIT BALANCE",
   "status": "STATUS",
-  "noTransfer": "No Transfers Available"
+  "noTransfer": "No Transfers Available",
+  "cancelTitle": "Are you sure you want to cancel this request?",
+  "rejectTitle": "Are you sure you want to reject this  request?",
+  "acceptTitle": "Accept Transfer Request",
+  "proceed": "Proceed",
+  "cancel": "Cancel",
+  "reject": "Reject",
+  "recognise": "Recognise",
+  "notrecognise": "Not Recognise",
+  "accept": "Accept",
+  "recogniseTitle": "Retire Credits",
+  "notRecogniseTitle": "Are you sure you do not want to recognise this international transfer retire request?",
+  "laccount": "Government Local Account",
+  "iaccount": "Government International Account"
 }

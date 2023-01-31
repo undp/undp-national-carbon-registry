@@ -12,6 +12,7 @@ import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { Company } from '../entities/company.entity';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.
     TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity, ProgrammeTransferViewEntityQuery]), 
     UtilModule, 
     CompanyModule, 
-    EmailModule
+    EmailModule,
+    UserModule
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService]

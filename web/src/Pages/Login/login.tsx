@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
 // import sha1 from 'sha1';
-import countryLogo from '../../Assets/Images/nigeria.png';
+import countryLogo from '../../Assets/Images/logo-slider.png';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -40,6 +40,7 @@ const Login = () => {
         id: response.data.id,
         role: response.data.role,
         companyId: response.data.companyId,
+        companyState: response.data.companyState,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -51,6 +52,8 @@ const Login = () => {
           companyId: response.data.companyId,
           companyRole: response.data.companyRole,
           companyLogo: response.data.companyLogo,
+          companyName: response.data.companyName,
+          companyState: response.data.companyState,
         });
         removeToken();
         return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');
@@ -89,7 +92,14 @@ const Login = () => {
                     <img src={countryLogo} alt="country-logo" />
                   </div>
                   <div className="login-country-name">
-                    <span>{t('common:nigeria')}</span>
+                    <div className="title">
+                      {'CARBON'}
+                      <span className="title-sub">{'REGISTRY'}</span>
+                    </div>
+
+                    <span className="country-name">
+                      {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                    </span>
                   </div>
                 </Col>
               </Row>
@@ -194,7 +204,8 @@ const Login = () => {
           <Row>
             <div className="login-language-selection-container">
               <span className="login-language-selection-txt">
-                {t('common:language')} :
+                {t('common:language')}
+                <span className="sep">{':'}</span>
                 <Select
                   placeholder="Search to Select"
                   defaultValue={

@@ -24,7 +24,7 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Get('profile')
     async getProfile(@Request() req) {
-      return await this.userService.getUserProfileDetails(req.user.email);
+      return await this.userService.getUserProfileDetails(req.user.id);
     }
     
     @ApiBearerAuth()

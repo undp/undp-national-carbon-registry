@@ -1,5 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, Length } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min } from "class-validator";
+import { RetireType } from "../enum/retire.type.enum";
+import { BasicOrgInfo } from "./basic.organisation.dto";
 
 export class ProgrammeRetire {
 
@@ -8,13 +10,40 @@ export class ProgrammeRetire {
     @IsString()
     programmeId: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    reason: string;
+    @ApiPropertyOptional()
+    @IsArray()
+    @IsInt({ each: true })
+    @IsOptional()
+    fromCompanyIds: number[];
 
-    @ApiProperty()
+    @ApiPropertyOptional()
+    @IsArray()
+    @IsNumber({},{each: true})
+    @Min(0, { each: true })
+    @IsOptional()
+    companyCredit: number[];
+
+    // @ApiPropertyOptional()
+    // @IsNotEmpty()
+    // @IsNotEmpty()
+    // @IsOptional()
+    // toAccount: string;
+
+    @ApiPropertyOptional()
+    @IsNotEmpty()
+    @IsNotEmpty()
+    @IsOptional()
+    toCompanyMeta: BasicOrgInfo;
+
+    @ApiPropertyOptional()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
+
+    @ApiProperty({ enum: RetireType })
+    @IsNotEmpty()
+    @IsEnum(RetireType, {
+        message: 'Invalid retire type. Supported following sector:' + Object.values(RetireType)
+    })
+    type: RetireType;
 }

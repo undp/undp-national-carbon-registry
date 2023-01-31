@@ -8,6 +8,8 @@ import { Sector } from '../enum/sector.enum';
 import { TransferStatus } from '../enum/transform.status.enum';
 import { ProgrammeStage } from '../enum/programme-status.enum';
 import { EntitySubject } from './entity.subject';
+import { BasicOrgInfo } from '../dto/basic.organisation.dto';
+import { RetireType } from '../enum/retire.type.enum';
 
 export const bigint: ValueTransformer = {
     to: (entityValue: number) => entityValue,
@@ -24,10 +26,34 @@ export class ProgrammeTransfer implements EntitySubject {
     programmeId: string;
 
     @Column()
-    requesterId: number;
+    initiator: number;
 
     @Column()
-    requesterCompanyId: number;
+    initiatorCompanyId: number;
+
+    @Column()
+    toCompanyId: number;
+
+    @Column({nullable: true})
+    toAccount: string;
+
+    @Column({
+        type: 'jsonb',
+        array: false,
+        nullable: true
+    })
+    toCompanyMeta: BasicOrgInfo;
+
+    @Column({
+        type: "enum",
+        enum: RetireType,
+        array: false,
+        nullable: true
+    })
+    retirementType: RetireType;
+
+    @Column()
+    fromCompanyId: number;
 
     @Column("real")
     creditAmount: number;
@@ -37,14 +63,14 @@ export class ProgrammeTransfer implements EntitySubject {
 
     @Column({type: "bigint"})
     txTime: number;
-
-    @Column("bigint", { array: true, transformer: [bigint] })
-    companyId: number[];
-
+    
     @Column({
         type: "enum",
         enum: TransferStatus,
         array: false
     })
     status: TransferStatus;
+
+    @Column({nullable: true, default: false})
+    isRetirement: boolean;
 }

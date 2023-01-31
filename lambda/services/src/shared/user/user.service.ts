@@ -36,6 +36,8 @@ import { plainToClass } from "class-transformer";
 import { Company } from "../../shared/entities/company.entity";
 import { CompanyService } from "../company/company.service";
 import { HelperService } from "../util/helpers.service";
+import { CounterService } from "../util/counter.service";
+import { CounterType } from "../util/counter.type.enum";
 
 @Injectable()
 export class UserService {
@@ -46,7 +48,8 @@ export class UserService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectEntityManager() private entityManger: EntityManager,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private counterService: CounterService
   ) {}
 
   private generateRandomPassword() {
@@ -97,8 +100,8 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
-  async getUserProfileDetails(username: string) {
-    const userProfileDetails = await this.findOne(username);
+  async getUserProfileDetails(id: number) {
+    const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(userProfileDetails.companyId);
     return{
       user: userProfileDetails,
@@ -302,6 +305,8 @@ export class UserService {
           HttpStatus.FORBIDDEN
         );
       }
+
+      company.createdTime = new Date().getTime();
     }
 
     if (
@@ -338,12 +343,32 @@ export class UserService {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
+    if (company) {
+      company.companyId = parseInt(
+        await this.counterService.incrementCount(CounterType.COMPANY, 3)
+      );
+      const response: any = await this.helperService.uploadCompanyLogoS3(
+        company.companyId,
+        company.logo
+      );
+      if (response.Location) {
+        company.logo = response.Location;
+      } else {
+        throw new HttpException(
+          "Company update failed. Please try again",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
+
     await this.emailService.sendEmail(u.email, EmailTemplates.REGISTER_EMAIL, {
       name: u.name,
       countryName: this.configService.get("systemCountry"),
       password: u.password,
       apiKeyText: u.apiKey ? `<br>Api Key: ${u.apiKey}` : "",
     });
+
+    u.createdTime = new Date().getTime();
 
     const usr = await this.entityManger
       .transaction(async (em) => {

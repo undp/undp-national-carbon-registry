@@ -1,8 +1,12 @@
 import { BankOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
+import { plainToClass } from 'class-transformer';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AbilityContext } from '../../Casl/Can';
+import { Company } from '../../Casl/entities/Company';
+import { Action } from '../../Casl/enums/action.enum';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -19,6 +23,8 @@ const CompanyProfile = () => {
   const [openDeauthorisationModal, setOpenDeauthorisationModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [userRole, setUserRole] = useState<any>('');
+  const [companyRole, setCompanyRole] = useState<any>('');
+  const ability = useContext(AbilityContext);
 
   const getCompanyDetails = async (companyId: string) => {
     try {
@@ -38,6 +44,7 @@ const CompanyProfile = () => {
       getCompanyDetails(state.record.companyId);
       const userRoleValue = localStorage.getItem('userRole') as string;
       setUserRole(userRoleValue);
+      setCompanyRole(localStorage.getItem('companyRole') as string);
     }
   }, []);
 
@@ -74,22 +81,14 @@ const CompanyProfile = () => {
 
   return (
     <div className="content-container company-profile">
-      {/* <Row> */}
-      {/* <Col md={24} lg={8}>
-          <div className="title-bar">
-            <div>
-              <div className="body-title">{t('companyProfile:title')}</div>
-              <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
-            </div>
-          </div>
-        </Col> */}
       <div className="title-bar">
         <div>
           <div className="body-title">{t('companyProfile:title')}</div>
           <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
         </div>
         <div className="flex-display">
-          {['Admin', 'Root', 'Manager'].includes(userRole) &&
+          {ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
+          !isLoading &&
           parseInt(companyDetails.state) !== 0 ? (
             <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
               {t('companyProfile:deauthorise')}
@@ -99,23 +98,6 @@ const CompanyProfile = () => {
           )}
         </div>
       </div>
-      {/* <Col md={24} lg={16}>
-          <Row justify="end">
-            {['Admin', 'Root', 'Manager'].includes(userRole) ? (
-              <Button
-                danger
-                disabled={parseInt(companyDetails.state) === 0}
-                className="mg-right-5 btn-danger"
-                onClick={onDeauthoriseOrganisation}
-              >
-                {t('companyProfile:deauthorise')}
-              </Button>
-            ) : (
-              ''
-            )}
-          </Row>
-        </Col> */}
-      {/* </Row> */}
 
       <div className="content-body">
         <Row gutter={16}>
@@ -123,10 +105,7 @@ const CompanyProfile = () => {
             <Card className="card-container">
               <Skeleton loading={isLoading} active>
                 <Row justify="center">
-                  <img
-                    className="profile-img"
-                    src={'data:image/jpeg;base64,' + companyDetails.logo}
-                  />
+                  <img className="profile-img" src={companyDetails.logo} />
                 </Row>
                 <Row justify="center">
                   <div className="padding-top-1 company-name">{companyDetails.name}</div>

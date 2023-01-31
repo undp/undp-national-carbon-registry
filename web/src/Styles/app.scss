@@ -275,6 +275,7 @@ body {
 
   .action-icon {
     margin-right: 12px;
+    display: flex;
   }
 
   .anticon-edit {
@@ -374,6 +375,12 @@ body {
   color: $body-text-color;
   font-size: 0.8rem;
 
+  .ant-select-selector {
+    text-align: left;
+    border-radius: 5px !important;
+    height: 32px;
+  }
+
   .form-label {
     text-align: left;
 
@@ -383,13 +390,13 @@ body {
     }
   }
 
-  .ant-form{
+  .ant-form {
     .ant-input-password {
       padding: 6.5px 11px;
-      font-size: 16px;  
+      font-size: 16px;
     }
 
-    .ant-form-item-explain-error{
+    .ant-form-item-explain-error {
       font-size: 13px;
       text-align: start;
     }
@@ -400,7 +407,7 @@ body {
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-  
+
       .error-message-txt {
         font-size: 0.9rem;
         color: $error-color;
@@ -415,7 +422,7 @@ body {
   font-weight: 600;
   font-family: $primary-font-family;
   font-size: 0.9rem;
-  margin: 25px 20px -25px 20px;
+  margin: 25px 20px -20px 20px;
 
   .icon {
     font-size: 4rem;
@@ -487,6 +494,11 @@ body {
     border-color: #d9d9d9;
     background: #f5f5f5;
   }
+
+  .ant-btn-default {
+    color: $body-text-color;
+    border-color: $body-text-color;
+  }
 }
 
 .ant-modal-footer {
@@ -494,6 +506,7 @@ body {
     height: 32px;
     border-radius: 4px;
     padding: 6px 16px;
+    font-weight: 500;
   }
 
   .ant-btn-default {
@@ -534,10 +547,161 @@ body {
   margin-left: 2rem !important;
 }
 
+.mg-left-1 {
+  margin-left: 1rem;
+}
+
 .mg-top-1 {
   margin-top: 1rem;
 }
 
 .mg-top-2 {
   margin-top: 2rem;
+}
+
+.transfer-form {
+  .popup-credit-input {
+    .ant-form-item-explain-error {
+      width: 200px;
+    }
+  }
+
+  .ant-row {
+    align-items: unset;
+  }
+  padding: 0px 15px;
+  .sub-text {
+    margin-bottom: 35px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .label {
+    text-align: left;
+    font-size: 0.9rem;
+    color: $body-text-color;
+  }
+  .seperator {
+    font-size: 1.2rem;
+    color: $line-colors;
+  }
+
+  .footer {
+    margin-bottom: 0px;
+    margin-top: 15px;
+  }
+  color: $body-text-color;
+
+  label {
+    font-size: 0.8rem;
+  }
+  .ant-radio-wrapper {
+    font-size: 0.9rem;
+  }
+
+  input {
+    color: $body-text-color;
+  }
+
+  button {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+}
+
+.color-error {
+  color: $error-color;
+}
+
+.color-primary {
+  color: $primary-color;
+}
+
+.ant-input-number-input {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.ant-form-item {
+  .ant-radio-group {
+    text-align: left;
+  }
+}
+
+.loading-center {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.ant-tag-purple {
+  color: #976ed7;
+}
+
+.ant-tag-orange {
+  color: #ff8f56;
+}
+
+.ant-tag-default {
+  color: rgba(#3a3541, 0.5);
+}
+
+.ant-popover-inner {
+  border-radius: 4px;
+}
+
+.ant-input-number {
+  border-radius: 5px;
+}
+
+.ret-icon {
+  background-color: rgba(#fef1ad, 0.5);
+  color: #ff8f56;
+}
+
+.flag-ret-icon {
+  display: flex !important;
+  background-color: #f4f5fa;
+  font-size: 1.1rem !important;
+  padding: 7px;
+}
+
+.b-icon {
+  vertical-align: middle;
+}
+
+.ant-message-notice-content {
+  // border-radius: 5px;
+  // font-family: $primary-font-family;
+  // font-size: 0.8rem;
+  // height: 100%;
+  // vertical-align: middle;
+  padding: 0px;
+  border-radius: 5px;
+
+  .ant-message-custom-content {
+    font-size: 0.8rem;
+    border-radius: 5px;
+    padding: 17px 24px;
+  }
+
+  .ant-message-error {
+    color: $error-color;
+    border: 1px solid $error-color;
+  }
+
+  .ant-message-success {
+    color: #5bce00;
+    border: 1px solid #5bce00;
+  }
+}
+
+.ant-select-selection-item {
+  color: $body-text-color;
+}
+
+.sub-text {
+  font-size: 0.9rem;
+  font-weight: 500;
 }

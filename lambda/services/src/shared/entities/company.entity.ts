@@ -6,7 +6,7 @@ import { EntitySubject } from "./entity.subject";
 @Entity()
 export class Company implements EntitySubject{
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     companyId: number;
 
     @Column({ unique: true, nullable: true })
@@ -51,6 +51,13 @@ export class Company implements EntitySubject{
     @Column("real", { nullable: true })
     creditBalance: number;
 
+    @Column({
+        type: 'jsonb',
+        array: false,
+        nullable: true
+    })
+    secondaryAccountBalance: any;
+
     @Column("bigint", { nullable: true })
     programmeCount: number;
 
@@ -59,5 +66,8 @@ export class Company implements EntitySubject{
 
     @Column({nullable:true})
     remarks: string;
+
+    @Column({type: "bigint", nullable: true})
+    createdTime: number;
 
 }
