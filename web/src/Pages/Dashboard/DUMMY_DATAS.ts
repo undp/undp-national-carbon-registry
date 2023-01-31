@@ -1,435 +1,3 @@
-export const DUmData = [
-  {
-    value: 220,
-    title: 'Programmes Registered',
-    updatedDate: 1669788334,
-    level: '1',
-  },
-  {
-    value: 220,
-    title: 'Programmes Authorized',
-    updatedDate: 1669781334,
-    level: '1',
-  },
-  {
-    value: 80,
-    title: 'Programmes Rejected',
-    updatedDate: 1669788334,
-    level: '1',
-  },
-  {
-    value: 72,
-    title: 'Programmes Certified',
-    updatedDate: 1669788334,
-    level: '2',
-  },
-  {
-    value: 25,
-    title: 'Certified Credits Available',
-    updatedDate: 1669763334,
-    level: '2',
-  },
-  {
-    value: 200,
-    title: 'Certified Credits Transferred',
-    updatedDate: 1669783334,
-    level: '3',
-  },
-  {
-    value: 22,
-    title: 'Certified Credits Available',
-    updatedDate: 1669783334,
-    level: '3',
-  },
-  {
-    value: 80,
-    title: 'Programmes Rejected',
-    updatedDate: 1669788334,
-    level: '4',
-  },
-  {
-    value: 72,
-    title: 'Programmes Certified',
-    updatedDate: 1669788334,
-    level: '5',
-  },
-  {
-    value: 25,
-    title: 'Certified Credits Available',
-    updatedDate: 1669763334,
-    level: '6',
-  },
-  {
-    value: 200,
-    title: 'Certified Credits Transferred',
-    updatedDate: 1669783334,
-    level: '7',
-  },
-  {
-    value: 22,
-    title: 'Certified Credits Available',
-    updatedDate: 1669783334,
-    level: '7',
-  },
-];
-
-export const options: any = {
-  states: {
-    active: {
-      filter: {
-        type: 'none',
-      },
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  chart: {
-    type: 'bar',
-    height: 400,
-    stacked: true,
-    stackType: 'normal',
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        legend: {
-          position: 'bottom',
-          offsetX: -10,
-          offsetY: 0,
-        },
-      },
-    },
-  ],
-  xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-  },
-  yaxis: {
-    show: true,
-    title: {
-      text: 'Programmes count',
-      rotate: -90,
-      offsetX: 0,
-      offsetY: 0,
-      style: {
-        color: '#263238',
-        fontSize: '12px',
-        fontFamily: 'Proxima-Nova-Regular',
-        fontWeight: 500,
-        cssClass: 'apexcharts-yaxis-title',
-      },
-    },
-  },
-  fill: {
-    opacity: 1,
-    colors: ['#E83250', '#72B829', '#D7D8DB'],
-  },
-  title: {
-    text: 'Total Programmes',
-    align: 'left',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
-      color: '#263238',
-    },
-  },
-  legend: {
-    show: true,
-    showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
-    position: 'bottom',
-    horizontalAlign: 'center',
-    floating: false,
-    fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
-    fontWeight: 400,
-    formatter: undefined,
-    inverseOrder: false,
-    width: undefined,
-    height: undefined,
-    tooltipHoverFormatter: undefined,
-    customLegendItems: [],
-    offsetX: 0,
-    offsetY: 5,
-    labels: {
-      colors: undefined,
-      useSeriesColors: false,
-    },
-    markers: {
-      width: 12,
-      height: 12,
-      strokeWidth: 0,
-      strokeColor: '#fff',
-      fillColors: ['#E83250', '#72B829', '#D7D8DB'],
-      radius: 12,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    itemMargin: {
-      horizontal: 5,
-      vertical: 0,
-    },
-    onItemClick: {
-      toggleDataSeries: true,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
-  },
-};
-
-export const optionsX: any = {
-  states: {
-    active: {
-      filter: {
-        type: 'none',
-      },
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  chart: {
-    type: 'bar',
-    height: 400,
-    stacked: true,
-    stackType: 'normal',
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        legend: {
-          position: 'bottom',
-          offsetX: -10,
-          offsetY: 0,
-        },
-      },
-    },
-  ],
-  xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-  },
-  yaxis: {
-    show: true,
-    title: {
-      text: 'Programmes count',
-      rotate: -90,
-      offsetX: 0,
-      offsetY: 0,
-      style: {
-        color: '#263238',
-        fontSize: '12px',
-        fontFamily: 'Proxima-Nova-Regular',
-        fontWeight: 500,
-        cssClass: 'apexcharts-yaxis-title',
-      },
-    },
-  },
-  fill: {
-    opacity: 1,
-    colors: ['#414487', '#2A788E', '#22A884', '#7AD151', '#FDE725'],
-  },
-  title: {
-    text: 'Total Programmes, Sector Wise',
-    align: 'left',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
-      color: '#263238',
-    },
-  },
-  legend: {
-    show: true,
-    showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
-    position: 'bottom',
-    horizontalAlign: 'center',
-    floating: false,
-    fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
-    fontWeight: 400,
-    formatter: undefined,
-    inverseOrder: false,
-    width: undefined,
-    height: undefined,
-    tooltipHoverFormatter: undefined,
-    customLegendItems: [],
-    offsetX: 0,
-    offsetY: 5,
-    labels: {
-      colors: ['#414487', '#2A788E', '#22A884', '#7AD151', '#FDE725'],
-      useSeriesColors: false,
-    },
-    markers: {
-      width: 12,
-      height: 12,
-      strokeWidth: 0,
-      strokeColor: '#fff',
-      fillColors: ['#414487', '#2A788E', '#22A884', '#7AD151', '#FDE725'],
-      radius: 12,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    itemMargin: {
-      horizontal: 5,
-      vertical: 0,
-    },
-    onItemClick: {
-      toggleDataSeries: true,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
-  },
-};
-
-export const optionsA: any = {
-  states: {
-    active: {
-      filter: {
-        type: 'none',
-      },
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  chart: {
-    type: 'bar',
-    height: 400,
-    stacked: true,
-    stackType: 'normal',
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        legend: {
-          position: 'bottom',
-          offsetX: -10,
-          offsetY: 0,
-        },
-      },
-    },
-  ],
-  xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-  },
-  yaxis: {
-    show: true,
-    title: {
-      text: 'Programmes count',
-      rotate: -90,
-      offsetX: 0,
-      offsetY: 0,
-      style: {
-        color: '#263238',
-        fontSize: '12px',
-        fontFamily: 'Proxima-Nova-Regular',
-        fontWeight: 500,
-        cssClass: 'apexcharts-yaxis-title',
-      },
-    },
-  },
-  fill: {
-    opacity: 1,
-    colors: ['#A8006D', '#D3014C', '#FF3701', '#FFAB00', '#FDE725'],
-  },
-  title: {
-    text: 'Total Programmes, Sub Sector Wise',
-    align: 'left',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
-      color: '#263238',
-    },
-  },
-  legend: {
-    show: true,
-    showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
-    position: 'bottom',
-    horizontalAlign: 'center',
-    floating: false,
-    fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
-    fontWeight: 400,
-    formatter: undefined,
-    inverseOrder: false,
-    width: undefined,
-    height: undefined,
-    tooltipHoverFormatter: undefined,
-    customLegendItems: [],
-    offsetX: 0,
-    offsetY: 5,
-    labels: {
-      colors: ['#A8006D', '#D3014C', '#FF3701', '#FFAB00', '#FDE725'],
-      useSeriesColors: false,
-    },
-    markers: {
-      width: 12,
-      height: 12,
-      strokeWidth: 0,
-      strokeColor: '#fff',
-      fillColors: ['#A8006D', '#D3014C', '#FF3701', '#FFAB00', '#FDE725'],
-      radius: 12,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    itemMargin: {
-      horizontal: 5,
-      vertical: 0,
-    },
-    onItemClick: {
-      toggleDataSeries: true,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
-  },
-};
-
-export const series = [
-  {
-    name: 'Approved',
-    data: [2, 5, 2, 5, 1, 5, 3, 8],
-  },
-  {
-    name: 'Rejected',
-    data: [10, 10, 6, 15, 6, 10, 6, 22],
-  },
-  {
-    name: 'Pending',
-    data: [10, 6, 3, 10, 12, 10, 5, 6],
-  },
-];
-
 export const seriesX = [
   {
     name: 'Land',
@@ -476,7 +44,7 @@ export const seriesA = [
   },
 ];
 
-export const optionsY: any = {
+export const totalProgrammesOptions: any = {
   states: {
     active: {
       filter: {
@@ -506,19 +74,19 @@ export const optionsY: any = {
     },
   ],
   xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
   },
   yaxis: {
     show: true,
     title: {
-      text: 'Credit count',
+      text: '',
       rotate: -90,
       offsetX: 0,
       offsetY: 0,
       style: {
         color: '#263238',
         fontSize: '12px',
-        fontFamily: 'Proxima-Nova-Regular',
+        fontFamily: 'Inter-Regular',
         fontWeight: 500,
         cssClass: 'apexcharts-yaxis-title',
       },
@@ -526,10 +94,10 @@ export const optionsY: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+    colors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
   },
   title: {
-    text: 'Total Credits Issued',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -538,7 +106,7 @@ export const optionsY: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
+      fontFamily: 'Inter',
       color: '#263238',
     },
   },
@@ -551,7 +119,7 @@ export const optionsY: any = {
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
+    fontFamily: 'Inter',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -562,7 +130,7 @@ export const optionsY: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+      colors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
       useSeriesColors: false,
     },
     markers: {
@@ -570,7 +138,266 @@ export const optionsY: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#0A97B7', '#31C4C3', '#D1D1D1'],
+      fillColors: ['#4FB8E7', '#FF8183', '#D8D8D8'],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+};
+export const totalProgrammesOptionsSub: any = {
+  states: {
+    active: {
+      filter: {
+        type: 'none',
+      },
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  chart: {
+    type: 'bar',
+    height: 400,
+    stacked: true,
+    stackType: 'normal',
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0,
+        },
+      },
+    },
+  ],
+  xaxis: {
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+  },
+  yaxis: {
+    show: true,
+    title: {
+      text: '',
+      rotate: -90,
+      offsetX: 0,
+      offsetY: 0,
+      style: {
+        color: '#263238',
+        fontSize: '12px',
+        fontFamily: 'Inter',
+        fontWeight: 500,
+        cssClass: 'apexcharts-yaxis-title',
+      },
+    },
+  },
+  fill: {
+    opacity: 1,
+    colors: [
+      '#16B1FF',
+      '#FF8183',
+      '#7FEABF',
+      '#FFB480',
+      '#666699',
+      '#009999',
+      '#c2c2d6',
+      '#ddddbb',
+      '#ff9900',
+      '#D8D8D8',
+    ],
+  },
+  title: {
+    text: '',
+    align: 'left',
+    margin: 10,
+    offsetX: 0,
+    offsetY: 0,
+    floating: false,
+    style: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      fontFamily: 'Inter',
+      color: '#263238',
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: [
+        '#16B1FF',
+        '#FF8183',
+        '#7FEABF',
+        '#FFB480',
+        '#666699',
+        '#009999',
+        '#c2c2d6',
+        '#ddddbb',
+        '#ff9900',
+        '#D8D8D8',
+      ],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: [
+        '#16B1FF',
+        '#FF8183',
+        '#7FEABF',
+        '#FFB480',
+        '#666699',
+        '#009999',
+        '#c2c2d6',
+        '#ddddbb',
+        '#ff9900',
+        '#D8D8D8',
+      ],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+};
+export const totalCreditsOptions: any = {
+  states: {
+    active: {
+      filter: {
+        type: 'none',
+      },
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  chart: {
+    type: 'bar',
+    height: 400,
+    stacked: true,
+    stackType: 'normal',
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        legend: {
+          position: 'bottom',
+          offsetX: -10,
+          offsetY: 0,
+        },
+      },
+    },
+  ],
+  xaxis: {
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+  },
+  yaxis: {
+    show: true,
+    title: {
+      text: '',
+      rotate: -90,
+      offsetX: 0,
+      offsetY: 0,
+      style: {
+        color: '#263238',
+        fontSize: '12px',
+        fontFamily: 'Inter-Regular',
+        fontWeight: 500,
+        cssClass: 'apexcharts-yaxis-title',
+      },
+    },
+  },
+  fill: {
+    opacity: 1,
+    colors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
+  },
+  title: {
+    text: '',
+    align: 'left',
+    margin: 10,
+    offsetX: 0,
+    offsetY: 0,
+    floating: false,
+    style: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      fontFamily: 'Inter',
+      color: '#263238',
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
@@ -590,7 +417,7 @@ export const optionsY: any = {
   },
 };
 
-export const optionsZ: any = {
+export const totalCreditsCertifiedOptions: any = {
   states: {
     active: {
       filter: {
@@ -620,19 +447,19 @@ export const optionsZ: any = {
     },
   ],
   xaxis: {
-    categories: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
+    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
   },
   yaxis: {
     show: true,
     title: {
-      text: 'Credit count',
+      text: '',
       rotate: -90,
       offsetX: 0,
       offsetY: 0,
       style: {
         color: '#263238',
         fontSize: '12px',
-        fontFamily: 'Proxima-Nova-Regular',
+        fontFamily: 'Inter-Regular',
         fontWeight: 500,
         cssClass: 'apexcharts-yaxis-title',
       },
@@ -640,10 +467,10 @@ export const optionsZ: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+    colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
   },
   title: {
-    text: 'Total Credits Certified',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -652,7 +479,7 @@ export const optionsZ: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
+      fontFamily: 'Inter',
       color: '#263238',
     },
   },
@@ -665,7 +492,7 @@ export const optionsZ: any = {
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
+    fontFamily: 'Inter',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -676,7 +503,7 @@ export const optionsZ: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       useSeriesColors: false,
     },
     markers: {
@@ -684,7 +511,7 @@ export const optionsZ: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#0088BE', '#FB6D85', '#D1D1D1'],
+      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
@@ -706,7 +533,7 @@ export const optionsZ: any = {
 
 export const seriesY = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [44, 55, 41, 67, 22, 43, 21, 49],
   },
   {
@@ -721,7 +548,7 @@ export const seriesY = [
 
 export const seriesZ = [
   {
-    name: 'Approved',
+    name: 'Authorised',
     data: [22, 31, 41, 67, 22, 40, 21, 11],
   },
   {
@@ -740,7 +567,7 @@ export const optionsP: any = {
     height: 400,
   },
   title: {
-    text: 'Overall Approved Programmes',
+    text: '',
     align: 'left',
     margin: 10,
     offsetX: 0,
@@ -749,7 +576,7 @@ export const optionsP: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
+      fontFamily: 'Inter-Regular',
       color: '#263238',
     },
   },
@@ -763,11 +590,11 @@ export const optionsP: any = {
     showForSingleSeries: false,
     showForNullSeries: true,
     showForZeroSeries: true,
-    position: 'right',
+    position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
+    fontFamily: 'Inter-Regular',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -838,7 +665,7 @@ export const optionsQ: any = {
     style: {
       fontSize: '16px',
       fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
+      fontFamily: 'Inter-Regular',
       color: '#263238',
     },
   },
@@ -856,7 +683,7 @@ export const optionsQ: any = {
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
+    fontFamily: 'Inter-Regular',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -909,40 +736,41 @@ export const optionsQ: any = {
   colors: ['#A8006D', '#D3014C', '#FF3701', '#FFAB00', '#FDE725'],
 };
 
-export const optionsR: any = {
+export const optionDonutPieA: any = {
   chart: {
-    type: 'pie',
-    height: 400,
+    type: 'donut',
   },
-  title: {
-    text: 'Overall Programmes',
-    align: 'left',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      fontFamily: 'Proxima-Nova-Regular',
-      color: '#263238',
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+  labels: ['Authorised', 'Transfered', 'Retired', 'Issued'],
+  plotOptions: {
+    pie: {
+      expandOnClick: false,
+      donut: {
+        labels: {
+          show: true,
+          total: {
+            showAlways: true,
+            show: true,
+            label: 'Total',
+            formatter: () => {},
+          },
+        },
+      },
     },
   },
-  fill: {
-    opacity: 1,
-    colors: ['#2EDFFC', '#FD646F'],
-  },
-  labels: ['Certified', 'Uncertified'],
   legend: {
     show: true,
     showForSingleSeries: false,
     showForNullSeries: true,
     showForZeroSeries: true,
-    position: 'right',
+    position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
-    fontFamily: 'Proxima-Nova-Regular',
+    fontFamily: 'Inter',
     fontWeight: 400,
     formatter: undefined,
     inverseOrder: false,
@@ -953,7 +781,7 @@ export const optionsR: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#2EDFFC', '#FD646F'],
+      colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
       useSeriesColors: false,
     },
     markers: {
@@ -961,7 +789,7 @@ export const optionsR: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#2EDFFC', '#FD646F'],
+      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
@@ -992,11 +820,90 @@ export const optionsR: any = {
       },
     },
   ],
-  colors: ['#2EDFFC', '#FD646F'],
 };
 
-export const seriesP = [25.49, 12.75, 17.65, 28.43, 15.69];
-
-export const seriesQ = [25.49, 12.75, 17.65, 28.43, 15.69];
-
-export const seriesR = [34, 66];
+export const optionDonutPieB: any = {
+  chart: {
+    type: 'donut',
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+  labels: ['Certified', 'Uncertified', 'Revoked'],
+  plotOptions: {
+    pie: {
+      expandOnClick: false,
+      donut: {
+        labels: {
+          show: true,
+          total: {
+            showAlways: true,
+            show: true,
+            label: 'Total',
+            formatter: () => {},
+          },
+        },
+      },
+    },
+  },
+  legend: {
+    show: true,
+    showForSingleSeries: false,
+    showForNullSeries: true,
+    showForZeroSeries: true,
+    position: 'bottom',
+    horizontalAlign: 'center',
+    floating: false,
+    fontSize: '14px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    formatter: undefined,
+    inverseOrder: false,
+    width: undefined,
+    height: undefined,
+    tooltipHoverFormatter: undefined,
+    customLegendItems: [],
+    offsetX: 0,
+    offsetY: 5,
+    labels: {
+      colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      useSeriesColors: false,
+    },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      radius: 12,
+      customHTML: undefined,
+      onClick: undefined,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    itemMargin: {
+      horizontal: 5,
+      vertical: 0,
+    },
+    onItemClick: {
+      toggleDataSeries: true,
+    },
+    onItemHover: {
+      highlightDataSeries: true,
+    },
+  },
+  responsive: [
+    {
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200,
+        },
+        legend: {
+          position: 'bottom',
+        },
+      },
+    },
+  ],
+};

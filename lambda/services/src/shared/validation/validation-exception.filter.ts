@@ -41,7 +41,9 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 				}
 				if (error.children) {
 					error.children.forEach((er_child) => {
-						resp[error.property + '.' + er_child.property] = Object.values(er_child.constraints);
+						if (er_child.constraints) {
+							resp[error.property + '.' + er_child.property] = Object.values(er_child.constraints);
+						}
 					});
 				}
 				return resp

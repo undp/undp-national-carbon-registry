@@ -4,7 +4,7 @@
   .common-form-class {
     .ant-form-item-label > label {
       color: $common-form-label;
-      font-family: 'Proxima-Nova-Regular';
+      font-family: 'Inter-Regular';
       font-size: 1rem;
     }
     .ant-input {
@@ -17,7 +17,7 @@
     }
     .ant-input::placeholder {
       color: $common-form-placeholder !important;
-      font-family: 'Proxima-Nova-Regular';
+      font-family: 'Inter-Regular';
       font-size: 1rem;
     }
     .ant-select-selector {
@@ -53,7 +53,7 @@
       flex-direction: row;
       align-items: center;
       color: $common-form-label;
-      font-family: 'Proxima-Nova-Regular';
+      font-family: 'Inter-Regular';
       font-size: 1rem;
     }
     input:-webkit-autofill,

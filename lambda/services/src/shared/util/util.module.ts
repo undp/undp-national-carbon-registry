@@ -7,6 +7,7 @@ import { Country } from '../entities/country.entity';
 import { TypeOrmConfigService } from '../typeorm.config.service';
 import { CounterService } from './counter.service';
 import { CountryService } from './country.service';
+import { HelperService } from './helpers.service';
 import { IsValidCountryConstraint } from './validcountry.decorator';
 
 @Module({
@@ -18,11 +19,12 @@ import { IsValidCountryConstraint } from './validcountry.decorator';
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
+      imports: undefined
     }),
     TypeOrmModule.forFeature([Counter]),
     TypeOrmModule.forFeature([Country]),
   ],
-  providers: [CounterService, CountryService, IsValidCountryConstraint],
-  exports: [CounterService, CountryService]
+  providers: [CounterService, CountryService, IsValidCountryConstraint, HelperService],
+  exports: [CounterService, CountryService, HelperService]
 })
 export class UtilModule {}

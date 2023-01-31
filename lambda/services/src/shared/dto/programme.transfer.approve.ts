@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Length } from "class-validator";
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Length, Min } from "class-validator";
 
 export class ProgrammeTransferApprove {
 
@@ -8,20 +8,21 @@ export class ProgrammeTransferApprove {
     @IsNumber()
     requestId: number;
 
-    @ApiPropertyOptional()
-    @IsArray()
-    @IsInt({ each: true })
-    @IsOptional()
-    companyIds: number[];
+    // @ApiPropertyOptional()
+    // @IsArray()
+    // @IsInt({ each: true })
+    // @IsOptional()
+    // companyIds: number[];
+
+    // @ApiPropertyOptional()
+    // @IsArray()
+    // @IsNumber({},{each: true})
+    // @Min(0, { each: true })
+    // @IsOptional()
+    // companyCredit: number[];
 
     @ApiPropertyOptional()
-    @IsArray()
-    @IsPositive({ each: true })
-    @IsOptional()
-    companyCredit: number[];
-
-    @ApiProperty()
     @IsString()
-    @Length(0, 200)
+    @IsOptional()
     comment: string;
 }

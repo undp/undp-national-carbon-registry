@@ -15,6 +15,11 @@ export class ProgrammeDto {
     @IsString()
     title: string;
 
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    externalId: string;
+
     @ApiProperty({ enum: SectoralScope })
     @IsNotEmpty()
     @IsEnum(SectoralScope, {

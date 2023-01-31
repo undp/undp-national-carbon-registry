@@ -10,11 +10,12 @@ import { AuthModule } from '../shared/auth/auth.module';
 import { CaslModule } from '../shared/casl/casl.module';
 import { ProgrammeModule } from '../shared/programme/programme.module';
 import { CompanyModule } from '../shared/company/company.module';
-import { UserController } from './user.controller';
-import { AuthController } from './auth.controller';
 import { CompanyController } from './company.controller';
 import { UserModule } from '../shared/user/user.module';
+import { UserController } from './user.controller';
+import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
+import { UtilModule } from '../shared/util/util.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { ProgrammeController } from './programme.controller';
     UserModule,
     CaslModule,
     ProgrammeModule,
-    CompanyModule
+    CompanyModule,
+    UtilModule
   ],
   controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController ],
   providers: [

@@ -1,14 +1,15 @@
 @font-face {
-  font-family: 'Proxima-Nova-Black';
-  src: url('FontsFree-Net-Proxima-Nova-Black.otf') format('opentype');
-  font-weight: bold;
+  font-family: 'Inter';
+  src: url('Inter-SemiBold.ttf') format('truetype');
+  font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
+
 @font-face {
-  font-family: 'Proxima-Nova-Bold';
-  src: url('FontsFree-Net-Proxima-Nova-Bold.otf') format('opentype');
-  font-weight: bold;
+  font-family: 'Inter';
+  src: url('Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -20,9 +21,33 @@
   font-display: swap;
 }
 @font-face {
-  font-family: 'Proxima-Nova-Regular';
-  src: url('FontsFree-Net-ProximaNova-Regular.ttf') format('truetype');
-  font-weight: normal;
+  font-family: 'Inter';
+  src: url('Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('Inter-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MuseoSans';
+  src: url('MuseoSans-100.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MuseoSans';
+  src: url('MuseoSans_700.otf') format('opentype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }

@@ -8,7 +8,7 @@ import { AnalyticsAPIModule } from "./analytics.api.module";
 let cachedServer: Server;
 
 export const handler: Handler = async (event: any, context: Context) => {
-  const httpBase = "/api/analytics";
+  const httpBase = "/api/stats";
   cachedServer = await bootstrapServer(
     cachedServer,
     AnalyticsAPIModule,

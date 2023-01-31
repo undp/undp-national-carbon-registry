@@ -308,7 +308,15 @@ Resources:
       LedgerName: !Ref LedgerInstance
       RoleArn: !GetAtt LambdaRole.Arn
       StreamName: !Sub qldb-${EnvironmentName}
-  
+
+  S3GatewayEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      RouteTableIds:
+        - !Ref PrivateRouteTable1
+        - !Ref PrivateRouteTable2
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId: !Ref VPC
 
   VPCEndpointForSES:
     Type: AWS::EC2::VPCEndpoint
@@ -331,6 +339,13 @@ Resources:
       WebsiteConfiguration:
         ErrorDocument: 'index.html'
         IndexDocument: 'index.html'
+
+  S3BucketCommonWeb:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Sub 'carbon-common-${EnvironmentName}'
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy

@@ -1,0 +1,707 @@
+@import './variables.scss';
+
+body {
+  background-color: $background-color;
+  font-family: $primary-font-family;
+  font-weight: 400;
+}
+
+.ant-menu {
+  background-color: $background-color;
+}
+
+.ant-layout-header {
+  background-color: $background-color;
+}
+
+.ant-layout {
+  background-color: $background-color;
+}
+
+.ant-menu-submenu {
+  .ant-menu {
+    background-color: $background-color;
+  }
+}
+.ant-menu-item {
+  background-color: $background-color;
+}
+
+.ant-menu-sub {
+  background-color: $background-color;
+}
+
+.ant-table-content {
+  font-family: $primary-font-family;
+}
+
+.ant-input {
+  border-radius: 5px !important;
+}
+.ant-btn {
+  border-radius: 5px !important;
+}
+.ant-input-group-addon:first-child {
+  border-radius: 5px !important;
+}
+
+.ant-input-group .ant-input {
+  width: 99% !important;
+}
+
+.ant-tooltip-inner {
+  border-radius: 5px !important;
+  background-color: #16b1ff !important;
+}
+
+.ant-tooltip-arrow-content {
+  --antd-arrow-background-color: linear-gradient(to right bottom, #16b1ff, #16b1ff) !important;
+}
+
+.ant-radio-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ant-radio-group-large .ant-radio-button-wrapper {
+  font-size: 0.8rem;
+  width: 25%;
+  border-radius: 5px !important;
+}
+
+.ant-upload-list-picture .ant-upload-list-item-error,
+.ant-upload-list-picture-card .ant-upload-list-item-error {
+  border-color: #40a9ff;
+  border-radius: 5px;
+  height: 40px;
+
+  .ant-upload-list-item-name {
+    color: #40a9ff !important;
+  }
+}
+
+.ant-upload-list-item-error .ant-upload-list-item-card-actions .anticon {
+  color: #40a9ff;
+}
+
+.ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+.ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+  border-color: #d9d9d9 !important;
+}
+
+.ant-input-group-wrapper-status-error .ant-input-group-addon {
+  border-color: #d9d9d9 !important;
+}
+
+.ant-form-item-explain-error {
+  font-size: 0.875rem;
+}
+
+.ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  background-color: transparent !important;
+}
+
+.ant-form-item-label > label {
+  flex-direction: row-reverse !important;
+  color: rgba(58, 53, 65, 0.5);
+}
+
+.ant-form-item-label
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  margin-left: 0.2rem !important;
+}
+
+.ant-picker {
+  border-radius: 5px !important;
+  height: 35px !important;
+}
+
+.PhoneInput {
+  .PhoneInputCountry {
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 5px !important;
+    padding: 0 1rem 0 1rem;
+  }
+  .PhoneInputInput {
+    flex: 1 1;
+    min-width: 0;
+    border-radius: 5px !important;
+    height: 40px;
+    border: 1px solid #d9d9d9 !important;
+    outline: none;
+  }
+}
+
+.filter-title {
+  color: $common-filter-color;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.ant-radio-wrapper {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 22px;
+  color: $common-filter-color;
+}
+
+.ant-list-item {
+  color: $common-filter-color;
+}
+
+.PhoneInput {
+  .PhoneInputInput:focus-visible,
+  .PhoneInputInput:hover {
+    flex: 1 1;
+    min-width: 0;
+    border-radius: 5px !important;
+    height: 40px;
+    border-right: 1px solid #40a9ff !important;
+    outline: 1px solid #40a9ff;
+  }
+}
+
+.layout-content-container {
+  padding-bottom: 100px;
+  .ant-btn-primary {
+    background-color: $primary-color;
+    color: $dark-text-color;
+    border: none;
+  }
+
+  .ant-btn {
+    height: 32px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border-radius: 0.3rem;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+    min-width: 80px;
+    box-shadow: none;
+    span {
+      text-transform: uppercase;
+    }
+  }
+}
+
+.content-container {
+  padding: 0px 20px;
+
+  .title-bar {
+    padding: 0px 0px 30px 0px;
+  }
+  .body-title {
+    color: $primary-color;
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+
+  .body-sub-title {
+    color: $body-text-color;
+    font-weight: 400;
+    font-size: 0.8rem;
+  }
+}
+
+.content-card {
+  background-color: $outside-background-color;
+  border-radius: 10px;
+  width: 100%;
+  // height: calc(100vh - 200px);
+  // overflow: auto;
+  .action-bar {
+    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+
+    button {
+      width: fit-content;
+    }
+  }
+
+  .filter-section {
+    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    .search-bar {
+      display: flex;
+      flex-direction: row-reverse;
+      width: 95%;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-direction: row-reverse;
+      margin-top: 0.8rem;
+      width: 5%;
+    }
+
+    .ant-input-affix-wrapper {
+      border-radius: 0.313rem 0 0 0.313rem !important;
+    }
+
+    .ant-input-search
+      > .ant-input-group
+      > .ant-input-group-addon:last-child
+      .ant-input-search-button {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-radius: 0 0.313rem 0.313rem 0 !important;
+    }
+  }
+}
+
+.layout-content-container .ant-btn {
+  min-width: 50px !important;
+}
+
+.table-actions-section {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.action-menu {
+  min-width: 120px;
+  color: $body-text-color;
+
+  .action-icon {
+    margin-right: 12px;
+    display: flex;
+  }
+
+  .anticon-edit {
+    color: #16b1ff;
+  }
+
+  .anticon-delete {
+    color: #f25a29;
+  }
+}
+
+.ant-dropdown-menu {
+  padding: 1rem 2rem 1rem 1rem !important;
+  border-radius: 5px;
+}
+
+.ant-dropdown-menu-item-active {
+  background-color: transparent !important;
+}
+
+.ant-popover-inner-content {
+  .action-menu {
+    margin: -12px -16px;
+
+    .ant-list-item {
+      padding: 11px 16px;
+      justify-content: flex-start;
+      cursor: pointer;
+    }
+  }
+}
+
+.ant-tag {
+  border-radius: 20px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.apexcharts-canvas {
+  font-family: $primary-font-family !important;
+}
+
+.apexcharts-legend-text {
+  font-family: $primary-font-family !important;
+}
+
+.ant-tag {
+  // border: none;
+  padding: 1px 10px;
+}
+
+.flex-display {
+  display: flex;
+}
+
+.ant-modal-footer {
+  border-top: none;
+  text-align: center;
+
+  button {
+    margin: 10px 20px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+}
+
+.ant-modal-header {
+  border-radius: 15px;
+  border: none;
+}
+
+.ant-modal-content {
+  border-radius: 15px;
+  border: none;
+}
+
+.ant-modal-header {
+  border: none;
+}
+
+.ant-modal-body {
+  text-align: center;
+  color: $body-text-color;
+  font-size: 0.8rem;
+
+  .ant-select-selector {
+    text-align: left;
+    border-radius: 5px !important;
+    height: 32px;
+  }
+
+  .form-label {
+    text-align: left;
+
+    .req-ast {
+      color: $error-color;
+      padding-left: 5px;
+    }
+  }
+
+  .ant-form {
+    .ant-input-password {
+      padding: 6.5px 11px;
+      font-size: 16px;
+    }
+
+    .ant-form-item-explain-error {
+      font-size: 13px;
+      text-align: start;
+    }
+
+    .error-message-container {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      .error-message-txt {
+        font-size: 0.9rem;
+        color: $error-color;
+      }
+    }
+  }
+}
+
+.popup-header {
+  text-align: center;
+  color: $title-text-color;
+  font-weight: 600;
+  font-family: $primary-font-family;
+  font-size: 0.9rem;
+  margin: 25px 20px -20px 20px;
+
+  .icon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    font-weight: 400;
+  }
+
+  img {
+    height: 100px;
+  }
+}
+
+.popup-success {
+  .icon {
+    color: $success-color;
+  }
+
+  .ant-btn-primary {
+    background: $primary-color;
+    border-radius: $primary-color;
+    border: none;
+  }
+
+  .ant-btn-default {
+    color: $body-text-color;
+    border-color: $body-text-color;
+  }
+
+  .ant-btn-primary[disabled] {
+    border-color: #d9d9d9;
+    background: #f5f5f5;
+  }
+}
+
+.popup-primary {
+  .icon {
+    color: $primary-color;
+  }
+
+  .ant-btn-primary {
+    background: $primary-color;
+    border-radius: $primary-color;
+    border: none;
+  }
+
+  .ant-btn-default {
+    color: $body-text-color;
+    border-color: $body-text-color;
+  }
+
+  .ant-btn-primary[disabled] {
+    border-color: #d9d9d9;
+    background: #f5f5f5;
+  }
+}
+
+.popup-danger {
+  .icon {
+    color: $error-color;
+  }
+
+  .ant-btn-primary {
+    background: $error-color;
+    border-radius: $error-color;
+    border: none;
+  }
+
+  .ant-btn-primary[disabled] {
+    border-color: #d9d9d9;
+    background: #f5f5f5;
+  }
+
+  .ant-btn-default {
+    color: $body-text-color;
+    border-color: $body-text-color;
+  }
+}
+
+.ant-modal-footer {
+  .ant-btn {
+    height: 32px;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-weight: 500;
+  }
+
+  .ant-btn-default {
+    color: $border-default-btn !important;
+    border-color: $border-default-btn !important;
+  }
+}
+
+.ant-tag-processing {
+  color: $primary-color;
+  background: rgba($color: #b9e2f4, $alpha: 0.4);
+  // border: none;
+  // border-color: #91d5ff;
+}
+
+// .apexcharts-tooltip.apexcharts-theme-dark{
+//   background: $primary-color !important;
+// }
+
+.filter-section input {
+  font-family: 'Inter';
+  font-size: 0.8rem !important;
+}
+
+.pull-right {
+  float: right;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.mg-left-3 {
+  margin-left: 3rem;
+}
+
+.mg-left-2 {
+  margin-left: 2rem !important;
+}
+
+.mg-left-1 {
+  margin-left: 1rem;
+}
+
+.mg-top-1 {
+  margin-top: 1rem;
+}
+
+.mg-top-2 {
+  margin-top: 2rem;
+}
+
+.transfer-form {
+  .popup-credit-input {
+    .ant-form-item-explain-error {
+      width: 200px;
+    }
+  }
+
+  .ant-row {
+    align-items: unset;
+  }
+  padding: 0px 15px;
+  .sub-text {
+    margin-bottom: 35px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .label {
+    text-align: left;
+    font-size: 0.9rem;
+    color: $body-text-color;
+  }
+  .seperator {
+    font-size: 1.2rem;
+    color: $line-colors;
+  }
+
+  .footer {
+    margin-bottom: 0px;
+    margin-top: 15px;
+  }
+  color: $body-text-color;
+
+  label {
+    font-size: 0.8rem;
+  }
+  .ant-radio-wrapper {
+    font-size: 0.9rem;
+  }
+
+  input {
+    color: $body-text-color;
+  }
+
+  button {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+}
+
+.color-error {
+  color: $error-color;
+}
+
+.color-primary {
+  color: $primary-color;
+}
+
+.ant-input-number-input {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.ant-form-item {
+  .ant-radio-group {
+    text-align: left;
+  }
+}
+
+.loading-center {
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.ant-tag-purple {
+  color: #976ed7;
+}
+
+.ant-tag-orange {
+  color: #ff8f56;
+}
+
+.ant-tag-default {
+  color: rgba(#3a3541, 0.5);
+}
+
+.ant-popover-inner {
+  border-radius: 4px;
+}
+
+.ant-input-number {
+  border-radius: 5px;
+}
+
+.ret-icon {
+  background-color: rgba(#fef1ad, 0.5);
+  color: #ff8f56;
+}
+
+.flag-ret-icon {
+  display: flex !important;
+  background-color: #f4f5fa;
+  font-size: 1.1rem !important;
+  padding: 7px;
+}
+
+.b-icon {
+  vertical-align: middle;
+}
+
+.ant-message-notice-content {
+  // border-radius: 5px;
+  // font-family: $primary-font-family;
+  // font-size: 0.8rem;
+  // height: 100%;
+  // vertical-align: middle;
+  padding: 0px;
+  border-radius: 5px;
+
+  .ant-message-custom-content {
+    font-size: 0.8rem;
+    border-radius: 5px;
+    padding: 17px 24px;
+  }
+
+  .ant-message-error {
+    color: $error-color;
+    border: 1px solid $error-color;
+  }
+
+  .ant-message-success {
+    color: #5bce00;
+    border: 1px solid #5bce00;
+  }
+}
+
+.ant-select-selection-item {
+  color: $body-text-color;
+}
+
+.sub-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}

@@ -3,7 +3,7 @@ import { Type } from "class-transformer";
 import { IsEmail, IsEnum, isNotEmpty, IsNotEmpty, IsNotEmptyObject, IsNumber, IsObject, IsOptional, IsString, ValidateIf, ValidateNested } from "class-validator";
 import { Role } from "../casl/role.enum";
 import MutuallyExclusive from "../util/mutualexclusive.decorator";
-import { CompanyDto } from "./company.dto";
+import { OrganisationDto } from "./organisation.dto";
 
 export class UserDto {
 
@@ -26,15 +26,16 @@ export class UserDto {
 
     @IsString()
     @ApiPropertyOptional()
+    @IsOptional()
     phoneNo: string;
 
     @IsNotEmptyObject()
     @ApiPropertyOptional()
     @IsOptional()
     @ValidateNested()
-    @Type(() => CompanyDto)
+    @Type(() => OrganisationDto)
     @MutuallyExclusive('company')
-    company: CompanyDto;
+    company: OrganisationDto;
 
     @IsNumber()
     @ApiPropertyOptional()

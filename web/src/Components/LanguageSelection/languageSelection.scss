@@ -1,0 +1,58 @@
+@import '../../Styles/variables.scss';
+
+.login-language-selection-container {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color:#16B1FF;
+
+    .ant-select {
+        width: 183px;
+        text-align: center;      
+        color: #16B1FF;  
+        .ant-select-arrow{
+            color: #16B1FF;
+        }
+    }
+
+    .ant-select-selector {
+        color: #16B1FF;
+        text-transform: uppercase;
+        border: 1px solid #16B1FF !important;
+        border-radius: 4px !important;
+    }
+
+    .ant-select-item {
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 22px;
+        color:#16B1FF;
+    }
+
+    .ant-select-selection-item{
+        color: #16B1FF !important;
+        font-weight: 500;
+    }
+}
+
+.login-language-selection{
+    .ant-select-item {
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 22px;
+        color:#16B1FF;
+        text-align: center;
+    }
+    .ant-select-item-option{
+        .ant-select-item-option-content{
+            color:rgba(#3A3541,0.5);
+        }
+    }
+    .ant-select-item-option-selected{
+        color: #16b1ff !important;;
+        line-height: 15.73px;
+        .ant-select-item-option-content{
+            color:#16B1FF;
+        }
+    }
+}

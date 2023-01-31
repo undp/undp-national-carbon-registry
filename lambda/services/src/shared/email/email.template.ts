@@ -37,5 +37,18 @@ export const EmailTemplates = {
         The Carbon Credit Registry Team 
         `,
         text: ''
+    },
+    RETIRE_REQUEST: {
+        subject: 'Retire Request Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{requestedCompany}} has requested to retire {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
+
+        <br><br>
+        Sincerely,<br>
+        The Carbon Credit Registry Team 
+        `,
+        text: ''
     }
 };

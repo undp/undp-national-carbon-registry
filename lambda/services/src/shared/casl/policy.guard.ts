@@ -3,6 +3,7 @@ import { Reflector } from "@nestjs/core";
 import { plainToClass } from "class-transformer";
 import { Stat } from "../dto/stat.dto";
 import { EntitySubject } from "../entities/entity.subject";
+import { User } from "../entities/user.entity";
 import { Action } from "./action.enum";
 import { CaslAbilityFactory, AppAbility } from "./casl-ability.factory";
 import { CHECK_POLICIES_KEY } from "./policy.decorator";
@@ -90,9 +91,9 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
         console.log(JSON.stringify(mongoQuery))
 
         if (mongoQuery && mongoQuery != "" && mongoQuery != "{}" && mongoQuery != '{"$or":[{}]}') {
-          const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
-          console.log("Where", whereQuery)
-          context.switchToHttp().getRequest()['abilityCondition'] = whereQuery;
+          // const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
+          // console.log("Where", whereQuery)
+          context.switchToHttp().getRequest()['abilityCondition'] = JSON.parse(mongoQuery);
         }
       }
 
@@ -120,9 +121,15 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       if (policyHandlers.length == 0 && action && subject && !onlyInject) {
         const obj = Object.assign(new subject(), body);
 
+        console.log(obj)
         if (action == Action.Update) {
+
+          if (obj instanceof User && obj.companyId == undefined) {
+            obj.companyId = user.companyId;
+          }
           for (const key in obj) {
             if (!ability.can(action, obj, key)) {
+              console.log('Failed due to', JSON.stringify(ability), action, obj, key)
               return false
             }
           }

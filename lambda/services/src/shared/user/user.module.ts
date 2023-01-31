@@ -8,6 +8,7 @@ import { TypeOrmConfigService } from '../../shared/typeorm.config.service';
 import configuration from '../../shared/configuration';
 import { ConfigModule } from '@nestjs/config';
 import { CompanyModule } from '../company/company.module';
+import { UtilModule } from '../util/util.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { CompanyModule } from '../company/company.module';
     TypeOrmModule.forFeature([User]),
     CaslModule,
     EmailModule,
-    CompanyModule
+    CompanyModule,
+    UtilModule
   ],
   providers: [UserService, Logger],
   exports: [UserService]

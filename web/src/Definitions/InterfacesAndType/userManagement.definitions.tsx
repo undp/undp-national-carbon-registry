@@ -1,16 +1,22 @@
 export interface TableDataType {
-  id: number;
-  email: string;
-  role: string;
-  name: string;
-  city: string;
-  zipCode: string;
-  state: string;
-  country: string;
-  contactNo: string;
-  companyName?: string;
-  companyLogo?: string;
-  companyLocation?: string;
-  registrationNo?: string;
-  industry?: string;
+  id?: number;
+  name?: string;
+  phoneNo?: string;
+  role?: string;
+  email?: string;
+  companyId?: number;
+  companyRole?: string;
+  company: {
+    name?: string;
+    address?: string;
+    companyId?: number;
+    companyRole?: string;
+    country?: string;
+    email?: string;
+    phoneNo?: string;
+    taxId?: string;
+    website?: string;
+    state?: string;
+    logo?: string;
+  };
 }

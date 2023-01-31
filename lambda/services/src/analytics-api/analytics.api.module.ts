@@ -6,9 +6,11 @@ import configuration from "../shared/configuration";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { TypeOrmConfigService } from "../shared/typeorm.config.service";
 import { Programme } from "../shared/entities/programme.entity";
+import { ProgrammeTransfer } from "../shared/entities/programme.transfer";
 import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledger.module";
 import { CaslModule } from "../shared/casl/casl.module";
 import { AuthModule } from "../shared/auth/auth.module";
+import { UtilModule } from "../shared/util/util.module";
 
 @Module({
   imports: [
@@ -19,11 +21,12 @@ import { AuthModule } from "../shared/auth/auth.module";
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
-      imports: undefined
+      imports: undefined,
     }),
-    TypeOrmModule.forFeature([Programme]),
+    TypeOrmModule.forFeature([Programme, ProgrammeTransfer]),
     AuthModule,
     CaslModule,
+    UtilModule,
     ProgrammeLedgerModule,
   ],
   controllers: [ProgrammeController],

@@ -11,7 +11,9 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api/national
+      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev/api
+      COUNTRY_NAME: 'Antarctic Region'
+      COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
     steps:
       - uses: actions/checkout@v3
       - name: Cache modules
@@ -39,3 +41,5 @@ jobs:
         run: CI=false yarn build
       - name: Deploy
         run: aws s3 sync ./web/build s3://carbon-www-dev
+      - name: Deploy Test
+        run: aws s3 sync ./web/build s3://www-test-carbon

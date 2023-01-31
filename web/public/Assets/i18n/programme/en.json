@@ -1,0 +1,13 @@
+{
+    "sector": "Sector",
+    "status": "Status",
+    "issued": "Credits Issued",
+    "balance": "Credits Balance",
+    "transferred": "Credits Transferred",
+    "viewProgrammes": "View Programmes",
+    "desc": "View the programmes available in the Carbon Registry based on your permissions",
+    "noProgrammes": "No Programmes",
+    "serialNoh": "Serial Number",
+    "certifiers": "Certifiers",
+    "title": "Programme Name"
+}
