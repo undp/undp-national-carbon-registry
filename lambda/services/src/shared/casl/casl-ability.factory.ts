@@ -57,6 +57,7 @@ export class CaslAbilityFactory {
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
       } else {
+
         if (user.companyRole == CompanyRole.GOVERNMENT) {
           can(Action.Read, User);
         } else {
@@ -118,7 +119,7 @@ export class CaslAbilityFactory {
         cannot(Action.Delete, 'all');
         cannot(Action.Update, 'all');
       }
-
+      can(Action.Delete, User, { id: { $eq: user.id } });
       cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
     }
 
