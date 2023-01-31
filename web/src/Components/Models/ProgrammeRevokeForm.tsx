@@ -29,9 +29,6 @@ const ProgrammeRevokeForm: FC<ProgrammeRevokeFormProps> = (props: ProgrammeRevok
       <Form
         name="transfer_init_popup"
         layout="vertical"
-        initialValues={{
-          issueAmount: 0,
-        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
@@ -46,7 +43,7 @@ const ProgrammeRevokeForm: FC<ProgrammeRevokeFormProps> = (props: ProgrammeRevok
               <Form.Item
                 className="remarks-label"
                 label={t('view:certifier')}
-                name="certifier"
+                name="certifierId"
                 rules={[
                   {
                     required: true,

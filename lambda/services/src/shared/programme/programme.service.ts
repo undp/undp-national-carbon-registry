@@ -582,7 +582,17 @@ export class ProgrammeService {
             throw new HttpException("Programme certification revoke can perform only by certifier or government", HttpStatus.FORBIDDEN)
         }
 
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, this.getUserRef(user))
+        let certifierId;
+        if (user.companyRole === CompanyRole.GOVERNMENT) {
+            if (!req.certifierId) {
+                throw new HttpException("certifierId required for government user", HttpStatus.FORBIDDEN)
+            }
+            certifierId = req.certifierId
+        } else {
+            certifierId = user.companyId;
+        }
+
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRef(user))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
