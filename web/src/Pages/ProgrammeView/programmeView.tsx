@@ -1044,6 +1044,10 @@ const ProgrammeView = () => {
                                           icon: <Icon.Save />,
                                           contentComp: (
                                             <ProgrammeRetireForm
+                                              hideType={
+                                                userInfoState?.companyRole !==
+                                                CompanyRole.GOVERNMENT
+                                              }
                                               programme={data}
                                               onCancel={() => {
                                                 setOpenModal(false);

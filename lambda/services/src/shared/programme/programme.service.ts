@@ -623,9 +623,15 @@ export class ProgrammeService {
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
         const toCompany = await this.companyService.findGovByCountry(this.configService.get('systemCountry'))
 
-        if (requestedCompany.companyRole != CompanyRole.GOVERNMENT && !programme.companyId.includes(requester.companyId)) {
-            throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
+        if (requestedCompany.companyRole != CompanyRole.GOVERNMENT) {
+            if (!programme.companyId.includes(requester.companyId)) {
+                throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
+            }
+            if (req.type !== RetireType.CROSS_BORDER) {
+                throw new HttpException("Programme developer allowed to initiate only cross border transfers", HttpStatus.BAD_REQUEST)
+            }
         }
+        
 
         const allTransferList: ProgrammeTransfer[] = []
         const autoApproveTransferList: ProgrammeTransfer[] = []

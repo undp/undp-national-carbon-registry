@@ -47,6 +47,7 @@ import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
 import { CircleFlag } from 'react-circle-flags';
+import { Role } from '../../Casl/enums/role.enum';
 
 type CompanyInfo = {
   name: string;
@@ -226,7 +227,7 @@ const CreditTransfer = () => {
   };
 
   const actionMenu = (record: any) => {
-    if (record.status === 'Pending') {
+    if (record.status === 'Pending' && userInfoState?.userRole !== Role.ViewOnly) {
       return userInfoState?.companyId === record.initiatorCompanyId ? (
         <List
           className="action-menu"
