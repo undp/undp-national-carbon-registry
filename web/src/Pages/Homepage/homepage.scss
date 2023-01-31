@@ -405,8 +405,8 @@
 
     .divider{
       margin:2px 60px 2px 60px;
-      width: calc(100% - 120px);
-      
+      width: calc(100% - 120px) !important;
+      min-width: calc(100% - 120px);
 
     }
     .logocontainer {
