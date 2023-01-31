@@ -80,7 +80,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         resp.data
           .map((d: any) => ({ label: d.name, value: d.companyId }))
           .filter((d: any) => {
-            return d.companyId !== userCompanyId;
+            return (
+              d.value !== userCompanyId &&
+              programme.companyId.map((e) => Number(e)).indexOf(d.value) < 0
+            );
           })
       );
     } else {
