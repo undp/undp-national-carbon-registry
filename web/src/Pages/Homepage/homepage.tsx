@@ -186,17 +186,14 @@ const Homepage = () => {
             </div>
           </Col>
         </Row>
-        <Divider
-          className="divider"
-          style={{ backgroundColor: '#FFFF', minWidth: '20px !important' }}
-        />
+        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
         <Row>
           <Col md={24} lg={24}>
             <div className="footertext">{t('homepage:footertext1')}</div>
           </Col>
         </Row>
         <Row>
-          <Col md={4.8} lg={17}>
+          <Col md={10} lg={16}>
             <div className="footertext-bottom">
               {t('homepage:antarctic')}
               <CcCircle className="cc" color="#FFFF" size="10px" />
