@@ -92,18 +92,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           <Input.Password placeholder="" />
         </Form.Item>
 
-        {errorMsg && (
-          <div className="error-message-container">
-            <ExclamationCircleOutlined
-              style={{
-                color: 'rgba(255, 77, 79, 0.8)',
-                marginRight: '0.5rem',
-                fontSize: '1.1rem',
-              }}
-            />
-            <span className="error-message-txt">{errorMsg}</span>
-          </div>
-        )}
+        {errorMsg && <Alert className="error" message={errorMsg} type="error" showIcon />}
 
         <div className="mg-top-2 ant-modal-footer">
           <Button htmlType="button" onClick={onCanceled}>

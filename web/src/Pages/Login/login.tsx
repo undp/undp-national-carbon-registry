@@ -178,7 +178,7 @@ const Login = () => {
                           fontSize: '1.1rem',
                         }}
                       />
-                      <span className="login-error-message-txt">Invalid login credentials</span>
+                      <span className="ant-form-item-explain-error">Invalid login credentials</span>
                     </div>
                   )}
                   <div className="login-forget-pwd-container">
