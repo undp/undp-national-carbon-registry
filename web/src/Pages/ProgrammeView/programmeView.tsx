@@ -669,95 +669,57 @@ const ProgrammeView = () => {
   });
   // genCerts(data);
   const actionBtns = [];
-  if (data.currentStage.toString() === 'AwaitingAuthorization') {
-    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      actionBtns.push(
-        <Button
-          danger
-          onClick={() => {
-            setActionInfo({
-              action: 'Reject',
-              text: t('view:popupText'),
-              type: 'danger',
-              title: `${t('view:rejectTitle')} - ${data.title}?`,
-              remark: true,
-              icon: <Icon.ClipboardX />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:reject')}
-        </Button>
-      );
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Authorise',
-              text: t('view:popupText'),
-              title: `${t('view:authTitle')} - ${data.title}?`,
-              type: 'primary',
-              remark: false,
-              icon: <Icon.ClipboardCheck />,
-              contentComp: (
-                <ProgrammeIssueForm
-                  enableIssue={false}
-                  programme={data}
-                  subText={t('view:popupText')}
-                  onCancel={() => {
-                    setOpenModal(false);
-                    setComment(undefined);
-                  }}
-                  actionBtnText={t('view:authorise')}
-                  onFinish={(body: any) =>
-                    onPopupAction(
-                      body,
-                      'authorize',
-                      t('view:successAuth'),
-                      put,
-                      updateProgrammeData
-                    )
-                  }
-                />
-              ),
-            });
-            showModal();
-          }}
-        >
-          {t('view:authorise')}
-        </Button>
-      );
-    }
-  } else if (
-    data.currentStage.toString() !== ProgrammeStage.Rejected &&
-    Number(data.creditEst) > Number(data.creditIssued)
-  ) {
-    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      if (Number(data.creditEst) > Number(data.creditIssued)) {
+
+  if (userInfoState?.userRole !== 'ViewOnly') {
+    if (data.currentStage.toString() === 'AwaitingAuthorization') {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+        actionBtns.push(
+          <Button
+            danger
+            onClick={() => {
+              setActionInfo({
+                action: 'Reject',
+                text: t('view:popupText'),
+                type: 'danger',
+                title: `${t('view:rejectTitle')} - ${data.title}?`,
+                remark: true,
+                icon: <Icon.ClipboardX />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:reject')}
+          </Button>
+        );
         actionBtns.push(
           <Button
             type="primary"
             onClick={() => {
               setActionInfo({
-                action: 'Issue',
+                action: 'Authorise',
                 text: t('view:popupText'),
-                title: `${t('view:issueTitle')} - ${data.title}?`,
+                title: `${t('view:authTitle')} - ${data.title}?`,
                 type: 'primary',
                 remark: false,
-                icon: <Icon.Award />,
+                icon: <Icon.ClipboardCheck />,
                 contentComp: (
                   <ProgrammeIssueForm
-                    enableIssue={true}
+                    enableIssue={false}
                     programme={data}
                     subText={t('view:popupText')}
                     onCancel={() => {
                       setOpenModal(false);
                       setComment(undefined);
                     }}
-                    actionBtnText={t('view:issue')}
+                    actionBtnText={t('view:authorise')}
                     onFinish={(body: any) =>
-                      onPopupAction(body, 'issue', t('view:successIssue'), put, updateProgrammeData)
+                      onPopupAction(
+                        body,
+                        'authorize',
+                        t('view:successAuth'),
+                        put,
+                        updateProgrammeData
+                      )
                     }
                   />
                 ),
@@ -765,115 +727,163 @@ const ProgrammeView = () => {
               showModal();
             }}
           >
-            {t('view:issue')}
+            {t('view:authorise')}
           </Button>
         );
       }
+    } else if (
+      data.currentStage.toString() !== ProgrammeStage.Rejected &&
+      Number(data.creditEst) > Number(data.creditIssued)
+    ) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+        if (Number(data.creditEst) > Number(data.creditIssued)) {
+          actionBtns.push(
+            <Button
+              type="primary"
+              onClick={() => {
+                setActionInfo({
+                  action: 'Issue',
+                  text: t('view:popupText'),
+                  title: `${t('view:issueTitle')} - ${data.title}?`,
+                  type: 'primary',
+                  remark: false,
+                  icon: <Icon.Award />,
+                  contentComp: (
+                    <ProgrammeIssueForm
+                      enableIssue={true}
+                      programme={data}
+                      subText={t('view:popupText')}
+                      onCancel={() => {
+                        setOpenModal(false);
+                        setComment(undefined);
+                      }}
+                      actionBtnText={t('view:issue')}
+                      onFinish={(body: any) =>
+                        onPopupAction(
+                          body,
+                          'issue',
+                          t('view:successIssue'),
+                          put,
+                          updateProgrammeData
+                        )
+                      }
+                    />
+                  ),
+                });
+                showModal();
+              }}
+            >
+              {t('view:issue')}
+            </Button>
+          );
+        }
+      }
+    }
+    //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+    //     actionBtns.push(
+    //       <Button
+    //         danger
+    //         onClick={() => {
+    //           setActionInfo({
+    //             action: 'Retire',
+    //             text: `You can’t undo this action`,
+    //             type: 'danger',
+    //             remark: true,
+    //             icon: <PoweroffOutlined />,
+    //           });
+    //           showModal();
+    //         }}
+    //       >
+    //         {t('view:retire')}
+    //       </Button>
+    //     );
+    //   } else {
+    // actionBtns.push(
+    //   <Button
+    //     danger
+    //     onClick={() => {
+    //       setActionInfo({
+    //         action: 'Retire',
+    //         text: `You are going to transfer programme ${data.title}`,
+    //         type: 'danger',
+    //       });
+    //       showModal();
+    //     }}
+    //   >
+    //     {t('view:Transfer')}
+    //   </Button>
+    // );
+    // }
+
+    if (
+      userInfoState &&
+      data.certifier &&
+      userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
+    ) {
+      actionBtns.push(
+        <Button
+          type="primary"
+          onClick={() => {
+            setActionInfo({
+              action: 'Certify',
+              text: ``,
+              title: `${t('view:certifyTitle')} - ${data.title}?`,
+              type: 'success',
+              remark: false,
+              icon: <ShieldCheck />,
+            });
+            showModal();
+          }}
+        >
+          {t('view:certify')}
+        </Button>
+      );
+    }
+    if (
+      userInfoState &&
+      data.certifier &&
+      data.certifier.length > 0 &&
+      ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+    ) {
+      actionBtns.push(
+        <Button
+          danger
+          onClick={() => {
+            setActionInfo({
+              action: 'Revoke',
+              title: `${t('view:revokeTitle')} - ${data.title}?`,
+              text: ``,
+              type: 'danger',
+              remark: true,
+              icon: <Icon.ShieldExclamation />,
+              contentComp: (
+                <ProgrammeRevokeForm
+                  programme={data}
+                  subText={t('view:popupText')}
+                  onCancel={() => {
+                    setOpenModal(false);
+                    setComment(undefined);
+                  }}
+                  actionBtnText={t('view:revoke')}
+                  onFinish={(body: any) =>
+                    onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
+                  }
+                  showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                />
+              ),
+            });
+            showModal();
+          }}
+        >
+          {t('view:revoke')}
+        </Button>
+      );
     }
   }
-  //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
-  //     actionBtns.push(
-  //       <Button
-  //         danger
-  //         onClick={() => {
-  //           setActionInfo({
-  //             action: 'Retire',
-  //             text: `You can’t undo this action`,
-  //             type: 'danger',
-  //             remark: true,
-  //             icon: <PoweroffOutlined />,
-  //           });
-  //           showModal();
-  //         }}
-  //       >
-  //         {t('view:retire')}
-  //       </Button>
-  //     );
-  //   } else {
-  // actionBtns.push(
-  //   <Button
-  //     danger
-  //     onClick={() => {
-  //       setActionInfo({
-  //         action: 'Retire',
-  //         text: `You are going to transfer programme ${data.title}`,
-  //         type: 'danger',
-  //       });
-  //       showModal();
-  //     }}
-  //   >
-  //     {t('view:Transfer')}
-  //   </Button>
-  // );
-  // }
 
-  if (
-    userInfoState &&
-    data.certifier &&
-    userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-    !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
-  ) {
-    actionBtns.push(
-      <Button
-        type="primary"
-        onClick={() => {
-          setActionInfo({
-            action: 'Certify',
-            text: ``,
-            title: `${t('view:certifyTitle')} - ${data.title}?`,
-            type: 'success',
-            remark: false,
-            icon: <ShieldCheck />,
-          });
-          showModal();
-        }}
-      >
-        {t('view:certify')}
-      </Button>
-    );
-  }
-  if (
-    userInfoState &&
-    data.certifier &&
-    data.certifier.length > 0 &&
-    ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-      data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
-  ) {
-    actionBtns.push(
-      <Button
-        danger
-        onClick={() => {
-          setActionInfo({
-            action: 'Revoke',
-            title: `${t('view:revokeTitle')} - ${data.title}?`,
-            text: ``,
-            type: 'danger',
-            remark: true,
-            icon: <Icon.ShieldExclamation />,
-            contentComp: (
-              <ProgrammeRevokeForm
-                programme={data}
-                subText={''}
-                onCancel={() => {
-                  setOpenModal(false);
-                  setComment(undefined);
-                }}
-                actionBtnText={t('view:revoke')}
-                onFinish={(body: any) =>
-                  onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
-                }
-                showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
-              />
-            ),
-          });
-          showModal();
-        }}
-      >
-        {t('view:revoke')}
-      </Button>
-    );
-  }
   // }
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {

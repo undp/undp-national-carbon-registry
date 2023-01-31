@@ -29,6 +29,12 @@ const ProgrammeRevokeForm: FC<ProgrammeRevokeFormProps> = (props: ProgrammeRevok
       <Form
         name="transfer_init_popup"
         layout="vertical"
+        initialValues={{
+          certifierId:
+            programme.certifierId && programme.certifierId.length === 1
+              ? Number(programme.certifierId[0])
+              : undefined,
+        }}
         onChange={() => setPopupError(undefined)}
         onFinish={async (d) => {
           setLoading(true);
