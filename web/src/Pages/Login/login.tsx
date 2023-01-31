@@ -192,12 +192,12 @@ const Login = () => {
                     </div>
                   </Form.Item>
                 </Form>
-                <div className="login-register-new-container">
+                {/* <div className="login-register-new-container">
                   <span className="login-register-new-txt">
                     {t('login:register-acc')}?&nbsp;&nbsp;
                     <span className="login-register-new-txt-span">{t('common:signUp')}</span>
                   </span>
-                </div>
+                </div> */}
               </div>
             </Col>
           </Row>
