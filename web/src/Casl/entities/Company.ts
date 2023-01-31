@@ -18,4 +18,6 @@ export class Company implements BaseEntity {
   logo?: string;
 
   country?: string;
+
+  companyRole?: string;
 }

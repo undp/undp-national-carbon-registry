@@ -15,6 +15,8 @@ import { FindOrganisationQueryDto } from "../dto/find.organisation.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { OrganisationUpdateDto } from "../dto/organisation.update.dto";
 import { DataResponseDto } from "../dto/data.response.dto";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
+import { TransferStatus } from "../enum/transform.status.enum";
 
 @Injectable()
 export class CompanyService {
@@ -23,10 +25,17 @@ export class CompanyService {
     private logger: Logger,
     private configService: ConfigService,
     private helperService: HelperService,
-    private programmeLedgerService: ProgrammeLedgerService
+    private programmeLedgerService: ProgrammeLedgerService,
+    @InjectRepository(ProgrammeTransfer)
+    private programmeTransferRepo: Repository<ProgrammeTransfer>
   ) {}
 
-  async suspend(companyId: number, userId: string, remarks:string, abilityCondition: string): Promise<any> {
+  async suspend(
+    companyId: number,
+    userId: string,
+    remarks: string,
+    abilityCondition: string
+  ): Promise<any> {
     this.logger.verbose("Suspend company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -62,11 +71,19 @@ export class CompanyService {
 
     if (result.affected > 0) {
       // TODO: Currently there can be unfreezed credits after company suspend if transactions failed
-      if(company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        await this.programmeLedgerService.freezeCompany(companyId, remarks, userId)
-      }
-      else if(company.companyRole === CompanyRole.CERTIFIER) {
-        await this.programmeLedgerService.revokeCompanyCertifications(companyId, remarks, userId)
+      if (company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        await this.programmeLedgerService.freezeCompany(
+          companyId,
+          remarks,
+          userId
+        );
+        await this.companyTransferCancel(companyId);
+      } else if (company.companyRole === CompanyRole.CERTIFIER) {
+        await this.programmeLedgerService.revokeCompanyCertifications(
+          companyId,
+          remarks,
+          userId
+        );
       }
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -286,5 +303,24 @@ export class CompanyService {
       "Company update failed. Please try again",
       HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  async companyTransferCancel(companyId: number) {
+    await this.programmeTransferRepo
+      .createQueryBuilder()
+      .update(ProgrammeTransfer)
+      .set({ status: TransferStatus.CANCELLED })
+      .where(
+        "(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status",
+        {
+          companyId: companyId,
+          status: TransferStatus.PENDING,
+        }
+      )
+      .execute()
+      .catch((err: any) => {
+        this.logger.error(err);
+        return err;
+      });
   }
 }

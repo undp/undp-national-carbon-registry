@@ -42,6 +42,7 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       });
       cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
       cannot([Action.Update], Company);
+      can([Action.Delete], Company);
     } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
@@ -51,6 +52,9 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Update, Company, { companyId: { $eq: user.companyId } });
       cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
       cannot(Action.Update, Company, ['companyRole']);
+      can([Action.Delete], Company);
+    } else if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
+      can([Action.Delete], Company);
     } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
       can(Action.Read, User, { companyId: { $eq: user.companyId } });
       can(Action.Delete, User, { companyId: { $eq: user.companyId } });
@@ -106,6 +110,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot(Action.Delete, 'all');
       cannot(Action.Update, 'all');
     }
+
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
   }
 
   ability.update(rules);

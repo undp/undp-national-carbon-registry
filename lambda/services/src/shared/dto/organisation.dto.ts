@@ -56,4 +56,6 @@ export class OrganisationDto {
         message: 'Invalid role. Supported following roles:' + Object.values(CompanyRole)
     })
     companyRole: CompanyRole;
+
+    createdTime: number;
 }

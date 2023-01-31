@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from '../typeorm.config.service';
 import { CompanyService } from './company.service';
 import { UtilModule } from '../util/util.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
+import { ProgrammeTransfer } from '../entities/programme.transfer';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.modu
       useClass: TypeOrmConfigService,
       imports: undefined
     }),
-    TypeOrmModule.forFeature([Company]),
+    TypeOrmModule.forFeature([Company, ProgrammeTransfer]),
     CaslModule,
     EmailModule,
     UtilModule,

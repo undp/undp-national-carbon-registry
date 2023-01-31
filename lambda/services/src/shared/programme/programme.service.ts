@@ -187,8 +187,30 @@ export class ProgrammeService {
             throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
-        const receiver = await this.companyService.findByCompanyId(transfer.toCompanyId);
-        // const user = await this.userService.findById(transfer.initiator);
+        const receiver = await this.companyService.findByCompanyId(
+          transfer.toCompanyId
+        );
+        const giver = await this.companyService.findByCompanyId(
+          transfer.fromCompanyId
+        );
+
+        if (receiver.state === CompanyState.SUSPENDED) {
+          await this.companyService.companyTransferCancel(transfer.toCompanyId);
+          throw new HttpException(
+            "Receive company suspended",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        if (giver.state === CompanyState.SUSPENDED) {
+          await this.companyService.companyTransferCancel(
+            transfer.fromCompanyId
+          );
+          throw new HttpException(
+            "Credit sending company suspended",
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({

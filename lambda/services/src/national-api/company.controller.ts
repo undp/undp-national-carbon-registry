@@ -36,7 +36,7 @@ export class CompanyController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, Company))
+    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Company))
     @Put('suspend')
     suspend(@Query('id') companyId: number,@Body() body: OrganisationSuspendDto, @Request() req) {
         if (companyId == req.user.companyId) {
