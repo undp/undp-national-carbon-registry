@@ -73,7 +73,7 @@ const ProgrammeIssueForm: FC<ProgrammeIssueFormProps> = (props: ProgrammeIssueFo
                           programme.creditEst - programme.creditIssued
                       ) {
                         // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('Amount > authorised');
+                        return Promise.reject('Amount > Authorised');
                       }
                       return Promise.resolve();
                     },

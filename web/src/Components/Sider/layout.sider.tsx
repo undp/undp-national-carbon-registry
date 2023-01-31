@@ -73,8 +73,15 @@ const LayoutSider = (props: LayoutSiderProps) => {
           <div className="logo">
             <img src={sliderLogo} alt="slider-logo" />
           </div>
-          <div className="title">{collapsed ? '' : 'CARBON'}</div>
-          <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
+          {!collapsed && (
+            <div>
+              <div style={{ display: 'flex' }}>
+                <div className="title">{collapsed ? '' : 'CARBON'}</div>
+                <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
+              </div>
+              <div className="country-name">{'Antarctic Region'}</div>
+            </div>
+          )}
         </div>
         <div className="layout-sider-menu-container">
           <Menu

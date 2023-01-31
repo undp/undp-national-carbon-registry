@@ -236,7 +236,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                           parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                         ) {
                           // eslint-disable-next-line prefer-promise-reject-errors
-                          return Promise.reject('Amount > available');
+                          return Promise.reject('Amount > Available');
                         }
                         return Promise.resolve();
                       },
