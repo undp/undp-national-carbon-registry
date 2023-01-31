@@ -79,6 +79,7 @@ import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
+import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 
 mapboxgl.accessToken =
   '';
@@ -318,7 +319,7 @@ const ProgrammeView = () => {
               activity.data.creditChange
             )} ${creditUnit} credits of this programme were retired as ${getRetirementTypeString(
               getTxRefValues(activity.data.txRef, 5)
-            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+            )?.toLowerCase()} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
               3
             )}`,
@@ -806,46 +807,72 @@ const ProgrammeView = () => {
   // );
   // }
 
-  if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-    if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Certify',
-              text: ``,
-              title: `${t('view:certifyTitle')} - ${data.title}?`,
-              type: 'success',
-              remark: false,
-              icon: <ShieldCheck />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:certify')}
-        </Button>
-      );
-    } else {
-      actionBtns.push(
-        <Button
-          danger
-          onClick={() => {
-            setActionInfo({
-              action: 'Revoke',
-              title: `${t('view:revokeTitle')} - ${data.title}?`,
-              text: ``,
-              type: 'danger',
-              remark: true,
-              icon: <Icon.ShieldExclamation />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:revoke')}
-        </Button>
-      );
-    }
+  if (
+    userInfoState &&
+    data.certifier &&
+    userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+    !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
+  ) {
+    actionBtns.push(
+      <Button
+        type="primary"
+        onClick={() => {
+          setActionInfo({
+            action: 'Certify',
+            text: ``,
+            title: `${t('view:certifyTitle')} - ${data.title}?`,
+            type: 'success',
+            remark: false,
+            icon: <ShieldCheck />,
+          });
+          showModal();
+        }}
+      >
+        {t('view:certify')}
+      </Button>
+    );
+  }
+  if (
+    userInfoState &&
+    data.certifier &&
+    data.certifier.length > 0 &&
+    ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+      data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+  ) {
+    actionBtns.push(
+      <Button
+        danger
+        onClick={() => {
+          setActionInfo({
+            action: 'Revoke',
+            title: `${t('view:revokeTitle')} - ${data.title}?`,
+            text: ``,
+            type: 'danger',
+            remark: true,
+            icon: <Icon.ShieldExclamation />,
+            contentComp: (
+              <ProgrammeRevokeForm
+                programme={data}
+                subText={''}
+                onCancel={() => {
+                  setOpenModal(false);
+                  setComment(undefined);
+                }}
+                actionBtnText={t('view:revoke')}
+                onFinish={(body: any) =>
+                  onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
+                }
+                showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+              />
+            ),
+          });
+          showModal();
+        }}
+      >
+        {t('view:revoke')}
+      </Button>
+    );
   }
   // }
   const generalInfo: any = {};

@@ -574,8 +574,12 @@ export class ProgrammeService {
     async certify(req: ProgrammeCertify, add: boolean, user: User) {
         this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
 
-        if (user.companyRole != CompanyRole.CERTIFIER) {
+        if (add && user.companyRole != CompanyRole.CERTIFIER) {
             throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
+        }
+
+        if (!add && ![CompanyRole.CERTIFIER, CompanyRole.GOVERNMENT].includes(user.companyRole)) {
+            throw new HttpException("Programme certification revoke can perform only by certifier or government", HttpStatus.FORBIDDEN)
         }
 
         const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, this.getUserRef(user))
