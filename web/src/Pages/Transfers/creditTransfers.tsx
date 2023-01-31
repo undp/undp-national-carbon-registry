@@ -532,7 +532,7 @@ const CreditTransfer = () => {
     },
     {
       title: t('programme:status'),
-      key: 'currentStage',
+      key: 'status',
       sorter: true,
       align: 'center' as const,
       render: (item: any, Obj: any) => {

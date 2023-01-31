@@ -97,7 +97,9 @@ const Login = () => {
                       <span className="title-sub">{'REGISTRY'}</span>
                     </div>
 
-                    <span className="country-name">{t('common:country')}</span>
+                    <span className="country-name">
+                      {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                    </span>
                   </div>
                 </Col>
               </Row>
