@@ -157,7 +157,7 @@ const Homepage = () => {
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-resources-content-container">
             <Row>
-              <Col md={12} lg={12}>
+              <Col className="resource-image-container" md={12} lg={12}>
                 <img className="image" src={resources} alt="resources" />
               </Col>
               <Col md={12} lg={12}>
@@ -193,22 +193,16 @@ const Homepage = () => {
           </Col>
         </Row>
         <Row>
-          <Col md={10} lg={16}>
+          <Col md={4.8} lg={12}>
             <div className="footertext-bottom">
               {t('homepage:antarctic')}
               <CcCircle className="cc" color="#FFFF" size="10px" />
             </div>
           </Col>
-          <Col md={4.8} lg={4.8}>
+          <Col className="footertext-link-container" md={4.8} lg={12}>
             <div className="footertext-links">{t('homepage:Cookie')}</div>
-          </Col>
-          <Col md={4.8} lg={4.8}>
             <div className="footertext-links">{t('homepage:codeconduct')}</div>
-          </Col>
-          <Col md={4.8} lg={4.8}>
             <div className="footertext-links">{t('homepage:terms')}</div>
-          </Col>
-          <Col md={4.8} lg={4.8}>
             <div className="footertext-links">{t('homepage:privacy')}</div>
           </Col>
         </Row>
