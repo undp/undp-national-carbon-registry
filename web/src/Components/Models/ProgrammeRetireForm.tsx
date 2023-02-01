@@ -198,12 +198,12 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   className="remarks-label"
                   label={t('view:country')}
                   name="country"
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: 'Required field',
-                  //   },
-                  // ]}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Required field',
+                    },
+                  ]}
                 >
                   <Select
                     showSearch
