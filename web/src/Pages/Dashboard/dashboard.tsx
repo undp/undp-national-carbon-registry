@@ -713,24 +713,24 @@ const Dashboard = () => {
         zoom: 0.5,
       });
 
-      const data = [
-        {
-          code: 'AL',
-          hdi: 1,
-        },
-        {
-          code: 'LK',
-          hdi: 0.09523809523809523,
-        },
-        {
-          code: 'CN',
-          hdi: 0.23809523809523808,
-        },
-        {
-          code: 'TD',
-          hdi: 0.5,
-        },
-      ];
+      // const data = [
+      //   {
+      //     code: 'AL',
+      //     hdi: 1,
+      //   },
+      //   {
+      //     code: 'LK',
+      //     hdi: 0.09523809523809523,
+      //   },
+      //   {
+      //     code: 'CN',
+      //     hdi: 0.23809523809523808,
+      //   },
+      //   {
+      //     code: 'TD',
+      //     hdi: 0.5,
+      //   },
+      // ];
 
       // Add markers to the map.
       map.on('load', () => {
@@ -746,9 +746,9 @@ const Dashboard = () => {
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of data) {
+        for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
-          const blue = row.hdi * 255;
+          const blue = row.ratio * 255;
           const color = `rgb(0, 50, ${blue})`;
 
           matchExpression.push(row.code, color);

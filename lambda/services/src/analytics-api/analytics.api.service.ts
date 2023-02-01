@@ -627,29 +627,49 @@ export class AnalyticsAPIService {
             )
             .getRawMany();
           let featuresTransfer: any[] = [];
-          let locations: any[] = [];
-          for (
-            let index = 0;
-            index < totalResponseTransferLocation.length;
-            index++
-          ) {
-            if (totalResponseTransferLocation[index]?.toCompanyMeta) {
-              let toCompanyMeta =
-                totalResponseTransferLocation[index]?.toCompanyMeta;
+          let locations = {};
+          for (const t of totalResponseTransferLocation) {
+            if (t?.toCompanyMeta) {
+              let toCompanyMeta = t?.toCompanyMeta;
               if (toCompanyMeta?.country) {
-                if (!locations?.includes(toCompanyMeta?.country)) {
-                  locations.push(toCompanyMeta?.country);
-                  featuresTransfer.push({
-                    code: toCompanyMeta?.country,
-                    hdi:
-                      index === 0
-                        ? 1
-                        : index / totalResponseTransferLocation.length,
-                  });
+                if (!locations[toCompanyMeta?.country]) {
+                  locations[toCompanyMeta?.country] = 1  
+                } else {
+                  locations[toCompanyMeta?.country] += 1
                 }
               }
             }
           }
+          for (const c in locations) {
+            featuresTransfer.push({
+              'code': c,
+              'count': locations[c],
+              'ratio': locations[c]/totalResponseTransferLocation.length
+            })
+          }
+
+          // for (
+          //   let index = 0;
+          //   index < totalResponseTransferLocation.length;
+          //   index++
+          // ) {
+          //   if (totalResponseTransferLocation[index]?.toCompanyMeta) {
+          //     let toCompanyMeta =
+          //       totalResponseTransferLocation[index]?.toCompanyMeta;
+          //     if (toCompanyMeta?.country) {
+          //       if (!locations?.includes(toCompanyMeta?.country)) {
+          //         locations.push(toCompanyMeta?.country);
+          //         featuresTransfer.push({
+          //           code: toCompanyMeta?.country,
+          //           hdi:
+          //             index === 0
+          //               ? 1
+          //               : index / totalResponseTransferLocation.length,
+          //         });
+          //       }
+          //     }
+          //   }
+          // }
 
           results[stat.type] = featuresTransfer;
           break;
