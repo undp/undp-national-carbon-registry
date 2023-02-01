@@ -280,7 +280,7 @@ const Dashboard = () => {
       const revokedCredit: any = [];
 
       const response: any = await post(
-        'analytics/programme/dashboardCharts',
+        'stats/programme/dashboardCharts',
         getAllProgrammeAnalyticsStatsChartsParams()
       );
       console.log(response?.data?.stats);
@@ -492,7 +492,7 @@ const Dashboard = () => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'analytics/programme/dashboard',
+        'stats/programme/dashboard',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
       console.log('stats data  -- > ', response?.data);
@@ -523,7 +523,7 @@ const Dashboard = () => {
     const pieSeriesCreditsCerifiedData: any[] = [];
     try {
       const response: any = await post(
-        'analytics/programme/dashboard',
+        'stats/programme/dashboard',
         getAllProgrammeAnalyticsStatsParams()
       );
       console.log('stats data  -- > ', response?.data);

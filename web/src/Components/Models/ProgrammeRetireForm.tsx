@@ -26,10 +26,11 @@ export interface ProgrammeRetireFormProps {
   actionBtnText: string;
   onFinish: any;
   subText?: string;
+  hideType: boolean;
 }
 
 const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetireFormProps) => {
-  const { programme, onFinish, onCancel, actionBtnText, subText } = props;
+  const { programme, onFinish, onCancel, actionBtnText, subText, hideType } = props;
   const { i18n, t } = useTranslation(['view']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,7 +48,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
     if (newValue !== undefined) {
       const resp = await post('national/organisation/countries', {
         page: 1,
-        size: 50,
+        size: 250,
         filterAnd: [
           {
             key: 'name',
@@ -101,6 +102,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
 
   useEffect(() => {
     handleSearch('');
+    if (hideType) {
+      setType('0');
+    }
   }, []);
 
   return (
@@ -133,6 +137,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           if (d.comment) {
             d.comment = d.comment.trim();
           }
+          if (hideType) {
+            d.type = '0';
+          }
           if (d.type === '0') {
             if (currentSum === 0) {
               setPopupError('Total Amount should be greater than 0');
@@ -152,35 +159,37 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           setLoading(false);
         }}
       >
-        <Row>
-          <Col span={24}>
-            <Form.Item
-              className="remarks-label"
-              label=""
-              name="type"
-              valuePropName="type"
-              rules={[
-                {
-                  required: true,
-                  message: 'Required field',
-                },
-              ]}
-            >
-              <Radio.Group
-                onChange={(v: any) => {
-                  setType(v.target.value);
-                  form.setFieldsValue({ type: v.target.value });
-                }}
+        {!hideType && (
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                className="remarks-label"
+                label=""
+                name="type"
+                valuePropName="type"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Required field',
+                  },
+                ]}
               >
-                <Space direction="vertical">
-                  <Radio value={'0'}>Cross-border transfer</Radio>
-                  <Radio value={'1'}>Legal Action</Radio>
-                  <Radio value={'2'}>Other</Radio>
-                </Space>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
-        </Row>
+                <Radio.Group
+                  onChange={(v: any) => {
+                    setType(v.target.value);
+                    form.setFieldsValue({ type: v.target.value });
+                  }}
+                >
+                  <Space direction="vertical">
+                    <Radio value={'0'}>Cross-border transfer</Radio>
+                    <Radio value={'1'}>Legal Action</Radio>
+                    <Radio value={'2'}>Other</Radio>
+                  </Space>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+        )}
         {type === '0' && (
           <div>
             <Row>
@@ -189,12 +198,12 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   className="remarks-label"
                   label={t('view:country')}
                   name="country"
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: 'Required field',
-                  //   },
-                  // ]}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Required field',
+                    },
+                  ]}
                 >
                   <Select
                     showSearch
@@ -252,7 +261,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                               parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                             ) {
                               // eslint-disable-next-line prefer-promise-reject-errors
-                              return Promise.reject('Amount > available');
+                              return Promise.reject('Amount > Available');
                             }
                             return Promise.resolve();
                           },

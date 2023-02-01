@@ -1,9 +1,12 @@
 import { BankOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Row, Skeleton } from 'antd';
-import { useEffect, useState } from 'react';
+import { plainToClass } from 'class-transformer';
+import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CompanyRole } from '../../Casl/enums/company.role.enum';
+import { AbilityContext } from '../../Casl/Can';
+import { Company } from '../../Casl/entities/Company';
+import { Action } from '../../Casl/enums/action.enum';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -20,6 +23,8 @@ const CompanyProfile = () => {
   const [openDeauthorisationModal, setOpenDeauthorisationModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [userRole, setUserRole] = useState<any>('');
+  const [companyRole, setCompanyRole] = useState<any>('');
+  const ability = useContext(AbilityContext);
 
   const getCompanyDetails = async (companyId: string) => {
     try {
@@ -39,6 +44,7 @@ const CompanyProfile = () => {
       getCompanyDetails(state.record.companyId);
       const userRoleValue = localStorage.getItem('userRole') as string;
       setUserRole(userRoleValue);
+      setCompanyRole(localStorage.getItem('companyRole') as string);
     }
   }, []);
 
@@ -81,10 +87,9 @@ const CompanyProfile = () => {
           <div className="body-sub-title">{t('companyProfile:subTitle')}</div>
         </div>
         <div className="flex-display">
-          {['Admin', 'Root', 'Manager'].includes(userRole) &&
+          {ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
           !isLoading &&
-          parseInt(companyDetails.state) !== 0 &&
-          companyDetails.companyRole !== CompanyRole.GOVERNMENT ? (
+          parseInt(companyDetails.state) !== 0 ? (
             <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
               {t('companyProfile:deauthorise')}
             </Button>

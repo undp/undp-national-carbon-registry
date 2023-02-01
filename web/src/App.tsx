@@ -37,13 +37,15 @@ const App = () => {
       localStorage.getItem('companyId') &&
       localStorage.getItem('userRole') &&
       localStorage.getItem('userId') &&
-      localStorage.getItem('companyState')
+      localStorage.getItem('companyState') &&
+      localStorage.getItem('companyRole')
     )
       updateUserAbility(ability, {
         id: parseInt(localStorage.getItem('userId') as string),
         role: localStorage.getItem('userRole') as string,
         companyId: parseInt(localStorage.getItem('companyId') as string),
         companyState: parseInt(localStorage.getItem('companyState') as string),
+        companyRole: localStorage.getItem('companyRole') as string,
       });
   }, []);
   return (

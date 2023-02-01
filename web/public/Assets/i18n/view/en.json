@@ -52,6 +52,7 @@
     "totalTransferCredit": "Total Amount",
     "successAuth": "Successfully authorised",
     "successRetire": "Successfully retired",
+    "successRevoke": "Successfully revoked",
     "successRetireInit": "Successfully initiated the retire request",
     "successIssue": "Successfully issued",
     "successRequest": "Successfully initiated the transfer request",
@@ -69,6 +70,7 @@
     "searchCountry": "Search country",
     "country": "Country",
     "company": "Company",
-    "accept": "Accept"
+    "accept": "Accept",
+    "certifier": "Certifier"
 
 }

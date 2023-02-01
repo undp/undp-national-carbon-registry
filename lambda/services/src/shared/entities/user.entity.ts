@@ -50,5 +50,8 @@ export class User  implements EntitySubject{
     @Column({nullable: true, select: false})
     apiKey: string;
 
+    @Column({type: "bigint", nullable: true})
+    createdTime: number;
+
     companyState: number;
 }

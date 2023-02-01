@@ -305,6 +305,8 @@ export class UserService {
           HttpStatus.FORBIDDEN
         );
       }
+
+      company.createdTime = new Date().getTime();
     }
 
     if (
@@ -365,6 +367,8 @@ export class UserService {
       password: u.password,
       apiKeyText: u.apiKey ? `<br>Api Key: ${u.apiKey}` : "",
     });
+
+    u.createdTime = new Date().getTime();
 
     const usr = await this.entityManger
       .transaction(async (em) => {
@@ -452,7 +456,7 @@ export class UserService {
       .where(
         `email = '${username}' ${
           ability
-            ? " AND " + this.helperService.parseMongoQueryToSQL(ability)
+            ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})`
             : ""
         }`
       )

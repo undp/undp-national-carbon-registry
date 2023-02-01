@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, message, Row, Select, Statistic } from 'antd';
+import { Button, Col, Divider, Form, Input, message, Row, Select, Statistic } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import undpLogo from '../../Assets/Images/undp.png';
 import forest from '../../Assets/Images/forest.png';
 import resources from '../../Assets/Images/resources.png';
 import './homepage.scss';
-import { BarChart, Gem, Calculator } from 'react-bootstrap-icons';
+import { BarChart, Gem, Calculator, CcCircle } from 'react-bootstrap-icons';
 const Homepage = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Homepage = () => {
   }, []);
   return (
     <div className="homepage-container">
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={22} lg={22} flex="auto">
           <div className="homepage-header-container">
             <div className="logo">
@@ -35,7 +35,7 @@ const Homepage = () => {
           </div>
         </Col>
         <Col md={2} lg={2} flex="auto">
-          <div className="homepage-header-container">
+          <div className="homepage-button-container">
             <div className="button">
               <Button type="primary" onClick={() => navigate('/login')}>
                 SIGN IN
@@ -66,7 +66,7 @@ const Homepage = () => {
               <div className="homepagebody_subtitle">{t('homepage:Keyfeatures')}</div>
 
               <div className="aboutus_cards-container">
-                <Row gutter={[8, 8]} className="aboutus_card-row">
+                <Row gutter={[5, 5]} className="aboutus_card-row">
                   <Col xxl={8} xl={8} md={8} className="aboutus_card-col">
                     <div className="aboutus-card-main-container">
                       <Col>
@@ -106,7 +106,7 @@ const Homepage = () => {
                       <Col>
                         <Row className="aboutus_card-row">
                           <div>
-                            <Calculator color="#FFFF" size="80px" />
+                            <Calculator className="aboutusicon" color="#FFFF" size="80px" />
                           </div>
                         </Row>
                         <Row className="aboutus_card-row">
@@ -134,18 +134,15 @@ const Homepage = () => {
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-image-content-container">
             <Row>
-              <Col flex={2} md={12} lg={12}>
-                <div className="title">Eligibility</div>
+              <Col className="eligicontent" flex={2} md={12} lg={12}>
+                <div className="title">{t('homepage:eligibility')}</div>
                 <div className="homepagebody">
                   {t('homepage:eligibilitybody')}
                   <ul>
-                    <li>
-                      The project should be in Nationally Determined Contributions (NDCs) programs
-                      of action
-                    </li>
-                    <li>The project should be in conditional NDCs programs of action</li>
-                    <li>The project should be in the whitelist.</li>
-                    <li>The project should meet the criteria of the buyer</li>
+                    <li>{t('homepage:eliglist1')}</li>
+                    <li>{t('homepage:eliglist2')}</li>
+                    <li>{t('homepage:eliglist3')}</li>
+                    <li>{t('homepage:eliglist4')}</li>
                   </ul>
                 </div>
               </Col>
@@ -160,16 +157,16 @@ const Homepage = () => {
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-resources-content-container">
             <Row>
-              <Col md={12} lg={12}>
+              <Col className="resource-image-container" md={12} lg={12}>
                 <img className="image" src={resources} alt="resources" />
               </Col>
               <Col md={12} lg={12}>
-                <div className="title">Resources</div>
+                <div className="title">{t('homepage:resource')}</div>
                 <div className="homepagebody">
                   <ul>
-                    <li>Application form</li>
-                    <li>Fees schedule</li>
-                    <li>Request for Letter of Authorization</li>
+                    <li>{t('homepage:reslist1')}</li>
+                    <li>{t('homepage:reslist2')}</li>
+                    <li>{t('homepage:reslist3')}</li>
                   </ul>
                 </div>
               </Col>
@@ -177,6 +174,39 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
+      <div className="homepage-footer-container">
+        <Row>
+          <Col md={24} lg={24}>
+            <div className="logocontainer">
+              <div className="logo">
+                <img src={sliderLogo} alt="slider-logo" />
+              </div>
+              <div className="title">{'CARBON'}</div>
+              <div className="title-sub">{'REGISTRY'}</div>
+            </div>
+          </Col>
+        </Row>
+        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
+        <Row>
+          <Col md={24} lg={24}>
+            <div className="footertext">{t('homepage:footertext1')}</div>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={4.8} lg={12}>
+            <div className="footertext-bottom">
+              {t('homepage:antarctic')}
+              <CcCircle className="cc" color="#FFFF" size="10px" />
+            </div>
+          </Col>
+          <Col className="footertext-link-container" md={4.8} lg={12}>
+            <div className="footertext-links">{t('homepage:Cookie')}</div>
+            <div className="footertext-links">{t('homepage:codeconduct')}</div>
+            <div className="footertext-links">{t('homepage:terms')}</div>
+            <div className="footertext-links">{t('homepage:privacy')}</div>
+          </Col>
+        </Row>
+      </div>
 
       {/* <Row>
         <Col md={24} lg={24} flex="auto">

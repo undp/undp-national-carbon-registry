@@ -22,6 +22,7 @@ import { JwtAuthGuard } from '../shared/auth/guards/jwt-auth.guard';
 import { ProgrammeCertify } from '../shared/dto/programme.certify';
 import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
 import { ProgrammeIssue } from '../shared/dto/programme.issue';
+import { ProgrammeRevoke } from '../shared/dto/programme.revoke';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -104,7 +105,7 @@ export class ProgrammeController {
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeCertify))
     @Put('revoke')
-    async programmeRevoke(@Body() body: ProgrammeCertify, @Request() req) {
+    async programmeRevoke(@Body() body: ProgrammeRevoke, @Request() req) {
         return this.programmeService.certify(body, false, req.user)
     }
 

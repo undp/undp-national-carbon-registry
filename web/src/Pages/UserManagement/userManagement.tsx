@@ -207,6 +207,7 @@ const UserManagement = () => {
           {
             text: 'Delete',
             icon: <DeleteOutlined />,
+            isDisabled: !ability.can(Action.Delete, plainToClass(User, record)),
             click: () => {
               setDeleteUserModalRecord(record);
               setDeleteUserModalVisible(true);
@@ -214,15 +215,14 @@ const UserManagement = () => {
             },
           },
         ]}
-        renderItem={(item) => (
-          <List.Item
-            onClick={!item.isDisabled ? item.click : undefined}
-            className={item.isDisabled ? 'disabled' : ''}
-          >
-            <Typography.Text className="action-icon">{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
+        renderItem={(item) =>
+          !item.isDisabled && (
+            <List.Item onClick={item.click}>
+              <Typography.Text className="action-icon">{item.icon}</Typography.Text>
+              <span>{item.text}</span>
+            </List.Item>
+          )
+        }
       />
     );
   };
@@ -312,12 +312,15 @@ const UserManagement = () => {
       align: 'right' as const,
       render: (_: any, record: TableDataType) => {
         return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-            <EllipsisOutlined
-              rotate={90}
-              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-            />
-          </Popover>
+          (ability.can(Action.Update, plainToClass(User, record)) ||
+            ability.can(Action.Delete, plainToClass(User, record))) && (
+            <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+              <EllipsisOutlined
+                rotate={90}
+                style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+              />
+            </Popover>
+          )
         );
       },
     },
@@ -661,15 +664,17 @@ const UserManagement = () => {
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<PlusOutlined />}
-                onClick={() => navigate('/userManagement/addUser')}
-              >
-                {t('user:addUser')}
-              </Button>
+              {ability.can(Action.Create, User) && (
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate('/userManagement/addUser')}
+                >
+                  {t('user:addUser')}
+                </Button>
+              )}
             </div>
           </Col>
           <Col md={16} xs={24}>

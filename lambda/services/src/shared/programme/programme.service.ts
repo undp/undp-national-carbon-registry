@@ -187,8 +187,30 @@ export class ProgrammeService {
             throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
-        const receiver = await this.companyService.findByCompanyId(transfer.toCompanyId);
-        // const user = await this.userService.findById(transfer.initiator);
+        const receiver = await this.companyService.findByCompanyId(
+          transfer.toCompanyId
+        );
+        const giver = await this.companyService.findByCompanyId(
+          transfer.fromCompanyId
+        );
+
+        if (receiver.state === CompanyState.SUSPENDED) {
+          await this.companyService.companyTransferCancel(transfer.toCompanyId);
+          throw new HttpException(
+            "Receive company suspended",
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        if (giver.state === CompanyState.SUSPENDED) {
+          await this.companyService.companyTransferCancel(
+            transfer.fromCompanyId
+          );
+          throw new HttpException(
+            "Credit sending company suspended",
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
         if (transfer.status != TransferStatus.PROCESSING) {
             const trq = await this.programmeTransferRepo.update({
@@ -552,11 +574,25 @@ export class ProgrammeService {
     async certify(req: ProgrammeCertify, add: boolean, user: User) {
         this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
 
-        if (user.companyRole != CompanyRole.CERTIFIER) {
+        if (add && user.companyRole != CompanyRole.CERTIFIER) {
             throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
         }
 
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, this.getUserRef(user))
+        if (!add && ![CompanyRole.CERTIFIER, CompanyRole.GOVERNMENT].includes(user.companyRole)) {
+            throw new HttpException("Programme certification revoke can perform only by certifier or government", HttpStatus.FORBIDDEN)
+        }
+
+        let certifierId;
+        if (user.companyRole === CompanyRole.GOVERNMENT) {
+            if (!req.certifierId) {
+                throw new HttpException("certifierId required for government user", HttpStatus.FORBIDDEN)
+            }
+            certifierId = req.certifierId
+        } else {
+            certifierId = user.companyId;
+        }
+
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRef(user))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
@@ -601,9 +637,15 @@ export class ProgrammeService {
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
         const toCompany = await this.companyService.findGovByCountry(this.configService.get('systemCountry'))
 
-        if (requestedCompany.companyRole != CompanyRole.GOVERNMENT && !programme.companyId.includes(requester.companyId)) {
-            throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
+        if (requestedCompany.companyRole != CompanyRole.GOVERNMENT) {
+            if (!programme.companyId.includes(requester.companyId)) {
+                throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
+            }
+            if (req.type !== RetireType.CROSS_BORDER) {
+                throw new HttpException("Programme developer allowed to initiate only cross border transfers", HttpStatus.BAD_REQUEST)
+            }
         }
+        
 
         const allTransferList: ProgrammeTransfer[] = []
         const autoApproveTransferList: ProgrammeTransfer[] = []
@@ -700,7 +742,7 @@ export class ProgrammeService {
         }
 
         if (program.currentStage != ProgrammeStage.AUTHORISED) {
-            throw new HttpException("Programme is not in issued state", HttpStatus.BAD_REQUEST);
+            throw new HttpException("Programme is not in authorised state", HttpStatus.BAD_REQUEST);
         }
         if (program.creditEst - program.creditIssued < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);

@@ -155,22 +155,13 @@ const CompanyManagement = () => {
           {
             text: 'Edit',
             icon: <EditOutlined />,
-            isDisabled: !ability.can(Action.Update, plainToClass(Company, record)),
             click: () => {
               navigate('/companyManagement/updateCompany', { state: { record } });
             },
           },
-          // {
-          //   text: 'Delete',
-          //   icon: <DeleteOutlined />,
-          //   click: () => {},
-          // },
         ]}
         renderItem={(item) => (
-          <List.Item
-            onClick={!item.isDisabled ? item.click : undefined}
-            className={item.isDisabled ? 'disabled' : ''}
-          >
+          <List.Item onClick={item.click}>
             <Typography.Text className="action-icon">{item.icon}</Typography.Text>
             <span>{item.text}</span>
           </List.Item>
@@ -270,12 +261,14 @@ const CompanyManagement = () => {
       align: 'right' as const,
       render: (_: any, record: CompanyTableDataType) => {
         return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-            <EllipsisOutlined
-              rotate={90}
-              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-            />
-          </Popover>
+          ability.can(Action.Update, plainToClass(Company, record)) && (
+            <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
+              <EllipsisOutlined
+                rotate={90}
+                style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+              />
+            </Popover>
+          )
         );
       },
     },
@@ -451,15 +444,17 @@ const CompanyManagement = () => {
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<PlusOutlined />}
-                onClick={() => navigate('/companyManagement/addCompany')}
-              >
-                {t('company:addCompany')}
-              </Button>
+              {ability.can(Action.Create, Company) && (
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate('/companyManagement/addCompany')}
+                >
+                  {t('company:addCompany')}
+                </Button>
+              )}
             </div>
           </Col>
           <Col md={16} xs={24}>
