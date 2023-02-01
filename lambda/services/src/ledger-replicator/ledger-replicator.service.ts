@@ -38,7 +38,15 @@ export class LedgerReplicatorService {
         ".json?access_token=" +
         ACCESS_TOKEN +
         "&limit=1";
-      console.log("geocoding request urls -> ", index, url);
+      console.log(
+        "geocoding request urls -> ",
+        index,
+        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+          encodeURIComponent(address[index]) +
+          ".json?access_token=" +
+          "my_token" +
+          "&limit=1"
+      );
       await axios
         .get(url)
         .then(function (response) {
@@ -109,8 +117,11 @@ export class LedgerReplicatorService {
                   }
                   await this.forwardGeocoding([...address]).then(
                     (response: any) => {
-                      programme.programmeProperties.geographicalLocationCordintes =
-                        [...response];
+                      console.log(
+                        "response from forwardGeoCoding function -> ",
+                        response
+                      );
+                      programme.geographicalLocationCordintes = [...response];
                     }
                   );
                 }

@@ -75,10 +75,10 @@ export class HelperService {
   }
 
   private isQueryDto(obj) {
-    if (typeof obj === 'object' && (obj['filterAnd'] || obj['filterOr'])){
+    if (typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
       return true;
     }
-    return false
+    return false;
   }
 
   public generateWhereSQLChartStasticsWithoutTimeRange(
@@ -158,11 +158,11 @@ export class HelperService {
           table ? table + "." : ""
         }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
       } else {
-        sql = sql = `${
-          table ? table + "." : ""
-        }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
-          table ? table + "." : ""
-        }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+        sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+          data?.startTime
+        )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+          data?.endTime
+        )}`;
       }
     }
 
@@ -198,32 +198,28 @@ export class HelperService {
     let sql = "";
     if (query.filterAnd) {
       sql += query.filterAnd
-        .map(
-          (e) => {
-            if (this.isQueryDto(e.value)) {
-              return `(${this.prepareValue(e.value, table)})`
-            } else {
-              return `${table ? table + "." : ""}"${e.key}" ${
-                e.operation
-              } ${this.prepareValue(e.value, table)}`
-            }
+        .map((e) => {
+          if (this.isQueryDto(e.value)) {
+            return `(${this.prepareValue(e.value, table)})`;
+          } else {
+            return `${table ? table + "." : ""}"${e.key}" ${
+              e.operation
+            } ${this.prepareValue(e.value, table)}`;
           }
-        )
+        })
         .join(" and ");
     }
     if (query.filterOr) {
       const orSQl = query.filterOr
-        .map(
-          (e) => {
-            if (this.isQueryDto(e.value)) {
-              return `(${this.prepareValue(e.value, table)})`
-            } else {
-              return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
-                typeof e.value === "string" ? "'" + e.value + "'" : e.value
-              }`
-            }
+        .map((e) => {
+          if (this.isQueryDto(e.value)) {
+            return `(${this.prepareValue(e.value, table)})`;
+          } else {
+            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
+              typeof e.value === "string" ? "'" + e.value + "'" : e.value
+            }`;
           }
-        )
+        })
         .join(" or ");
       if (sql != "") {
         sql = `(${sql}) and (${orSQl})`;

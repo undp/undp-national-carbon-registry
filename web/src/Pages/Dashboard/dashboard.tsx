@@ -710,7 +710,7 @@ const Dashboard = () => {
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [12, 50],
-        zoom: 0,
+        zoom: 0.5,
       });
 
       const data = [
@@ -746,7 +746,7 @@ const Dashboard = () => {
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
+        for (const row of data) {
           // Convert the range of data values to a suitable color
           const blue = row.hdi * 255;
           const color = `rgb(0, 50, ${blue})`;
