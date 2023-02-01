@@ -34,8 +34,8 @@ const Homepage = () => {
             <div className="title-sub">{'REGISTRY'}</div>
           </div>
         </Col>
-        <Col md={1} lg={1} flex="auto">
-          <div className="homepage-header-container">
+        <Col md={2} lg={2} flex="auto">
+          <div className="homepage-button-container">
             <div className="button">
               <Button type="primary" onClick={() => navigate('/login')}>
                 SIGN IN
