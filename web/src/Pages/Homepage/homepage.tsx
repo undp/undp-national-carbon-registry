@@ -24,7 +24,7 @@ const Homepage = () => {
   }, []);
   return (
     <div className="homepage-container">
-      <Row>
+      <Row gutter={[8, 8]}>
         <Col md={22} lg={22} flex="auto">
           <div className="homepage-header-container">
             <div className="logo">
@@ -34,7 +34,7 @@ const Homepage = () => {
             <div className="title-sub">{'REGISTRY'}</div>
           </div>
         </Col>
-        <Col md={2} lg={2} flex="auto">
+        <Col md={1} lg={1} flex="auto">
           <div className="homepage-header-container">
             <div className="button">
               <Button type="primary" onClick={() => navigate('/login')}>

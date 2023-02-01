@@ -17,7 +17,7 @@
     align-items: center;
     // margin-bottom: 2vw;
     // padding-left: 2rem;
-    padding: 0rem 2rem 0 1rem;
+    padding: 0rem 0 0 2vw;;
     cursor: pointer;
 
     .title {
@@ -200,8 +200,12 @@
       background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
       border-radius: 0.625rem;
       padding: 40px 25px 25px 25px;
-      margin: 60px 30px 60px 60px;
+      margin: 60px 40px 60px 40px;
       text-align: center;
+
+      .aboutus-card-main-container:hover {
+        background: yellow;
+      }
     }
     .aboutus_cards-container {
       display: flex;
