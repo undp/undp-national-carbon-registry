@@ -82,7 +82,7 @@ export class CaslAbilityFactory {
         can([Action.Delete], Company);
       } 
 
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {
+      if (user.role != Role.ViewOnly && user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Manage, ProgrammeCertify);
       }
 
