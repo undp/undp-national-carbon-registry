@@ -565,7 +565,7 @@ export class AnalyticsAPIService {
             .select([
               `"programmeId"`,
               `"companyId"`,
-              `"programmeProperties"`,
+              `"geographicalLocationCordintes"`,
               `"createdTime"`,
             ])
             .where(
@@ -579,23 +579,14 @@ export class AnalyticsAPIService {
           let features: any[] = [];
           locationsGeoData.type = "FeatureCollection";
           for (let i = 0; i < totalResponseProgrammeLocation.length; i++) {
-            let programme: any =
-              totalResponseProgrammeLocation[i]?.programmeProperties;
-            let programmePropertiesGeoCordinates: any[] =
-              programme?.geographicalLocationCordintes;
-            if (programmePropertiesGeoCordinates) {
-              for (
-                let j = 0;
-                j < programmePropertiesGeoCordinates?.length;
-                j++
-              ) {
-                if (programmePropertiesGeoCordinates[j] !== null) {
-                  console.log(
-                    "cordinates ---- > ",
-                    programmePropertiesGeoCordinates[j]
-                  );
+            let programmeCordinates: any[] =
+              totalResponseProgrammeLocation[i]?.geographicalLocationCordintes;
+            if (programmeCordinates) {
+              for (let j = 0; j < programmeCordinates?.length; j++) {
+                if (programmeCordinates[j] !== null) {
+                  console.log("cordinates ---- > ", programmeCordinates[j]);
                   let programmeGeoData: any = {};
-                  let location: any = programmePropertiesGeoCordinates[j];
+                  let location: any = programmeCordinates[j];
                   programmeGeoData.type = "Feature";
                   let properties: any = {};
                   let geometry: any = {};
