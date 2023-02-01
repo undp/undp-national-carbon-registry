@@ -30,8 +30,13 @@ const Homepage = () => {
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />
             </div>
-            <div className="title">{'CARBON'}</div>
-            <div className="title-sub">{'REGISTRY'}</div>
+            <div>
+              <div style={{ display: 'flex' }}>
+                <div className="title">{'CARBON'}</div>
+                <div className="title-sub">{'REGISTRY'}</div>
+              </div>
+              <div className="country-name">{process.env.COUNTRY_NAME || 'Antarctic Region'}</div>
+            </div>
           </div>
         </Col>
         <Col md={2} lg={2} flex="auto">
@@ -181,8 +186,15 @@ const Homepage = () => {
               <div className="logo">
                 <img src={sliderLogo} alt="slider-logo" />
               </div>
-              <div className="title">{'CARBON'}</div>
-              <div className="title-sub">{'REGISTRY'}</div>
+              <div>
+                <div style={{ display: 'flex' }}>
+                  <div className="title">{'CARBON'}</div>
+                  <div className="title-sub">{'REGISTRY'}</div>
+                </div>
+                <div className="footer-country-name">
+                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                </div>
+              </div>
             </div>
           </Col>
         </Row>

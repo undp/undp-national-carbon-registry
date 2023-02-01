@@ -7,63 +7,6 @@
   overflow-x: hidden;
   background-color: $background-color;
 
-  .homepage-header-container {
-    background-color: $background-color;
-    height: 90px;
-    padding-top: 15px;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
-    padding: 0rem 0rem 0 0vw;;
-    cursor: pointer;
-
-    .title {
-      font-family: 'MuseoSans';
-      font-size: 1.2rem;
-      color: $logo-text-color;
-      font-weight: 700;
-      margin-right: 0.5rem;
-    }
-
-    .title-sub {
-      font-weight: 100 !important;
-      font-family: 'MuseoSans';
-      font-size: 1.2rem;
-      color: $logo-text-color;
-      // padding-bottom: 3px;
-    }
-
-    .logo {
-      // display: flex;
-      // flex-direction: row;
-      // justify-content: flex-start;
-      // align-items: center;
-      height: 50px;
-      padding-left: 2vw;
-      // overflow: hidden;
-      // margin-right: 0.8rem;
-
-      // background-color: red;
-      img {
-        object-fit: cover;
-        height: auto;
-        height: 70%;
-        margin-top: 6px;
-      }
-    }
-    button {
-      margin-top: 6px;
-      margin-right: 10px;
-      margin-left: 30px;
-      text-transform: uppercase;
-      // font-size: 1.25rem;
-      // font-weight: 500;
-      // color: $primary-color;
-    }
-  }
  .homepage-header-container {
     background-color: $background-color;
     height: 90px;
@@ -98,7 +41,7 @@
       // flex-direction: row;
       // justify-content: flex-start;
       // align-items: center;
-      height: 50px;
+      height: 53px;
       padding-left: 2vw;
       // overflow: hidden;
       // margin-right: 0.8rem;
@@ -119,6 +62,12 @@
       // font-size: 1.25rem;
       // font-weight: 500;
       // color: $primary-color;
+    }
+    .country-name {
+      font-size: 0.65rem;
+      color: $logo-text-color;
+      margin-top: -5px;
+      font-family: 'MuseoSans';
     }
     
   }
@@ -521,13 +470,19 @@
       }
 
       .logo {
-        height: 100px;
+        height: 97px;
         img {
           object-fit: cover;
           height: auto;
           height: 70%;
           margin-left: 60px;
         }
+      }
+      .footer-country-name {
+        font-size: 0.875rem;
+        color:$dark-text-color;
+        margin-top: -5px;
+        font-family: 'MuseoSans';
       }
     }
   }
