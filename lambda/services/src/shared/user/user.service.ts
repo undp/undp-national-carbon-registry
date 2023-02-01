@@ -201,6 +201,10 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
+      await this.emailService.sendEmail(user.email,EmailTemplates.CHANGE_PASSOWRD,{
+        name: user.name,
+        countryName: this.configService.get("systemCountry")
+      });
       return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
     }
     throw new HttpException(
@@ -257,6 +261,7 @@ export class UserService {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
+
   async create(
     userDto: UserDto,
     companyId: number,
@@ -364,8 +369,12 @@ export class UserService {
     await this.emailService.sendEmail(u.email, EmailTemplates.REGISTER_EMAIL, {
       name: u.name,
       countryName: this.configService.get("systemCountry"),
-      password: u.password,
-      apiKeyText: u.apiKey ? `<br>Api Key: ${u.apiKey}` : "",
+      tempPassword: u.password,
+      login: this.configService.get("host")+'/login',
+      home: this.configService.get("host")+'/dashboard',
+      email: u.email,
+      liveChat: this.configService.get("liveChat"),
+      helpDoc: this.configService.get("helpDocumentation")
     });
 
     u.createdTime = new Date().getTime();

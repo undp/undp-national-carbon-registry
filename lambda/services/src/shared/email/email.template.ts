@@ -1,16 +1,39 @@
 export const EmailTemplates = {
     REGISTER_EMAIL: {
-        subject: 'Welcome to Carbon Credit Registry',
+        subject: 'Carbon Registry: Welcome!',
         html: `
-        Hi {{name}},<br><br>
-
-        Welcome to Carbon Credit Registry - {{countryName}}. <br>Your account has been created. 
-        <br>You can access using your temporary password: {{password}}
-        {{apiKeyText}}
-        <br><br>
-        Sincerely,<br>
-        The Carbon Credit Registry Team 
-    `,
+        Welcome {name}, 
+        
+        Your account has been created for the {countryName} Carbon Credit 
+        Registry. Together we can work on reducing global greenhouse gasses. 
+        To get the most out of the Registry, take a look: 
+        
+        Explore the Registry here {login}. 
+        
+        For future reference, here’s your login information: 
+        Homepage: {home} 
+        User: {email} 
+        Password (temporary): {tempPassword} 
+        
+        If you have any questions, feel free to email our customer success 
+        team <a href="mailto:mailto: help@carbreg.org?subject=I Need Help With The 
+        {countryName} Carbon Credit Registry">customer success 
+        team</a>
+        (We’re lightning quick at 
+        replying.) We also offer live chat 
+        {liveChat}. 
+        
+        Sincerely, The {countryName} Carbon Credit Registry Team 
+        
+        P.S.Need immediate help getting started? Check out our help 
+        documentation {helpDoc}. Or, just reply to this email, the 
+        {countryName} Carbon Credit Registry Team is always ready to 
+        help! 
+        
+        United Nations Development Programme 
+        1 United Nations Plaza 
+        New York, NY USA 10001
+        `,
         text: ''
     },
     API_KEY_EMAIL: {
@@ -48,6 +71,21 @@ export const EmailTemplates = {
         <br><br>
         Sincerely,<br>
         The Carbon Credit Registry Team 
+        `,
+        text: ''
+    },
+    CHANGE_PASSOWRD: {
+        subject: 'Carbon Registry: Your password was changed',
+        html: `
+        Hi {name},<br><br>
+        The password of your Carbon Registry account was changed successfully. <br><br>
+        If you do not use {countryName} Carbon Credit Registry or did not request a password reset, please ignore this email or 
+        <a href="mailto: help@carbreg.org?subject=Password Problem With The {countryName} Carbon Credit Registry">contact support</a>
+        if you have questions. 
+        
+        <br><br>
+        Sincerely, <br>
+        The {countryName} Carbon Credit Registry Team
         `,
         text: ''
     }

@@ -34,5 +34,8 @@ export default () => ({
     },
     s3CommonBucket: {
         name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),
-    }
+    },
+    host: process.env.HOST || 'https://d3jqjkxcrafyfv.cloudfront.net',
+    liveChat : 'https://undp2020cdo.typeform.com/to/emSWOmDo',
+    helpDocumentation: 'carbreg.org/help'
 });
