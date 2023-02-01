@@ -41,6 +41,7 @@ const Login = () => {
         role: response.data.role,
         companyId: response.data.companyId,
         companyState: response.data.companyState,
+        companyRole: response.data.companyRole,
       });
 
       if (response.status === 200 || response.status === 201) {
