@@ -628,6 +628,7 @@ export class AnalyticsAPIService {
             .getRawMany();
           let featuresTransfer: any[] = [];
           let locations = {};
+          let total = 0
           for (const t of totalResponseTransferLocation) {
             if (t?.toCompanyMeta) {
               let toCompanyMeta = t?.toCompanyMeta;
@@ -637,6 +638,7 @@ export class AnalyticsAPIService {
                 } else {
                   locations[toCompanyMeta?.country] += 1
                 }
+                total += 1
               }
             }
           }
@@ -644,7 +646,7 @@ export class AnalyticsAPIService {
             featuresTransfer.push({
               'code': c,
               'count': locations[c],
-              'ratio': locations[c]/totalResponseTransferLocation.length
+              'ratio': locations[c]/total
             })
           }
 
