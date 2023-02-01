@@ -95,7 +95,7 @@ const AddNewCompany = () => {
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigate('/companyManagement', { replace: true });
+        navigate('/companyManagement/viewAll', { replace: true });
         setLoading(false);
       }
     } catch (error: any) {
@@ -107,7 +107,6 @@ const AddNewCompany = () => {
       });
     } finally {
       setLoading(false);
-      //navigate('/companyManagement/viewAll', { replace: true });
     }
   };
 
@@ -607,15 +606,15 @@ const AddNewCompany = () => {
         </div>
       </div>
       <div className="adding-section">
-        <div className="form-section">
-          {isUpdate ? (
-            <>
-              {/* <div className="step-title-container">
-                <div className="title">{t('addCompany:companyDetailsTitle')}</div>
-              </div> */}
-              <CompanyDetailsForm />
-            </>
-          ) : (
+        {isUpdate ? (
+          <>
+            <div className="step-title-container">
+              <div className="title">{t('addCompany:companyDetailsTitle')}</div>
+            </div>
+            <CompanyDetailsForm />
+          </>
+        ) : (
+          <div className="form-section">
             <Steps
               progressDot
               direction="vertical"
@@ -641,8 +640,8 @@ const AddNewCompany = () => {
                 },
               ]}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

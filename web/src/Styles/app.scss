@@ -96,7 +96,8 @@ body {
 }
 
 .ant-form-item-explain-error {
-  font-size: 0.875rem;
+  font-size: 13px;
+  color: $error-color;
 }
 
 .ant-table-thead
@@ -113,6 +114,7 @@ body {
 .ant-form-item-label
   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   margin-left: 0.2rem !important;
+  color: $error-color !important;
 }
 
 .ant-picker {
@@ -397,21 +399,7 @@ body {
     }
 
     .ant-form-item-explain-error {
-      font-size: 13px;
       text-align: start;
-    }
-
-    .error-message-container {
-      display: flex;
-      flex: 1;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-
-      .error-message-txt {
-        font-size: 0.9rem;
-        color: $error-color;
-      }
     }
   }
 }

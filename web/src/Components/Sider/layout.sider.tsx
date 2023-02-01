@@ -79,7 +79,17 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 <div className="title">{collapsed ? '' : 'CARBON'}</div>
                 <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
               </div>
-              <div className="country-name">{'Antarctic Region'}</div>
+              <div className="country-name">{process.env.COUNTRY_NAME || 'Antarctic Region'}</div>
+            </div>
+          )}
+          {collapsed && (
+            <div className="country-flag">
+              <img
+                src={
+                  process.env.COUNTRY_FLAG_URL ||
+                  'https://carbon-common-dev.s3.amazonaws.com/flag.png'
+                }
+              />
             </div>
           )}
         </div>

@@ -80,7 +80,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         resp.data
           .map((d: any) => ({ label: d.name, value: d.companyId }))
           .filter((d: any) => {
-            return d.companyId !== userCompanyId;
+            return d.value !== userCompanyId;
           })
       );
     } else {
@@ -246,6 +246,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                   <InputNumber
                     placeholder=""
                     controls={false}
+                    disabled={value === pert.companyId}
                     onKeyPress={(event) => {
                       if (!/[0-9\.]/.test(event.key)) {
                         event.preventDefault();
