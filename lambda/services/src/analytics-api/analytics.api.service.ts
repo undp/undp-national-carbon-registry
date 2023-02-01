@@ -120,9 +120,11 @@ export class AnalyticsAPIService {
                   "Rejected" && rejectedC++;
               }
               if (indexProgramme === totalProgrammesResponse.length - 1) {
-                data?.awaitingAuthorization.push({ [sTime]: pendingC });
-                data?.issued.push({ [sTime]: issuedC });
-                data?.rejected.push({ [sTime]: rejectedC });
+                data?.awaitingAuthorization.push({
+                  [sTime]: Math.round(pendingC),
+                });
+                data?.issued.push({ [sTime]: Math.round(issuedC) });
+                data?.rejected.push({ [sTime]: Math.round(rejectedC) });
               }
             }
             sTime = eTime;
@@ -287,6 +289,7 @@ export class AnalyticsAPIService {
               `"creditBalance"`,
               `"creditTransferred"`,
               `"creditRetired"`,
+              `"creditFrozen"`,
               `"createdTime"`,
             ])
             .where(
@@ -327,6 +330,7 @@ export class AnalyticsAPIService {
             let issuedS = 0;
             let transferredS = 0;
             let retiredS = 0;
+            let frozenS = 0;
             // console.log("week count ---- ", index, { sTime, eTime });
             for (
               let indexProgramme = 0;
@@ -375,6 +379,17 @@ export class AnalyticsAPIService {
                       totalResponseCredit[indexProgramme]?.creditRetired
                     );
                 }
+                if (
+                  totalResponseCredit[indexProgramme]?.creditFrozen !== null
+                ) {
+                  let sum: any = 0;
+                  let creditFrozen: any[] =
+                    totalResponseCredit[indexProgramme]?.creditFrozen;
+                  for (let cF = 0; cF < creditFrozen.length; cF++) {
+                    sum = sum + creditFrozen[cF];
+                  }
+                  frozenS = frozenS + parseFloat(sum);
+                }
                 if (totalResponseCredit[indexProgramme]?.creditEst !== null) {
                   estimatedS =
                     estimatedS +
@@ -383,11 +398,20 @@ export class AnalyticsAPIService {
               }
               if (indexProgramme === totalResponseCredit.length - 1) {
                 dataCredits?.authorized.push({
-                  [sTimeCredit]: estimatedS - issuedS,
+                  [sTimeCredit]: (estimatedS - issuedS).toFixed(1),
                 });
-                dataCredits?.issued.push({ [sTimeCredit]: availableS });
-                dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
-                dataCredits?.retired.push({ [sTimeCredit]: retiredS });
+                dataCredits?.issued.push({
+                  [sTimeCredit]: (
+                    issuedS -
+                    (transferredS + retiredS + frozenS)
+                  ).toFixed(1),
+                });
+                dataCredits?.transferred.push({
+                  [sTimeCredit]: transferredS.toFixed(1),
+                });
+                dataCredits?.retired.push({
+                  [sTimeCredit]: retiredS.toFixed(1),
+                });
               }
             }
             sTimeCredit = eTimeCredit;
@@ -511,13 +535,13 @@ export class AnalyticsAPIService {
               }
               if (indexProgramme === totalResponseCreditsCertified.length - 1) {
                 dataCreditsCertified?.certified.push({
-                  [sTimeCreditCertified]: certifiedS,
+                  [sTimeCreditCertified]: certifiedS.toFixed(1),
                 });
                 dataCreditsCertified?.uncertified.push({
-                  [sTimeCreditCertified]: unCertifiedS,
+                  [sTimeCreditCertified]: unCertifiedS.toFixed(1),
                 });
                 dataCreditsCertified?.revoked.push({
-                  [sTimeCreditCertified]: revokedS,
+                  [sTimeCreditCertified]: revokedS.toFixed(1),
                 });
               }
             }
@@ -780,6 +804,7 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_STATS_RETIRED:
         case StatType.CREDIT_STATS_ISSUED:
         case StatType.CREDIT_STATS_ESTIMATED:
+        case StatType.CREDIT_STATS_FROZEN:
           const startTimeProgrammeCredits = query.startTime;
           const endTimeProgrammeCredits = query.endTime;
           const valuesCreditRequest: programmeStatusRequestDto = {
