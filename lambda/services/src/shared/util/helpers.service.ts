@@ -212,7 +212,7 @@ export class HelperService {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
             return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
-          } else if (!this.isEnumKey(e.key)) {
+          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
@@ -231,8 +231,8 @@ export class HelperService {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
             return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
-          } else if (!this.isEnumKey(e.key)) {
-            return `LOWER${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
+          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
+            return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
           } else {
             return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;
           }

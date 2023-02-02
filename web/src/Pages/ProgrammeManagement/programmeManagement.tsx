@@ -298,7 +298,7 @@ const ProgrammeManagement = () => {
 
   useEffect(() => {
     getAllProgramme();
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
+  }, [currentPage, pageSize, sortField, sortOrder, search]);
 
   // useEffect(() => {
   //   setCurrentPage(0);
