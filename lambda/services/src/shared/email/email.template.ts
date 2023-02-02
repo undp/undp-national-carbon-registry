@@ -88,5 +88,35 @@ export const EmailTemplates = {
         The {countryName} Carbon Credit Registry Team
         `,
         text: ''
-    }
+    },
+    PROGRAMME_CREATE: {
+        subject: 'New Programme Received for Authorisation',
+        html:`
+        Hi {name},  <br><br>
+
+        A new programme from {organisationName} is awaiting authorisation. <br>
+        
+        <a href="{programmePageLink}">Click here</a> to access all the programmes that require authorisation. 
+        <br><br>
+         
+        Sincerely,  <br>
+        The {countryName} Carbon Credit Registry Team 
+        `
+    },
+    PROGRAMME_AUTHORISATION: {
+        subject: 'Programme authorised',
+        html:`
+        Hi {name},  <br><br>
+
+        {programmeName} of your organisation has been authorised on {authorisedDate} with the serial number {serialNumber}. 
+        <br>
+         
+        <a href="{programmePageLink}">Click here</a> for more details of the programme. 
+        <br><br>
+        
+        Sincerely,  <br>
+        The {countryName} Carbon Credit Registry Team 
+        `
+    },
+    
 };

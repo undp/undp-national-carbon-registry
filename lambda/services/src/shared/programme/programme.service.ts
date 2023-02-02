@@ -494,6 +494,16 @@ export class ProgrammeService {
             programme.creditUnit = this.configService.get('defaultCreditUnit')
         }
 
+        const users =await this.userService.getGovAdminAndManagerUsers();
+        users.forEach((user:User) =>{
+            this.emailService.sendEmail(user.email,EmailTemplates.PROGRAMME_CREATE,{
+                name:user.name,
+                organisationName: '',
+                programmePageLink: '',
+                countryName: user.country
+            })
+        })
+
         return await this.programmeLedger.createProgramme(programme);
     }
 
@@ -789,6 +799,19 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        const users = await this.userService.getOrganisationAdminAndManagerUsers(updated.companyId);
+        users.forEach((user:User) =>{
+            this.emailService.sendEmail(user.email,EmailTemplates.PROGRAMME_AUTHORISATION,{
+                name:user.name,
+                programmeName: '',
+                authorisedDate: '',
+                serialNumber: '',
+                programmePageLink: '',
+                countryName: user.country
+            })
+        })
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 

@@ -201,10 +201,14 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
-      await this.emailService.sendEmail(user.email,EmailTemplates.CHANGE_PASSOWRD,{
+      await this.emailService.sendEmail(
+        user.email,
+        EmailTemplates.CHANGE_PASSOWRD,
+        {
         name: user.name,
-        countryName: this.configService.get("systemCountry")
-      });
+          countryName: this.configService.get("systemCountry"),
+        }
+      );
       return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
     }
     throw new HttpException(
@@ -370,11 +374,11 @@ export class UserService {
       name: u.name,
       countryName: this.configService.get("systemCountry"),
       tempPassword: u.password,
-      login: this.configService.get("host")+'/login',
-      home: this.configService.get("host")+'/dashboard',
+      login: this.configService.get("host") + "/login",
+      home: this.configService.get("host") + "/dashboard",
       email: u.email,
       liveChat: this.configService.get("liveChat"),
-      helpDoc: this.configService.get("helpDocumentation")
+      helpDoc: this.configService.get("helpDocumentation"),
     });
 
     u.createdTime = new Date().getTime();
@@ -502,5 +506,29 @@ export class UserService {
       "Delete failed. Please try again",
       HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  async getGovAdminAndManagerUsers() {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role = :admin OR user.role = :manager",{admin:Role.Admin, manager:Role.Manager})
+      .andWhere("user.companyRole= :companyRole",{companyRole:CompanyRole.GOVERNMENT})
+      .select(['user.name','user.email'])
+      .getRawMany();
+
+    return result;
+
+    //return result.map((item) => {return item.user_email});
+  }
+
+  async getOrganisationAdminAndManagerUsers(organisationId) {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role = :admin OR user.role = :manager",{admin:Role.Admin, manager:Role.Manager})
+      .andWhere("user.companyId= :companyId",{companyId:organisationId})
+      .select(['user.name','user.email'])
+      .getRawMany();
+
+    return result;
   }
 }
