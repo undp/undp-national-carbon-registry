@@ -294,7 +294,11 @@ const ProgrammeManagement = () => {
     } else {
       getAllProgramme();
     }
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search, statusFilter, dataFilter]);
+  }, [statusFilter, dataFilter]);
+
+  useEffect(() => {
+    getAllProgramme();
+  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
 
   // useEffect(() => {
   //   setCurrentPage(0);
