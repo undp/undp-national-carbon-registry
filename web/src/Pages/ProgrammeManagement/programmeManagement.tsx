@@ -28,6 +28,7 @@ import {
   ProgrammeStage,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const { Search } = Input;
 
@@ -43,9 +44,11 @@ const ProgrammeManagement = () => {
   const [search, setSearch] = useState<string>();
   const [searchText, setSearchText] = useState<string>();
   const [statusFilter, setStatusFilter] = useState<any>();
+  const [dataFilter, setDataFilter] = useState<any>();
   const { i18n, t } = useTranslation(['common', 'programme']);
   const [sortOrder, setSortOrder] = useState<string>();
   const [sortField, setSortField] = useState<string>();
+  const { userInfoState } = useUserContext();
 
   const statusOptions = Object.keys(ProgrammeStage).map((k, index) => ({
     label: Object.values(ProgrammeStage)[index],
@@ -231,6 +234,10 @@ const ProgrammeManagement = () => {
     setLoading(true);
 
     const filter: any[] = [];
+
+    if (dataFilter) {
+      filter.push(dataFilter);
+    }
     if (statusFilter) {
       filter.push(statusFilter);
     }
@@ -282,8 +289,16 @@ const ProgrammeManagement = () => {
   };
 
   useEffect(() => {
-    getAllProgramme();
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      getAllProgramme();
+    }
+  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search, statusFilter, dataFilter]);
+
+  // useEffect(() => {
+  //   setCurrentPage(0);
+  // }, [statusFilter, dataFilter]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
@@ -307,7 +322,7 @@ const ProgrammeManagement = () => {
       </div>
       <div className="content-card">
         <Row className="table-actions-section">
-          <Col lg={{ span: 16 }} md={{ span: 16 }}>
+          <Col lg={{ span: 14 }} md={{ span: 14 }}>
             <div className="action-bar">
               <Checkbox
                 className="all-check"
@@ -328,7 +343,27 @@ const ProgrammeManagement = () => {
               />
             </div>
           </Col>
-          <Col lg={{ span: 8 }} md={{ span: 8 }}>
+          <Col lg={{ span: 4 }} md={{ span: 4 }}>
+            <div className="action-bar pull-right">
+              <Checkbox
+                className="label"
+                onChange={(v) =>
+                  setDataFilter(
+                    v
+                      ? {
+                          key: 'companyId',
+                          operation: 'ANY',
+                          value: userInfoState?.companyId,
+                        }
+                      : undefined
+                  )
+                }
+              >
+                {t('view:seeMine')}
+              </Checkbox>
+            </div>
+          </Col>
+          <Col lg={{ span: 6 }} md={{ span: 6 }}>
             <div className="filter-section">
               <div className="search-bar">
                 <Search
