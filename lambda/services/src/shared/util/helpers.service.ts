@@ -138,6 +138,7 @@ export class HelperService {
     } else if (data?.type === "CREDIT_REVOKED") {
       col = "certifierId";
       sql = `${table ? table + "." : ""}"${col}" = '{}'`;
+    } else if (data?.type === "CREDIT_STATS_FROZEN") {
     }
 
     if (
@@ -318,7 +319,7 @@ export class HelperService {
       ContentEncoding: "base64",
       ContentType: "image/png",
     };
-    uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
+    uploadParams.Key = `profile_images/${companyId}.png`;
 
     return await s3
       .upload(uploadParams, function (err, data) {

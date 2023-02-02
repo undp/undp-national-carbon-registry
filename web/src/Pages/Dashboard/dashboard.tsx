@@ -835,12 +835,12 @@ ${total}
           style: 'mapbox://styles/mapbox/light-v11',
         });
         map.on('load', () => {
-          // add a clustered GeoJSON source for a sample set of earthquakes
-          map.addSource('earthquakes', {
+          // add a clustered GeoJSON source for a sample set of programmeLocations
+          map.addSource('programmeLocations', {
             type: 'geojson',
             data: programmeLocations,
             cluster: true,
-            clusterRadius: 80,
+            clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
               count1: ['+', ['case', count1, 1, 0]],
@@ -850,11 +850,11 @@ ${total}
               count5: ['+', ['case', count5, 1, 0]],
             },
           });
-          // circle and symbol layers for rendering individual earthquakes (unclustered points)
+          // circle and symbol layers for rendering individual programmeLocations (unclustered points)
           map.addLayer({
             id: 'earthquake_circle',
             type: 'circle',
-            source: 'earthquakes',
+            source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
             paint: {
               'circle-color': [
@@ -869,26 +869,8 @@ ${total}
                 colors[3],
                 colors[4],
               ],
-              'circle-opacity': 0.6,
-              'circle-radius': 12,
-            },
-          });
-          map.addLayer({
-            id: 'earthquake_label',
-            type: 'symbol',
-            source: 'earthquakes',
-            filter: ['!=', 'cluster', true],
-            layout: {
-              'text-field': [
-                'number-format',
-                ['get', 'count'],
-                { 'min-fraction-digits': 1, 'max-fraction-digits': 1 },
-              ],
-              'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-              'text-size': 10,
-            },
-            paint: {
-              'text-color': ['case', ['<', ['get', 'count'], 3], 'black', 'white'],
+              'circle-opacity': 1,
+              'circle-radius': 10,
             },
           });
 
@@ -898,7 +880,7 @@ ${total}
 
           function updateMarkers() {
             const newMarkers: any = {};
-            const features: any = map.querySourceFeatures('earthquakes');
+            const features: any = map.querySourceFeatures('programmeLocations');
 
             // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
             // and add it to the map if it's not there already
@@ -929,7 +911,7 @@ ${total}
 
           // after the GeoJSON data is loaded, update markers on the screen on every frame
           map.on('render', () => {
-            if (!map.isSourceLoaded('earthquakes')) return;
+            if (!map.isSourceLoaded('programmeLocations')) return;
             updateMarkers();
           });
         });
@@ -1152,7 +1134,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on argin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
@@ -1174,7 +1156,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on argin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>

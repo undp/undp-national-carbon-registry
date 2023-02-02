@@ -21,6 +21,7 @@ import {
   chartStatsResultSend,
   chartStatsResultInitialValueSend,
 } from "../shared/dto/chart.stats.result";
+import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
 
 @Injectable()
 export class AnalyticsAPIService {
@@ -28,8 +29,8 @@ export class AnalyticsAPIService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
-    @InjectRepository(ProgrammeTransfer)
-    private programmeTransferRepo: Repository<ProgrammeTransfer>
+    @InjectRepository(ProgrammeTransferViewEntityQuery)
+    private programmeTransferRepo: Repository<ProgrammeTransferViewEntityQuery>
   ) {}
 
   async programmesStaticChartsDetails(
@@ -618,7 +619,7 @@ export class AnalyticsAPIService {
           };
           let totalResponseTransferLocation = await this.programmeTransferRepo
             .createQueryBuilder()
-            .select([`"requestId"`, `"toCompanyMeta"`])
+            .select([`"requestId"`, `"companyId"`, `"toCompanyMeta"`])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsTransferLocations,
@@ -628,26 +629,26 @@ export class AnalyticsAPIService {
             .getRawMany();
           let featuresTransfer: any[] = [];
           let locations = {};
-          let total = 0
+          let total = 0;
           for (const t of totalResponseTransferLocation) {
             if (t?.toCompanyMeta) {
               let toCompanyMeta = t?.toCompanyMeta;
               if (toCompanyMeta?.country) {
                 if (!locations[toCompanyMeta?.country]) {
-                  locations[toCompanyMeta?.country] = 1  
+                  locations[toCompanyMeta?.country] = 1;
                 } else {
-                  locations[toCompanyMeta?.country] += 1
+                  locations[toCompanyMeta?.country] += 1;
                 }
-                total += 1
+                total += 1;
               }
             }
           }
           for (const c in locations) {
             featuresTransfer.push({
-              'code': c,
-              'count': locations[c],
-              'ratio': locations[c]/total
-            })
+              code: c,
+              count: locations[c],
+              ratio: locations[c] / total,
+            });
           }
 
           // for (
@@ -840,10 +841,10 @@ export class AnalyticsAPIService {
           results[stat.type] = creditStat;
           break;
 
-        case StatType.CREDIT_CERTIFIED_BALANCE:
-        case StatType.CREDIT_CERTIFIED_TRANSFERRED:
-        case StatType.CREDIT_CERTIFIED_RETIRED:
-        case StatType.CREDIT_CERTIFIED_ISSUED:
+        // case StatType.CREDIT_CERTIFIED_BALANCE:
+        // case StatType.CREDIT_CERTIFIED_TRANSFERRED:
+        // case StatType.CREDIT_CERTIFIED_RETIRED:
+        // case StatType.CREDIT_CERTIFIED_ISSUED:
         case StatType.CREDIT_CERTIFIED:
         case StatType.CREDIT_UNCERTIFIED:
         case StatType.CREDIT_REVOKED:
