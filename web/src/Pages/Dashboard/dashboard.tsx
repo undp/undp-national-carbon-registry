@@ -715,20 +715,64 @@ const Dashboard = () => {
 
       const data = [
         {
-          code: 'AL',
-          hdi: 1,
+          code: 'GE',
+          hdi: 0.23297491039426524,
         },
         {
-          code: 'LK',
-          hdi: 0.09523809523809523,
+          code: 'MX',
+          hdi: 0.26881720430107525,
+        },
+        {
+          code: 'GS',
+          hdi: 0.3655913978494624,
         },
         {
           code: 'CN',
-          hdi: 0.23809523809523808,
+          hdi: 0.3906810035842294,
         },
         {
-          code: 'TD',
-          hdi: 0.5,
+          code: 'LK',
+          hdi: 0.5698924731182796,
+        },
+        {
+          code: 'AQ',
+          hdi: 0.5734767025089605,
+        },
+        {
+          code: 'AX',
+          hdi: 0.8566308243727598,
+        },
+        {
+          code: 'AS',
+          hdi: 0.9068100358422939,
+        },
+        {
+          code: 'BD',
+          hdi: 0.9175627240143369,
+        },
+        {
+          code: 'BB',
+          hdi: 0.9283154121863799,
+        },
+        {
+          code: 'BW',
+          hdi: 0.9390681003584229,
+        },
+        {
+          code: 'BJ',
+          hdi: 0.974910394265233,
+        },
+        {
+          code: 'BS',
+          hdi: 0.982078853046595,
+        },
+        {
+          code: 'AR',
+          hdi: 0.985663082437276,
+        },
+        {
+          code: 'AO',
+          hdi: 0.996415770609319,
         },
       ];
 
@@ -818,8 +862,8 @@ const Dashboard = () => {
         offsets.push(total);
         total += count;
       }
-      const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
-      const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+      const fontSize = total >= 1000 ? 24 : total >= 100 ? 22 : total >= 10 ? 20 : 18;
+      const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 20;
       const r0 = Math.round(r * 0.6);
       const w = r * 2;
 
@@ -837,7 +881,7 @@ const Dashboard = () => {
       }
       html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
   <text dominant-baseline="central" transform="translate(${r}, ${r})">
-  ${total.toLocaleString()}
+  ${Math.round(total).toLocaleString()}
   </text>
   </svg>
   </div>`;
@@ -859,12 +903,12 @@ const Dashboard = () => {
           style: 'mapbox://styles/mapbox/light-v11',
         });
         map.on('load', () => {
-          // add a clustered GeoJSON source for a sample set of earthquakes
-          map.addSource('earthquakes', {
+          // add a clustered GeoJSON source for a sample set of programmeLocations
+          map.addSource('programmeLocations', {
             type: 'geojson',
             data: programmeLocations,
             cluster: true,
-            clusterRadius: 80,
+            clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
               count1: ['+', ['case', count1, 1, 0]],
@@ -874,11 +918,11 @@ const Dashboard = () => {
               count5: ['+', ['case', count5, 1, 0]],
             },
           });
-          // circle and symbol layers for rendering individual earthquakes (unclustered points)
+          // circle and symbol layers for rendering individual programmeLocations (unclustered points)
           map.addLayer({
             id: 'earthquake_circle',
             type: 'circle',
-            source: 'earthquakes',
+            source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
             paint: {
               'circle-color': [
@@ -893,26 +937,8 @@ const Dashboard = () => {
                 colors[3],
                 colors[4],
               ],
-              'circle-opacity': 0.6,
-              'circle-radius': 12,
-            },
-          });
-          map.addLayer({
-            id: 'earthquake_label',
-            type: 'symbol',
-            source: 'earthquakes',
-            filter: ['!=', 'cluster', true],
-            layout: {
-              'text-field': [
-                'number-format',
-                ['get', 'count'],
-                { 'min-fraction-digits': 1, 'max-fraction-digits': 1 },
-              ],
-              'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-              'text-size': 10,
-            },
-            paint: {
-              'text-color': ['case', ['<', ['get', 'count'], 3], 'black', 'white'],
+              'circle-opacity': 1,
+              'circle-radius': 10,
             },
           });
 
@@ -922,7 +948,7 @@ const Dashboard = () => {
 
           function updateMarkers() {
             const newMarkers: any = {};
-            const features: any = map.querySourceFeatures('earthquakes');
+            const features: any = map.querySourceFeatures('programmeLocations');
 
             // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
             // and add it to the map if it's not there already
@@ -952,7 +978,7 @@ const Dashboard = () => {
 
           // after the GeoJSON data is loaded, update markers on the screen on every frame
           map.on('render', () => {
-            if (!map.isSourceLoaded('earthquakes')) return;
+            if (!map.isSourceLoaded('programmeLocations')) return;
             updateMarkers();
           });
         });
@@ -1175,7 +1201,7 @@ const Dashboard = () => {
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on argin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
@@ -1197,7 +1223,7 @@ const Dashboard = () => {
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on">
+                  <div className="updated-on argin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>

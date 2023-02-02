@@ -818,10 +818,10 @@ export class AnalyticsAPIService {
           results[stat.type] = creditStat;
           break;
 
-        case StatType.CREDIT_CERTIFIED_BALANCE:
-        case StatType.CREDIT_CERTIFIED_TRANSFERRED:
-        case StatType.CREDIT_CERTIFIED_RETIRED:
-        case StatType.CREDIT_CERTIFIED_ISSUED:
+        // case StatType.CREDIT_CERTIFIED_BALANCE:
+        // case StatType.CREDIT_CERTIFIED_TRANSFERRED:
+        // case StatType.CREDIT_CERTIFIED_RETIRED:
+        // case StatType.CREDIT_CERTIFIED_ISSUED:
         case StatType.CREDIT_CERTIFIED:
         case StatType.CREDIT_UNCERTIFIED:
         case StatType.CREDIT_REVOKED:
