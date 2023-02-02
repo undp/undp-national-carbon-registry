@@ -355,7 +355,7 @@
 
     ul {
       margin-top: 25px;
-      margin-left: 15vw;
+      margin-left: 9vw;
     }
     li {
       line-height: 40px;
@@ -378,7 +378,7 @@
       font-weight: 700;
       font-family: $primary-font-family;
       color: $title-text-color;
-      margin-left: 16vw;
+      margin-left: 10vw;
       text-transform: uppercase;
       padding: 50px 50px 10px 50px;
 
@@ -425,7 +425,7 @@
     }
     .footertext-bottom {
       color: $dark-text-color;
-      padding: 100px 60px 20px 60px;
+      padding: 100px 60px 28px 60px;
       font-size: 0.875rem;
       font-family: 'MuseoSans';
       font-weight: 100;
@@ -484,7 +484,6 @@
       .footer-country-name {
         font-size: 0.875rem;
         color: $dark-text-color;
-        margin-top: -5px;
         font-family: 'MuseoSans';
       }
     }
