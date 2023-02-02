@@ -326,7 +326,7 @@ const ProgrammeManagement = () => {
       </div>
       <div className="content-card">
         <Row className="table-actions-section">
-          <Col lg={{ span: 14 }} md={{ span: 14 }}>
+          <Col lg={{ span: 16 }} md={{ span: 16 }}>
             <div className="action-bar">
               <Checkbox
                 className="all-check"
@@ -347,28 +347,26 @@ const ProgrammeManagement = () => {
               />
             </div>
           </Col>
-          <Col lg={{ span: 4 }} md={{ span: 4 }}>
-            <div className="action-bar pull-right">
-              <Checkbox
-                className="label"
-                onChange={(v) =>
-                  setDataFilter(
-                    v
-                      ? {
-                          key: 'companyId',
-                          operation: 'ANY',
-                          value: userInfoState?.companyId,
-                        }
-                      : undefined
-                  )
-                }
-              >
-                {t('view:seeMine')}
-              </Checkbox>
-            </div>
-          </Col>
-          <Col lg={{ span: 6 }} md={{ span: 6 }}>
+          <Col lg={{ span: 8 }} md={{ span: 8 }}>
             <div className="filter-section">
+              <div className="search-filter">
+                <Checkbox
+                  className="label"
+                  onChange={(v) =>
+                    setDataFilter(
+                      v.target.checked
+                        ? {
+                            key: 'companyId',
+                            operation: 'ANY',
+                            value: userInfoState?.companyId,
+                          }
+                        : undefined
+                    )
+                  }
+                >
+                  {t('view:seeMine')}
+                </Checkbox>
+              </div>
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
