@@ -13,6 +13,8 @@ import './addNewCompany.scss';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
 import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { UserProps } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -32,6 +34,7 @@ const AddNewCompany = () => {
   const maximumImageSize = process.env.MAXIMUM_IMAGE_SIZE
     ? parseInt(process.env.MAXIMUM_IMAGE_SIZE)
     : 3145728;
+  const { setUserInfo } = useUserContext();
 
   useEffect(() => {
     setIsUpdate(state?.record ? true : false);
@@ -89,6 +92,9 @@ const AddNewCompany = () => {
       requestData.company.logo = logoUrls[1];
       const response = await post('national/user/add', requestData);
       if (response.status === 200 || response.status === 201) {
+        setUserInfo({
+          companyLogo: response.data.logo,
+        } as UserProps);
         message.open({
           type: 'success',
           content: 'Company added Successfully!',
@@ -143,6 +149,9 @@ const AddNewCompany = () => {
 
       const response = await put('national/organisation/update', values);
       if (response.status === 200 || response.status === 201) {
+        setUserInfo({
+          companyLogo: response.data.logo,
+        } as UserProps);
         message.open({
           type: 'success',
           content: 'Company updated Successfully!',
@@ -288,6 +297,7 @@ const AddNewCompany = () => {
                     label="Organisation Logo (File Type : JPEG , PNG , SVG )"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
+                    required={true}
                     rules={[
                       {
                         validator: async (rule, file) => {
