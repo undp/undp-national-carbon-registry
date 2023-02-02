@@ -106,3 +106,14 @@ All the CRUD operations can perform as per the following table,
 
 - All users can edit own user account except Role and Email.
 - Users are not allowed to delete the own account from the system.
+
+### Governance and Support
+![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)
+
+UNDP is responsible for managing the application. 
+
+Availability problems, failures of platform components, capacity requirements, performances degradation, database indexing, backup and monitoring are all in the responsibility of UNDP.
+
+UNDP is also responsible for performing the user support.
+
+By performing such support UNDP may require assistance from [Xeptagon](https://www.xeptagon.com). 
