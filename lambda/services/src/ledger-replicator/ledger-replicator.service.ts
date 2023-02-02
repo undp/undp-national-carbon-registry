@@ -138,7 +138,7 @@ export class LedgerReplicatorService {
                 ).columns;
               const columnNames = columns
                 .filter(function (item) {
-                  return item.propertyName !== "programmeId";
+                  return (item.propertyName !== "programmeId" && item.propertyName !== "geographicalLocationCordintes");
                 })
                 .map((e) => e.propertyName);
               this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);

@@ -50,6 +50,7 @@
     "issueCreditText": "Credits to be issued",
     "authCreditText": "Credits to authorise",
     "totalTransferCredit": "Total Amount",
+    "totalRetireCredit": "Retired Credit Amount",
     "successAuth": "Successfully authorised",
     "successRetire": "Successfully retired",
     "successRevoke": "Successfully revoked",

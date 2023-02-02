@@ -10,7 +10,7 @@ import {
 import { IsValidCountry } from "../util/validcountry.decorator";
 
 export class BasicOrgInfo {
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
   @ApiPropertyOptional()
   @IsOptional()

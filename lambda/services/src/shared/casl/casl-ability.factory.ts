@@ -1,4 +1,11 @@
-import { AbilityBuilder, CreateAbility, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility } from "@casl/ability";
+import {
+  AbilityBuilder,
+  CreateAbility,
+  createMongoAbility,
+  ExtractSubjectType,
+  InferSubjects,
+  MongoAbility,
+} from "@casl/ability";
 import { Injectable } from "@nestjs/common";
 import { User } from "../entities/user.entity";
 import { Action } from "./action.enum";
@@ -15,7 +22,7 @@ import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
 
-type Subjects = InferSubjects<typeof EntitySubject> | 'all';
+type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>;
@@ -23,22 +30,37 @@ export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>;
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    console.log('createForUser', user)
+    console.log("createForUser", user);
     const { can, cannot, build } = new AbilityBuilder(createAppAbility);
     if (user) {
       if (user.role == Role.Root) {
-        can(Action.Manage, 'all');
+        can(Action.Manage, "all");
 
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
+        cannot(
+          Action.Update,
+          User,
+          ["role", "apiKey", "password", "companyRole", "email"],
+          { id: { $eq: user.id } }
+        );
         cannot([Action.Update], User, { companyId: { $ne: user.companyId } });
         cannot([Action.Update], Company);
         can([Action.Delete], Company);
         can([Action.Create], Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
-      } else if (user.role == Role.Admin && user.companyRole == CompanyRole.GOVERNMENT) {
+      } else if (
+        user.role == Role.Admin &&
+        user.companyRole == CompanyRole.GOVERNMENT
+      ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
-        cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
+        cannot(
+          Action.Update,
+          User,
+          ["role", "apiKey", "password", "companyRole", "email"],
+          { id: { $eq: user.id } }
+        );
+        cannot([Action.Update, Action.Delete], User, {
+          companyId: { $ne: user.companyId },
+        });
 
         // can(Action.Manage, Programme);
 
@@ -46,31 +68,44 @@ export class CaslAbilityFactory {
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
         can([Action.Delete], Company);
         can([Action.Create], Company);
-      } else if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
-        can([Action.Delete], Company);
-      } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
+      } else if (
+        user.role == Role.Admin &&
+        user.companyRole != CompanyRole.GOVERNMENT
+      ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
-        cannot([Action.Update, Action.Delete], User, { companyId: { $ne: user.companyId } });
-        cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], { id: { $eq: user.id } });
+        cannot([Action.Update, Action.Delete, Action.Read], User, {
+          companyId: { $ne: user.companyId },
+        });
+        cannot(
+          Action.Update,
+          User,
+          ["role", "apiKey", "password", "companyRole", "email"],
+          { id: { $eq: user.id } }
+        );
 
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
         cannot([Action.Create], Company);
       } else {
-
         if (user.companyRole == CompanyRole.GOVERNMENT) {
           can(Action.Read, User);
         } else {
           can(Action.Read, User, { companyId: { $eq: user.companyId } });
         }
-        can(Action.Update, User, { id: { $eq: user.id } })
-        cannot(Action.Update, User, ['email', 'role', 'apiKey', 'password', 'companyRole']);
+        can(Action.Update, User, { id: { $eq: user.id } });
+        cannot(Action.Update, User, [
+          "email",
+          "role",
+          "apiKey",
+          "password",
+          "companyRole",
+        ]);
         can(Action.Read, Company);
       }
 
       if (user.companyRole == CompanyRole.GOVERNMENT) {
-        if (user.role != Role.ViewOnly){
+        if (user.role != Role.ViewOnly) {
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
           can(Action.Manage, ProgrammeTransferRequest);
@@ -80,59 +115,99 @@ export class CaslAbilityFactory {
         }
       }
 
-      if (user.role != Role.ViewOnly && user.companyRole == CompanyRole.CERTIFIER) {
+      if (
+        user.role === Role.Manager &&
+        user.companyRole === CompanyRole.GOVERNMENT
+      ) {
+        can([Action.Delete], Company);
+      }
+
+      if (
+        user.role != Role.ViewOnly &&
+        user.companyRole != CompanyRole.PROGRAMME_DEVELOPER
+      ) {
         can(Action.Manage, ProgrammeCertify);
       }
 
       if (user.role == Role.Admin && user.companyRole == CompanyRole.MRV) {
         can([Action.Create, Action.Read], Programme);
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
-        can(Action.Read, Programme, { currentStage: { $in: [ ProgrammeStage.AUTHORISED ]}});
-        can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } }});
-        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] }});
+        can(Action.Read, Programme, {
+          currentStage: { $in: [ProgrammeStage.AUTHORISED] },
+        });
+        can(Action.Read, Programme, {
+          certifierId: { $elemMatch: { $eq: user.companyId } },
+        });
+        can(Action.Read, ProgrammeTransfer, {
+          status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] },
+        });
       } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
-        can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.AUTHORISED }});
-        can(Action.Read, ProgrammeTransfer, { status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] }});
+        can(Action.Read, Programme, {
+          currentStage: { $eq: ProgrammeStage.AUTHORISED },
+        });
+        can(Action.Read, ProgrammeTransfer, {
+          status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] },
+        });
         if (user.role != Role.ViewOnly) {
-          can(Action.Manage, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
-          can(Action.Manage, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
-          can(Action.Manage, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
-          can(Action.Manage, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+          can(Action.Manage, Programme, {
+            companyId: { $elemMatch: { $eq: user.companyId } },
+          });
+          can(Action.Manage, ProgrammeTransfer, {
+            toCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Manage, ProgrammeTransfer, {
+            fromCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Manage, ProgrammeTransfer, {
+            initiatorCompanyId: { $eq: user.companyId },
+          });
           can(Action.Manage, ProgrammeTransferRequest);
         } else {
-          can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } }});
-          can(Action.Read, ProgrammeTransfer, { toCompanyId: { $eq: user.companyId }});
-          can(Action.Read, ProgrammeTransfer, { fromCompanyId: { $eq: user.companyId }});
-          can(Action.Read, ProgrammeTransfer, { initiatorCompanyId: { $eq: user.companyId }});
+          can(Action.Read, Programme, {
+            companyId: { $elemMatch: { $eq: user.companyId } },
+          });
+          can(Action.Read, ProgrammeTransfer, {
+            toCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Read, ProgrammeTransfer, {
+            fromCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Read, ProgrammeTransfer, {
+            initiatorCompanyId: { $eq: user.companyId },
+          });
         }
       }
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
-        can(Action.Read, Stat, { type: { $nin: [ StatType.TOTAL_PROGRAMS, StatType.PROGRAMS_BY_STATUS]}})
+        can(Action.Read, Stat, { type: { $nin: [] } });
       } else {
-        can(Action.Read, Stat, { type: { $nin: [ ]}})
+        can(Action.Read, Stat, { type: { $nin: [] } });
       }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
-      cannot(Action.Update, User, ['companyRole'])
+      cannot(Action.Update, User, ["companyRole"]);
 
-      cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.GOVERNMENT },
+      });
 
       if (user.role === Role.Admin || user.role === Role.Root) {
         can(Action.Create, User);
       } else {
         cannot(Action.Create, User);
-        cannot(Action.Update, User);
-        cannot(Action.Delete, User);
+        cannot(Action.Update, User, { id: { $ne: user.id } });
+        cannot(Action.Delete, User, { id: { $ne: user.id } });
         cannot([Action.Create], Company);
       }
 
-      if(user.companyState === 0){
-        cannot(Action.Create, 'all');
-        cannot(Action.Delete, 'all');
-        cannot(Action.Update, 'all');
+      if (user.companyState === 0) {
+        cannot(Action.Create, "all");
+        cannot(Action.Delete, "all");
+        cannot(Action.Update, "all");
       }
       can(Action.Delete, User, { id: { $eq: user.id } });
-      cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.GOVERNMENT },
+      });
     }
 
     return build({

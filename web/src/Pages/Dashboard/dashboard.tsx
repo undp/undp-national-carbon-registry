@@ -703,6 +703,72 @@ const Dashboard = () => {
     console.log('transfr credit --- > ', transferredCredits);
   }, [transferredCredits]);
 
+  const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 4]];
+  const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
+  const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
+  const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
+  const count5 = ['>=', ['get', 'count'], 16];
+
+  // colors to use for the categories
+  const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+
+  function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
+    if (end - start === 1) end -= 0.00001;
+    const a0 = 2 * Math.PI * (start - 0.25);
+    const a1 = 2 * Math.PI * (end - 0.25);
+    const x0 = Math.cos(a0),
+      y0 = Math.sin(a0);
+    const x1 = Math.cos(a1),
+      y1 = Math.sin(a1);
+    const largeArc = end - start > 0.5 ? 1 : 0;
+
+    // draw an SVG path
+    return `<path d="M ${r + r0 * x0} ${r + r0 * y0} L ${r + r * x0} ${
+      r + r * y0
+    } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
+      r + r0 * y1
+    } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
+  }
+
+  // code for creating an SVG donut chart from feature properties
+  function createDonutChart(properties: any) {
+    console.log('properties of donut creator --- > ', properties);
+    const offsets = [];
+    const counts = [
+      properties.count1,
+      properties.count2,
+      properties.count3,
+      properties.count4,
+      properties.count5,
+    ];
+    let total = 0;
+    for (const count of counts) {
+      offsets.push(total);
+      total += count;
+    }
+    const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
+    const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+    const r0 = Math.round(r * 0.6);
+    const w = r * 2;
+
+    let html = `<div>
+<svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
+
+    for (let i = 0; i < counts.length; i++) {
+      html += donutSegment(offsets[i] / total, (offsets[i] + counts[i]) / total, r, r0, colors[i]);
+    }
+    html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
+<text dominant-baseline="central" transform="translate(${r}, ${r})">
+${total}
+</text>
+</svg>
+</div>`;
+
+    const el = document.createElement('div');
+    el.innerHTML = html;
+    return el.firstChild;
+  }
+
   useEffect(() => {
     setTimeout(() => {
       const map = new mapboxgl.Map({
@@ -712,69 +778,6 @@ const Dashboard = () => {
         center: [12, 50],
         zoom: 0.5,
       });
-
-      const data = [
-        {
-          code: 'GE',
-          hdi: 0.23297491039426524,
-        },
-        {
-          code: 'MX',
-          hdi: 0.26881720430107525,
-        },
-        {
-          code: 'GS',
-          hdi: 0.3655913978494624,
-        },
-        {
-          code: 'CN',
-          hdi: 0.3906810035842294,
-        },
-        {
-          code: 'LK',
-          hdi: 0.5698924731182796,
-        },
-        {
-          code: 'AQ',
-          hdi: 0.5734767025089605,
-        },
-        {
-          code: 'AX',
-          hdi: 0.8566308243727598,
-        },
-        {
-          code: 'AS',
-          hdi: 0.9068100358422939,
-        },
-        {
-          code: 'BD',
-          hdi: 0.9175627240143369,
-        },
-        {
-          code: 'BB',
-          hdi: 0.9283154121863799,
-        },
-        {
-          code: 'BW',
-          hdi: 0.9390681003584229,
-        },
-        {
-          code: 'BJ',
-          hdi: 0.974910394265233,
-        },
-        {
-          code: 'BS',
-          hdi: 0.982078853046595,
-        },
-        {
-          code: 'AR',
-          hdi: 0.985663082437276,
-        },
-        {
-          code: 'AO',
-          hdi: 0.996415770609319,
-        },
-      ];
 
       // Add markers to the map.
       map.on('load', () => {
@@ -790,9 +793,9 @@ const Dashboard = () => {
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of data) {
+        for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
-          const blue = row.hdi * 255;
+          const blue = row.ratio * 255;
           const color = `rgb(0, 50, ${blue})`;
 
           matchExpression.push(row.code, color);
@@ -819,77 +822,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     // const address = programmeLocations[0];
-    const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 3]];
-    const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
-    const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
-    const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
-    const count5 = ['>=', ['get', 'count'], 16];
-
-    // colors to use for the categories
-    const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
-
-    function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
-      if (end - start === 1) end -= 0.00001;
-      const a0 = 2 * Math.PI * (start - 0.25);
-      const a1 = 2 * Math.PI * (end - 0.25);
-      const x0 = Math.cos(a0),
-        y0 = Math.sin(a0);
-      const x1 = Math.cos(a1),
-        y1 = Math.sin(a1);
-      const largeArc = end - start > 0.5 ? 1 : 0;
-
-      // draw an SVG path
-      return `<path d="M ${r + r0 * x0} ${r + r0 * y0} L ${r + r * x0} ${
-        r + r * y0
-      } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
-        r + r0 * y1
-      } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
-    }
-
-    // code for creating an SVG donut chart from feature properties
-    function createDonutChart(properties: any) {
-      console.log('properties of donut creator --- > ', properties);
-      const offsets = [];
-      const counts = [
-        properties.count1,
-        properties.count2,
-        properties.count3,
-        properties.count4,
-        properties.count5,
-      ];
-      let total = 0;
-      for (const count of counts) {
-        offsets.push(total);
-        total += count;
-      }
-      const fontSize = total >= 1000 ? 24 : total >= 100 ? 22 : total >= 10 ? 20 : 18;
-      const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 20;
-      const r0 = Math.round(r * 0.6);
-      const w = r * 2;
-
-      let html = `<div>
-  <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
-
-      for (let i = 0; i < counts.length; i++) {
-        html += donutSegment(
-          offsets[i] / total,
-          (offsets[i] + counts[i]) / total,
-          r,
-          r0,
-          colors[i]
-        );
-      }
-      html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
-  <text dominant-baseline="central" transform="translate(${r}, ${r})">
-  ${Math.round(total).toLocaleString()}
-  </text>
-  </svg>
-  </div>`;
-
-      const el = document.createElement('div');
-      el.innerHTML = html;
-      return el.firstChild;
-    }
 
     setTimeout(() => {
       if (mapContainerRef.current) {
@@ -953,6 +885,7 @@ const Dashboard = () => {
             // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
             // and add it to the map if it's not there already
             for (const feature of features) {
+              console.log(feature.properties);
               const coords = feature.geometry.coordinates;
               const properties = feature.properties;
               if (!properties.cluster) continue;

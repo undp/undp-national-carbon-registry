@@ -1085,6 +1085,7 @@ const ProgrammeView = () => {
                                                 userInfoState?.companyRole !==
                                                 CompanyRole.GOVERNMENT
                                               }
+                                              myCompanyId={userInfoState?.companyId}
                                               programme={data}
                                               onCancel={() => {
                                                 setOpenModal(false);
