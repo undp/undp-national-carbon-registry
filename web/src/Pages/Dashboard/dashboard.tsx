@@ -717,7 +717,7 @@ const Dashboard = () => {
   }, [transferredCredits]);
 
   const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
-  const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
+  const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
   const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
   const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
   const count5 = ['>=', ['get', 'count'], 16];
@@ -747,13 +747,18 @@ const Dashboard = () => {
   function createDonutChart(properties: any) {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
-    const counts = [
-      properties.count1,
-      properties.count2,
-      properties.count3,
-      properties.count4,
-      properties.count5,
-    ];
+    let counts: any = [];
+    if (properties.count1) {
+      counts = [
+        properties.count1,
+        properties.count2,
+        properties.count3,
+        properties.count4,
+        properties.count5,
+      ];
+    } else {
+      counts = [properties.count];
+    }
     let total = 0;
     for (const count of counts) {
       offsets.push(total);
@@ -840,7 +845,7 @@ ${total}
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
           container: mapContainerRef.current || '',
-          zoom: 3,
+          zoom: 2,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
             : [54.44073, 16.39371],
@@ -865,7 +870,7 @@ ${total}
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
           map.addLayer({
-            id: 'earthquake_circle',
+            id: 'programmes_circle',
             type: 'circle',
             source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
@@ -901,8 +906,8 @@ ${total}
               console.log(feature.properties);
               const coords = feature.geometry.coordinates;
               const properties = feature.properties;
-              if (!properties.cluster) continue;
-              const id = properties.cluster_id;
+              // if (!properties.cluster) continue;
+              const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
 
               let marker: any = markers[id];
               if (!marker) {
