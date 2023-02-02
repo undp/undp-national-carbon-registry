@@ -402,10 +402,7 @@ export class AnalyticsAPIService {
                   [sTimeCredit]: (estimatedS - issuedS).toFixed(1),
                 });
                 dataCredits?.issued.push({
-                  [sTimeCredit]: (
-                    issuedS -
-                    (transferredS + retiredS + frozenS)
-                  ).toFixed(1),
+                  [sTimeCredit]: availableS.toFixed(1),
                 });
                 dataCredits?.transferred.push({
                   [sTimeCredit]: transferredS.toFixed(1),

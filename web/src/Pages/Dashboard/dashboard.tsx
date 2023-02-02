@@ -547,10 +547,14 @@ const Dashboard = () => {
       // pieSeriesCreditsCerifiedData.push(
       //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
       // );
-      const totalCredits =
-        String(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) !== 'NaN'
-          ? parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum)
-          : 0;
+      let totalCredits = 0.0;
+      console.log(
+        'estimated value || total credits -- > ',
+        response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum === null
+      );
+      if (response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum !== null) {
+        totalCredits = response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum;
+      }
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
         if (String(pieSeriesCreditsData[i]) === 'NaN') {
@@ -572,6 +576,7 @@ const Dashboard = () => {
           totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
         }
       }
+
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCredits);
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
