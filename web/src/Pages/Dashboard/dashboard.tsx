@@ -57,6 +57,8 @@ const Dashboard = () => {
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
+  const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
+    useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
@@ -146,6 +148,9 @@ const Dashboard = () => {
         },
         {
           type: 'PROGRAMS_UNCERTIFIED',
+        },
+        {
+          type: 'CREDIT_CERTIFIED',
         },
       ],
       category: 'overall',
@@ -500,6 +505,9 @@ const Dashboard = () => {
       setCreditBalanceWithoutTimeRange(
         parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
       );
+      setCreditCertifiedBalanceWithoutTimeRange(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum)
+      );
       setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
       setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
       setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
@@ -547,10 +555,14 @@ const Dashboard = () => {
       // pieSeriesCreditsCerifiedData.push(
       //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
       // );
-      const totalCredits =
-        String(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) !== 'NaN'
-          ? parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum)
-          : 0;
+      let totalCredits = 0.0;
+      console.log(
+        'estimated value || total credits -- > ',
+        response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum === null
+      );
+      if (response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum !== null) {
+        totalCredits = response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum;
+      }
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
         if (String(pieSeriesCreditsData[i]) === 'NaN') {
@@ -572,6 +584,7 @@ const Dashboard = () => {
           totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
         }
       }
+
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCredits);
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
@@ -703,8 +716,8 @@ const Dashboard = () => {
     console.log('transfr credit --- > ', transferredCredits);
   }, [transferredCredits]);
 
-  const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 4]];
-  const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
+  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
+  const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
   const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
   const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
   const count5 = ['>=', ['get', 'count'], 16];
@@ -734,13 +747,18 @@ const Dashboard = () => {
   function createDonutChart(properties: any) {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
-    const counts = [
-      properties.count1,
-      properties.count2,
-      properties.count3,
-      properties.count4,
-      properties.count5,
-    ];
+    let counts: any = [];
+    if (properties.count1) {
+      counts = [
+        properties.count1,
+        properties.count2,
+        properties.count3,
+        properties.count4,
+        properties.count5,
+      ];
+    } else {
+      counts = [properties.count];
+    }
     let total = 0;
     for (const count of counts) {
       offsets.push(total);
@@ -827,7 +845,7 @@ ${total}
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
           container: mapContainerRef.current || '',
-          zoom: 3,
+          zoom: 2,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
             : [54.44073, 16.39371],
@@ -852,7 +870,7 @@ ${total}
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
           map.addLayer({
-            id: 'earthquake_circle',
+            id: 'programmes_circle',
             type: 'circle',
             source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
@@ -888,8 +906,8 @@ ${total}
               console.log(feature.properties);
               const coords = feature.geometry.coordinates;
               const properties = feature.properties;
-              if (!properties.cluster) continue;
-              const id = properties.cluster_id;
+              // if (!properties.cluster) continue;
+              const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
 
               let marker: any = markers[id];
               if (!marker) {
@@ -992,14 +1010,14 @@ ${total}
                   ? creditBalanceWithoutTimeRange
                   : companyRole === 'ProgrammeDeveloper'
                   ? creditBalanceWithoutTimeRange
-                  : certifcationsRevoked
+                  : creditCertiedBalanceWithoutTimeRange
               }
               title={
                 companyRole === 'Government'
                   ? 'Credit Balance'
                   : companyRole === 'ProgrammeDeveloper'
                   ? 'Credit Balance'
-                  : 'Certification Revoked'
+                  : 'Credit Certified'
               }
               updatedDate={lastUpdate}
               icon={
