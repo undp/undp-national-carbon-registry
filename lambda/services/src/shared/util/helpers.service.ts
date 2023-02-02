@@ -12,15 +12,17 @@ import { ConfigService } from "@nestjs/config";
 export class HelperService {
   constructor(private configService: ConfigService) {}
 
-  private prepareValue(value: any, table?: string, isEnum?: boolean) {
+  private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
-    } else if (isEnum) {
-      return "'" + value + "'";
-    } else if (typeof value === "string") {
-      return "LOWER('" + value + "')";
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
+    } else if (typeof value === "string") {
+      if (toLower != true) {
+        return "'" + value + "'";
+      } else {
+        return "LOWER('" + value + "')";
+      }
     }
     return value;
   }
@@ -213,11 +215,11 @@ export class HelperService {
           } else if (!this.isEnumKey(e.key)) {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${
               e.operation
-            } ${this.prepareValue(e.value, table)}`;
+            } ${this.prepareValue(e.value, table, true)}`;
           } else {
             return `${table ? table + "." : ""}"${e.key}" ${
               e.operation
-            } ${this.prepareValue(e.value, table, this.isEnumKey(e.key))}`;
+            } ${this.prepareValue(e.value, table)}`;
           }
         })
         .join(" and ");
@@ -230,9 +232,9 @@ export class HelperService {
           } else if (e.operation === 'ANY') {
             return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
           } else if (!this.isEnumKey(e.key)) {
-            return `LOWER${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table)}`;
+            return `LOWER${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
           } else {
-            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table, this.isEnumKey(e.key))}`;
+            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;
           }
         })
         .join(" or ");
