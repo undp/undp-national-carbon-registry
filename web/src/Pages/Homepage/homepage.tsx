@@ -24,41 +24,45 @@ const Homepage = () => {
   }, []);
   return (
     <div className="homepage-container">
-      <Row gutter={[8, 8]}>
-        <Col md={22} lg={22} flex="auto">
-          <div className="homepage-header-container">
-            <div className="logo">
-              <img src={sliderLogo} alt="slider-logo" />
-            </div>
-            <div>
-              <div style={{ display: 'flex' }}>
-                <div className="title">{'CARBON'}</div>
-                <div className="title-sub">{'REGISTRY'}</div>
-              </div>
-              <div className="country-name">{process.env.COUNTRY_NAME || 'Antarctic Region'}</div>
-            </div>
-          </div>
-        </Col>
-        <Col md={2} lg={2} flex="auto">
-          <div className="homepage-button-container">
-            <div className="button">
-              <Button type="primary" onClick={() => navigate('/login')}>
-                SIGN IN
-              </Button>
-            </div>
-          </div>
-        </Col>
-      </Row>
       <Row>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-img-container">
-            <div className="text-ctn">
-              <span>
-                {t('homepage:carbon')} {t('homepage:credit')} <br />
-                {t('homepage:registry')}
-              </span>
-              <div className="subhome">{t('homepage:lorem')}</div>
-            </div>
+            <Row>
+              <Col md={21} lg={21} flex="auto">
+                <div className="homepage-header-container">
+                  <div className="logo">
+                    <img src={sliderLogo} alt="slider-logo" />
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex' }}>
+                      <div className="title">{'CARBON'}</div>
+                      <div className="title-sub">{'REGISTRY'}</div>
+                    </div>
+                    <div className="country-name">
+                      {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Col md={3} lg={3} flex="auto">
+                <div className="homepage-button-container">
+                  <div className="button">
+                    <Button type="primary" onClick={() => navigate('/login')}>
+                      SIGN IN
+                    </Button>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <div className="text-ctn">
+                <span>
+                  {t('homepage:carbon')} {t('homepage:credit')} <br />
+                  {t('homepage:registry')}
+                </span>
+                <div className="subhome">{t('homepage:lorem')}</div>
+              </div>
+            </Row>
           </div>
         </Col>
       </Row>
@@ -207,15 +211,23 @@ const Homepage = () => {
         <Row>
           <Col md={4.8} lg={12}>
             <div className="footertext-bottom">
-              {t('homepage:antarctic')}
+              {process.env.COUNTRY_NAME || 'Antarctic Region'}
               <CcCircle className="cc" color="#FFFF" size="10px" />
             </div>
           </Col>
           <Col className="footertext-link-container" md={4.8} lg={12}>
-            <div className="footertext-links">{t('homepage:Cookie')}</div>
-            <div className="footertext-links">{t('homepage:codeconduct')}</div>
-            <div className="footertext-links">{t('homepage:terms')}</div>
-            <div className="footertext-links">{t('homepage:privacy')}</div>
+            <div onClick={() => navigate('/cookie')} className="footertext-links">
+              {t('homepage:Cookie')}
+            </div>
+            <div onClick={() => navigate('/codeconduct')} className="footertext-links">
+              {t('homepage:codeconduct')}
+            </div>
+            <div onClick={() => navigate('/terms')} className="footertext-links">
+              {t('homepage:terms')}
+            </div>
+            <div onClick={() => navigate('/privacy')} className="footertext-links">
+              {t('homepage:privacy')}
+            </div>
           </Col>
         </Row>
       </div>
