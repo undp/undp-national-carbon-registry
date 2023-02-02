@@ -57,6 +57,8 @@ const Dashboard = () => {
   const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
+  const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
+    useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
@@ -146,6 +148,9 @@ const Dashboard = () => {
         },
         {
           type: 'PROGRAMS_UNCERTIFIED',
+        },
+        {
+          type: 'CREDIT_CERTIFIED',
         },
       ],
       category: 'overall',
@@ -500,6 +505,9 @@ const Dashboard = () => {
       setCreditBalanceWithoutTimeRange(
         parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
       );
+      setCreditCertifiedBalanceWithoutTimeRange(
+        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum)
+      );
       setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
       setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
       setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
@@ -708,7 +716,7 @@ const Dashboard = () => {
     console.log('transfr credit --- > ', transferredCredits);
   }, [transferredCredits]);
 
-  const count1 = ['all', ['>=', ['get', 'count'], 1], ['<', ['get', 'count'], 4]];
+  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
   const count2 = ['all', ['>=', ['get', 'count'], 3], ['<', ['get', 'count'], 6]];
   const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
   const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
@@ -997,14 +1005,14 @@ ${total}
                   ? creditBalanceWithoutTimeRange
                   : companyRole === 'ProgrammeDeveloper'
                   ? creditBalanceWithoutTimeRange
-                  : certifcationsRevoked
+                  : creditCertiedBalanceWithoutTimeRange
               }
               title={
                 companyRole === 'Government'
                   ? 'Credit Balance'
                   : companyRole === 'ProgrammeDeveloper'
                   ? 'Credit Balance'
-                  : 'Certification Revoked'
+                  : 'Credit Certified'
               }
               updatedDate={lastUpdate}
               icon={
