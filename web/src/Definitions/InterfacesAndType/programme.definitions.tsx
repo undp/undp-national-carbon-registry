@@ -207,6 +207,7 @@ export const addCommSep = (value: any) => {
     Number(value)
       // .toString()
       .toFixed(2)
+      .replace('.00', '')
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   );
 };
@@ -214,6 +215,7 @@ export const addCommSep = (value: any) => {
 export const addCommSepRound = (value: any) => {
   return Number(value)
     .toFixed(2)
+    .replace('.00', '')
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 

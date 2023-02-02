@@ -16,7 +16,7 @@ export class HelperService {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
     } else if (typeof value === "string") {
-      return "'" + value + "'";
+      return "LOWER('" + value + "')";
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
     }
@@ -203,7 +203,7 @@ export class HelperService {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
           } else {
-            return `${table ? table + "." : ""}"${e.key}" ${
+            return `LOWER(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table)}`;
           }
@@ -216,7 +216,7 @@ export class HelperService {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
           } else {
-            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
+            return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${
               typeof e.value === "string" ? "'" + e.value + "'" : e.value
             }`;
           }

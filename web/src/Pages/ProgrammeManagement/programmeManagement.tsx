@@ -21,6 +21,7 @@ import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { useTranslation } from 'react-i18next';
 import {
+  addCommSep,
   getCompanyBgColor,
   getStageEnumVal,
   getStageTagType,
@@ -172,11 +173,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
@@ -186,11 +183,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
@@ -200,11 +193,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
