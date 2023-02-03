@@ -37,8 +37,9 @@ const CodeOfConduct = () => {
         </Col>
       </Row>
       <Row>
-        <Col>
-          <div className="codetitle">This is code of conduct Page</div>
+        <Col md={24} lg={24} flex="auto">
+          <div className="conductcontainer"></div>
+          <div className="codetitle">Our Pledge</div>
         </Col>
       </Row>
     </div>
