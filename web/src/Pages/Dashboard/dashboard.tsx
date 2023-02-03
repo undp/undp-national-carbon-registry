@@ -813,8 +813,16 @@ ${total}
         // Calculate color values for each country based on 'hdi' value
         for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
-          const blue = row.ratio * 255;
-          const color = `rgb(0, 50, ${blue})`;
+          // const blue = row.ratio * 255;
+
+          const color =
+            row.ratio < 0.25
+              ? `#FFC343`
+              : row.ratio < 0.5
+              ? '#FFAC6F'
+              : row.ratio < 0.75
+              ? '#FF923D'
+              : '#FE8163';
 
           matchExpression.push(row.code, color);
         }
@@ -845,7 +853,7 @@ ${total}
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
           container: mapContainerRef.current || '',
-          zoom: 2,
+          zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
             : [54.44073, 16.39371],

@@ -37,16 +37,9 @@ export class LedgerReplicatorService {
         encodeURIComponent(address[index]) +
         ".json?access_token=" +
         ACCESS_TOKEN +
-        "&limit=1";
-      console.log(
-        "geocoding request urls -> ",
-        index,
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-          encodeURIComponent(address[index]) +
-          ".json?access_token=" +
-          "my_token" +
-          "&limit=1"
-      );
+        "&limit=1"+ 
+        `&country=${this.configService.get('systemCountry')}&autocomplete=false&types=region%2Cdistrict`
+      console.log("geocoding request urls -> ", index, url);
       await axios
         .get(url)
         .then(function (response) {
