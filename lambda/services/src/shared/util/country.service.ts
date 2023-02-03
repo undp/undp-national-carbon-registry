@@ -46,4 +46,16 @@ export class CountryService {
             undefined
             );
     }
+
+    async getAvailableCountries() {
+        const resp = await this.countryRepo
+            .find({
+                select:{
+                    name: true,
+                    alpha2: true
+                }
+            })
+
+        return resp;
+    }
 }

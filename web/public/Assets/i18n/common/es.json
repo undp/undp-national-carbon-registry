@@ -2,7 +2,7 @@
   "submit": "Enviar",
   "name": "Nombre",
   "email": "Correo electrónico",
-  "pwd": "Clave",
+  "pwd": "contraseña",
   "login": "Registrarse",
   "signUp": "Inscribirse",
   "language": "Idioma",

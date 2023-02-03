@@ -93,11 +93,4 @@ export class ProgrammeProperties {
   @IsOptional()
   @IsNotEmpty()
   projectMaterial: string;
-
-  @ApiProperty()
-  @IsArray()
-  @ArrayMinSize(1)
-  @IsOptional()
-  @IsNotEmpty()
-  geographicalLocationCordintes?: string[];
 }

@@ -12,15 +12,23 @@ import { ConfigService } from "@nestjs/config";
 export class HelperService {
   constructor(private configService: ConfigService) {}
 
-  private prepareValue(value: any, table?: string) {
+  private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
-    } else if (typeof value === "string") {
-      return "'" + value + "'";
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
+    } else if (typeof value === "string") {
+      if (toLower != true) {
+        return "'" + value + "'";
+      } else {
+        return "LOWER('" + value + "')";
+      }
     }
     return value;
+  }
+
+  private isEnumKey(key: string) {
+    return ["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state"].includes(key)
   }
 
   public generateWhereSQLChartStastics(
@@ -75,10 +83,10 @@ export class HelperService {
   }
 
   private isQueryDto(obj) {
-    if (typeof obj === 'object' && (obj['filterAnd'] || obj['filterOr'])){
+    if (typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
       return true;
     }
-    return false
+    return false;
   }
 
   public generateWhereSQLChartStasticsWithoutTimeRange(
@@ -138,6 +146,7 @@ export class HelperService {
     } else if (data?.type === "CREDIT_REVOKED") {
       col = "certifierId";
       sql = `${table ? table + "." : ""}"${col}" = '{}'`;
+    } else if (data?.type === "CREDIT_STATS_FROZEN") {
     }
 
     if (
@@ -158,11 +167,11 @@ export class HelperService {
           table ? table + "." : ""
         }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
       } else {
-        sql = sql = `${
-          table ? table + "." : ""
-        }"${colFilter}" > ${this.prepareValue(data?.startTime)} and ${
-          table ? table + "." : ""
-        }"${colFilter}" < ${this.prepareValue(data?.endTime)}`;
+        sql = `${table ? table + "." : ""}"${colFilter}" > ${this.prepareValue(
+          data?.startTime
+        )} and ${table ? table + "." : ""}"${colFilter}" < ${this.prepareValue(
+          data?.endTime
+        )}`;
       }
     }
 
@@ -198,32 +207,36 @@ export class HelperService {
     let sql = "";
     if (query.filterAnd) {
       sql += query.filterAnd
-        .map(
-          (e) => {
-            if (this.isQueryDto(e.value)) {
-              return `(${this.prepareValue(e.value, table)})`
-            } else {
-              return `${table ? table + "." : ""}"${e.key}" ${
-                e.operation
-              } ${this.prepareValue(e.value, table)}`
-            }
+        .map((e) => {
+          if (this.isQueryDto(e.value)) {
+            return `(${this.prepareValue(e.value, table)})`;
+          } else if (e.operation === 'ANY') {
+            return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
+          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
+            return `LOWER(${table ? table + "." : ""}"${e.key}") ${
+              e.operation
+            } ${this.prepareValue(e.value, table, true)}`;
+          } else {
+            return `${table ? table + "." : ""}"${e.key}" ${
+              e.operation
+            } ${this.prepareValue(e.value, table)}`;
           }
-        )
+        })
         .join(" and ");
     }
     if (query.filterOr) {
       const orSQl = query.filterOr
-        .map(
-          (e) => {
-            if (this.isQueryDto(e.value)) {
-              return `(${this.prepareValue(e.value, table)})`
-            } else {
-              return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${
-                typeof e.value === "string" ? "'" + e.value + "'" : e.value
-              }`
-            }
+        .map((e) => {
+          if (this.isQueryDto(e.value)) {
+            return `(${this.prepareValue(e.value, table)})`;
+          } else if (e.operation === 'ANY') {
+            return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
+          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
+            return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
+          } else {
+            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;
           }
-        )
+        })
         .join(" or ");
       if (sql != "") {
         sql = `(${sql}) and (${orSQl})`;
@@ -322,6 +335,7 @@ export class HelperService {
       ContentEncoding: "base64",
       ContentType: "image/png",
     };
+    
     uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
 
     return await s3

@@ -79,6 +79,7 @@ const CreditTransfer = () => {
 
   const { post } = useConnection();
   const [totalProgramme, setTotalProgramme] = useState<number>();
+  const [dataFilter, setDataFilter] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -157,6 +158,7 @@ const CreditTransfer = () => {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
+        filterOr: dataFilter,
         sort: sort,
       });
 
@@ -177,8 +179,16 @@ const CreditTransfer = () => {
   };
 
   useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      getAllTransfers();
+    }
+  }, [statusFilter, dataFilter]);
+
+  useEffect(() => {
     getAllTransfers();
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
+  }, [currentPage, pageSize, sortField, sortOrder, search]);
 
   const handleRequestOk = async (
     reqId: number,
@@ -386,6 +396,13 @@ const CreditTransfer = () => {
       key: 'programmeTitle',
       sorter: true,
       align: 'left' as const,
+      // onCell: (record: any, rowIndex: any) => {
+      //   return {
+      //     onClick: (ev: any) => {
+      //       navigate('/programmeManagement/view', { state: { id: record.programmeId } });
+      //     },
+      //   };
+      // },
     },
     {
       title: t('creditTransfer:sector'),
@@ -679,6 +696,36 @@ const CreditTransfer = () => {
           </Col>
           <Col lg={{ span: 8 }} md={{ span: 8 }}>
             <div className="filter-section">
+              <div className="search-filter">
+                <Checkbox
+                  className="label"
+                  onChange={(v) =>
+                    setDataFilter(
+                      v.target.checked
+                        ? [
+                            {
+                              key: 'initiatorCompanyId',
+                              operation: '=',
+                              value: userInfoState?.companyId,
+                            },
+                            {
+                              key: 'fromCompanyId',
+                              operation: '=',
+                              value: userInfoState?.companyId,
+                            },
+                            {
+                              key: 'toCompanyId',
+                              operation: '=',
+                              value: userInfoState?.companyId,
+                            },
+                          ]
+                        : undefined
+                    )
+                  }
+                >
+                  {t('view:seeMine')}
+                </Checkbox>
+              </div>
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}

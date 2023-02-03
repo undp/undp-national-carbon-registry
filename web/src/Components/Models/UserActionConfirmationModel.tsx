@@ -1,4 +1,4 @@
-import { Alert, Modal } from 'antd';
+import { Alert, Form, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 import TextArea from 'antd/lib/input/TextArea';
 import { useTranslation } from 'react-i18next';
@@ -41,11 +41,16 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
       destroyOnClose={true}
     >
       <p>{actionInfo.text}</p>
-      <div className="form-label">
-        {t('userProfile:remarks')}
-        <span className="req-ast">*</span>
-      </div>
-      <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
+      <Form layout="vertical">
+        <Form.Item
+          className="mg-bottom-0"
+          label={t('userProfile:remarks')}
+          name="remarks"
+          required={true}
+        >
+          <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
+        </Form.Item>
+      </Form>
       {errorMsg ? <Alert className="mg-top-1" message={errorMsg} type="error" showIcon /> : ''}
     </Modal>
   );

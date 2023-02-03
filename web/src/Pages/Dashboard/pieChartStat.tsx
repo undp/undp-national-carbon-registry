@@ -29,7 +29,7 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
             <Chart options={options} series={series} type="donut" width="350px" />
           </div>
           <div className="updated-on margin-top-2">
-            <div className="updated-moment-container">{moment(lastUpdate * 1000).fromNow()}</div>
+            <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
           </div>
         </>
       )}

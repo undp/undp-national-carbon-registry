@@ -21,12 +21,14 @@ import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { useTranslation } from 'react-i18next';
 import {
+  addCommSep,
   getCompanyBgColor,
   getStageEnumVal,
   getStageTagType,
   ProgrammeStage,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const { Search } = Input;
 
@@ -42,9 +44,11 @@ const ProgrammeManagement = () => {
   const [search, setSearch] = useState<string>();
   const [searchText, setSearchText] = useState<string>();
   const [statusFilter, setStatusFilter] = useState<any>();
+  const [dataFilter, setDataFilter] = useState<any>();
   const { i18n, t } = useTranslation(['common', 'programme']);
   const [sortOrder, setSortOrder] = useState<string>();
   const [sortField, setSortField] = useState<string>();
+  const { userInfoState } = useUserContext();
 
   const statusOptions = Object.keys(ProgrammeStage).map((k, index) => ({
     label: Object.values(ProgrammeStage)[index],
@@ -172,11 +176,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
@@ -186,11 +186,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
@@ -200,11 +196,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item
-          ? Number(item)
-              .toFixed(2)
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-          : '-';
+        return item ? addCommSep(Number(item)) : '-';
       },
     },
     {
@@ -242,6 +234,10 @@ const ProgrammeManagement = () => {
     setLoading(true);
 
     const filter: any[] = [];
+
+    if (dataFilter) {
+      filter.push(dataFilter);
+    }
     if (statusFilter) {
       filter.push(statusFilter);
     }
@@ -293,8 +289,20 @@ const ProgrammeManagement = () => {
   };
 
   useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      getAllProgramme();
+    }
+  }, [statusFilter, dataFilter]);
+
+  useEffect(() => {
     getAllProgramme();
-  }, [currentPage, pageSize, statusFilter, sortField, sortOrder, search]);
+  }, [currentPage, pageSize, sortField, sortOrder, search]);
+
+  // useEffect(() => {
+  //   setCurrentPage(0);
+  // }, [statusFilter, dataFilter]);
 
   const onChange: PaginationProps['onChange'] = (page, size) => {
     setCurrentPage(page);
@@ -341,6 +349,24 @@ const ProgrammeManagement = () => {
           </Col>
           <Col lg={{ span: 8 }} md={{ span: 8 }}>
             <div className="filter-section">
+              <div className="search-filter">
+                <Checkbox
+                  className="label"
+                  onChange={(v) =>
+                    setDataFilter(
+                      v.target.checked
+                        ? {
+                            key: 'companyId',
+                            operation: 'ANY',
+                            value: userInfoState?.companyId,
+                          }
+                        : undefined
+                    )
+                  }
+                >
+                  {t('view:seeMine')}
+                </Checkbox>
+              </div>
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}

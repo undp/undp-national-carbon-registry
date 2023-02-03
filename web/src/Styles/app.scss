@@ -227,17 +227,17 @@ body {
   }
 
   .filter-section {
-    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+    padding: 1.4rem 1.3rem 1.6rem 1.3rem;
     display: flex;
     width: 100%;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
 
     .search-bar {
       display: flex;
       flex-direction: row-reverse;
-      width: 95%;
+      // width: 95%;
     }
 
     .filter-bar {
@@ -694,4 +694,8 @@ body {
 .sub-text {
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.search-filter {
+  margin-right: 15px;
 }

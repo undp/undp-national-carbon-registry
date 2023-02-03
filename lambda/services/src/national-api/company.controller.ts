@@ -80,4 +80,10 @@ export class CompanyController {
     async getCountries(@Body()query: QueryDto, @Request() req) {
         return await this.countryService.getCountryList(query);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("countries")
+    async getAvailableCountries(@Request() req) {
+      return await this.countryService.getAvailableCountries();
+    }
 }

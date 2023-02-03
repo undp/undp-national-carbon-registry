@@ -37,7 +37,8 @@ export class LedgerReplicatorService {
         encodeURIComponent(address[index]) +
         ".json?access_token=" +
         ACCESS_TOKEN +
-        "&limit=1";
+        "&limit=1"+ 
+        `&country=${this.configService.get('systemCountry')}&autocomplete=false&types=region%2Cdistrict`
       console.log("geocoding request urls -> ", index, url);
       await axios
         .get(url)
@@ -48,7 +49,11 @@ export class LedgerReplicatorService {
             response?.data?.features[0],
             response?.data?.features[0]?.center
           );
-          geoCodinates.push([...response?.data?.features[0]?.center]);
+          if (response?.data?.features.length > 0) {
+            geoCodinates.push([...response?.data?.features[0]?.center]);
+          } else {
+            geoCodinates.push(null)
+          }
         })
         .catch((err) => {
           this.logger.error("Geocoding failed - ", err);
@@ -109,8 +114,11 @@ export class LedgerReplicatorService {
                   }
                   await this.forwardGeocoding([...address]).then(
                     (response: any) => {
-                      programme.programmeProperties.geographicalLocationCordintes =
-                        [...response];
+                      console.log(
+                        "response from forwardGeoCoding function -> ",
+                        response
+                      );
+                      programme.geographicalLocationCordintes = [...response];
                     }
                   );
                 }
@@ -127,7 +135,7 @@ export class LedgerReplicatorService {
                 ).columns;
               const columnNames = columns
                 .filter(function (item) {
-                  return item.propertyName !== "programmeId";
+                  return (item.propertyName !== "programmeId" && item.propertyName !== "geographicalLocationCordintes");
                 })
                 .map((e) => e.propertyName);
               this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
