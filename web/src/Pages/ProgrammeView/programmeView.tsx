@@ -13,6 +13,7 @@ import {
   Select,
   Radio,
   Space,
+  Form,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -106,6 +107,8 @@ const ProgrammeView = () => {
   const showModal = () => {
     setOpenModal(true);
   };
+
+  const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
 
   const getTxRefValues = (value: string, position: number, sep?: string) => {
     if (sep === undefined) {
@@ -562,44 +565,70 @@ const ProgrammeView = () => {
       // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
       setTimeout(async () => {
         // let mapd: any = undefined;
+
         let mapd: any;
-        for (const address of state.record?.programmeProperties.geographicalLocation) {
-          const response = await Geocoding({ accessToken: mapboxgl.accessToken })
-            .forwardGeocode({
-              query: address,
-              autocomplete: false,
-              limit: 1,
-              types: ['region', 'district'],
-              countries: [process.env.COUNTRY_CODE || 'NG'],
-            })
-            .send();
+        if (
+          state.record?.geographicalLocationCordintes &&
+          state.record?.geographicalLocationCordintes.length > 0
+        ) {
+          mapd = new mapboxgl.Map({
+            container: mapContainerRef.current || '',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: state.record?.geographicalLocationCordintes[0] as LngLatLike,
+            zoom: 4,
+          });
 
-          if (
-            !response ||
-            !response.body ||
-            !response.body.features ||
-            !response.body.features.length
-          ) {
-            console.error('Invalid response:');
-            console.error(response);
-            return;
-          }
-          const feature = response.body.features[0];
-          if (mapContainerRef.current) {
-            if (mapd === undefined) {
-              mapd = new mapboxgl.Map({
-                container: mapContainerRef.current || '',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: feature.center as LngLatLike,
-                zoom: 4,
-              });
+          for (const iloc in state.record?.geographicalLocationCordintes) {
+            // const popup = new mapboxgl.Popup()
+            //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
+            //   .addTo(mapd);
+
+            if (state.record?.geographicalLocationCordintes[iloc] !== null) {
+              new mapboxgl.Marker({
+                color: locationColors[locationColors.length % (Number(iloc) + 1)],
+              })
+                .setLngLat(state.record?.geographicalLocationCordintes[iloc] as LngLatLike)
+                .addTo(mapd);
             }
+            // .setPopup(popup);
+          }
+        } else {
+          for (const address of state.record?.programmeProperties.geographicalLocation) {
+            const response = await Geocoding({ accessToken: mapboxgl.accessToken })
+              .forwardGeocode({
+                query: address,
+                autocomplete: false,
+                limit: 1,
+                types: ['region', 'district'],
+                countries: [process.env.COUNTRY_CODE || 'NG'],
+              })
+              .send();
 
-            const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
-            new mapboxgl.Marker()
-              .setLngLat(feature.center as LngLatLike)
-              .addTo(mapd)
-              .setPopup(popup);
+            if (
+              !response ||
+              !response.body ||
+              !response.body.features ||
+              !response.body.features.length
+            ) {
+              console.error('Invalid response:');
+              console.error(response);
+              return;
+            }
+            const feature = response.body.features[0];
+            if (mapContainerRef.current) {
+              if (mapd === undefined) {
+                mapd = new mapboxgl.Map({
+                  container: mapContainerRef.current || '',
+                  style: 'mapbox://styles/mapbox/streets-v11',
+                  center: feature.center as LngLatLike,
+                  zoom: 4,
+                });
+              }
+
+              // const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
+              new mapboxgl.Marker().setLngLat(feature.center as LngLatLike).addTo(mapd);
+              // .setPopup(popup);
+            }
           }
         }
       }, 1000);
@@ -1254,15 +1283,24 @@ const ProgrammeView = () => {
             <Card className="card-container">
               <div className="info-view">
                 <div className="title">
-                  <span className="title-icon">{<PushpinOutlined />}</span>
+                  <span className="title-icon">{<Icon.PinMap />}</span>
                   <span className="title-text">{t('view:location')}</span>
                 </div>
                 <div className="map-content">
                   <div className="map-container" ref={mapContainerRef} />
                   <Row className="region-list">
-                    {data.programmeProperties.geographicalLocation.map((e: any) => (
-                      <Col>
-                        <Tag color="processing">{e}</Tag>
+                    {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                      <Col className="loc-tag">
+                        {data.geographicalLocationCordintes[idx] !== null &&
+                          data.geographicalLocationCordintes[idx] !== undefined && (
+                            <span
+                              style={{ color: locationColors[locationColors.length % (idx + 1)] }}
+                              className="loc-icon"
+                            >
+                              {<Icon.GeoAltFill />}
+                            </span>
+                          )}
+                        <span className="loc-text">{e}</span>
                       </Col>
                     ))}
                   </Row>
@@ -1332,15 +1370,20 @@ const ProgrammeView = () => {
         ) : (
           <div>
             <p className="sub-text">{actionInfo.text}</p>
-            <div className="form-label remark">
-              {t('view:remarks')}
-              {actionInfo.remark && <span className="req-ast">*</span>}
-            </div>
-            <TextArea
-              defaultValue={comment}
-              rows={2}
-              onChange={(v) => setComment(v.target.value)}
-            />
+            <Form layout="vertical">
+              <Form.Item
+                className="mg-bottom-0"
+                label={t('view:remarks')}
+                name="remarks"
+                required={actionInfo.remark}
+              >
+                <TextArea
+                  defaultValue={comment}
+                  rows={2}
+                  onChange={(v) => setComment(v.target.value)}
+                />
+              </Form.Item>
+            </Form>
             <div>
               <div className="footer-btn">
                 <Button

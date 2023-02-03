@@ -335,7 +335,8 @@ export class HelperService {
       ContentEncoding: "base64",
       ContentType: "image/png",
     };
-    uploadParams.Key = `profile_images/${companyId}.png`;
+    
+    uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
 
     return await s3
       .upload(uploadParams, function (err, data) {
