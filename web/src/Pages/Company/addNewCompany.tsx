@@ -294,7 +294,7 @@ const AddNewCompany = () => {
                   </Form.Item>
                   <Form.Item
                     name="logo"
-                    label="Organisation Logo (File Type : JPEG , PNG , SVG )"
+                    label="Organisation Logo (File Type : JPEG , PNG)"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     required={true}
