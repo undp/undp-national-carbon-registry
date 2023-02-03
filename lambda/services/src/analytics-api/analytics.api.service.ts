@@ -711,6 +711,24 @@ export class AnalyticsAPIService {
           results[stat.type] = totalProgrammesResponse;
           break;
 
+        case StatType.TOTAL_PROGRAMS_LAST_UPDATE:
+          let totalProgrammesResponseLatest = await this.programmeRepo
+            .createQueryBuilder()
+            .select([`"programmeId"`, `"createdTime"`])
+            .where(
+              abilityCondition
+                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
+                : ""
+            )
+            .orderBy(`"createdTime"`, "DESC")
+            .limit(1)
+            .getRawMany();
+
+          results[stat.type] = totalProgrammesResponseLatest[0]?.createdTime
+            ? totalProgrammesResponseLatest[0]?.createdTime
+            : Math.round(Date.now() / 1000);
+          break;
+
         case StatType.PROGRAMS_BY_STATUS:
           const startTimeProgrammeStatus = query.startTime;
           const endTimeProgrammeStatus = query.endTime;

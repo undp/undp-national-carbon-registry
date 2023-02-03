@@ -37,6 +37,7 @@ export class ProgrammeController {
   async programmesStaticDetails(@Body() query: StatList, @Request() req) {
     const companyId =
       req?.user?.companyId !== null ? req?.user?.companyId : null;
+    console.log("user ---- > ", req?.user);
     return this.analyticsService.programmesStaticDetails(
       req.abilityCondition,
       query,
