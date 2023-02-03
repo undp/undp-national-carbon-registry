@@ -637,7 +637,7 @@ const Dashboard = () => {
 
   const seriesTotalProgrammesSubY = [
     {
-      name: 'Enery',
+      name: 'Energy',
       data: energyProgrammes,
     },
     {
@@ -808,88 +808,10 @@ ${total}
         // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
         const matchExpression: any = ['match', ['get', 'iso_3166_1']];
 
-        const data = [
-          {
-            code: 'NG',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'ET',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'BM',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'BB',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'JP',
-            count: 2,
-            ratio: 0.07692307692307693,
-          },
-          {
-            code: 'CN',
-            count: 3,
-            ratio: 0.11538461538461539,
-          },
-          {
-            code: 'CL',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'AL',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'AI',
-            count: 3,
-            ratio: 0.11538461538461539,
-          },
-          {
-            code: 'DZ',
-            count: 4,
-            ratio: 0.15384615384615385,
-          },
-          {
-            code: 'AO',
-            count: 2,
-            ratio: 0.07692307692307693,
-          },
-          {
-            code: 'BA',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'BR',
-            count: 3,
-            ratio: 0.11538461538461539,
-          },
-          {
-            code: 'BZ',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-          {
-            code: 'AZ',
-            count: 1,
-            ratio: 0.038461538461538464,
-          },
-        ];
-
         const transferLocations: any = [...programmeTransferLocations];
 
         // Calculate color values for each country based on 'hdi' value
-        for (const row of data) {
+        for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
           // const blue = row.ratio * 255;
 
@@ -903,6 +825,10 @@ ${total}
               : '#FE8163';
 
           matchExpression.push(row.code, color);
+        }
+
+        function getCountryCodes(dataSet: any) {
+          return dataSet.map((item: any) => item.code);
         }
 
         // Last value is the default, used where there is no data
