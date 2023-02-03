@@ -244,6 +244,11 @@
   font-size: 1rem;
 }
 
+.loc-text {
+  line-height: 1.2rem;
+  vertical-align: top;
+}
+
 .apexcharts-datalabels-group {
   font-family: $primary-font-family !important;
   color: $title-text-color !important;

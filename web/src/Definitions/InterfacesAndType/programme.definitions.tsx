@@ -183,6 +183,7 @@ export interface Programme {
   createdTime: number;
   txRef: string;
   typeOfMitigation: TypeOfMitigation;
+  geographicalLocationCordintes: any;
 }
 
 export const getGeneralFields = (programme: Programme) => {

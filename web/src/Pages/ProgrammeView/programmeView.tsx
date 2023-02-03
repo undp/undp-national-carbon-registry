@@ -582,11 +582,14 @@ const ProgrammeView = () => {
             // const popup = new mapboxgl.Popup()
             //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
             //   .addTo(mapd);
-            new mapboxgl.Marker({
-              color: locationColors[locationColors.length % (Number(iloc) + 1)],
-            })
-              .setLngLat(state.record?.geographicalLocationCordintes[iloc] as LngLatLike)
-              .addTo(mapd);
+
+            if (state.record?.geographicalLocationCordintes[iloc] !== null) {
+              new mapboxgl.Marker({
+                color: locationColors[locationColors.length % (Number(iloc) + 1)],
+              })
+                .setLngLat(state.record?.geographicalLocationCordintes[iloc] as LngLatLike)
+                .addTo(mapd);
+            }
             // .setPopup(popup);
           }
         } else {
@@ -1288,13 +1291,16 @@ const ProgrammeView = () => {
                   <Row className="region-list">
                     {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
                       <Col className="loc-tag">
-                        <span
-                          style={{ color: locationColors[locationColors.length % (idx + 1)] }}
-                          className="loc-icon"
-                        >
-                          {<Icon.GeoAltFill />}
-                        </span>
-                        <span>{e}</span>
+                        {data.geographicalLocationCordintes[idx] !== null &&
+                          data.geographicalLocationCordintes[idx] !== undefined && (
+                            <span
+                              style={{ color: locationColors[locationColors.length % (idx + 1)] }}
+                              className="loc-icon"
+                            >
+                              {<Icon.GeoAltFill />}
+                            </span>
+                          )}
+                        <span className="loc-text">{e}</span>
                       </Col>
                     ))}
                   </Row>

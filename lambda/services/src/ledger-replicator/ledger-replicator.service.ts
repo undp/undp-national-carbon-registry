@@ -49,7 +49,11 @@ export class LedgerReplicatorService {
             response?.data?.features[0],
             response?.data?.features[0]?.center
           );
-          geoCodinates.push([...response?.data?.features[0]?.center]);
+          if (response?.data?.features.length > 0) {
+            geoCodinates.push([...response?.data?.features[0]?.center]);
+          } else {
+            geoCodinates.push(null)
+          }
         })
         .catch((err) => {
           this.logger.error("Geocoding failed - ", err);
