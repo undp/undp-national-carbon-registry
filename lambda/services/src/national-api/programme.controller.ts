@@ -96,7 +96,7 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeCertify))
+    // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeCertify))
     @Put('certify')
     async programmeCertify(@Body() body: ProgrammeCertify, @Request() req) {
         return this.programmeService.certify(body, true, req.user)
