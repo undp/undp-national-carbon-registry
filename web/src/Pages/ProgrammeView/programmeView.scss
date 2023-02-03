@@ -234,6 +234,15 @@
   }
 }
 
+.loc-tag {
+  padding: 10px 20px 0px 0px;
+  color: $body-text-color;
+}
+
+.loc-icon {
+  margin-right: 5px;
+  font-size: 1rem;
+}
 
 .apexcharts-datalabels-group {
   font-family: $primary-font-family !important;
