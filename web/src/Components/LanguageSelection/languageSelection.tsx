@@ -30,11 +30,11 @@ const LanguageSelection = () => {
             },
             {
               value: 'es',
-              label: 'Española',
+              label: 'Español',
             },
             {
               value: 'fr',
-              label: 'Française',
+              label: 'Français',
             },
           ]}
         />
