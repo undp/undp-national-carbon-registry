@@ -396,6 +396,13 @@ const CreditTransfer = () => {
       key: 'programmeTitle',
       sorter: true,
       align: 'left' as const,
+      // onCell: (record: any, rowIndex: any) => {
+      //   return {
+      //     onClick: (ev: any) => {
+      //       navigate('/programmeManagement/view', { state: { id: record.programmeId } });
+      //     },
+      //   };
+      // },
     },
     {
       title: t('creditTransfer:sector'),

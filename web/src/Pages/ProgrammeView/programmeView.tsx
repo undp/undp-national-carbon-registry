@@ -95,6 +95,7 @@ const ProgrammeView = () => {
   const [historyData, setHistoryData] = useState<any>([]);
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [loadingAll, setLoadingAll] = useState<boolean>(false);
   const mapContainerRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -948,7 +949,9 @@ const ProgrammeView = () => {
 
   calculations.constantVersion = data.constantVersion;
 
-  return (
+  return loadingAll ? (
+    <Skeleton />
+  ) : (
     <div className="content-container programme-view">
       <div className="title-bar">
         <div>
@@ -1291,7 +1294,8 @@ const ProgrammeView = () => {
                   <Row className="region-list">
                     {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
                       <Col className="loc-tag">
-                        {data.geographicalLocationCordintes[idx] !== null &&
+                        {data.geographicalLocationCordintes &&
+                          data.geographicalLocationCordintes[idx] !== null &&
                           data.geographicalLocationCordintes[idx] !== undefined && (
                             <span
                               style={{ color: locationColors[locationColors.length % (idx + 1)] }}

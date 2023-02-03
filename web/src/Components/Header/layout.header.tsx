@@ -7,6 +7,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import thumbnail from '../../Assets/Images/thumbnail.png';
 
 const LayoutHeader = (props: HeaderProps) => {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ const LayoutHeader = (props: HeaderProps) => {
             }}
           />
         </div>
+        <img src={thumbnail} style={{ display: 'none' }} />
         {/* <div className="header-menu-container">
                 <div className="header-signOut-container">
                   <Dropdown menu={{ items }} placement="bottomLeft">
