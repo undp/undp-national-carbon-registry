@@ -178,11 +178,6 @@ export class CaslAbilityFactory {
         }
       }
 
-      if (user.companyRole == CompanyRole.CERTIFIER) {
-        can(Action.Read, Stat, { type: { $nin: [] } });
-      } else {
-        can(Action.Read, Stat, { type: { $nin: [] } });
-      }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
       cannot(Action.Update, User, ["companyRole"]);
 
