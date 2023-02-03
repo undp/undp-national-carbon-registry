@@ -96,14 +96,14 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeCertify))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeCertify, true))
     @Put('certify')
     async programmeCertify(@Body() body: ProgrammeCertify, @Request() req) {
         return this.programmeService.certify(body, true, req.user)
     }
 
     @ApiBearerAuth()
-    // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeCertify))
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeCertify, true))
     @Put('revoke')
     async programmeRevoke(@Body() body: ProgrammeRevoke, @Request() req) {
         return this.programmeService.certify(body, false, req.user)
