@@ -986,7 +986,7 @@ ${total}
                   ? 'Transfer Requests Received'
                   : 'Programmes Uncertified'
               }
-              updatedDate={parseInt(lastUpdateProgrammesStats)}
+              updatedDate={parseInt(lastUpdateProgrammesStats) / 1000}
               icon={
                 companyRole === 'Government' ? (
                   <ClockHistory color="#16B1FF" size={80} />
