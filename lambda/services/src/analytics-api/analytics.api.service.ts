@@ -21,6 +21,7 @@ import {
   chartStatsResultSend,
   chartStatsResultInitialValueSend,
 } from "../shared/dto/chart.stats.result";
+import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
 
 @Injectable()
 export class AnalyticsAPIService {
@@ -28,8 +29,8 @@ export class AnalyticsAPIService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
-    @InjectRepository(ProgrammeTransfer)
-    private programmeTransferRepo: Repository<ProgrammeTransfer>
+    @InjectRepository(ProgrammeTransferViewEntityQuery)
+    private programmeTransferRepo: Repository<ProgrammeTransferViewEntityQuery>
   ) {}
 
   async programmesStaticChartsDetails(
@@ -120,9 +121,11 @@ export class AnalyticsAPIService {
                   "Rejected" && rejectedC++;
               }
               if (indexProgramme === totalProgrammesResponse.length - 1) {
-                data?.awaitingAuthorization.push({ [sTime]: pendingC });
-                data?.issued.push({ [sTime]: issuedC });
-                data?.rejected.push({ [sTime]: rejectedC });
+                data?.awaitingAuthorization.push({
+                  [sTime]: Math.round(pendingC),
+                });
+                data?.issued.push({ [sTime]: Math.round(issuedC) });
+                data?.rejected.push({ [sTime]: Math.round(rejectedC) });
               }
             }
             sTime = eTime;
@@ -287,6 +290,7 @@ export class AnalyticsAPIService {
               `"creditBalance"`,
               `"creditTransferred"`,
               `"creditRetired"`,
+              `"creditFrozen"`,
               `"createdTime"`,
             ])
             .where(
@@ -327,6 +331,7 @@ export class AnalyticsAPIService {
             let issuedS = 0;
             let transferredS = 0;
             let retiredS = 0;
+            let frozenS = 0;
             // console.log("week count ---- ", index, { sTime, eTime });
             for (
               let indexProgramme = 0;
@@ -375,6 +380,17 @@ export class AnalyticsAPIService {
                       totalResponseCredit[indexProgramme]?.creditRetired
                     );
                 }
+                if (
+                  totalResponseCredit[indexProgramme]?.creditFrozen !== null
+                ) {
+                  let sum: any = 0;
+                  let creditFrozen: any[] =
+                    totalResponseCredit[indexProgramme]?.creditFrozen;
+                  for (let cF = 0; cF < creditFrozen.length; cF++) {
+                    sum = sum + creditFrozen[cF];
+                  }
+                  frozenS = frozenS + parseFloat(sum);
+                }
                 if (totalResponseCredit[indexProgramme]?.creditEst !== null) {
                   estimatedS =
                     estimatedS +
@@ -383,11 +399,17 @@ export class AnalyticsAPIService {
               }
               if (indexProgramme === totalResponseCredit.length - 1) {
                 dataCredits?.authorized.push({
-                  [sTimeCredit]: estimatedS - issuedS,
+                  [sTimeCredit]: (estimatedS - issuedS).toFixed(1),
                 });
-                dataCredits?.issued.push({ [sTimeCredit]: availableS });
-                dataCredits?.transferred.push({ [sTimeCredit]: transferredS });
-                dataCredits?.retired.push({ [sTimeCredit]: retiredS });
+                dataCredits?.issued.push({
+                  [sTimeCredit]: availableS.toFixed(1),
+                });
+                dataCredits?.transferred.push({
+                  [sTimeCredit]: transferredS.toFixed(1),
+                });
+                dataCredits?.retired.push({
+                  [sTimeCredit]: retiredS.toFixed(1),
+                });
               }
             }
             sTimeCredit = eTimeCredit;
@@ -511,13 +533,13 @@ export class AnalyticsAPIService {
               }
               if (indexProgramme === totalResponseCreditsCertified.length - 1) {
                 dataCreditsCertified?.certified.push({
-                  [sTimeCreditCertified]: certifiedS,
+                  [sTimeCreditCertified]: certifiedS.toFixed(1),
                 });
                 dataCreditsCertified?.uncertified.push({
-                  [sTimeCreditCertified]: unCertifiedS,
+                  [sTimeCreditCertified]: unCertifiedS.toFixed(1),
                 });
                 dataCreditsCertified?.revoked.push({
-                  [sTimeCreditCertified]: revokedS,
+                  [sTimeCreditCertified]: revokedS.toFixed(1),
                 });
               }
             }
@@ -541,7 +563,7 @@ export class AnalyticsAPIService {
             .select([
               `"programmeId"`,
               `"companyId"`,
-              `"programmeProperties"`,
+              `"geographicalLocationCordintes"`,
               `"createdTime"`,
             ])
             .where(
@@ -555,23 +577,14 @@ export class AnalyticsAPIService {
           let features: any[] = [];
           locationsGeoData.type = "FeatureCollection";
           for (let i = 0; i < totalResponseProgrammeLocation.length; i++) {
-            let programme: any =
-              totalResponseProgrammeLocation[i]?.programmeProperties;
-            let programmePropertiesGeoCordinates: any[] =
-              programme?.geographicalLocationCordintes;
-            if (programmePropertiesGeoCordinates) {
-              for (
-                let j = 0;
-                j < programmePropertiesGeoCordinates?.length;
-                j++
-              ) {
-                if (programmePropertiesGeoCordinates[j] !== null) {
-                  console.log(
-                    "cordinates ---- > ",
-                    programmePropertiesGeoCordinates[j]
-                  );
+            let programmeCordinates: any[] =
+              totalResponseProgrammeLocation[i]?.geographicalLocationCordintes;
+            if (programmeCordinates) {
+              for (let j = 0; j < programmeCordinates?.length; j++) {
+                if (programmeCordinates[j] !== null) {
+                  console.log("cordinates ---- > ", programmeCordinates[j]);
                   let programmeGeoData: any = {};
-                  let location: any = programmePropertiesGeoCordinates[j];
+                  let location: any = programmeCordinates[j];
                   programmeGeoData.type = "Feature";
                   let properties: any = {};
                   let geometry: any = {};
@@ -603,7 +616,7 @@ export class AnalyticsAPIService {
           };
           let totalResponseTransferLocation = await this.programmeTransferRepo
             .createQueryBuilder()
-            .select([`"requestId"`, `"toCompanyMeta"`])
+            .select([`"requestId"`, `"companyId"`, `"toCompanyMeta"`])
             .where(
               this.helperService.generateWhereSQLChartStastics(
                 paramsTransferLocations,
@@ -612,29 +625,51 @@ export class AnalyticsAPIService {
             )
             .getRawMany();
           let featuresTransfer: any[] = [];
-          let locations: any[] = [];
-          for (
-            let index = 0;
-            index < totalResponseTransferLocation.length;
-            index++
-          ) {
-            if (totalResponseTransferLocation[index]?.toCompanyMeta) {
-              let toCompanyMeta =
-                totalResponseTransferLocation[index]?.toCompanyMeta;
+          let locations = {};
+          let total = 0;
+          for (const t of totalResponseTransferLocation) {
+            if (t?.toCompanyMeta) {
+              let toCompanyMeta = t?.toCompanyMeta;
               if (toCompanyMeta?.country) {
-                if (!locations?.includes(toCompanyMeta?.country)) {
-                  locations.push(toCompanyMeta?.country);
-                  featuresTransfer.push({
-                    code: toCompanyMeta?.country,
-                    hdi:
-                      index === 0
-                        ? 1
-                        : index / totalResponseTransferLocation.length,
-                  });
+                if (!locations[toCompanyMeta?.country]) {
+                  locations[toCompanyMeta?.country] = 1;
+                } else {
+                  locations[toCompanyMeta?.country] += 1;
                 }
+                total += 1;
               }
             }
           }
+          for (const c in locations) {
+            featuresTransfer.push({
+              code: c,
+              count: locations[c],
+              ratio: locations[c] / total,
+            });
+          }
+
+          // for (
+          //   let index = 0;
+          //   index < totalResponseTransferLocation.length;
+          //   index++
+          // ) {
+          //   if (totalResponseTransferLocation[index]?.toCompanyMeta) {
+          //     let toCompanyMeta =
+          //       totalResponseTransferLocation[index]?.toCompanyMeta;
+          //     if (toCompanyMeta?.country) {
+          //       if (!locations?.includes(toCompanyMeta?.country)) {
+          //         locations.push(toCompanyMeta?.country);
+          //         featuresTransfer.push({
+          //           code: toCompanyMeta?.country,
+          //           hdi:
+          //             index === 0
+          //               ? 1
+          //               : index / totalResponseTransferLocation.length,
+          //         });
+          //       }
+          //     }
+          //   }
+          // }
 
           results[stat.type] = featuresTransfer;
           break;
@@ -674,6 +709,24 @@ export class AnalyticsAPIService {
             .getCount();
 
           results[stat.type] = totalProgrammesResponse;
+          break;
+
+        case StatType.TOTAL_PROGRAMS_LAST_UPDATE:
+          let totalProgrammesResponseLatest = await this.programmeRepo
+            .createQueryBuilder()
+            .select([`"programmeId"`, `"createdTime"`])
+            .where(
+              abilityCondition
+                ? this.helperService.parseMongoQueryToSQL(abilityCondition)
+                : ""
+            )
+            .orderBy(`"createdTime"`, "DESC")
+            .limit(1)
+            .getRawMany();
+
+          results[stat.type] = totalProgrammesResponseLatest[0]?.createdTime
+            ? totalProgrammesResponseLatest[0]?.createdTime
+            : Math.round(Date.now() / 1000);
           break;
 
         case StatType.PROGRAMS_BY_STATUS:
@@ -780,6 +833,7 @@ export class AnalyticsAPIService {
         case StatType.CREDIT_STATS_RETIRED:
         case StatType.CREDIT_STATS_ISSUED:
         case StatType.CREDIT_STATS_ESTIMATED:
+        case StatType.CREDIT_STATS_FROZEN:
           const startTimeProgrammeCredits = query.startTime;
           const endTimeProgrammeCredits = query.endTime;
           const valuesCreditRequest: programmeStatusRequestDto = {
@@ -802,10 +856,10 @@ export class AnalyticsAPIService {
           results[stat.type] = creditStat;
           break;
 
-        case StatType.CREDIT_CERTIFIED_BALANCE:
-        case StatType.CREDIT_CERTIFIED_TRANSFERRED:
-        case StatType.CREDIT_CERTIFIED_RETIRED:
-        case StatType.CREDIT_CERTIFIED_ISSUED:
+        // case StatType.CREDIT_CERTIFIED_BALANCE:
+        // case StatType.CREDIT_CERTIFIED_TRANSFERRED:
+        // case StatType.CREDIT_CERTIFIED_RETIRED:
+        // case StatType.CREDIT_CERTIFIED_ISSUED:
         case StatType.CREDIT_CERTIFIED:
         case StatType.CREDIT_UNCERTIFIED:
         case StatType.CREDIT_REVOKED:

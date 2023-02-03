@@ -181,11 +181,6 @@
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-
-      .login-error-message-txt {
-        font-size: 0.9rem;
-        color: $error-color;
-      }
     }
 
     .ant-form-item {
@@ -198,7 +193,6 @@
       .ant-form-item-explain-error {
         // padding-left: 1rem;
         margin-bottom: 0.2rem;
-        color: $error-color;
       }
 
       #login-details_password_help {

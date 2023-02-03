@@ -12,6 +12,7 @@
     "carboncalbody":"Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. ",
     "serialgen":"Serial Number Generator",
     "serialgenbody":"Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.",
+    "eligibility":"Eligibility",
     "eliglist1":"The project should be in Nationally Determined Contributions (NDCs) programs of action",
     "eliglist2":"The project should be in conditional NDCs programs of action",
     "eliglist3":"The project should be in the whitelist",
@@ -19,6 +20,12 @@
     "resource" :"Resources",
     "reslist1":"Application form",
     "reslist2":"Fees schedule",
-    "reslist3":"Request for Letter of Authorization"
+    "reslist3":"Request for Letter of Authorization",
+    "footertext1":"The National Carbon Registry enable carbon credit trading in order to reduce greenhouse gas emissions.",
+    "antarctic":"Antarctic Region",
+    "Cookie":"Cookie Policy",
+    "codeconduct":"Code of Conduct",
+    "terms":"Terms of Use",
+    "privacy":"Privacy Policy"
 
 }

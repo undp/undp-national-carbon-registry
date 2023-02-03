@@ -70,6 +70,11 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             operation: 'like',
             value: newValue + '%',
           },
+          {
+            key: 'companyRole',
+            operation: '!=',
+            value: 'Certifier',
+          },
         ],
         sort: {
           key: 'name',
@@ -80,10 +85,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         resp.data
           .map((d: any) => ({ label: d.name, value: d.companyId }))
           .filter((d: any) => {
-            return (
-              d.value !== userCompanyId &&
-              programme.companyId.map((e) => Number(e)).indexOf(d.value) < 0
-            );
+            return d.value !== userCompanyId;
           })
       );
     } else {
@@ -249,6 +251,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                   <InputNumber
                     placeholder=""
                     controls={false}
+                    disabled={value === pert.companyId}
                     onKeyPress={(event) => {
                       if (!/[0-9\.]/.test(event.key)) {
                         event.preventDefault();

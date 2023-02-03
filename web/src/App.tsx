@@ -19,6 +19,10 @@ import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import CreditTransfers from './Pages/Transfers/creditTransfers';
 import Homepage from './Pages/Homepage/homepage';
+import PrivacyPolicy from './Pages/PrivacyPolicy/privacyPolicy';
+import CodeOfConduct from './Pages/CodeofConduct/codeofConduct';
+import CookiePolicy from './Pages/CookiePolicy/cookiePolicy';
+import TermsOfUse from './Pages/TermsofUse/termsofUse';
 import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
@@ -37,13 +41,15 @@ const App = () => {
       localStorage.getItem('companyId') &&
       localStorage.getItem('userRole') &&
       localStorage.getItem('userId') &&
-      localStorage.getItem('companyState')
+      localStorage.getItem('companyState') &&
+      localStorage.getItem('companyRole')
     )
       updateUserAbility(ability, {
         id: parseInt(localStorage.getItem('userId') as string),
         role: localStorage.getItem('userRole') as string,
         companyId: parseInt(localStorage.getItem('companyId') as string),
         companyState: parseInt(localStorage.getItem('companyState') as string),
+        companyRole: localStorage.getItem('companyRole') as string,
       });
   }, []);
   return (
@@ -60,6 +66,10 @@ const App = () => {
             <Routes>
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="codeconduct" element={<CodeOfConduct />} />
+              <Route path="cookie" element={<CookiePolicy />} />
+              <Route path="terms" element={<TermsOfUse />} />
               <Route path="/" element={<Homepage />} />
               <Route path="/" element={<PrivateRoute />}>
                 <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>

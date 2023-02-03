@@ -456,7 +456,7 @@ export class UserService {
       .where(
         `email = '${username}' ${
           ability
-            ? " AND " + this.helperService.parseMongoQueryToSQL(ability)
+            ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})`
             : ""
         }`
       )

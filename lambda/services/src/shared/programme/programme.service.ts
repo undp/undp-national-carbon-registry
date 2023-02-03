@@ -574,11 +574,25 @@ export class ProgrammeService {
     async certify(req: ProgrammeCertify, add: boolean, user: User) {
         this.logger.log(`Programme ${req.programmeId} certification received by ${user.id}`)
 
-        if (user.companyRole != CompanyRole.CERTIFIER) {
+        if (add && user.companyRole != CompanyRole.CERTIFIER) {
             throw new HttpException("Programme certification can perform only by certifier", HttpStatus.FORBIDDEN)
         }
 
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, user.companyId, add, this.getUserRef(user))
+        if (!add && ![CompanyRole.CERTIFIER, CompanyRole.GOVERNMENT].includes(user.companyRole)) {
+            throw new HttpException("Programme certification revoke can perform only by certifier or government", HttpStatus.FORBIDDEN)
+        }
+
+        let certifierId;
+        if (user.companyRole === CompanyRole.GOVERNMENT) {
+            if (!req.certifierId) {
+                throw new HttpException("certifierId required for government user", HttpStatus.FORBIDDEN)
+            }
+            certifierId = req.certifierId
+        } else {
+            certifierId = user.companyId;
+        }
+
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRef(user))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
@@ -599,6 +613,10 @@ export class ProgrammeService {
             }
         }
 
+        // if (req.type === RetireType.CROSS_BORDER && !req.toCompanyMeta.country) {
+        //     throw new HttpException("Country is required for cross border retirement", HttpStatus.BAD_REQUEST)
+        // }
+
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
 
         if (!programme) {
@@ -609,6 +627,7 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
+        
 
         if (!req.fromCompanyIds) {
             req.fromCompanyIds = programme.companyId;
