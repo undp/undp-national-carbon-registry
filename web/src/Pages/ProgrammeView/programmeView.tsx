@@ -13,6 +13,7 @@ import {
   Select,
   Radio,
   Space,
+  Form,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -1332,15 +1333,20 @@ const ProgrammeView = () => {
         ) : (
           <div>
             <p className="sub-text">{actionInfo.text}</p>
-            <div className="form-label remark">
-              {t('view:remarks')}
-              {actionInfo.remark && <span className="req-ast">*</span>}
-            </div>
-            <TextArea
-              defaultValue={comment}
-              rows={2}
-              onChange={(v) => setComment(v.target.value)}
-            />
+            <Form layout="vertical">
+              <Form.Item
+                className="mg-bottom-0"
+                label={t('view:remarks')}
+                name="remarks"
+                required={actionInfo.remark}
+              >
+                <TextArea
+                  defaultValue={comment}
+                  rows={2}
+                  onChange={(v) => setComment(v.target.value)}
+                />
+              </Form.Item>
+            </Form>
             <div>
               <div className="footer-btn">
                 <Button
