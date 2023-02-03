@@ -180,6 +180,8 @@ export class CaslAbilityFactory {
 
       if (user.companyRole == CompanyRole.CERTIFIER) {
         can(Action.Read, Stat);
+      } else {
+        can(Action.Read, Stat);
       }
       // cannot(Action.Delete, User, { id: { $eq: user.id } })
       cannot(Action.Update, User, ["companyRole"]);
