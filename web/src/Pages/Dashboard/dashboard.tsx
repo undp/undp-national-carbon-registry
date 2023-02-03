@@ -62,6 +62,7 @@ const Dashboard = () => {
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
+  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<any>();
   const [estimatedCredits, setEstimatedCredits] = useState<number>();
 
   const [startTime, setStartTime] = useState<number>(0);
@@ -152,6 +153,9 @@ const Dashboard = () => {
         {
           type: 'CREDIT_CERTIFIED',
         },
+        {
+          type: 'TOTAL_PROGRAMS_LAST_UPDATE',
+        },
       ],
       category: 'overall',
     };
@@ -203,7 +207,7 @@ const Dashboard = () => {
           type: 'CREDIT_REVOKED',
         },
       ],
-      category: categoryType,
+      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
@@ -231,7 +235,7 @@ const Dashboard = () => {
           type: 'TRANSFER_LOCATIONS',
         },
       ],
-      category: categoryType,
+      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
       startTime: startTime !== 0 ? startTime : startOfTheYear,
       endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
@@ -512,6 +516,7 @@ const Dashboard = () => {
       setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
       setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
       setTransferRequestReceived(response?.data?.stats?.TRANSFER_REQUEST_RECEIVED);
+      setLastUpdateProgrammesStats(response?.data?.stats?.TOTAL_PROGRAMS_LAST_UPDATE);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -613,6 +618,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
+    if (companyRole === 'ProgrammeDeveloper') {
+      console.log('sdkfjhkahf ewiufhwiefhuf ******** ');
+      setCategoryType('mine');
+    }
   }, [companyRole]);
 
   useEffect(() => {
@@ -977,7 +986,7 @@ ${total}
                   ? 'Transfer Requests Received'
                   : 'Programmes Uncertified'
               }
-              updatedDate={lastUpdate}
+              updatedDate={parseInt(lastUpdateProgrammesStats)}
               icon={
                 companyRole === 'Government' ? (
                   <ClockHistory color="#16B1FF" size={80} />
@@ -1085,7 +1094,7 @@ ${total}
               pending={pendingProjects}
               rejected={rejectedProjects}
               authorized={authorisedProjects}
-              updatedDate={lastUpdate}
+              updatedDate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1094,7 +1103,7 @@ ${total}
               title="Credits"
               options={optionDonutPieA}
               series={creditsPieSeries}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1103,7 +1112,7 @@ ${total}
               title="Certified Credits"
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1116,7 +1125,7 @@ ${total}
               title="Total Programmes"
               options={totalProgrammesOptions}
               series={seriesTotalProgrammesY}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1125,7 +1134,7 @@ ${total}
               title="Total Programmes:Sector"
               options={totalProgrammesOptionsSub}
               series={seriesTotalProgrammesSubY}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1138,7 +1147,7 @@ ${total}
               title="Total Credits"
               options={totalCreditsOptions}
               series={seriesTotalCreditsY}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1147,7 +1156,7 @@ ${total}
               title="Total Credit Certified"
               options={totalCreditsCertifiedOptions}
               series={seriesTotalCreditsCertifiedY}
-              lastUpdate={lastUpdate}
+              lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
@@ -1170,7 +1179,7 @@ ${total}
                   </div>
                   <div className="updated-on argin-top-1">
                     <div className="updated-moment-container">
-                      {moment(lastUpdate * 1000).fromNow()}
+                      {moment(parseInt(lastUpdateProgrammesStats)).fromNow()}
                     </div>
                   </div>
                 </>
