@@ -637,7 +637,7 @@ const Dashboard = () => {
 
   const seriesTotalProgrammesSubY = [
     {
-      name: 'Enery',
+      name: 'Energy',
       data: energyProgrammes,
     },
     {
@@ -827,6 +827,10 @@ ${total}
           matchExpression.push(row.code, color);
         }
 
+        function getCountryCodes(dataSet: any) {
+          return dataSet.map((item: any) => item.code);
+        }
+
         // Last value is the default, used where there is no data
         matchExpression.push('rgba(0, 0, 0, 0)');
 
@@ -923,6 +927,10 @@ ${total}
                 marker = markers[id] = new mapboxgl.Marker({
                   element: el,
                 }).setLngLat(coords);
+
+                // marker = markers[id] = new mapboxgl.Marker({
+                //   element: el,
+                // }).;
               }
               newMarkers[id] = marker;
 
