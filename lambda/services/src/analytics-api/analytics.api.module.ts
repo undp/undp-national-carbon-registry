@@ -12,6 +12,8 @@ import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledg
 import { CaslModule } from "../shared/casl/casl.module";
 import { AuthModule } from "../shared/auth/auth.module";
 import { UtilModule } from "../shared/util/util.module";
+import { AggregateAPIService } from "./aggregate.api.service";
+import { Company } from "../shared/entities/company.entity";
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { UtilModule } from "../shared/util/util.module";
       Programme,
       ProgrammeTransfer,
       ProgrammeTransferViewEntityQuery,
+      Company
     ]),
     AuthModule,
     CaslModule,
@@ -35,6 +38,6 @@ import { UtilModule } from "../shared/util/util.module";
     ProgrammeLedgerModule,
   ],
   controllers: [ProgrammeController],
-  providers: [AnalyticsAPIService, Logger],
+  providers: [AnalyticsAPIService, Logger, AggregateAPIService],
 })
 export class AnalyticsAPIModule {}

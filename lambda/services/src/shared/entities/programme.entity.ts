@@ -1,6 +1,6 @@
 import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
 import { SectoralScope } from "serial-number-gen";
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
 import { AgricultureProperties } from "../dto/agriculture.properties";
 import { ProgrammeProperties } from "../dto/programme.properties";
 import { SolarProperties } from "../dto/solar.properties";
@@ -149,4 +149,10 @@ export class Programme implements EntitySubject {
     nullable: true,
   })
   geographicalLocationCordintes: any;
+
+  @CreateDateColumn()
+  created_at: Date; 
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
