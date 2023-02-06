@@ -81,6 +81,7 @@ import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
+import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 
 mapboxgl.accessToken =
   '';
@@ -671,6 +672,7 @@ const ProgrammeView = () => {
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
           </div>
+          <OrganisationStatus organisationStatus={parseInt(ele.company.state)}></OrganisationStatus>
         </div>
       </div>
     );

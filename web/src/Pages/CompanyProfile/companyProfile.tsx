@@ -12,6 +12,7 @@ import UserActionConfirmationModel from '../../Components/Models/UserActionConfi
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './companyProfile.scss';
 import * as Icon from 'react-bootstrap-icons';
+import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 
 const CompanyProfile = () => {
   const { get, put } = useConnection();
@@ -123,13 +124,9 @@ const CompanyProfile = () => {
                   <div className="padding-top-1 company-name">{companyDetails.name}</div>
                 </Row>
                 <Row justify="center">
-                  {parseInt(companyDetails.state) === 1 ? (
-                    <div className="mg-top-1 active">{t('companyProfile:activeStatus')}</div>
-                  ) : (
-                    <div className="mg-top-1 deauthorised">
-                      {t('companyProfile:deauthorisedStatus')}
-                    </div>
-                  )}
+                  <OrganisationStatus
+                    organisationStatus={parseInt(companyDetails.state)}
+                  ></OrganisationStatus>
                 </Row>
               </Skeleton>
             </Card>
