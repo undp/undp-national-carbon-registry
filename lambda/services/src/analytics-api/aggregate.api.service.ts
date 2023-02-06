@@ -336,9 +336,9 @@ export class AggregateAPIService {
           results[stat.type] = {
             last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
-              "certifiedSum": Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
-              "revokedSum": Number(results[StatType.REVOKED_BY_ME].data[0]['sum']),
-              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_BY_ME].data[0]['sum']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
+              "certifiedSum": Number(results[StatType.CERTIFIED_BY_ME].data[0]['totalestcredit']),
+              "revokedSum": Number(results[StatType.REVOKED_BY_ME].data[0]['totalestcredit']),
+              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_BY_ME].data[0]['totalestcredit']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['totalestcredit']),
               "certifiedCount": Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
               "revokedCount": Number(results[StatType.REVOKED_BY_ME].data[0]['count']),
               "uncertifiedCount": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['count']) - Number(results[StatType.REVOKED_BY_ME].data[0]['count']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
@@ -375,7 +375,7 @@ export class AggregateAPIService {
               results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere);
             }
             allValues = results[StatType.ALL_AUTH_PROGRAMMES]
-            stat.statFilter ? stat.statFilter.onlyMine = false : stat.statFilter = { onlyMine: true }
+            stat.statFilter ? stat.statFilter.onlyMine = false : stat.statFilter = { onlyMine: false }
           }
 
           if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES){
@@ -383,7 +383,7 @@ export class AggregateAPIService {
               results[StatType.ALL_AUTH_PROGRAMME_MINE] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId)
             }
             allValues = results[StatType.ALL_AUTH_PROGRAMME_MINE]
-            stat.statFilter ? stat.statFilter.onlyMine = false : stat.statFilter = { onlyMine: true }
+            stat.statFilter ? stat.statFilter.onlyMine = true : stat.statFilter = { onlyMine: true }
           }
 
           if (!results[StatType.REVOKED_PROGRAMMES]){
@@ -395,9 +395,9 @@ export class AggregateAPIService {
           results[stat.type] =  {
             last: allValues.last,
             data: {
-              "certifiedSum": Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
-              "revokedSum": Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']),
-              "uncertifiedSum": Number(allValues.data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
+              "certifiedSum": Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['totalestcredit']),
+              "revokedSum": Number(results[StatType.REVOKED_PROGRAMMES].data[0]['totalestcredit']),
+              "uncertifiedSum": Number(allValues.data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['totalestcredit']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['totalestcredit']),
             }
           }
           break;
