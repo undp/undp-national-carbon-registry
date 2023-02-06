@@ -97,6 +97,17 @@ const CompanyProfile = () => {
           ) : (
             ''
           )}
+          {ability.can(Action.Update, plainToClass(Company, companyDetails)) && !isLoading && (
+            <Button
+              className="mg-left-1"
+              type="primary"
+              onClick={() =>
+                navigate('/companyManagement/updateCompany', { state: { record: companyDetails } })
+              }
+            >
+              {t('common:edit')}
+            </Button>
+          )}
         </div>
       </div>
 
