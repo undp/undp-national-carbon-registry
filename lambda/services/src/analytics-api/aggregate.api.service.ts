@@ -315,6 +315,36 @@ export class AggregateAPIService {
               "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
             }
           }
+        case StatType.CERTIFIED_BY_ME_BY_STATE:
+          if (stat.statFilter) {
+            stat.statFilter.onlyMine = true;
+          } else {
+            stat.statFilter = { onlyMine: true }
+          }
+          let filtCState = this.getFilterAndByStatFilter(stat.statFilter, 
+            { value: companyId, 
+              key: "certifierId", 
+              operation: 'ANY' 
+            });
+          
+          results[stat.type] = await this.genAggregateTypeOrmQuery(
+            this.programmeRepo,
+            "programme", 
+            ["currentStage"], 
+            [
+              new AggrEntry('programmeId', 'COUNT'),
+              new AggrEntry('creditEst', 'SUM'),
+              new AggrEntry('creditIssued', 'SUM'),
+              new AggrEntry('creditRetired', 'SUM'),
+              new AggrEntry('creditTransferred', 'SUM')
+            ], 
+            filtCState, 
+            null, 
+            abilityCondition,
+            lastTimeForWhere, 
+            undefined
+          );
+          break;
       }
     }
     return new DataCountResponseDto(results);
