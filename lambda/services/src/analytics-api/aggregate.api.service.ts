@@ -125,12 +125,23 @@ export class AggregateAPIService {
       }
   }
 
-  private async getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere){
-    const filtAuth = this.getFilterAndByStatFilter(stat.statFilter, 
+  private async getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId?){
+    let filtAuth = this.getFilterAndByStatFilter(stat.statFilter, 
       { value: ProgrammeStage.AUTHORISED, 
         key: "currentStage", 
         operation: '=' 
       });
+
+    if (companyId) {
+      if (!filtAuth) {
+        filtAuth = []
+      }
+      filtAuth.push({ 
+        value: companyId, 
+        key: "companyId", 
+        operation: 'ANY' 
+      })
+    }
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme", 
@@ -141,6 +152,25 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       "createdTime"
+    );
+  }
+
+  private async getCertifiedByMePrgrammes(statFilter, companyId, certifyField, abilityCondition, lastTimeForWhere) {
+    const filtC = this.getFilterAndByStatFilter(statFilter, 
+      { value: companyId, 
+        key: certifyField, 
+        operation: 'ANY' 
+      });
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeRepo,
+      "programme", 
+      null, 
+      [new AggrEntry('programmeId', 'COUNT'), new AggrEntry('creditEst', 'SUM')], 
+      filtC, 
+      null, 
+      abilityCondition,
+      lastTimeForWhere, 
+      undefined
     );
   }
 
@@ -187,6 +217,12 @@ export class AggregateAPIService {
       switch (stat.type) {
         case StatType.AGG_PROGRAMME_BY_STATUS:
         case StatType.AGG_PROGRAMME_BY_SECTOR:
+        case StatType.MY_AGG_PROGRAMME_BY_STATUS:
+        case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
+
+          if ([StatType.MY_AGG_PROGRAMME_BY_SECTOR, StatType.MY_AGG_PROGRAMME_BY_STATUS].includes(stat.type)) {
+            stat.statFilter.onlyMine = true;
+          }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeRepo, 
             "programme", 
@@ -243,6 +279,7 @@ export class AggregateAPIService {
           );
           break;
         case StatType.CERTIFIED_BY_ME:
+        case StatType.REVOKED_BY_ME:
           if (stat.statFilter) {
             stat.statFilter.onlyMine = true;
           } else {
@@ -251,31 +288,42 @@ export class AggregateAPIService {
           if (!results[StatType.ALL_AUTH_PROGRAMMES]){
             results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
           }
-          const filtC = this.getFilterAndByStatFilter(stat.statFilter, 
-            { value: companyId, 
-              key: "certifierId", 
-              operation: 'ANY' 
-            });
-          const cert = await this.genAggregateTypeOrmQuery(
-            this.programmeRepo,
-            "programme", 
-            null, 
-            [new AggrEntry('programmeId', 'COUNT'), new AggrEntry('creditEst', 'SUM')], 
-            filtC, 
-            null, 
-            abilityCondition,
-            lastTimeForWhere, 
-            undefined
-          );
-          results[stat.type] =  {
+          
+          if (!results[stat.type]){
+            results[stat.type] = await this.getCertifiedByMePrgrammes(stat.statFilter, companyId, stat.type === StatType.CERTIFIED_BY_ME ? "certifierId" : "revokedCertifierId", abilityCondition, lastTimeForWhere)
+          }
+
+          break;
+        case StatType.CERTIFIED_REVOKED_BY_ME:
+          if (stat.statFilter) {
+            stat.statFilter.onlyMine = true;
+          } else {
+            stat.statFilter = { onlyMine: true }
+          }
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
+            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+          }
+          
+          if (!results[StatType.CERTIFIED_BY_ME]){
+            results[StatType.CERTIFIED_BY_ME] = await this.getCertifiedByMePrgrammes(stat.statFilter, companyId, "certifierId", abilityCondition, lastTimeForWhere)
+          }
+
+          if (!results[StatType.REVOKED_BY_ME]){
+            results[StatType.REVOKED_BY_ME] = await this.getCertifiedByMePrgrammes(stat.statFilter, companyId, "revokedCertifierId", abilityCondition, lastTimeForWhere)
+          }
+
+          results[stat.type] = {
             last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
-              "certifiedSum": Number(cert.data[0]['sum']),
-              "certifiedCount": Number(cert.data[0]['count']),
-              "uncertifiedCount": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['count']) - Number(cert.data[0]['count']),
-              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(cert.data[0]['sum'])
+              "certifiedSum": Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
+              "revokedSum": Number(results[StatType.REVOKED_BY_ME].data[0]['sum']),
+              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_BY_ME].data[0]['sum']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
+              "certifiedCount": Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
+              "revokedCount": Number(results[StatType.REVOKED_BY_ME].data[0]['count']),
+              "uncertifiedCount": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['count']) - Number(results[StatType.REVOKED_BY_ME].data[0]['count']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
             }
           }
+
           break;
         case StatType.ALL_AUTH_PROGRAMMES:
           if (!results[StatType.ALL_AUTH_PROGRAMMES]){
@@ -298,9 +346,23 @@ export class AggregateAPIService {
           }
           break;
         case StatType.CERTIFIED_REVOKED_PROGRAMMES:
-          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
-            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+        case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
+
+          let allValues;
+          if (stat.type === StatType.CERTIFIED_REVOKED_PROGRAMMES){
+            if (!results[StatType.ALL_AUTH_PROGRAMMES]) {
+              results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere);
+            }
+            allValues = results[StatType.ALL_AUTH_PROGRAMMES]
           }
+
+          if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES){
+            if (!results[StatType.ALL_AUTH_PROGRAMME_MINE]) {
+              results[StatType.ALL_AUTH_PROGRAMME_MINE] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId)
+            }
+            allValues = results[StatType.ALL_AUTH_PROGRAMME_MINE]
+          }
+
           if (!results[StatType.REVOKED_PROGRAMMES]){
             results[StatType.REVOKED_PROGRAMMES] = await this.getCertifiedProgrammes(stat.statFilter, abilityCondition, lastTimeForWhere, companyId, ["revokedCertifierId"])
           }
@@ -308,11 +370,11 @@ export class AggregateAPIService {
             results[StatType.CERTIFIED_PROGRAMMES] = await this.getCertifiedProgrammes(stat.statFilter, abilityCondition, lastTimeForWhere, companyId, ["certifierId"])
           }
           results[stat.type] =  {
-            last: results[StatType.ALL_AUTH_PROGRAMMES].last,
+            last: allValues.last,
             data: {
               "certifiedSum": Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
               "revokedSum": Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']),
-              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
+              "uncertifiedSum": Number(allValues.data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
             }
           }
         case StatType.CERTIFIED_BY_ME_BY_STATE:
