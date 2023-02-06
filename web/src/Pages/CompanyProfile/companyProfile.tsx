@@ -11,6 +11,7 @@ import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './companyProfile.scss';
+import * as Icon from 'react-bootstrap-icons';
 
 const CompanyProfile = () => {
   const { get, put } = useConnection();
@@ -73,7 +74,7 @@ const CompanyProfile = () => {
       headerText: `${t('companyProfile:deauthoriseConfirmHeaderText')}`,
       text: `${t('companyProfile:deauthoriseConfirmText')}`,
       type: 'danger',
-      icon: <MinusCircleOutlined />,
+      icon: <Icon.BuildingDash />,
     });
     setErrorMsg('');
     setOpenDeauthorisationModal(true);
