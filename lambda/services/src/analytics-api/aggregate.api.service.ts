@@ -47,6 +47,7 @@ export class AggregateAPIService {
       if (statFilter.onlyMine == true) {
         filters.push(mineFilter)
       }
+      
       return filters;
     } else {
       return null;
@@ -76,7 +77,9 @@ export class AggregateAPIService {
     sort: SortEntry, 
     abilityCondition: string,
     lastTimeForWhere: any,
-    timeCol: string
+    timeCol: string,
+    timeGroupingCol?: string,
+    timeGroupingAccuracy?: string
     ) {
     
       const query = new QueryDto()
@@ -87,7 +90,7 @@ export class AggregateAPIService {
       let queryBuild = repo.createQueryBuilder(tableName).where(whereC)
 
       if (aggregates) {
-        const selectQuery = aggregates.map( a => `${a.operation}("${tableName}"."${a.key}")`).join(',')
+        const selectQuery = aggregates.map( a => `${a.operation}("${tableName}"."${a.key}") as ${a.fieldName}`).join(',')
         queryBuild = queryBuild.select(selectQuery);
       }
 
@@ -95,11 +98,25 @@ export class AggregateAPIService {
         queryBuild = queryBuild.orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
       }
       
+      let grpByAll = undefined
       if (groupBy) {
         const groupQuery = groupBy.map( gb => `"${tableName}"."${gb}"`).join(',')
         queryBuild = queryBuild.addSelect(groupQuery)
-        queryBuild = queryBuild.groupBy(groupQuery)
+        grpByAll = groupQuery
       }
+      if (timeGroupingCol && timeGroupingAccuracy) {
+        const groupQuery = `date_trunc('${timeGroupingAccuracy}', "${timeGroupingCol}") as time_group`
+        queryBuild = queryBuild.addSelect(groupQuery)
+        if (!grpByAll) {
+          grpByAll = 'time_group'
+        } else {
+          grpByAll += ', time_group'
+        }
+      }
+      if (grpByAll != '') {
+        queryBuild = queryBuild.groupBy(grpByAll)
+      }
+
       let d = await queryBuild.getRawMany();
       
       let t = 0;
@@ -146,7 +163,7 @@ export class AggregateAPIService {
       this.programmeRepo,
       "programme", 
       null, 
-      [new AggrEntry('programmeId', 'COUNT'), new AggrEntry('creditEst', 'SUM')], 
+      [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtAuth, 
       null, 
       abilityCondition,
@@ -165,7 +182,7 @@ export class AggregateAPIService {
       this.programmeRepo,
       "programme", 
       null, 
-      [new AggrEntry('programmeId', 'COUNT'), new AggrEntry('creditEst', 'SUM')], 
+      [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtC, 
       null, 
       abilityCondition,
@@ -191,11 +208,11 @@ export class AggregateAPIService {
       "programme", 
       null, 
       [
-        new AggrEntry('programmeId', 'COUNT'),
-        new AggrEntry('creditEst', 'SUM'),
-        new AggrEntry('creditIssued', 'SUM'),
-        new AggrEntry('creditRetired', 'SUM'),
-        new AggrEntry('creditTransferred', 'SUM')
+        new AggrEntry('programmeId', 'COUNT', "count"),
+        new AggrEntry('creditEst', 'SUM', "totalEstCredit"),
+        new AggrEntry('creditIssued', 'SUM', "totalIssuedCredit"),
+        new AggrEntry('creditRetired', 'SUM', "totalRetiredCredit"),
+        new AggrEntry('creditTransferred', 'SUM', "totalTxCredit")
       ], 
       filters, 
       null, 
@@ -228,17 +245,19 @@ export class AggregateAPIService {
             "programme", 
             stat.type === StatType.AGG_PROGRAMME_BY_STATUS ? ["currentStage"] : ["sector"], 
             [
-              new AggrEntry('programmeId', 'COUNT'),
-              new AggrEntry('creditEst', 'SUM'),
-              new AggrEntry('creditIssued', 'SUM'),
-              new AggrEntry('creditRetired', 'SUM'),
-              new AggrEntry('creditTransferred', 'SUM')
+              new AggrEntry('programmeId', 'COUNT', "count"),
+              new AggrEntry('creditEst', 'SUM', "totalEstCredit"),
+              new AggrEntry('creditIssued', 'SUM', "totalIssuedCredit"),
+              new AggrEntry('creditRetired', 'SUM', "totalRetiredCredit"),
+              new AggrEntry('creditTransferred', 'SUM', "totalTxCredit")
             ], 
             this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' }), 
             null, 
             abilityCondition,
             lastTimeForWhere,
-            "createdTime"
+            "createdTime",
+            stat.statFilter?.timeGroup ? "createdAt" : undefined,
+            stat.statFilter?.timeGroup ? "day" : undefined,
           );
           break;
         case StatType.MY_CREDIT:
@@ -270,7 +289,7 @@ export class AggregateAPIService {
             this.programmeTransferRepo,
             "transfer", 
             null, 
-            [new AggrEntry('requestId', 'COUNT')], 
+            [new AggrEntry('requestId', 'COUNT', 'count')], 
             filt, 
             null, 
             abilityCondition,
@@ -395,11 +414,11 @@ export class AggregateAPIService {
             "programme", 
             stat.type === StatType.CERTIFIED_BY_ME_BY_STATE ? ["currentStage"] : ["sector"],
             [
-              new AggrEntry('programmeId', 'COUNT'),
-              new AggrEntry('creditEst', 'SUM'),
-              new AggrEntry('creditIssued', 'SUM'),
-              new AggrEntry('creditRetired', 'SUM'),
-              new AggrEntry('creditTransferred', 'SUM')
+              new AggrEntry('programmeId', 'COUNT', "count"),
+              new AggrEntry('creditEst', 'SUM', "totalEstCredit"),
+              new AggrEntry('creditIssued', 'SUM', "totalIssuedCredit"),
+              new AggrEntry('creditRetired', 'SUM', "totalRetiredCredit"),
+              new AggrEntry('creditTransferred', 'SUM', "totalTxCredit")
             ], 
             filtCState, 
             null, 

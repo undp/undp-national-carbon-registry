@@ -100,6 +100,7 @@ export class LedgerReplicatorService {
               let address: any[] = [];
               if (programme && programme.programmeProperties) {
                 if (programme.currentStage === "AwaitingAuthorization") {
+                  programme.createdAt = new Date(programme.createdTime / 1000)
                   const programmeProperties = programme.programmeProperties;
                   if (programmeProperties.geographicalLocation) {
                     for (
@@ -129,6 +130,7 @@ export class LedgerReplicatorService {
                 error
               );
             } finally {
+              programme.updatedAt = new Date(programme.txTime / 1000)
               const columns =
                 this.programmeRepo.manager.connection.getMetadata(
                   "Programme"
@@ -138,6 +140,7 @@ export class LedgerReplicatorService {
                   return (item.propertyName !== "programmeId" && item.propertyName !== "geographicalLocationCordintes");
                 })
                 .map((e) => e.propertyName);
+              
               this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
               return await this.programmeRepo
                 .createQueryBuilder()
