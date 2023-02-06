@@ -203,6 +203,8 @@ export class AggregateAPIService {
       value: 0,
       keyOperation: 'cardinality'
     });
+
+    console.log('getCertifiedProgrammes')
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo, 
       "programme", 
@@ -373,6 +375,7 @@ export class AggregateAPIService {
               results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere);
             }
             allValues = results[StatType.ALL_AUTH_PROGRAMMES]
+            stat.statFilter ? stat.statFilter.onlyMine = false : stat.statFilter = { onlyMine: true }
           }
 
           if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES){
@@ -380,6 +383,7 @@ export class AggregateAPIService {
               results[StatType.ALL_AUTH_PROGRAMME_MINE] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId)
             }
             allValues = results[StatType.ALL_AUTH_PROGRAMME_MINE]
+            stat.statFilter ? stat.statFilter.onlyMine = false : stat.statFilter = { onlyMine: true }
           }
 
           if (!results[StatType.REVOKED_PROGRAMMES]){
@@ -396,6 +400,7 @@ export class AggregateAPIService {
               "uncertifiedSum": Number(allValues.data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
             }
           }
+          break;
         case StatType.CERTIFIED_BY_ME_BY_STATE:
         case StatType.CERTIFIED_BY_ME_BY_SECTOR:
           if (stat.statFilter) {
