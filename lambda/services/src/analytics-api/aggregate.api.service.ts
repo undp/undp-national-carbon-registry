@@ -143,6 +143,37 @@ export class AggregateAPIService {
       "createdTime"
     );
   }
+
+  private async getCertifiedProgrammes(statFilter, abilityCondition, lastTimeForWhere, companyId, cardinalityField) {
+
+    let filters = this.getFilterAndByStatFilter(statFilter, { value: companyId, key: 'companyId', operation: 'ANY' });
+    if (!filters) {
+      filters = [];
+    }
+    filters.push({
+      key: cardinalityField,
+      operation: ">",
+      value: 0,
+      keyOperation: 'cardinality'
+    });
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeRepo, 
+      "programme", 
+      null, 
+      [
+        new AggrEntry('programmeId', 'COUNT'),
+        new AggrEntry('creditEst', 'SUM'),
+        new AggrEntry('creditIssued', 'SUM'),
+        new AggrEntry('creditRetired', 'SUM'),
+        new AggrEntry('creditTransferred', 'SUM')
+      ], 
+      filters, 
+      null, 
+      abilityCondition,
+      lastTimeForWhere,
+      "createdTime"
+    );
+  }
   
   async getAggregateQuery(
     abilityCondition: string,
@@ -152,7 +183,6 @@ export class AggregateAPIService {
     let results = {};
     let lastTimeForWhere = {};
 
-    let authProgrammesStats = undefined;
     for (const stat of query.stats) {
       switch (stat.type) {
         case StatType.AGG_PROGRAMME_BY_STATUS:
@@ -218,8 +248,8 @@ export class AggregateAPIService {
           } else {
             stat.statFilter = { onlyMine: true }
           }
-          if (!authProgrammesStats){
-            authProgrammesStats = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
+            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
           }
           const filtC = this.getFilterAndByStatFilter(stat.statFilter, 
             { value: companyId, 
@@ -238,53 +268,53 @@ export class AggregateAPIService {
             undefined
           );
           results[stat.type] =  {
-            last: authProgrammesStats.last,
+            last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
               "certifiedSum": Number(cert.data[0]['sum']),
               "certifiedCount": Number(cert.data[0]['count']),
-              "uncertifiedCount": Number(authProgrammesStats.data[0]['count']) - Number(cert.data[0]['count']),
-              "uncertifiedSum": Number(authProgrammesStats.data[0]['sum']) - Number(cert.data[0]['sum'])
+              "uncertifiedCount": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['count']) - Number(cert.data[0]['count']),
+              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(cert.data[0]['sum'])
             }
           }
           break;
         case StatType.ALL_AUTH_PROGRAMMES:
-          if (!authProgrammesStats){
-            authProgrammesStats = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
+            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
           }
-          results[stat.type] = authProgrammesStats;
+          // results[stat.type] = results[StatType.ALL_AUTH_PROGRAMMES];
           break;
         case StatType.CERTIFIED_PROGRAMMES:
         case StatType.REVOKED_PROGRAMMES:
-          if (!authProgrammesStats){
-            authProgrammesStats = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
+            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
           }
-          let filters = this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' });
-          if (!filters) {
-            filters = [];
+          if (!results[stat.type]) {
+            results[stat.type] = await this.getCertifiedProgrammes(stat.statFilter, 
+              abilityCondition, 
+              lastTimeForWhere, 
+              companyId, 
+              (stat.type === StatType.CERTIFIED_PROGRAMMES ? ["certifierId"] : ["revokedCertifierId"])
+            );
           }
-          filters.push({
-            key: `cardinality(${(stat.type === StatType.CERTIFIED_PROGRAMMES ? ["certifierId"] : ["revokedCertifierId"])})`,
-            operation: ">",
-            value: "0"
-          });
-          results[stat.type] = await this.genAggregateTypeOrmQuery(
-            this.programmeRepo, 
-            "programme", 
-            null, 
-            [
-              new AggrEntry('programmeId', 'COUNT'),
-              new AggrEntry('creditEst', 'SUM'),
-              new AggrEntry('creditIssued', 'SUM'),
-              new AggrEntry('creditRetired', 'SUM'),
-              new AggrEntry('creditTransferred', 'SUM')
-            ], 
-            filters, 
-            null, 
-            abilityCondition,
-            lastTimeForWhere,
-            "createdTime"
-          );
           break;
+        case StatType.CERTIFIED_REVOKED_PROGRAMMES:
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]){
+            results[StatType.ALL_AUTH_PROGRAMMES] = await this.getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere)
+          }
+          if (!results[StatType.REVOKED_PROGRAMMES]){
+            results[StatType.REVOKED_PROGRAMMES] = await this.getCertifiedProgrammes(stat.statFilter, abilityCondition, lastTimeForWhere, companyId, ["revokedCertifierId"])
+          }
+          if (!results[StatType.CERTIFIED_PROGRAMMES]){
+            results[StatType.CERTIFIED_PROGRAMMES] = await this.getCertifiedProgrammes(stat.statFilter, abilityCondition, lastTimeForWhere, companyId, ["certifierId"])
+          }
+          results[stat.type] =  {
+            last: results[StatType.ALL_AUTH_PROGRAMMES].last,
+            data: {
+              "certifiedSum": Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
+              "revokedSum": Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']),
+              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_PROGRAMMES].data[0]['sum']) - Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]['sum']),
+            }
+          }
       }
     }
     return new DataCountResponseDto(results);
