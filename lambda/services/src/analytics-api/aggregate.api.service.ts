@@ -316,6 +316,7 @@ export class AggregateAPIService {
             }
           }
         case StatType.CERTIFIED_BY_ME_BY_STATE:
+        case StatType.CERTIFIED_BY_ME_BY_SECTOR:
           if (stat.statFilter) {
             stat.statFilter.onlyMine = true;
           } else {
@@ -330,7 +331,7 @@ export class AggregateAPIService {
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeRepo,
             "programme", 
-            ["currentStage"], 
+            stat.type === StatType.CERTIFIED_BY_ME_BY_STATE ? ["currentStage"] : ["sector"],
             [
               new AggrEntry('programmeId', 'COUNT'),
               new AggrEntry('creditEst', 'SUM'),

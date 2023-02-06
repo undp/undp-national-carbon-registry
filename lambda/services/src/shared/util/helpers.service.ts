@@ -84,7 +84,7 @@ export class HelperService {
   }
 
   private isQueryDto(obj) {
-    if (typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
+    if (obj && typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
       return true;
     }
     return false;
