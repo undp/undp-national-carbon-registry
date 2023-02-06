@@ -132,30 +132,30 @@ const Dashboard = () => {
     return {
       stats: [
         {
-          type: 'CREDIT_STATS_BALANCE',
+          type: 'AGG_PROGRAMME_BY_STATUS',
         },
-        {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'AWAITING_AUTHORIZATION',
-        },
-        {
-          type: 'TRANSFER_REQUEST_RECEIVED',
-        },
-        {
-          type: 'TRANSFER_REQUEST_SENT',
-        },
-        {
-          type: 'PROGRAMS_CERTIFIED',
-        },
-        {
-          type: 'PROGRAMS_UNCERTIFIED',
-        },
-        {
-          type: 'CREDIT_CERTIFIED',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_LAST_UPDATE',
-        },
+        // {
+        //   type: 'PROGRAMS_BY_STATUS',
+        //   value: 'AWAITING_AUTHORIZATION',
+        // },
+        // {
+        //   type: 'TRANSFER_REQUEST_RECEIVED',
+        // },
+        // {
+        //   type: 'TRANSFER_REQUEST_SENT',
+        // },
+        // {
+        //   type: 'PROGRAMS_CERTIFIED',
+        // },
+        // {
+        //   type: 'PROGRAMS_UNCERTIFIED',
+        // },
+        // {
+        //   type: 'CREDIT_CERTIFIED',
+        // },
+        // {
+        //   type: 'TOTAL_PROGRAMS_LAST_UPDATE',
+        // },
       ],
       category: 'overall',
     };
@@ -501,22 +501,34 @@ const Dashboard = () => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/dashboard',
+        'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
       console.log('stats data  -- > ', response?.data);
-      setPendingProjectsWithoutTimeRange(response?.data?.stats?.AWAITING_AUTHORIZATION);
-      setCreditBalanceWithoutTimeRange(
-        parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
-      );
-      setCreditCertifiedBalanceWithoutTimeRange(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum)
-      );
-      setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
-      setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
-      setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
-      setTransferRequestReceived(response?.data?.stats?.TRANSFER_REQUEST_RECEIVED);
-      setLastUpdateProgrammesStats(response?.data?.stats?.TOTAL_PROGRAMS_LAST_UPDATE);
+      const programmeByStatusAggregationResponse =
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+      const programmeByStatusAggregationResponseLastUpdate =
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
+      programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+        if (responseItem?.currentStage === 'AwaitingAuthorization') {
+          setPendingProjectsWithoutTimeRange(responseItem?.count);
+        }
+      });
+      if (programmeByStatusAggregationResponseLastUpdate) {
+        setLastUpdateProgrammesStats(programmeByStatusAggregationResponseLastUpdate);
+      }
+      // setPendingProjectsWithoutTimeRange(response?.data?.stats?.AWAITING_AUTHORIZATION);
+      // setCreditBalanceWithoutTimeRange(
+      //   parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
+      // );
+      // setCreditCertifiedBalanceWithoutTimeRange(
+      //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum)
+      // );
+      // setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
+      // setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
+      // setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
+      // setTransferRequestReceived(response?.data?.stats?.TRANSFER_REQUEST_RECEIVED);
+      // setLastUpdateProgrammesStats(response?.data?.stats?.TOTAL_PROGRAMS_LAST_UPDATE);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
