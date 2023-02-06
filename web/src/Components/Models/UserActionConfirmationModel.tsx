@@ -40,7 +40,7 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
       centered={true}
       destroyOnClose={true}
     >
-      <p>{actionInfo.text}</p>
+      <p style={{ whiteSpace: 'pre-line' }}>{actionInfo.text}</p>
       <Form layout="vertical">
         <Form.Item
           className="mg-bottom-0"
