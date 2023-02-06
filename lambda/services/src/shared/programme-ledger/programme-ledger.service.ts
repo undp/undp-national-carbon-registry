@@ -237,20 +237,19 @@ export class ProgrammeLedgerService {
             if (programme.companyId[i] == transfer.fromCompanyId) {
               percentages.push(
                 programme.creditBalance - transfer.creditAmount != 0
-                  ? this.round2Precision(
-                      ((currentCredit[transfer.fromCompanyId] -
+                  ? parseFloat(
+                      (((currentCredit[transfer.fromCompanyId] -
                         transfer.creditAmount) *
                         100) /
-                        (programme.creditBalance - transfer.creditAmount)
-                    )
+                        (programme.creditBalance - transfer.creditAmount)).toFixed(6))
                   : 0
               );
             } else {
               percentages.push(
                 programme.creditBalance - transfer.creditAmount != 0
-                  ? this.round2Precision(
-                      (currentCredit[programme.companyId[i]] * 100) /
-                        (programme.creditBalance - transfer.creditAmount)
+                  ? parseFloat(
+                      ((currentCredit[programme.companyId[i]] * 100) /
+                        (programme.creditBalance - transfer.creditAmount)).toFixed(6)
                     )
                   : 0
               );
@@ -1099,9 +1098,7 @@ export class ProgrammeLedgerService {
             companyCreditDistribution[String(programme.companyId[i])] =
               changeCredit;
             percentages.push(
-              this.round2Precision(
-                ((currentCredit + changeCredit) * 100) / programme.creditBalance
-              )
+              parseFloat((((currentCredit + changeCredit) * 100) / programme.creditBalance).toFixed(6))
             );
           }
           programme.creditOwnerPercentage = percentages;
