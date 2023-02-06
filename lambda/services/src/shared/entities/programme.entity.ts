@@ -150,9 +150,9 @@ export class Programme implements EntitySubject {
   })
   geographicalLocationCordintes: any;
 
-  @CreateDateColumn()
-  created_at: Date; 
+  // @CreateDateColumn({nullable: true})
+  // created_at: Date; 
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  // @UpdateDateColumn({nullable: true})
+  // updated_at: Date;
 }
