@@ -157,9 +157,17 @@ const Dashboard = () => {
         stats: [
           {
             type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
           },
         ],
       };
@@ -168,9 +176,17 @@ const Dashboard = () => {
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
           },
           {
             type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
           },
         ],
       };
@@ -551,8 +567,8 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
           if (responseItem?.currentStage === 'AwaitingAuthorization') {
-            setPendingProjects(parseInt(responseItem?.count));
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
             totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
@@ -560,9 +576,9 @@ const Dashboard = () => {
               totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
             totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
             totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setPendingProjects(parseInt(responseItem?.count));
           }
           if (responseItem?.currentStage === 'Rejected') {
-            setRejectedProjects(parseInt(responseItem?.count));
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
             totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
@@ -570,9 +586,9 @@ const Dashboard = () => {
               totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
             totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
             totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setRejectedProjects(parseInt(responseItem?.count));
           }
           if (responseItem?.currentStage === 'Authorised') {
-            setAuthorisedProjects(parseInt(responseItem?.count));
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
             totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
@@ -580,6 +596,7 @@ const Dashboard = () => {
               totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
             totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
             totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setAuthorisedProjects(parseInt(responseItem?.count));
           }
         });
         setTotalProjects(totalProgrammes);
@@ -594,10 +611,6 @@ const Dashboard = () => {
         totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
         totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
       }
-      // setPendingProjects(response?.data?.stats?.AWAITING_AUTHORIZATION);
-      // setRejectedProjects(response?.data?.stats?.REJECTED);
-      // setAuthorisedProjects(response?.data?.stats?.AUTHORISED);
-      // setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
       pieSeriesCreditsData.push(creditAuthorized);
@@ -610,27 +623,6 @@ const Dashboard = () => {
       pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
       const totalCreditsCertified =
         totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
-      // for (let i = 0; i < pieSeriesCreditsData.length; i++) {
-      //   if (String(pieSeriesCreditsData[i]) === 'NaN') {
-      //     if (i !== -1) {
-      //       pieSeriesCreditsData[i] = 0;
-      //     }
-      //     // totalCredits = totalCredits + 0;
-      //   } else {
-      //     // totalCredits = totalCredits + pieSeriesCreditsData[i];
-      //   }
-      // }
-      // for (let j = 0; j < pieSeriesCreditsCerifiedData.length; j++) {
-      //   if (String(pieSeriesCreditsCerifiedData[j]) === 'NaN') {
-      //     if (j !== -1) {
-      //       pieSeriesCreditsCerifiedData[j] = 0;
-      //     }
-      //     totalCreditsCertified = totalCreditsCertified + 0;
-      //   } else {
-      //     totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
-      //   }
-      // }
-
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
@@ -658,9 +650,12 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    console.log('rejected projects hanges --- ', rejectedProjects);
+  }, [rejectedProjects]);
+
+  useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (companyRole === 'ProgrammeDeveloper') {
-      console.log('sdkfjhkahf ewiufhwiefhuf ******** ');
       setCategoryType('mine');
     }
   }, [companyRole]);
