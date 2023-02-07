@@ -19,6 +19,7 @@ import {
   LedgerDbService,
 } from "../ledger-db/ledger-db.service";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -562,10 +563,11 @@ export class ProgrammeLedgerService {
   public async freezeCompany(
     companyId: number,
     reason: string,
-    user: string
+    user: any,
+    companyName: string
   ): Promise<number[]> {
     this.logger.log(
-      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`
+      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user.id}`
     );
     const getQueries = {};
     companyId = Number(companyId);
@@ -620,7 +622,7 @@ export class ProgrammeLedgerService {
 
           const prvTxTime = programme.txTime;
           (programme.txTime = new Date().getTime()),
-            (programme.txRef = `${user}#${reason}`),
+            (programme.txRef = `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${companyName}`),
             (programme.txType = TxType.FREEZE);
           programme.creditFrozen[index] = freezeCredit;
 
