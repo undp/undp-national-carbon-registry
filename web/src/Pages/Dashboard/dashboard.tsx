@@ -156,10 +156,7 @@ const Dashboard = () => {
       return {
         stats: [
           {
-            type: 'AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              onlyMine: true,
-            },
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
@@ -531,13 +528,15 @@ const Dashboard = () => {
         getAllProgrammeAnalyticsStatsParams()
       );
       console.log('stats data 2nd  -- > ', response?.data);
-      const programmeByStatusAggregationResponse =
-        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+      let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
       if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
@@ -550,41 +549,51 @@ const Dashboard = () => {
       let totalCertifiedCredit = 0;
       let totalUnCertifiedredit = 0;
       let totalRevokedCredits = 0;
-      programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-        if (responseItem?.currentStage === 'AwaitingAuthorization') {
-          setPendingProjects(parseInt(responseItem?.count));
-          totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-        }
-        if (responseItem?.currentStage === 'Rejected') {
-          setRejectedProjects(parseInt(responseItem?.count));
-          totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-        }
-        if (responseItem?.currentStage === 'Authorised') {
-          setAuthorisedProjects(parseInt(responseItem?.count));
-          totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-        }
-      });
+      if (programmeByStatusAggregationResponse?.length > 0) {
+        programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+          if (responseItem?.currentStage === 'AwaitingAuthorization') {
+            setPendingProjects(parseInt(responseItem?.count));
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          }
+          if (responseItem?.currentStage === 'Rejected') {
+            setRejectedProjects(parseInt(responseItem?.count));
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          }
+          if (responseItem?.currentStage === 'Authorised') {
+            setAuthorisedProjects(parseInt(responseItem?.count));
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          }
+        });
+        setTotalProjects(totalProgrammes);
+      } else {
+        setPendingProjects(0);
+        setAuthorisedProjects(0);
+        setRejectedProjects(0);
+        setTotalProjects(0);
+      }
       if (certifiedRevokedAggregationResponse) {
         totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
         totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
         totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
       }
-      setTotalProjects(totalProgrammes);
       // setPendingProjects(response?.data?.stats?.AWAITING_AUTHORIZATION);
       // setRejectedProjects(response?.data?.stats?.REJECTED);
       // setAuthorisedProjects(response?.data?.stats?.AUTHORISED);

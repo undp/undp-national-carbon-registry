@@ -108,7 +108,12 @@ export class AggregateAPIService {
     if (aggregates) {
       const selectQuery = aggregates
         .map(
-          (a) => `${a.operation}("${tableName}"."${a.key}") as ${a.fieldName}`
+          (a) =>
+            `${a.operation}(${
+              a.outerQuery ? "(" + a.outerQuery + "(" : ""
+            }"${tableName}"."${a.key}"${a.outerQuery ? ")s )" : ""}) as ${
+              a.fieldName
+            }`
         )
         .join(",");
       queryBuild = queryBuild.select(selectQuery);
@@ -238,7 +243,8 @@ export class AggregateAPIService {
     abilityCondition,
     lastTimeForWhere,
     companyId,
-    cardinalityField
+    cardinalityField,
+    frzAgg
   ) {
     let filters = this.getFilterAndByStatFilter(statFilter, {
       value: companyId,
@@ -266,6 +272,7 @@ export class AggregateAPIService {
         new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
         new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
         new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+        frzAgg,
       ],
       filters,
       null,
@@ -283,6 +290,9 @@ export class AggregateAPIService {
     let results = {};
     let lastTimeForWhere = {};
 
+    const frzAgg = new AggrEntry("creditFrozen", "SUM", "totalFreezeCredit");
+    frzAgg.outerQuery = "select sum(s) from unnest";
+
     for (const stat of query.stats) {
       switch (stat.type) {
         case StatType.AGG_PROGRAMME_BY_STATUS:
@@ -295,12 +305,17 @@ export class AggregateAPIService {
               StatType.MY_AGG_PROGRAMME_BY_STATUS,
             ].includes(stat.type)
           ) {
-            stat.statFilter.onlyMine = true;
+            stat.statFilter
+              ? (stat.statFilter.onlyMine = true)
+              : (stat.statFilter = { onlyMine: true });
           }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeRepo,
             "programme",
-            stat.type === StatType.AGG_PROGRAMME_BY_STATUS
+            [
+              StatType.AGG_PROGRAMME_BY_STATUS,
+              StatType.MY_AGG_PROGRAMME_BY_STATUS,
+            ].includes(stat.type)
               ? ["currentStage"]
               : ["sector"],
             [
@@ -310,6 +325,7 @@ export class AggregateAPIService {
               new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
               new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
               new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+              frzAgg,
             ],
             this.getFilterAndByStatFilter(stat.statFilter, {
               value: companyId,
@@ -490,7 +506,8 @@ export class AggregateAPIService {
               companyId,
               stat.type === StatType.CERTIFIED_PROGRAMMES
                 ? ["certifierId"]
-                : ["revokedCertifierId"]
+                : ["revokedCertifierId"],
+              frzAgg
             );
           }
           break;
@@ -535,7 +552,8 @@ export class AggregateAPIService {
                 abilityCondition,
                 lastTimeForWhere,
                 companyId,
-                ["revokedCertifierId"]
+                ["revokedCertifierId"],
+                frzAgg
               );
           }
           if (!results[StatType.CERTIFIED_PROGRAMMES]) {
@@ -545,7 +563,8 @@ export class AggregateAPIService {
                 abilityCondition,
                 lastTimeForWhere,
                 companyId,
-                ["certifierId"]
+                ["certifierId"],
+                frzAgg
               );
           }
           results[stat.type] = {
@@ -595,6 +614,7 @@ export class AggregateAPIService {
               new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
               new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
               new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+              frzAgg,
             ],
             filtCState,
             null,
@@ -603,6 +623,32 @@ export class AggregateAPIService {
             undefined
           );
           break;
+        // case StatType.ALL_PROGRAMME_LOCATION:
+        // case StatType.MY_PROGRAMME_LOCATION:
+
+        //   if (StatType.MY_PROGRAMME_LOCATION === stat.type) {
+        //     stat.statFilter.onlyMine = true;
+        //   }
+
+        //   const locationAgg = new AggrEntry("geographicalLocationCordintes", '', "locationCoordinates");
+        //   locationAgg.outerQuery = 'select sum(s) from unnest'
+        //   results[stat.type] = await this.genAggregateTypeOrmQuery(
+        //     this.programmeRepo,
+        //     "programme",
+        //     undefined,
+        //     [
+        //       new AggrEntry('programmeId', 'COUNT', "count"),
+        //       frzAgg,
+        //     ],
+        //     this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' }),
+        //     null,
+        //     abilityCondition,
+        //     lastTimeForWhere,
+        //     "createdTime",
+        //     stat.statFilter?.timeGroup ? "createdAt" : undefined,
+        //     stat.statFilter?.timeGroup ? "day" : undefined,
+        //   );
+        //   break;
       }
     }
     return new DataCountResponseDto(results);

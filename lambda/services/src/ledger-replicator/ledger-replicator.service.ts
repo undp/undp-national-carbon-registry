@@ -100,7 +100,6 @@ export class LedgerReplicatorService {
               let address: any[] = [];
               if (programme && programme.programmeProperties) {
                 if (programme.currentStage === "AwaitingAuthorization") {
-                  programme.createdAt = new Date(programme.createdTime / 1000)
                   const programmeProperties = programme.programmeProperties;
                   if (programmeProperties.geographicalLocation) {
                     for (
@@ -130,7 +129,8 @@ export class LedgerReplicatorService {
                 error
               );
             } finally {
-              programme.updatedAt = new Date(programme.txTime / 1000)
+              programme.updatedAt = new Date(programme.txTime)
+              programme.createdAt = new Date(programme.createdTime)
               const columns =
                 this.programmeRepo.manager.connection.getMetadata(
                   "Programme"
