@@ -18,4 +18,16 @@ export class FilterEntry {
     @ApiPropertyOptional()
     @IsOptional()
     operation: any;
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+    keyOperation?: any;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // @ApiPropertyOptional()
+    // @IsOptional()
+    // keyOperationAttr?: any;
 }

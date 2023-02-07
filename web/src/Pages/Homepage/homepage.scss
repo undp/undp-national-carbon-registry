@@ -8,7 +8,7 @@
   background-color: $background-color;
 
   .homepage-header-container {
-    background-color: $background-color;
+    background-color: rgba(255, 255, 255, 0.8);
     height: 90px;
     padding-top: 15px;
 
@@ -17,7 +17,7 @@
     align-items: center;
     // margin-bottom: 2vw;
     // padding-left: 2rem;
-    padding: 0rem 2rem 0 1rem;
+    padding: 0rem 0rem 0 0vw;
     cursor: pointer;
 
     .title {
@@ -41,7 +41,8 @@
       // flex-direction: row;
       // justify-content: flex-start;
       // align-items: center;
-      height: 50px;
+      height: 53px;
+      padding-left: 2vw;
       // overflow: hidden;
       // margin-right: 0.8rem;
 
@@ -53,20 +54,40 @@
         margin-top: 6px;
       }
     }
-    .button {
-      margin-top: 6px;
-      margin-right: 5px;
-      text-transform: uppercase;
-      // font-size: 1.25rem;
-      // font-weight: 500;
-      // color: $primary-color;
+    // button {
+    //   margin-top: 6px;
+    //   margin-right: 10px;
+    //   margin-left: 30px;
+    //   text-transform: uppercase;
+    //   // font-size: 1.25rem;
+    //   // font-weight: 500;
+    //   // color: $primary-color;
+    // }
+    .country-name {
+      font-size: 0.65rem;
+      color: $logo-text-color;
+      margin-top: -5px;
+      font-family: 'MuseoSans';
     }
   }
+  .homepage-button-container {
+    display: flex;
+    justify-content: right;
+    min-width: 150px;
+    height: 90px;
+    background-color: rgba(255, 255, 255, 0.8);;
 
+    button {
+      margin-top: 29px;
+      margin-right: 30px;
+      margin-left: 30px;
+      text-transform: uppercase;
+    }
+  }
   .homepage-img-container {
-    background: linear-gradient(180deg, rgba(196, 196, 196, 0) 0%, rgba(22, 177, 255, 0.5) 0.01%),
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
       url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
-    height: calc(100vh - 90px);
+    height: 100vh;
     background-position-x: 100%;
     background-position-y: 100%;
     flex-direction: column;
@@ -74,8 +95,8 @@
     display: flex;
     flex: 1;
     text-align: left;
+
     // background-size: 500vh;
-    padding-top: 60vh;
 
     @media (max-width: $lg-size) {
       text-align: center;
@@ -92,6 +113,7 @@
       line-height: 1.2em;
       text-transform: uppercase;
       position: relative;
+      padding-top: 60vh;
 
       @media (max-width: $lg-size) {
         font-size: 2.2rem;
@@ -194,14 +216,18 @@
       display: flex;
       max-height: 22rem;
       min-height: 20rem;
-      min-width: 22rem;
       max-width: 25rem;
       justify-content: center;
       background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
       border-radius: 0.625rem;
       padding: 40px 25px 25px 25px;
-      margin: 60px 30px 60px 60px;
+      margin: 60px 40px 60px 40px;
       text-align: center;
+    }
+    .aboutus-card-main-container:hover {
+      // background: linear-gradient(to top,$gradient-background-end,$gradient-background-start);
+      background: $gradient-background-end;
+      cursor: pointer;
     }
     .aboutus_cards-container {
       display: flex;
@@ -249,6 +275,9 @@
   .aboutusicon {
     size: 100px;
   }
+  .eligicontent {
+    padding: 20px;
+  }
   .homepage-image-content-container {
     background-color: $outside-background-color;
     // height: 35vh;
@@ -257,7 +286,6 @@
     margin-top: 5px;
 
     @media (max-width: $lg-size) {
-      height: fit-content;
     }
 
     ul {
@@ -268,10 +296,14 @@
       line-height: 40px;
     }
 
-    img {
-      max-height: 50vh;
-      min-height: 50vh;
-    }
+    // img {
+    //   max-height: 50vh;
+    //   min-height: 50vh;
+
+    //   @media (max-width: $lg-size) {
+    //     max-height: 500px;
+    //   }
+    // }
 
     .title {
       font-size: 2rem;
@@ -314,23 +346,31 @@
     // height: 35vh;
     height: fit-content;
     padding-left: 60px;
-    text-align: center;
-    margin-top: 5px;
 
+    margin-top: 5px;
+    height: fit-content;
     @media (max-width: $lg-size) {
       height: fit-content;
     }
 
     ul {
       margin-top: 25px;
-      margin-left: 15vw;
+      margin-left: 9vw;
     }
     li {
       line-height: 40px;
     }
 
     img {
+      display: flex;
       padding: 50px;
+      justify-content: center;
+      text-align: center;
+    }
+    .resource-image-container {
+      display: flex;
+      justify-content: center;
+      text-align: center;
     }
 
     .title {
@@ -338,8 +378,7 @@
       font-weight: 700;
       font-family: $primary-font-family;
       color: $title-text-color;
-      text-align: center;
-      justify-content: center;
+      margin-left: 10vw;
       text-transform: uppercase;
       padding: 50px 50px 10px 50px;
 
@@ -352,12 +391,11 @@
       }
     }
     .homepagebody {
-      text-align: left;
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
       color: $body-text-color;
-      justify-content: left;
+      // justify-content: left;
       margin: 20px 60px 20px 60px;
 
       @media (max-width: $lg-size) {
@@ -380,34 +418,38 @@
     padding: 0rem 2rem 0 1rem;
     cursor: pointer;
 
-    .footertext{
+    .footertext {
       color: $dark-text-color;
-      padding:5px 60px 20px 60px;
+      padding: 5px 60px 20px 60px;
       font-size: 0.875rem;
     }
-    .footertext-bottom{
+    .footertext-bottom {
       color: $dark-text-color;
-      padding:100px 60px 10px 60px;
+      padding: 100px 60px 28px 60px;
       font-size: 0.875rem;
-      font-family: "MuseoSans";
+      font-family: 'MuseoSans';
       font-weight: 100;
 
-      .cc{
-        margin:5px;
+      .cc {
+        margin: 5px;
       }
     }
-    .footertext-links{
+    .footertext-link-container {
+      display: flex;
       color: $dark-text-color;
-      padding:100px 20px 10px 20px;
+      padding: 100px 60px 20px 60px;
       font-size: 0.75rem;
       text-decoration: underline;
+      justify-content: right;
+    }
+    .footertext-links {
+      padding-left: 30px;
     }
 
-    .divider{
-      margin:2px 60px 2px 60px;
+    .divider {
+      margin: 2px 60px 2px 60px;
       width: calc(100% - 120px) !important;
       min-width: calc(100% - 120px);
-
     }
     .logocontainer {
       display: flex;
@@ -431,13 +473,18 @@
       }
 
       .logo {
-        height: 100px;
+        height: 97px;
         img {
           object-fit: cover;
           height: auto;
           height: 70%;
           margin-left: 60px;
         }
+      }
+      .footer-country-name {
+        font-size: 0.875rem;
+        color: $dark-text-color;
+        font-family: 'MuseoSans';
       }
     }
   }

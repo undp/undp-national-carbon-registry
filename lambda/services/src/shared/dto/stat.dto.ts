@@ -1,7 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { IsEnum } from "class-validator";
 import { EntitySubject } from "../entities/entity.subject";
 import { StatType } from "../enum/stat.type.enum";
+import { StatFilter } from "./stat.filter";
 
 export class Stat extends EntitySubject {
   @ApiProperty({ enum: StatType })
@@ -12,4 +14,8 @@ export class Stat extends EntitySubject {
   type: StatType;
   value?: any;
   data?: any;
+
+  @ApiPropertyOptional()
+  @Type(() => StatFilter)
+  statFilter?: StatFilter;
 }

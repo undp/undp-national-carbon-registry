@@ -55,6 +55,9 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     if (companyLogo) {
       setUserInfoState((prev) => ({ ...prev, companyLogo }));
       localStorage.setItem('companyLogo', companyLogo);
+    } else {
+      setUserInfoState((prev) => ({ ...prev, companyLogo: '' }));
+      localStorage.setItem('companyLogo', '');
     }
 
     if (companyName) {

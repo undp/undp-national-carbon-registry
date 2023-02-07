@@ -230,11 +230,11 @@ const Login = () => {
                     },
                     {
                       value: 'es',
-                      label: 'Española',
+                      label: 'Español',
                     },
                     {
                       value: 'fr',
-                      label: 'française',
+                      label: 'Français',
                     },
                   ]}
                 />

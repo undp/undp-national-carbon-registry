@@ -623,6 +623,10 @@ export class ProgrammeService {
             }
         }
 
+        // if (req.type === RetireType.CROSS_BORDER && !req.toCompanyMeta.country) {
+        //     throw new HttpException("Country is required for cross border retirement", HttpStatus.BAD_REQUEST)
+        // }
+
         const programme = await this.programmeLedger.getProgrammeById(req.programmeId);
 
         if (!programme) {
@@ -633,6 +637,7 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
+        
 
         if (!req.fromCompanyIds) {
             req.fromCompanyIds = programme.companyId;

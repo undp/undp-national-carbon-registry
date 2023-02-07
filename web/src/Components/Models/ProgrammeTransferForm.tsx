@@ -70,6 +70,11 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             operation: 'like',
             value: newValue + '%',
           },
+          {
+            key: 'companyRole',
+            operation: '!=',
+            value: 'Certifier',
+          },
         ],
         sort: {
           key: 'name',

@@ -13,6 +13,8 @@ import './addNewCompany.scss';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
 import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { UserProps } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -27,14 +29,27 @@ const AddNewCompany = () => {
   const [current, setCurrent] = useState<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
   const { i18n, t } = useTranslation(['addCompany']);
-  const { put } = useConnection();
+  const { put, get } = useConnection();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const maximumImageSize = process.env.MAXIMUM_IMAGE_SIZE
     ? parseInt(process.env.MAXIMUM_IMAGE_SIZE)
     : 3145728;
+  const { setUserInfo } = useUserContext();
+  const [countries, setCountries] = useState<[]>([]);
+
+  const getCountryList = async () => {
+    const response = await get('national/organisation/countries');
+    if (response.data) {
+      const alpha2Names = response.data.map((item: any) => {
+        return item.alpha2;
+      });
+      setCountries(alpha2Names);
+    }
+  };
 
   useEffect(() => {
     setIsUpdate(state?.record ? true : false);
+    getCountryList();
     if (state?.record?.logo) {
       setFileList([
         {
@@ -89,6 +104,9 @@ const AddNewCompany = () => {
       requestData.company.logo = logoUrls[1];
       const response = await post('national/user/add', requestData);
       if (response.status === 200 || response.status === 201) {
+        setUserInfo({
+          companyLogo: response.data.logo,
+        } as UserProps);
         message.open({
           type: 'success',
           content: 'Company added Successfully!',
@@ -143,6 +161,9 @@ const AddNewCompany = () => {
 
       const response = await put('national/organisation/update', values);
       if (response.status === 200 || response.status === 201) {
+        setUserInfo({
+          companyLogo: response.data.logo,
+        } as UserProps);
         message.open({
           type: 'success',
           content: 'Company updated Successfully!',
@@ -285,9 +306,10 @@ const AddNewCompany = () => {
                   </Form.Item>
                   <Form.Item
                     name="logo"
-                    label="Organisation Logo (File Type : JPEG , PNG , SVG )"
+                    label="Organisation Logo (File Type : JPEG , PNG)"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
+                    required={true}
                     rules={[
                       {
                         validator: async (rule, file) => {
@@ -423,6 +445,7 @@ const AddNewCompany = () => {
                       defaultCountry="LK"
                       countryCallingCodeEditable={false}
                       onChange={(v) => {}}
+                      countries={countries}
                     />
                   </Form.Item>
                   <Form.Item
