@@ -421,6 +421,7 @@ const CreditTransfer = () => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             {itemObj.certifier &&
+              itemObj.certifier &&
               itemObj.certifier.map((v: any, i: any) => {
                 return (
                   <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
@@ -442,19 +443,20 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.requester.map((v: any, i: any) => {
-              return (
-                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
-                  <div>
-                    <ProfileIcon
-                      icon={v.logo}
-                      bg={getCompanyBgColor(v.companyRole)}
-                      name={v.name}
-                    />
-                  </div>
-                </Tooltip>
-              );
-            })}
+            {itemObj.requester &&
+              itemObj.requester.map((v: any, i: any) => {
+                return (
+                  <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                    <div>
+                      <ProfileIcon
+                        icon={v.logo}
+                        bg={getCompanyBgColor(v.companyRole)}
+                        name={v.name}
+                      />
+                    </div>
+                  </Tooltip>
+                );
+              })}
           </div>
         );
       },
@@ -467,19 +469,20 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.sender.map((v: any, i: any) => {
-              return (
-                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
-                  <div>
-                    <ProfileIcon
-                      icon={v.logo}
-                      bg={getCompanyBgColor(v.companyRole)}
-                      name={v.name}
-                    />
-                  </div>
-                </Tooltip>
-              );
-            })}
+            {itemObj.sender &&
+              itemObj.sender.map((v: any, i: any) => {
+                return (
+                  <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                    <div>
+                      <ProfileIcon
+                        icon={v.logo}
+                        bg={getCompanyBgColor(v.companyRole)}
+                        name={v.name}
+                      />
+                    </div>
+                  </Tooltip>
+                );
+              })}
           </div>
         );
       },
@@ -493,42 +496,43 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.receiver.map((v: any, i: any) => {
-              return !itemObj.isRetirement ? (
-                <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
-                  <div>
-                    <ProfileIcon
-                      icon={v.logo}
-                      bg={getCompanyBgColor(v.companyRole)}
-                      name={v.name}
-                    />
-                  </div>
-                </Tooltip>
-              ) : itemObj.retirementType === '0' ? (
-                <Tooltip
-                  title={t('creditTransfer:iaccount')}
-                  color={TooltipColor}
-                  key={TooltipColor}
-                >
-                  {itemObj.toCompanyMeta.country && (
-                    <CircleFlag
-                      className="profile-icon flag-ret-icon"
-                      countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
-                    />
-                  )}
-                </Tooltip>
-              ) : (
-                <Tooltip
-                  title={t('creditTransfer:laccount')}
-                  color={TooltipColor}
-                  key={TooltipColor}
-                >
-                  <div className="ret-icon profile-icon">
-                    <Icon.Save />
-                  </div>
-                </Tooltip>
-              );
-            })}
+            {itemObj.receiver &&
+              itemObj.receiver.map((v: any, i: any) => {
+                return !itemObj.isRetirement ? (
+                  <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
+                    <div>
+                      <ProfileIcon
+                        icon={v.logo}
+                        bg={getCompanyBgColor(v.companyRole)}
+                        name={v.name}
+                      />
+                    </div>
+                  </Tooltip>
+                ) : itemObj.retirementType === '0' ? (
+                  <Tooltip
+                    title={t('creditTransfer:iaccount')}
+                    color={TooltipColor}
+                    key={TooltipColor}
+                  >
+                    {itemObj.toCompanyMeta.country && (
+                      <CircleFlag
+                        className="profile-icon flag-ret-icon"
+                        countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
+                      />
+                    )}
+                  </Tooltip>
+                ) : (
+                  <Tooltip
+                    title={t('creditTransfer:laccount')}
+                    color={TooltipColor}
+                    key={TooltipColor}
+                  >
+                    <div className="ret-icon profile-icon">
+                      <Icon.Save />
+                    </div>
+                  </Tooltip>
+                );
+              })}
           </div>
         );
       },
