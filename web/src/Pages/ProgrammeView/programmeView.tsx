@@ -335,10 +335,13 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: `${addCommSep(
               activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)
-            )} number of credits frozen by ${getTxRefValues(
+            )} credits were frozen due to the deactivation of ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              4
+            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+              activity.data.txRef,
+              3
+            )}`,
             icon: (
               <span className="step-icon freeze-step">
                 <CloseCircleOutlined />

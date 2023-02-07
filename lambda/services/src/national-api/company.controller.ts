@@ -42,7 +42,7 @@ export class CompanyController {
         if (companyId == req.user.companyId) {
             throw new HttpException("Can not suspend your own company", HttpStatus.FORBIDDEN)
         }
-        return this.companyService.suspend(companyId, req.user.id, body.remarks, req.abilityCondition)
+        return this.companyService.suspend(companyId, req.user, body.remarks, req.abilityCondition)
     }
 
     @ApiBearerAuth()

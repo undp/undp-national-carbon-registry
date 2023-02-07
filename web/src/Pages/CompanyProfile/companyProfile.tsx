@@ -1,5 +1,5 @@
 import { BankOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Row, Skeleton } from 'antd';
+import { Button, Card, Col, message, Row, Skeleton } from 'antd';
 import { plainToClass } from 'class-transformer';
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +59,12 @@ const CompanyProfile = () => {
         }
       );
       setOpenDeauthorisationModal(false);
+      message.open({
+        type: 'success',
+        content: t('companyProfile:deauthorisationSuccess'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
       setErrorMsg(exception.message);
