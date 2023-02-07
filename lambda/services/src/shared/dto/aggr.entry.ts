@@ -2,16 +2,12 @@ import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
 
-export class FilterEntry {
+export class AggrEntry {
 
     @IsNotEmpty()
     @ApiPropertyOptional()
     @IsOptional()
     key: any;
-
-    @IsNotEmpty()
-    @ApiProperty()
-    value: any;
 
     @IsNotEmpty()
     @IsString()
@@ -23,11 +19,29 @@ export class FilterEntry {
     @IsString()
     @ApiPropertyOptional()
     @IsOptional()
-    keyOperation?: any;
+    fieldName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+    outerQuery?: string;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // @ApiPropertyOptional()
+    // @IsOptional()
+    // keyOperation?: any;
 
     // @IsNotEmpty()
     // @IsString()
     // @ApiPropertyOptional()
     // @IsOptional()
     // keyOperationAttr?: any;
+
+    constructor(key: any, operation: any, fieldName: string) {
+        this.key = key;
+        this.operation = operation;
+        this.fieldName = fieldName;
+    }
 }

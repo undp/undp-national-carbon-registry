@@ -35,7 +35,7 @@ import {
   Form,
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { PencilSquare, PersonDash, Trash } from 'react-bootstrap-icons';
 import './userManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
@@ -64,6 +64,7 @@ import { AbilityContext } from '../../Casl/Can';
 import { User } from '../../Casl/entities/User';
 import { plainToClass } from 'class-transformer';
 import { Action } from '../../Casl/enums/action.enum';
+import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -85,10 +86,12 @@ const UserManagement = () => {
   const [filterByRole, setFilterByRole] = useState<string>('All');
   const [sortOrder, setSortOrder] = useState<string>('');
   const [sortField, setSortField] = useState<string>('');
-  const [deleteUserModalVisible, setDeleteUserModalVisible] = useState<boolean>(false);
   const [deleteUserModalRecord, setDeleteUserModalRecord] = useState<any>();
   const { i18n, t } = useTranslation(['user']);
   const ability = useContext(AbilityContext);
+  const [actionInfo, setActionInfo] = useState<any>({});
+  const [errorMsg, setErrorMsg] = useState<any>('');
+  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
 
   document.addEventListener('mousedown', (event: any) => {
     const userFilterArea1 = document.querySelector('.filter-bar');
@@ -168,26 +171,20 @@ const UserManagement = () => {
           setTableData(temp);
         }
         setLoading(false);
+        setOpenDeleteConfirmationModal(false);
       }
     } catch (error: any) {
-      console.log('Error in deleting user', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
+      setErrorMsg(error.message);
       setLoading(false);
     }
   };
 
   const handleOk = () => {
     deleteUser(deleteUserModalRecord);
-    setDeleteUserModalVisible(false);
   };
 
   const handleCancel = () => {
-    setDeleteUserModalVisible(false);
+    setOpenDeleteConfirmationModal(false);
   };
 
   const actionMenu = (record: TableDataType) => {
@@ -210,8 +207,15 @@ const UserManagement = () => {
             isDisabled: !ability.can(Action.Delete, plainToClass(User, record)),
             click: () => {
               setDeleteUserModalRecord(record);
-              setDeleteUserModalVisible(true);
-              // deleteUser(record);
+              setActionInfo({
+                action: 'Delete',
+                headerText: `${t('user:deleteConfirmHeaderText')}`,
+                text: `${t('user:deleteConfirmText')}`,
+                type: 'danger',
+                icon: <PersonDash />,
+              });
+              setErrorMsg('');
+              setOpenDeleteConfirmationModal(true);
             },
           },
         ]}
@@ -602,60 +606,6 @@ const UserManagement = () => {
 
   return (
     <div className="content-container">
-      <Modal
-        centered
-        title=""
-        okText="DELETE"
-        open={deleteUserModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-        width="400px"
-      >
-        <div className="delete-modal-container">
-          <div className="confirm-message-details">
-            <div className="icon">
-              <Trash color="#FF4D4F" size={64} />
-            </div>
-            <div className="content">Are you sure you want to permanently delete this user?</div>
-            <div className="sub-content">You can’t undo this action</div>
-          </div>
-          <div className="remarks">
-            <Form
-              name="delete-modal-details"
-              className="delete-modal-form"
-              layout={'vertical'}
-              requiredMark={true}
-              form={formModal}
-              onFinish={handleOk}
-            >
-              <Form.Item
-                className="remarks-label"
-                label="Remarks"
-                name="remarks"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Remarks is required!',
-                  },
-                ]}
-              >
-                <Input.TextArea placeholder="" />
-              </Form.Item>
-              <Form.Item>
-                <div className="delete-modal-btns">
-                  <div className="center width-60">
-                    <Button onClick={handleCancel}>CANCEL</Button>
-                    <Button type="primary" htmlType="submit" loading={loading}>
-                      DELETE
-                    </Button>
-                  </div>
-                </div>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
-      </Modal>
       <div className="title-bar">
         <div className="body-title">{t('user:viewUsers')}</div>
         <div className="body-sub-title">{t('user:viewDesc')}</div>
@@ -750,6 +700,13 @@ const UserManagement = () => {
           </Col>
         </Row>
       </div>
+      <UserActionConfirmationModel
+        actionInfo={actionInfo}
+        onActionConfirmed={handleOk}
+        onActionCanceled={handleCancel}
+        openModal={openDeleteConfirmationModal}
+        errorMsg={errorMsg}
+      />
     </div>
   );
 };

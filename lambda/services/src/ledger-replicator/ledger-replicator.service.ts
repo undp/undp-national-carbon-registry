@@ -129,6 +129,8 @@ export class LedgerReplicatorService {
                 error
               );
             } finally {
+              programme.updatedAt = new Date(programme.txTime)
+              programme.createdAt = new Date(programme.createdTime)
               const columns =
                 this.programmeRepo.manager.connection.getMetadata(
                   "Programme"
@@ -138,6 +140,7 @@ export class LedgerReplicatorService {
                   return (item.propertyName !== "programmeId" && item.propertyName !== "geographicalLocationCordintes");
                 })
                 .map((e) => e.propertyName);
+              
               this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
               return await this.programmeRepo
                 .createQueryBuilder()

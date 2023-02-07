@@ -27,8 +27,9 @@ export class HelperService {
     return value;
   }
 
-  private isEnumKey(key: string) {
-    return ["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state"].includes(key)
+  private isNotLower(key: string) {
+    if (["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state"].includes(key))
+      return true;
   }
 
   public generateWhereSQLChartStastics(
@@ -83,7 +84,7 @@ export class HelperService {
   }
 
   private isQueryDto(obj) {
-    if (typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
+    if (obj && typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
       return true;
     }
     return false;
@@ -212,7 +213,11 @@ export class HelperService {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
             return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
-          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
+          } else if (e.keyOperation) {
+            return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
+              e.operation
+            } ${this.prepareValue(e.value, table, true)}`;
+          } else if (!this.isNotLower(e.key) && typeof e.value === "string") {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
@@ -231,7 +236,11 @@ export class HelperService {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
             return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
-          } else if (!this.isEnumKey(e.key) && typeof e.value === "string") {
+          } else if (e.keyOperation) {
+            return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
+              e.operation
+            } ${this.prepareValue(e.value, table, true)}`;
+          } else if (!this.isNotLower(e.key) && typeof e.value === "string") {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
           } else {
             return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;

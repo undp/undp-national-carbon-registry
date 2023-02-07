@@ -642,9 +642,14 @@ const ProgrammeView = () => {
 
   const pieChartData = getPieChartData(data);
   const percentages: any[] = [];
-  data.company.forEach((obj: any, index: number) => {
+
+  const companies: any = {};
+  for (const c of data.company) {
+    companies[c.companyId] = c;
+  }
+  data.companyId.forEach((obj: any, index: number) => {
     percentages.push({
-      company: obj,
+      company: companies[obj],
       percentage: data.proponentPercentage ? data.proponentPercentage[index] : 100,
     });
   });
