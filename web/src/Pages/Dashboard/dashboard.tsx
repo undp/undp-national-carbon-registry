@@ -144,7 +144,7 @@ const Dashboard = () => {
           type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'CERTIFIED_BY_ME',
+          type: 'CERTIFIED_REVOKED_BY_ME',
         },
       ],
       category: 'overall',
@@ -152,54 +152,32 @@ const Dashboard = () => {
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-        },
-        {
-          type: 'CERTIFIED_REVOKED_PROGRAMMES',
-        },
-        // {
-        //   type: 'PROGRAMS_BY_STATUS',
-        //   value: 'AUTHORISED',
-        // },
-        // {
-        //   type: 'PROGRAMS_BY_STATUS',
-        //   value: 'REJECTED',
-        // },
-        // {
-        //   type: 'TRANSFER_REQUEST',
-        // },
-        // {
-        //   type: 'CREDIT_STATS_BALANCE',
-        // },
-        // {
-        //   type: 'CREDIT_STATS_TRANSFERRED',
-        // },
-        // {
-        //   type: 'CREDIT_STATS_RETIRED',
-        // },
-        // {
-        //   type: 'CREDIT_STATS_ISSUED',
-        // },
-        // {
-        //   type: 'CREDIT_STATS_ESTIMATED',
-        // },
-        // {
-        //   type: 'CREDIT_CERTIFIED',
-        // },
-        // {
-        //   type: 'CREDIT_UNCERTIFIED',
-        // },
-        // {
-        //   type: 'CREDIT_REVOKED',
-        // },
-      ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
-    };
+    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              onlyMine: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+          },
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+          },
+        ],
+      };
+    }
   };
 
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
@@ -501,7 +479,7 @@ const Dashboard = () => {
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
       const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       const programmeByStatusAggregationResponseLastUpdate =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
@@ -525,7 +503,9 @@ const Dashboard = () => {
         setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
         setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
         setCreditCertifiedBalanceWithoutTimeRange(
-          parseInt(certifiedByMeAggregationResponse?.certifiedSum)
+          certifiedByMeAggregationResponse?.certifiedSum === null
+            ? 0
+            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
         );
       }
     } catch (error: any) {
@@ -553,8 +533,14 @@ const Dashboard = () => {
       console.log('stats data 2nd  -- > ', response?.data);
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
-      const certifiedRevokedAggregationResponse =
-        response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+      let certifiedRevokedAggregationResponse: any;
+      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else {
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+      }
       let totalProgrammes = 0;
       let totalEstCredits = 0;
       let totalIssuedCredits = 0;
