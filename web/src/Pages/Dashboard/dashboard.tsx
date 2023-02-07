@@ -555,18 +555,34 @@ const Dashboard = () => {
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
       let totalProgrammes = 0;
+      let totalEstCredits = 0;
+      let totalIssuedCredits = 0;
+      let totalRetiredCredits = 0;
+      let totalTxCredits = 0;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
         if (responseItem?.currentStage === 'AwaitingAuthorization') {
           setPendingProjects(parseInt(responseItem?.count));
           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
         }
         if (responseItem?.currentStage === 'Rejected') {
           setRejectedProjects(parseInt(responseItem?.count));
           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
         }
         if (responseItem?.currentStage === 'Authorised') {
           setAuthorisedProjects(parseInt(responseItem?.count));
           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
         }
       });
       setTotalProjects(totalProgrammes);
@@ -575,12 +591,10 @@ const Dashboard = () => {
       // setAuthorisedProjects(response?.data?.stats?.AUTHORISED);
       // setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      const creditAuthorized =
-        parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) -
-        parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum);
+      const creditAuthorized = totalEstCredits - totalIssuedCredits;
       pieSeriesCreditsData.push(creditAuthorized);
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
+      pieSeriesCreditsData.push(totalTxCredits);
+      pieSeriesCreditsData.push(totalRetiredCredits);
       pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
 
       pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
@@ -589,16 +603,16 @@ const Dashboard = () => {
       // pieSeriesCreditsCerifiedData.push(
       //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
       // );
-      let totalCredits = 0;
-      console.log(
-        'estimated value || total credits -- > ',
-        response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum === null
-      );
-      if (response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum !== null) {
-        totalCredits = response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum;
-      } else {
-        totalCredits = 0;
-      }
+      // let totalCredits = 0;
+      // console.log(
+      //   'estimated value || total credits -- > ',
+      //   response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum === null
+      // );
+      // if (response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum !== null) {
+      //   totalCredits = response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum;
+      // } else {
+      //   totalCredits = 0;
+      // }
       let totalCreditsCertified = 0;
       for (let i = 0; i < pieSeriesCreditsData.length; i++) {
         if (String(pieSeriesCreditsData[i]) === 'NaN') {
@@ -622,7 +636,7 @@ const Dashboard = () => {
       }
 
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + String(addCommSep(totalCredits)) !== 'NaN' ? addCommSep(totalCredits) : 0;
+        '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
 
