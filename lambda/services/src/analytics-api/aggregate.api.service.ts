@@ -307,6 +307,7 @@ export class AggregateAPIService {
               new AggrEntry("programmeId", "COUNT", "count"),
               new AggrEntry("creditEst", "SUM", "totalEstCredit"),
               new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
+              new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
               new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
               new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
             ],
