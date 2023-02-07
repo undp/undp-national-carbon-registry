@@ -109,14 +109,18 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     programme.creditOwnerPercentage = [100];
   }
 
+  const companies: any = {};
+  for (const c of programme.company) {
+    companies[c.companyId] = c;
+  }
   const validCompanies: { percentage: number; name: any; companyId: any; available: number }[] = [];
   let totalCredits = 0;
   const companyCredit = [];
   for (const index in programme.creditOwnerPercentage) {
     if (
-      (toCompanyDefault && userCompanyId !== programme.company[index].companyId) ||
+      (toCompanyDefault && userCompanyId !== Number(programme.companyId[index])) ||
       (!toCompanyDefault &&
-        (userCompanyId === programme.company[index].companyId ||
+        (userCompanyId === Number(programme.companyId[index]) ||
           companyRole === CompanyRole.GOVERNMENT))
     ) {
       const companyAvailableTotal =
@@ -125,8 +129,8 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         100;
       validCompanies.push({
         percentage: programme.creditOwnerPercentage[index],
-        name: programme.company[index].name,
-        companyId: programme.company[index].companyId,
+        name: companies[Number(programme.companyId[index])].name,
+        companyId: Number(programme.companyId[index]),
         available: companyAvailableTotal,
       });
       companyCredit.push(0);

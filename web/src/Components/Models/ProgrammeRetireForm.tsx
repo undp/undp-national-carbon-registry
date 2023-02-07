@@ -82,15 +82,19 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
     programme.creditOwnerPercentage = [100];
   }
 
+  const companies: any = {};
+  for (const c of programme.company) {
+    companies[c.companyId] = c;
+  }
   const validCompanies: { percentage: number; name: any; available: number; companyId: any }[] = [];
   const companyCredit = [];
   let totalCredits = 0;
   let companyName = undefined;
   for (const index in programme.creditOwnerPercentage) {
-    if (hideType && programme.company[index].companyId !== myCompanyId) {
+    if (hideType && Number(programme.companyId[index]) !== myCompanyId) {
       continue;
     } else {
-      companyName = programme.company[index].name;
+      companyName = companies[Number(programme.companyId[index])].name;
     }
     const companyAvailableTotal =
       ((programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *
@@ -98,9 +102,9 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
       100;
     validCompanies.push({
       percentage: programme.creditOwnerPercentage[index],
-      name: programme.company[index].name,
+      name: companies[Number(programme.companyId[index])].name,
       available: companyAvailableTotal,
-      companyId: programme.company[index].companyId,
+      companyId: Number(programme.companyId[index]),
     });
     companyCredit.push(0);
 
