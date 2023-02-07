@@ -442,7 +442,7 @@ export class AggregateAPIService {
         case StatType.ALL_PROGRAMME_LOCATION:
         case StatType.MY_PROGRAMME_LOCATION:
         case StatType.MY_CERTIFIED_PROGRAMME_LOCATION:
-          results[stat.type] = await this.programmeRepo.manager.query(`SELECT p."programmeId", count(*) AS count
+          results[stat.type] = await this.programmeRepo.manager.query(`SELECT p."programmeId" as loc, count(*) AS count
             FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
             ${stat.type === StatType.MY_PROGRAMME_LOCATION ? `where ${companyId} = ANY(b."companyId")` : ''}
             ${stat.type === StatType.MY_CERTIFIED_PROGRAMME_LOCATION ? `where ${companyId} = ANY(b."certifierId")` : ''}
@@ -477,7 +477,7 @@ export class AggregateAPIService {
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
-            ["toCompanyMeta->>country"], 
+            ['"toCompanyMeta"->>country'], 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
             filtCom, 
             null, 
