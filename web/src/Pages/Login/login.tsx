@@ -41,6 +41,7 @@ const Login = () => {
         role: response.data.role,
         companyId: response.data.companyId,
         companyState: response.data.companyState,
+        companyRole: response.data.companyRole,
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -178,7 +179,7 @@ const Login = () => {
                           fontSize: '1.1rem',
                         }}
                       />
-                      <span className="login-error-message-txt">Invalid login credentials</span>
+                      <span className="ant-form-item-explain-error">Invalid login credentials</span>
                     </div>
                   )}
                   <div className="login-forget-pwd-container">
@@ -192,12 +193,12 @@ const Login = () => {
                     </div>
                   </Form.Item>
                 </Form>
-                <div className="login-register-new-container">
+                {/* <div className="login-register-new-container">
                   <span className="login-register-new-txt">
                     {t('login:register-acc')}?&nbsp;&nbsp;
                     <span className="login-register-new-txt-span">{t('common:signUp')}</span>
                   </span>
-                </div>
+                </div> */}
               </div>
             </Col>
           </Row>

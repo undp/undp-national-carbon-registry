@@ -3,6 +3,11 @@
 .programme-view {
   padding: 0px 50px;
 
+  .map-container {
+    width: 100%;
+    height: 250px;
+  }
+
   .ant-steps-item-tail::after {
     background-color: #ffff !important;
     background-color: #ffff !important;
@@ -223,11 +228,25 @@
     color: rgba(#FF00C7, 0.56);
     background-color: rgba(#FF9FDE, 0.4);
   }
+
+  .region-list {
+    padding-top: 20px;
+  }
 }
 
-.map-container {
-  width: 100%;
-  height: 250px;
+.loc-tag {
+  padding: 10px 20px 0px 0px;
+  color: $body-text-color;
+}
+
+.loc-icon {
+  margin-right: 5px;
+  font-size: 1rem;
+}
+
+.loc-text {
+  line-height: 1.2rem;
+  vertical-align: top;
 }
 
 .apexcharts-datalabels-group {

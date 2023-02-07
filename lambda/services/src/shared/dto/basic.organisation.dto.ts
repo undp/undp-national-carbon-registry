@@ -7,9 +7,10 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
+import { IsValidCountry } from "../util/validcountry.decorator";
 
 export class BasicOrgInfo {
-  @IsEmail()
+  @IsString()
   @IsNotEmpty()
   @ApiPropertyOptional()
   @IsOptional()
@@ -17,7 +18,7 @@ export class BasicOrgInfo {
 
   @IsNotEmpty()
   @IsString()
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
+  @IsValidCountry()
   country: string;
 }

@@ -1,5 +1,5 @@
 import { BankOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Row, Skeleton } from 'antd';
+import { Button, Card, Col, message, Row, Skeleton } from 'antd';
 import { plainToClass } from 'class-transformer';
 import { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,8 @@ import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './companyProfile.scss';
+import * as Icon from 'react-bootstrap-icons';
+import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 
 const CompanyProfile = () => {
   const { get, put } = useConnection();
@@ -57,6 +59,12 @@ const CompanyProfile = () => {
         }
       );
       setOpenDeauthorisationModal(false);
+      message.open({
+        type: 'success',
+        content: t('companyProfile:deauthorisationSuccess'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
       setErrorMsg(exception.message);
@@ -73,7 +81,7 @@ const CompanyProfile = () => {
       headerText: `${t('companyProfile:deauthoriseConfirmHeaderText')}`,
       text: `${t('companyProfile:deauthoriseConfirmText')}`,
       type: 'danger',
-      icon: <MinusCircleOutlined />,
+      icon: <Icon.BuildingDash />,
     });
     setErrorMsg('');
     setOpenDeauthorisationModal(true);
@@ -96,6 +104,17 @@ const CompanyProfile = () => {
           ) : (
             ''
           )}
+          {ability.can(Action.Update, plainToClass(Company, companyDetails)) && !isLoading && (
+            <Button
+              className="mg-left-1"
+              type="primary"
+              onClick={() =>
+                navigate('/companyManagement/updateCompany', { state: { record: companyDetails } })
+              }
+            >
+              {t('common:edit')}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -111,13 +130,9 @@ const CompanyProfile = () => {
                   <div className="padding-top-1 company-name">{companyDetails.name}</div>
                 </Row>
                 <Row justify="center">
-                  {parseInt(companyDetails.state) === 1 ? (
-                    <div className="mg-top-1 active">{t('companyProfile:activeStatus')}</div>
-                  ) : (
-                    <div className="mg-top-1 deauthorised">
-                      {t('companyProfile:deauthorisedStatus')}
-                    </div>
-                  )}
+                  <OrganisationStatus
+                    organisationStatus={parseInt(companyDetails.state)}
+                  ></OrganisationStatus>
                 </Row>
               </Skeleton>
             </Card>

@@ -13,6 +13,7 @@ import {
   Select,
   Radio,
   Space,
+  Form,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -70,7 +71,7 @@ import {
 } from '../Common/role.color.constants';
 import { DateTime } from 'luxon';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import mapboxgl from 'mapbox-gl';
+import mapboxgl, { LngLatLike } from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -79,6 +80,8 @@ import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
 import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
+import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
+import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 
 mapboxgl.accessToken =
   '';
@@ -93,6 +96,7 @@ const ProgrammeView = () => {
   const [historyData, setHistoryData] = useState<any>([]);
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [loadingAll, setLoadingAll] = useState<boolean>(false);
   const mapContainerRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -106,6 +110,8 @@ const ProgrammeView = () => {
     setOpenModal(true);
   };
 
+  const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
+
   const getTxRefValues = (value: string, position: number, sep?: string) => {
     if (sep === undefined) {
       sep = '#';
@@ -115,12 +121,6 @@ const ProgrammeView = () => {
       return null;
     }
     return parts[position];
-  };
-
-  const addCommasToNumber = (value: any) => {
-    return Number(value)
-      .toFixed(2)
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   const numIsExist = (n: any) => {
@@ -193,7 +193,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: 'Programme Created',
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was created with a valuation of ${addCommasToNumber(
+            description: `The programme was created with a valuation of ${addCommSep(
               activity.data.creditEst
             )} ${creditUnit} credits.`,
             icon: (
@@ -207,7 +207,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Authorised`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was authorised for ${addCommasToNumber(
+            description: `The programme was authorised for ${addCommSep(
               activity.data.creditEst
             )} ${creditUnit} credits until ${DateTime.fromMillis(
               activity.data.endTime * 1000
@@ -228,7 +228,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Issued`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was issued ${addCommasToNumber(
+            description: `The programme was issued ${addCommSep(
               activity.data.creditChange
             )} ${creditUnit} credits by the ${getTxRefValues(
               activity.data.txRef,
@@ -260,7 +260,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Credit Transferred`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `${addCommasToNumber(
+            description: `${addCommSep(
               activity.data.creditChange
             )} ${creditUnit} credits of this programme were transferred to ${getTxRefValues(
               activity.data.txRef,
@@ -314,11 +314,11 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Retired`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `${addCommasToNumber(
+            description: `${addCommSep(
               activity.data.creditChange
             )} ${creditUnit} credits of this programme were retired as ${getRetirementTypeString(
               getTxRefValues(activity.data.txRef, 5)
-            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+            )?.toLowerCase()} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
               activity.data.txRef,
               3
             )}`,
@@ -333,12 +333,15 @@ const ProgrammeView = () => {
             status: 'process',
             title: `Credits freezed`,
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `${addCommasToNumber(
+            description: `${addCommSep(
               activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)
-            )} number of credits frozen by ${getTxRefValues(
+            )} credits were frozen due to the deactivation of ${getTxRefValues(
               activity.data.txRef,
-              1
-            )} via ${getTxRefValues(activity.data.txRef, 3)}`,
+              4
+            )} by ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
+              activity.data.txRef,
+              3
+            )}`,
             icon: (
               <span className="step-icon freeze-step">
                 <CloseCircleOutlined />
@@ -564,16 +567,48 @@ const ProgrammeView = () => {
       getProgrammeHistory(state.record.programmeId);
       setData(state.record);
 
-      const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
-      setTimeout(() => {
-        Geocoding({ accessToken: mapboxgl.accessToken })
-          .forwardGeocode({
-            query: address,
-            autocomplete: false,
-            limit: 1,
-          })
-          .send()
-          .then((response: any) => {
+      // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
+      setTimeout(async () => {
+        // let mapd: any = undefined;
+
+        let mapd: any;
+        if (
+          state.record?.geographicalLocationCordintes &&
+          state.record?.geographicalLocationCordintes.length > 0
+        ) {
+          mapd = new mapboxgl.Map({
+            container: mapContainerRef.current || '',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: state.record?.geographicalLocationCordintes[0] as LngLatLike,
+            zoom: 4,
+          });
+
+          for (const iloc in state.record?.geographicalLocationCordintes) {
+            // const popup = new mapboxgl.Popup()
+            //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
+            //   .addTo(mapd);
+
+            if (state.record?.geographicalLocationCordintes[iloc] !== null) {
+              new mapboxgl.Marker({
+                color: locationColors[locationColors.length % (Number(iloc) + 1)],
+              })
+                .setLngLat(state.record?.geographicalLocationCordintes[iloc] as LngLatLike)
+                .addTo(mapd);
+            }
+            // .setPopup(popup);
+          }
+        } else {
+          for (const address of state.record?.programmeProperties.geographicalLocation) {
+            const response = await Geocoding({ accessToken: mapboxgl.accessToken })
+              .forwardGeocode({
+                query: address,
+                autocomplete: false,
+                limit: 1,
+                types: ['region', 'district'],
+                countries: [process.env.COUNTRY_CODE || 'NG'],
+              })
+              .send();
+
             if (
               !response ||
               !response.body ||
@@ -586,43 +621,21 @@ const ProgrammeView = () => {
             }
             const feature = response.body.features[0];
             if (mapContainerRef.current) {
-              const map = new mapboxgl.Map({
-                container: mapContainerRef.current || '',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: feature.center,
-                zoom: 5,
-              });
+              if (mapd === undefined) {
+                mapd = new mapboxgl.Map({
+                  container: mapContainerRef.current || '',
+                  style: 'mapbox://styles/mapbox/streets-v11',
+                  center: feature.center as LngLatLike,
+                  zoom: 4,
+                });
+              }
 
-              const popup = new mapboxgl.Popup().setText(address).addTo(map);
-
-              new mapboxgl.Marker().setLngLat(feature.center).addTo(map).setPopup(popup);
-
-              // map.on('load', () => {
-              //   map.addSource('admin-1', {
-              //     type: 'vector',
-              //     url: 'mapbox://mapbox.boundaries-adm1-v4',
-              //     promoteId: 'mapbox_id',
-              //   });
-
-              //   map.addLayer(
-              //     {
-              //       id: 'admin-1-fill',
-              //       type: 'fill',
-              //       source: 'admin-1',
-              //       'source-layer': 'boundaries_admin_1',
-              //       paint: {
-              //         'fill-color': '#CCCCCC',
-              //         'fill-opacity': 0.5,
-              //       },
-              //     },
-              //     // This final argument indicates that we want to add the Boundaries layer
-              //     // before the `waterway-label` layer that is in the map from the Mapbox
-              //     // Light style. This ensures the admin polygons are rendered below any labels
-              //     'waterway-label'
-              //   );
-              // });
+              // const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
+              new mapboxgl.Marker().setLngLat(feature.center as LngLatLike).addTo(mapd);
+              // .setPopup(popup);
             }
-          });
+          }
+        }
       }, 1000);
     }
   }, []);
@@ -633,9 +646,14 @@ const ProgrammeView = () => {
 
   const pieChartData = getPieChartData(data);
   const percentages: any[] = [];
-  data.company.forEach((obj: any, index: number) => {
+
+  const companies: any = {};
+  for (const c of data.company) {
+    companies[c.companyId] = c;
+  }
+  data.companyId.forEach((obj: any, index: number) => {
     percentages.push({
-      company: obj,
+      company: companies[obj],
       percentage: data.proponentPercentage ? data.proponentPercentage[index] : 100,
     });
   });
@@ -662,101 +680,64 @@ const ProgrammeView = () => {
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
           </div>
+          <OrganisationStatus organisationStatus={parseInt(ele.company.state)}></OrganisationStatus>
         </div>
       </div>
     );
   });
   // genCerts(data);
   const actionBtns = [];
-  if (data.currentStage.toString() === 'AwaitingAuthorization') {
-    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      actionBtns.push(
-        <Button
-          danger
-          onClick={() => {
-            setActionInfo({
-              action: 'Reject',
-              text: t('view:popupText'),
-              type: 'danger',
-              title: `${t('view:rejectTitle')} - ${data.title}?`,
-              remark: true,
-              icon: <Icon.ClipboardX />,
-            });
-            showModal();
-          }}
-        >
-          {t('view:reject')}
-        </Button>
-      );
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Authorise',
-              text: t('view:popupText'),
-              title: `${t('view:authTitle')} - ${data.title}?`,
-              type: 'primary',
-              remark: false,
-              icon: <Icon.ClipboardCheck />,
-              contentComp: (
-                <ProgrammeIssueForm
-                  enableIssue={false}
-                  programme={data}
-                  subText={t('view:popupText')}
-                  onCancel={() => {
-                    setOpenModal(false);
-                    setComment(undefined);
-                  }}
-                  actionBtnText={t('view:authorise')}
-                  onFinish={(body: any) =>
-                    onPopupAction(
-                      body,
-                      'authorize',
-                      t('view:successAuth'),
-                      put,
-                      updateProgrammeData
-                    )
-                  }
-                />
-              ),
-            });
-            showModal();
-          }}
-        >
-          {t('view:authorise')}
-        </Button>
-      );
-    }
-  } else if (
-    data.currentStage.toString() !== ProgrammeStage.Rejected &&
-    Number(data.creditEst) > Number(data.creditIssued)
-  ) {
-    if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
-      if (Number(data.creditEst) > Number(data.creditIssued)) {
+
+  if (userInfoState?.userRole !== 'ViewOnly') {
+    if (data.currentStage.toString() === 'AwaitingAuthorization') {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+        actionBtns.push(
+          <Button
+            danger
+            onClick={() => {
+              setActionInfo({
+                action: 'Reject',
+                text: t('view:popupText'),
+                type: 'danger',
+                title: `${t('view:rejectTitle')} - ${data.title}?`,
+                remark: true,
+                icon: <Icon.ClipboardX />,
+              });
+              showModal();
+            }}
+          >
+            {t('view:reject')}
+          </Button>
+        );
         actionBtns.push(
           <Button
             type="primary"
             onClick={() => {
               setActionInfo({
-                action: 'Issue',
+                action: 'Authorise',
                 text: t('view:popupText'),
-                title: `${t('view:issueTitle')} - ${data.title}?`,
+                title: `${t('view:authTitle')} - ${data.title}?`,
                 type: 'primary',
                 remark: false,
-                icon: <Icon.Award />,
+                icon: <Icon.ClipboardCheck />,
                 contentComp: (
                   <ProgrammeIssueForm
-                    enableIssue={true}
+                    enableIssue={false}
                     programme={data}
                     subText={t('view:popupText')}
                     onCancel={() => {
                       setOpenModal(false);
                       setComment(undefined);
                     }}
-                    actionBtnText={t('view:issue')}
+                    actionBtnText={t('view:authorise')}
                     onFinish={(body: any) =>
-                      onPopupAction(body, 'issue', t('view:successIssue'), put, updateProgrammeData)
+                      onPopupAction(
+                        body,
+                        'authorize',
+                        t('view:successAuth'),
+                        put,
+                        updateProgrammeData
+                      )
                     }
                   />
                 ),
@@ -764,50 +745,100 @@ const ProgrammeView = () => {
               showModal();
             }}
           >
-            {t('view:issue')}
+            {t('view:authorise')}
           </Button>
         );
       }
+    } else if (
+      data.currentStage.toString() !== ProgrammeStage.Rejected &&
+      Number(data.creditEst) > Number(data.creditIssued)
+    ) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+        if (Number(data.creditEst) > Number(data.creditIssued)) {
+          actionBtns.push(
+            <Button
+              type="primary"
+              onClick={() => {
+                setActionInfo({
+                  action: 'Issue',
+                  text: t('view:popupText'),
+                  title: `${t('view:issueTitle')} - ${data.title}?`,
+                  type: 'primary',
+                  remark: false,
+                  icon: <Icon.Award />,
+                  contentComp: (
+                    <ProgrammeIssueForm
+                      enableIssue={true}
+                      programme={data}
+                      subText={t('view:popupText')}
+                      onCancel={() => {
+                        setOpenModal(false);
+                        setComment(undefined);
+                      }}
+                      actionBtnText={t('view:issue')}
+                      onFinish={(body: any) =>
+                        onPopupAction(
+                          body,
+                          'issue',
+                          t('view:successIssue'),
+                          put,
+                          updateProgrammeData
+                        )
+                      }
+                    />
+                  ),
+                });
+                showModal();
+              }}
+            >
+              {t('view:issue')}
+            </Button>
+          );
+        }
+      }
     }
-  }
-  //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
-  //     actionBtns.push(
-  //       <Button
-  //         danger
-  //         onClick={() => {
-  //           setActionInfo({
-  //             action: 'Retire',
-  //             text: `You can’t undo this action`,
-  //             type: 'danger',
-  //             remark: true,
-  //             icon: <PoweroffOutlined />,
-  //           });
-  //           showModal();
-  //         }}
-  //       >
-  //         {t('view:retire')}
-  //       </Button>
-  //     );
-  //   } else {
-  // actionBtns.push(
-  //   <Button
-  //     danger
-  //     onClick={() => {
-  //       setActionInfo({
-  //         action: 'Retire',
-  //         text: `You are going to transfer programme ${data.title}`,
-  //         type: 'danger',
-  //       });
-  //       showModal();
-  //     }}
-  //   >
-  //     {t('view:Transfer')}
-  //   </Button>
-  // );
-  // }
+    //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
+    //     actionBtns.push(
+    //       <Button
+    //         danger
+    //         onClick={() => {
+    //           setActionInfo({
+    //             action: 'Retire',
+    //             text: `You can’t undo this action`,
+    //             type: 'danger',
+    //             remark: true,
+    //             icon: <PoweroffOutlined />,
+    //           });
+    //           showModal();
+    //         }}
+    //       >
+    //         {t('view:retire')}
+    //       </Button>
+    //     );
+    //   } else {
+    // actionBtns.push(
+    //   <Button
+    //     danger
+    //     onClick={() => {
+    //       setActionInfo({
+    //         action: 'Retire',
+    //         text: `You are going to transfer programme ${data.title}`,
+    //         type: 'danger',
+    //       });
+    //       showModal();
+    //     }}
+    //   >
+    //     {t('view:Transfer')}
+    //   </Button>
+    // );
+    // }
 
-  if (userInfoState && userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-    if (!data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) {
+    if (
+      userInfoState &&
+      data.certifier &&
+      userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
+    ) {
       actionBtns.push(
         <Button
           type="primary"
@@ -826,7 +857,15 @@ const ProgrammeView = () => {
           {t('view:certify')}
         </Button>
       );
-    } else {
+    }
+    if (
+      userInfoState &&
+      data.certifier &&
+      data.certifier.length > 0 &&
+      ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+    ) {
       actionBtns.push(
         <Button
           danger
@@ -838,6 +877,21 @@ const ProgrammeView = () => {
               type: 'danger',
               remark: true,
               icon: <Icon.ShieldExclamation />,
+              contentComp: (
+                <ProgrammeRevokeForm
+                  programme={data}
+                  subText={t('view:popupText')}
+                  onCancel={() => {
+                    setOpenModal(false);
+                    setComment(undefined);
+                  }}
+                  actionBtnText={t('view:revoke')}
+                  onFinish={(body: any) =>
+                    onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
+                  }
+                  showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                />
+              ),
             });
             showModal();
           }}
@@ -847,6 +901,7 @@ const ProgrammeView = () => {
       );
     }
   }
+
   // }
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
@@ -904,7 +959,9 @@ const ProgrammeView = () => {
 
   calculations.constantVersion = data.constantVersion;
 
-  return (
+  return loadingAll ? (
+    <Skeleton />
+  ) : (
     <div className="content-container programme-view">
       <div className="title-bar">
         <div>
@@ -1048,6 +1105,7 @@ const ProgrammeView = () => {
                                                 userInfoState?.companyRole !==
                                                 CompanyRole.GOVERNMENT
                                               }
+                                              myCompanyId={userInfoState?.companyId}
                                               programme={data}
                                               onCancel={() => {
                                                 setOpenModal(false);
@@ -1238,11 +1296,28 @@ const ProgrammeView = () => {
             <Card className="card-container">
               <div className="info-view">
                 <div className="title">
-                  <span className="title-icon">{<PushpinOutlined />}</span>
+                  <span className="title-icon">{<Icon.PinMap />}</span>
                   <span className="title-text">{t('view:location')}</span>
                 </div>
                 <div className="map-content">
                   <div className="map-container" ref={mapContainerRef} />
+                  <Row className="region-list">
+                    {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                      <Col className="loc-tag">
+                        {data.geographicalLocationCordintes &&
+                          data.geographicalLocationCordintes[idx] !== null &&
+                          data.geographicalLocationCordintes[idx] !== undefined && (
+                            <span
+                              style={{ color: locationColors[locationColors.length % (idx + 1)] }}
+                              className="loc-icon"
+                            >
+                              {<Icon.GeoAltFill />}
+                            </span>
+                          )}
+                        <span className="loc-text">{e}</span>
+                      </Col>
+                    ))}
+                  </Row>
                 </div>
               </div>
             </Card>
@@ -1309,15 +1384,20 @@ const ProgrammeView = () => {
         ) : (
           <div>
             <p className="sub-text">{actionInfo.text}</p>
-            <div className="form-label remark">
-              {t('view:remarks')}
-              {actionInfo.remark && <span className="req-ast">*</span>}
-            </div>
-            <TextArea
-              defaultValue={comment}
-              rows={2}
-              onChange={(v) => setComment(v.target.value)}
-            />
+            <Form layout="vertical">
+              <Form.Item
+                className="mg-bottom-0"
+                label={t('view:remarks')}
+                name="remarks"
+                required={actionInfo.remark}
+              >
+                <TextArea
+                  defaultValue={comment}
+                  rows={2}
+                  onChange={(v) => setComment(v.target.value)}
+                />
+              </Form.Item>
+            </Form>
             <div>
               <div className="footer-btn">
                 <Button

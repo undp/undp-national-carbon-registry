@@ -17,6 +17,7 @@ import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "../shared/dto/stat.dto";
 import { ChartStatList } from "../shared/dto/chartStats.list.dto";
 import { Programme } from "../shared/entities/programme.entity";
+import { AggregateAPIService } from "./aggregate.api.service";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -24,6 +25,7 @@ import { Programme } from "../shared/entities/programme.entity";
 export class ProgrammeController {
   constructor(
     private analyticsService: AnalyticsAPIService,
+    private aggService: AggregateAPIService,
     private readonly logger: Logger
   ) {}
 
@@ -37,6 +39,7 @@ export class ProgrammeController {
   async programmesStaticDetails(@Body() query: StatList, @Request() req) {
     const companyId =
       req?.user?.companyId !== null ? req?.user?.companyId : null;
+    console.log("user ---- > ", req?.user);
     return this.analyticsService.programmesStaticDetails(
       req.abilityCondition,
       query,
@@ -58,6 +61,25 @@ export class ProgrammeController {
     const companyId =
       req?.user?.companyId !== null ? req?.user?.companyId : null;
     return this.analyticsService.programmesStaticChartsDetails(
+      req.abilityCondition,
+      query,
+      companyId
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, Stat, true, true)
+  )
+  @Post("agg")
+  async aggQueries(
+    @Body() query: StatList,
+    @Request() req
+  ) {
+    const companyId =
+      req?.user?.companyId !== null ? req?.user?.companyId : null;
+    return this.aggService.getAggregateQuery(
       req.abilityCondition,
       query,
       companyId

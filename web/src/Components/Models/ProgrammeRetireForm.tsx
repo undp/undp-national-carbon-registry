@@ -27,10 +27,11 @@ export interface ProgrammeRetireFormProps {
   onFinish: any;
   subText?: string;
   hideType: boolean;
+  myCompanyId?: number;
 }
 
 const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetireFormProps) => {
-  const { programme, onFinish, onCancel, actionBtnText, subText, hideType } = props;
+  const { programme, onFinish, onCancel, actionBtnText, subText, hideType, myCompanyId } = props;
   const { i18n, t } = useTranslation(['view']);
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
@@ -81,19 +82,29 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
     programme.creditOwnerPercentage = [100];
   }
 
+  const companies: any = {};
+  for (const c of programme.company) {
+    companies[c.companyId] = c;
+  }
   const validCompanies: { percentage: number; name: any; available: number; companyId: any }[] = [];
   const companyCredit = [];
   let totalCredits = 0;
+  let companyName = undefined;
   for (const index in programme.creditOwnerPercentage) {
+    if (hideType && Number(programme.companyId[index]) !== myCompanyId) {
+      continue;
+    } else {
+      companyName = companies[Number(programme.companyId[index])].name;
+    }
     const companyAvailableTotal =
       ((programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *
         programme.creditOwnerPercentage[index]) /
       100;
     validCompanies.push({
       percentage: programme.creditOwnerPercentage[index],
-      name: programme.company[index].name,
+      name: companies[Number(programme.companyId[index])].name,
       available: companyAvailableTotal,
-      companyId: programme.company[index].companyId,
+      companyId: Number(programme.companyId[index]),
     });
     companyCredit.push(0);
 
@@ -159,6 +170,24 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
           setLoading(false);
         }}
       >
+        {hideType && (
+          <>
+            <Row>
+              <Col span={24}>
+                <Form.Item className="remarks-label" label={t('view:from')} name="from">
+                  <Input placeholder={companyName} disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+                <Form.Item className="remarks-label" label={t('view:programme')} name="programme">
+                  <Input placeholder={programme.title} disabled />
+                </Form.Item>
+              </Col>
+            </Row>
+          </>
+        )}
         {!hideType && (
           <Row>
             <Col span={24}>
@@ -198,12 +227,12 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                   className="remarks-label"
                   label={t('view:country')}
                   name="country"
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: 'Required field',
-                  //   },
-                  // ]}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Required field',
+                    },
+                  ]}
                 >
                   <Select
                     showSearch
@@ -239,7 +268,13 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
               return (
                 <Row>
                   <Col lg={11} md={24}>
-                    <div className="label">{pert.name}</div>
+                    {hideType ? (
+                      <div className="label">{`${t(
+                        'view:totalRetireCredit'
+                      )} (${creditUnit})`}</div>
+                    ) : (
+                      <div className="label">{pert.name}</div>
+                    )}
                   </Col>
                   <Col lg={6} md={12}>
                     <Form.Item
@@ -290,7 +325,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Row>
               );
             })}
-            {validCompanies.length > 1 && (
+            {!hideType && validCompanies.length > 1 && (
               <Row>
                 <Col lg={11} md={24}>
                   <div className="label">{`${t('view:totalTransferCredit')} (${creditUnit})`}</div>
@@ -305,11 +340,39 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                 </Col>
                 <Col lg={6} md={12}>
                   <Form.Item className="popup-credit-input">
-                    <InputNumber placeholder={addCommSep(programme.creditBalance)} disabled />
+                    <InputNumber placeholder={addCommSep(totalCredits)} disabled />
                   </Form.Item>
                 </Col>
               </Row>
             )}
+            {/* {hideType && (
+              <Row>
+                <Col lg={11} md={24}>
+                  <div className="label">{`${t('view:totalRetireCredit')} (${creditUnit})`}</div>
+                </Col>
+                <Col lg={6} md={12}>
+                  <Form.Item className="popup-credit-input">
+                    <InputNumber
+                      placeholder=""
+                      controls={false}
+                      onKeyPress={(event) => {
+                        if (!/[0-9\.]/.test(event.key)) {
+                          event.preventDefault();
+                        }
+                      }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={1} md={1} className="seperator">
+                  {'/'}
+                </Col>
+                <Col lg={6} md={12}>
+                  <Form.Item className="popup-credit-input">
+                    <InputNumber placeholder={addCommSep(totalCredits)} disabled />
+                  </Form.Item>
+                </Col>
+              </Row>
+            )} */}
           </div>
         )}
 
@@ -363,7 +426,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
               // ]}
             >
               <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
-                {t('view:confirmRetire')}
+                {hideType ? t('view:confirmRetire') : t('view:confirmClosure')}
               </Checkbox>
             </Form.Item>
           </Col>

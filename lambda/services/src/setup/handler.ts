@@ -73,21 +73,18 @@ exports.handler = async (event) => {
       console.log(`User ${event['rootEmail']} failed to create`, e) 
     }
 
-    console.log('Creating countries')
-    const data = fs.readFileSync('countries.json', 'utf8')
-    const jsonData = JSON.parse(data)
-
+    const countryData = fs.readFileSync('countries.json', 'utf8');
+    const jsonCountryData = JSON.parse(countryData);
     const utils = await NestFactory.createApplicationContext(UtilModule)
     const countryService = utils.get(CountryService)
-    for (const jsn of jsonData) {
-      if (jsn['ISO-alpha2 Code'] == undefined || jsn['ISO-alpha2 Code'] == "") {
-        continue;
+
+    jsonCountryData.forEach(async countryItem => {
+      if(countryItem["UN Member States"] === "x"){
+        const country = new Country()
+        country.alpha2 = countryItem["ISO-alpha2 Code"]
+        country.alpha3 = countryItem["ISO-alpha3 Code"]
+        country.name = countryItem["English short"]
+        await countryService.insertCountry(country)
       }
-      const country = new Country()
-      country.alpha2 = jsn['ISO-alpha2 Code']
-      country.alpha3 = jsn['ISO-alpha3 Code']
-      country.name = jsn['Country or Area']
-      await countryService.insertCountry(country)
-      console.log('Country inserted', country)
-    }
+    });
 }

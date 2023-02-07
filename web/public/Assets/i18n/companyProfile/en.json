@@ -13,8 +13,9 @@
     "creditBalance":"Credit Balance",
     "programmeCount":"Number of Programmes",
     "deauthoriseConfirmHeaderText": "Are you sure you want to deactivate this organisation?",
-    "deauthoriseConfirmText":"You can’t undo this action",
+    "deauthoriseConfirmText":"Organisation will still be visible but no further action will be able to take place.\n Note: all users associated with the organisation will also be deactivated.",
     "activeStatus": "Active",
     "deauthorisedStatus": "Deactivated",
-    "remarks": "Remarks"
+    "remarks": "Remarks",
+    "deauthorisationSuccess": "Company deactivated successfully!"
 }

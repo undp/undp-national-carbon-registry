@@ -27,7 +27,7 @@ const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
             <Chart options={options} series={series} type="bar" height="350px" width="490px" />
           </div>
           <div className="updated-on">
-            <div className="updated-moment-container">{moment(lastUpdate * 1000).fromNow()}</div>
+            <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
           </div>
         </>
       )}

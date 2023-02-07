@@ -126,59 +126,6 @@ const CompanyManagement = () => {
     );
   };
 
-  const onDeleteUser = async (record: any) => {
-    setLoading(true);
-    try {
-      console.log('record   -- > ');
-      // const response: any = await del(`national/user/delete?email=${email}`);
-      // setTableData(response.data);
-      // setTotalCompany(response.response.data.total);
-      // setLoading(false);
-    } catch (error: any) {
-      console.log('Error in deleteting user', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoading(false);
-    }
-  };
-
-  const actionMenu = (record: CompanyTableDataType) => {
-    return (
-      <List
-        className="action-menu"
-        size="small"
-        dataSource={[
-          {
-            text: 'Edit',
-            icon: <EditOutlined />,
-            isDisabled: !ability.can(Action.Update, plainToClass(Company, record)),
-            click: () => {
-              navigate('/companyManagement/updateCompany', { state: { record } });
-            },
-          },
-          // {
-          //   text: 'Delete',
-          //   icon: <DeleteOutlined />,
-          //   click: () => {},
-          // },
-        ]}
-        renderItem={(item) => (
-          <List.Item
-            onClick={!item.isDisabled ? item.click : undefined}
-            className={item.isDisabled ? 'disabled' : ''}
-          >
-            <Typography.Text className="action-icon">{item.icon}</Typography.Text>
-            <span>{item.text}</span>
-          </List.Item>
-        )}
-      />
-    );
-  };
-
   const handleFilterVisibleChange = () => {
     setFilterVisible(true);
   };
@@ -262,21 +209,6 @@ const CompanyManagement = () => {
       align: 'left' as const,
       render: (item: any) => {
         return item ? addCommSep(item) : '-';
-      },
-    },
-    {
-      title: '',
-      width: 6,
-      align: 'right' as const,
-      render: (_: any, record: CompanyTableDataType) => {
-        return (
-          <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
-            <EllipsisOutlined
-              rotate={90}
-              style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
-            />
-          </Popover>
-        );
       },
     },
   ];
@@ -451,15 +383,17 @@ const CompanyManagement = () => {
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<PlusOutlined />}
-                onClick={() => navigate('/companyManagement/addCompany')}
-              >
-                {t('company:addCompany')}
-              </Button>
+              {ability.can(Action.Create, Company) && (
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate('/companyManagement/addCompany')}
+                >
+                  {t('company:addCompany')}
+                </Button>
+              )}
             </div>
           </Col>
           <Col md={16} xs={24}>

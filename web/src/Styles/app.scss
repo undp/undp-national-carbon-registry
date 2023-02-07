@@ -96,7 +96,8 @@ body {
 }
 
 .ant-form-item-explain-error {
-  font-size: 0.875rem;
+  font-size: 13px;
+  color: $error-color;
 }
 
 .ant-table-thead
@@ -113,6 +114,7 @@ body {
 .ant-form-item-label
   > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   margin-left: 0.2rem !important;
+  color: $error-color !important;
 }
 
 .ant-picker {
@@ -225,17 +227,17 @@ body {
   }
 
   .filter-section {
-    padding: 1.6rem 1.3rem 1.6rem 1.3rem;
+    padding: 1.4rem 1.3rem 1.6rem 1.3rem;
     display: flex;
     width: 100%;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: end;
 
     .search-bar {
       display: flex;
       flex-direction: row-reverse;
-      width: 95%;
+      // width: 95%;
     }
 
     .filter-bar {
@@ -397,21 +399,7 @@ body {
     }
 
     .ant-form-item-explain-error {
-      font-size: 13px;
       text-align: start;
-    }
-
-    .error-message-container {
-      display: flex;
-      flex: 1;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-
-      .error-message-txt {
-        font-size: 0.9rem;
-        color: $error-color;
-      }
     }
   }
 }
@@ -632,8 +620,10 @@ body {
 
 .loading-center {
   margin: auto;
-  width: 50%;
   text-align: center;
+  position:absolute;
+  top: 50%;
+  left: 50%;
 }
 .ant-tag-purple {
   color: #976ed7;
@@ -704,4 +694,12 @@ body {
 .sub-text {
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+.search-filter {
+  margin-right: 15px;
+}
+
+.mg-bottom-0 {
+  margin-bottom: 0px;
 }

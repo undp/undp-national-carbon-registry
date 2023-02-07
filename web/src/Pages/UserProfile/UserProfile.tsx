@@ -11,6 +11,7 @@ import ChangePasswordModel from '../../Components/Models/ChangePasswordModel';
 import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
+import * as Icon from 'react-bootstrap-icons';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);
@@ -53,7 +54,7 @@ const UserProfile = () => {
       headerText: `${t('userProfile:deleteConfirmHeaderText')}`,
       text: `${t('userProfile:deleteConfirmText')}`,
       type: 'danger',
-      icon: <DeleteOutlined />,
+      icon: <Icon.PersonDash />,
     });
     setErrorMsg('');
     setOpenDeleteConfirmationModal(true);

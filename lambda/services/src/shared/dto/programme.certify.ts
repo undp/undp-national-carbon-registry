@@ -12,4 +12,9 @@ export class ProgrammeCertify {
     @IsString()
     @IsOptional()
     comment: string; 
+
+    @ApiPropertyOptional()
+    @IsNumber()
+    @IsOptional()
+    certifierId: number; 
 }

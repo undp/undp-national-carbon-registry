@@ -19,6 +19,7 @@ import {
   LedgerDbService,
 } from "../ledger-db/ledger-db.service";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -28,37 +29,37 @@ export class ProgrammeLedgerService {
     private ledger: LedgerDbService
   ) {}
 
-  // async forwardGeocoding(address: any[]) {
-  //   let geoCodinates: any[] = [];
-  //   const ACCESS_TOKEN =
-  //     "";
+  async forwardGeocoding(address: any[]) {
+    let geoCodinates: any[] = [];
+    const ACCESS_TOKEN =
+      "";
 
-  //   for (let index = 0; index < address.length; index++) {
-  //     const url =
-  //       "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-  //       encodeURIComponent(address[index]) +
-  //       ".json?access_token=" +
-  //       ACCESS_TOKEN +
-  //       "&limit=1";
-  //     await axios
-  //       .get(url)
-  //       .then(function (response) {
-  //         // handle success
-  //         console.log(
-  //           "cordinates data in replicator -> ",
-  //           response?.data?.features[0],
-  //           response?.data?.features[0]?.center
-  //         );
-  //         geoCodinates.push([...response?.data?.features[0]?.center]);
-  //       })
-  //       .catch((err) => {
-  //         this.logger.error(err);
-  //         return err;
-  //       });
-  //   }
+    for (let index = 0; index < address.length; index++) {
+      const url =
+        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+        encodeURIComponent(address[index]) +
+        ".json?access_token=" +
+        ACCESS_TOKEN +
+        "&limit=1";
+      await axios
+        .get(url)
+        .then(function (response) {
+          // handle success
+          console.log(
+            "cordinates data in replicator -> ",
+            response?.data?.features[0],
+            response?.data?.features[0]?.center
+          );
+          geoCodinates.push([...response?.data?.features[0]?.center]);
+        })
+        .catch((err) => {
+          this.logger.error(err);
+          return err;
+        });
+    }
 
-  //   return geoCodinates;
-  // }
+    return geoCodinates;
+  }
 
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
@@ -107,9 +108,7 @@ export class ProgrammeLedgerService {
     //       }
     //     }
     //     await this.forwardGeocoding([...address]).then((response: any) => {
-    //       programme.programmeProperties.geographicalLocationCordintes = [
-    //         ...response,
-    //       ];
+    //       programme.geographicalLocationCordintes = [...response];
     //     });
     //   }
     // }
@@ -239,20 +238,19 @@ export class ProgrammeLedgerService {
             if (programme.companyId[i] == transfer.fromCompanyId) {
               percentages.push(
                 programme.creditBalance - transfer.creditAmount != 0
-                  ? this.round2Precision(
-                      ((currentCredit[transfer.fromCompanyId] -
+                  ? parseFloat(
+                      (((currentCredit[transfer.fromCompanyId] -
                         transfer.creditAmount) *
                         100) /
-                        (programme.creditBalance - transfer.creditAmount)
-                    )
+                        (programme.creditBalance - transfer.creditAmount)).toFixed(6))
                   : 0
               );
             } else {
               percentages.push(
                 programme.creditBalance - transfer.creditAmount != 0
-                  ? this.round2Precision(
-                      (currentCredit[programme.companyId[i]] * 100) /
-                        (programme.creditBalance - transfer.creditAmount)
+                  ? parseFloat(
+                      ((currentCredit[programme.companyId[i]] * 100) /
+                        (programme.creditBalance - transfer.creditAmount)).toFixed(6)
                     )
                   : 0
               );
@@ -565,10 +563,11 @@ export class ProgrammeLedgerService {
   public async freezeCompany(
     companyId: number,
     reason: string,
-    user: string
+    user: any,
+    companyName: string
   ): Promise<number[]> {
     this.logger.log(
-      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`
+      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user.id}`
     );
     const getQueries = {};
     companyId = Number(companyId);
@@ -623,7 +622,7 @@ export class ProgrammeLedgerService {
 
           const prvTxTime = programme.txTime;
           (programme.txTime = new Date().getTime()),
-            (programme.txRef = `${user}#${reason}`),
+            (programme.txRef = `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${companyName}`),
             (programme.txType = TxType.FREEZE);
           programme.creditFrozen[index] = freezeCredit;
 
@@ -1101,9 +1100,7 @@ export class ProgrammeLedgerService {
             companyCreditDistribution[String(programme.companyId[i])] =
               changeCredit;
             percentages.push(
-              this.round2Precision(
-                ((currentCredit + changeCredit) * 100) / programme.creditBalance
-              )
+              parseFloat((((currentCredit + changeCredit) * 100) / programme.creditBalance).toFixed(6))
             );
           }
           programme.creditOwnerPercentage = percentages;

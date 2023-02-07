@@ -1,0 +1,140 @@
+@import '../../Assets/Fonts/fonts.scss';
+@import '../../Styles/variables.scss';
+
+.code-container {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: $background-color;
+
+  .ant-row {
+    display: block;
+  }
+
+  .code-header-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    height: 90px;
+    padding-top: 15px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0rem 0rem 0 0vw;
+    cursor: pointer;
+
+    .title {
+      font-family: 'MuseoSans';
+      font-size: 1.2rem;
+      color: $logo-text-color;
+      font-weight: 700;
+      margin-right: 0.5rem;
+    }
+
+    .title-sub {
+      font-weight: 100 !important;
+      font-family: 'MuseoSans';
+      font-size: 1.2rem;
+      color: $logo-text-color;
+    }
+
+    .logo {
+      height: 53px;
+      padding-left: 2vw;
+
+      img {
+        object-fit: cover;
+        height: auto;
+        height: 70%;
+        margin-top: 6px;
+      }
+    }
+
+    .country-name {
+      font-size: 0.65rem;
+      color: $logo-text-color;
+      margin-top: -5px;
+      font-family: 'MuseoSans';
+    }
+  }
+  .code-body-container {
+    text-align: left;
+    justify-content: left;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-bottom: 60px;
+    
+    .code-body {
+      color: $title-text-color;
+      padding:20px 200px 20px 200px;
+    }
+    .code-body-contact
+    {
+      color: $title-text-color;
+      text-align: left;
+      padding:20px 60px 20px 60px;
+    }
+    .code-sub {
+      padding-bottom: 30px;
+      font-weight: 700;
+      color: $title-text-color;
+    }
+    .codetitle {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: $primary-font-family;
+      color: $title-text-color;
+      text-align: center;
+      justify-content: center;
+      text-transform: uppercase;
+      padding: 50px 50px 10px 50px;
+
+      @media (max-width: $lg-size) {
+        font-size: 2rem;
+        margin-top: 1rem;
+        color: $title-text-color;
+        // width: 100vw;
+        line-height: 1.5em;
+      }
+    }
+    .code-subtitle {
+      display: flex;
+      text-align: left;
+      justify-content: left;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: $title-text-color;
+      padding-top: 30px;
+      font-size: 20px;
+      font-weight: 700;
+      padding-left: 200px;
+    }
+    .code-card-subtitle {
+      text-decoration: underline;
+      color: $title-text-color;
+      font-size: 20px;
+      font-weight: 700;
+      padding-bottom: 20px;
+    }
+    .code-card-subtitle-text{
+      margin: 10px 60px 10px 60px;
+
+    }
+    .code-card-container {
+      text-align: left;
+      // justify-content: center;
+      margin: 30px 60px 30px 60px;
+      padding: 30px;
+      border-style: solid;
+      border-color: $common-form-input-border;
+      border-width: 1px;
+      table {
+        color: $title-text-color;
+        align-items: center;
+
+        td {
+          padding-right: 20px;
+        }
+      }
+    }
+  }
+}

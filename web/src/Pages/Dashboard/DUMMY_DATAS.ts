@@ -113,8 +113,8 @@ export const totalProgrammesOptions: any = {
   legend: {
     show: true,
     showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
+    showForNullSeries: false,
+    showForZeroSeries: false,
     position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
@@ -237,8 +237,8 @@ export const totalProgrammesOptionsSub: any = {
   legend: {
     show: true,
     showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
+    showForNullSeries: false,
+    showForZeroSeries: false,
     position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
@@ -372,8 +372,8 @@ export const totalCreditsOptions: any = {
   legend: {
     show: true,
     showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
+    showForNullSeries: false,
+    showForZeroSeries: false,
     position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
@@ -486,8 +486,8 @@ export const totalCreditsCertifiedOptions: any = {
   legend: {
     show: true,
     showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
+    showForNullSeries: false,
+    showForZeroSeries: false,
     position: 'bottom',
     horizontalAlign: 'center',
     floating: false,

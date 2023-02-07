@@ -7,18 +7,19 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import thumbnail from '../../Assets/Images/thumbnail.png';
 
 const LayoutHeader = (props: HeaderProps) => {
   const navigate = useNavigate();
   const { title, onToggle } = props;
   const { updateToken } = useConnection();
-  const { removeUserInfo } = useUserContext();
+  const { removeUserInfo, userInfoState } = useUserContext();
   const { i18n } = useTranslation(['common', 'login']);
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };
   const [collapsed, setCollapsed] = useState(false);
-  const companyLogo = localStorage.getItem('companyLogo');
+  const companyLogo = userInfoState?.companyLogo;
 
   const signOut = (): void => {
     updateToken();
@@ -58,6 +59,7 @@ const LayoutHeader = (props: HeaderProps) => {
             }}
           />
         </div>
+        <img src={thumbnail} style={{ display: 'none' }} />
         {/* <div className="header-menu-container">
                 <div className="header-signOut-container">
                   <Dropdown menu={{ items }} placement="bottomLeft">

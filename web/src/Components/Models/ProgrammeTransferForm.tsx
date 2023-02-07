@@ -70,6 +70,11 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
             operation: 'like',
             value: newValue + '%',
           },
+          {
+            key: 'companyRole',
+            operation: '!=',
+            value: 'Certifier',
+          },
         ],
         sort: {
           key: 'name',
@@ -80,10 +85,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         resp.data
           .map((d: any) => ({ label: d.name, value: d.companyId }))
           .filter((d: any) => {
-            return (
-              d.value !== userCompanyId &&
-              programme.companyId.map((e) => Number(e)).indexOf(d.value) < 0
-            );
+            return d.value !== userCompanyId;
           })
       );
     } else {
@@ -107,14 +109,18 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
     programme.creditOwnerPercentage = [100];
   }
 
+  const companies: any = {};
+  for (const c of programme.company) {
+    companies[c.companyId] = c;
+  }
   const validCompanies: { percentage: number; name: any; companyId: any; available: number }[] = [];
   let totalCredits = 0;
   const companyCredit = [];
   for (const index in programme.creditOwnerPercentage) {
     if (
-      (toCompanyDefault && userCompanyId !== programme.company[index].companyId) ||
+      (toCompanyDefault && userCompanyId !== Number(programme.companyId[index])) ||
       (!toCompanyDefault &&
-        (userCompanyId === programme.company[index].companyId ||
+        (userCompanyId === Number(programme.companyId[index]) ||
           companyRole === CompanyRole.GOVERNMENT))
     ) {
       const companyAvailableTotal =
@@ -123,8 +129,8 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         100;
       validCompanies.push({
         percentage: programme.creditOwnerPercentage[index],
-        name: programme.company[index].name,
-        companyId: programme.company[index].companyId,
+        name: companies[Number(programme.companyId[index])].name,
+        companyId: Number(programme.companyId[index]),
         available: companyAvailableTotal,
       });
       companyCredit.push(0);
@@ -249,6 +255,7 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
                   <InputNumber
                     placeholder=""
                     controls={false}
+                    disabled={value === pert.companyId}
                     onKeyPress={(event) => {
                       if (!/[0-9\.]/.test(event.key)) {
                         event.preventDefault();
