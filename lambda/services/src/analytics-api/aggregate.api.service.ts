@@ -477,7 +477,7 @@ export class AggregateAPIService {
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
-            ['"toCompanyMeta"->>country'], 
+            ['toCompanyMeta"->>country'], 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
             filtCom, 
             null, 
