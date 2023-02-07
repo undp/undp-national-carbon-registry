@@ -25,5 +25,9 @@ export class FilterEntry {
     @IsOptional()
     keyOperation?: any;
 
-
+    // @IsNotEmpty()
+    // @IsString()
+    // @ApiPropertyOptional()
+    // @IsOptional()
+    // keyOperationAttr?: any;
 }

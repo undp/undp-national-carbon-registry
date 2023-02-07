@@ -15,8 +15,27 @@ export class AggrEntry {
     @IsOptional()
     operation: any;
 
-    constructor(key: any, operation: any) {
+    @IsNotEmpty()
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+    fieldName: string;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // @ApiPropertyOptional()
+    // @IsOptional()
+    // keyOperation?: any;
+
+    // @IsNotEmpty()
+    // @IsString()
+    // @ApiPropertyOptional()
+    // @IsOptional()
+    // keyOperationAttr?: any;
+
+    constructor(key: any, operation: any, fieldName: string) {
         this.key = key;
         this.operation = operation;
+        this.fieldName = fieldName;
     }
 }

@@ -50,6 +50,7 @@ export class AggregateAPIService {
       if (statFilter.onlyMine == true) {
         filters.push(mineFilter);
       }
+
       return filters;
     } else {
       return null;
@@ -87,7 +88,9 @@ export class AggregateAPIService {
     sort: SortEntry,
     abilityCondition: string,
     lastTimeForWhere: any,
-    timeCol: string
+    timeCol: string,
+    timeGroupingCol?: string,
+    timeGroupingAccuracy?: string
   ) {
     const query = new QueryDto();
     query.filterAnd = filterAnd;
@@ -104,7 +107,9 @@ export class AggregateAPIService {
 
     if (aggregates) {
       const selectQuery = aggregates
-        .map((a) => `${a.operation}("${tableName}"."${a.key}")`)
+        .map(
+          (a) => `${a.operation}("${tableName}"."${a.key}") as ${a.fieldName}`
+        )
         .join(",");
       queryBuild = queryBuild.select(selectQuery);
     }
@@ -116,13 +121,27 @@ export class AggregateAPIService {
       );
     }
 
+    let grpByAll = undefined;
     if (groupBy) {
       const groupQuery = groupBy
         .map((gb) => `"${tableName}"."${gb}"`)
         .join(",");
       queryBuild = queryBuild.addSelect(groupQuery);
-      queryBuild = queryBuild.groupBy(groupQuery);
+      grpByAll = groupQuery;
     }
+    if (timeGroupingCol && timeGroupingAccuracy) {
+      const groupQuery = `date_trunc('${timeGroupingAccuracy}', "${timeGroupingCol}") as time_group`;
+      queryBuild = queryBuild.addSelect(groupQuery);
+      if (!grpByAll) {
+        grpByAll = "time_group";
+      } else {
+        grpByAll += ", time_group";
+      }
+    }
+    if (grpByAll != "") {
+      queryBuild = queryBuild.groupBy(grpByAll);
+    }
+
     let d = await queryBuild.getRawMany();
 
     let t = 0;
@@ -148,25 +167,69 @@ export class AggregateAPIService {
     };
   }
 
-  private async getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere) {
-    const filtAuth = this.getFilterAndByStatFilter(stat.statFilter, {
+  private async getAllAuthProgramme(
+    stat,
+    abilityCondition,
+    lastTimeForWhere,
+    companyId?
+  ) {
+    let filtAuth = this.getFilterAndByStatFilter(stat.statFilter, {
       value: ProgrammeStage.AUTHORISED,
       key: "currentStage",
       operation: "=",
     });
+
+    if (companyId) {
+      if (!filtAuth) {
+        filtAuth = [];
+      }
+      filtAuth.push({
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      });
+    }
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
       null,
       [
-        new AggrEntry("programmeId", "COUNT"),
-        new AggrEntry("creditEst", "SUM"),
+        new AggrEntry("programmeId", "COUNT", "count"),
+        new AggrEntry("creditEst", "SUM", "sum"),
       ],
       filtAuth,
       null,
       abilityCondition,
       lastTimeForWhere,
       "createdTime"
+    );
+  }
+
+  private async getCertifiedByMePrgrammes(
+    statFilter,
+    companyId,
+    certifyField,
+    abilityCondition,
+    lastTimeForWhere
+  ) {
+    const filtC = this.getFilterAndByStatFilter(statFilter, {
+      value: companyId,
+      key: certifyField,
+      operation: "ANY",
+    });
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeRepo,
+      "programme",
+      null,
+      [
+        new AggrEntry("programmeId", "COUNT", "count"),
+        new AggrEntry("creditEst", "SUM", "sum"),
+      ],
+      filtC,
+      null,
+      abilityCondition,
+      lastTimeForWhere,
+      undefined
     );
   }
 
@@ -191,16 +254,18 @@ export class AggregateAPIService {
       value: 0,
       keyOperation: "cardinality",
     });
+
+    console.log("getCertifiedProgrammes");
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
       null,
       [
-        new AggrEntry("programmeId", "COUNT"),
-        new AggrEntry("creditEst", "SUM"),
-        new AggrEntry("creditIssued", "SUM"),
-        new AggrEntry("creditRetired", "SUM"),
-        new AggrEntry("creditTransferred", "SUM"),
+        new AggrEntry("programmeId", "COUNT", "count"),
+        new AggrEntry("creditEst", "SUM", "totalEstCredit"),
+        new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
+        new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
+        new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
       ],
       filters,
       null,
@@ -222,6 +287,16 @@ export class AggregateAPIService {
       switch (stat.type) {
         case StatType.AGG_PROGRAMME_BY_STATUS:
         case StatType.AGG_PROGRAMME_BY_SECTOR:
+        case StatType.MY_AGG_PROGRAMME_BY_STATUS:
+        case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
+          if (
+            [
+              StatType.MY_AGG_PROGRAMME_BY_SECTOR,
+              StatType.MY_AGG_PROGRAMME_BY_STATUS,
+            ].includes(stat.type)
+          ) {
+            stat.statFilter.onlyMine = true;
+          }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeRepo,
             "programme",
@@ -229,11 +304,11 @@ export class AggregateAPIService {
               ? ["currentStage"]
               : ["sector"],
             [
-              new AggrEntry("programmeId", "COUNT"),
-              new AggrEntry("creditEst", "SUM"),
-              new AggrEntry("creditIssued", "SUM"),
-              new AggrEntry("creditRetired", "SUM"),
-              new AggrEntry("creditTransferred", "SUM"),
+              new AggrEntry("programmeId", "COUNT", "count"),
+              new AggrEntry("creditEst", "SUM", "totalEstCredit"),
+              new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
+              new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
+              new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
             ],
             this.getFilterAndByStatFilter(stat.statFilter, {
               value: companyId,
@@ -243,7 +318,9 @@ export class AggregateAPIService {
             null,
             abilityCondition,
             lastTimeForWhere,
-            "createdTime"
+            "createdTime",
+            stat.statFilter?.timeGroup ? "createdAt" : undefined,
+            stat.statFilter?.timeGroup ? "day" : undefined
           );
           break;
         case StatType.MY_CREDIT:
@@ -278,7 +355,7 @@ export class AggregateAPIService {
             this.programmeTransferRepo,
             "transfer",
             null,
-            [new AggrEntry("requestId", "COUNT")],
+            [new AggrEntry("requestId", "COUNT", "count")],
             filt,
             null,
             abilityCondition,
@@ -287,6 +364,7 @@ export class AggregateAPIService {
           );
           break;
         case StatType.CERTIFIED_BY_ME:
+        case StatType.REVOKED_BY_ME:
           if (stat.statFilter) {
             stat.statFilter.onlyMine = true;
           } else {
@@ -300,38 +378,87 @@ export class AggregateAPIService {
                 lastTimeForWhere
               );
           }
-          const filtC = this.getFilterAndByStatFilter(stat.statFilter, {
-            value: companyId,
-            key: "certifierId",
-            operation: "ANY",
-          });
-          const cert = await this.genAggregateTypeOrmQuery(
-            this.programmeRepo,
-            "programme",
-            null,
-            [
-              new AggrEntry("programmeId", "COUNT"),
-              new AggrEntry("creditEst", "SUM"),
-            ],
-            filtC,
-            null,
-            abilityCondition,
-            lastTimeForWhere,
-            undefined
-          );
+
+          if (!results[stat.type]) {
+            results[stat.type] = await this.getCertifiedByMePrgrammes(
+              stat.statFilter,
+              companyId,
+              stat.type === StatType.CERTIFIED_BY_ME
+                ? "certifierId"
+                : "revokedCertifierId",
+              abilityCondition,
+              lastTimeForWhere
+            );
+          }
+
+          break;
+        case StatType.CERTIFIED_REVOKED_BY_ME:
+          if (stat.statFilter) {
+            stat.statFilter.onlyMine = true;
+          } else {
+            stat.statFilter = { onlyMine: true };
+          }
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]) {
+            results[StatType.ALL_AUTH_PROGRAMMES] =
+              await this.getAllAuthProgramme(
+                stat,
+                abilityCondition,
+                lastTimeForWhere
+              );
+          }
+
+          if (!results[StatType.CERTIFIED_BY_ME]) {
+            results[StatType.CERTIFIED_BY_ME] =
+              await this.getCertifiedByMePrgrammes(
+                stat.statFilter,
+                companyId,
+                "certifierId",
+                abilityCondition,
+                lastTimeForWhere
+              );
+          }
+
+          if (!results[StatType.REVOKED_BY_ME]) {
+            results[StatType.REVOKED_BY_ME] =
+              await this.getCertifiedByMePrgrammes(
+                stat.statFilter,
+                companyId,
+                "revokedCertifierId",
+                abilityCondition,
+                lastTimeForWhere
+              );
+          }
+
           results[stat.type] = {
             last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
-              certifiedSum: Number(cert.data[0]["sum"]),
-              certifiedCount: Number(cert.data[0]["count"]),
-              uncertifiedCount:
-                Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]["count"]) -
-                Number(cert.data[0]["count"]),
+              certifiedSum: Number(
+                results[StatType.CERTIFIED_BY_ME].data[0]["totalestcredit"]
+              ),
+              revokedSum: Number(
+                results[StatType.REVOKED_BY_ME].data[0]["totalestcredit"]
+              ),
               uncertifiedSum:
                 Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]["sum"]) -
-                Number(cert.data[0]["sum"]),
+                Number(
+                  results[StatType.REVOKED_BY_ME].data[0]["totalestcredit"]
+                ) -
+                Number(
+                  results[StatType.CERTIFIED_BY_ME].data[0]["totalestcredit"]
+                ),
+              certifiedCount: Number(
+                results[StatType.CERTIFIED_BY_ME].data[0]["count"]
+              ),
+              revokedCount: Number(
+                results[StatType.REVOKED_BY_ME].data[0]["count"]
+              ),
+              uncertifiedCount:
+                Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]["count"]) -
+                Number(results[StatType.REVOKED_BY_ME].data[0]["count"]) -
+                Number(results[StatType.CERTIFIED_BY_ME].data[0]["count"]),
             },
           };
+
           break;
         case StatType.ALL_AUTH_PROGRAMMES:
           if (!results[StatType.ALL_AUTH_PROGRAMMES]) {
@@ -367,14 +494,39 @@ export class AggregateAPIService {
           }
           break;
         case StatType.CERTIFIED_REVOKED_PROGRAMMES:
-          if (!results[StatType.ALL_AUTH_PROGRAMMES]) {
-            results[StatType.ALL_AUTH_PROGRAMMES] =
-              await this.getAllAuthProgramme(
-                stat,
-                abilityCondition,
-                lastTimeForWhere
-              );
+        case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
+          let allValues;
+          if (stat.type === StatType.CERTIFIED_REVOKED_PROGRAMMES) {
+            if (!results[StatType.ALL_AUTH_PROGRAMMES]) {
+              results[StatType.ALL_AUTH_PROGRAMMES] =
+                await this.getAllAuthProgramme(
+                  stat,
+                  abilityCondition,
+                  lastTimeForWhere
+                );
+            }
+            allValues = results[StatType.ALL_AUTH_PROGRAMMES];
+            stat.statFilter
+              ? (stat.statFilter.onlyMine = false)
+              : (stat.statFilter = { onlyMine: false });
           }
+
+          if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES) {
+            if (!results[StatType.ALL_AUTH_PROGRAMME_MINE]) {
+              results[StatType.ALL_AUTH_PROGRAMME_MINE] =
+                await this.getAllAuthProgramme(
+                  stat,
+                  abilityCondition,
+                  lastTimeForWhere,
+                  companyId
+                );
+            }
+            allValues = results[StatType.ALL_AUTH_PROGRAMME_MINE];
+            stat.statFilter
+              ? (stat.statFilter.onlyMine = true)
+              : (stat.statFilter = { onlyMine: true });
+          }
+
           if (!results[StatType.REVOKED_PROGRAMMES]) {
             results[StatType.REVOKED_PROGRAMMES] =
               await this.getCertifiedProgrammes(
@@ -396,20 +548,27 @@ export class AggregateAPIService {
               );
           }
           results[stat.type] = {
-            last: results[StatType.ALL_AUTH_PROGRAMMES].last,
+            last: allValues.last,
             data: {
               certifiedSum: Number(
-                results[StatType.CERTIFIED_PROGRAMMES].data[0]["sum"]
+                results[StatType.CERTIFIED_PROGRAMMES].data[0]["totalestcredit"]
               ),
               revokedSum: Number(
-                results[StatType.REVOKED_PROGRAMMES].data[0]["sum"]
+                results[StatType.REVOKED_PROGRAMMES].data[0]["totalestcredit"]
               ),
               uncertifiedSum:
-                Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]["sum"]) -
-                Number(results[StatType.REVOKED_PROGRAMMES].data[0]["sum"]) -
-                Number(results[StatType.CERTIFIED_PROGRAMMES].data[0]["sum"]),
+                Number(allValues.data[0]["sum"]) -
+                Number(
+                  results[StatType.REVOKED_PROGRAMMES].data[0]["totalestcredit"]
+                ) -
+                Number(
+                  results[StatType.CERTIFIED_PROGRAMMES].data[0][
+                    "totalestcredit"
+                  ]
+                ),
             },
           };
+          break;
         case StatType.CERTIFIED_BY_ME_BY_STATE:
         case StatType.CERTIFIED_BY_ME_BY_SECTOR:
           if (stat.statFilter) {
@@ -430,11 +589,11 @@ export class AggregateAPIService {
               ? ["currentStage"]
               : ["sector"],
             [
-              new AggrEntry("programmeId", "COUNT"),
-              new AggrEntry("creditEst", "SUM"),
-              new AggrEntry("creditIssued", "SUM"),
-              new AggrEntry("creditRetired", "SUM"),
-              new AggrEntry("creditTransferred", "SUM"),
+              new AggrEntry("programmeId", "COUNT", "count"),
+              new AggrEntry("creditEst", "SUM", "totalEstCredit"),
+              new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
+              new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
+              new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
             ],
             filtCState,
             null,
