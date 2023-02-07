@@ -420,7 +420,7 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.certifier &&
+            {itemObj.certifier && itemObj.certifier &&
               itemObj.certifier.map((v: any, i: any) => {
                 return (
                   <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
@@ -442,7 +442,7 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.requester.map((v: any, i: any) => {
+            {itemObj.requester && itemObj.requester.map((v: any, i: any) => {
               return (
                 <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                   <div>
@@ -467,7 +467,7 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.sender.map((v: any, i: any) => {
+            {itemObj.sender && itemObj.sender.map((v: any, i: any) => {
               return (
                 <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                   <div>
@@ -493,7 +493,7 @@ const CreditTransfer = () => {
       render: (item: any, itemObj: any) => {
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.receiver.map((v: any, i: any) => {
+            {itemObj.receiver && itemObj.receiver.map((v: any, i: any) => {
               return !itemObj.isRetirement ? (
                 <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                   <div>
