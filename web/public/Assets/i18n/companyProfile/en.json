@@ -16,5 +16,6 @@
     "deauthoriseConfirmText":"Organisation will still be visible but no further action will be able to take place.\n Note: all users associated with the organisation will also be deactivated.",
     "activeStatus": "Active",
     "deauthorisedStatus": "Deactivated",
-    "remarks": "Remarks"
+    "remarks": "Remarks",
+    "deauthorisationSuccess": "Company deactivated successfully!"
 }
