@@ -21,6 +21,12 @@ export class AggrEntry {
     @IsOptional()
     fieldName: string;
 
+    @IsNotEmpty()
+    @IsString()
+    @ApiPropertyOptional()
+    @IsOptional()
+    outerQuery?: string;
+
     // @IsNotEmpty()
     // @IsString()
     // @ApiPropertyOptional()
