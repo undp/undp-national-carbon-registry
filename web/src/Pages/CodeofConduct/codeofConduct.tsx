@@ -61,8 +61,10 @@ const CodeOfConduct = () => {
           <Col>
             <div className="code-subtitle">Our Standards</div>
             <div className="code-body">
-              Examples of behavior that contributes to a positive environment for our community
-              include:
+              <p>
+                Examples of behavior that contributes to a positive environment for our community
+                include:
+              </p>
               <ul>
                 <li>Demonstrating empathy and kindness toward other people</li>
                 <li>Being respectful of differing opinions, viewpoints, and experiences</li>
@@ -95,8 +97,6 @@ const CodeOfConduct = () => {
                   setting
                 </li>
               </ul>
-              <br /> We pledge to act and interact in ways that contribute to an open, welcoming,
-              diverse, inclusive, and healthy community.
             </div>
           </Col>
         </Row>
@@ -167,6 +167,11 @@ const CodeOfConduct = () => {
                 Community Impact : Use of inappropriate language or other behavior deemed
                 unprofessional or unwelcome in the community.
               </p>
+              <p>
+                Consequence: A private, written warning from community leaders, providing clarity
+                around the nature of the violation and an explanation of why the behavior was
+                inappropriate. A public apology may be requested.
+              </p>
             </div>
           </Col>
         </Row>
@@ -175,6 +180,14 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">2. Warning</div>
             <div className="code-body">
               <p> Community Impact : A violation through a single incident or series of actions.</p>
+              <p>
+                {' '}
+                Consequence: A warning with consequences for continued behavior. No interaction with
+                the people involved, including unsolicited interaction with those enforcing the Code
+                of Conduct, for a specified period of time. This includes avoiding interactions in
+                community spaces as well as external channels like social media. Violating these
+                terms may lead to a temporary or permanent ban.
+              </p>
             </div>
           </Col>
         </Row>
@@ -183,9 +196,15 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">3. Temporary Ban</div>
             <div className="code-body">
               <p>
-                {' '}
                 Community Impact : A serious violation of community standards, including sustained
                 inappropriate behavior.
+              </p>
+              <p>
+                Consequence: A temporary ban from any sort of interaction or public communication
+                with the community for a specified period of time. No public or private interaction
+                with the people involved, including unsolicited interaction with those enforcing the
+                Code of Conduct, is allowed during this period. Violating these terms may lead to a
+                permanent ban.
               </p>
             </div>
           </Col>
@@ -222,7 +241,7 @@ const CodeOfConduct = () => {
               <p>
                 Community Impact Guidelines were inspired by
                 <a href="https://github.com/mozilla/diversity">
-                  Mozilla&rsquo;s code of conduct enforcement ladder
+                  Mozilla &rsquo;s code of conduct enforcement ladder
                 </a>
                 .
               </p>
