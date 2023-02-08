@@ -216,18 +216,18 @@ const Homepage = () => {
             </div>
           </Col>
           <Col className="footertext-link-container" md={4.8} lg={12}>
-            <div onClick={() => navigate('/cookie')} className="footertext-links">
+            <a href="/cookie" className="footertext-links">
               {t('homepage:Cookie')}
-            </div>
-            <div onClick={() => navigate('/codeconduct')} className="footertext-links">
+            </a>
+            <a href="codeconduct" className="footertext-links">
               {t('homepage:codeconduct')}
-            </div>
-            <div onClick={() => navigate('/terms')} className="footertext-links">
+            </a>
+            <a href="/terms#termuse" className="footertext-links">
               {t('homepage:terms')}
-            </div>
-            <div onClick={() => navigate('/privacy')} className="footertext-links">
+            </a>
+            <a href="/privacy" className="footertext-links">
               {t('homepage:privacy')}
-            </div>
+            </a>
           </Col>
         </Row>
       </div>

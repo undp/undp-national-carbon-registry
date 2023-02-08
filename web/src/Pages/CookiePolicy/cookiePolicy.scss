@@ -134,4 +134,90 @@
       }
     }
   }
+  .homepage-footer-container {
+
+    background-color: $background-color-dark;
+    min-height: 200px;
+    height: 100%;
+    align-items: center;
+    // margin-bottom: 2vw;
+    // padding-left: 2rem;
+    padding: 1rem 2rem 0 1rem;
+    cursor: pointer;
+
+    .footertext {
+      color: $dark-text-color;
+      padding: 5px 60px 20px 60px;
+      font-size: 0.875rem;
+
+    }
+    .footer-raw{
+      display:flex;
+    }
+    .footertext-bottom {
+      color: $dark-text-color;
+      padding: 100px 60px 28px 60px;
+      font-size: 0.875rem;
+      font-family: 'MuseoSans';
+      font-weight: 100;
+
+      .cc {
+        margin: 5px;
+      }
+    }
+    .footertext-link-container {
+      display: flex;
+      color: $dark-text-color;
+      padding: 100px 60px 20px 60px;
+      font-size: 0.75rem;
+      text-decoration: underline;
+      justify-content: right;
+    }
+    .footertext-links {
+      padding-left: 30px;
+      color: $dark-text-color;
+    }
+
+    .divider {
+      margin: 2px 60px 2px 60px;
+      width: calc(100% - 120px) !important;
+      min-width: calc(100% - 120px);
+    }
+    .logocontainer {
+      display: flex;
+      margin-top: 10px;
+
+      .title {
+        font-family: 'MuseoSans';
+        font-size: 2rem;
+        color: $dark-text-color;
+        font-weight: 700;
+        margin-right: 0.5rem;
+      }
+
+      .title-sub {
+        font-weight: 100 !important;
+        font-family: 'MuseoSans';
+        font-size: 2rem;
+        color: $dark-text-color;
+
+        // padding-bottom: 3px;
+      }
+
+      .logo {
+        height: 97px;
+        img {
+          object-fit: cover;
+          height: auto;
+          height: 70%;
+          margin-left: 60px;
+        }
+      }
+      .footer-country-name {
+        font-size: 0.875rem;
+        color: $dark-text-color;
+        font-family: 'MuseoSans';
+      }
+    }
+  }
 }
