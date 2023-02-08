@@ -292,25 +292,24 @@ export class AggregateAPIService {
           } else {
             stat.statFilter = { onlyMine: false }
           }
-          let filt = this.getFilterAndByStatFilter(stat.statFilter, null);
-          
-          const filterOr = [{ value: companyId, 
-            key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "toCompanyId", 
+          let filt = this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, 
+            key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "fromCompanyId", 
             operation: '=' 
-          }];
-          if (stat.type === StatType.PENDING_TRANSFER_RECV) {
-            filterOr.push({ value: companyId, 
-              key: "fromCompanyId", 
-              operation: '=' 
-            })
-          }
+          });
+          
+          // if (stat.type === StatType.PENDING_TRANSFER_RECV) {
+          //   filterOr.push({ value: companyId, 
+          //     key: "fromCompanyId", 
+          //     operation: '=' 
+          //   })
+          // }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
             null, 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
             filt,
-            filterOr,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere,
