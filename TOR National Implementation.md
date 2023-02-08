@@ -8,13 +8,13 @@ The following work steps are for the TOR for national implementation of the carb
 	- integration with existing NDC management tools (if applicable)
 	- adjustment of user types to national requirements
 	- creation of government accounts
-*(Deliverable: Fully localized Carbon Registry running on test environment)  
+*(Deliverable: Fully localized Carbon Registry running on test environment)*
  
 - Successful end-to-end test of the registry. This test needs to cover the full lifecycle of one dummy project including at least project creation, authorization, implementation, MRV, issuance and transfer. 
 *(Deliverable: Test Report)*
 - Creation of a nationally appropriate signup proceedure for non-government accounts
 - Hand over to official government use
-*(Deliverable: Government Acceptance
+*(Deliverable: Government Acceptance)*
 
 - Long term hosting and DevOps of the registry
 
