@@ -92,14 +92,14 @@ export class AnalyticsAPIService {
           }
           let data = {
             awaitingAuthorization: [],
-            issued: [],
+            authorised: [],
             rejected: [],
             programmes: [],
           };
           for (let index = 1; index <= durationCounts; index++) {
             let eTime = sTime + duraion;
             let pendingC = 0;
-            let issuedC = 0;
+            let authorisedC = 0;
             let rejectedC = 0;
             let programmesC = 0;
             // console.log("week count ---- ", index, { sTime, eTime });
@@ -116,7 +116,7 @@ export class AnalyticsAPIService {
                 totalProgrammesResponse[indexProgramme]?.currentStage ===
                   "AwaitingAuthorization" && pendingC++;
                 totalProgrammesResponse[indexProgramme]?.currentStage ===
-                  "Issued" && issuedC++;
+                  "Authorised" && authorisedC++;
                 totalProgrammesResponse[indexProgramme]?.currentStage ===
                   "Rejected" && rejectedC++;
               }
@@ -124,7 +124,7 @@ export class AnalyticsAPIService {
                 data?.awaitingAuthorization.push({
                   [sTime]: Math.round(pendingC),
                 });
-                data?.issued.push({ [sTime]: Math.round(issuedC) });
+                data?.authorised.push({ [sTime]: Math.round(authorisedC) });
                 data?.rejected.push({ [sTime]: Math.round(rejectedC) });
               }
             }

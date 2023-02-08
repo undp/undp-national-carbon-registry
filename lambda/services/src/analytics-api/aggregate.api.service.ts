@@ -120,9 +120,11 @@ export class AggregateAPIService {
     }
 
     if (sort) {
+      console.table({ sort });
       queryBuild = queryBuild.orderBy(
-        query?.sort?.key && `"${query?.sort?.key}"`,
-        query?.sort?.order
+        sort?.key && `"${tableName}"."${sort?.key}"`,
+        sort?.order,
+        "NULLS LAST"
       );
     }
 
@@ -333,6 +335,9 @@ export class AggregateAPIService {
               operation: "ANY",
             }),
             null,
+            // stat.statFilter?.timeGroup
+            //   ? { key: "createdAt", order: "ASC" }
+            //   : null
             abilityCondition,
             lastTimeForWhere,
             "createdTime",

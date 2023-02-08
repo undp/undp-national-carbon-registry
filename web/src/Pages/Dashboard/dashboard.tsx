@@ -69,7 +69,7 @@ const Dashboard = () => {
   const [endTime, setEndTime] = useState<number>(0);
   const [categoryType, setCategoryType] = useState<string>('overall');
 
-  const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [authorisedProgrammes, setAuthorisedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
 
@@ -193,6 +193,21 @@ const Dashboard = () => {
     }
   };
 
+  const getAllChartsParams = () => {
+    return {
+      stats: [
+        {
+          type: 'AGG_PROGRAMME_BY_STATUS',
+          statFilter: {
+            startTime: startTime !== 0 ? startTime : undefined,
+            endTime: endTime !== 0 ? endTime : undefined,
+            timeGroup: true,
+          },
+        },
+      ],
+    };
+  };
+
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
     return {
       stats: [
@@ -244,7 +259,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const pendingProgrames: any = [];
-      const issuedProgrames: any = [];
+      const authorisedProgrames: any = [];
       const rejectedProgrames: any = [];
       const timeLabelsProgrames: any = [];
 
@@ -286,11 +301,11 @@ const Dashboard = () => {
             timeLabelsProgrames.push(formattedDate);
           });
         }
-        if (totalProgrammes?.issued) {
-          const issued = totalProgrammes?.issued;
-          issued?.map((item: any, index: any) => {
+        if (totalProgrammes?.authorised) {
+          const authorised = totalProgrammes?.authorised;
+          authorised?.map((item: any, index: any) => {
             const programesCount = Object.values(item);
-            issuedProgrames.push(programesCount[0]);
+            authorisedProgrames.push(programesCount[0]);
           });
         }
         if (totalProgrammes?.rejected) {
@@ -437,9 +452,14 @@ const Dashboard = () => {
           });
         }
       }
-      console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
+      console.log({
+        pendingProgrames,
+        authorisedProgrames,
+        rejectedProgrames,
+        timeLabelsProgrames,
+      });
       setPendingProgrammes(pendingProgrames);
-      setIssuedProgrammes(issuedProgrames);
+      setAuthorisedProgrammes(authorisedProgrames);
       setRejectedProgrammes(rejectedProgrames);
 
       setEnergyProgrammes(energyProgrames);
@@ -668,7 +688,7 @@ const Dashboard = () => {
   const seriesTotalProgrammesY = [
     {
       name: 'Authorised',
-      data: issuedProgrammes,
+      data: authorisedProgrammes,
     },
     {
       name: 'Rejected',
@@ -733,12 +753,12 @@ const Dashboard = () => {
       data: issuedCredits,
     },
     {
-      name: 'Retired',
-      data: retiredCredits,
-    },
-    {
       name: 'Transferred',
       data: transferredCredits,
+    },
+    {
+      name: 'Retired',
+      data: retiredCredits,
     },
   ];
 
