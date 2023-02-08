@@ -16,7 +16,7 @@ This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
 
 ## System Architecture
-UNDP Carbon Registry based on AWS Serverless
+UNDP Carbon Registry based on Serverless Architecture.
 ![alt text](./documention/imgs/System%20Architecture.svg)
 
 ## Project Structure
@@ -55,7 +55,7 @@ UNDP Carbon Registry based on AWS Serverless
 - Start all the services by executing `sls offline --stage=local`
 - Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/api/national/docs#/`
 
-## Deploy System on AWS
+## Deploy System on the AWS Cloud
 - Execute to create all the required resources on the AWS.
     ```
     aws cloudformation deploy --template-file ./deployment/aws-formation.yml --stack-name carbon-registry-basic --parameter-overrides EnvironmentName=<stage> DBPassword=<password> --capabilities CAPABILITY_NAMED_IAM
