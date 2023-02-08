@@ -102,7 +102,16 @@ export class AggregateAPIService {
       
       let grpByAll = undefined
       if (groupBy) {
-        const groupQuery = groupBy.map( gb => `"${tableName}"."${gb}"`).join(',')
+        const groupQuery = groupBy.map( gb => {
+          let val;
+          if (gb.includes('->>')) {
+            const parts = gb.split('->>');
+            val = `"${parts[0]}"->>'${parts[1]}'`
+          } else {
+            val = `"${gb}"`
+          }
+          return `"${tableName}".${val}`
+        }).join(',')
         queryBuild = queryBuild.addSelect(groupQuery)
         grpByAll = groupQuery
       }
@@ -500,13 +509,13 @@ export class AggregateAPIService {
           if (stat.type === StatType.MY_CERTIFIED_TRANSFER_LOCATION)
           filtCom.push({
             value: companyId, 
-            key: 'certifier"->>"certifierId', 
+            key: 'certifier->>certifierId', 
             operation: 'ANY' 
           })
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
-            ['toCompanyMeta"->>country'], 
+            [`toCompanyMeta->>country`], 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
             filtCom,
             null,
