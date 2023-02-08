@@ -623,32 +623,64 @@ export class AggregateAPIService {
             undefined
           );
           break;
-        // case StatType.ALL_PROGRAMME_LOCATION:
-        // case StatType.MY_PROGRAMME_LOCATION:
+        case StatType.ALL_PROGRAMME_LOCATION:
+        case StatType.MY_PROGRAMME_LOCATION:
+        case StatType.MY_CERTIFIED_PROGRAMME_LOCATION:
+          results[stat.type] = await this.programmeRepo.manager
+            .query(`SELECT p."programmeId" as loc, count(*) AS count
+            FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
+            ${
+              stat.type === StatType.MY_PROGRAMME_LOCATION
+                ? `where ${companyId} = ANY(b."companyId")`
+                : ""
+            }
+            ${
+              stat.type === StatType.MY_CERTIFIED_PROGRAMME_LOCATION
+                ? `where ${companyId} = ANY(b."certifierId")`
+                : ""
+            }
+            GROUP  BY p."programmeId"`);
+          break;
+        case StatType.ALL_TRANSFER_LOCATION:
+        case StatType.MY_TRANSFER_LOCATION:
+        case StatType.MY_CERTIFIED_TRANSFER_LOCATION:
+          if (stat.type === StatType.MY_TRANSFER_LOCATION) {
+            stat.statFilter
+              ? (stat.statFilter.onlyMine = true)
+              : (stat.statFilter = { onlyMine: true });
+          }
 
-        //   if (StatType.MY_PROGRAMME_LOCATION === stat.type) {
-        //     stat.statFilter.onlyMine = true;
-        //   }
-
-        //   const locationAgg = new AggrEntry("geographicalLocationCordintes", '', "locationCoordinates");
-        //   locationAgg.outerQuery = 'select sum(s) from unnest'
-        //   results[stat.type] = await this.genAggregateTypeOrmQuery(
-        //     this.programmeRepo,
-        //     "programme",
-        //     undefined,
-        //     [
-        //       new AggrEntry('programmeId', 'COUNT', "count"),
-        //       frzAgg,
-        //     ],
-        //     this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' }),
-        //     null,
-        //     abilityCondition,
-        //     lastTimeForWhere,
-        //     "createdTime",
-        //     stat.statFilter?.timeGroup ? "createdAt" : undefined,
-        //     stat.statFilter?.timeGroup ? "day" : undefined,
-        //   );
-        //   break;
+          let filtCom = this.getFilterAndByStatFilter(stat.statFilter, {
+            value: companyId,
+            key: "fromCompanyId",
+            operation: "=",
+          });
+          if (!filtCom) {
+            filtCom = [];
+          }
+          filtCom.push({
+            value: "0",
+            key: "retirementType",
+            operation: "=",
+          });
+          if (stat.type === StatType.MY_CERTIFIED_TRANSFER_LOCATION)
+            filtCom.push({
+              value: companyId,
+              key: 'certifier"->>"certifierId',
+              operation: "ANY",
+            });
+          results[stat.type] = await this.genAggregateTypeOrmQuery(
+            this.programmeTransferRepo,
+            "transfer",
+            ['toCompanyMeta"->>country'],
+            [new AggrEntry("requestId", "COUNT", "count")],
+            filtCom,
+            null,
+            abilityCondition,
+            lastTimeForWhere,
+            "txTime"
+          );
+          break;
       }
     }
     return new DataCountResponseDto(results);

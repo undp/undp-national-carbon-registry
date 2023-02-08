@@ -1,6 +1,15 @@
 
 # Carbon Registry
-Carbon credit initiative for ExO Digital and HQ/GEF NCE.
+The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
+
+As an online database, the National Carbon Registry uses standards national and international standards for quantifying and verifying greenhouse gas emissions reductions of programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
+
+The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more. 
+
+The system has 3 key features:
+* **Analytics Dashboard:** Enabling governments, companies, and certification bodies to operate transparently and function on an immutable blockchain.
+* **Carbon Credit Calculator:** Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. 
+* **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
 
 ## Standard
 This codebase aims to fullfill the digital public goods standard:
@@ -13,23 +22,22 @@ UNDP Carbon Registry based on AWS Serverless
 ## Project Structure
 
     .
-    ├── .github                         # Github Actions files
-    ├── deployment                      # AWS cloudformation files for initial resource creation and setup
-    ├── lambda                          # Server implementation - NestJS applications
-        ├── layer                       # AWS lambda layer
-            ├── serverless.yml          # AWS Lambda Layer deployment configuration
-        ├── services                    # AWS lambda function deployments scripts and implementation (NestJS application)
+    ├── .github                         # CI/CD [Github Actions files]
+    ├── deployment                      # Declarative configuration files for initial resource creation and setup [AWS Cloudformation]
+    ├── lambda                          # System service implementation [NestJS applications, Serverless + AWS Lambda]
+        ├── layer                       # Service dependency layer [AWS Lambda Layers]
+            ├── serverless.yml          # Service dependency layer deployment scripts [ Serverless + AWS Lambda Layer]
+        ├── services                    # Services implementation [AWS lambda - NestJS application]
             ├── src
-                ├── national-api        # National API NestJS module       
-                ├── operational-api     # Operation API NestJS module
-                ├── certifier-api       # Certifier API NestJS module
-                ├── ledger-replicator   # QLDB ledger data replicator
-                ├── shared              # Shared resources
-            ├── serverless.yml          # AWS Lambda function deployment scripts for services 
+                ├── national-api        # National API [NestJS module]      
+                ├── stats-api           # Statistic API [NestJS module]
+                ├── ledger-replicator   # Blockchain Database data replicator [QLDB to Postgres]
+                ├── shared              # Shared resources [NestJS module]     
+            ├── serverless.yml          # Service deployment scripts [Serverless + AWS Lambda]
     ├── libs
-        ├── carbon-credit-calculator    # Node module implementation for the Carbon credit calculation library
-        ├── serial-number-gen           # Node module implementation for the carbon programme serial number calculation
-    ├── web                             # System ReactJS web frontend implementation
+        ├── carbon-credit-calculator    # Implementation for the Carbon credit calculation library [Node module + Typescript]
+        ├── serial-number-gen           # Implementation for the carbon programme serial number calculation [Node module + Typescript]
+    ├── web                             # System web frontend implementation [ReactJS]
     ├── .gitignore
     └── README.md
 
@@ -106,6 +114,14 @@ All the CRUD operations can perform as per the following table,
 
 - All users can edit own user account except Role and Email.
 - Users are not allowed to delete the own account from the system.
+
+
+### Web Frontend
+Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
+
+
+### Status Page
+https://github.com/undp/carbon-registry-status
 
 ### Governance and Support
 ![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)

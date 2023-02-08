@@ -17,6 +17,7 @@ import { OrganisationUpdateDto } from "../dto/organisation.update.dto";
 import { DataResponseDto } from "../dto/data.response.dto";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class CompanyService {
@@ -32,7 +33,7 @@ export class CompanyService {
 
   async suspend(
     companyId: number,
-    userId: string,
+    user: User,
     remarks: string,
     abilityCondition: string
   ): Promise<any> {
@@ -75,14 +76,15 @@ export class CompanyService {
         await this.programmeLedgerService.freezeCompany(
           companyId,
           remarks,
-          userId
+          user,
+          company.name
         );
         await this.companyTransferCancel(companyId);
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
           remarks,
-          userId
+          user.id.toString()
         );
       }
       return new BasicResponseDto(
