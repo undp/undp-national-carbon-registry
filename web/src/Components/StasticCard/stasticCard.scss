@@ -48,7 +48,7 @@
       font-size: 0.875rem;
       font-weight: 500;
       width: 100%;
-      color:  rgba(58, 53, 65, 0.5);
+      color: rgba(58, 53, 65, 0.5);
     }
 
     .value {
@@ -69,6 +69,17 @@
       margin-top: 1rem;
       color: $primary-blue;
       background-color: rgba($color: #b9e2f4, $alpha: 0.4);
+    }
+
+    .updated-on-null {
+      display: flex;
+      flex-direction: row;
+      font-size: 0.813rem;
+      border-radius: 3.125rem;
+      padding: 0 0.5rem 0 0.5rem;
+      margin-top: 1rem;
+      color: transparent;
+      background-color: transparent;
     }
   }
 
