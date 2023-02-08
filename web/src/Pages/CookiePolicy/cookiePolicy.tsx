@@ -143,7 +143,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>JavaServer Pages Technologies View Service Privacy Policy </td>
+                  <td>
+                    JavaServer Pages Technologies{' '}
+                    <a href="https://www.oracle.com/legal/privacy/privacy-policy.html">
+                      View Service Privacy Policy
+                    </a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -178,7 +183,10 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>reCAPTCHA View Service Privacy Policy </td>
+                  <td>
+                    reCAPTCHA{' '}
+                    <a href="https://policies.google.com/privacy">View Service Privacy Policy</a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -210,7 +218,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>Termly View Service Privacy Policy </td>
+                  <td>
+                    Termly
+                    <a href="https://termly.io/our-privacy-policy/">
+                      View Service Privacy Policy
+                    </a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -287,7 +300,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>Google Analytics View Service Privacy Policy</td>
+                  <td>
+                    Google Analytics{' '}
+                    <a href="https://policies.google.com/technologies/ads">
+                      View Service Privacy Policy
+                    </a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -323,7 +341,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>Google analytics View Service Privacy Policy</td>
+                  <td>
+                    Google analytics
+                    <a href="https://policies.google.com/technologies/ads">
+                      View Service Privacy Policy
+                    </a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -369,7 +392,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>Cox Digital Solutions (Fomerly Adify) View Service Privacy Policy </td>
+                  <td>
+                    Cox Digital Solutions (Fomerly Adify){' '}
+                    <a href="https://www.novomotus.com/privacy-policy/">
+                      View Service Privacy Policy
+                    </a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -403,7 +431,12 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Service:</td>
-                  <td>Facebook View Service Privacy Policy </td>
+                  <td>
+                    Facebook{' '}
+                    <a href="https://www.facebook.com/privacy/policy/?entry_point=data_policy_redirect&entry=0">
+                      View Service Privacy Policy
+                    </a>{' '}
+                  </td>
                 </tr>
                 <tr>
                   <td>Country:</td>
@@ -491,13 +524,19 @@ const CookiePolicy = () => {
               services, fraud prevention and for other site operations.
               <br /> If you do not want Flash Cookies stored on your computer, you can adjust the
               settings of your Flash player to block Flash Cookies storage using the tools contained
-              in the Website Storage Settings Panel. You can also control Flash Cookies by going to
-              the Global Storage Settings Panel and following the instructions (which may include
-              instructions that explain, for example, how to delete existing Flash Cookies (referred
-              to "information" on the Macromedia site), how to prevent Flash LSOs from being placed
-              on your computer without your being asked, and (for Flash Player 8 and later) how to
-              block Flash Cookies that are not being delivered by the operator of the page you are
-              on at the time).
+              in the{' '}
+              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html">
+                Website Storage Settings Panel
+              </a>
+              . You can also control Flash Cookies by going to the{' '}
+              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html">
+                Global Storage Settings Panel
+              </a>{' '}
+              and following the instructions (which may include instructions that explain, for
+              example, how to delete existing Flash Cookies (referred to "information" on the
+              Macromedia site), how to prevent Flash LSOs from being placed on your computer without
+              your being asked, and (for Flash Player 8 and later) how to block Flash Cookies that
+              are not being delivered by the operator of the page you are on at the time).
               <br /> Please note that setting the Flash Player to restrict or limit acceptance of
               Flash Cookies may reduce or impede the functionality of some Flash applications,
               including, potentially, Flash applications used in connection with our services or
@@ -545,7 +584,11 @@ const CookiePolicy = () => {
               <br /> United Nations Development Programme 1 United Nations Plaza New York,
               <br /> New York United States
               <br /> Phone: +260-211-263258
-              <br /> This cookie policy was created using Termly's Cookie Consent Manager.
+              <br /> This cookie policy was created using Termly's{' '}
+              <a href="https://termly.io/products/cookie-consent-manager/">
+                Cookie Consent Manager
+              </a>
+              .
             </div>
           </Col>
         </Row>

@@ -15,6 +15,7 @@ import { AggrEntry } from "../shared/dto/aggr.entry";
 import { Company } from "../shared/entities/company.entity";
 import { StatFilter } from "../shared/dto/stat.filter";
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { TransferStatus } from "../shared/enum/transform.status.enum";
 
 @Injectable()
 export class AggregateAPIService {
@@ -44,7 +45,7 @@ export class AggregateAPIService {
           value: statFilter.endTime,
         })
       }
-      if (statFilter.onlyMine == true) {
+      if (statFilter.onlyMine == true && mineFilter) {
         filters.push(mineFilter)
       }
       
@@ -74,12 +75,13 @@ export class AggregateAPIService {
     groupBy: string[], 
     aggregates: AggrEntry[], 
     filterAnd: FilterEntry[], 
+    filterOr: FilterEntry[], 
     sort: SortEntry, 
     abilityCondition: string,
     lastTimeForWhere: any,
     timeCol: string,
     timeGroupingCol?: string,
-    timeGroupingAccuracy?: string
+    timeGroupingAccuracy?: string,
     ) {
     
       const query = new QueryDto()
@@ -162,9 +164,10 @@ export class AggregateAPIService {
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme", 
-      null, 
+      null,
       [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtAuth, 
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere,
@@ -184,6 +187,7 @@ export class AggregateAPIService {
       null, 
       [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtC, 
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere, 
@@ -217,7 +221,8 @@ export class AggregateAPIService {
         new AggrEntry('creditTransferred', 'SUM', "totalTxCredit"),
         frzAgg,
       ], 
-      filters, 
+      filters,
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere,
@@ -254,12 +259,14 @@ export class AggregateAPIService {
               new AggrEntry('programmeId', 'COUNT', "count"),
               new AggrEntry('creditEst', 'SUM', "totalEstCredit"),
               new AggrEntry('creditIssued', 'SUM', "totalIssuedCredit"),
+              new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
               new AggrEntry('creditRetired', 'SUM', "totalRetiredCredit"),
               new AggrEntry('creditTransferred', 'SUM', "totalTxCredit"),
               frzAgg,
             ], 
             this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' }), 
-            null, 
+            null,
+            null,
             abilityCondition,
             lastTimeForWhere,
             "createdTime",
@@ -287,17 +294,33 @@ export class AggregateAPIService {
           } else {
             stat.statFilter = { onlyMine: true }
           }
-          const filt = this.getFilterAndByStatFilter(stat.statFilter, 
-            { value: companyId, 
-              key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "toCompanyId", 
-              operation: '=' 
-            });
+          let filt = this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, 
+            key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "fromCompanyId", 
+            operation: '=' 
+          });
+
+          if (!filt) {
+            filt = []
+          }
+          filt.push({
+            value: TransferStatus.PENDING,
+            operation: '=',
+            key: 'status'
+          })
+          
+          // if (stat.type === StatType.PENDING_TRANSFER_RECV) {
+          //   filterOr.push({ value: companyId, 
+          //     key: "fromCompanyId", 
+          //     operation: '=' 
+          //   })
+          // }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
             null, 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
-            filt, 
+            filt,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere,
@@ -432,7 +455,8 @@ export class AggregateAPIService {
               new AggrEntry('creditTransferred', 'SUM', "totalTxCredit"),
               frzAgg,
             ], 
-            filtCState, 
+            filtCState,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere, 
@@ -479,7 +503,8 @@ export class AggregateAPIService {
             "transfer", 
             ['toCompanyMeta"->>country'], 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
-            filtCom, 
+            filtCom,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere,

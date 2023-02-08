@@ -353,7 +353,7 @@ export const totalCreditsOptions: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
+    colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
   },
   title: {
     text: '',
@@ -389,7 +389,7 @@ export const totalCreditsOptions: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
+      colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
       useSeriesColors: false,
     },
     markers: {
@@ -397,7 +397,7 @@ export const totalCreditsOptions: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#4FB8E7', '#7FEABF', '#FF8183', '#D8D8D8'],
+      fillColors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
@@ -743,8 +743,8 @@ export const optionDonutPieA: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
-  labels: ['Authorised', 'Transfered', 'Retired', 'Issued'],
+  colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
+  labels: ['Authorised', 'Issued', 'Transfered', 'Retired'],
   plotOptions: {
     pie: {
       expandOnClick: false,
@@ -781,7 +781,7 @@ export const optionDonutPieA: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
       useSeriesColors: false,
     },
     markers: {
@@ -789,7 +789,7 @@ export const optionDonutPieA: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#CDCDCD', '#FF8183', '#7FEABF'],
+      fillColors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,

@@ -69,7 +69,7 @@ const Dashboard = () => {
   const [endTime, setEndTime] = useState<number>(0);
   const [categoryType, setCategoryType] = useState<string>('overall');
 
-  const [issuedProgrammes, setIssuedProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [authorisedProgrammes, setAuthorisedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
   const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
 
@@ -132,29 +132,19 @@ const Dashboard = () => {
     return {
       stats: [
         {
-          type: 'CREDIT_STATS_BALANCE',
+          type: 'AGG_PROGRAMME_BY_STATUS',
         },
         {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'AWAITING_AUTHORIZATION',
+          type: 'PENDING_TRANSFER_INIT',
         },
         {
-          type: 'TRANSFER_REQUEST_RECEIVED',
+          type: 'MY_CREDIT',
         },
         {
-          type: 'TRANSFER_REQUEST_SENT',
+          type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'PROGRAMS_CERTIFIED',
-        },
-        {
-          type: 'PROGRAMS_UNCERTIFIED',
-        },
-        {
-          type: 'CREDIT_CERTIFIED',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_LAST_UPDATE',
+          type: 'CERTIFIED_REVOKED_BY_ME',
         },
       ],
       category: 'overall',
@@ -162,54 +152,59 @@ const Dashboard = () => {
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
+    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    }
+  };
+
+  const getAllChartsParams = () => {
     return {
       stats: [
         {
-          type: 'TOTAL_PROGRAMS',
-        },
-        {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'AWAITING_AUTHORIZATION',
-        },
-        {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'AUTHORISED',
-        },
-        {
-          type: 'PROGRAMS_BY_STATUS',
-          value: 'REJECTED',
-        },
-        {
-          type: 'TRANSFER_REQUEST',
-        },
-        {
-          type: 'CREDIT_STATS_BALANCE',
-        },
-        {
-          type: 'CREDIT_STATS_TRANSFERRED',
-        },
-        {
-          type: 'CREDIT_STATS_RETIRED',
-        },
-        {
-          type: 'CREDIT_STATS_ISSUED',
-        },
-        {
-          type: 'CREDIT_STATS_ESTIMATED',
-        },
-        {
-          type: 'CREDIT_CERTIFIED',
-        },
-        {
-          type: 'CREDIT_UNCERTIFIED',
-        },
-        {
-          type: 'CREDIT_REVOKED',
+          type: 'AGG_PROGRAMME_BY_STATUS',
+          statFilter: {
+            startTime: startTime !== 0 ? startTime : undefined,
+            endTime: endTime !== 0 ? endTime : undefined,
+            timeGroup: true,
+          },
         },
       ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
     };
   };
 
@@ -264,7 +259,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const pendingProgrames: any = [];
-      const issuedProgrames: any = [];
+      const authorisedProgrames: any = [];
       const rejectedProgrames: any = [];
       const timeLabelsProgrames: any = [];
 
@@ -306,11 +301,11 @@ const Dashboard = () => {
             timeLabelsProgrames.push(formattedDate);
           });
         }
-        if (totalProgrammes?.issued) {
-          const issued = totalProgrammes?.issued;
-          issued?.map((item: any, index: any) => {
+        if (totalProgrammes?.authorised) {
+          const authorised = totalProgrammes?.authorised;
+          authorised?.map((item: any, index: any) => {
             const programesCount = Object.values(item);
-            issuedProgrames.push(programesCount[0]);
+            authorisedProgrames.push(programesCount[0]);
           });
         }
         if (totalProgrammes?.rejected) {
@@ -457,9 +452,14 @@ const Dashboard = () => {
           });
         }
       }
-      console.log({ pendingProgrames, issuedProgrames, rejectedProgrames, timeLabelsProgrames });
+      console.log({
+        pendingProgrames,
+        authorisedProgrames,
+        rejectedProgrames,
+        timeLabelsProgrames,
+      });
       setPendingProgrammes(pendingProgrames);
-      setIssuedProgrammes(issuedProgrames);
+      setAuthorisedProgrammes(authorisedProgrames);
       setRejectedProgrammes(rejectedProgrames);
 
       setEnergyProgrammes(energyProgrames);
@@ -501,22 +501,46 @@ const Dashboard = () => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/dashboard',
+        'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
       console.log('stats data  -- > ', response?.data);
-      setPendingProjectsWithoutTimeRange(response?.data?.stats?.AWAITING_AUTHORIZATION);
-      setCreditBalanceWithoutTimeRange(
-        parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
-      );
-      setCreditCertifiedBalanceWithoutTimeRange(
-        parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum)
-      );
-      setProgrammesCertifed(response?.data?.stats?.PROGRAMS_CERTIFIED);
-      setProgrammesUnCertifed(response?.data?.stats?.PROGRAMS_UNCERTIFIED);
-      setTransferRequestSent(response?.data?.stats?.TRANSFER_REQUEST_SENT);
-      setTransferRequestReceived(response?.data?.stats?.TRANSFER_REQUEST_RECEIVED);
-      setLastUpdateProgrammesStats(response?.data?.stats?.TOTAL_PROGRAMS_LAST_UPDATE);
+      const programmeByStatusAggregationResponse =
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+      const pendingTransferInitAggregationResponse =
+        response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
+      const pendingTransferReceivedAggregationResponse =
+        response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
+      const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+      const programmeByStatusAggregationResponseLastUpdate =
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
+      programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+        if (responseItem?.currentStage === 'AwaitingAuthorization') {
+          setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
+        }
+      });
+      if (programmeByStatusAggregationResponseLastUpdate) {
+        setLastUpdateProgrammesStats(programmeByStatusAggregationResponseLastUpdate);
+      }
+      if (pendingTransferInitAggregationResponse) {
+        setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
+      }
+      if (myCreditAggregationResponse) {
+        setCreditBalanceWithoutTimeRange(myCreditAggregationResponse?.primary);
+      }
+      if (pendingTransferReceivedAggregationResponse) {
+        setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
+      }
+      if (certifiedByMeAggregationResponse) {
+        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
+        setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
+        setCreditCertifiedBalanceWithoutTimeRange(
+          certifiedByMeAggregationResponse?.certifiedSum === null
+            ? 0
+            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
+        );
+      }
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -536,62 +560,91 @@ const Dashboard = () => {
     const pieSeriesCreditsCerifiedData: any[] = [];
     try {
       const response: any = await post(
-        'stats/programme/dashboard',
+        'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParams()
       );
-      console.log('stats data  -- > ', response?.data);
-      setPendingProjects(response?.data?.stats?.AWAITING_AUTHORIZATION);
-      setRejectedProjects(response?.data?.stats?.REJECTED);
-      setAuthorisedProjects(response?.data?.stats?.AUTHORISED);
-      setTotalProjects(response?.data?.stats?.TOTAL_PROGRAMS);
-      setTransfererequestsSent(response?.data?.stats?.TRANSFER_REQUEST);
+      console.log('stats data 2nd  -- > ', response?.data);
+      let programmeByStatusAggregationResponse: any;
+      let certifiedRevokedAggregationResponse: any;
+      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else {
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+      }
+      let totalProgrammes = 0;
+      let totalEstCredits = 0;
+      let totalIssuedCredits = 0;
+      let totalRetiredCredits = 0;
+      let totalBalancecredit = 0;
+      let totalTxCredits = 0;
+      let totalCertifiedCredit = 0;
+      let totalUnCertifiedredit = 0;
+      let totalRevokedCredits = 0;
+      if (programmeByStatusAggregationResponse?.length > 0) {
+        programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
+          if (responseItem?.currentStage === 'AwaitingAuthorization') {
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setPendingProjects(parseInt(responseItem?.count));
+          }
+          if (responseItem?.currentStage === 'Rejected') {
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setRejectedProjects(parseInt(responseItem?.count));
+          }
+          if (responseItem?.currentStage === 'Authorised') {
+            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+            totalRetiredCredits =
+              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+            setAuthorisedProjects(parseInt(responseItem?.count));
+          }
+        });
+        setTotalProjects(totalProgrammes);
+      } else {
+        setPendingProjects(0);
+        setAuthorisedProjects(0);
+        setRejectedProjects(0);
+        setTotalProjects(0);
+      }
+      if (certifiedRevokedAggregationResponse) {
+        totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
+        totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
+        totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
+      }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      const creditAuthorized =
-        parseFloat(response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum) -
-        parseFloat(response?.data?.stats?.CREDIT_STATS_ISSUED?.sum);
+      const creditAuthorized = totalEstCredits - totalIssuedCredits;
       pieSeriesCreditsData.push(creditAuthorized);
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_TRANSFERRED?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_RETIRED?.sum));
-      pieSeriesCreditsData.push(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      pieSeriesCreditsData.push(totalBalancecredit);
+      pieSeriesCreditsData.push(totalTxCredits);
+      pieSeriesCreditsData.push(totalRetiredCredits);
 
-      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_CERTIFIED?.sum));
-      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_UNCERTIFIED?.sum));
-      pieSeriesCreditsCerifiedData.push(parseFloat(response?.data?.stats?.CREDIT_REVOKED?.sum));
-      // pieSeriesCreditsCerifiedData.push(
-      //   parseFloat(response?.data?.stats?.CREDIT_CERTIFIED_ISSUED?.sum)
-      // );
-      let totalCredits = 0.0;
-      console.log(
-        'estimated value || total credits -- > ',
-        response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum === null
-      );
-      if (response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum !== null) {
-        totalCredits = response?.data?.stats?.CREDIT_STATS_ESTIMATED?.sum;
-      }
-      let totalCreditsCertified = 0;
-      for (let i = 0; i < pieSeriesCreditsData.length; i++) {
-        if (String(pieSeriesCreditsData[i]) === 'NaN') {
-          if (i !== -1) {
-            pieSeriesCreditsData[i] = 0;
-          }
-          // totalCredits = totalCredits + 0;
-        } else {
-          // totalCredits = totalCredits + pieSeriesCreditsData[i];
-        }
-      }
-      for (let j = 0; j < pieSeriesCreditsCerifiedData.length; j++) {
-        if (String(pieSeriesCreditsCerifiedData[j]) === 'NaN') {
-          if (j !== -1) {
-            pieSeriesCreditsCerifiedData[j] = 0;
-          }
-          totalCreditsCertified = totalCreditsCertified + 0;
-        } else {
-          totalCreditsCertified = totalCreditsCertified + pieSeriesCreditsCerifiedData[j];
-        }
-      }
-
+      pieSeriesCreditsCerifiedData.push(totalCertifiedCredit);
+      pieSeriesCreditsCerifiedData.push(totalUnCertifiedredit);
+      pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
+      const totalCreditsCertified =
+        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + addCommSep(totalCredits);
+        '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
 
@@ -617,9 +670,12 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
+    console.log('rejected projects hanges --- ', rejectedProjects);
+  }, [rejectedProjects]);
+
+  useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (companyRole === 'ProgrammeDeveloper') {
-      console.log('sdkfjhkahf ewiufhwiefhuf ******** ');
       setCategoryType('mine');
     }
   }, [companyRole]);
@@ -632,7 +688,7 @@ const Dashboard = () => {
   const seriesTotalProgrammesY = [
     {
       name: 'Authorised',
-      data: issuedProgrammes,
+      data: authorisedProgrammes,
     },
     {
       name: 'Rejected',
@@ -697,12 +753,12 @@ const Dashboard = () => {
       data: issuedCredits,
     },
     {
-      name: 'Retired',
-      data: retiredCredits,
-    },
-    {
       name: 'Transferred',
       data: transferredCredits,
+    },
+    {
+      name: 'Retired',
+      data: retiredCredits,
     },
   ];
 
@@ -1003,7 +1059,7 @@ ${total}
             <StasticCard
               value={
                 companyRole === 'Government'
-                  ? transfererequestsSent
+                  ? transferRequestSent
                   : companyRole === 'ProgrammeDeveloper'
                   ? transferRequestSent
                   : programmesCertifed
