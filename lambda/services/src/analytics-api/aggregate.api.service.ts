@@ -289,9 +289,9 @@ export class AggregateAPIService {
         case StatType.PENDING_TRANSFER_INIT:
         case StatType.PENDING_TRANSFER_RECV:
           if (stat.statFilter) {
-            stat.statFilter.onlyMine = false;
+            stat.statFilter.onlyMine = true;
           } else {
-            stat.statFilter = { onlyMine: false }
+            stat.statFilter = { onlyMine: true }
           }
           let filt = this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, 
             key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "fromCompanyId", 
