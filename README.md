@@ -17,7 +17,7 @@ https://digitalpublicgoods.net/standard/
 
 ## System Architecture
 UNDP Carbon Registry based on Serverless Architecture.
-![alt text](./documention/imgs/System%20Architecture.svg)
+![alt text](./documention/imgs/System%20Architecture.png)
 
 ## Project Structure
 
