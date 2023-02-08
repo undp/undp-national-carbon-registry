@@ -44,7 +44,7 @@ export class AggregateAPIService {
           value: statFilter.endTime,
         })
       }
-      if (statFilter.onlyMine == true) {
+      if (statFilter.onlyMine == true && mineFilter) {
         filters.push(mineFilter)
       }
       
@@ -74,12 +74,13 @@ export class AggregateAPIService {
     groupBy: string[], 
     aggregates: AggrEntry[], 
     filterAnd: FilterEntry[], 
+    filterOr: FilterEntry[], 
     sort: SortEntry, 
     abilityCondition: string,
     lastTimeForWhere: any,
     timeCol: string,
     timeGroupingCol?: string,
-    timeGroupingAccuracy?: string
+    timeGroupingAccuracy?: string,
     ) {
     
       const query = new QueryDto()
@@ -162,9 +163,10 @@ export class AggregateAPIService {
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme", 
-      null, 
+      null,
       [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtAuth, 
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere,
@@ -184,6 +186,7 @@ export class AggregateAPIService {
       null, 
       [new AggrEntry('programmeId', 'COUNT', "count"), new AggrEntry('creditEst', 'SUM', "sum")], 
       filtC, 
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere, 
@@ -217,7 +220,8 @@ export class AggregateAPIService {
         new AggrEntry('creditTransferred', 'SUM', "totalTxCredit"),
         frzAgg,
       ], 
-      filters, 
+      filters,
+      null,
       null, 
       abilityCondition,
       lastTimeForWhere,
@@ -259,7 +263,8 @@ export class AggregateAPIService {
               frzAgg,
             ], 
             this.getFilterAndByStatFilter(stat.statFilter, { value: companyId, key: 'companyId', operation: 'ANY' }), 
-            null, 
+            null,
+            null,
             abilityCondition,
             lastTimeForWhere,
             "createdTime",
@@ -283,21 +288,29 @@ export class AggregateAPIService {
         case StatType.PENDING_TRANSFER_INIT:
         case StatType.PENDING_TRANSFER_RECV:
           if (stat.statFilter) {
-            stat.statFilter.onlyMine = true;
+            stat.statFilter.onlyMine = false;
           } else {
-            stat.statFilter = { onlyMine: true }
+            stat.statFilter = { onlyMine: false }
           }
-          const filt = this.getFilterAndByStatFilter(stat.statFilter, 
-            { value: companyId, 
-              key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "toCompanyId", 
+          let filt = this.getFilterAndByStatFilter(stat.statFilter, null);
+          
+          const filterOr = [{ value: companyId, 
+            key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "toCompanyId", 
+            operation: '=' 
+          }];
+          if (stat.type === StatType.PENDING_TRANSFER_RECV) {
+            filterOr.push({ value: companyId, 
+              key: "fromCompanyId", 
               operation: '=' 
-            });
+            })
+          }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer", 
             null, 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
-            filt, 
+            filt,
+            filterOr,
             null, 
             abilityCondition,
             lastTimeForWhere,
@@ -432,7 +445,8 @@ export class AggregateAPIService {
               new AggrEntry('creditTransferred', 'SUM', "totalTxCredit"),
               frzAgg,
             ], 
-            filtCState, 
+            filtCState,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere, 
@@ -479,7 +493,8 @@ export class AggregateAPIService {
             "transfer", 
             ['toCompanyMeta"->>country'], 
             [new AggrEntry('requestId', 'COUNT', 'count')], 
-            filtCom, 
+            filtCom,
+            null,
             null, 
             abilityCondition,
             lastTimeForWhere,
