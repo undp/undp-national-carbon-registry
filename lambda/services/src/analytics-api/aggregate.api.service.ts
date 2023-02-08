@@ -15,6 +15,7 @@ import { AggrEntry } from "../shared/dto/aggr.entry";
 import { Company } from "../shared/entities/company.entity";
 import { StatFilter } from "../shared/dto/stat.filter";
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { TransferStatus } from "../shared/enum/transform.status.enum";
 
 @Injectable()
 export class AggregateAPIService {
@@ -297,6 +298,15 @@ export class AggregateAPIService {
             key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "fromCompanyId", 
             operation: '=' 
           });
+
+          if (!filt) {
+            filt = []
+          }
+          filt.push({
+            value: TransferStatus.PENDING,
+            operation: '=',
+            key: 'status'
+          })
           
           // if (stat.type === StatType.PENDING_TRANSFER_RECV) {
           //   filterOr.push({ value: companyId, 
