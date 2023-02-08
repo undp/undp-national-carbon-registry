@@ -307,6 +307,11 @@ export class AggregateAPIService {
             operation: '=',
             key: 'status'
           })
+          filt.push({
+            value: true,
+            operation: '!=',
+            key: 'isRetirement'
+          })
           
           // if (stat.type === StatType.PENDING_TRANSFER_RECV) {
           //   filterOr.push({ value: companyId, 
