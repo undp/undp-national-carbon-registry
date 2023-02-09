@@ -155,11 +155,11 @@ export class AggregateAPIService {
 
   private async getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId?){
     let filtAuth = this.getFilterAndByStatFilter(stat.statFilter, 
-      { 
+      companyId ? { 
         value: companyId, 
         key: "companyId", 
         operation: 'ANY' 
-      });
+      }: undefined);
 
     if (companyId) {
       if (!filtAuth) {
