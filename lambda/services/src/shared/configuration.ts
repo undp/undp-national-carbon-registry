@@ -37,5 +37,6 @@ export default () => ({
     },
     host: process.env.HOST || 'https://d3jqjkxcrafyfv.cloudfront.net',
     liveChat : 'https://undp2020cdo.typeform.com/to/emSWOmDo',
-    helpDocumentation: 'carbreg.org/help'
+    helpDocumentation: 'carbreg.org/help',
+    systemCountryName: process.env.systemCountryName || 'Sri Lanka',
 });

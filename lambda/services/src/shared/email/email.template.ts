@@ -1,37 +1,46 @@
 export const EmailTemplates = {
-    REGISTER_EMAIL: {
+    ORGANISATION_CREATE:{
         subject: 'Carbon Registry: Welcome!',
         html: `
-        Welcome {name}, 
+            Welcome {{organisationName}},<br><br> 
+            
+            Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br> 
+            Explore the Registry here {{home}}. <br>
+            
+            Sincerely,<br> 
+            The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    USER_CREATE: {
+        subject: 'Carbon Registry: Welcome!',
+        html: `
+        Welcome {{name}}, <br><br>
         
-        Your account has been created for the {countryName} Carbon Credit 
-        Registry. Together we can work on reducing global greenhouse gasses. 
-        To get the most out of the Registry, take a look: 
+        Your account has been created for the {{countryName}} Carbon Credit 
+        Registry. Your account has been created. You can access your account using the temporaryHomepage: {{home}} <br>
         
-        Explore the Registry here {login}. 
-        
-        For future reference, here’s your login information: 
-        Homepage: {home} 
-        User: {email} 
-        Password (temporary): {tempPassword} 
-        
+        User: {{email}} <br>
+        Password (temporary): {{tempPassword}} <br> 
+
         If you have any questions, feel free to email our customer success 
         team <a href="mailto:mailto: help@carbreg.org?subject=I Need Help With The 
-        {countryName} Carbon Credit Registry">customer success 
+        {{countryName}} Carbon Credit Registry">customer success 
         team</a>
         (We’re lightning quick at 
         replying.) We also offer live chat 
-        {liveChat}. 
+        {{liveChat}}. 
+        <br>
         
-        Sincerely, The {countryName} Carbon Credit Registry Team 
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team <br>
         
         P.S.Need immediate help getting started? Check out our help 
-        documentation {helpDoc}. Or, just reply to this email, the 
-        {countryName} Carbon Credit Registry Team is always ready to 
-        help! 
+        documentation {{helpDoc}}. Or, just reply to this email, the 
+        {{countryName}} Carbon Credit Registry Team is always ready to 
+        help! <br>
         
-        United Nations Development Programme 
-        1 United Nations Plaza 
+        United Nations Development Programme <br>
+        1 United Nations Plaza  <br>
         New York, NY USA 10001
         `,
         text: ''
@@ -77,46 +86,111 @@ export const EmailTemplates = {
     CHANGE_PASSOWRD: {
         subject: 'Carbon Registry: Your password was changed',
         html: `
-        Hi {name},<br><br>
+        Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
-        If you do not use {countryName} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem With The {countryName} Carbon Credit Registry">contact support</a>
+        If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
+        <a href="mailto: help@carbreg.org?subject=Password Problem With The {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
-        <br><br>
+        <br>
         Sincerely, <br>
-        The {countryName} Carbon Credit Registry Team
+        The {{countryName}} Carbon Credit Registry Team
         `,
         text: ''
     },
     PROGRAMME_CREATE: {
         subject: 'New Programme Received for Authorisation',
         html:`
-        Hi {name},  <br><br>
+        Hi {{name}}, <br><br>
 
-        A new programme from {organisationName} is awaiting authorisation. <br>
+        A new programme owned by {{organisationName}} is awaiting authorisation. <br>
         
-        <a href="{programmePageLink}">Click here</a> to access all the programmes that require authorisation. 
+        <a href="{{programmePageLink}}">Click here</a> to access all the programmes that require authorisation. 
         <br><br>
          
         Sincerely,  <br>
-        The {countryName} Carbon Credit Registry Team 
+        The {{countryName}} Carbon Credit Registry Team 
         `
     },
     PROGRAMME_AUTHORISATION: {
         subject: 'Programme authorised',
         html:`
-        Hi {name},  <br><br>
+        Hi {{name}},  <br><br>
 
-        {programmeName} of your organisation has been authorised on {authorisedDate} with the serial number {serialNumber}. 
+        {{programmeName}}  of your organisation has been authorised on {{authorisedDate}} with the serial number {{serialNumber}}. 
         <br>
          
-        <a href="{programmePageLink}">Click here</a> for more details of the programme. 
+        <a href="{{programmePageLink}}">Click here</a> for more details of the programme. 
         <br><br>
         
         Sincerely,  <br>
-        The {countryName} Carbon Credit Registry Team 
+        The {{countryName}} Carbon Credit Registry Team 
         `
     },
-    
+    PROGRAMME_REJECTION: {
+        subject: 'Programme Rejected',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        {{programmeName}} of your Organisation has been rejected on {{date}} due to the following reason/s: <br>
+        {{reason}} <br>
+        Click here {{pageLink}} for more details of the programme.  <br>
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    },
+    CREDIT_ISSUANCE: {
+        subject: 'Credits Issued',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        {{programmeName}} of your Organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br>
+        Click here {{pageLink}} for more details of the programme.<br>
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    },
+    CREDIT_TRANSFER_REQUISITIONS: {
+        subject: 'Transfer Request Received',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br>
+        Click here {{pageLink}} for more details of the transfer request.<br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    },
+    CREDIT_TRANSFER_CANCELLATION: {
+        subject: 'Transfer Request Cancelled',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled.<br>
+        Click here {{pageLink}} for more details of the transfer request.<br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    },
+    CREDIT_TRANSFER_ACCEPTED: {
+        subject: 'Transfer Request Accepted',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been accepted by {{organisationName}}.<br>
+        Click here {{pageLink}} for more details of the transfer request.
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    },
+    CREDIT_TRANSFER_REJECTED: {
+        subject: 'Transfer Request Rejected',
+        html: `
+        Hi {{name}}, <br><br> 
+        
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} 
+        made by your organisation has been rejected by {{organisationName}}.<br>
+        Click here {{pageLink}} for more details of the transfer request
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team`
+    } 
 };
