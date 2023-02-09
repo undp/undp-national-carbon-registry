@@ -82,6 +82,7 @@ import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm
 import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
+import Loading from '../../Components/Loading/Loading';
 
 mapboxgl.accessToken =
   '';
@@ -146,6 +147,9 @@ const ProgrammeView = () => {
 
   const drawMap = () => {
     // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
+    if (!mapContainerRef || !mapContainerRef.current) {
+      return;
+    }
     setTimeout(async () => {
       // let mapd: any = undefined;
 
@@ -165,7 +169,7 @@ const ProgrammeView = () => {
 
           if (data?.geographicalLocationCordintes[iloc] !== null) {
             new mapboxgl.Marker({
-              color: locationColors[locationColors.length % (Number(iloc) + 1)],
+              color: locationColors[(Number(iloc) + 1) % locationColors.length],
             })
               .setLngLat(data?.geographicalLocationCordintes[iloc] as LngLatLike)
               .addTo(mapd);
@@ -255,11 +259,13 @@ const ProgrammeView = () => {
       const response: any = await post('national/programme/query', {
         page: 1,
         size: 2,
-        filterAnd: {
-          key: 'programmeId',
-          operation: '=',
-          value: programmeId,
-        },
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
       });
       if (response.data && response.data.length > 0) {
         const d = response.data[0];
@@ -274,8 +280,8 @@ const ProgrammeView = () => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-      setLoadingAll(false);
     }
+    setLoadingAll(false);
   };
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
@@ -682,7 +688,7 @@ const ProgrammeView = () => {
   }, [data]);
 
   if (!data) {
-    return <div></div>;
+    return <Loading />;
   }
 
   const pieChartData = getPieChartData(data);
@@ -1001,7 +1007,7 @@ const ProgrammeView = () => {
   calculations.constantVersion = data.constantVersion;
 
   return loadingAll ? (
-    <Skeleton />
+    <Loading />
   ) : (
     <div className="content-container programme-view">
       <div className="title-bar">
@@ -1349,7 +1355,7 @@ const ProgrammeView = () => {
                           data.geographicalLocationCordintes[idx] !== null &&
                           data.geographicalLocationCordintes[idx] !== undefined && (
                             <span
-                              style={{ color: locationColors[locationColors.length % (idx + 1)] }}
+                              style={{ color: locationColors[(idx + 1) % locationColors.length] }}
                               className="loc-icon"
                             >
                               {<Icon.GeoAltFill />}
