@@ -193,26 +193,49 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-          statFilter: {
-            startTime: startTime !== 0 ? startTime : undefined,
-            endTime: endTime !== 0 ? endTime : undefined,
-            timeGroup: true,
+    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
           },
-        },
-        {
-          type: 'AGG_PROGRAMME_BY_SECTOR',
-          statFilter: {
-            startTime: startTime !== 0 ? startTime : undefined,
-            endTime: endTime !== 0 ? endTime : undefined,
-            timeGroup: true,
+          {
+            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
           },
-        },
-      ],
-    };
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    }
   };
 
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
@@ -267,8 +290,15 @@ const Dashboard = () => {
     try {
       const response: any = await post('stats/programme/agg', getAllChartsParams());
       console.log('stats data 3 -- > ', response?.data);
-      const programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
-      const programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+      let programmesAggByStatus;
+      let programmesAggBySector;
+      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+      } else {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+      }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
       let timeLabelDataSector = [];
