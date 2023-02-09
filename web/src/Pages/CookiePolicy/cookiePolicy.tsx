@@ -44,11 +44,13 @@ const CookiePolicy = () => {
             <div className="cookie-sub">Last updated February 02, 2023</div>
             <div className="cookie-body">
               This Cookie Policy explains how United Nations Development Programme (<b>"Company"</b>
-              , <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) uses cookies and similar technologies to
+              , "<b>w</b>","<b>us</b>", and "<b>our</b>") uses cookies and similar technologies to
               recognize you when you visit our websites at{' '}
-              <a href="https://carbreg.org">https://carbreg.org</a>, ("Websites"). It explains what
-              these technologies are and why we use them, as well as your rights to control our use
-              of them.
+              <a target="_blank" href="https://carbreg.org">
+                https://carbreg.org
+              </a>
+              , ("<b>Websites</b>"). It explains what these technologies are and why we use them, as
+              well as your rights to control our use of them.
               <div>
                 In some cases we may use cookies to collect personal information, or that becomes
                 personal information if we combine it with other information.
@@ -83,9 +85,9 @@ const CookiePolicy = () => {
               "essential" or "strictly necessary" cookies. Other cookies also enable us to track and
               target the interests of our users to enhance the experience on our Online Properties.
               Third parties serve cookies through our Websites for advertising, analytics and other
-              purposes. This is described in more detail below. The specific types of first and
-              third party cookies served through our Websites and the purposes they perform are
-              described below
+              purposes. This is described in more detail below.
+              <br /> The specific types of first and third party cookies served through our Websites
+              and the purposes they perform are described below
               <br /> (please note that the specific cookies served may vary depending on the
               specific Online Properties you visit):
             </div>
@@ -108,8 +110,16 @@ const CookiePolicy = () => {
               browser-to-browser, you should visit your browser's help menu for more information.
               <br /> In addition, most advertising networks offer you a way to opt out of targeted
               advertising. If you would like to find out more information, please visit
-              <a href="http://www.aboutads.info/choices/">http://www.aboutads.info/choices/</a> or
-              <a href="http://www.youronlinechoices.com">http://www.youronlinechoices.com</a> .
+              <a target="_blank" href="http://www.aboutads.info/choices/">
+                {' '}
+                http://www.aboutads.info/choices/
+              </a>{' '}
+              or
+              <a target="_blank" href="http://www.youronlinechoices.com">
+                {' '}
+                http://www.youronlinechoices.com
+              </a>{' '}
+              .
               <br /> The specific types of first and third party cookies served through our Websites
               and the purposes they perform are described in the table below (please note that the
               specific cookies served may vary depending on the specific Online Properties you
@@ -146,7 +156,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     JavaServer Pages Technologies{' '}
-                    <a href="https://www.oracle.com/legal/privacy/privacy-policy.html">
+                    <a
+                      target="_blank"
+                      href="https://www.oracle.com/legal/privacy/privacy-policy.html"
+                    >
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -186,7 +199,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     reCAPTCHA{' '}
-                    <a href="https://policies.google.com/privacy">View Service Privacy Policy</a>{' '}
+                    <a target="_blank" href="https://policies.google.com/privacy">
+                      {' '}
+                      View Service Privacy Policy
+                    </a>{' '}
                   </td>
                 </tr>
                 <tr>
@@ -221,7 +237,7 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Termly
-                    <a href="https://termly.io/our-privacy-policy/">
+                    <a target="_blank" href="https://termly.io/our-privacy-policy/">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -303,7 +319,7 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Google Analytics{' '}
-                    <a href="https://policies.google.com/technologies/ads">
+                    <a target="_blank" href="https://policies.google.com/technologies/ads">
                       View Service Privacy Policy
                     </a>
                   </td>
@@ -343,8 +359,8 @@ const CookiePolicy = () => {
                 <tr>
                   <td>Service:</td>
                   <td>
-                    Google analytics
-                    <a href="https://policies.google.com/technologies/ads">
+                    Google analytics{' '}
+                    <a target="_blank" href="https://policies.google.com/technologies/ads">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -395,7 +411,7 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Cox Digital Solutions (Fomerly Adify){' '}
-                    <a href="https://www.novomotus.com/privacy-policy/">
+                    <a target="_blank" href="https://www.novomotus.com/privacy-policy/">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -434,7 +450,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Facebook{' '}
-                    <a href="https://www.facebook.com/privacy/policy/?entry_point=data_policy_redirect&entry=0">
+                    <a
+                      target="_blank"
+                      href="https://www.facebook.com/privacy/policy/?entry_point=data_policy_redirect&entry=0"
+                    >
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -526,11 +545,17 @@ const CookiePolicy = () => {
               <br /> If you do not want Flash Cookies stored on your computer, you can adjust the
               settings of your Flash player to block Flash Cookies storage using the tools contained
               in the{' '}
-              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html">
+              <a
+                target="_blank"
+                href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html"
+              >
                 Website Storage Settings Panel
               </a>
               . You can also control Flash Cookies by going to the{' '}
-              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html">
+              <a
+                target="_blank"
+                href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"
+              >
                 Global Storage Settings Panel
               </a>{' '}
               and following the instructions (which may include instructions that explain, for

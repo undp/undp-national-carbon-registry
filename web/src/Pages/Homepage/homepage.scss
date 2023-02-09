@@ -6,6 +6,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: $background-color;
+  scroll-behavior: smooth;
 
   .homepage-header-container {
     background-color: rgba(255, 255, 255, 0.8);
@@ -19,6 +20,10 @@
     // padding-left: 2rem;
     padding: 0rem 0rem 0 0vw;
     cursor: pointer;
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     .title {
       font-family: 'MuseoSans';
@@ -75,7 +80,7 @@
     justify-content: right;
     min-width: 150px;
     height: 90px;
-    background-color: rgba(255, 255, 255, 0.8);;
+    background-color: rgba(255, 255, 255, 0.8);
 
     button {
       margin-top: 29px;
@@ -95,6 +100,7 @@
     display: flex;
     flex: 1;
     text-align: left;
+    
 
     // background-size: 500vh;
 
@@ -102,6 +108,67 @@
       text-align: center;
       justify-content: center;
       padding-top: 50vh;
+    }
+    .arrows {
+      width: 60px;
+      height: 72px;
+      position: absolute;
+      left: 50%;
+      margin-left: -30px;
+      bottom: 20px;
+    }
+
+    .arrows path {
+      stroke: #ffffff;
+      fill: transparent;
+      stroke-width: 2.5px;
+      animation: arrow 2s infinite;
+      -webkit-animation: arrow 2s infinite;
+    }
+
+    @keyframes arrow {
+      0% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @-webkit-keyframes arrow /*Safari and Chrome*/ {
+      0% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .arrows path.a1 {
+      animation-delay: -1s;
+      -webkit-animation-delay: -1s;
+    }
+
+    .arrows path.a2 {
+      animation-delay: -0.5s;
+      -webkit-animation-delay: -0.5s;
+    }
+
+    .arrows path.a3 {
+      animation-delay: 0s;
+      -webkit-animation-delay: 0s;
     }
 
     .text-ctn {
@@ -444,7 +511,7 @@
     }
     .footertext-links {
       padding-left: 30px;
-      color:$dark-text-color;
+      color: $dark-text-color;
     }
 
     .divider {
