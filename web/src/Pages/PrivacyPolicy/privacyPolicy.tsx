@@ -43,9 +43,9 @@ const PrivacyPolicy = () => {
             <div className="privacytitle">PRIVACY NOTICE</div>
             <div className="privacy-sub">Last updated February 02, 2023</div>
             <div className="privacy-body">
-              This Cookie Policy explains how United Nations Development Programme (<b>"Company"</b>
-              , <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) describes how and why we might collect,
-              store, use, and/or share ("process") your information when you use our services
+              This privacy notice for United Nations Development Programme (<b>"Company"</b>,{' '}
+              <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) describes how and why we might collect,
+              store, use, and/or share ("process")your information when you use our services
               ("Services"), such as when you:
               <ul>
                 <li>

@@ -503,22 +503,26 @@ export class AggregateAPIService {
     lastTimeForWhere,
     companyId?
   ) {
-    let filtAuth = this.getFilterAndByStatFilter(stat.statFilter, {
+    let filtAuth = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      companyId
+        ? {
+            value: companyId,
+            key: "companyId",
+            operation: "ANY",
+          }
+        : undefined
+    );
+
+    if (!filtAuth) {
+      filtAuth = [];
+    }
+    filtAuth.push({
       value: ProgrammeStage.AUTHORISED,
       key: "currentStage",
       operation: "=",
     });
 
-    if (companyId) {
-      if (!filtAuth) {
-        filtAuth = [];
-      }
-      filtAuth.push({
-        value: companyId,
-        key: "companyId",
-        operation: "ANY",
-      });
-    }
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
@@ -561,7 +565,7 @@ export class AggregateAPIService {
       null,
       abilityCondition,
       lastTimeForWhere,
-      undefined
+      "createdTime"
     );
   }
 
@@ -794,19 +798,15 @@ export class AggregateAPIService {
             last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
               certifiedSum: Number(
-                results[StatType.CERTIFIED_BY_ME].data[0]["totalestcredit"]
+                results[StatType.CERTIFIED_BY_ME].data[0]["sum"]
               ),
               revokedSum: Number(
-                results[StatType.REVOKED_BY_ME].data[0]["totalestcredit"]
+                results[StatType.REVOKED_BY_ME].data[0]["sum"]
               ),
               uncertifiedSum:
                 Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]["sum"]) -
-                Number(
-                  results[StatType.REVOKED_BY_ME].data[0]["totalestcredit"]
-                ) -
-                Number(
-                  results[StatType.CERTIFIED_BY_ME].data[0]["totalestcredit"]
-                ),
+                Number(results[StatType.REVOKED_BY_ME].data[0]["sum"]) -
+                Number(results[StatType.CERTIFIED_BY_ME].data[0]["sum"]),
               certifiedCount: Number(
                 results[StatType.CERTIFIED_BY_ME].data[0]["count"]
               ),

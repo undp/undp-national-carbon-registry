@@ -231,9 +231,9 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">Attribution</div>
             <div className="code-body">
               <p>
-                This Code of Conduct is adapted from the{' '}
-                <a href="https://www.contributor-covenant.org">Contributor Covenant</a>, version
-                2.0, available at
+                This Code of Conduct is adapted from the
+                <a href="https://www.contributor-covenant.org"> Contributor Covenant</a>, version
+                2.0, available at{' '}
                 <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct.html">
                   https://www.contributor-covenant.org/version/2/0/code_of_conduct.html
                 </a>
@@ -242,12 +242,13 @@ const CodeOfConduct = () => {
               <p>
                 Community Impact Guidelines were inspired by
                 <a href="https://github.com/mozilla/diversity">
+                  {' '}
                   Mozilla &rsquo;s code of conduct enforcement ladder
                 </a>
                 .
               </p>
               <p>
-                For answers to common questions about this code of conduct, see the FAQ at
+                For answers to common questions about this code of conduct, see the FAQ at{' '}
                 <a href="https://www.contributor-covenant.org/faq">
                   https://www.contributor-covenant.org/faq
                 </a>
