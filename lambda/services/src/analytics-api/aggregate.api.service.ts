@@ -161,15 +161,14 @@ export class AggregateAPIService {
         operation: 'ANY' 
       }: undefined);
 
-    if (companyId) {
-      if (!filtAuth) {
-        filtAuth = []
-      }
-      filtAuth.push( { value: ProgrammeStage.AUTHORISED, 
-        key: "currentStage", 
-        operation: '=' 
-      })
+    if (!filtAuth) {
+      filtAuth = []
     }
+    filtAuth.push( { value: ProgrammeStage.AUTHORISED, 
+      key: "currentStage", 
+      operation: '=' 
+    })
+  
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme", 
@@ -355,6 +354,7 @@ export class AggregateAPIService {
           if (!results[stat.type]){
             results[stat.type] = await this.getCertifiedByMePrgrammes(stat.statFilter, companyId, stat.type === StatType.CERTIFIED_BY_ME ? "certifierId" : "revokedCertifierId", abilityCondition, lastTimeForWhere)
           }
+          
 
           break;
         case StatType.CERTIFIED_REVOKED_BY_ME:
@@ -378,9 +378,9 @@ export class AggregateAPIService {
           results[stat.type] = {
             last: results[StatType.ALL_AUTH_PROGRAMMES].last,
             data: {
-              "certifiedSum": Number(results[StatType.CERTIFIED_BY_ME].data[0]['totalestcredit']),
-              "revokedSum": Number(results[StatType.REVOKED_BY_ME].data[0]['totalestcredit']),
-              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_BY_ME].data[0]['totalestcredit']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['totalestcredit']),
+              "certifiedSum": Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
+              "revokedSum": Number(results[StatType.REVOKED_BY_ME].data[0]['sum']),
+              "uncertifiedSum": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['sum']) - Number(results[StatType.REVOKED_BY_ME].data[0]['sum']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['sum']),
               "certifiedCount": Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
               "revokedCount": Number(results[StatType.REVOKED_BY_ME].data[0]['count']),
               "uncertifiedCount": Number(results[StatType.ALL_AUTH_PROGRAMMES].data[0]['count']) - Number(results[StatType.REVOKED_BY_ME].data[0]['count']) - Number(results[StatType.CERTIFIED_BY_ME].data[0]['count']),
