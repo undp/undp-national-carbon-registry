@@ -17,6 +17,14 @@ const Homepage = () => {
     i18n.changeLanguage(lang);
   };
 
+  const handleClickScroll = () => {
+    const element = document.getElementById('scrollhome');
+    if (element) {
+      // 👇 Will scroll smoothly to the top of the next section
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     if (localStorage.getItem('i18nextLng')!.length > 2) {
       i18next.changeLanguage('en');
@@ -63,13 +71,24 @@ const Homepage = () => {
                 <div className="subhome">{t('homepage:lorem')}</div>
               </div>
             </Row>
+            <Row>
+              <nav>
+                <svg onClick={handleClickScroll} className="arrows">
+                  <path className="a1" d="M0 0 L30 32 L60 0"></path>
+                  <path className="a2" d="M0 20 L30 52 L60 20"></path>
+                  <path className="a3" d="M0 40 L30 72 L60 40"></path>
+                </svg>
+              </nav>
+            </Row>
           </div>
         </Col>
       </Row>
       <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
-            <div className="title">{t('homepage:aboutustitle')}</div>
+            <div id="scrollhome" className="title">
+              {t('homepage:aboutustitle')}
+            </div>
             <div className="homepagebody">
               <div className="homepagebody_aboutusline1">{t('homepage:aboutusline1')}</div>
               <div className="homepagebody_subtitle">{t('homepage:Keyfeatures')}</div>

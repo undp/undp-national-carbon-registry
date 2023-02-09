@@ -132,12 +132,16 @@ const TermsOfUse = () => {
                 These Terms of Use constitute a legally binding agreement made between you, whether
                 personally or on behalf of an entity (“you”) and United Nations Development
                 Programme ("Company," “we," “us," or “our”), concerning your access to and use of
-                the <a href="https://carbreg.org">https://carbreg.org</a> website as well as any
-                other media form, media channel, mobile website or mobile application related,
-                linked, or otherwise connected thereto (collectively, the “Site”). You agree that by
-                accessing the Site, you have read, understood, and agreed to be bound by all of
-                these Terms of Use. IF YOU DO NOT AGREE WITH ALL OF THESE TERMS OF USE, THEN YOU ARE
-                EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+                the{' '}
+                <a target="_blank" href="https://carbreg.org">
+                  https://carbreg.org
+                </a>{' '}
+                website as well as any other media form, media channel, mobile website or mobile
+                application related, linked, or otherwise connected thereto (collectively, the
+                “Site”). You agree that by accessing the Site, you have read, understood, and agreed
+                to be bound by all of these Terms of Use. IF YOU DO NOT AGREE WITH ALL OF THESE
+                TERMS OF USE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST
+                DISCONTINUE USE IMMEDIATELY.
               </p>
               <p>
                 Supplemental terms and conditions or documents that may be posted on the Site from
@@ -675,17 +679,20 @@ const TermsOfUse = () => {
                 of the American Arbitration Association ("AAA") and, where appropriate, the AAA’s
                 Supplementary Procedures for Consumer Related Disputes ("AAA Consumer Rules"), both
                 of which are available at the AAA website:{' '}
-                <a href="https://www.adr.org/">www.adr.org</a>. Your arbitration fees and your share
-                of arbitrator compensation shall be governed by the AAA Consumer Rules and, where
-                appropriate, limited by the AAA Consumer Rules. The arbitration may be conducted in
-                person, through the submission of documents, by phone, or online. The arbitrator
-                will make a decision in writing, but need not provide a statement of reasons unless
-                requested by either Party. The arbitrator must follow applicable law, and any award
-                may be challenged if the arbitrator fails to do so. Except where otherwise required
-                by the applicable AAA rules or applicable law, the arbitration will take place in
-                Manhattan, New York. Except as otherwise provided herein, the Parties may litigate
-                in court to compel arbitration, stay proceedings pending arbitration, or to confirm,
-                modify, vacate, or enter judgment on the award entered by the arbitrator.
+                <a target="_blank" href="https://www.adr.org/">
+                  www.adr.org
+                </a>
+                . Your arbitration fees and your share of arbitrator compensation shall be governed
+                by the AAA Consumer Rules and, where appropriate, limited by the AAA Consumer Rules.
+                The arbitration may be conducted in person, through the submission of documents, by
+                phone, or online. The arbitrator will make a decision in writing, but need not
+                provide a statement of reasons unless requested by either Party. The arbitrator must
+                follow applicable law, and any award may be challenged if the arbitrator fails to do
+                so. Except where otherwise required by the applicable AAA rules or applicable law,
+                the arbitration will take place in Manhattan, New York. Except as otherwise provided
+                herein, the Parties may litigate in court to compel arbitration, stay proceedings
+                pending arbitration, or to confirm, modify, vacate, or enter judgment on the award
+                entered by the arbitrator.
               </p>
               <p>
                 If for any reason, a Dispute proceeds in court rather than arbitration, the Dispute
@@ -933,7 +940,7 @@ const TermsOfUse = () => {
               <br /> Phone: +1-2129065000
               <br /> nce.digital@undp.org
               <br /> These terms of use were created using Termly's{' '}
-              <a href="https://termly.io/products/terms-and-conditions-generator/">
+              <a target="_blank" href="https://termly.io/products/terms-and-conditions-generator/">
                 Terms and Conditions Generator.
               </a>
             </div>
