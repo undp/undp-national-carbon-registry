@@ -96,7 +96,7 @@ const ProgrammeView = () => {
   const [historyData, setHistoryData] = useState<any>([]);
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
-  const [loadingAll, setLoadingAll] = useState<boolean>(false);
+  const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const mapContainerRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -143,6 +143,77 @@ const ProgrammeView = () => {
     ];
     return dt;
   };
+
+  const drawMap = () => {
+    // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
+    setTimeout(async () => {
+      // let mapd: any = undefined;
+
+      let mapd: any;
+      if (data?.geographicalLocationCordintes && data?.geographicalLocationCordintes.length > 0) {
+        mapd = new mapboxgl.Map({
+          container: mapContainerRef.current || '',
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: data?.geographicalLocationCordintes[0] as LngLatLike,
+          zoom: 4,
+        });
+
+        for (const iloc in data?.geographicalLocationCordintes) {
+          // const popup = new mapboxgl.Popup()
+          //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
+          //   .addTo(mapd);
+
+          if (data?.geographicalLocationCordintes[iloc] !== null) {
+            new mapboxgl.Marker({
+              color: locationColors[locationColors.length % (Number(iloc) + 1)],
+            })
+              .setLngLat(data?.geographicalLocationCordintes[iloc] as LngLatLike)
+              .addTo(mapd);
+          }
+          // .setPopup(popup);
+        }
+      } else {
+        for (const address of data!.programmeProperties.geographicalLocation) {
+          const response = await Geocoding({ accessToken: mapboxgl.accessToken })
+            .forwardGeocode({
+              query: address,
+              autocomplete: false,
+              limit: 1,
+              types: ['region', 'district'],
+              countries: [process.env.COUNTRY_CODE || 'NG'],
+            })
+            .send();
+
+          if (
+            !response ||
+            !response.body ||
+            !response.body.features ||
+            !response.body.features.length
+          ) {
+            console.error('Invalid response:');
+            console.error(response);
+            return;
+          }
+          const feature = response.body.features[0];
+          if (mapContainerRef.current) {
+            if (mapd === undefined) {
+              mapd = new mapboxgl.Map({
+                container: mapContainerRef.current || '',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: feature.center as LngLatLike,
+                zoom: 4,
+              });
+            }
+
+            // const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
+            new mapboxgl.Marker().setLngLat(feature.center as LngLatLike).addTo(mapd);
+            // .setPopup(popup);
+          }
+        }
+      }
+    }, 1000);
+  };
+
   const genPieData = (d: Programme) => {
     // ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen']
 
@@ -179,6 +250,33 @@ const ProgrammeView = () => {
     setCerts(c);
   };
 
+  const getProgrammeById = async (programmeId: number) => {
+    try {
+      const response: any = await post('national/programme/query', {
+        page: 1,
+        size: 2,
+        filterAnd: {
+          key: 'programmeId',
+          operation: '=',
+          value: programmeId,
+        },
+      });
+      if (response.data && response.data.length > 0) {
+        const d = response.data[0];
+        setData(d);
+        navigate('.', { state: { record: d } });
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingAll(false);
+    }
+  };
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
@@ -383,6 +481,7 @@ const ProgrammeView = () => {
       });
       setLoadingHistory(false);
     }
+    return null;
   };
 
   const updateProgrammeData = (response: any) => {
@@ -564,81 +663,23 @@ const ProgrammeView = () => {
       console.log(state);
       navigate('/programmeManagement', { replace: true });
     } else {
-      getProgrammeHistory(state.record.programmeId);
-      setData(state.record);
-
-      // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
-      setTimeout(async () => {
-        // let mapd: any = undefined;
-
-        let mapd: any;
-        if (
-          state.record?.geographicalLocationCordintes &&
-          state.record?.geographicalLocationCordintes.length > 0
-        ) {
-          mapd = new mapboxgl.Map({
-            container: mapContainerRef.current || '',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: state.record?.geographicalLocationCordintes[0] as LngLatLike,
-            zoom: 4,
-          });
-
-          for (const iloc in state.record?.geographicalLocationCordintes) {
-            // const popup = new mapboxgl.Popup()
-            //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
-            //   .addTo(mapd);
-
-            if (state.record?.geographicalLocationCordintes[iloc] !== null) {
-              new mapboxgl.Marker({
-                color: locationColors[locationColors.length % (Number(iloc) + 1)],
-              })
-                .setLngLat(state.record?.geographicalLocationCordintes[iloc] as LngLatLike)
-                .addTo(mapd);
-            }
-            // .setPopup(popup);
-          }
-        } else {
-          for (const address of state.record?.programmeProperties.geographicalLocation) {
-            const response = await Geocoding({ accessToken: mapboxgl.accessToken })
-              .forwardGeocode({
-                query: address,
-                autocomplete: false,
-                limit: 1,
-                types: ['region', 'district'],
-                countries: [process.env.COUNTRY_CODE || 'NG'],
-              })
-              .send();
-
-            if (
-              !response ||
-              !response.body ||
-              !response.body.features ||
-              !response.body.features.length
-            ) {
-              console.error('Invalid response:');
-              console.error(response);
-              return;
-            }
-            const feature = response.body.features[0];
-            if (mapContainerRef.current) {
-              if (mapd === undefined) {
-                mapd = new mapboxgl.Map({
-                  container: mapContainerRef.current || '',
-                  style: 'mapbox://styles/mapbox/streets-v11',
-                  center: feature.center as LngLatLike,
-                  zoom: 4,
-                });
-              }
-
-              // const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
-              new mapboxgl.Marker().setLngLat(feature.center as LngLatLike).addTo(mapd);
-              // .setPopup(popup);
-            }
-          }
+      if (!state.record) {
+        if (state.id) {
+          getProgrammeById(state.id);
         }
-      }, 1000);
+      } else {
+        setLoadingAll(false);
+        setData(state.record);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      getProgrammeHistory(Number(data.programmeId));
+      drawMap();
+    }
+  }, [data]);
 
   if (!data) {
     return <div></div>;
