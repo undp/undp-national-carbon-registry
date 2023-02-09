@@ -437,7 +437,16 @@ export class AggregateAPIService {
     let grpByAll = undefined;
     if (groupBy) {
       const groupQuery = groupBy
-        .map((gb) => `"${tableName}"."${gb}"`)
+        .map((gb) => {
+          let val;
+          if (gb.includes("->>")) {
+            const parts = gb.split("->>");
+            val = `"${parts[0]}"->>'${parts[1]}'`;
+          } else {
+            val = `"${gb}"`;
+          }
+          return `"${tableName}".${val}`;
+        })
         .join(",");
       queryBuild = queryBuild.addSelect(groupQuery);
       grpByAll = groupQuery;
@@ -624,7 +633,9 @@ export class AggregateAPIService {
               StatType.MY_AGG_PROGRAMME_BY_STATUS,
             ].includes(stat.type)
           ) {
-            stat.statFilter ? stat.statFilter.onlyMine = true : stat.statFilter = { onlyMine: true }
+            stat.statFilter
+              ? (stat.statFilter.onlyMine = true)
+              : (stat.statFilter = { onlyMine: true });
           }
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeRepo,
