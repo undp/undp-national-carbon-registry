@@ -147,7 +147,6 @@ const Dashboard = () => {
           type: 'CERTIFIED_REVOKED_BY_ME',
         },
       ],
-      category: 'overall',
     };
   };
 
