@@ -155,19 +155,19 @@ export class AggregateAPIService {
 
   private async getAllAuthProgramme(stat, abilityCondition, lastTimeForWhere, companyId?){
     let filtAuth = this.getFilterAndByStatFilter(stat.statFilter, 
-      { value: ProgrammeStage.AUTHORISED, 
-        key: "currentStage", 
-        operation: '=' 
+      { 
+        value: companyId, 
+        key: "companyId", 
+        operation: 'ANY' 
       });
 
     if (companyId) {
       if (!filtAuth) {
         filtAuth = []
       }
-      filtAuth.push({ 
-        value: companyId, 
-        key: "companyId", 
-        operation: 'ANY' 
+      filtAuth.push( { value: ProgrammeStage.AUTHORISED, 
+        key: "currentStage", 
+        operation: '=' 
       })
     }
     return await this.genAggregateTypeOrmQuery(
@@ -200,7 +200,7 @@ export class AggregateAPIService {
       null, 
       abilityCondition,
       lastTimeForWhere, 
-      undefined
+      "createdTime"
     );
   }
 

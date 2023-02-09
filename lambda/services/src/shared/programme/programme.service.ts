@@ -324,9 +324,9 @@ export class ProgrammeService {
         // if (programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen.reduce((a, b) => a + b, 0) : 0) < req.creditAmount) {
         //     throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
         // }
-        // if (requester.companyRole != CompanyRole.GOVERNMENT && programme.companyId.includes(requester.companyId)) {
-        //     throw new HttpException("Cannot initiate transfers for already owned programmes", HttpStatus.BAD_REQUEST)
-        // }
+        if (requester.companyRole != CompanyRole.GOVERNMENT && ![...req.fromCompanyIds, req.toCompanyId].includes(requester.companyId)) {
+            throw new HttpException("Cannot initiate transfers for other companies", HttpStatus.BAD_REQUEST)
+        }
 
         if (!req.fromCompanyIds) {
             req.fromCompanyIds = programme.companyId;
