@@ -185,7 +185,7 @@ export class LedgerReplicatorService {
 
             let updateObj;
             if (account) {
-              if (company.secondaryAccountBalance) {
+              if (company.secondaryAccountBalance && company.secondaryAccountBalance[account]) {
                 company.secondaryAccountBalance[account]["total"] =
                   overall.credit;
                 company.secondaryAccountBalance[account]["count"] += 1;
