@@ -550,16 +550,16 @@ const CreditTransfer = () => {
         return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
-    {
-      title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
-      dataIndex: 'creditBalance',
-      key: 'creditBalance',
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any, Obj: any) => {
-        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
-      },
-    },
+    // {
+    //   title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
+    //   dataIndex: 'creditBalance',
+    //   key: 'creditBalance',
+    //   sorter: true,
+    //   align: 'right' as const,
+    //   render: (item: any, Obj: any) => {
+    //     return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
+    //   },
+    // },
     {
       title: t('programme:status'),
       key: 'status',
