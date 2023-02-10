@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer = require('nodemailer');
+import { EmailTemplates } from './email.template';
 
 @Injectable()
 export class EmailService {
@@ -29,9 +30,7 @@ export class EmailService {
         }
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                var find = `{{${key}}}`;
-                var re = new RegExp(find, 'g');
-                template = template.replace(re, data[key]);
+                template = template.replace(`{{${key}}}`, data[key])
             }
         }
 
