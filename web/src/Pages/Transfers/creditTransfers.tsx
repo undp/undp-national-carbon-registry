@@ -418,7 +418,7 @@ const CreditTransfer = () => {
       title: t('creditTransfer:certifier'),
       dataIndex: 'certifier',
       key: 'certifier',
-      sorter: true,
+      sorter: false,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
@@ -550,16 +550,16 @@ const CreditTransfer = () => {
         return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
-    {
-      title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
-      dataIndex: 'creditBalance',
-      key: 'creditBalance',
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any, Obj: any) => {
-        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
-      },
-    },
+    // {
+    //   title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
+    //   dataIndex: 'creditBalance',
+    //   key: 'creditBalance',
+    //   sorter: true,
+    //   align: 'right' as const,
+    //   render: (item: any, Obj: any) => {
+    //     return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
+    //   },
+    // },
     {
       title: t('programme:status'),
       key: 'status',
@@ -723,6 +723,11 @@ const CreditTransfer = () => {
                             {
                               key: 'toCompanyId',
                               operation: '=',
+                              value: userInfoState?.companyId,
+                            },
+                            {
+                              key: 'programmeCertifierId',
+                              operation: 'ANY',
                               value: userInfoState?.companyId,
                             },
                           ]
