@@ -641,103 +641,15 @@ export class AggregateAPIService {
         case StatType.AGG_PROGRAMME_BY_SECTOR:
         case StatType.MY_AGG_PROGRAMME_BY_STATUS:
         case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
-          if (
-            [
-              StatType.MY_AGG_PROGRAMME_BY_SECTOR,
-              StatType.MY_AGG_PROGRAMME_BY_STATUS,
-            ].includes(stat.type)
-          ) {
-            stat.statFilter
-              ? (stat.statFilter.onlyMine = true)
-              : (stat.statFilter = { onlyMine: true });
-          }
-          results[stat.type] = await this.genAggregateTypeOrmQuery(
-            this.programmeRepo,
-            "programme",
-            [
-              StatType.AGG_PROGRAMME_BY_STATUS,
-              StatType.MY_AGG_PROGRAMME_BY_STATUS,
-            ].includes(stat.type)
-              ? ["currentStage"]
-              : ["sector"],
-            [
-              new AggrEntry("programmeId", "COUNT", "count"),
-              new AggrEntry("creditEst", "SUM", "totalEstCredit"),
-              new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
-              new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
-              new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
-              new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
-              frzAgg,
-            ],
-            this.getFilterAndByStatFilter(stat.statFilter, {
-              value: companyId,
-              key: "companyId",
-              operation: "ANY",
-            }),
-            null,
-            stat.statFilter?.timeGroup
-              ? { key: "time_group", order: "ASC" }
-              : null,
-            abilityCondition,
-            lastTimeForWhere,
-            "createdTime",
-            stat.statFilter?.timeGroup ? "createdAt" : undefined,
-            stat.statFilter?.timeGroup ? "day" : undefined
-          );
+          results[stat.type] = await this.generateProgrammeAggregates(stat, frzAgg, abilityCondition, lastTimeForWhere, companyId);
           break;
 
         case StatType.MY_CREDIT:
-          const comp = await this.companyRepo.findOne({
-            where: {
-              companyId: companyId,
-            },
-          });
-          results[stat.type] = {
-            data: {
-              'primary': comp ? comp.creditBalance : 0,
-              'secondary': comp ? comp.secondaryAccountBalance : 0
-            },
-            last: comp.creditTxTime
-          }
+          results[stat.type] = await this.getCompanyCredits(companyId);
           break;
         case StatType.PENDING_TRANSFER_INIT:
         case StatType.PENDING_TRANSFER_RECV:
-          if (stat.statFilter) {
-            stat.statFilter.onlyMine = false;
-          } else {
-            stat.statFilter = { onlyMine: false };
-          }
-          let filt = this.getFilterAndByStatFilter(stat.statFilter, null);
-
-          const filterOr = [
-            {
-              value: companyId,
-              key:
-                stat.type === StatType.PENDING_TRANSFER_INIT
-                  ? "initiatorCompanyId"
-                  : "toCompanyId",
-              operation: "=",
-            },
-          ];
-          if (stat.type === StatType.PENDING_TRANSFER_RECV) {
-            filterOr.push({
-              value: companyId,
-              key: "fromCompanyId",
-              operation: "=",
-            });
-          }
-          results[stat.type] = await this.genAggregateTypeOrmQuery(
-            this.programmeTransferRepo,
-            "transfer",
-            null,
-            [new AggrEntry("requestId", "COUNT", "count")],
-            filt,
-            filterOr,
-            null,
-            abilityCondition,
-            lastTimeForWhere,
-            "txTime"
-          );
+          results[stat.type] = await this.getPendingTxStats(stat, companyId, abilityCondition, lastTimeForWhere);
           break;
         case StatType.CERTIFIED_BY_ME:
         case StatType.REVOKED_BY_ME:
@@ -1089,5 +1001,102 @@ export class AggregateAPIService {
       }
     }
     return new DataCountResponseDto(results);
+  }
+  async getCompanyCredits(companyId: any) {
+    const comp = await this.companyRepo.findOne({
+      where: {
+        companyId: companyId,
+      },
+    });
+    return {
+      data: {
+        'primary': comp ? comp.creditBalance : 0,
+        'secondary': comp ? comp.secondaryAccountBalance : 0
+      },
+      last: comp.creditTxTime
+    }
+  }
+  async getPendingTxStats(stat, companyId, abilityCondition, lastTimeForWhere) {
+    if (stat.statFilter) {
+      stat.statFilter.onlyMine = false;
+    } else {
+      stat.statFilter = { onlyMine: false };
+    }
+    let filt = this.getFilterAndByStatFilter(stat.statFilter, null);
+
+    const filterOr = [
+      {
+        value: companyId,
+        key:
+          stat.type === StatType.PENDING_TRANSFER_INIT
+            ? "initiatorCompanyId"
+            : "toCompanyId",
+        operation: "=",
+      },
+    ];
+    if (stat.type === StatType.PENDING_TRANSFER_RECV) {
+      filterOr.push({
+        value: companyId,
+        key: "fromCompanyId",
+        operation: "=",
+      });
+    }
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeTransferRepo,
+      "transfer",
+      null,
+      [new AggrEntry("requestId", "COUNT", "count")],
+      filt,
+      filterOr,
+      null,
+      abilityCondition,
+      lastTimeForWhere,
+      "txTime"
+    );
+  }
+  async generateProgrammeAggregates(stat, frzAgg, abilityCondition, lastTimeForWhere, companyId) {
+    if (
+      [
+        StatType.MY_AGG_PROGRAMME_BY_SECTOR,
+        StatType.MY_AGG_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+    ) {
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
+    }
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeRepo,
+      "programme",
+      [
+        StatType.AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+        ? ["currentStage"]
+        : ["sector"],
+      [
+        new AggrEntry("programmeId", "COUNT", "count"),
+        new AggrEntry("creditEst", "SUM", "totalEstCredit"),
+        new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
+        new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
+        new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
+        new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+        frzAgg,
+      ],
+      this.getFilterAndByStatFilter(stat.statFilter, {
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      }),
+      null,
+      stat.statFilter?.timeGroup
+        ? { key: "time_group", order: "ASC" }
+        : null,
+      abilityCondition,
+      lastTimeForWhere,
+      "createdTime",
+      stat.statFilter?.timeGroup ? "createdAt" : undefined,
+      stat.statFilter?.timeGroup ? "day" : undefined
+    );
   }
 }
