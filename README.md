@@ -7,6 +7,7 @@
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
 * [Web Frontend](#frontend)
+* [API](#api)
 * [Status Page](#status)
 * [Governance & Support](#support)
 
@@ -137,6 +138,11 @@ All the CRUD operations can perform as per the following table,
 <a name="frontend"></a>
 ### Web Frontend
 Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
+
+
+<a name="api"></a>
+### Application Programming Interface (API)
+For integration, reference RESTful Web API Documentation documentation via Swagger. To access the API docs go to api.APP_URL
 
 <a name="status"></a>
 ### Status Page
