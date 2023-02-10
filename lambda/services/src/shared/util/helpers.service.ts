@@ -32,6 +32,15 @@ export class HelperService {
       return true;
   }
 
+  public generateSortCol(col: string) {
+    if (col.includes('->>')) {
+      const parts = col.split('->>');
+      return `"${parts[0]}"->>'${parts[1]}'`
+    } else {
+      return `"${col}"`
+    }
+  }
+
   public generateWhereSQLChartStastics(
     data: chartStatsRequestDto,
     extraSQL: string,

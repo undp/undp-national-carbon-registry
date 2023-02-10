@@ -417,7 +417,7 @@ const CreditTransfer = () => {
     {
       title: t('creditTransfer:certifier'),
       dataIndex: 'certifier',
-      key: 'certifier',
+      key: 'certifier->>companyId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
