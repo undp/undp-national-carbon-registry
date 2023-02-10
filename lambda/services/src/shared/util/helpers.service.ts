@@ -27,8 +27,8 @@ export class HelperService {
     return value;
   }
 
-  private isNotLower(key: string) {
-    if (["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state", "status", "role", "retirementType"].includes(key))
+  private isLower(key: string) {
+    if (["email", "name", "companyName", "taxId", "country", "title", "externalId", "serialNo", "programmeTitle"].includes(key))
       return true;
   }
 
@@ -217,7 +217,7 @@ export class HelperService {
             return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
-          } else if (!this.isNotLower(e.key) && typeof e.value === "string") {
+          } else if (this.isLower(e.key) && typeof e.value === "string") {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
@@ -240,7 +240,7 @@ export class HelperService {
             return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
-          } else if (!this.isNotLower(e.key) && typeof e.value === "string") {
+          } else if (this.isLower(e.key) && typeof e.value === "string") {
             return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
           } else {
             return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;
