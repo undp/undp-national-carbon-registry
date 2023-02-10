@@ -484,12 +484,16 @@ export class AggregateAPIService {
         }
       }
     }
-    if (timeGroupingCol && timeGroupingAccuracy) {
+    if (timeGroupingCol && timeGroupingAccuracy && groupBy) {
+      console.log("coming into this condition ---- groupBy[0]", groupBy[0]);
       if (groupBy[0] === "currentStage") {
         dTimeGrouped = await this.getTimeGroupedDataStatusConverted(d);
-      } else {
+      } else if (groupBy[0] === "sector") {
         dTimeGrouped = await this.getTimeGroupedDataSectorConverted(d);
       }
+    } else if (timeGroupingCol && timeGroupingAccuracy) {
+      console.log("coming into this condition ---- !groupBy[0]");
+      dTimeGrouped = d;
     }
     return {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
@@ -501,6 +505,7 @@ export class AggregateAPIService {
     stat,
     abilityCondition,
     lastTimeForWhere,
+    timeGroup: boolean,
     companyId?
   ) {
     let filtAuth = this.getFilterAndByStatFilter(
@@ -533,10 +538,12 @@ export class AggregateAPIService {
       ],
       filtAuth,
       null,
-      null,
+      timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
-      "createdTime"
+      "createdTime",
+      timeGroup ? "createdAt" : undefined,
+      timeGroup ? "day" : undefined
     );
   }
 
@@ -575,7 +582,8 @@ export class AggregateAPIService {
     lastTimeForWhere,
     companyId,
     cardinalityField,
-    frzAgg
+    frzAgg,
+    timeGroup?: boolean
   ) {
     let filters = this.getFilterAndByStatFilter(statFilter, {
       value: companyId,
@@ -607,10 +615,12 @@ export class AggregateAPIService {
       ],
       filters,
       null,
-      null,
+      timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
-      "createdTime"
+      "createdTime",
+      timeGroup ? "createdAt" : undefined,
+      timeGroup ? "day" : undefined
     );
   }
 
@@ -740,7 +750,8 @@ export class AggregateAPIService {
               await this.getAllAuthProgramme(
                 stat,
                 abilityCondition,
-                lastTimeForWhere
+                lastTimeForWhere,
+                false
               );
           }
 
@@ -768,7 +779,8 @@ export class AggregateAPIService {
               await this.getAllAuthProgramme(
                 stat,
                 abilityCondition,
-                lastTimeForWhere
+                lastTimeForWhere,
+                false
               );
           }
 
@@ -827,7 +839,8 @@ export class AggregateAPIService {
               await this.getAllAuthProgramme(
                 stat,
                 abilityCondition,
-                lastTimeForWhere
+                lastTimeForWhere,
+                false
               );
           }
           // results[stat.type] = results[StatType.ALL_AUTH_PROGRAMMES];
@@ -839,7 +852,8 @@ export class AggregateAPIService {
               await this.getAllAuthProgramme(
                 stat,
                 abilityCondition,
-                lastTimeForWhere
+                lastTimeForWhere,
+                false
               );
           }
           if (!results[stat.type]) {
@@ -864,7 +878,8 @@ export class AggregateAPIService {
                 await this.getAllAuthProgramme(
                   stat,
                   abilityCondition,
-                  lastTimeForWhere
+                  lastTimeForWhere,
+                  stat.statFilter?.timeGroup ? true : false
                 );
             }
             allValues = results[StatType.ALL_AUTH_PROGRAMMES];
@@ -880,6 +895,7 @@ export class AggregateAPIService {
                   stat,
                   abilityCondition,
                   lastTimeForWhere,
+                  stat.statFilter?.timeGroup ? true : false,
                   companyId
                 );
             }
@@ -897,7 +913,8 @@ export class AggregateAPIService {
                 lastTimeForWhere,
                 companyId,
                 ["revokedCertifierId"],
-                frzAgg
+                frzAgg,
+                stat.statFilter?.timeGroup ? true : false
               );
           }
           if (!results[StatType.CERTIFIED_PROGRAMMES]) {
@@ -908,25 +925,66 @@ export class AggregateAPIService {
                 lastTimeForWhere,
                 companyId,
                 ["certifierId"],
-                frzAgg
+                frzAgg,
+                stat.statFilter?.timeGroup ? true : false
               );
+          }
+
+          console.log(
+            "result certified revoked programmes --- > ",
+            results[StatType.CERTIFIED_PROGRAMMES]?.data,
+            results[StatType.REVOKED_PROGRAMMES]?.data,
+            results[StatType.ALL_AUTH_PROGRAMMES]?.data
+          );
+          if (!results[StatType.ALL_AUTH_PROGRAMMES]?.data?.length) {
+            results[StatType.ALL_AUTH_PROGRAMMES]?.data.push({
+              count: "0",
+              sum: 0,
+              time_group: 0,
+            });
+          }
+          if (!results[StatType.REVOKED_PROGRAMMES]?.data?.length) {
+            results[StatType.REVOKED_PROGRAMMES]?.data.push({
+              count: "0",
+              totalestcredit: 0,
+              totalissuedcredit: 0,
+              totalretiredcredit: 0,
+              totaltxcredit: 0,
+              totalfreezecredit: 0,
+              time_group: 0,
+            });
+          }
+          if (!results[StatType.CERTIFIED_PROGRAMMES]?.data?.length) {
+            results[StatType.CERTIFIED_PROGRAMMES]?.data.push({
+              count: "0",
+              totalestcredit: 0,
+              totalissuedcredit: 0,
+              totalretiredcredit: 0,
+              totaltxcredit: 0,
+              totalfreezecredit: 0,
+              time_group: 0,
+            });
           }
           results[stat.type] = {
             last: allValues.last,
             data: {
               certifiedSum: Number(
-                results[StatType.CERTIFIED_PROGRAMMES].data[0]["totalestcredit"]
+                results[StatType.CERTIFIED_PROGRAMMES]?.data[0][
+                  "totalestcredit"
+                ]
               ),
               revokedSum: Number(
-                results[StatType.REVOKED_PROGRAMMES].data[0]["totalestcredit"]
+                results[StatType.REVOKED_PROGRAMMES]?.data[0]["totalestcredit"]
               ),
               uncertifiedSum:
-                Number(allValues.data[0]["sum"]) -
+                Number(allValues?.data[0]["sum"]) -
                 Number(
-                  results[StatType.REVOKED_PROGRAMMES].data[0]["totalestcredit"]
+                  results[StatType.REVOKED_PROGRAMMES]?.data[0][
+                    "totalestcredit"
+                  ]
                 ) -
                 Number(
-                  results[StatType.CERTIFIED_PROGRAMMES].data[0][
+                  results[StatType.CERTIFIED_PROGRAMMES]?.data[0][
                     "totalestcredit"
                   ]
                 ),
