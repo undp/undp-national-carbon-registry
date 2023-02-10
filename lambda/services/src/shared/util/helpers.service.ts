@@ -35,7 +35,7 @@ export class HelperService {
     } else {
       key = `"${col}"`
     }
-    return `${table ? table + "." : ""}"${key}"`
+    return `${table ? table + "." : ""}${key}`
   }
 
   private isLower(key: string) {
