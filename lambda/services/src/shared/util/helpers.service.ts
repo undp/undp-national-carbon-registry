@@ -28,7 +28,7 @@ export class HelperService {
   }
 
   private isNotLower(key: string) {
-    if (["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state"].includes(key))
+    if (["txType", "typeOfMitigation", "currentStage", "sectoralScope", "companyRole", "state", "status"].includes(key))
       return true;
   }
 

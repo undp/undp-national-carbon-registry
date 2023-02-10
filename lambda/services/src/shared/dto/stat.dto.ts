@@ -17,5 +17,5 @@ export class Stat extends EntitySubject {
 
   @ApiPropertyOptional()
   @Type(() => StatFilter)
-  statFilter?: StatFilter;
+  statFilter: StatFilter;
 }
