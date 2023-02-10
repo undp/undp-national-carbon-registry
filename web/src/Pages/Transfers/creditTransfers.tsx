@@ -417,8 +417,8 @@ const CreditTransfer = () => {
     {
       title: t('creditTransfer:certifier'),
       dataIndex: 'certifier',
-      key: 'certifier->>companyId',
-      sorter: true,
+      key: 'certifier',
+      sorter: false,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
@@ -726,8 +726,8 @@ const CreditTransfer = () => {
                               value: userInfoState?.companyId,
                             },
                             {
-                              key: 'certifier->>companyId',
-                              operation: '=',
+                              key: 'programmeCertifierId',
+                              operation: 'ANY',
                               value: userInfoState?.companyId,
                             },
                           ]
