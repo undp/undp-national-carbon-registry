@@ -27,6 +27,17 @@ export class HelperService {
     return value;
   }
 
+  private prepareKey(col: string, table?: string) {
+    let key;
+    if (col.includes('->>')) {
+      const parts = col.split('->>');
+      key = `"${parts[0]}"->>'${parts[1]}'`
+    } else {
+      key = `"${col}"`
+    }
+    return `${table ? table + "." : ""}"${key}"`
+  }
+
   private isLower(key: string) {
     if (["email", "name", "companyName", "taxId", "country", "title", "externalId", "serialNo", "programmeTitle"].includes(key))
       return true;
@@ -221,17 +232,17 @@ export class HelperService {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
-            return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
+            return `${this.prepareValue(e.value, table)} = ANY(${this.prepareKey(e.key, table)})`;
           } else if (e.keyOperation) {
-            return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
+            return `${e.keyOperation}(${this.prepareKey(e.key, table)}) ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
           } else if (this.isLower(e.key) && typeof e.value === "string") {
-            return `LOWER(${table ? table + "." : ""}"${e.key}") ${
+            return `LOWER(${this.prepareKey(e.key, table)}) ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
           } else {
-            return `${table ? table + "." : ""}"${e.key}" ${
+            return `${this.prepareKey(e.key, table)} ${
               e.operation
             } ${this.prepareValue(e.value, table)}`;
           }
@@ -244,15 +255,15 @@ export class HelperService {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
           } else if (e.operation === 'ANY') {
-            return `${this.prepareValue(e.value, table)} = ANY(${table ? table + "." : ""}"${e.key}")`;
+            return `${this.prepareValue(e.value, table)} = ANY(${this.prepareKey(e.key, table)})`;
           } else if (e.keyOperation) {
-            return `${e.keyOperation}(${table ? table + "." : ""}"${e.key}") ${
+            return `${e.keyOperation}(${this.prepareKey(e.key, table)}) ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
           } else if (this.isLower(e.key) && typeof e.value === "string") {
-            return `LOWER(${table ? table + "." : ""}"${e.key}") ${e.operation} ${this.prepareValue(e.value, table, true)}`;
+            return `LOWER(${this.prepareKey(e.key, table)}) ${e.operation} ${this.prepareValue(e.value, table, true)}`;
           } else {
-            return `${table ? table + "." : ""}"${e.key}" ${e.operation} ${this.prepareValue(e.value, table)}`;
+            return `${this.prepareKey(e.key, table)} ${e.operation} ${this.prepareValue(e.value, table)}`;
           }
         })
         .join(" or ");

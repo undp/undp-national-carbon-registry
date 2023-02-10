@@ -725,6 +725,11 @@ const CreditTransfer = () => {
                               operation: '=',
                               value: userInfoState?.companyId,
                             },
+                            {
+                              key: 'certifier->>companyId',
+                              operation: '=',
+                              value: userInfoState?.companyId,
+                            },
                           ]
                         : undefined
                     )
