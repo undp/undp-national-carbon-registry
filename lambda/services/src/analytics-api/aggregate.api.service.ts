@@ -694,10 +694,11 @@ export class AggregateAPIService {
           });
           results[stat.type] = {
             data: {
-              primary: comp ? comp.creditBalance : 0,
-              secondary: comp ? comp.secondaryAccountBalance : 0,
+              'primary': comp ? comp.creditBalance : 0,
+              'secondary': comp ? comp.secondaryAccountBalance : 0
             },
-          };
+            last: comp.creditTxTime
+          }
           break;
         case StatType.PENDING_TRANSFER_INIT:
         case StatType.PENDING_TRANSFER_RECV:
