@@ -45,8 +45,8 @@ const PrivacyPolicy = () => {
             <div className="privacy-body">
               This privacy notice for United Nations Development Programme (<b>"Company"</b>,{' '}
               <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) describes how and why we might collect,
-              store, use, and/or share ("process")your information when you use our services
-              ("Services"), such as when you:
+              store, use, and/or share ("<b>process</b>")your information when you use our services
+              ("<b>Services</b>"), such as when you:
               <ul>
                 <li>
                   Visit our website at iverifyit.com, or any website of ours that links to this
@@ -74,14 +74,15 @@ const PrivacyPolicy = () => {
                   This summary provides key points from our privacy notice, but you can find out
                   more details about any of these topics by clicking the link following each key
                   point or by using our table of contents below to find the section you are looking
-                  for. You can also click here to go directly to our table of contents.
+                  for. You can also <a href="#toc">click here</a> to go directly to our table of
+                  contents.
                 </b>
               </p>
               <p>
                 <b>What personal information do we process?</b>When you visit, use, or navigate our
                 Services, we may process personal information depending on how you interact with
                 United Nations Development Programme and the Services, the choices you make, and the
-                products and features you use. Click here to learn more.
+                products and features you use. <a href="#infocollect">Click here</a> to learn more.
               </p>
               <p>
                 <b>Do we process any sensitive personal information?</b> We do not process sensitive
@@ -97,12 +98,12 @@ const PrivacyPolicy = () => {
                 improve, and administer our Services, communicate with you, for security and fraud
                 prevention, and to comply with law. We may also process your information for other
                 purposes with your consent. We process your information only when we have a valid
-                legal reason to do so. Click here to learn more.
+                legal reason to do so.<a href="#infouse"> Click here</a> to learn more.
               </p>
               <p>
                 <b>In what situations and with which parties do we share personal information?</b>{' '}
                 We may share information in specific situations and with specific third parties.
-                Click here to learn more.
+                <a href="#whoshare">Click here</a> to learn more.
               </p>
               <p>
                 <b>How do we keep your information safe?</b> We have organizational and technical
@@ -110,30 +111,36 @@ const PrivacyPolicy = () => {
                 electronic transmission over the internet or information storage technology can be
                 guaranteed to be 100% secure, so we cannot promise or guarantee that hackers,
                 cybercriminals, or other unauthorized third parties will not be able to defeat our
-                security and improperly collect, access, steal, or modify your information. Click
-                here to learn more.
+                security and improperly collect, access, steal, or modify your information.{' '}
+                <a href="#infosafe">Click here</a> to learn more.
               </p>
               <p>
                 <b>What are your rights?</b> Depending on where you are located geographically, the
                 applicable privacy law may mean you have certain rights regarding your personal
-                information. Click here to learn more.
+                information. <a href="#privacyrights">Click here</a> to learn more.
               </p>
               <p>
                 <b>How do I exercise my rights? </b> The easiest way to exercise your rights is by
-                filling out our data subject request form available here, or by contacting us. We
-                will consider and act upon any request in accordance with applicable data protection
-                laws.
+                filling out our data subject request form available
+                <a href="https://app.termly.io/notify/d2782ea2-96ee-43e9-96de-b60955f40192">
+                  {' '}
+                  here
+                </a>
+                , or by contacting us. We will consider and act upon any request in accordance with
+                applicable data protection laws.
               </p>
               <p>
                 Want to learn more about what United Nations Development Programme does with any
-                information we collect? Click here to review the notice in full.
+                information we collect? <a href="#toc">Click here</a> to review the notice in full.
               </p>
             </div>
           </Col>
         </Row>
         <Row>
           <Col>
-            <div className="privacy-subtitle">TABLE OF CONTENTS</div>
+            <div id="toc" className="privacy-subtitle">
+              TABLE OF CONTENTS
+            </div>
             <div className="privacy-body">
               <ol>
                 <li>
@@ -401,7 +408,8 @@ const PrivacyPolicy = () => {
                 <li>
                   <b>Consent.</b> We may process your information if you have given us permission
                   (i.e., consent) to use your personal information for a specific purpose. You can
-                  withdraw your consent at any time. Click here to learn more.
+                  withdraw your consent at any time. <a href="#withdrawconsent">Click here</a> to
+                  learn more.
                 </li>
                 <li>
                   <b>Legitimate Interests.</b> We may process your information when we believe it is
@@ -681,13 +689,20 @@ const PrivacyPolicy = () => {
                   https://www.edoeb.admin.ch/edoeb/en/home.html.
                 </a>
               </p>
-              <p>
-                <u>Withdrawing your consent:</u> If we are relying on your consent to process your
-                personal information, which may be express and/or implied consent depending on the
-                applicable law, you have the right to withdraw your consent at any time. You can
-                withdraw your consent at any time by contacting us by using the contact details
-                provided in the section "HOW CAN YOU CONTACT US ABOUT THIS NOTICE?" below.
-              </p>
+
+              <div id="withdrawconsent">
+                <p>
+                  <u>
+                    <b>Withdrawing your consent:</b>
+                  </u>{' '}
+                  If we are relying on your consent to process your personal information, which may
+                  be express and/or implied consent depending on the applicable law, you have the
+                  right to withdraw your consent at any time. You can withdraw your consent at any
+                  time by contacting us by using the contact details provided in the section{' '}
+                  <a href="#privacyrights">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?"</a> below.
+                </p>
+              </div>
+
               <p>
                 However, please note that this will not affect the lawfulness of the processing
                 before its withdrawal, nor when applicable law allows, will it affect the processing
@@ -701,11 +716,12 @@ const PrivacyPolicy = () => {
                 You can unsubscribe from our marketing and promotional communications at any time by
                 clicking on the unsubscribe link in the emails that we send, replying “STOP” or
                 “UNSUBSCRIBE” to the SMS messages that we send, or by contacting us using the
-                details provided in the section "HOW CAN YOU CONTACT US ABOUT THIS NOTICE?" below.
-                You will then be removed from the marketing lists — however, we may still
-                communicate with you, for example to send you service-related messages that are
-                necessary for the administration and use of your account, to respond to service
-                requests, or for other non-marketing purposes.
+                details provided in the section{' '}
+                <a href="#contact">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?"</a> below. You will
+                then be removed from the marketing lists — however, we may still communicate with
+                you, for example to send you service-related messages that are necessary for the
+                administration and use of your account, to respond to service requests, or for other
+                non-marketing purposes.
               </p>
               <p>
                 <b>Account Information</b>
