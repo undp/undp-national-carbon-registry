@@ -64,6 +64,9 @@ export class Company implements EntitySubject{
     @Column("bigint", { nullable: true })
     lastUpdateVersion: number;
 
+    @Column("bigint", { nullable: true })
+    creditTxTime: number;
+    
     @Column({nullable:true})
     remarks: string;
 

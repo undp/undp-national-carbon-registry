@@ -15,6 +15,8 @@ export class Stat extends EntitySubject {
   value?: any;
   data?: any;
 
+  key?: string;
+
   @ApiPropertyOptional()
   @Type(() => StatFilter)
   statFilter: StatFilter;
