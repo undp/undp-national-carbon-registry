@@ -2,13 +2,12 @@ export const EmailTemplates = {
     ORGANISATION_CREATE:{
         subject: 'Carbon Registry: Welcome!',
         html: `
-            Welcome {{organisationName}},<br><br> 
-            
-            Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br> 
-            Explore the Registry here {{home}}. <br>
-            
-            Sincerely,<br> 
-            The {{countryName}} Carbon Credit Registry Team
+        Welcome {{organisationName}},<br><br> 
+        Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br> 
+        Explore the Registry here {{home}}. <br><br> 
+        
+        Sincerely,<br> 
+        The {{countryName}} Carbon Credit Registry Team
         `
     },
     USER_CREATE: {
@@ -17,31 +16,31 @@ export const EmailTemplates = {
         Welcome {{name}}, <br><br>
         
         Your account has been created for the {{countryName}} Carbon Credit 
-        Registry. Your account has been created. You can access your account using the temporaryHomepage: {{home}} <br>
-        
+        Registry. Your account has been created. You can access your account using the temporaryHomepage: {{home}} <br><br>
+
         User: {{email}} <br>
-        Password (temporary): {{tempPassword}} <br> 
+        Password (temporary): {{tempPassword}} <br><br>
 
         If you have any questions, feel free to email our customer success 
         team <a href="mailto:mailto: help@carbreg.org?subject=I Need Help With The 
-        {{countryName}} Carbon Credit Registry">customer success 
-        team</a>
-        (We’re lightning quick at 
-        replying.) We also offer live chat 
-        {{liveChat}}. 
-        <br>
-        
+        {{countryName}} Carbon Credit Registry">customer success team</a>
+        (We’re lightning quick at replying.) We also offer live chat {{liveChat}}. 
+        <br><br>
+
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team <br>
-        
-        P.S.Need immediate help getting started? Check out our help 
-        documentation {{helpDoc}}. Or, just reply to this email, the 
-        {{countryName}} Carbon Credit Registry Team is always ready to 
-        help! <br>
-        
-        United Nations Development Programme <br>
-        1 United Nations Plaza  <br>
-        New York, NY USA 10001
+        The {{countryName}} Carbon Credit Registry Team <br><br>
+
+        <div style="font-size:12px">
+            P.S.Need immediate help getting started? Check out our help 
+            documentation {{helpDoc}}. Or, just reply to this email, the 
+            {{countryName}} Carbon Credit Registry Team is always ready to help! 
+        </div>
+        <br>
+        <div style="font-size:12px">
+            United Nations Development Programme <br>
+            1 United Nations Plaza  <br>
+            New York, NY USA 10001
+        </div>
         `,
         text: ''
     },
@@ -87,12 +86,12 @@ export const EmailTemplates = {
         subject: 'Carbon Registry: Your password was changed',
         html: `
         Hi {{name}},<br><br>
-        The password of your Carbon Registry account was changed successfully. <br><br>
+        The password of your Carbon Registry account was changed successfully. <br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
         <a href="mailto: help@carbreg.org?subject=Password Problem With The {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
-        <br>
+        <br><br>
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `,

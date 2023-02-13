@@ -376,7 +376,7 @@ export class UserService {
           organisationName: company.name,
           countryName: this.configService.get("systemCountryName"),
           organisationRole: company.companyRole,
-          home: hostAddress + "/dashboard"
+          home: hostAddress,
         });
       }
     }
@@ -385,8 +385,7 @@ export class UserService {
       name: u.name,
       countryName: this.configService.get("systemCountryName"),
       tempPassword: u.password,
-      login: hostAddress + "/login",
-      home: hostAddress + "/dashboard",
+      home: hostAddress,
       email: u.email,
       liveChat: this.configService.get("liveChat"),
       helpDoc: this.configService.get("helpDocumentation"),
