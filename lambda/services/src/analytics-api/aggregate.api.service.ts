@@ -25,7 +25,6 @@ import {
   StatusGroupedByTimedata,
   StatusGroupedByTimedataThere,
 } from "../shared/dto/programmeStatus.timeGrouped.result";
-import { Result } from "amazon-qldb-driver-nodejs";
 
 @Injectable()
 export class AggregateAPIService {
