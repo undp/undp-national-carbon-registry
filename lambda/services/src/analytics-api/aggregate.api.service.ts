@@ -20,6 +20,12 @@ import {
   SectorGroupedByTimedata,
   SectorGroupedByTimedataThere,
 } from "../shared/dto/sector.timeGrouped.result";
+import { Sector } from "../shared/enum/sector.enum";
+import {
+  StatusGroupedByTimedata,
+  StatusGroupedByTimedataThere,
+} from "../shared/dto/programmeStatus.timeGrouped.result";
+import { Result } from "amazon-qldb-driver-nodejs";
 
 @Injectable()
 export class AggregateAPIService {
@@ -85,6 +91,10 @@ export class AggregateAPIService {
     return 0;
   }
 
+  private firstLower(lower) {
+    return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
+  }
+
   private async getTimeGroupedDataStatusConverted(data) {
     const passedResult = data;
     const awaitingAuthorizationsCounts = [];
@@ -115,6 +125,7 @@ export class AggregateAPIService {
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
       let retiredCreditsSum = 0;
+      const statusArray = Object.values(ProgrammeStage);
       for (
         let arrResultForTimeGroupIndex = 0;
         arrResultForTimeGroupIndex < arrResultForTimeGroup.length;
@@ -193,11 +204,8 @@ export class AggregateAPIService {
     console.log(groupedDatasObject);
     console.log({
       timeLabel,
-      awaitingAuthorizationsCounts,
-      rejectedCounts,
-      authorisedCounts,
     });
-    const result = {
+    const resultS = {
       timeLabel,
       awaitingAuthorizationsCounts,
       rejectedCounts,
@@ -207,7 +215,7 @@ export class AggregateAPIService {
       transferredCredits,
       retiredCredits,
     };
-    return result;
+    return resultS;
   }
 
   private async getTimeGroupedDataSectorConverted(data) {
@@ -249,17 +257,7 @@ export class AggregateAPIService {
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
     for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
       const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
-      let sectorsArray = [
-        "Energy",
-        "Health",
-        "Education",
-        "Transport",
-        "Manufacturing",
-        "Hospitality",
-        "Forestry",
-        "Agriculture",
-        "Other",
-      ];
+      const sectorsArray = Object.values(Sector);
       for (
         let arrResultForTimeGroupIndex = 0;
         arrResultForTimeGroupIndex < arrResultForTimeGroup.length;

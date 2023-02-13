@@ -1,15 +1,11 @@
 export class StatusGroupedByTimedata {
-  awaitingauthorization: any[];
-  rejected: any[];
+  awaitingAuthorization: any[];
   authorised: any[];
-  authorisedCredits: any[];
-  issuedCredits: any[];
-  transferredCredits: any[];
-  retiredCredits: any[];
+  rejected: any[];
 }
 
 export class StatusGroupedByTimedataThere {
-  awaitingauthorization: boolean;
-  rejected: boolean;
+  awaitingAuthorization: boolean;
   authorised: boolean;
+  rejected: boolean;
 }
