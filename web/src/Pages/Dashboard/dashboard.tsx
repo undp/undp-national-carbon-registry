@@ -327,16 +327,16 @@ const Dashboard = () => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
 
-        setAgricultureProgrammes(programmesAggBySector?.agricultureCounts);
-        setEducationProgrammes(programmesAggBySector?.educationCounts);
-        setEnergyProgrammes(programmesAggBySector?.energyCounts);
-        setForestryProgrammes(programmesAggBySector?.forestryCounts);
-        setHealthProgrammes(programmesAggBySector?.healthCounts);
-        setHospitalityProgrammes(programmesAggBySector?.hospitalityCounts);
-        setManufacturingProgrammes(programmesAggBySector?.manufacturingCounts);
-        setOtherProgrammes(programmesAggBySector?.otherCounts);
-        setTransportProgrammes(programmesAggBySector?.transportCounts);
-        setWasteProgrammes(programmesAggBySector?.wasteCounts);
+        setAgricultureProgrammes(programmesAggBySector?.agriculture);
+        setEducationProgrammes(programmesAggBySector?.education);
+        setEnergyProgrammes(programmesAggBySector?.energy);
+        setForestryProgrammes(programmesAggBySector?.forestry);
+        setHealthProgrammes(programmesAggBySector?.health);
+        setHospitalityProgrammes(programmesAggBySector?.hospitality);
+        setManufacturingProgrammes(programmesAggBySector?.manufacturing);
+        setOtherProgrammes(programmesAggBySector?.other);
+        setTransportProgrammes(programmesAggBySector?.transport);
+        setWasteProgrammes(programmesAggBySector?.waste);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
       }
@@ -701,7 +701,7 @@ const Dashboard = () => {
       data: certifiedCredits,
     },
     {
-      name: 'UnCertified',
+      name: 'Uncertified',
       data: unCertifiedCredits,
     },
     {
@@ -1120,7 +1120,7 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Programmes:Sector"
+              title="Total Programmes: Sector"
               options={totalProgrammesOptionsSub}
               series={seriesTotalProgrammesSubY}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
@@ -1142,7 +1142,7 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Credit Certified"
+              title="Total Credits Certified"
               options={totalCreditsCertifiedOptions}
               series={seriesTotalCreditsCertifiedY}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}

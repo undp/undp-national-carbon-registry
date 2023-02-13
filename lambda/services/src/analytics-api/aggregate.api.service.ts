@@ -15,6 +15,14 @@ import { AggrEntry } from "../shared/dto/aggr.entry";
 import { Company } from "../shared/entities/company.entity";
 import { StatFilter } from "../shared/dto/stat.filter";
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import {
+  SectorGroupedByTimedata,
+  SectorGroupedByTimedataThere,
+} from "../shared/dto/sector.timeGrouped.result";
+import {
+  StatusGroupedByTimedata,
+  StatusGroupedByTimedataThere,
+} from "../shared/dto/programmeStatus.timeGrouped.result";
 
 @Injectable()
 export class AggregateAPIService {
@@ -206,16 +214,6 @@ export class AggregateAPIService {
 
   private async getTimeGroupedDataSectorConverted(data) {
     const passedResult = data;
-    const energyCounts = [];
-    const healthCounts = [];
-    const educationCounts = [];
-    const transportCounts = [];
-    const manufacturingCounts = [];
-    const hospitalityCounts = [];
-    const forestryCounts = [];
-    const wasteCounts = [];
-    const agricultureCounts = [];
-    const otherCounts = [];
     const groupedDataFiltered = passedResult?.filter(
       (item) => String(item.time_group) !== "0"
     );
@@ -228,161 +226,82 @@ export class AggregateAPIService {
       return acc;
     }, {});
 
+    let result: SectorGroupedByTimedata = {
+      energy: [],
+      health: [],
+      education: [],
+      transport: [],
+      manufacturing: [],
+      hospitality: [],
+      forestry: [],
+      agriculture: [],
+      other: [],
+    };
+    let resultThere: SectorGroupedByTimedataThere = {
+      energy: false,
+      health: false,
+      education: false,
+      transport: false,
+      manufacturing: false,
+      hospitality: false,
+      forestry: false,
+      agriculture: false,
+      other: false,
+    };
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
     for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
       const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
-      let energyThere = false;
-      let healthThere = false;
-      let educationThere = false;
-      let transportThere = false;
-      let manufacturingThere = false;
-      let hospitalityThere = false;
-      let forestryThere = false;
-      let wasteThere = false;
-      let agricultureThere = false;
-      let otherThere = false;
+      let sectorsArray = [
+        "Energy",
+        "Health",
+        "Education",
+        "Transport",
+        "Manufacturing",
+        "Hospitality",
+        "Forestry",
+        "Agriculture",
+        "Other",
+      ];
       for (
         let arrResultForTimeGroupIndex = 0;
         arrResultForTimeGroupIndex < arrResultForTimeGroup.length;
         arrResultForTimeGroupIndex++
       ) {
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector === "Energy"
-        ) {
-          energyThere = true;
-          energyCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
+        sectorsArray?.map((sector) => {
+          if (
+            arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector === sector
+          ) {
+            resultThere[
+              arrResultForTimeGroup[
+                arrResultForTimeGroupIndex
+              ]?.sector?.toLowerCase()
+            ] = true;
+            result[
+              arrResultForTimeGroup[
+                arrResultForTimeGroupIndex
+              ]?.sector?.toLowerCase()
+            ]?.push(
+              parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
+            );
+          }
+        });
+      }
+      sectorsArray?.map((sector) => {
+        if (resultThere[sector?.toLocaleLowerCase()] === false) {
+          result[sector?.toLocaleLowerCase()]?.push(0);
         }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector === "Health"
-        ) {
-          healthThere = true;
-          healthCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Education"
-        ) {
-          educationThere = true;
-          educationCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Transport"
-        ) {
-          transportThere = true;
-          transportCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Manufacturing"
-        ) {
-          manufacturingThere = true;
-          manufacturingCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Hospitality"
-        ) {
-          hospitalityThere = true;
-          hospitalityCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Forestry"
-        ) {
-          forestryThere = true;
-          forestryCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector === "Waste"
-        ) {
-          wasteThere = true;
-          wasteCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector ===
-          "Agriculture"
-        ) {
-          agricultureThere = true;
-          agricultureCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.sector === "Other"
-        ) {
-          otherThere = true;
-          otherCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-      }
-      if (energyThere === false) {
-        energyCounts.push(0);
-      }
-      if (healthThere === false) {
-        healthCounts.push(0);
-      }
-      if (educationThere === false) {
-        educationCounts.push(0);
-      }
-      if (transportThere === false) {
-        transportCounts.push(0);
-      }
-      if (manufacturingThere === false) {
-        manufacturingCounts.push(0);
-      }
-      if (hospitalityThere === false) {
-        hospitalityCounts.push(0);
-      }
-      if (forestryThere === false) {
-        forestryCounts.push(0);
-      }
-      if (wasteThere === false) {
-        wasteCounts.push(0);
-      }
-      if (agricultureThere === false) {
-        agricultureCounts.push(0);
-      }
-      if (otherThere === false) {
-        otherCounts.push(0);
-      }
+      });
     }
 
     console.table(groupedDataFiltered);
     console.log(groupedDatasObject);
 
-    const result = {
+    const resultS = {
       timeLabel,
-      energyCounts,
-      healthCounts,
-      educationCounts,
-      transportCounts,
-      manufacturingCounts,
-      hospitalityCounts,
-      forestryCounts,
-      wasteCounts,
-      agricultureCounts,
-      otherCounts,
+      ...result,
     };
 
-    return result;
+    return resultS;
   }
 
   private async genAggregateTypeOrmQuery(
@@ -442,9 +361,14 @@ export class AggregateAPIService {
           if (gb.includes("->>")) {
             const parts = gb.split("->>");
             val = `"${parts[0]}"->>'${parts[1]}'`;
+            console.log("groupby values ----- > ", val);
           } else {
             val = `"${gb}"`;
           }
+          console.log(
+            "groupby values return ----- > ",
+            `"${tableName}".${val}`
+          );
           return `"${tableName}".${val}`;
         })
         .join(",");
@@ -1069,13 +993,13 @@ export class AggregateAPIService {
           if (stat.type === StatType.MY_CERTIFIED_TRANSFER_LOCATION)
             filtCom.push({
               value: companyId,
-              key: 'certifier"->>"certifierId',
+              key: "certifier->>certifierId",
               operation: "ANY",
             });
           results[stat.type] = await this.genAggregateTypeOrmQuery(
             this.programmeTransferRepo,
             "transfer",
-            ['toCompanyMeta"->>country'],
+            [`toCompanyMeta->>country`],
             [new AggrEntry("requestId", "COUNT", "count")],
             filtCom,
             null,
