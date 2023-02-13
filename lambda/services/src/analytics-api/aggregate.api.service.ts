@@ -300,6 +300,18 @@ export class AggregateAPIService {
     return resultS;
   }
 
+  private async calculateTotalCountOfTransferLocations(data) {
+    let count = 0;
+    if (data?.length > 0) {
+      data?.map((item) => {
+        count = count + parseInt(item?.count);
+      });
+    } else {
+      count = 0;
+    }
+    return count;
+  }
+
   private async genAggregateTypeOrmQuery(
     repo: Repository<any>,
     tableName: string,
@@ -417,9 +429,15 @@ export class AggregateAPIService {
       dTimeGrouped = d;
     }
 
+    let total: any = 0;
+
+    if (groupBy[0] === "toCompanyMeta->>country") {
+      total = await this.calculateTotalCountOfTransferLocations(d);
+    }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
       last: t,
+      total: groupBy[0] === "toCompanyMeta->>country" ? total : undefined,
     };
 
     return statCache[key];
