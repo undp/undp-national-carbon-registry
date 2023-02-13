@@ -132,42 +132,50 @@ export const EmailTemplates = {
         Hi {{name}}, <br><br> 
         
         {{programmeName}} of your Organisation has been rejected on {{date}} due to the following reason/s: <br>
-        {{reason}} <br>
-        Click here {{pageLink}} for more details of the programme.  <br>
+        {{reason}} <br><br>
+
+        Click here {{pageLink}} for more details of the programme.  <br><br>
+
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team`
+        The {{countryName}} Carbon Credit Registry Team
+        `
     },
     CREDIT_ISSUANCE: {
         subject: 'Credits Issued',
         html: `
         Hi {{name}}, <br><br> 
         
-        {{programmeName}} of your Organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br>
-        Click here {{pageLink}} for more details of the programme.<br>
+        {{programmeName}} of your Organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br><br>
+
+        Click here {{pageLink}} for more details of the programme.<br><br>
+
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team`
+        The {{countryName}} Carbon Credit Registry Team
+        `
     },
     CREDIT_TRANSFER_REQUISITIONS: {
         subject: 'Transfer Request Received',
         html: `
         Hi {{name}}, <br><br> 
         
-        {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br>
-        Click here {{pageLink}} for more details of the transfer request.<br>
+        {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        Click here {{pageLink}} for more details of the transfer request.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team`
+        The {{countryName}} Carbon Credit Registry Team
+        `
     },
     CREDIT_TRANSFER_CANCELLATION: {
         subject: 'Transfer Request Cancelled',
         html: `
         Hi {{name}}, <br><br> 
         
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled.<br>
-        Click here {{pageLink}} for more details of the transfer request.<br>
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled.<br><br>
+        Click here {{pageLink}} for more details of the transfer request.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team`
+        The {{countryName}} Carbon Credit Registry Team
+        `
     },
     CREDIT_TRANSFER_ACCEPTED: {
         subject: 'Transfer Request Accepted',

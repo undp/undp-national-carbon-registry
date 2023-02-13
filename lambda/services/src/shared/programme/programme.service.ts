@@ -294,14 +294,17 @@ export class ProgrammeService {
             return err;
         });
 
+        const programme = await this.programmeLedger.getProgrammeById(transfer.programmeId);
+        const companyDetails = await this.companyService.findByCompanyId(transfer.initiatorCompanyId)
+
         if (result.affected > 0) {
             const hostAddress = this.configService.get("host");
             this.userService.sendEmailToOrganisation(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{
-                organisationName : transfer.initiatorCompanyId,
+                organisationName : companyDetails.name,
                 credits : transfer.creditAmount,
-                serialNumber : '',
-                programmeName: transfer.programmeId,
-                pageLink: hostAddress + `/programmeManagement/view/${transfer.programmeId}`
+                serialNumber : programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + 'creditTransfers/viewAll'
             })
 
             return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
