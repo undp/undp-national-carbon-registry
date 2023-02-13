@@ -378,16 +378,9 @@ export class AggregateAPIService {
       console.log("coming into this condition ---- !groupBy[0]");
       dTimeGrouped = d;
     }
-
-    let total: any = 0;
-
-    if (groupBy[0] === "toCompanyMeta->>country") {
-      total = await this.calculateTotalCountOfTransferLocations(d);
-    }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
       last: t,
-      total: groupBy[0] === "toCompanyMeta->>country" ? total : undefined,
     };
 
     return statCache[key];
