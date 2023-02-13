@@ -90,7 +90,13 @@ const Login = () => {
               <Row>
                 <Col lg={{ span: 9, offset: 15 }} md={{ span: 24 }} flex="auto">
                   <div className="login-country-logo">
-                    <img src={countryLogo} alt="country-logo" />
+                    <img
+                      src={countryLogo}
+                      alt="country-logo"
+                      onClick={() => {
+                        navigate('/');
+                      }}
+                    />
                   </div>
                   <div className="login-country-name">
                     <div className="title">
