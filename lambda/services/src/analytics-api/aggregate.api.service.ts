@@ -721,9 +721,9 @@ export class AggregateAPIService {
       //   break;
       case StatType.CERTIFIED_REVOKED_PROGRAMMES:
       case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
-        stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES && stat.statFilter
-            ? (stat.statFilter.onlyMine = true)
-            : (stat.statFilter = { onlyMine: true });
+        if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES) {
+          stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+        }
         results[key] = await this.getCertifiedRevokedAgg(stat, results, abilityCondition, lastTimeForWhere, statCache, companyId, frzAgg);
         break;
       case StatType.CERTIFIED_BY_ME_BY_STATE:
@@ -765,25 +765,29 @@ export class AggregateAPIService {
         break;
       case StatType.ALL_PROGRAMME_LOCATION:
       case StatType.MY_PROGRAMME_LOCATION:
-      case StatType.MY_CERTIFIED_PROGRAMME_LOCATION:
+      // case StatType.MY_CERTIFIED_PROGRAMME_LOCATION:
+        if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
+          stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+        }
         results[stat.type] = await this.programmeRepo.manager
           .query(`SELECT p."programmeId" as loc, count(*) AS count
           FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
           ${
-            stat.type === StatType.MY_PROGRAMME_LOCATION
-              ? `where ${companyId} = ANY(b."companyId")`
+            (stat.statFilter.onlyMine || stat.statFilter.startTime) ? ' where ' : ' '
+          }
+          ${
+            stat.statFilter.onlyMine
+              ? `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
               : ""
           }
           ${
-            stat.type === StatType.MY_CERTIFIED_PROGRAMME_LOCATION
-              ? `where ${companyId} = ANY(b."certifierId")`
-              : ""
+            stat.statFilter.startTime ? ` createdTime >= ${stat.statFilter.startTime}` : ''
           }
           GROUP  BY p."programmeId"`);
         break;
       case StatType.ALL_TRANSFER_LOCATION:
       case StatType.MY_TRANSFER_LOCATION:
-      case StatType.MY_CERTIFIED_TRANSFER_LOCATION:
+      // case StatType.MY_CERTIFIED_TRANSFER_LOCATION:
         if (stat.type === StatType.MY_TRANSFER_LOCATION) {
           stat.statFilter
             ? (stat.statFilter.onlyMine = true)
