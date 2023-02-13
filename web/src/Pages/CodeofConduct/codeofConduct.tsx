@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
+import LayoutFooter from '../../Components/Footer/layout.footer';
 import './codeofConduct.scss';
 import { CcCircle } from 'react-bootstrap-icons';
 const CodeOfConduct = () => {
@@ -38,8 +39,8 @@ const CodeOfConduct = () => {
         </Col>
       </Row>
       <div className="code-body-container">
-        <Row>
-          <Col>
+        <Row className="code-raw">
+          <Col md={24} lg={24}>
             <div className="codetitle">CONTRIBUTOR COVENANT CODE OF CONDUCT</div>
           </Col>
         </Row>
@@ -263,7 +264,7 @@ const CodeOfConduct = () => {
         </Row>
       </div>
       <div className="homepage-footer-container">
-        <Row>
+        {/* <Row>
           <Col md={24} lg={24}>
             <div className="logocontainer">
               <div className="logo">
@@ -308,7 +309,8 @@ const CodeOfConduct = () => {
               {t('homepage:privacy')}
             </a>
           </Col>
-        </Row>
+        </Row> */}
+        <LayoutFooter />
       </div>
     </div>
   );
