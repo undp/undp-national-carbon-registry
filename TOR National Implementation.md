@@ -1,4 +1,4 @@
-The following work steps are for the TOR for national implementation of the carbon registry in any country:
+The following work steps are required for the national implementation of the DPG carbon registry in any country.
 
 - Installation of a Carbon Registry from https://github.com/undp/carbon-registry
 
@@ -18,6 +18,23 @@ The following work steps are for the TOR for national implementation of the carb
 
 - Long term hosting and DevOps of the registry
 
-
+Sample Terms of Reference
 The TOR can be further specified if national details are known, e.g. about the NDC management tool. 
-These worksteps can also be intergrated with larger TORs, especially TORs covering wider NDC management / transparency.
+These worksteps can also be intergrated with larger TORs, especially TORs covering wider NDC management / transparency. Below are sample phrases that may be used. Generally a vendor (firm) or a group of individual consultant are encouraged, as the required skills vary. 
+
+1. Scope of Work
+
+3. Deliverables
+Deliverable 1: 
+Deliverable 2:
+Deliverable 3:
+Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
+
+Other items to consider:
+- Hosting / cloud server: The ToR is based on the assumption that he government entity has or will prepare a hosting environment in a cloud server. If the government does not have a server space, consider if the vendor will need to host the registry. If so, consider if the vendor can be contracted for a long term. 
+
+4. Required persons / skills
+ - Developer: 
+ - Developer 2:
+ - Project manager: 
+ - Carbon or stakeholder engagement expert (optional)
