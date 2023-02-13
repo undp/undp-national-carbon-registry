@@ -144,7 +144,7 @@ export class ProgrammeService {
               this.helperService.parseMongoQueryToSQLWithTable("programme_transfer", abilityCondition)
             )
           )
-          .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
+          .orderBy(query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key), query?.sort?.order)
           .offset(query.size * query.page - query.size)
           .limit(query.size)
           .getManyAndCount();
