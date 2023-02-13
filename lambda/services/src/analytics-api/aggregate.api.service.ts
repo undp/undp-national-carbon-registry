@@ -96,13 +96,15 @@ export class AggregateAPIService {
 
   private async getTimeGroupedDataStatusConverted(data) {
     const passedResult = data;
-    const awaitingAuthorizationsCounts = [];
-    const rejectedCounts = [];
-    const authorisedCounts = [];
-    const authorisedCredits = [];
-    const issuedCredits = [];
-    const transferredCredits = [];
-    const retiredCredits = [];
+    let result: StatusGroupedByTimedata = {
+      awaitingAuthorization: [],
+      authorised: [],
+      rejected: [],
+      authorisedCredits: [],
+      issuedCredits: [],
+      transferredCredits: [],
+      retiredCredits: [],
+    };
     const groupedDataFiltered = passedResult?.filter(
       (item) => String(item.time_group) !== "0"
     );
@@ -115,104 +117,53 @@ export class AggregateAPIService {
       return acc;
     }, {});
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
-    for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
-      const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
-      let isAwaitingAuthorisationThere = false;
-      let isRejectedThere = false;
-      let isAuthorisedThere = false;
+    timeLabel?.map((timeLabelItem) => {
+      const arrResultForTimeGroup = groupedDatasObject[timeLabelItem];
       let authorisedCreditsSum = 0;
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
       let retiredCreditsSum = 0;
+      let resultThere: StatusGroupedByTimedataThere = {
+        awaitingAuthorization: false,
+        authorised: false,
+        rejected: false,
+      };
       const statusArray = Object.values(ProgrammeStage);
-      for (
-        let arrResultForTimeGroupIndex = 0;
-        arrResultForTimeGroupIndex < arrResultForTimeGroup.length;
-        arrResultForTimeGroupIndex++
-      ) {
+      arrResultForTimeGroup?.map((timeGroupItem) => {
+        console.log("status array ----- > ", statusArray);
         authorisedCreditsSum =
           authorisedCreditsSum +
-          (parseFloat(
-            arrResultForTimeGroup[arrResultForTimeGroupIndex]?.totalestcredit
-          ) -
-            parseFloat(
-              arrResultForTimeGroup[arrResultForTimeGroupIndex]
-                ?.totalissuedcredit
-            ));
+          (parseFloat(timeGroupItem?.totalestcredit) -
+            parseFloat(timeGroupItem?.totalissuedcredit));
         issuedCreditsSum =
-          issuedCreditsSum +
-          parseFloat(
-            arrResultForTimeGroup[arrResultForTimeGroupIndex]
-              ?.totalbalancecredit
-          );
+          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
         transferredCreditsSum =
-          transferredCreditsSum +
-          parseFloat(
-            arrResultForTimeGroup[arrResultForTimeGroupIndex]?.totaltxcredit
-          );
+          transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
-          retiredCreditsSum +
-          parseFloat(
-            arrResultForTimeGroup[arrResultForTimeGroupIndex]
-              ?.totalretiredcredit
-          );
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.currentStage ===
-          "AwaitingAuthorization"
-        ) {
-          isAwaitingAuthorisationThere = true;
-          awaitingAuthorizationsCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
+          retiredCreditsSum + parseFloat(timeGroupItem?.totalretiredcredit);
+        statusArray?.map((status) => {
+          if (timeGroupItem?.currentStage === status) {
+            resultThere[this.firstLower(timeGroupItem?.currentStage)] = true;
+            result[this.firstLower(timeGroupItem?.currentStage)]?.push(
+              parseInt(timeGroupItem?.count)
+            );
+          }
+        });
+      });
+      statusArray?.map((status) => {
+        if (resultThere[this.firstLower(status)] === false) {
+          result[this.firstLower(status)]?.push(0);
         }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.currentStage ===
-          "Rejected"
-        ) {
-          isRejectedThere = true;
-          rejectedCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-        if (
-          arrResultForTimeGroup[arrResultForTimeGroupIndex]?.currentStage ===
-          "Authorised"
-        ) {
-          isAuthorisedThere = true;
-          authorisedCounts.push(
-            parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
-          );
-        }
-      }
-      authorisedCredits.push(authorisedCreditsSum);
-      issuedCredits.push(issuedCreditsSum);
-      transferredCredits.push(transferredCreditsSum);
-      retiredCredits.push(retiredCreditsSum);
-      if (isAwaitingAuthorisationThere === false) {
-        awaitingAuthorizationsCounts.push(0);
-      }
-      if (isRejectedThere === false) {
-        rejectedCounts.push(0);
-      }
-      if (isAuthorisedThere === false) {
-        authorisedCounts.push(0);
-      }
-    }
-    console.table(groupedDataFiltered);
-    console.log(timeLabel);
-    console.log(groupedDatasObject);
-    console.log({
-      timeLabel,
+      });
+      result["authorisedCredits"]?.push(authorisedCreditsSum);
+      result["issuedCredits"]?.push(issuedCreditsSum);
+      result["transferredCredits"]?.push(transferredCreditsSum);
+      result["retiredCredits"]?.push(retiredCreditsSum);
     });
+
     const resultS = {
       timeLabel,
-      awaitingAuthorizationsCounts,
-      rejectedCounts,
-      authorisedCounts,
-      authorisedCredits,
-      issuedCredits,
-      transferredCredits,
-      retiredCredits,
+      ...result,
     };
     return resultS;
   }
@@ -242,21 +193,21 @@ export class AggregateAPIService {
       agriculture: [],
       other: [],
     };
-    let resultThere: SectorGroupedByTimedataThere = {
-      energy: false,
-      health: false,
-      education: false,
-      transport: false,
-      manufacturing: false,
-      hospitality: false,
-      forestry: false,
-      agriculture: false,
-      other: false,
-    };
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
     for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
       const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
       const sectorsArray = Object.values(Sector);
+      let resultThere: SectorGroupedByTimedataThere = {
+        energy: false,
+        health: false,
+        education: false,
+        transport: false,
+        manufacturing: false,
+        hospitality: false,
+        forestry: false,
+        agriculture: false,
+        other: false,
+      };
       for (
         let arrResultForTimeGroupIndex = 0;
         arrResultForTimeGroupIndex < arrResultForTimeGroup.length;

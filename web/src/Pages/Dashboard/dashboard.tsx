@@ -309,9 +309,9 @@ const Dashboard = () => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
 
-        setAuthorisedProgrammes(programmesAggByStatus?.authorisedCounts);
-        setPendingProgrammes(programmesAggByStatus?.awaitingAuthorizationsCounts);
-        setRejectedProgrammes(programmesAggByStatus?.rejectedCounts);
+        setAuthorisedProgrammes(programmesAggByStatus?.authorised);
+        setPendingProgrammes(programmesAggByStatus?.awaitingAuthorization);
+        setRejectedProgrammes(programmesAggByStatus?.rejected);
         totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
 
         setAuthorizedCredits(programmesAggByStatus?.authorisedCredits);
