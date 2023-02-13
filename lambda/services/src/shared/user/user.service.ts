@@ -201,6 +201,14 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
+      await this.emailService.sendEmail(
+        user.email,
+        EmailTemplates.CHANGE_PASSOWRD,
+        {
+          name: user.name,
+          countryName: this.configService.get("systemCountryName"),
+        }
+      );
       return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
     }
     throw new HttpException(
@@ -257,6 +265,7 @@ export class UserService {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
+
   async create(
     userDto: UserDto,
     companyId: number,
@@ -343,6 +352,8 @@ export class UserService {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
+    const hostAddress = this.configService.get("host");
+
     if (company) {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
@@ -359,13 +370,26 @@ export class UserService {
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
+
+      if(company.email){
+        await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
+          organisationName: company.name,
+          countryName: this.configService.get("systemCountryName"),
+          organisationRole: company.companyRole,
+          home: hostAddress + "/dashboard"
+        });
+      }
     }
 
-    await this.emailService.sendEmail(u.email, EmailTemplates.REGISTER_EMAIL, {
+    await this.emailService.sendEmail(u.email, EmailTemplates.USER_CREATE, {
       name: u.name,
-      countryName: this.configService.get("systemCountry"),
-      password: u.password,
-      apiKeyText: u.apiKey ? `<br>Api Key: ${u.apiKey}` : "",
+      countryName: this.configService.get("systemCountryName"),
+      tempPassword: u.password,
+      login: hostAddress + "/login",
+      home: hostAddress + "/dashboard",
+      email: u.email,
+      liveChat: this.configService.get("liveChat"),
+      helpDoc: this.configService.get("helpDocumentation"),
     });
 
     u.createdTime = new Date().getTime();
@@ -493,5 +517,61 @@ export class UserService {
       "Delete failed. Please try again",
       HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  async getGovAdminAndManagerUsers() {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin, :manager)",{admin:Role.Admin, manager:Role.Manager})
+      .andWhere("user.companyRole= :companyRole",{companyRole:CompanyRole.GOVERNMENT})
+      .select(['user.name','user.email'])
+      .getRawMany();
+
+    return result;
+
+    //return result.map((item) => {return item.user_email});
+  }
+
+  async getOrganisationAdminAndManagerUsers(organisationId) {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin,:manager)",{admin:Role.Admin, manager:Role.Manager})
+      .andWhere("user.companyId= :companyId",{companyId:organisationId})
+      .select(['user.name','user.email'])
+      .getRawMany();
+
+    return result;
+  }
+
+  public async sendEmailToOrganisation(
+    companyId: number,
+    template,
+    templateData: any
+  ) {
+    const systemCountryName = this.configService.get("systemCountryName");
+    const users = await this.getOrganisationAdminAndManagerUsers(
+      companyId
+    );
+    users.forEach((user: any) => {
+      templateData = {
+        ...templateData,
+        name: user.user_name,
+        countryName: systemCountryName,
+      };
+      this.emailService.sendEmail(user.user_email, template, templateData);
+    });
+  }
+
+  public async sendEmailToGovernment(template, templateData: any) {
+    const systemCountryName = this.configService.get("systemCountryName");
+    const users = await this.getGovAdminAndManagerUsers();
+    users.forEach((user: any) => {
+      templateData = {
+        ...templateData,
+        name: user.user_name,
+        countryName: systemCountryName,
+      };
+      this.emailService.sendEmail(user.user_email, template, templateData);
+    });
   }
 }

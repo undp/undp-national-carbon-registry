@@ -129,6 +129,15 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
+            const hostAddress = this.configService.get("host");
+            this.userService.sendEmailToOrganisation(pTransfer.initiatorCompanyId, EmailTemplates.CREDIT_TRANSFER_REJECTED,{
+                organisationName : pTransfer.initiatorCompanyId,
+                credits : pTransfer.creditAmount,
+                serialNumber : '',
+                programmeName: pTransfer.programmeId,
+                pageLink: hostAddress + `/programmeManagement/view/${pTransfer.programmeId}`
+            })
+
             return new BasicResponseDto(HttpStatus.OK, "Successfully rejected");
         }
 
@@ -228,6 +237,15 @@ export class ProgrammeService {
             }
         }
 
+        const hostAddress = this.configService.get("host");
+        this.userService.sendEmailToOrganisation(transfer.toCompanyId, EmailTemplates.CREDIT_TRANSFER_ACCEPTED,{
+            organisationName : transfer.initiatorCompanyId,
+            credits : transfer.creditAmount,
+            serialNumber : '',
+            programmeName: transfer.programmeId,
+            pageLink: hostAddress + `/programmeManagement/view/${transfer.programmeId}`
+        })
+
         return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
     }
 
@@ -277,6 +295,15 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
+            const hostAddress = this.configService.get("host");
+            this.userService.sendEmailToOrganisation(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{
+                organisationName : transfer.initiatorCompanyId,
+                credits : transfer.creditAmount,
+                serialNumber : '',
+                programmeName: transfer.programmeId,
+                pageLink: hostAddress + `/programmeManagement/view/${transfer.programmeId}`
+            })
+
             return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
         }
         return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
@@ -352,10 +379,12 @@ export class ProgrammeService {
             }
         }
         
+        const fromCompanyList = [];
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
+            fromCompanyList.push(fromCompany);
 
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
@@ -393,16 +422,6 @@ export class ProgrammeService {
 
             if (requester.companyId != fromCompanyId) {
                 transfer.status = TransferStatus.PENDING;
-                await this.emailService.sendEmail(
-                    fromCompany.email,
-                    EmailTemplates.TRANSFER_REQUEST,
-                    {
-                        "name": fromCompany.name,
-                        "requestedCompany": requestedCompany.name,
-                        "credits": transfer.creditAmount,
-                        "serialNo": programme.serialNo,
-                        "programmeName": programme.title
-                    });
             } else {
                 transfer.status = TransferStatus.PROCESSING;
                 autoApproveTransferList.push(transfer);
@@ -425,6 +444,20 @@ export class ProgrammeService {
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
+
+        const hostAddress = this.configService.get("host");
+        allTransferList.forEach(async transfer => {
+            if (requester.companyId != transfer.fromCompanyId) {
+                this.userService.sendEmailToOrganisation(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,{
+                    organisationName : requestedCompany.name,
+                    credits : transfer.creditAmount,
+                    programmeName: programme.title,
+                    serialNumber: programme.serialNo,
+                    pageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+                })
+            }
+        });
+
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
 
@@ -449,7 +482,8 @@ export class ProgrammeService {
             throw new HttpException("Proponent tax id cannot be duplicated", HttpStatus.BAD_REQUEST)
         }
 
-        const companyIds = []
+        const companyIds = [];
+        const companyNames = [];
         for (const taxId of programmeDto.proponentTaxVatId) {
             const projectCompany = await this.companyService.findByTaxId(taxId);
             if (!projectCompany) {
@@ -461,6 +495,7 @@ export class ProgrammeService {
             }
 
             companyIds.push(projectCompany.companyId)
+            companyNames.push(projectCompany.name)
         }
 
 
@@ -493,6 +528,20 @@ export class ProgrammeService {
         if (!programme.creditUnit) {
             programme.creditUnit = this.configService.get('defaultCreditUnit')
         }
+
+        let orgNamesList = '';
+        if(companyNames.length>1){
+            const lastItem = companyNames.pop();
+            orgNamesList = companyNames.join(',')+' and '+lastItem;
+        }else{
+            orgNamesList = companyNames[0];
+        }
+
+        const hostAddress = this.configService.get("host");
+        this.userService.sendEmailToGovernment(EmailTemplates.PROGRAMME_CREATE,{
+            organisationName: orgNamesList,
+            programmePageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+        })
 
         return await this.programmeLedger.createProgramme(programme);
     }
@@ -765,6 +814,17 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        const hostAddress = this.configService.get("host");
+        updated.company.forEach(async company => {
+            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.CREDIT_ISSUANCE,{
+                programmeName: updated.title,
+                credits: updated.creditIssued,
+                serialNumber: updated.serialNo,
+                pageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+            })
+        });
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
@@ -794,20 +854,51 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        const hostAddress = this.configService.get("host");
+        updated.company.forEach(async company => {
+            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.PROGRAMME_AUTHORISATION,{
+                programmeName: updated.title,
+                authorisedDate: new Date(updated.txTime),
+                serialNumber: updated.serialNo,
+                programmePageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+            })
+        });
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
     async rejectProgramme(req: ProgrammeReject, user: User) {
         this.logger.log(`Programme ${req.programmeId} reject. Comment: ${req.comment}`)
 
-        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, this.getUserRef(user))
+        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, this.getUserRefWithRemarks(user, req.comment ))
         if (!updated) {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
+
+        const updatedProgramme = await this.programmeLedger.getProgrammeById(req.programmeId);
+        const companyList = await this.companyRepo.find({
+            where: { companyId: In(updatedProgramme.companyId) },
+        });
+
+        const hostAddress = this.configService.get("host");
+        companyList.forEach(async company => {
+            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.PROGRAMME_REJECTION,{
+                programmeName: updatedProgramme.title,
+                date: new Date(updatedProgramme.txTime),
+                reason: req.comment,
+                pageLink: hostAddress + `/programmeManagement/view/${updatedProgramme.programmeId}`
+            })
+        });
+
         return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
     }
 
     private getUserRef = (user: any) => {
         return `${user.companyId}#${user.companyName}#${user.id}#${user.name}`;
+    }
+
+    private getUserRefWithRemarks = (user: any, remarks: string) => {
+        return `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${remarks}`;
     }
 }
