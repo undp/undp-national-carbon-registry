@@ -517,7 +517,7 @@ const CreditTransfer = () => {
                     color={TooltipColor}
                     key={TooltipColor}
                   >
-                    {itemObj.toCompanyMeta.country && (
+                    {itemObj.toCompanyMeta && itemObj.toCompanyMeta.country && (
                       <CircleFlag
                         className="profile-icon flag-ret-icon"
                         countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
