@@ -541,36 +541,4 @@ export class UserService {
 
     return result;
   }
-
-  public async sendEmailToOrganisation(
-    companyId: number,
-    template,
-    templateData: any
-  ) {
-    const systemCountryName = this.configService.get("systemCountryName");
-    const users = await this.getOrganisationAdminAndManagerUsers(
-      companyId
-    );
-    users.forEach((user: any) => {
-      templateData = {
-        ...templateData,
-        name: user.user_name,
-        countryName: systemCountryName,
-      };
-      this.emailService.sendEmail(user.user_email, template, templateData);
-    });
-  }
-
-  public async sendEmailToGovernment(template, templateData: any) {
-    const systemCountryName = this.configService.get("systemCountryName");
-    const users = await this.getGovAdminAndManagerUsers();
-    users.forEach((user: any) => {
-      templateData = {
-        ...templateData,
-        name: user.user_name,
-        countryName: systemCountryName,
-      };
-      this.emailService.sendEmail(user.user_email, template, templateData);
-    });
-  }
 }

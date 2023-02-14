@@ -40,8 +40,7 @@ import { CompanyState } from '../enum/company.state.enum';
 import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
 import { RetireType } from '../enum/retire.type.enum';
-import { UserService } from '../user/user.service';
-import { Role } from '../casl/role.enum';
+import { EmailHelperService } from '../email-helper/email-helper.service';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -53,9 +52,9 @@ export class ProgrammeService {
         private counterService: CounterService,
         private configService: ConfigService,
         private companyService: CompanyService,
-        private userService: UserService,
         private emailService: EmailService,
         private helperService: HelperService,
+        private emailHelperService: EmailHelperService
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
@@ -129,15 +128,8 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
-            const hostAddress = this.configService.get("host");
-            this.userService.sendEmailToOrganisation(pTransfer.initiatorCompanyId, EmailTemplates.CREDIT_TRANSFER_REJECTED,{
-                organisationName : pTransfer.initiatorCompanyId,
-                credits : pTransfer.creditAmount,
-                serialNumber : '',
-                programmeName: pTransfer.programmeId,
-                pageLink: hostAddress + `/programmeManagement/view/${pTransfer.programmeId}`
-            })
-
+            this.emailHelperService.sendEmailToProgrammeOwnerAdmins(pTransfer.programmeId,EmailTemplates.CREDIT_TRANSFER_REJECTED,
+                 {credits : pTransfer.creditAmount}, pTransfer.initiatorCompanyId);
             return new BasicResponseDto(HttpStatus.OK, "Successfully rejected");
         }
 
@@ -237,14 +229,7 @@ export class ProgrammeService {
             }
         }
 
-        const hostAddress = this.configService.get("host");
-        this.userService.sendEmailToOrganisation(transfer.toCompanyId, EmailTemplates.CREDIT_TRANSFER_ACCEPTED,{
-            organisationName : transfer.initiatorCompanyId,
-            credits : transfer.creditAmount,
-            serialNumber : '',
-            programmeName: transfer.programmeId,
-            pageLink: hostAddress + `/programmeManagement/view/${transfer.programmeId}`
-        })
+        this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_ACCEPTED, {credits : transfer.creditAmount}, transfer.initiatorCompanyId )
 
         return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
     }
@@ -294,19 +279,8 @@ export class ProgrammeService {
             return err;
         });
 
-        const programme = await this.programmeLedger.getProgrammeById(transfer.programmeId);
-        const companyDetails = await this.companyService.findByCompanyId(transfer.initiatorCompanyId)
-
         if (result.affected > 0) {
-            const hostAddress = this.configService.get("host");
-            this.userService.sendEmailToOrganisation(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{
-                organisationName : companyDetails.name,
-                credits : transfer.creditAmount,
-                serialNumber : programme.serialNo,
-                programmeName: programme.title,
-                pageLink: hostAddress + 'creditTransfers/viewAll'
-            })
-
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{credits : transfer.creditAmount}, transfer.initiatorCompanyId);
             return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
         }
         return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
@@ -451,7 +425,7 @@ export class ProgrammeService {
         const hostAddress = this.configService.get("host");
         allTransferList.forEach(async transfer => {
             if (requester.companyId != transfer.fromCompanyId) {
-                this.userService.sendEmailToOrganisation(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,{
+                this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,{
                     organisationName : requestedCompany.name,
                     credits : transfer.creditAmount,
                     programmeName: programme.title,
@@ -541,7 +515,7 @@ export class ProgrammeService {
         }
 
         const hostAddress = this.configService.get("host");
-        this.userService.sendEmailToGovernment(EmailTemplates.PROGRAMME_CREATE,{
+        this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.PROGRAMME_CREATE,{
             organisationName: orgNamesList,
             programmePageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
         })
@@ -820,7 +794,7 @@ export class ProgrammeService {
 
         const hostAddress = this.configService.get("host");
         updated.company.forEach(async company => {
-            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.CREDIT_ISSUANCE,{
+            this.emailHelperService.sendEmailToOrganisationAdmins(company.companyId, EmailTemplates.CREDIT_ISSUANCE,{
                 programmeName: updated.title,
                 credits: updated.creditIssued,
                 serialNumber: updated.serialNo,
@@ -860,7 +834,7 @@ export class ProgrammeService {
 
         const hostAddress = this.configService.get("host");
         updated.company.forEach(async company => {
-            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.PROGRAMME_AUTHORISATION,{
+            this.emailHelperService.sendEmailToOrganisationAdmins(company.companyId, EmailTemplates.PROGRAMME_AUTHORISATION,{
                 programmeName: updated.title,
                 authorisedDate: new Date(updated.txTime),
                 serialNumber: updated.serialNo,
@@ -879,20 +853,7 @@ export class ProgrammeService {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
 
-        const updatedProgramme = await this.programmeLedger.getProgrammeById(req.programmeId);
-        const companyList = await this.companyRepo.find({
-            where: { companyId: In(updatedProgramme.companyId) },
-        });
-
-        const hostAddress = this.configService.get("host");
-        companyList.forEach(async company => {
-            this.userService.sendEmailToOrganisation(company.companyId, EmailTemplates.PROGRAMME_REJECTION,{
-                programmeName: updatedProgramme.title,
-                date: new Date(updatedProgramme.txTime),
-                reason: req.comment,
-                pageLink: hostAddress + `/programmeManagement/view/${updatedProgramme.programmeId}`
-            })
-        });
+        await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_REJECTION,{reason: req.comment})
 
         return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
     }

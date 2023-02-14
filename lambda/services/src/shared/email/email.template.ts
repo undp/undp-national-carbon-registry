@@ -1,5 +1,6 @@
 export const EmailTemplates = {
     ORGANISATION_CREATE:{
+        id: 'ORGANISATION_CREATE',
         subject: 'Carbon Registry: Welcome!',
         html: `
         Welcome {{organisationName}},<br><br> 
@@ -11,6 +12,7 @@ export const EmailTemplates = {
         `
     },
     USER_CREATE: {
+        id: 'USER_CREATE',
         subject: 'Carbon Registry: Welcome!',
         html: `
         Welcome {{name}}, <br><br>
@@ -83,6 +85,7 @@ export const EmailTemplates = {
         text: ''
     },
     CHANGE_PASSOWRD: {
+        id: 'CHANGE_PASSOWRD',
         subject: 'Carbon Registry: Your password was changed',
         html: `
         Hi {{name}},<br><br>
@@ -98,6 +101,7 @@ export const EmailTemplates = {
         text: ''
     },
     PROGRAMME_CREATE: {
+        id: 'PROGRAMME_CREATE',
         subject: 'New Programme Received for Authorisation',
         html:`
         Hi {{name}}, <br><br>
@@ -112,6 +116,7 @@ export const EmailTemplates = {
         `
     },
     PROGRAMME_AUTHORISATION: {
+        id: 'PROGRAMME_AUTHORISATION',
         subject: 'Programme authorised',
         html:`
         Hi {{name}},  <br><br>
@@ -127,6 +132,7 @@ export const EmailTemplates = {
         `
     },
     PROGRAMME_REJECTION: {
+        id: 'PROGRAMME_REJECTION',
         subject: 'Programme Rejected',
         html: `
         Hi {{name}}, <br><br> 
@@ -141,6 +147,7 @@ export const EmailTemplates = {
         `
     },
     CREDIT_ISSUANCE: {
+        id: 'CREDIT_ISSUANCE',
         subject: 'Credits Issued',
         html: `
         Hi {{name}}, <br><br> 
@@ -154,6 +161,7 @@ export const EmailTemplates = {
         `
     },
     CREDIT_TRANSFER_REQUISITIONS: {
+        id: 'CREDIT_TRANSFER_REQUISITIONS',
         subject: 'Transfer Request Received',
         html: `
         Hi {{name}}, <br><br> 
@@ -166,6 +174,7 @@ export const EmailTemplates = {
         `
     },
     CREDIT_TRANSFER_CANCELLATION: {
+        id: 'CREDIT_TRANSFER_CANCELLATION',
         subject: 'Transfer Request Cancelled',
         html: `
         Hi {{name}}, <br><br> 
@@ -178,24 +187,27 @@ export const EmailTemplates = {
         `
     },
     CREDIT_TRANSFER_ACCEPTED: {
+        id: 'CREDIT_TRANSFER_ACCEPTED',
         subject: 'Transfer Request Accepted',
         html: `
         Hi {{name}}, <br><br> 
         
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been accepted by {{organisationName}}.<br>
-        Click here {{pageLink}} for more details of the transfer request.
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been accepted by {{organisationName}}.<br><br>
+        Click here {{pageLink}} for more details of the transfer request. <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team`
+        The {{countryName}} Carbon Credit Registry Team
+        `
     },
     CREDIT_TRANSFER_REJECTED: {
+        id: 'CREDIT_TRANSFER_REJECTED',
         subject: 'Transfer Request Rejected',
         html: `
         Hi {{name}}, <br><br> 
         
         Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} 
-        made by your organisation has been rejected by {{organisationName}}.<br>
-        Click here {{pageLink}} for more details of the transfer request
+        made by your organisation has been rejected by {{organisationName}}.<br><br>
+        Click here {{pageLink}} for more details of the transfer request. <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team`
