@@ -947,7 +947,7 @@ ${total}
               ? '#003366'
               : '#000d1a';
 
-          matchExpression.push(row['?column?'], color);
+          matchExpression.push(row.country, color);
         }
 
         function getCountryCodes(dataSet: any) {
