@@ -765,7 +765,7 @@ export class AggregateAPIService {
           });
           filterOr.push({
             value: companyId,
-            key: "certifier->>certifierId",
+            key: "programmeCertifierId",
             operation: "ANY",
           });
         }
