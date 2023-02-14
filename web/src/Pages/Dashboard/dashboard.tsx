@@ -253,6 +253,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else if (companyRole === 'Certifier' && categoryType === 'mine') {
@@ -268,6 +276,14 @@ const Dashboard = () => {
           },
           {
             type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -295,6 +311,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else {
@@ -316,6 +340,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     }
@@ -324,9 +356,6 @@ const Dashboard = () => {
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
     return {
       stats: [
-        {
-          type: 'TOTAL_CREDITS_CERTIFIED',
-        },
         {
           type: 'PROGRAMME_LOCATIONS',
         },
@@ -366,23 +395,30 @@ const Dashboard = () => {
       console.log('stats data 3 -- > ', response?.data);
       let programmesAggByStatus;
       let programmesAggBySector;
+      let totalCreditsCertifiedStats;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
       let timeLabelDataSector = [];
       let formattedTimeLabelDataSector: any = [];
+      let timeLabelCertifiedCreditsStats = [];
+      let formattedTimeLabelCertifiedCreditsStats: any = [];
       if (programmesAggByStatus) {
         timeLabelDataStatus = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
@@ -403,7 +439,7 @@ const Dashboard = () => {
 
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
-        formattedTimeLabelDataSector = timeLabelDataStatus?.map((item: any) => {
+        formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
 
@@ -419,6 +455,19 @@ const Dashboard = () => {
         setWasteProgrammes(programmesAggBySector?.waste);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+      }
+      if (totalCreditsCertifiedStats) {
+        timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
+        formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
+          (item: any) => {
+            return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          }
+        );
+        setCertifiedCredits(totalCreditsCertifiedStats?.certifiedSum);
+        setUnCertifiedCredits(totalCreditsCertifiedStats?.uncertifiedSum);
+        setRevokedCredits(totalCreditsCertifiedStats?.revokedSum);
+
+        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -436,12 +485,6 @@ const Dashboard = () => {
   const getAllProgrammeAnalyticsStatsCharts = async () => {
     setLoading(true);
     try {
-      const timeLabelsProgrames: any = [];
-
-      const certifiedCredit: any = [];
-      const unCertifiedCredit: any = [];
-      const revokedCredit: any = [];
-
       const response: any = await post(
         'stats/programme/dashboardCharts',
         getAllProgrammeAnalyticsStatsChartsParams()
@@ -455,38 +498,6 @@ const Dashboard = () => {
         const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
         setProgrammeTransferLocations(locations);
       }
-      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
-        if (totalCredits?.certified) {
-          const certified = totalCredits?.certified;
-          certified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            const label = Object.getOwnPropertyNames(item);
-            const date = new Date(parseInt(label[0]));
-            const formattedDate = moment(date).format('DD-MM-YYYY');
-            timeLabelsProgrames.push(formattedDate);
-            certifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.uncertified) {
-          const uncertified = totalCredits?.uncertified;
-          uncertified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            unCertifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.revoked) {
-          const revoked = totalCredits?.revoked;
-          revoked?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            revokedCredit.push(credit[0]);
-          });
-        }
-      }
-      setCertifiedCredits(certifiedCredit);
-      setUnCertifiedCredits(unCertifiedCredit);
-      setRevokedCredits(revokedCredit);
-      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
