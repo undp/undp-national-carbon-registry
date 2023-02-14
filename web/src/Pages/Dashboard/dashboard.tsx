@@ -261,6 +261,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else if (companyRole === 'Certifier' && categoryType === 'mine') {
@@ -284,6 +292,14 @@ const Dashboard = () => {
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -319,6 +335,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else {
@@ -348,6 +372,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     }
@@ -358,9 +390,6 @@ const Dashboard = () => {
       stats: [
         {
           type: 'PROGRAMME_LOCATIONS',
-        },
-        {
-          type: 'TRANSFER_LOCATIONS',
         },
       ],
       category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
@@ -396,22 +425,27 @@ const Dashboard = () => {
       let programmesAggByStatus;
       let programmesAggBySector;
       let totalCreditsCertifiedStats;
+      let transferLocationsStats;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
@@ -469,6 +503,9 @@ const Dashboard = () => {
 
         totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
       }
+      if (transferLocationsStats) {
+        setProgrammeTransferLocations(transferLocationsStats);
+      }
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -493,10 +530,6 @@ const Dashboard = () => {
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
-      }
-      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
-        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
-        setProgrammeTransferLocations(locations);
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -882,7 +915,7 @@ ${total}
   useEffect(() => {
     setTimeout(() => {
       const map = new mapboxgl.Map({
-        container: mapContainerInternationalRef.current || '',
+        container: mapContainerInternationalRef?.current || '',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [12, 50],
@@ -908,15 +941,17 @@ ${total}
           // const blue = row.ratio * 255;
 
           const color =
-            row.ratio < 0.25
-              ? `#FFC343`
-              : row.ratio < 0.5
-              ? '#FFAC6F'
-              : row.ratio < 0.75
-              ? '#FF923D'
-              : '#FE8163';
+            row.count < 2
+              ? `#4da6ff`
+              : row.count < 10
+              ? '#0080ff'
+              : row.count < 50
+              ? '#0059b3'
+              : row.count < 100
+              ? '#003366'
+              : '#000d1a';
 
-          matchExpression.push(row.code, color);
+          matchExpression.push(row['?column?'], color);
         }
 
         function getCountryCodes(dataSet: any) {
@@ -948,7 +983,7 @@ ${total}
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
-          container: mapContainerRef.current || '',
+          container: mapContainerRef?.current || '',
           zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
