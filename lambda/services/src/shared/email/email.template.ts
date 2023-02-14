@@ -18,7 +18,7 @@ export const EmailTemplates = {
         Welcome {{name}}, <br><br>
         
         Your account has been created for the {{countryName}} Carbon Credit 
-        Registry. Your account has been created. You can access your account using the temporaryHomepage: {{home}} <br><br>
+        Registry. Your account has been created. You can access your account using the temporary Homepage: {{home}} <br><br>
 
         User: {{email}} <br>
         Password (temporary): {{tempPassword}} <br><br>
