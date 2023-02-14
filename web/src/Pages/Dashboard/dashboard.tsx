@@ -147,7 +147,6 @@ const Dashboard = () => {
           type: 'CERTIFIED_REVOKED_BY_ME',
         },
       ],
-      category: 'overall',
     };
   };
 
@@ -194,18 +193,49 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-          statFilter: {
-            startTime: startTime !== 0 ? startTime : undefined,
-            endTime: endTime !== 0 ? endTime : undefined,
-            timeGroup: true,
+    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
           },
-        },
-      ],
-    };
+          {
+            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    }
   };
 
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
@@ -255,29 +285,78 @@ const Dashboard = () => {
     }
   };
 
+  const getAllProgrammesAggChartStats = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post('stats/programme/agg', getAllChartsParams());
+      console.log('stats data 3 -- > ', response?.data);
+      let programmesAggByStatus;
+      let programmesAggBySector;
+      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+      } else {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+      }
+      let timeLabelDataStatus = [];
+      let formattedTimeLabelDataStatus: any = [];
+      let timeLabelDataSector = [];
+      let formattedTimeLabelDataSector: any = [];
+      if (programmesAggByStatus) {
+        timeLabelDataStatus = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+
+        setAuthorisedProgrammes(programmesAggByStatus?.authorised);
+        setPendingProgrammes(programmesAggByStatus?.awaitingAuthorization);
+        setRejectedProgrammes(programmesAggByStatus?.rejected);
+        totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
+
+        setAuthorizedCredits(programmesAggByStatus?.authorisedCredits);
+        setIssuedCredits(programmesAggByStatus?.issuedCredits);
+        setTransferredCredits(programmesAggByStatus?.transferredCredits);
+        setRetiredCredits(programmesAggByStatus?.retiredCredits);
+        totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
+      }
+
+      if (programmesAggBySector) {
+        timeLabelDataSector = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataSector = timeLabelDataStatus?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+
+        setAgricultureProgrammes(programmesAggBySector?.agriculture);
+        setEducationProgrammes(programmesAggBySector?.education);
+        setEnergyProgrammes(programmesAggBySector?.energy);
+        setForestryProgrammes(programmesAggBySector?.forestry);
+        setHealthProgrammes(programmesAggBySector?.health);
+        setHospitalityProgrammes(programmesAggBySector?.hospitality);
+        setManufacturingProgrammes(programmesAggBySector?.manufacturing);
+        setOtherProgrammes(programmesAggBySector?.other);
+        setTransportProgrammes(programmesAggBySector?.transport);
+        setWasteProgrammes(programmesAggBySector?.waste);
+
+        totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getAllProgrammeAnalyticsStatsCharts = async () => {
     setLoading(true);
     try {
-      const pendingProgrames: any = [];
-      const authorisedProgrames: any = [];
-      const rejectedProgrames: any = [];
       const timeLabelsProgrames: any = [];
-
-      const energyProgrames: any = [];
-      const healthProgrames: any = [];
-      const educationProgrames: any = [];
-      const transportProgrames: any = [];
-      const manufacturingProgrames: any = [];
-      const hospitalityProgrames: any = [];
-      const forestryProgrames: any = [];
-      const wasteProgrames: any = [];
-      const agricultureProgrames: any = [];
-      const otherProgrames: any = [];
-
-      const authorizedCredit: any = [];
-      const issuedCredit: any = [];
-      const retiredCredit: any = [];
-      const transferredCredit: any = [];
 
       const certifiedCredit: any = [];
       const unCertifiedCredit: any = [];
@@ -297,126 +376,7 @@ const Dashboard = () => {
             const label = Object.getOwnPropertyNames(item);
             const date = new Date(parseInt(label[0]));
             const formattedDate = moment(date).format('DD-MM-YYYY');
-            pendingProgrames.push(programesCount[0]);
             timeLabelsProgrames.push(formattedDate);
-          });
-        }
-        if (totalProgrammes?.authorised) {
-          const authorised = totalProgrammes?.authorised;
-          authorised?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            authorisedProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammes?.rejected) {
-          const rejected = totalProgrammes?.rejected;
-          rejected?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            rejectedProgrames.push(programesCount[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.TOTAL_PROGRAMS_SECTOR) {
-        const totalProgrammesSector = response?.data?.stats?.TOTAL_PROGRAMS_SECTOR;
-        if (totalProgrammesSector?.agriculture) {
-          const agriculture = totalProgrammesSector?.agriculture;
-          agriculture?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            agricultureProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.education) {
-          const education = totalProgrammesSector?.education;
-          education?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            educationProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.energy) {
-          const energy = totalProgrammesSector?.energy;
-          energy?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            energyProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.forestry) {
-          const forestry = totalProgrammesSector?.forestry;
-          forestry?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            forestryProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.health) {
-          const health = totalProgrammesSector?.health;
-          health?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            healthProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.hospitality) {
-          const hospitality = totalProgrammesSector?.hospitality;
-          hospitality?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            hospitalityProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.manufacturing) {
-          const manufacturing = totalProgrammesSector?.manufacturing;
-          manufacturing?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            manufacturingProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.other) {
-          const other = totalProgrammesSector?.other;
-          other?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            otherProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.transport) {
-          const transport = totalProgrammesSector?.transport;
-          transport?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            transportProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.waste) {
-          const waste = totalProgrammesSector?.waste;
-          waste?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            wasteProgrames.push(programesCount[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.TOTAL_CREDITS) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS;
-        if (totalCredits?.authorized) {
-          const authorized = totalCredits?.authorized;
-          authorized?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            authorizedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.issued) {
-          const issued = totalCredits?.issued;
-          issued?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            issuedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.retired) {
-          const retired = totalCredits?.retired;
-          retired?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            retiredCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.transferred) {
-          const transferred = totalCredits?.transferred;
-          transferred?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            transferredCredit.push(credit[0]);
           });
         }
       }
@@ -452,37 +412,9 @@ const Dashboard = () => {
           });
         }
       }
-      console.log({
-        pendingProgrames,
-        authorisedProgrames,
-        rejectedProgrames,
-        timeLabelsProgrames,
-      });
-      setPendingProgrammes(pendingProgrames);
-      setAuthorisedProgrammes(authorisedProgrames);
-      setRejectedProgrammes(rejectedProgrames);
-
-      setEnergyProgrammes(energyProgrames);
-      setHealthProgrammes(healthProgrames);
-      setEducationProgrammes(educationProgrames);
-      setTransportProgrammes(transportProgrames);
-      setManufacturingProgrammes(manufacturingProgrames);
-      setHospitalityProgrammes(hospitalityProgrames);
-      setForestryProgrammes(forestryProgrames);
-      setWasteProgrammes(wasteProgrames);
-      setAgricultureProgrammes(agricultureProgrames);
-      setOtherProgrammes(otherProgrames);
-
-      setAuthorizedCredits(authorizedCredit);
-      setIssuedCredits(issuedCredit);
-      setRetiredCredits(retiredCredit);
-      setTransferredCredits(transferredCredit);
       setCertifiedCredits(certifiedCredit);
       setUnCertifiedCredits(unCertifiedCredit);
       setRevokedCredits(revokedCredit);
-      totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
-      totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
-      totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
       totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -682,6 +614,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
+    getAllProgrammesAggChartStats();
     getAllProgrammeAnalyticsStatsCharts();
   }, [startTime, endTime, categoryType]);
 
@@ -768,7 +701,7 @@ const Dashboard = () => {
       data: certifiedCredits,
     },
     {
-      name: 'UnCertified',
+      name: 'Uncertified',
       data: unCertifiedCredits,
     },
     {
@@ -1187,7 +1120,7 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Programmes:Sector"
+              title="Total Programmes: Sector"
               options={totalProgrammesOptionsSub}
               series={seriesTotalProgrammesSubY}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
@@ -1209,7 +1142,7 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Credit Certified"
+              title="Total Credits Certified"
               options={totalCreditsCertifiedOptions}
               series={seriesTotalCreditsCertifiedY}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}

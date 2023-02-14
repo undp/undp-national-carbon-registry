@@ -18,7 +18,7 @@ import { UserModule } from "../user/user.module";
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
         signOptions: {
-          expiresIn: 3600,
+          expiresIn: 3600*100,
         },
       }),
       inject: [ConfigService],
