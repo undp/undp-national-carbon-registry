@@ -279,6 +279,7 @@ export class AggregateAPIService {
   ) {
     const query = new QueryDto();
     query.filterAnd = filterAnd;
+    query.filterOr = filterOr;
     query.sort = sort;
 
     const whereC = this.helperService.generateWhereSQL(
