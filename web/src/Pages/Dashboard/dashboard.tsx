@@ -34,7 +34,6 @@ import {
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
 import TransferLocationsMap from './transferLocations';
-import { match } from 'assert';
 
 const { RangePicker } = DatePicker;
 
@@ -929,7 +928,7 @@ ${total}
         // Build a GL match expression that defines the color for every vector tile feature
         // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
         const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-        const strings = [];
+        const strings = ['match', ['get', 'iso_3166_1']];
 
         const transferLocations: any = [...programmeTransferLocations];
 
@@ -950,7 +949,7 @@ ${total}
               : '#000d1a';
 
           matchExpression.push(row.country, color);
-          strings.push(row.country);
+          strings.push(row.country, row.count);
         }
 
         function getCountryCodes(dataSet: any) {
@@ -982,7 +981,7 @@ ${total}
         //   layout: {
         //     'icon-image': 'custom-marker',
         //     // get the title name from the source's "title" property
-        //     'text-field': ['get', 'country'],
+        //     'text-field': strings,
         //     'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
         //     'text-offset': [0, 1.25],
         //     'text-anchor': 'top',
