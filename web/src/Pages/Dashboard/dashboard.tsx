@@ -283,15 +283,6 @@ const Dashboard = () => {
     return {
       stats: [
         {
-          type: 'TOTAL_PROGRAMS',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_SECTOR',
-        },
-        {
-          type: 'TOTAL_CREDITS',
-        },
-        {
           type: 'TOTAL_CREDITS_CERTIFIED',
         },
         {
@@ -408,19 +399,6 @@ const Dashboard = () => {
         getAllProgrammeAnalyticsStatsChartsParams()
       );
       console.log(response?.data?.stats);
-      if (response?.data?.stats?.TOTAL_PROGRAMS) {
-        const totalProgrammes = response?.data?.stats?.TOTAL_PROGRAMS;
-        if (totalProgrammes?.awaitingAuthorization) {
-          const pendings = totalProgrammes?.awaitingAuthorization;
-          pendings?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            const label = Object.getOwnPropertyNames(item);
-            const date = new Date(parseInt(label[0]));
-            const formattedDate = moment(date).format('DD-MM-YYYY');
-            timeLabelsProgrames.push(formattedDate);
-          });
-        }
-      }
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
@@ -435,6 +413,10 @@ const Dashboard = () => {
           const certified = totalCredits?.certified;
           certified?.map((item: any, index: any) => {
             const credit = Object.values(item);
+            const label = Object.getOwnPropertyNames(item);
+            const date = new Date(parseInt(label[0]));
+            const formattedDate = moment(date).format('DD-MM-YYYY');
+            timeLabelsProgrames.push(formattedDate);
             certifiedCredit.push(credit[0]);
           });
         }
