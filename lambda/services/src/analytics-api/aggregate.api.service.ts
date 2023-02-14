@@ -513,7 +513,7 @@ export class AggregateAPIService {
     });
 
     let filterOr = undefined;
-    if (statFilter.onlyMine) {
+    if (statFilter && statFilter.onlyMine) {
       filterOr = [
         {
           value: companyId,
@@ -716,7 +716,7 @@ export class AggregateAPIService {
             : (stat.statFilter = { onlyMine: true });
         }
         const whereC = [];
-        if (stat.statFilter.onlyMine) {
+        if (stat.statFilter && stat.statFilter.onlyMine) {
           whereC.push(
             `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
           );
@@ -828,7 +828,7 @@ export class AggregateAPIService {
       stat.statFilter?.timeGroup ? true : false
     );
 
-    if (stat.statFilter.timeGroup != true) {
+    if (stat.statFilter && stat.statFilter.timeGroup != true) {
       return {
         last: Math.max(allAuth.last, certified.last, revoked.last),
         data: {
