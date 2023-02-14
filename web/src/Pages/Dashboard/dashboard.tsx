@@ -144,14 +144,17 @@ const Dashboard = () => {
           type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'CERTIFIED_REVOKED_BY_ME',
+          type: 'UNCERTIFIED_BY_ME',
+        },
+        {
+          type: 'CERTIFIED_BY_ME',
         },
       ],
     };
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (companyRole === 'ProgrammeDeveloper') {
       return {
         stats: [
           {
@@ -163,6 +166,44 @@ const Dashboard = () => {
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -444,7 +485,8 @@ const Dashboard = () => {
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
       const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       const programmeByStatusAggregationResponseLastUpdate =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
@@ -465,13 +507,15 @@ const Dashboard = () => {
         setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
       }
       if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
-        setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
+        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
         setCreditCertifiedBalanceWithoutTimeRange(
           certifiedByMeAggregationResponse?.certifiedSum === null
             ? 0
-            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
+            : parseFloat(certifiedByMeAggregationResponse?.sum)
         );
+      }
+      if (unCertifiedByMeAggregationResponse) {
+        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -498,11 +542,20 @@ const Dashboard = () => {
       console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      if (companyRole === 'ProgrammeDeveloper') {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
