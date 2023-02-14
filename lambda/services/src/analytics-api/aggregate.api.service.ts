@@ -747,10 +747,10 @@ export class AggregateAPIService {
             `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
           );
         }
-        if (stat.statFilter.startTime) {
+        if (stat.statFilter && stat.statFilter.startTime) {
           whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
         }
-        if (stat.statFilter.endTime) {
+        if (stat.statFilter && stat.statFilter.endTime) {
           whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
         }
         results[key] = this.groupByStatus(
