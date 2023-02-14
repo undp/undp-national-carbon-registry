@@ -304,6 +304,7 @@ export class AggregateAPIService {
   ) {
     const query = new QueryDto();
     query.filterAnd = filterAnd;
+    query.filterOr = filterOr;
     query.sort = sort;
 
     const whereC = this.helperService.generateWhereSQL(
@@ -367,7 +368,7 @@ export class AggregateAPIService {
       queryBuild = queryBuild.groupBy(grpByAll);
     }
 
-    const key = grpByAll ? grpByAll : "" + " " + whereC + " from " + tableName;
+    const key = (grpByAll ? grpByAll : "") + " " + whereC + " from " + tableName;
     if (statCache[key]) {
       return statCache[key];
     }
@@ -401,7 +402,14 @@ export class AggregateAPIService {
       }
     } else if (timeGroupingCol && timeGroupingAccuracy) {
       console.log("coming into this condition ---- !groupBy[0]");
-      dTimeGrouped = d;
+      const map = {}
+      for (const en of d) {
+        if (!map[en.time_group]) {
+          map[en.time_group] = []
+        }
+        map[en.time_group].push(en)
+      }
+      dTimeGrouped = map;
     }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
@@ -508,11 +516,7 @@ export class AggregateAPIService {
   ) {
     let filters = this.getFilterAndByStatFilter(
       statFilter,
-      {
-        value: companyId,
-        key: companyField,
-        operation: "ANY",
-      },
+      null,
       "createdTime"
     );
     if (!filters) {
@@ -533,6 +537,23 @@ export class AggregateAPIService {
       operation: "=",
     });
 
+    let filterOr = undefined;
+    if (statFilter.onlyMine) {
+      filterOr = [
+        {
+          value: companyId,
+          key: companyField,
+          operation: "ANY",
+        },
+        {
+          value: companyId,
+          key: 'companyId',
+          operation: "ANY",
+        },
+      ]
+    }
+
+
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
@@ -546,7 +567,7 @@ export class AggregateAPIService {
         frzAgg,
       ],
       filters,
-      null,
+      filterOr,
       timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
@@ -655,10 +676,11 @@ export class AggregateAPIService {
       //   break;
       case StatType.CERTIFIED_REVOKED_PROGRAMMES:
       case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
-        stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES &&
-        stat.statFilter
-          ? (stat.statFilter.onlyMine = true)
-          : (stat.statFilter = { onlyMine: true });
+        if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES) {
+          stat.statFilter
+            ? (stat.statFilter.onlyMine = true)
+            : (stat.statFilter = { onlyMine: true });
+        }
         results[key] = await this.getCertifiedRevokedAgg(
           stat,
           results,
@@ -686,7 +708,7 @@ export class AggregateAPIService {
           "createdTime"
         );
 
-        results[stat.type] = await this.genAggregateTypeOrmQuery(
+        results[key] = await this.genAggregateTypeOrmQuery(
           this.programmeRepo,
           "programme",
           stat.type === StatType.CERTIFIED_BY_ME_BY_STATE
@@ -706,30 +728,39 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          undefined
+          "createdTime",
+          stat.statFilter?.timeGroup ? "createdAt" : undefined,
+          stat.statFilter?.timeGroup ? "day" : undefined
         );
         break;
       case StatType.ALL_PROGRAMME_LOCATION:
       case StatType.MY_PROGRAMME_LOCATION:
-      case StatType.MY_CERTIFIED_PROGRAMME_LOCATION:
-        results[stat.type] = await this.programmeRepo.manager
-          .query(`SELECT p."programmeId" as loc, count(*) AS count
+        if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
+          stat.statFilter
+            ? (stat.statFilter.onlyMine = true)
+            : (stat.statFilter = { onlyMine: true });
+        }
+        const whereC = [];
+        if (stat.statFilter.onlyMine) {
+          whereC.push(
+            `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
+          );
+        }
+        if (stat.statFilter.startTime) {
+          whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
+        }
+        if (stat.statFilter.endTime) {
+          whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
+        }
+        results[key] = this.groupByStatus("loc", await this.programmeRepo.manager
+          .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
           FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-          ${
-            stat.type === StatType.MY_PROGRAMME_LOCATION
-              ? `where ${companyId} = ANY(b."companyId")`
-              : ""
-          }
-          ${
-            stat.type === StatType.MY_CERTIFIED_PROGRAMME_LOCATION
-              ? `where ${companyId} = ANY(b."certifierId")`
-              : ""
-          }
-          GROUP  BY p."programmeId"`);
+          ${whereC.length > 0 ? " where " : " "}
+          ${whereC.join(" and ")}
+          GROUP  BY p."programmeId", b."currentStage"`));
         break;
       case StatType.ALL_TRANSFER_LOCATION:
       case StatType.MY_TRANSFER_LOCATION:
-      case StatType.MY_CERTIFIED_TRANSFER_LOCATION:
         if (stat.type === StatType.MY_TRANSFER_LOCATION) {
           stat.statFilter
             ? (stat.statFilter.onlyMine = true)
@@ -738,11 +769,7 @@ export class AggregateAPIService {
 
         let filtCom = this.getFilterAndByStatFilter(
           stat.statFilter,
-          {
-            value: companyId,
-            key: "fromCompanyId",
-            operation: "=",
-          },
+          null,
           "txTime"
         );
         if (!filtCom) {
@@ -753,19 +780,27 @@ export class AggregateAPIService {
           key: "retirementType",
           operation: "=",
         });
-        if (stat.type === StatType.MY_CERTIFIED_TRANSFER_LOCATION)
-          filtCom.push({
+
+        const filterOr = [];
+        if (stat.statFilter && stat.statFilter.onlyMine) {
+          filterOr.push({
             value: companyId,
-            key: "certifier->>certifierId",
+            key: "fromCompanyId",
+            operation: "=",
+          });
+          filterOr.push({
+            value: companyId,
+            key: "programmeCertifierId",
             operation: "ANY",
           });
-        results[stat.type] = await this.genAggregateTypeOrmQuery(
+        }
+        results[key] = await this.genAggregateTypeOrmQuery(
           this.programmeTransferRepo,
           "transfer",
           [`toCompanyMeta->>country`],
           [new AggrEntry("requestId", "COUNT", "count")],
           filtCom,
-          null,
+          filterOr,
           null,
           abilityCondition,
           lastTimeForWhere,
@@ -818,56 +853,76 @@ export class AggregateAPIService {
       stat.statFilter?.timeGroup ? true : false
     );
 
-    // if (!results[StatType.ALL_AUTH_PROGRAMMES]?.data?.length) {
-    //   results[StatType.ALL_AUTH_PROGRAMMES]?.data.push({
-    //     count: "0",
-    //     sum: 0,
-    //     time_group: 0,
-    //   });
-    // }
-    // if (!results[StatType.REVOKED_PROGRAMMES]?.data?.length) {
-    //   results[StatType.REVOKED_PROGRAMMES]?.data.push({
-    //     count: "0",
-    //     totalestcredit: 0,
-    //     totalissuedcredit: 0,
-    //     totalretiredcredit: 0,
-    //     totaltxcredit: 0,
-    //     totalfreezecredit: 0,
-    //     time_group: 0,
-    //   });
-    // }
-    // if (!results[StatType.CERTIFIED_PROGRAMMES]?.data?.length) {
-    //   results[StatType.CERTIFIED_PROGRAMMES]?.data.push({
-    //     count: "0",
-    //     totalestcredit: 0,
-    //     totalissuedcredit: 0,
-    //     totalretiredcredit: 0,
-    //     totaltxcredit: 0,
-    //     totalfreezecredit: 0,
-    //     time_group: 0,
-    //   });
-    // }
-    return {
-      last: Math.max(allAuth.last, certified.last, revoked.last),
-      data: {
-        certifiedSum: Number(
-          certified?.data.length > 0 ? certified?.data[0]["totalestcredit"] : 0
-        ),
-        revokedSum: Number(
-          revoked?.data.length > 0 ? revoked.data[0]["totalestcredit"] : 0
-        ),
-        uncertifiedSum:
-          Number(allAuth?.data.length > 0 ? allAuth?.data[0]["sum"] : 0) -
-          Number(
-            certified?.data.length > 0
-              ? certified?.data[0]["totalestcredit"]
-              : 0
-          ) -
-          Number(
+    if (stat.statFilter.timeGroup != true) {
+      return {
+        last: Math.max(allAuth.last, certified.last, revoked.last),
+        data: {
+          certifiedSum: Number(
+            certified?.data.length > 0 ? certified?.data[0]["totalestcredit"] : 0
+          ),
+          revokedSum: Number(
             revoked?.data.length > 0 ? revoked.data[0]["totalestcredit"] : 0
           ),
-      },
-    };
+          uncertifiedSum:
+            Number(allAuth?.data.length > 0 ? allAuth?.data[0]["sum"] : 0) -
+            Number(
+              certified?.data.length > 0
+                ? certified?.data[0]["totalestcredit"]
+                : 0
+            ) -
+            Number(
+              revoked?.data.length > 0 ? revoked.data[0]["totalestcredit"] : 0
+            ),
+        },
+      };
+    } else {
+      const groupedData = {};
+      for (const d in certified.data) {
+        groupedData[d] = {
+          certifiedSum: Number(certified.data[d][0]['totalestcredit']),
+          revokedSum: 0
+        }
+      }
+      for (const d in revoked.data) {
+        if (!groupedData[d]) {
+          groupedData[d] = {
+            revokedSum: Number(revoked.data[d][0]['totalestcredit']),
+            certifiedSum: 0
+          }
+        } else {
+          groupedData[d]['revokedSum'] = Number(revoked.data[d][0]['totalestcredit']);
+        }
+      }
+      for (const d in allAuth.data) {
+        if (!groupedData[d]) {
+          groupedData[d] = {
+            revokedSum: 0,
+            certifiedSum: 0,
+            uncertifiedSum: Number(allAuth.data[d][0]['sum'])
+          }
+        } else {
+          groupedData[d]['uncertifiedSum'] = Number(allAuth.data[d][0]['sum']) - groupedData[d]['certifiedSum'] - groupedData[d]['revokedSum'];
+        }
+      }
+
+      const chartData = {
+        "timeLabel": [],
+        "certifiedSum": [],
+        "uncertifiedSum": [],
+        "revokedSum": []
+      }
+      for (const tg in groupedData) {
+        chartData.timeLabel.push(tg);
+        chartData.certifiedSum.push(groupedData[tg]['certifiedSum'])
+        chartData.uncertifiedSum.push(groupedData[tg]['uncertifiedSum'])
+        chartData.revokedSum.push(groupedData[tg]['revokedSum'])
+      }
+
+      return {
+        last: Math.max(allAuth.last, certified.last, revoked.last),
+        data: chartData,
+      };
+    }
   }
 
   // async getMultipleStats(sourceStats: Stat[], newStat: Stat, results, frzAgg, abilityCondition, lastTimeForWhere, companyId, aggFunc: any) {
@@ -943,17 +998,18 @@ export class AggregateAPIService {
       return {
         last: Math.max(revoked.last, certified.last, allAuth.last),
         data: {
-          certifiedSum: Number(certified.data[0]["sum"]),
-          uncertifiedSum:
-            Number(allAuth.data[0]["sum"]) -
-            Number(revoked.data[0]["sum"]) -
-            Number(certified.data[0]["sum"]),
           certifiedCount: Number(certified.data[0]["count"]),
           revokedCount: Number(revoked.data[0]["count"]),
           uncertifiedCount:
             Number(allAuth.data[0]["count"]) -
             Number(revoked.data[0]["count"]) -
             Number(certified.data[0]["count"]),
+          revokedSum: Number(revoked.data[0]["sum"]),
+          certifiedSum: Number(certified.data[0]["sum"]),
+          uncertifiedSum:
+            Number(allAuth.data[0]["sum"]) -
+            Number(revoked.data[0]["sum"]) -
+            Number(certified.data[0]["sum"]),
         },
       };
     } else {
@@ -1083,5 +1139,18 @@ export class AggregateAPIService {
       stat.statFilter?.timeGroup ? "createdAt" : undefined,
       stat.statFilter?.timeGroup ? "day" : undefined
     );
+  }
+
+  private groupByStatus(key: string, data: any) {
+    const mapping = {}
+    for (const d of data) {
+      if (!mapping[d[key]]) {
+        mapping[d[key]] = [];
+      }
+      mapping[d[key]].push(d)
+      d[key] = undefined;
+    }
+
+    return mapping;
   }
 }

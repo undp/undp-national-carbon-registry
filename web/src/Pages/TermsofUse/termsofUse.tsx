@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import './termsofUse.scss';
+import LayoutFooter from '../../Components/Footer/layout.footer';
 import { CcCircle } from 'react-bootstrap-icons';
 const TermsOfUse = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
@@ -39,7 +40,7 @@ const TermsOfUse = () => {
       </Row>
       <div className="term-body-container">
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="termtitle">TERMS OF USE</div>
             <div className="term-sub">Last updated February 02, 2023</div>
           </Col>
@@ -947,54 +948,7 @@ const TermsOfUse = () => {
           </Col>
         </Row>
       </div>
-      <div className="homepage-footer-container">
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="logocontainer">
-              <div className="logo">
-                <img src={sliderLogo} alt="slider-logo" />
-              </div>
-              <div>
-                <div style={{ display: 'flex' }}>
-                  <div className="title">{'CARBON'}</div>
-                  <div className="title-sub">{'REGISTRY'}</div>
-                </div>
-                <div className="footer-country-name">
-                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="footertext">{t('homepage:footertext1')}</div>
-          </Col>
-        </Row>
-        <Row className="footer-raw">
-          <Col md={4.8} lg={12}>
-            <div className="footertext-bottom">
-              {process.env.COUNTRY_NAME || 'Antarctic Region'}
-              <CcCircle className="cc" color="#FFFF" size="10px" />
-            </div>
-          </Col>
-          <Col className="footertext-link-container" md={4.8} lg={12}>
-            <a href="/cookie" className="footertext-links">
-              {t('homepage:Cookie')}
-            </a>
-            <a href="codeconduct" className="footertext-links">
-              {t('homepage:codeconduct')}
-            </a>
-            <a href="/terms#termuse" className="footertext-links">
-              {t('homepage:terms')}
-            </a>
-            <a href="/privacy" className="footertext-links">
-              {t('homepage:privacy')}
-            </a>
-          </Col>
-        </Row>
-      </div>
+      <LayoutFooter />
     </div>
   );
 };
