@@ -756,7 +756,7 @@ export class AggregateAPIService {
         });
 
         const filterOr = [];
-        if (stat.statFilter.onlyMine) {
+        if (stat.statFilter && stat.statFilter.onlyMine) {
           filterOr.push({
             value: companyId,
             key: "fromCompanyId",
@@ -768,7 +768,7 @@ export class AggregateAPIService {
             operation: "ANY",
           });
         }
-        results[stat.type] = await this.genAggregateTypeOrmQuery(
+        results[key] = await this.genAggregateTypeOrmQuery(
           this.programmeTransferRepo,
           "transfer",
           [`toCompanyMeta->>country`],
