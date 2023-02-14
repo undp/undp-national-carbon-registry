@@ -25,16 +25,18 @@ These worksteps can also be intergrated with larger TORs, especially TORs coveri
 1. Scope of Work
 
 3. Deliverables
-Deliverable 1: 
-Deliverable 2:
-Deliverable 3:
-Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
+- Deliverable 1: 
+- Deliverable 2:
+- Deliverable 3:
+- Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
 
 Other items to consider:
-- Hosting / cloud server: The ToR is based on the assumption that he government entity has or will prepare a hosting environment in a cloud server. If the government does not have a server space, consider if the vendor will need to host the registry. If so, consider if the vendor can be contracted for a long term. 
+- Hosting / clound server:
+- 	The ToR is based on the assumption that he government entity has or will prepare a hosting environment in a cloud server. If the government does not have a server space, consider if the vendor will need to host the registry. If so, consider if the vendor can be contracted for a long term. 
+- 	Server specs- 
 
 4. Required persons / skills
- - Developer: 
+ - Developer 1: 
  - Developer 2:
  - Project manager: 
  - Carbon or stakeholder engagement expert (optional)
