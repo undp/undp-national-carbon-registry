@@ -13,6 +13,7 @@ import { Company } from '../entities/company.entity';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
 import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.view.entity';
 import { UserModule } from '../user/user.module';
+import { EmailHelperModule } from '../email-helper/email-helper.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { UserModule } from '../user/user.module';
     UtilModule, 
     CompanyModule, 
     EmailModule,
-    UserModule
+    UserModule,
+    EmailHelperModule
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService]
