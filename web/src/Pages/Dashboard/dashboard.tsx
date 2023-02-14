@@ -261,6 +261,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else if (companyRole === 'Certifier' && categoryType === 'mine') {
@@ -284,6 +292,14 @@ const Dashboard = () => {
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -319,6 +335,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     } else {
@@ -348,6 +372,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     }
@@ -358,9 +390,6 @@ const Dashboard = () => {
       stats: [
         {
           type: 'PROGRAMME_LOCATIONS',
-        },
-        {
-          type: 'TRANSFER_LOCATIONS',
         },
       ],
       category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
@@ -396,22 +425,27 @@ const Dashboard = () => {
       let programmesAggByStatus;
       let programmesAggBySector;
       let totalCreditsCertifiedStats;
+      let transferLocationsStats;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
@@ -469,6 +503,9 @@ const Dashboard = () => {
 
         totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
       }
+      if (transferLocationsStats) {
+        setProgrammeTransferLocations(transferLocationsStats);
+      }
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -493,10 +530,6 @@ const Dashboard = () => {
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
-      }
-      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
-        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
-        setProgrammeTransferLocations(locations);
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -804,10 +837,6 @@ const Dashboard = () => {
     },
   ];
 
-  useEffect(() => {
-    console.log('transfr credit --- > ', transferredCredits);
-  }, [transferredCredits]);
-
   const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
   const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
   const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
@@ -882,7 +911,7 @@ ${total}
   useEffect(() => {
     setTimeout(() => {
       const map = new mapboxgl.Map({
-        container: mapContainerInternationalRef.current || '',
+        container: mapContainerInternationalRef?.current || '',
         // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [12, 50],
@@ -899,6 +928,7 @@ ${total}
         // Build a GL match expression that defines the color for every vector tile feature
         // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
         const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+        const strings = ['match', ['get', 'iso_3166_1']];
 
         const transferLocations: any = [...programmeTransferLocations];
 
@@ -908,15 +938,18 @@ ${total}
           // const blue = row.ratio * 255;
 
           const color =
-            row.ratio < 0.25
-              ? `#FFC343`
-              : row.ratio < 0.5
-              ? '#FFAC6F'
-              : row.ratio < 0.75
-              ? '#FF923D'
-              : '#FE8163';
+            row.count < 2
+              ? `#4da6ff`
+              : row.count < 10
+              ? '#0080ff'
+              : row.count < 50
+              ? '#0059b3'
+              : row.count < 100
+              ? '#003366'
+              : '#000d1a';
 
-          matchExpression.push(row.code, color);
+          matchExpression.push(row.country, color);
+          strings.push(row.country, row.count);
         }
 
         function getCountryCodes(dataSet: any) {
@@ -925,6 +958,8 @@ ${total}
 
         // Last value is the default, used where there is no data
         matchExpression.push('rgba(0, 0, 0, 0)');
+
+        console.table(matchExpression);
 
         map.addLayer(
           {
@@ -938,6 +973,20 @@ ${total}
           },
           'admin-1-boundary-bg'
         );
+
+        // map.addLayer({
+        //   id: 'points',
+        //   type: 'symbol',
+        //   source: 'countries',
+        //   layout: {
+        //     'icon-image': 'custom-marker',
+        //     // get the title name from the source's "title" property
+        //     'text-field': strings,
+        //     'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        //     'text-offset': [0, 1.25],
+        //     'text-anchor': 'top',
+        //   },
+        // });
       });
     }, 1000);
   }, [programmeTransferLocations]);
@@ -948,7 +997,7 @@ ${total}
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
-          container: mapContainerRef.current || '',
+          container: mapContainerRef?.current || '',
           zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
