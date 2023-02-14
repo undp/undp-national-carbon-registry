@@ -77,11 +77,13 @@ const Login = () => {
     <div className="login-container">
       <Row>
         <Col md={24} lg={15} flex="auto">
-          <div className="login-img-container">
-            <span>
-              {t('login:carbon')} <br /> {t('login:credit')} <br />
-              {t('login:management')}
-            </span>
+          <div className="login-img-container container-image">
+            <div className="text-ctn">
+              <span>
+                {t('login:carbon')} <br /> {t('login:credit')} <br />
+                {t('login:management')}
+              </span>
+            </div>
           </div>
         </Col>
         <Col md={24} lg={9} flex="auto">
