@@ -144,14 +144,17 @@ const Dashboard = () => {
           type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'CERTIFIED_REVOKED_BY_ME',
+          type: 'UNCERTIFIED_BY_ME',
+        },
+        {
+          type: 'CERTIFIED_BY_ME',
         },
       ],
     };
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (companyRole === 'ProgrammeDeveloper') {
       return {
         stats: [
           {
@@ -163,6 +166,44 @@ const Dashboard = () => {
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -193,7 +234,7 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (companyRole === 'ProgrammeDeveloper') {
       return {
         stats: [
           {
@@ -206,6 +247,72 @@ const Dashboard = () => {
           },
           {
             type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -233,6 +340,14 @@ const Dashboard = () => {
               timeGroup: true,
             },
           },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
         ],
       };
     }
@@ -241,18 +356,6 @@ const Dashboard = () => {
   const getAllProgrammeAnalyticsStatsChartsParams = () => {
     return {
       stats: [
-        {
-          type: 'TOTAL_PROGRAMS',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_SECTOR',
-        },
-        {
-          type: 'TOTAL_CREDITS',
-        },
-        {
-          type: 'TOTAL_CREDITS_CERTIFIED',
-        },
         {
           type: 'PROGRAMME_LOCATIONS',
         },
@@ -292,17 +395,30 @@ const Dashboard = () => {
       console.log('stats data 3 -- > ', response?.data);
       let programmesAggByStatus;
       let programmesAggBySector;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      let totalCreditsCertifiedStats;
+      if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
       let timeLabelDataSector = [];
       let formattedTimeLabelDataSector: any = [];
+      let timeLabelCertifiedCreditsStats = [];
+      let formattedTimeLabelCertifiedCreditsStats: any = [];
       if (programmesAggByStatus) {
         timeLabelDataStatus = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
@@ -323,7 +439,7 @@ const Dashboard = () => {
 
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
-        formattedTimeLabelDataSector = timeLabelDataStatus?.map((item: any) => {
+        formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
 
@@ -339,6 +455,19 @@ const Dashboard = () => {
         setWasteProgrammes(programmesAggBySector?.waste);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+      }
+      if (totalCreditsCertifiedStats) {
+        timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
+        formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
+          (item: any) => {
+            return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          }
+        );
+        setCertifiedCredits(totalCreditsCertifiedStats?.certifiedSum);
+        setUnCertifiedCredits(totalCreditsCertifiedStats?.uncertifiedSum);
+        setRevokedCredits(totalCreditsCertifiedStats?.revokedSum);
+
+        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -356,30 +485,11 @@ const Dashboard = () => {
   const getAllProgrammeAnalyticsStatsCharts = async () => {
     setLoading(true);
     try {
-      const timeLabelsProgrames: any = [];
-
-      const certifiedCredit: any = [];
-      const unCertifiedCredit: any = [];
-      const revokedCredit: any = [];
-
       const response: any = await post(
         'stats/programme/dashboardCharts',
         getAllProgrammeAnalyticsStatsChartsParams()
       );
       console.log(response?.data?.stats);
-      if (response?.data?.stats?.TOTAL_PROGRAMS) {
-        const totalProgrammes = response?.data?.stats?.TOTAL_PROGRAMS;
-        if (totalProgrammes?.awaitingAuthorization) {
-          const pendings = totalProgrammes?.awaitingAuthorization;
-          pendings?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            const label = Object.getOwnPropertyNames(item);
-            const date = new Date(parseInt(label[0]));
-            const formattedDate = moment(date).format('DD-MM-YYYY');
-            timeLabelsProgrames.push(formattedDate);
-          });
-        }
-      }
       if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
         const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
         setProgrammeLocations(locations);
@@ -388,34 +498,6 @@ const Dashboard = () => {
         const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
         setProgrammeTransferLocations(locations);
       }
-      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
-        if (totalCredits?.certified) {
-          const certified = totalCredits?.certified;
-          certified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            certifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.uncertified) {
-          const uncertified = totalCredits?.uncertified;
-          uncertified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            unCertifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.revoked) {
-          const revoked = totalCredits?.revoked;
-          revoked?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            revokedCredit.push(credit[0]);
-          });
-        }
-      }
-      setCertifiedCredits(certifiedCredit);
-      setUnCertifiedCredits(unCertifiedCredit);
-      setRevokedCredits(revokedCredit);
-      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -444,7 +526,8 @@ const Dashboard = () => {
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
       const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       const programmeByStatusAggregationResponseLastUpdate =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
@@ -465,13 +548,15 @@ const Dashboard = () => {
         setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
       }
       if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
-        setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
+        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
         setCreditCertifiedBalanceWithoutTimeRange(
           certifiedByMeAggregationResponse?.certifiedSum === null
             ? 0
-            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
+            : parseFloat(certifiedByMeAggregationResponse?.sum)
         );
+      }
+      if (unCertifiedByMeAggregationResponse) {
+        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -498,11 +583,20 @@ const Dashboard = () => {
       console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      if (companyRole === 'ProgrammeDeveloper') {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
@@ -1166,7 +1260,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(parseInt(lastUpdateProgrammesStats)).fromNow()}
                     </div>
@@ -1188,7 +1282,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
