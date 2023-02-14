@@ -8,7 +8,7 @@ import { NationalAPIModule } from './national.api.module';
 let cachedServer: Server;
 
 export const handler: Handler = async (event: any, context: Context) => {
-   const httpBase = '/api/national'
+   const httpBase = '/national'
    // event.path = event.path.includes('swagger-ui') ? `${event.path}` : event.path
    cachedServer = await bootstrapServer(cachedServer, NationalAPIModule, httpBase);
    return proxy(cachedServer, event, context, 'PROMISE').promise;

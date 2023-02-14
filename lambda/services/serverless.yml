@@ -42,7 +42,7 @@ functions:
     events:
       - http:
           method: any
-          path: /api/national/{any+}
+          path: /national/{any+}
     ssmToEnvironment:
       - DB_PASSWORD
       - USER_JWT_SECRET
@@ -60,7 +60,7 @@ functions:
     events:
       - http:
           method: any
-          path: /api/stats/{any+}
+          path: /stats/{any+}
     ssmToEnvironment:
       - DB_PASSWORD
       - USER_JWT_SECRET
