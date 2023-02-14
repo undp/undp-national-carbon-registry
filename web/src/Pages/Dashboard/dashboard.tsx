@@ -837,10 +837,6 @@ const Dashboard = () => {
     },
   ];
 
-  useEffect(() => {
-    console.log('transfr credit --- > ', transferredCredits);
-  }, [transferredCredits]);
-
   const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
   const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
   const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
@@ -973,6 +969,21 @@ ${total}
           },
           'admin-1-boundary-bg'
         );
+
+        // map.addLayer({
+        //   id: 'points',
+        //   type: 'symbol',
+        //   source: 'points',
+        //   layout: {
+        //     'icon-image': 'custom-marker',
+        //     ''
+        //     // get the title name from the source's "title" property
+        //     'text-field': ['get', 'title'],
+        //     'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        //     'text-offset': [0, 1.25],
+        //     'text-anchor': 'top',
+        //   },
+        // });
       });
     }, 1000);
   }, [programmeTransferLocations]);
