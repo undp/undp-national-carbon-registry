@@ -89,9 +89,16 @@
       text-transform: uppercase;
     }
   }
-  .homepage-img-container {
+  .image-container {
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
       url('../../Assets/Images/factory.webp') left 10% bottom 20% / cover no-repeat border-box;
+  }
+
+  .no-image-container {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
+      url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
+  }
+  .homepage-img-container {
     height: 100vh;
     background-position-x: 100%;
     background-position-y: 100%;
@@ -100,19 +107,6 @@
     display: flex;
     flex: 1;
     text-align: left;
-
-    .no-homepage-img-container {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
-        url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
-      height: 100vh;
-      background-position-x: 100%;
-      background-position-y: 100%;
-      flex-direction: column;
-      justify-content: flex-start;
-      display: flex;
-      flex: 1;
-      text-align: left;
-    }
 
     // background-size: 500vh;
 
