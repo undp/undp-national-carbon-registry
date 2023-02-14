@@ -54,7 +54,7 @@ export class ProgrammeService {
         private companyService: CompanyService,
         private emailService: EmailService,
         private helperService: HelperService,
-        private emailHelperService: EmailHelperService
+        private emailHelperService: EmailHelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
