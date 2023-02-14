@@ -234,7 +234,7 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (companyRole === 'ProgrammeDeveloper') {
       return {
         stats: [
           {
@@ -247,6 +247,48 @@ const Dashboard = () => {
           },
           {
             type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -324,9 +366,15 @@ const Dashboard = () => {
       console.log('stats data 3 -- > ', response?.data);
       let programmesAggByStatus;
       let programmesAggBySector;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
