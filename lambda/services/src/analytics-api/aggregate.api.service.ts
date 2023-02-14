@@ -538,7 +538,7 @@ export class AggregateAPIService {
     });
 
     let filterOr = undefined;
-    if (statFilter.onlyMine) {
+    if (statFilter && statFilter.onlyMine) {
       filterOr = [
         {
           value: companyId,
@@ -741,7 +741,7 @@ export class AggregateAPIService {
             : (stat.statFilter = { onlyMine: true });
         }
         const whereC = [];
-        if (stat.statFilter.onlyMine) {
+        if (stat.statFilter && stat.statFilter.onlyMine) {
           whereC.push(
             `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
           );
@@ -781,8 +781,9 @@ export class AggregateAPIService {
           operation: "=",
         });
 
-        const filterOr = [];
+        let filterOr = undefined;
         if (stat.statFilter && stat.statFilter.onlyMine) {
+          filterOr = [];
           filterOr.push({
             value: companyId,
             key: "fromCompanyId",
@@ -811,6 +812,7 @@ export class AggregateAPIService {
     }
     return results;
   }
+
 
   async getCertifiedRevokedAgg(
     stat: Stat,
@@ -853,25 +855,25 @@ export class AggregateAPIService {
       stat.statFilter?.timeGroup ? true : false
     );
 
-    if (stat.statFilter.timeGroup != true) {
+    if (!stat.statFilter || stat.statFilter.timeGroup != true) {
       return {
         last: Math.max(allAuth.last, certified.last, revoked.last),
         data: {
           certifiedSum: Number(
-            certified?.data.length > 0 ? certified?.data[0]["totalestcredit"] : 0
+            (certified && certified.data.length > 0 && certified?.data[0]) ? certified?.data[0]["totalestcredit"] : 0
           ),
           revokedSum: Number(
-            revoked?.data.length > 0 ? revoked.data[0]["totalestcredit"] : 0
+            (revoked && revoked.data.length > 0 && revoked?.data[0])  ? revoked.data[0]["totalestcredit"] : 0
           ),
           uncertifiedSum:
-            Number(allAuth?.data.length > 0 ? allAuth?.data[0]["sum"] : 0) -
+            Number((allAuth && allAuth.data.length > 0 && allAuth?.data[0])  ? allAuth?.data[0]["sum"] : 0) -
             Number(
-              certified?.data.length > 0
+              (certified && certified?.data.length > 0 && certified?.data[0]) 
                 ? certified?.data[0]["totalestcredit"]
                 : 0
             ) -
             Number(
-              revoked?.data.length > 0 ? revoked.data[0]["totalestcredit"] : 0
+              (revoked && revoked?.data.length > 0 && revoked?.data[0])  ? revoked.data[0]["totalestcredit"] : 0
             ),
         },
       };
@@ -879,18 +881,18 @@ export class AggregateAPIService {
       const groupedData = {};
       for (const d in certified.data) {
         groupedData[d] = {
-          certifiedSum: Number(certified.data[d][0]['totalestcredit']),
+          certifiedSum: Number( (certified && certified.data[d] && certified.data[d].length > 0) ? certified.data[d][0]['totalestcredit'] : 0),
           revokedSum: 0
         }
       }
       for (const d in revoked.data) {
         if (!groupedData[d]) {
           groupedData[d] = {
-            revokedSum: Number(revoked.data[d][0]['totalestcredit']),
+            revokedSum: Number((revoked && revoked.data[d] && revoked.data[d].length > 0) ? revoked.data[d][0]['totalestcredit'] : 0),
             certifiedSum: 0
           }
         } else {
-          groupedData[d]['revokedSum'] = Number(revoked.data[d][0]['totalestcredit']);
+          groupedData[d]['revokedSum'] = Number((revoked && revoked.data[d] && revoked.data[d].length > 0) ? revoked.data[d][0]['totalestcredit'] : 0);
         }
       }
       for (const d in allAuth.data) {
@@ -898,10 +900,10 @@ export class AggregateAPIService {
           groupedData[d] = {
             revokedSum: 0,
             certifiedSum: 0,
-            uncertifiedSum: Number(allAuth.data[d][0]['sum'])
+            uncertifiedSum: Number((allAuth && allAuth.data[d] && allAuth.data[d].length > 0) ?  allAuth.data[d][0]['sum'] : 0)
           }
         } else {
-          groupedData[d]['uncertifiedSum'] = Number(allAuth.data[d][0]['sum']) - groupedData[d]['certifiedSum'] - groupedData[d]['revokedSum'];
+          groupedData[d]['uncertifiedSum'] = Number((allAuth && allAuth.data[d] && allAuth.data[d].length > 0) ? allAuth.data[d][0]['sum'] : 0) - groupedData[d]['certifiedSum'] - groupedData[d]['revokedSum'];
         }
       }
 
@@ -998,18 +1000,18 @@ export class AggregateAPIService {
       return {
         last: Math.max(revoked.last, certified.last, allAuth.last),
         data: {
-          certifiedCount: Number(certified.data[0]["count"]),
-          revokedCount: Number(revoked.data[0]["count"]),
+          certifiedCount: Number((certified && certified.data.length > 0) ? certified.data[0]["count"] : 0),
+          revokedCount: Number((revoked && revoked.data.length > 0) ? revoked.data[0]["count"]: 0),
           uncertifiedCount:
-            Number(allAuth.data[0]["count"]) -
-            Number(revoked.data[0]["count"]) -
-            Number(certified.data[0]["count"]),
-          revokedSum: Number(revoked.data[0]["sum"]),
-          certifiedSum: Number(certified.data[0]["sum"]),
+            Number((allAuth && allAuth.data.length > 0) ? allAuth.data[0]["count"] : 0) -
+            Number((revoked && revoked.data.length > 0) ? revoked.data[0]["count"] : 0) -
+            Number((certified && certified.data.length > 0) ? certified.data[0]["count"] : 0),
+          revokedSum: Number((revoked && revoked.data.length > 0) ? revoked.data[0]["sum"] : 0) ,
+          certifiedSum: Number((certified && certified.data.length > 0) ? certified.data[0]["sum"] : 0),
           uncertifiedSum:
-            Number(allAuth.data[0]["sum"]) -
-            Number(revoked.data[0]["sum"]) -
-            Number(certified.data[0]["sum"]),
+            Number((allAuth && allAuth.data.length > 0) ? allAuth.data[0]["sum"] : 0) -
+            Number((revoked && revoked.data.length > 0) ? revoked.data[0]["sum"] : 0) -
+            Number((certified && certified.data.length > 0) ? certified.data[0]["sum"] : 0),
         },
       };
     } else {
@@ -1017,10 +1019,10 @@ export class AggregateAPIService {
         last: Math.max(certified.last, allAuth.last),
         data: {
           uncertifiedSum:
-            Number(allAuth.data[0]["sum"]) - Number(certified.data[0]["sum"]),
+            Number((allAuth && allAuth.data.length > 0) ? allAuth.data[0]["sum"] : 0 ) - Number((certified && certified.data.length > 0) ? certified.data[0]["sum"] : 0),
           uncertifiedCount:
-            Number(allAuth.data[0]["count"]) -
-            Number(certified.data[0]["count"]),
+            Number((allAuth && allAuth.data.length > 0) ? allAuth.data[0]["count"] : 0) -
+            Number((certified && certified.data.length > 0) ? certified.data[0]["count"] : 0),
         },
       };
     }
