@@ -1166,7 +1166,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(parseInt(lastUpdateProgrammesStats)).fromNow()}
                     </div>
@@ -1188,7 +1188,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>

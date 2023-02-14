@@ -250,6 +250,31 @@ export class AggregateAPIService {
     return resultS;
   }
 
+  private async programmeLocationDataFormatter(data) {
+    const locationData = [...data];
+    let locationsGeoData: any = {};
+    let features: any[] = [];
+    locationsGeoData.type = "FeatureCollection";
+    locationData?.map((locationDataItem, index) => {
+      let programmeGeoData: any = {};
+      let location: any = locationDataItem?.loc;
+      programmeGeoData.type = "Feature";
+      let properties: any = {};
+      let geometry: any = {};
+      properties.id = String(index);
+      properties.count = locationDataItem?.count;
+      geometry.type = "Point";
+      geometry.coordinates = location;
+      programmeGeoData.properties = properties;
+      programmeGeoData.geometry = geometry;
+      features.push(programmeGeoData);
+    });
+
+    locationsGeoData.features = [...features];
+    console.table(data);
+    return locationsGeoData;
+  }
+
   private async calculateTotalCountOfTransferLocations(data) {
     let count = 0;
     if (data?.length > 0) {
