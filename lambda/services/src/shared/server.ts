@@ -38,7 +38,7 @@ function setupSwagger(nestApp: INestApplication, name: string, httpBase: String)
   
     const document = SwaggerModule.createDocument(nestApp, config);
   
-    SwaggerModule.setup(`${httpBase}/docs`, nestApp, document, {
+    SwaggerModule.setup(`${httpBase}`, nestApp, document, {
       customSiteTitle: 'API Documentation',
       swaggerOptions: {
         docExpansion: 'none',
