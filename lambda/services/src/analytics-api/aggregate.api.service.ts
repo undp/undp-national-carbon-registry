@@ -352,7 +352,19 @@ export class AggregateAPIService {
           return `"${tableName}".${val}`;
         })
         .join(",");
-      queryBuild = queryBuild.addSelect(groupQuery);
+      const groupSelectQuery = groupBy
+        .map((gb) => {
+          let val;
+          if (gb.includes("->>")) {
+            const parts = gb.split("->>");
+            val = `"${parts[0]}"->>'${parts[1]}' as ${parts[1]}`;
+          } else {
+            val = `"${gb}"`;
+          }
+          return `"${tableName}".${val}`;
+        })
+        .join(",");
+      queryBuild = queryBuild.addSelect(groupSelectQuery);
       grpByAll = groupQuery;
     }
     if (timeGroupingCol && timeGroupingAccuracy) {
