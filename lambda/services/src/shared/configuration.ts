@@ -1,6 +1,7 @@
 export default () => ({
     stage: process.env.STAGE || 'local',
     systemCountry: process.env.systemCountryCode || 'NG',
+    systemCountryName: process.env.systemCountryName || 'Antarctic Region',
     defaultCreditUnit: process.env.defaultCreditUnit || 'ITMO',
     dateTimeFormat: 'DD LLLL yyyy @ HH:mm',
     dateFormat: 'DD LLLL yyyy',
@@ -34,5 +35,8 @@ export default () => ({
     },
     s3CommonBucket: {
         name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),
-    }
+    },
+    host: process.env.HOST || 'https://test.carbreg.org',
+    liveChat : 'https://undp2020cdo.typeform.com/to/emSWOmDo',
+    helpDocumentation: 'carbreg.org/help',
 });
