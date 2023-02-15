@@ -808,6 +808,7 @@ ${total}
 
         const transferLocations: any = [...programmeTransferLocations];
 
+        const txLocationMap: any = {};
         // Calculate color values for each country based on 'hdi' value
         for (const row of transferLocations) {
           // Convert the range of data values to a suitable color
@@ -823,6 +824,7 @@ ${total}
               : '#FE8163';
 
           matchExpression.push(row.code, color);
+          txLocationMap[row.code] = row.count;
         }
 
         function getCountryCodes(dataSet: any) {
@@ -844,6 +846,36 @@ ${total}
           },
           'admin-1-boundary-bg'
         );
+
+        map.on('click', function (e) {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+          if (!features.length) {
+            return;
+          }
+
+          const feature = features[0];
+          if (!txLocationMap[feature.properties?.iso_3166_1]) {
+            return;
+          }
+          console.log(feature);
+
+          const popup = new mapboxgl.Popup()
+            .setLngLat(map.unproject(e.point))
+            .setHTML(
+              `${feature.properties?.name_en} : ${txLocationMap[feature.properties?.iso_3166_1]}`
+            )
+            .addTo(map);
+        });
+
+        // Use the same approach as above to indicate that the symbols are clickable
+        // by changing the cursor style to 'pointer'.
+        map.on('mousemove', function (e) {
+          const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+          map.getCanvas().style.cursor =
+            features.length > 0 && txLocationMap[features[0].properties?.iso_3166_1]
+              ? 'pointer'
+              : '';
+        });
       });
     }, 1000);
   }, [programmeTransferLocations]);
