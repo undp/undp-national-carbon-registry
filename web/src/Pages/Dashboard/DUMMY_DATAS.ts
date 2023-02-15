@@ -797,8 +797,8 @@ export const optionDonutPieA: any = {
       offsetY: 0,
     },
     itemMargin: {
-      horizontal: 5,
-      vertical: 0,
+      horizontal: 10,
+      vertical: 3,
     },
     onItemClick: {
       toggleDataSeries: true,
@@ -883,8 +883,8 @@ export const optionDonutPieB: any = {
       offsetY: 0,
     },
     itemMargin: {
-      horizontal: 5,
-      vertical: 0,
+      horizontal: 10,
+      vertical: 3,
     },
     onItemClick: {
       toggleDataSeries: true,
