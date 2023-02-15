@@ -700,29 +700,45 @@ export class ProgrammeService {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
 
-        if (!req.fromCompanyIds) {
-            req.fromCompanyIds = programme.companyId;
-        }
         if (!programme.creditOwnerPercentage) {
             programme.creditOwnerPercentage = [100]
         }
-        
-        if (!req.companyCredit) {
-            req.companyCredit = programme.creditOwnerPercentage.map((p, i) => (programme.creditBalance*p/100 - (programme.creditFrozen ? programme.creditFrozen[i]: 0)));
-        }
-
         const requestedCompany = await this.companyService.findByCompanyId(requester.companyId);
         const toCompany = await this.companyService.findGovByCountry(this.configService.get('systemCountry'))
 
         if (requestedCompany.companyRole != CompanyRole.GOVERNMENT) {
+            if (!req.fromCompanyIds) {
+                req.fromCompanyIds = [requester.companyId];
+            }
+
             if (!programme.companyId.includes(requester.companyId)) {
                 throw new HttpException("Credit retirement can initiate only the government or programme owner", HttpStatus.BAD_REQUEST)
             }
+
+            if (!req.fromCompanyIds.includes(requester.companyId)) {
+                throw new HttpException("Requester does not included in the from company id", HttpStatus.BAD_REQUEST)
+            }
+
+            if (req.fromCompanyIds.length > 1) {
+                throw new HttpException("Does not allow to retire other company credits", HttpStatus.BAD_REQUEST)
+            }
+
             if (req.type !== RetireType.CROSS_BORDER) {
                 throw new HttpException("Programme developer allowed to initiate only cross border transfers", HttpStatus.BAD_REQUEST)
             }
+
+            if (!req.companyCredit) {
+                const reqIndex = programme.companyId.indexOf(requester.companyId);
+                req.companyCredit = [(programme.creditBalance* (programme.creditOwnerPercentage[reqIndex])/100 - (programme.creditFrozen ? programme.creditFrozen[reqIndex]: 0))]
+            }
+        } else {
+            if (!req.fromCompanyIds) {
+                req.fromCompanyIds = programme.companyId;
+            }
+            if (!req.companyCredit) {
+                req.companyCredit = programme.creditOwnerPercentage.map((p, i) => (programme.creditBalance*p/100 - (programme.creditFrozen ? programme.creditFrozen[i]: 0)));
+            }
         }
-        
 
         const allTransferList: ProgrammeTransfer[] = []
         const autoApproveTransferList: ProgrammeTransfer[] = []
