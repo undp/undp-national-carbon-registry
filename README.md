@@ -53,7 +53,7 @@ UNDP Carbon Registry based on Serverless Architecture.
 - Run `yarn run sls:install `
 - Initial user data setup `serverless invoke local --stage=local --function setup --data '{"rootEmail": "<Root user email>","systemCountryCode": "<System country Alpha 2 code>", "name": "<System country name>", "logoBase64": "<System country logo base64>"}'`
 - Start all the services by executing `sls offline --stage=local`
-- Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/api/national/docs#/`
+- Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/national`
 
 ## Deploy System on the AWS Cloud
 - Execute to create all the required resources on the AWS.

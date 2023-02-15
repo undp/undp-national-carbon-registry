@@ -40,8 +40,7 @@ import { CompanyState } from '../enum/company.state.enum';
 import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
 import { RetireType } from '../enum/retire.type.enum';
-import { UserService } from '../user/user.service';
-import { Role } from '../casl/role.enum';
+import { EmailHelperService } from '../email-helper/email-helper.service';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -53,9 +52,9 @@ export class ProgrammeService {
         private counterService: CounterService,
         private configService: ConfigService,
         private companyService: CompanyService,
-        private userService: UserService,
         private emailService: EmailService,
         private helperService: HelperService,
+        private emailHelperService: EmailHelperService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
@@ -129,6 +128,8 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
+            this.emailHelperService.sendEmailToProgrammeOwnerAdmins(pTransfer.programmeId,EmailTemplates.CREDIT_TRANSFER_REJECTED,
+                 {credits : pTransfer.creditAmount}, pTransfer.initiatorCompanyId);
             return new BasicResponseDto(HttpStatus.OK, "Successfully rejected");
         }
 
@@ -228,6 +229,8 @@ export class ProgrammeService {
             }
         }
 
+        this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_ACCEPTED, {credits : transfer.creditAmount}, transfer.initiatorCompanyId )
+
         return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
     }
 
@@ -277,6 +280,7 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{credits : transfer.creditAmount}, transfer.initiatorCompanyId);
             return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
         }
         return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
@@ -352,10 +356,12 @@ export class ProgrammeService {
             }
         }
         
+        const fromCompanyList = [];
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
+            fromCompanyList.push(fromCompany);
 
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
@@ -393,16 +399,6 @@ export class ProgrammeService {
 
             if (requester.companyId != fromCompanyId) {
                 transfer.status = TransferStatus.PENDING;
-                await this.emailService.sendEmail(
-                    fromCompany.email,
-                    EmailTemplates.TRANSFER_REQUEST,
-                    {
-                        "name": fromCompany.name,
-                        "requestedCompany": requestedCompany.name,
-                        "credits": transfer.creditAmount,
-                        "serialNo": programme.serialNo,
-                        "programmeName": programme.title
-                    });
             } else {
                 transfer.status = TransferStatus.PROCESSING;
                 autoApproveTransferList.push(transfer);
@@ -425,6 +421,20 @@ export class ProgrammeService {
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
+
+        const hostAddress = this.configService.get("host");
+        allTransferList.forEach(async transfer => {
+            if (requester.companyId != transfer.fromCompanyId) {
+                this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,{
+                    organisationName : requestedCompany.name,
+                    credits : transfer.creditAmount,
+                    programmeName: programme.title,
+                    serialNumber: programme.serialNo,
+                    pageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+                })
+            }
+        });
+
         return new DataListResponseDto(allTransferList, allTransferList.length)
     }
 
@@ -449,7 +459,8 @@ export class ProgrammeService {
             throw new HttpException("Proponent tax id cannot be duplicated", HttpStatus.BAD_REQUEST)
         }
 
-        const companyIds = []
+        const companyIds = [];
+        const companyNames = [];
         for (const taxId of programmeDto.proponentTaxVatId) {
             const projectCompany = await this.companyService.findByTaxId(taxId);
             if (!projectCompany) {
@@ -461,6 +472,7 @@ export class ProgrammeService {
             }
 
             companyIds.push(projectCompany.companyId)
+            companyNames.push(projectCompany.name)
         }
 
 
@@ -493,6 +505,20 @@ export class ProgrammeService {
         if (!programme.creditUnit) {
             programme.creditUnit = this.configService.get('defaultCreditUnit')
         }
+
+        let orgNamesList = '';
+        if(companyNames.length>1){
+            const lastItem = companyNames.pop();
+            orgNamesList = companyNames.join(',')+' and '+lastItem;
+        }else{
+            orgNamesList = companyNames[0];
+        }
+
+        const hostAddress = this.configService.get("host");
+        this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.PROGRAMME_CREATE,{
+            organisationName: orgNamesList,
+            programmePageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+        })
 
         return await this.programmeLedger.createProgramme(programme);
     }
@@ -765,6 +791,17 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        const hostAddress = this.configService.get("host");
+        updated.company.forEach(async company => {
+            this.emailHelperService.sendEmailToOrganisationAdmins(company.companyId, EmailTemplates.CREDIT_ISSUANCE,{
+                programmeName: updated.title,
+                credits: updated.creditIssued,
+                serialNumber: updated.serialNo,
+                pageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+            })
+        });
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
@@ -794,20 +831,38 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        const hostAddress = this.configService.get("host");
+        updated.company.forEach(async company => {
+            this.emailHelperService.sendEmailToOrganisationAdmins(company.companyId, EmailTemplates.PROGRAMME_AUTHORISATION,{
+                programmeName: updated.title,
+                authorisedDate: new Date(updated.txTime),
+                serialNumber: updated.serialNo,
+                programmePageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+            })
+        });
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
     async rejectProgramme(req: ProgrammeReject, user: User) {
         this.logger.log(`Programme ${req.programmeId} reject. Comment: ${req.comment}`)
 
-        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, this.getUserRef(user))
+        const updated = await this.programmeLedger.updateProgrammeStatus(req.programmeId, ProgrammeStage.REJECTED, ProgrammeStage.AWAITING_AUTHORIZATION, this.getUserRefWithRemarks(user, req.comment ))
         if (!updated) {
             throw new HttpException("Programme does not exist", HttpStatus.BAD_REQUEST);
         }
+
+        await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_REJECTION,{reason: req.comment})
+
         return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
     }
 
     private getUserRef = (user: any) => {
         return `${user.companyId}#${user.companyName}#${user.id}#${user.name}`;
+    }
+
+    private getUserRefWithRemarks = (user: any, remarks: string) => {
+        return `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${remarks}`;
     }
 }

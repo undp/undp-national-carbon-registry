@@ -4,7 +4,7 @@ import { NationalAPIModule } from './national-api/national.api.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AnalyticsAPIModule);
-  app.setGlobalPrefix('/api/analytics')
+  app.setGlobalPrefix('/stats')
   await app.listen(3000);
 }
 bootstrap();

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer = require('nodemailer');
-import { EmailTemplates } from './email.template';
 
 @Injectable()
 export class EmailService {
@@ -30,7 +29,9 @@ export class EmailService {
         }
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                template = template.replace(`{{${key}}}`, data[key])
+                var find = `{{${key}}}`;
+                var re = new RegExp(find, 'g');
+                template = template.replace(re, data[key]);
             }
         }
 
@@ -40,7 +41,7 @@ export class EmailService {
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
         this.logger.log('Sending email', JSON.stringify(sendToEmail))
         // this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))
-        if (sendToEmail && sendToEmail.endsWith('@undp.org')) {
+        if (sendToEmail && !sendToEmail.endsWith('@xeptagon.com')) {
             return new Promise((resolve, reject) => {
                 this.transporter.sendMail({
                     from: this.sourceEmail,

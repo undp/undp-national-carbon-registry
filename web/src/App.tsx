@@ -58,7 +58,7 @@ const App = () => {
         serverURL={
           process.env.REACT_APP_BACKEND
             ? process.env.REACT_APP_BACKEND
-            : 'http://localhost:3000/local/api'
+            : 'http://localhost:3000/local'
         }
       >
         <UserInformationContextProvider>
