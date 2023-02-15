@@ -751,6 +751,7 @@ export class AggregateAPIService {
             : (stat.statFilter = { onlyMine: true });
         }
         const whereC = [];
+        whereC.push(`b."geographicalLocationCordintes" is not null`);
         if (stat.statFilter && stat.statFilter.onlyMine) {
           whereC.push(
             `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
