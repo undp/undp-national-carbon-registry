@@ -913,7 +913,7 @@ ${total}
           // Build a GL match expression that defines the color for every vector tile feature
           // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
           const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-          const strings: any = [];
+          const txLocationMap: any = {};
 
           const transferLocations: any = [...programmeTransferLocations];
 
@@ -934,12 +934,42 @@ ${total}
                 : '#000d1a';
 
             matchExpression.push(row.country, color);
-            strings.push(row.count);
+            txLocationMap[row.country] = row.count;
           }
 
           function getCountryCodes(dataSet: any) {
             return dataSet.map((item: any) => item.code);
           }
+
+          map.on('click', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            if (!features.length) {
+              return;
+            }
+
+            const feature = features[0];
+            if (!txLocationMap[feature.properties?.iso_3166_1]) {
+              return;
+            }
+            console.log(feature);
+
+            const popup = new mapboxgl.Popup()
+              .setLngLat(map.unproject(e.point))
+              .setHTML(
+                `${feature.properties?.name_en} : ${txLocationMap[feature.properties?.iso_3166_1]}`
+              )
+              .addTo(map);
+          });
+
+          // Use the same approach as above to indicate that the symbols are clickable
+          // by changing the cursor style to 'pointer'.
+          map.on('mousemove', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            map.getCanvas().style.cursor =
+              features.length > 0 && txLocationMap[features[0].properties?.iso_3166_1]
+                ? 'pointer'
+                : '';
+          });
 
           // Last value is the default, used where there is no data
           matchExpression.push('rgba(0, 0, 0, 0)');
