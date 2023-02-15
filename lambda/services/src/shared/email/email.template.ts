@@ -211,5 +211,88 @@ export const EmailTemplates = {
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team`
-    } 
+    },
+    CREDIT_TRANSFER_GOV:{
+        id: 'CREDIT_TRANSFER_GOV',
+        subject: 'Transfer Request Received',
+        html: `
+        Hi {{name}}, <br><br>
+        
+        {{government}} has requested your organisation to transfer {{credits}} credits with the serial number {{serialNumber}}
+         from {{programmeName}} to {{organisationName}}. <br><br>
+         
+        Click here {{pageLink}} for more details of the transfer request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_TRANSFER_GOV_CANCELLATION: {
+        id: 'CREDIT_TRANSFER_GOV_CANCELLATION',
+        subject: 'Transfer Request Cancelled',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} 
+        to {{organisationName}} made by {{government}} has been cancelled. <br><br>
+        
+        Click here {{pageLink}} for more details of the transfer request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR: {
+        id: 'CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR',
+        subject: 'Transfer Request Accepted',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been accepted by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the transfer request.<br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER: {
+        id: 'CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER',
+        subject: 'Credits Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{organisationName}} has transferred {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to your organisation by accepting the request made by the {{government}}.<br><br> 
+        Click here {{pageLink}} for more details of the transfer request <br> <br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_TRANSFER_GOV_REJECTED: {
+        id: 'CREDIT_TRANSFER_GOV_REJECTED',
+        subject: 'Transfer Request Rejected',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}}  credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the transfer request <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_SEND_DEVELOPER:{
+        id: 'CREDIT_SEND_DEVELOPER',
+        subject: 'Credits Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{organisationName}} has transferred {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to your organisation.<br><br>
+
+        Click here {{pageLink}} for more details of the transfer request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    }
 };
