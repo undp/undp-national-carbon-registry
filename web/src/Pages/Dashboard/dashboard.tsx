@@ -818,11 +818,14 @@ const Dashboard = () => {
     },
   ];
 
-  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
-  const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
-  const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
-  const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
-  const count5 = ['>=', ['get', 'count'], 16];
+  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 50]];
+  const count2 = ['all', ['>=', ['get', 'count'], 50], ['<', ['get', 'count'], 250]];
+  const count3 = ['all', ['>=', ['get', 'count'], 250], ['<', ['get', 'count'], 600]];
+  const count4 = ['all', ['>=', ['get', 'count'], 600], ['<', ['get', 'count'], 1000]];
+  const count5 = ['>=', ['get', 'count'], 1000];
+  // const pending = ['===', ['get', 'stage'], 'AwaitingAuthorization'];
+  // const authorised = ['===', ['get', 'stage'], 'Authorised'];
+  // const rejected = ['===', ['get', 'stage'], 'Rejected'];
 
   // colors to use for the categories
   const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
@@ -893,87 +896,75 @@ ${total}
 
   useEffect(() => {
     setTimeout(() => {
-      const map = new mapboxgl.Map({
-        container: mapContainerInternationalRef?.current || '',
-        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [12, 50],
-        zoom: 0.5,
-      });
-
-      // Add markers to the map.
-      map.on('load', () => {
-        map.addSource('countries', {
-          type: 'vector',
-          url: 'mapbox://mapbox.country-boundaries-v1',
+      if (mapContainerInternationalRef?.current) {
+        const map = new mapboxgl.Map({
+          container: mapContainerInternationalRef?.current || '',
+          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: [12, 50],
+          zoom: 0.5,
         });
 
-        // Build a GL match expression that defines the color for every vector tile feature
-        // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-        const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-        const strings: any = [];
+        // Add markers to the map.
+        map.on('load', () => {
+          map.addSource('countries', {
+            type: 'vector',
+            url: 'mapbox://mapbox.country-boundaries-v1',
+          });
 
-        const transferLocations: any = [...programmeTransferLocations];
+          // Build a GL match expression that defines the color for every vector tile feature
+          // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+          const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+          const strings: any = [];
 
-        // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
-          // Convert the range of data values to a suitable color
-          // const blue = row.ratio * 255;
+          const transferLocations: any = [...programmeTransferLocations];
 
-          const color =
-            row.count < 2
-              ? `#4da6ff`
-              : row.count < 10
-              ? '#0080ff'
-              : row.count < 50
-              ? '#0059b3'
-              : row.count < 100
-              ? '#003366'
-              : '#000d1a';
+          // Calculate color values for each country based on 'hdi' value
+          for (const row of transferLocations) {
+            // Convert the range of data values to a suitable color
+            // const blue = row.ratio * 255;
 
-          matchExpression.push(row.country, color);
-          strings.push(row.count);
-        }
+            const color =
+              row.count < 2
+                ? `#4da6ff`
+                : row.count < 10
+                ? '#0080ff'
+                : row.count < 50
+                ? '#0059b3'
+                : row.count < 100
+                ? '#003366'
+                : '#000d1a';
 
-        function getCountryCodes(dataSet: any) {
-          return dataSet.map((item: any) => item.code);
-        }
+            matchExpression.push(row.country, color);
+            strings.push(row.count);
+          }
 
-        // Last value is the default, used where there is no data
-        matchExpression.push('rgba(0, 0, 0, 0)');
+          function getCountryCodes(dataSet: any) {
+            return dataSet.map((item: any) => item.code);
+          }
 
-        map.addLayer(
-          {
-            id: 'countries-join',
-            type: 'fill',
-            source: 'countries',
-            'source-layer': 'country_boundaries',
-            paint: {
-              'fill-color': matchExpression,
+          // Last value is the default, used where there is no data
+          matchExpression.push('rgba(0, 0, 0, 0)');
+
+          map.addLayer(
+            {
+              id: 'countries-join',
+              type: 'fill',
+              source: 'countries',
+              'source-layer': 'country_boundaries',
+              paint: {
+                'fill-color': matchExpression,
+              },
             },
-          },
-          'admin-1-boundary-bg'
-        );
-
-        map.addLayer({
-          id: 'points',
-          type: 'symbol',
-          source: 'countries',
-          layout: {
-            'icon-image': 'custom-marker',
-            // get the title name from the source's "title" property
-            'text-field': ['format', ...strings],
-            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-            'text-offset': [0, 1.25],
-            'text-anchor': 'top',
-          },
+            'admin-1-boundary-bg'
+          );
         });
-      });
+      }
     }, 1000);
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    console.log(programmeLocations?.features[0]);
+    console.log(programmeLocations);
 
     setTimeout(() => {
       if (mapContainerRef.current) {
@@ -982,7 +973,7 @@ ${total}
           zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
-            : [54.44073, 16.39371],
+            : [7.4924165, 5.5324032],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',
         });
@@ -1000,6 +991,9 @@ ${total}
               count3: ['+', ['case', count3, ['get', 'count'], 0]],
               count4: ['+', ['case', count4, ['get', 'count'], 0]],
               count5: ['+', ['case', count5, ['get', 'count'], 0]],
+              // pending: [['+', ['case', pending, ['get', 'count'], 0]]],
+              // authorised: [['+', ['case', authorised, ['get', 'count'], 0]]],
+              // rejected: [['+', ['case', rejected, ['get', 'count'], 0]]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
