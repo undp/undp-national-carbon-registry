@@ -112,7 +112,6 @@ const Dashboard = () => {
   const currentYear = new Date();
   const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
   const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
-  console.log({ currentYear, startOfTheYear, endOfTheYear });
 
   const getUserProfileDetails = async () => {
     try {
@@ -636,7 +635,6 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
           if (responseItem?.currentStage === 'AwaitingAuthorization') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
@@ -696,8 +694,6 @@ const Dashboard = () => {
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
-
-      console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
       setLastUpdate(response?.data?.lastUpdate);
@@ -719,10 +715,6 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log('rejected projects hanges --- ', rejectedProjects);
-  }, [rejectedProjects]);
-
-  useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (companyRole === 'ProgrammeDeveloper') {
       setCategoryType('mine');
@@ -732,8 +724,7 @@ const Dashboard = () => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
-    // getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime, categoryType]);
+  }, [startTime, endTime, categoryType, companyRole]);
 
   const seriesTotalProgrammesY = [
     {
@@ -951,8 +942,6 @@ ${total}
         // Last value is the default, used where there is no data
         matchExpression.push('rgba(0, 0, 0, 0)');
 
-        console.table(matchExpression);
-
         map.addLayer(
           {
             id: 'countries-join',
@@ -984,7 +973,6 @@ ${total}
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    console.table(programmeLocations);
     console.log(programmeLocations?.features[0]);
 
     setTimeout(() => {
