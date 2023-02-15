@@ -828,7 +828,8 @@ const Dashboard = () => {
   const rejected = ['==', ['get', 'stage'], 'Rejected'];
 
   // colors to use for the categories
-  const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+  // const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+  const colors = ['#6ACDFF', '#CDCDCD', '#FF8183'];
 
   function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
     if (end - start === 1) end -= 0.00001;
@@ -852,7 +853,9 @@ const Dashboard = () => {
   function createDonutChart(properties: any) {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
+    const offsetsStage = [];
     let counts: any = [];
+    let programmeStageCounts: any = [];
     if (properties.count1) {
       counts = [
         properties.count1,
@@ -864,10 +867,26 @@ const Dashboard = () => {
     } else {
       counts = [parseInt(properties.count)];
     }
+    if (properties.count1) {
+      programmeStageCounts = [properties.authorised, properties.pending, properties.rejected];
+    } else {
+      if (properties?.stage === 'AwaitingAuthorization') {
+        programmeStageCounts = [0, properties.count, 0];
+      } else if (properties?.stage === 'Authorised') {
+        programmeStageCounts = [properties.count, 0, 0];
+      } else if (properties?.stage === 'Rejected') {
+        programmeStageCounts = [0, 0, properties.count];
+      }
+    }
     let total = 0;
     for (const count of counts) {
       offsets.push(total);
       total += count;
+    }
+    let totalStage = 0;
+    for (const count of programmeStageCounts) {
+      offsetsStage.push(totalStage);
+      totalStage += count;
     }
     const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
     const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
@@ -877,8 +896,16 @@ const Dashboard = () => {
     let html = `<div>
 <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
 
-    for (let i = 0; i < counts.length; i++) {
-      html += donutSegment(offsets[i] / total, (offsets[i] + counts[i]) / total, r, r0, colors[i]);
+    for (let i = 0; i < programmeStageCounts?.length; i++) {
+      if (programmeStageCounts[i] !== 0) {
+        html += donutSegment(
+          offsetsStage[i] === 0 ? 0 : offsetsStage[i] / totalStage,
+          (offsetsStage[i] + programmeStageCounts[i]) / totalStage,
+          r,
+          r0,
+          colors[i]
+        );
+      }
     }
     html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
 <text dominant-baseline="central" transform="translate(${r}, ${r})">
@@ -1003,15 +1030,19 @@ ${total}
             paint: {
               'circle-color': [
                 'case',
-                count1,
+                // count1,
+                // colors[1],
+                // count2,
+                // colors[1],
+                // count3,
+                // colors[1],
+                // count4,
+                // colors[1],
+                pending,
                 colors[0],
-                count2,
+                authorised,
                 colors[1],
-                count3,
                 colors[2],
-                count4,
-                colors[3],
-                colors[4],
               ],
               'circle-opacity': 1,
               'circle-radius': 10,
