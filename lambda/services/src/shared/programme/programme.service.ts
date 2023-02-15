@@ -653,7 +653,6 @@ export class ProgrammeService {
         if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException("Programme is not in credit issued state", HttpStatus.BAD_REQUEST)
         }
-        
 
         if (!req.fromCompanyIds) {
             req.fromCompanyIds = programme.companyId;
@@ -661,6 +660,7 @@ export class ProgrammeService {
         if (!programme.creditOwnerPercentage) {
             programme.creditOwnerPercentage = [100]
         }
+        
         if (!req.companyCredit) {
             req.companyCredit = programme.creditOwnerPercentage.map((p, i) => (programme.creditBalance*p/100 - (programme.creditFrozen ? programme.creditFrozen[i]: 0)));
         }
@@ -705,6 +705,10 @@ export class ProgrammeService {
                 transferCompanyCredit = companyAvailableCredit;
             } else {
                 transferCompanyCredit = req.companyCredit[j];
+            }
+
+            if (req.type != RetireType.CROSS_BORDER && transferCompanyCredit < companyAvailableCredit) {
+                throw new HttpException(`Required to retire the full credit amount for the given retirement type`, HttpStatus.BAD_REQUEST)
             }
 
             if (companyAvailableCredit < transferCompanyCredit) {

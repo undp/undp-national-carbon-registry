@@ -12,6 +12,7 @@ import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
 import * as Icon from 'react-bootstrap-icons';
+import { Role } from '../../Casl/enums/role.enum';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);
@@ -26,6 +27,7 @@ const UserProfile = () => {
   const [openPasswordChangeModal, setopenPasswordChangeModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [isLoading, setIsLoading] = useState(false);
+  const { userInfoState } = useUserContext();
 
   const signOut = (): void => {
     updateToken();
@@ -116,12 +118,14 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            <Button
-              className="mg-left-1 btn-danger mg-bottom-1"
-              onClick={() => onDeleteProfileUser()}
-            >
-              {t('userProfile:delete')}
-            </Button>
+            {userInfoState?.userRole !== Role.Root && (
+              <Button
+                className="mg-left-1 btn-danger mg-bottom-1"
+                onClick={() => onDeleteProfileUser()}
+              >
+                {t('userProfile:delete')}
+              </Button>
+            )}
             <Button
               className="mg-left-1 mg-bottom-1"
               type="primary"
