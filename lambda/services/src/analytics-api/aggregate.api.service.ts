@@ -239,9 +239,6 @@ export class AggregateAPIService {
       });
     }
 
-    console.table(groupedDataFiltered);
-    console.log(groupedDatasObject);
-
     const resultS = {
       timeLabel,
       ...result,
@@ -272,7 +269,6 @@ export class AggregateAPIService {
     });
 
     locationsGeoData.features = [...features];
-    console.table(data);
     return locationsGeoData;
   }
 
