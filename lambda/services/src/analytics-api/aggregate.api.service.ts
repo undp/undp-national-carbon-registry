@@ -1132,7 +1132,7 @@ export class AggregateAPIService {
     }
     let filt = this.getFilterAndByStatFilter(stat.statFilter, null, "txTime");
 
-    if (filt = null) {
+    if (filt == null) {
       filt = []
     }
     filt.push({
