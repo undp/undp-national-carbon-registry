@@ -127,9 +127,18 @@ export class ProgrammeService {
             return err;
         });
 
+        const initiatorCompanyDetails = await this.companyService.findByCompanyId(
+            pTransfer.initiatorCompanyId
+        );
+
         if (result.affected > 0) {
-            this.emailHelperService.sendEmailToProgrammeOwnerAdmins(pTransfer.programmeId,EmailTemplates.CREDIT_TRANSFER_REJECTED,
-                 {credits : pTransfer.creditAmount}, pTransfer.initiatorCompanyId);
+            if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+                this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_TRANSFER_GOV_REJECTED,{credits : pTransfer.creditAmount},
+                    pTransfer.programmeId,pTransfer.fromCompanyId)
+            }else{
+                this.emailHelperService.sendEmailToOrganisationAdmins(pTransfer.initiatorCompanyId,EmailTemplates.CREDIT_TRANSFER_REJECTED,
+                    {credits : pTransfer.creditAmount}, pTransfer.fromCompanyId, pTransfer.programmeId);
+            }
             return new BasicResponseDto(HttpStatus.OK, "Successfully rejected");
         }
 
@@ -229,7 +238,20 @@ export class ProgrammeService {
             }
         }
 
-        this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_ACCEPTED, {credits : transfer.creditAmount}, transfer.initiatorCompanyId )
+        const initiatorCompanyDetails = await this.companyService.findByCompanyId(
+            transfer.initiatorCompanyId
+        );
+
+        if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+            await this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR, 
+                {credits : transfer.creditAmount},transfer.programmeId ,approver.companyId );
+            await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.toCompanyId,EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER,
+                {credits : transfer.creditAmount, government: initiatorCompanyDetails.name},transfer.fromCompanyId, transfer.programmeId)
+
+        }else{
+            await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.toCompanyId,EmailTemplates.CREDIT_TRANSFER_ACCEPTED, 
+                {credits : transfer.creditAmount}, approver.companyId, transfer.programmeId );
+        }
 
         return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
     }
@@ -280,7 +302,14 @@ export class ProgrammeService {
         });
 
         if (result.affected > 0) {
-            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(transfer.programmeId,EmailTemplates.CREDIT_TRANSFER_CANCELLATION,{credits : transfer.creditAmount}, transfer.initiatorCompanyId);
+            const initiatorCompanyDetails = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
+            if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+                await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId,EmailTemplates.CREDIT_TRANSFER_GOV_CANCELLATION,
+                    {credits : transfer.creditAmount, government: initiatorCompanyDetails.name}, transfer.toCompanyId, transfer.programmeId);
+            }else{
+                await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId,EmailTemplates.CREDIT_TRANSFER_CANCELLATION,
+                    {credits : transfer.creditAmount}, transfer.initiatorCompanyId, transfer.programmeId);
+            }
             return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
         }
         return new BasicResponseDto(HttpStatus.BAD_REQUEST, "Transfer request does not exist in the giv");
@@ -355,6 +384,8 @@ export class ProgrammeService {
                 frozenCredit[programme.companyId[i]] = programme.creditFrozen[i]
             }
         }
+
+        const hostAddress = this.configService.get("host");
         
         const fromCompanyList = [];
         for (const j in req.fromCompanyIds) {
@@ -417,20 +448,35 @@ export class ProgrammeService {
             const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
             console.log('To Company', toCompany)
             updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}`, req.comment, false)).data;
+            this.emailHelperService.sendEmailToOrganisationAdmins(trf.toCompanyId, EmailTemplates.CREDIT_SEND_DEVELOPER,{
+                organisationName : requestedCompany.name,
+                credits : trf.creditAmount,
+                programmeName: programme.title,
+                serialNumber: programme.serialNo,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+            })
         }
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
         }
 
-        const hostAddress = this.configService.get("host");
         allTransferList.forEach(async transfer => {
-            if (requester.companyId != transfer.fromCompanyId) {
+            if(requester.companyRole === CompanyRole.GOVERNMENT){
+                this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_GOV,{
+                    credits : transfer.creditAmount,
+                    programmeName: programme.title,
+                    serialNumber: programme.serialNo,
+                    pageLink: hostAddress + "/creditTransfers/viewAll",
+                    government: requestedCompany.name,
+                },transfer.toCompanyId)
+            }
+            else if (requester.companyId != transfer.fromCompanyId) {
                 this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId, EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,{
                     organisationName : requestedCompany.name,
                     credits : transfer.creditAmount,
                     programmeName: programme.title,
                     serialNumber: programme.serialNo,
-                    pageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+                    pageLink: hostAddress + "/creditTransfers/viewAll",
                 })
             }
         });
@@ -865,4 +911,6 @@ export class ProgrammeService {
     private getUserRefWithRemarks = (user: any, remarks: string) => {
         return `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${remarks}`;
     }
+
+    
 }
