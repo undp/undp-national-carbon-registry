@@ -520,6 +520,12 @@ const Dashboard = () => {
         setProgrammeTransferLocations(transferLocationsStats);
       }
       if (programmeLocationsStats) {
+        // const data = programmeLocationsStats;
+        // const dataFeatures = data?.features;
+        // const filteredFeatures = dataFeatures?.filter(
+        //   (item: any) => item?.geometry?.coordinates !== null
+        // );
+        // data.features = filteredFeatures;
         setProgrammeLocations(programmeLocationsStats);
       }
     } catch (error: any) {
@@ -823,9 +829,9 @@ const Dashboard = () => {
   const count3 = ['all', ['>=', ['get', 'count'], 250], ['<', ['get', 'count'], 600]];
   const count4 = ['all', ['>=', ['get', 'count'], 600], ['<', ['get', 'count'], 1000]];
   const count5 = ['>=', ['get', 'count'], 1000];
-  // const pending = ['===', ['get', 'stage'], 'AwaitingAuthorization'];
-  // const authorised = ['===', ['get', 'stage'], 'Authorised'];
-  // const rejected = ['===', ['get', 'stage'], 'Rejected'];
+  // const pending = ['literal', ['===', ['get', 'stage'], 'AwaitingAuthorization']];
+  // const authorised = ['literal', ['===', ['get', 'stage'], 'Authorised']];
+  // const rejected = ['literal', ['===', ['get', 'stage'], 'Rejected']];
 
   // colors to use for the categories
   const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
@@ -861,8 +867,6 @@ const Dashboard = () => {
         properties.count4,
         properties.count5,
       ];
-    } else if (properties.point_count) {
-      counts = [properties.point_count];
     } else {
       counts = [parseInt(properties.count)];
     }
@@ -991,9 +995,9 @@ ${total}
               count3: ['+', ['case', count3, ['get', 'count'], 0]],
               count4: ['+', ['case', count4, ['get', 'count'], 0]],
               count5: ['+', ['case', count5, ['get', 'count'], 0]],
-              // pending: [['+', ['case', pending, ['get', 'count'], 0]]],
-              // authorised: [['+', ['case', authorised, ['get', 'count'], 0]]],
-              // rejected: [['+', ['case', rejected, ['get', 'count'], 0]]],
+              // pending: ['+', ['case', pending, ['get', 'count'], 0]],
+              // authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
+              // rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)

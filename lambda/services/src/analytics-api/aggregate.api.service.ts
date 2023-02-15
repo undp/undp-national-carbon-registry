@@ -272,18 +272,6 @@ export class AggregateAPIService {
     return locationsGeoData;
   }
 
-  private async calculateTotalCountOfTransferLocations(data) {
-    let count = 0;
-    if (data?.length > 0) {
-      data?.map((item) => {
-        count = count + parseInt(item?.count);
-      });
-    } else {
-      count = 0;
-    }
-    return count;
-  }
-
   private async genAggregateTypeOrmQuery(
     repo: Repository<any>,
     tableName: string,
@@ -751,7 +739,7 @@ export class AggregateAPIService {
             : (stat.statFilter = { onlyMine: true });
         }
         const whereC = [];
-        whereC.push(`b."geographicalLocationCordintes" is not null`);
+        whereC.push(`p."programmeId" != 'null'`);
         if (stat.statFilter && stat.statFilter.onlyMine) {
           whereC.push(
             `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
