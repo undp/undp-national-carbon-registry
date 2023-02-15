@@ -142,12 +142,14 @@ Web frontend implemented using ReactJS framework. Please refer [getting started 
 
 <a name="api"></a>
 ### Application Programming Interface (API)
-For integration, reference RESTful Web API Documentation documentation via Swagger. To access the API docs go to api.APP_URL
+For integration, reference RESTful Web API Documentation documentation via Swagger. To access
+- National API: api.APP_URL/national
+- Status API: api.APP_URL/stats
 
 <a name="status"></a>
 ### Status Page
-For transparent uptime monitoring 
-https://github.com/undp/carbon-registry-status
+For transparent uptime monitoring go to status.APP_URL
+Open source code available at https://github.com/undp/carbon-registry-status
 
 <a name="support"></a>
 ### Governance and Support
