@@ -30,7 +30,7 @@ export class EmailHelperService {
           ...templateData,
           programmeName: programme.title,
           date: new Date(programme.txTime),
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
 
@@ -93,7 +93,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           serialNumber: programme.serialNo,
           programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
         };
         break;
 
@@ -107,7 +107,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           serialNumber: programme.serialNo,
           programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
         };
         break;
 

@@ -563,7 +563,7 @@ export class ProgrammeService {
         const hostAddress = this.configService.get("host");
         this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.PROGRAMME_CREATE,{
             organisationName: orgNamesList,
-            programmePageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+            programmePageLink: hostAddress + `/programmeManagement/view?id=${programme.programmeId}`
         })
 
         return await this.programmeLedger.createProgramme(programme);
@@ -844,7 +844,7 @@ export class ProgrammeService {
                 programmeName: updated.title,
                 credits: updated.creditIssued,
                 serialNumber: updated.serialNo,
-                pageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+                pageLink: hostAddress + `/programmeManagement/view?id=${updated.programmeId}`
             })
         });
 
@@ -884,7 +884,7 @@ export class ProgrammeService {
                 programmeName: updated.title,
                 authorisedDate: new Date(updated.txTime),
                 serialNumber: updated.serialNo,
-                programmePageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+                programmePageLink: hostAddress + `/programmeManagement/view?id=${updated.programmeId}`
             })
         });
 
