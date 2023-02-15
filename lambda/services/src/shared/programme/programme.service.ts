@@ -121,7 +121,8 @@ export class ProgrammeService {
             requestId: req.requestId,
             status: TransferStatus.PENDING
         }, {
-            status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISED : TransferStatus.REJECTED
+            status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISED : TransferStatus.REJECTED,
+            txTime: new Date().getTime()
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -227,7 +228,8 @@ export class ProgrammeService {
                 requestId: req.requestId,
                 status: TransferStatus.PENDING
             }, {
-                status: TransferStatus.PROCESSING
+                status: TransferStatus.PROCESSING,
+                txTime: new Date().getTime()
             }).catch((err) => {
                 this.logger.error(err);
                 return err;
@@ -263,7 +265,8 @@ export class ProgrammeService {
         const result = await this.programmeTransferRepo.update({
             requestId: transfer.requestId
         }, {
-            status: transfer.isRetirement ? TransferStatus.RECOGNISED : TransferStatus.APPROVED
+            status: transfer.isRetirement ? TransferStatus.RECOGNISED : TransferStatus.APPROVED,
+            txTime: new Date().getTime()
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -295,7 +298,8 @@ export class ProgrammeService {
             requestId: req.requestId,
             status: TransferStatus.PENDING
         }, {
-            status: TransferStatus.CANCELLED
+            status: TransferStatus.CANCELLED,
+            txTime: new Date().getTime()
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -423,6 +427,7 @@ export class ProgrammeService {
             transfer.initiator = requester.id;
             transfer.initiatorCompanyId = requester.companyId;
             transfer.txTime = new Date().getTime()
+            transfer.createdTime = transfer.txTime;
             transfer.comment = req.comment;
             transfer.creditAmount = transferCompanyCredit;
             transfer.toAccount = req.toAccount;
@@ -788,6 +793,7 @@ export class ProgrammeService {
             transfer.initiator = requester.id;
             transfer.initiatorCompanyId = requester.companyId;
             transfer.txTime = new Date().getTime()
+            transfer.createdTime = transfer.txTime;
             transfer.comment = req.comment;
             transfer.creditAmount = transferCompanyCredit;
             transfer.toAccount = req.type == RetireType.CROSS_BORDER ? 'international': 'local';

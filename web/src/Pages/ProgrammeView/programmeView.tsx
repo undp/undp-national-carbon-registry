@@ -44,6 +44,7 @@ import {
   addCommSep,
   addSpaces,
   CompanyRole,
+  CreditTransferStage,
   getFinancialFields,
   getGeneralFields,
   getRetirementTypeString,
@@ -83,6 +84,7 @@ import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
+import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 
 mapboxgl.accessToken =
   '';
@@ -283,10 +285,45 @@ const ProgrammeView = () => {
     }
     setLoadingAll(false);
   };
+
+  const getTxActivityLog = (transfer: ProgrammeTransfer) => {
+    const createdTime = transfer.createdTime ? transfer.createdTime : transfer.txTime!;
+    const hist: any = [{
+        status: 'default',
+        title: 'Transfer Initiated',
+        subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+        description: `${addCommSep(
+          transfer.creditAmount
+        )} ${creditUnit} credits of this programme were requested to be transferred from African Development Bank to Nestle by Federal Republic of Nigeria `, //via Kento Yatsumono
+        icon: (
+          <span className="step-icon tx-step">
+            <Icon.ClockHistory />
+          </span>
+        ),
+    }]
+    if (transfer.status === CreditTransferStage.Rejected) {
+
+    }  
+    return hist;
+  }
+
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
     try {
-      const response: any = await get(`national/programme/getHistory?programmeId=${programmeId}`);
+      const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
+      const transferPromise = post('national/programme/transferQuery', {
+        page: 1,
+        size: 30,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: String(programmeId),
+          },
+        ],
+      });
+
+      const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
 
       const certifiedTime: any = {};
       const activityList: any[] = [];

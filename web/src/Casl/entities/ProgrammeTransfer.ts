@@ -31,4 +31,6 @@ export class ProgrammeTransfer implements BaseEntity {
   companyId?: number[];
 
   creditOwnerPercentage?: number[];
+
+  createdTime?: number;
 }
