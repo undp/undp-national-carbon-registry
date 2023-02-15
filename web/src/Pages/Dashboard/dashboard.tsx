@@ -928,7 +928,7 @@ ${total}
         // Build a GL match expression that defines the color for every vector tile feature
         // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
         const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-        const strings = ['match', ['get', 'iso_3166_1']];
+        const strings: any = [];
 
         const transferLocations: any = [...programmeTransferLocations];
 
@@ -949,7 +949,7 @@ ${total}
               : '#000d1a';
 
           matchExpression.push(row.country, color);
-          strings.push(row.country, row.count);
+          strings.push(row.count);
         }
 
         function getCountryCodes(dataSet: any) {
@@ -974,19 +974,19 @@ ${total}
           'admin-1-boundary-bg'
         );
 
-        // map.addLayer({
-        //   id: 'points',
-        //   type: 'symbol',
-        //   source: 'countries',
-        //   layout: {
-        //     'icon-image': 'custom-marker',
-        //     // get the title name from the source's "title" property
-        //     'text-field': strings,
-        //     'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        //     'text-offset': [0, 1.25],
-        //     'text-anchor': 'top',
-        //   },
-        // });
+        map.addLayer({
+          id: 'points',
+          type: 'symbol',
+          source: 'countries',
+          layout: {
+            'icon-image': 'custom-marker',
+            // get the title name from the source's "title" property
+            'text-field': ['format', ...strings],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-offset': [0, 1.25],
+            'text-anchor': 'top',
+          },
+        });
       });
     }, 1000);
   }, [programmeTransferLocations]);
