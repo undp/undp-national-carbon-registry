@@ -520,12 +520,6 @@ const Dashboard = () => {
         setProgrammeTransferLocations(transferLocationsStats);
       }
       if (programmeLocationsStats) {
-        // const data = programmeLocationsStats;
-        // const dataFeatures = data?.features;
-        // const filteredFeatures = dataFeatures?.filter(
-        //   (item: any) => item?.geometry?.coordinates !== null
-        // );
-        // data.features = filteredFeatures;
         setProgrammeLocations(programmeLocationsStats);
       }
     } catch (error: any) {
