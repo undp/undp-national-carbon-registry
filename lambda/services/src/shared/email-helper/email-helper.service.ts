@@ -20,12 +20,10 @@ export class EmailHelperService {
   public async sendEmailToProgrammeOwnerAdmins(
     programmeId: string,
     template: any,
-    templateData: {},
-    companyId?: number
+    templateData: {}
   ) {
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
-    let companyDetails: Company;
     switch (template.id) {
       case "PROGRAMME_REJECTION":
         templateData = {
@@ -36,34 +34,8 @@ export class EmailHelperService {
         };
         break;
 
-      case "CREDIT_TRANSFER_CANCELLATION":
-        companyDetails = await this.companyService.findByCompanyId(companyId);
-        templateData = {
-          ...templateData,
-          organisationName: companyDetails.name,
-          serialNumber: programme.serialNo,
-          programmeName: programme.title,
-          pageLink: hostAddress + "creditTransfers/viewAll",
-        };
-
-      case "CREDIT_TRANSFER_ACCEPTED":
-        companyDetails = await this.companyService.findByCompanyId(companyId);
-        templateData = {
-          ...templateData,
-          organisationName: companyDetails.name,
-          serialNumber: programme.serialNo,
-          programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
-        };
-      case "CREDIT_TRANSFER_REJECTED":
-        companyDetails = await this.companyService.findByCompanyId(companyId);
-        templateData = {
-          ...templateData,
-          organisationName: companyDetails.name,
-          serialNumber: programme.serialNo,
-          programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
-        };
+      default:
+        break;
     }
 
     programme.companyId.forEach(async (companyId: number) => {
@@ -74,12 +46,103 @@ export class EmailHelperService {
   public async sendEmailToOrganisationAdmins(
     companyId: number,
     template,
-    templateData: any
+    templateData: any,
+    receiverCompanyId?: number,
+    programmeId?: string
   ) {
     const systemCountryName = this.configService.get("systemCountryName");
     const users = await this.userService.getOrganisationAdminAndManagerUsers(
       companyId
     );
+    let companyDetails: Company;
+    let programme: Programme;
+    const hostAddress = this.configService.get("host");
+
+    switch (template.id) {
+      case "CREDIT_TRANSFER_GOV":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_CANCELLATION":
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_TRANSFER_ACCEPTED":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_REJECTED":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_GOV_CANCELLATION":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      default:
+        break;
+    }
+
     users.forEach((user: any) => {
       templateData = {
         ...templateData,
@@ -90,9 +153,47 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailToGovernmentAdmins(template, templateData: any) {
+  public async sendEmailToGovernmentAdmins(
+    template,
+    templateData: any,
+    programmeId?: string,
+    companyId?: number
+  ) {
     const systemCountryName = this.configService.get("systemCountryName");
+    const hostAddress = this.configService.get("host");
     const users = await this.userService.getGovAdminAndManagerUsers();
+    let programme: Programme;
+    let companyDetails: Company;
+    if (programmeId)
+      programme = await this.programmeLedger.getProgrammeById(programmeId);
+
+    switch (template.id) {
+      case "CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_TRANSFER_GOV_REJECTED":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      default:
+        break;
+    }
+
     users.forEach((user: any) => {
       templateData = {
         ...templateData,
