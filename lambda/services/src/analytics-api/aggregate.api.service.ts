@@ -262,7 +262,8 @@ export class AggregateAPIService {
       let properties: any = {};
       let geometry: any = {};
       properties.id = String(index);
-      properties.count = locationDataItem?.count;
+      properties.count = parseInt(locationDataItem?.count);
+      properties.stage = locationDataItem?.stage;
       geometry.type = "Point";
       geometry.coordinates = location;
       programmeGeoData.properties = properties;
@@ -765,14 +766,14 @@ export class AggregateAPIService {
         if (stat.statFilter && stat.statFilter.endTime) {
           whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
         }
-        results[key] = this.groupByStatus(
-          "loc",
-          await this.programmeRepo.manager
-            .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
+        const resultsProgrammeLocations = await this.programmeRepo.manager
+          .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
           FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
           ${whereC.length > 0 ? " where " : " "}
           ${whereC.join(" and ")}
-          GROUP  BY p."programmeId", b."currentStage"`)
+          GROUP  BY p."programmeId", b."currentStage"`);
+        results[key] = await this.programmeLocationDataFormatter(
+          resultsProgrammeLocations
         );
         break;
       case StatType.ALL_TRANSFER_LOCATION:
@@ -1239,9 +1240,8 @@ export class AggregateAPIService {
         mapping[d[key]] = [];
       }
       mapping[d[key]].push(d);
-      d[key] = undefined;
     }
 
-    return mapping;
+    return data;
   }
 }

@@ -266,7 +266,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -303,7 +309,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -340,7 +352,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -377,25 +395,18 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
       };
     }
-  };
-
-  const getAllProgrammeAnalyticsStatsChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'PROGRAMME_LOCATIONS',
-        },
-      ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
-    };
   };
 
   const onChangeRange = async (dateMoment: any, dateString: any) => {
@@ -421,31 +432,35 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response: any = await post('stats/programme/agg', getAllChartsParams());
-      console.log('stats data 3 -- > ', response?.data);
       let programmesAggByStatus;
       let programmesAggBySector;
       let totalCreditsCertifiedStats;
+      let programmeLocationsStats;
       let transferLocationsStats;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
@@ -470,7 +485,6 @@ const Dashboard = () => {
         setRetiredCredits(programmesAggByStatus?.retiredCredits);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
       }
-
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
@@ -506,30 +520,8 @@ const Dashboard = () => {
       if (transferLocationsStats) {
         setProgrammeTransferLocations(transferLocationsStats);
       }
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getAllProgrammeAnalyticsStatsCharts = async () => {
-    setLoading(true);
-    try {
-      const response: any = await post(
-        'stats/programme/dashboardCharts',
-        getAllProgrammeAnalyticsStatsChartsParams()
-      );
-      console.log(response?.data?.stats);
-      if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
-        const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
-        setProgrammeLocations(locations);
+      if (programmeLocationsStats) {
+        setProgrammeLocations(programmeLocationsStats);
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -551,7 +543,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
-      console.log('stats data  -- > ', response?.data);
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
       const pendingTransferInitAggregationResponse =
@@ -613,7 +604,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParams()
       );
-      console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
       if (companyRole === 'ProgrammeDeveloper') {
@@ -742,7 +732,7 @@ const Dashboard = () => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
-    getAllProgrammeAnalyticsStatsCharts();
+    // getAllProgrammeAnalyticsStatsCharts();
   }, [startTime, endTime, categoryType]);
 
   const seriesTotalProgrammesY = [
@@ -877,8 +867,10 @@ const Dashboard = () => {
         properties.count4,
         properties.count5,
       ];
+    } else if (properties.point_count) {
+      counts = [properties.point_count];
     } else {
-      counts = [properties.count];
+      counts = [parseInt(properties.count)];
     }
     let total = 0;
     for (const count of counts) {
@@ -992,7 +984,8 @@ ${total}
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    // const address = programmeLocations[0];
+    console.table(programmeLocations);
+    console.log(programmeLocations?.features[0]);
 
     setTimeout(() => {
       if (mapContainerRef.current) {
@@ -1014,11 +1007,11 @@ ${total}
             clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
-              count1: ['+', ['case', count1, 1, 0]],
-              count2: ['+', ['case', count2, 1, 0]],
-              count3: ['+', ['case', count3, 1, 0]],
-              count4: ['+', ['case', count4, 1, 0]],
-              count5: ['+', ['case', count5, 1, 0]],
+              count1: ['+', ['case', count1, ['get', 'count'], 0]],
+              count2: ['+', ['case', count2, ['get', 'count'], 0]],
+              count3: ['+', ['case', count3, ['get', 'count'], 0]],
+              count4: ['+', ['case', count4, ['get', 'count'], 0]],
+              count5: ['+', ['case', count5, ['get', 'count'], 0]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
