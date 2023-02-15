@@ -25,6 +25,7 @@ import {
   StatusGroupedByTimedata,
   StatusGroupedByTimedataThere,
 } from "../shared/dto/programmeStatus.timeGrouped.result";
+import { TransferStatus } from "../shared/enum/transform.status.enum";
 
 @Injectable()
 export class AggregateAPIService {
@@ -1130,6 +1131,15 @@ export class AggregateAPIService {
       stat.statFilter = { onlyMine: false };
     }
     let filt = this.getFilterAndByStatFilter(stat.statFilter, null, "txTime");
+
+    if (filt = null) {
+      filt = []
+    }
+    filt.push({
+      key: 'status',
+      operation: '=',
+      value: TransferStatus.PENDING
+    });
 
     const filterOr = [
       {
