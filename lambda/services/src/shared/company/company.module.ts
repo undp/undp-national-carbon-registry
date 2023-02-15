@@ -10,6 +10,7 @@ import { CompanyService } from './company.service';
 import { UtilModule } from '../util/util.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
+import { EmailHelperModule } from '../email-helper/email-helper.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProgrammeTransfer } from '../entities/programme.transfer';
     CaslModule,
     EmailModule,
     UtilModule,
-    ProgrammeLedgerModule
+    ProgrammeLedgerModule,
+    EmailHelperModule
   ],
   providers: [CompanyService, Logger],
   exports: [CompanyService]

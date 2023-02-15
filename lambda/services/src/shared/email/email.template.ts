@@ -294,5 +294,70 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `
-    }
+    },
+    PROGRAMME_CERTIFICATION:{
+        id: 'PROGRAMME_CERTIFICATION',
+        subject: 'Programme Certified by {{organisationName}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} of your Organisation has been certified by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_CERT:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_CERT',
+        subject: 'Programme Certificate Revoked by {{organisationName}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification of the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME',
+        subject: 'Programme Certificate Revoked by {{government}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the {{government}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT',
+        subject: 'Programme Certificate Revoked by {{government}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by your organisation for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the {{government}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM',
+        subject: 'Programme Certificate Revoked by the System',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the system as {{organisationName}} was deactivated. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
 };

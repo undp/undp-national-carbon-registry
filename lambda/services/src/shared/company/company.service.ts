@@ -18,6 +18,7 @@ import { DataResponseDto } from "../dto/data.response.dto";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { User } from "../entities/user.entity";
+import { EmailHelperService } from "../email-helper/email-helper.service";
 
 @Injectable()
 export class CompanyService {
@@ -27,6 +28,7 @@ export class CompanyService {
     private configService: ConfigService,
     private helperService: HelperService,
     private programmeLedgerService: ProgrammeLedgerService,
+    private emailHelperService: EmailHelperService,
     @InjectRepository(ProgrammeTransfer)
     private programmeTransferRepo: Repository<ProgrammeTransfer>
   ) {}
@@ -86,6 +88,7 @@ export class CompanyService {
           remarks,
           user.id.toString()
         );
+        await this.emailHelperService.sendEmailForRevokeCompanyCertifications(companyId);
       }
       return new BasicResponseDto(
         HttpStatus.OK,

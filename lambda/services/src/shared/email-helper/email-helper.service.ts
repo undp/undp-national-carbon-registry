@@ -20,16 +20,66 @@ export class EmailHelperService {
   public async sendEmailToProgrammeOwnerAdmins(
     programmeId: string,
     template: any,
-    templateData: {}
+    templateData: {},
+    companyId ?: number,
+    governmentId?: number
   ) {
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
+    let companyDetails:Company;
+
     switch (template.id) {
       case "PROGRAMME_REJECTION":
         templateData = {
           ...templateData,
           programmeName: programme.title,
           date: new Date(programme.txTime),
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_CERT':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        const government = await this.companyService.findByCompanyId(
+          governmentId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          government: government.name,
           pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
@@ -139,6 +189,21 @@ export class EmailHelperService {
         };
         break;
 
+      case "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          government: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
       default:
         break;
     }
@@ -202,5 +267,9 @@ export class EmailHelperService {
       };
       this.emailService.sendEmail(user.user_email, template, templateData);
     });
+  }
+
+  public async sendEmailForRevokeCompanyCertifications(companyId){
+    
   }
 }

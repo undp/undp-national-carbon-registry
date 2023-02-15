@@ -673,6 +673,23 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        if(add){
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION,{
+            },user.companyId)
+        }else{
+            if(user.companyRole === CompanyRole.GOVERNMENT){
+                await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME,{
+                },req.certifierId,user.companyId)
+                await this.emailHelperService.sendEmailToOrganisationAdmins(req.certifierId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT,{
+                },user.companyId,req.programmeId)
+            }else {
+                await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_CERT,{
+                },user.companyId)
+            }
+        }
+
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
