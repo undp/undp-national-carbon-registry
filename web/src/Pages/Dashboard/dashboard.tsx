@@ -112,7 +112,6 @@ const Dashboard = () => {
   const currentYear = new Date();
   const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
   const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
-  console.log({ currentYear, startOfTheYear, endOfTheYear });
 
   const getUserProfileDetails = async () => {
     try {
@@ -266,7 +265,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -303,7 +308,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -340,7 +351,13 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
@@ -377,25 +394,18 @@ const Dashboard = () => {
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
             },
           },
         ],
       };
     }
-  };
-
-  const getAllProgrammeAnalyticsStatsChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'PROGRAMME_LOCATIONS',
-        },
-      ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
-    };
   };
 
   const onChangeRange = async (dateMoment: any, dateString: any) => {
@@ -421,31 +431,35 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response: any = await post('stats/programme/agg', getAllChartsParams());
-      console.log('stats data 3 -- > ', response?.data);
       let programmesAggByStatus;
       let programmesAggBySector;
       let totalCreditsCertifiedStats;
+      let programmeLocationsStats;
       let transferLocationsStats;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       } else {
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       }
       let timeLabelDataStatus = [];
       let formattedTimeLabelDataStatus: any = [];
@@ -470,7 +484,6 @@ const Dashboard = () => {
         setRetiredCredits(programmesAggByStatus?.retiredCredits);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
       }
-
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
@@ -506,30 +519,8 @@ const Dashboard = () => {
       if (transferLocationsStats) {
         setProgrammeTransferLocations(transferLocationsStats);
       }
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getAllProgrammeAnalyticsStatsCharts = async () => {
-    setLoading(true);
-    try {
-      const response: any = await post(
-        'stats/programme/dashboardCharts',
-        getAllProgrammeAnalyticsStatsChartsParams()
-      );
-      console.log(response?.data?.stats);
-      if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
-        const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
-        setProgrammeLocations(locations);
+      if (programmeLocationsStats) {
+        setProgrammeLocations(programmeLocationsStats);
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -551,7 +542,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
-      console.log('stats data  -- > ', response?.data);
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
       const pendingTransferInitAggregationResponse =
@@ -613,7 +603,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParams()
       );
-      console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
       if (companyRole === 'ProgrammeDeveloper') {
@@ -646,7 +635,6 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
           if (responseItem?.currentStage === 'AwaitingAuthorization') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
@@ -706,8 +694,6 @@ const Dashboard = () => {
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
-
-      console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
       setLastUpdate(response?.data?.lastUpdate);
@@ -729,10 +715,6 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log('rejected projects hanges --- ', rejectedProjects);
-  }, [rejectedProjects]);
-
-  useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (companyRole === 'ProgrammeDeveloper') {
       setCategoryType('mine');
@@ -742,8 +724,7 @@ const Dashboard = () => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
-    getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime, categoryType]);
+  }, [startTime, endTime, categoryType, companyRole]);
 
   const seriesTotalProgrammesY = [
     {
@@ -877,8 +858,10 @@ const Dashboard = () => {
         properties.count4,
         properties.count5,
       ];
+    } else if (properties.point_count) {
+      counts = [properties.point_count];
     } else {
-      counts = [properties.count];
+      counts = [parseInt(properties.count)];
     }
     let total = 0;
     for (const count of counts) {
@@ -928,7 +911,7 @@ ${total}
         // Build a GL match expression that defines the color for every vector tile feature
         // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
         const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-        const strings = ['match', ['get', 'iso_3166_1']];
+        const strings: any = [];
 
         const transferLocations: any = [...programmeTransferLocations];
 
@@ -949,7 +932,7 @@ ${total}
               : '#000d1a';
 
           matchExpression.push(row.country, color);
-          strings.push(row.country, row.count);
+          strings.push(row.count);
         }
 
         function getCountryCodes(dataSet: any) {
@@ -958,8 +941,6 @@ ${total}
 
         // Last value is the default, used where there is no data
         matchExpression.push('rgba(0, 0, 0, 0)');
-
-        console.table(matchExpression);
 
         map.addLayer(
           {
@@ -974,25 +955,25 @@ ${total}
           'admin-1-boundary-bg'
         );
 
-        // map.addLayer({
-        //   id: 'points',
-        //   type: 'symbol',
-        //   source: 'countries',
-        //   layout: {
-        //     'icon-image': 'custom-marker',
-        //     // get the title name from the source's "title" property
-        //     'text-field': strings,
-        //     'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        //     'text-offset': [0, 1.25],
-        //     'text-anchor': 'top',
-        //   },
-        // });
+        map.addLayer({
+          id: 'points',
+          type: 'symbol',
+          source: 'countries',
+          layout: {
+            'icon-image': 'custom-marker',
+            // get the title name from the source's "title" property
+            'text-field': ['format', ...strings],
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-offset': [0, 1.25],
+            'text-anchor': 'top',
+          },
+        });
       });
     }, 1000);
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    // const address = programmeLocations[0];
+    console.log(programmeLocations?.features[0]);
 
     setTimeout(() => {
       if (mapContainerRef.current) {
@@ -1014,11 +995,11 @@ ${total}
             clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
-              count1: ['+', ['case', count1, 1, 0]],
-              count2: ['+', ['case', count2, 1, 0]],
-              count3: ['+', ['case', count3, 1, 0]],
-              count4: ['+', ['case', count4, 1, 0]],
-              count5: ['+', ['case', count5, 1, 0]],
+              count1: ['+', ['case', count1, ['get', 'count'], 0]],
+              count2: ['+', ['case', count2, ['get', 'count'], 0]],
+              count3: ['+', ['case', count3, ['get', 'count'], 0]],
+              count4: ['+', ['case', count4, ['get', 'count'], 0]],
+              count5: ['+', ['case', count5, ['get', 'count'], 0]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
