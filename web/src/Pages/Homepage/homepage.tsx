@@ -4,10 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
-import undpLogo from '../../Assets/Images/undp.png';
-import forest from '../../Assets/Images/forest.png';
-import resources from '../../Assets/Images/resources.png';
+import undpLogo from '../../Assets/Images/undp.webp';
+import undpLogofall from '../../Assets/Images/undp.png';
+import forest from '../../Assets/Images/forest.webp';
+import forestfall from '../../Assets/Images/forest.png';
+import resources from '../../Assets/Images/resources.webp';
+import resourcesfall from '../../Assets/Images/resources.png';
 import LayoutFooter from '../../Components/Footer/layout.footer';
+import ImgWithFallback from '../../Components/ImgwithFallback/ImgWithFallback';
 import './homepage.scss';
 import { BarChart, Gem, Calculator } from 'react-bootstrap-icons';
 const Homepage = () => {
@@ -170,7 +174,14 @@ const Homepage = () => {
               <Row className="homepagebody_aboutuslines">{t('homepage:aboutusline3')}</Row>
               <div className="homepagebody_aboutusline1">Developed in Partnership with</div>
               <Row gutter={[8, 8]} className="undplogocontainer">
-                <img className="undplogocontainer" src={undpLogo} alt="undp logo" />
+                <ImgWithFallback
+                  className="undplogocontainer"
+                  src={undpLogo}
+                  fallbackSrc={undpLogofall}
+                  mediaType="image/webp"
+                  alt="undplogo"
+                />
+                {/* <img className="undplogocontainer" src={undpLogo} alt="undp logo" /> */}
               </Row>
             </div>
           </div>
@@ -193,7 +204,14 @@ const Homepage = () => {
                 </div>
               </Col>
               <Col flex={3} md={12} lg={12}>
-                <img className="image" src={forest} alt="forest" />
+                <ImgWithFallback
+                  className="image"
+                  src={forest}
+                  fallbackSrc={forestfall}
+                  mediaType="image/webp"
+                  alt="forestry"
+                />
+                {/* <img className="image" src={forest} alt="forest" /> */}
               </Col>
             </Row>
           </div>
@@ -204,7 +222,14 @@ const Homepage = () => {
           <div className="homepage-resources-content-container">
             <Row>
               <Col className="resource-image-container" md={12} lg={12}>
-                <img className="image" src={resources} alt="resources" />
+                <ImgWithFallback
+                  className="image"
+                  src={resources}
+                  fallbackSrc={resourcesfall}
+                  mediaType="image/webp"
+                  alt="resources"
+                />
+                {/* <img className="image" src={resources} alt="resources" /> */}
               </Col>
               <Col md={12} lg={12}>
                 <div className="title">{t('homepage:resource')}</div>
@@ -221,15 +246,6 @@ const Homepage = () => {
         </Col>
       </Row>
       <LayoutFooter />
-
-      {/* <Row>
-        <Col md={24} lg={24} flex="auto">
-          <div className="homepage-content-containerwhite">
-            <div className="title">Contact Us</div>
-            <div className="homepagebody">{t('homepage:name')}</div>
-          </div>
-        </Col>
-      </Row> */}
     </div>
   );
 };
