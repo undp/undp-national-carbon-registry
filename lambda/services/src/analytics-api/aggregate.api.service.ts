@@ -16,10 +16,6 @@ import { Company } from "../shared/entities/company.entity";
 import { StatFilter } from "../shared/dto/stat.filter";
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
 import { Stat } from "../shared/dto/stat.dto";
-import {
-  SectorGroupedByTimedata,
-  SectorGroupedByTimedataThere,
-} from "../shared/dto/sector.timeGrouped.result";
 import { Sector } from "../shared/enum/sector.enum";
 import {
   StatusGroupedByTimedata,
