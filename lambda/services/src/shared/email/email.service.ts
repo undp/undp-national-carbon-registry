@@ -38,6 +38,21 @@ export class EmailService {
         return template;
     }
 
+    private getSubjectMessage(template: string, data) :string{
+        if (template == undefined) {
+            return template;
+        }
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                var find = `{{${key}}}`;
+                var re = new RegExp(find, 'g');
+                template = template.replace(re, data[key]);
+            }
+        }
+
+        return `🇦🇶 Carbon Registry: ${template}`;
+    }
+
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
         this.logger.log('Sending email', JSON.stringify(sendToEmail))
         // this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))
@@ -46,7 +61,7 @@ export class EmailService {
                 this.transporter.sendMail({
                     from: this.sourceEmail,
                     to: sendToEmail,
-                    subject: this.getTemplateMessage(template["subject"], templateData),
+                    subject: this.getSubjectMessage(template["subject"], templateData),
                     text: this.getTemplateMessage(template["text"], templateData), // plain text body
                     html: this.getTemplateMessage(template["html"], templateData), // html body
                 }, function(error, info) {

@@ -389,5 +389,70 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `
+    },
+    CREDIT_RETIREMENT_BY_GOV:{
+        id: 'CREDIT_RETIREMENT_BY_GOV',
+        subject: 'Credits Retired',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{credits}} credits of the programme {{programmeName}} with the serial number {{serialNumber}} has been retired by the {{government}} as {{reason}}.<br><br>
+        Click here {{pageLink}} for more details of the retirement. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_BY_DEV:{
+        id: 'CREDIT_RETIREMENT_BY_DEV',
+        subject: 'International Transfer Retire Request Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{organisationName}} has requested an international transfer retirement of {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}. <br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_CANCEL:{
+        id: 'CREDIT_RETIREMENT_CANCEL',
+        subject: 'International Transfer Retire Request Cancelled',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by {{organisationName}} has been cancelled.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_RECOGNITION:{
+        id: 'CREDIT_RETIREMENT_RECOGNITION',
+        subject: 'International Transfer Retire Request Recognised',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your organisation has been recognised.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_NOT_RECOGNITION:{
+        id: 'CREDIT_RETIREMENT_NOT_RECOGNITION',
+        subject: 'International Transfer Retire Request Not Recognised',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your organisation has not been recognised.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
     }
 };

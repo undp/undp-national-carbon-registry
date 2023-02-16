@@ -205,6 +205,26 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_RETIREMENT_RECOGNITION":
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_RETIREMENT_NOT_RECOGNITION":
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+        
       default:
         break;
     }
@@ -250,6 +270,16 @@ export class EmailHelperService {
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_RETIREMENT_CANCEL":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
           serialNumber: programme.serialNo,
           programmeName: programme.title,
           pageLink: hostAddress + "/creditTransfers/viewAll",
