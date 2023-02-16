@@ -35,6 +35,8 @@ import {
   totalProgrammesInitialValues,
   totalProgrammmesSectorInitialValues,
 } from './dashboardTypesInitialValues';
+import { Sector } from '../../Casl/enums/sector.enum';
+import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
 
 const { RangePicker } = DatePicker;
 
@@ -426,15 +428,19 @@ const Dashboard = () => {
     }
   };
 
+  const firstLower = (lower: any) => {
+    return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
+  };
+
   const getAllProgrammesAggChartStats = async () => {
     setLoading(true);
     try {
       const response: any = await post('stats/programme/agg', getAllChartsParams());
-      let programmesAggByStatus;
-      let programmesAggBySector;
-      let totalCreditsCertifiedStats;
-      let programmeLocationsStats;
-      let transferLocationsStats;
+      let programmesAggByStatus: any;
+      let programmesAggBySector: any;
+      let totalCreditsCertifiedStats: any;
+      let programmeLocationsStats: any;
+      let transferLocationsStats: any;
       if (companyRole === 'ProgrammeDeveloper') {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
@@ -472,20 +478,14 @@ const Dashboard = () => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
         setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
-        const totalProgrammesValues: ChartSeriesItem[] = [
-          {
-            name: 'Authorised',
-            data: programmesAggByStatus?.authorised,
-          },
-          {
-            name: 'Rejected',
-            data: programmesAggByStatus?.awaitingAuthorization,
-          },
-          {
-            name: 'Pending',
-            data: programmesAggByStatus?.rejected,
-          },
-        ];
+        const statusArray = Object.values(ProgrammeStageLegend);
+        const totalProgrammesValues: ChartSeriesItem[] = [];
+        statusArray?.map((status: any) => {
+          totalProgrammesValues.push({
+            name: status === 'AwaitingAuthorization' ? 'Pending' : status,
+            data: programmesAggByStatus[firstLower(status)],
+          });
+        });
         setTotalProgrammesSeries(totalProgrammesValues);
         totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
 
@@ -516,48 +516,55 @@ const Dashboard = () => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
         setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
-        const progarmmesSectorSeriesData: ChartSeriesItem[] = [
-          {
-            name: 'Energy',
-            data: programmesAggBySector?.energy,
-          },
-          {
-            name: 'Health',
-            data: programmesAggBySector?.health,
-          },
-          {
-            name: 'Education',
-            data: programmesAggBySector?.education,
-          },
-          {
-            name: 'Transport',
-            data: programmesAggBySector?.transport,
-          },
-          {
-            name: 'Manufacturing',
-            data: programmesAggBySector?.manufacturing,
-          },
-          {
-            name: 'Hospitality',
-            data: programmesAggBySector?.hospitality,
-          },
-          {
-            name: 'Forestry',
-            data: programmesAggBySector?.forestry,
-          },
-          {
-            name: 'Waste',
-            data: programmesAggBySector?.waste,
-          },
-          {
-            name: 'Agriculture',
-            data: programmesAggBySector?.agriculture,
-          },
-          {
-            name: 'Other',
-            data: programmesAggBySector?.other,
-          },
-        ];
+        const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
+        const sectorsArray = Object.values(Sector);
+        sectorsArray?.map((sector: any) => {
+          progarmmesSectorSeriesData.push({
+            name: sector,
+            data: programmesAggBySector[firstLower(sector)],
+          });
+        });
+        //   {
+        //     name: 'Energy',
+        //     data: programmesAggBySector?.energy,
+        //   },
+        //   {
+        //     name: 'Health',
+        //     data: programmesAggBySector?.health,
+        //   },
+        //   {
+        //     name: 'Education',
+        //     data: programmesAggBySector?.education,
+        //   },
+        //   {
+        //     name: 'Transport',
+        //     data: programmesAggBySector?.transport,
+        //   },
+        //   {
+        //     name: 'Manufacturing',
+        //     data: programmesAggBySector?.manufacturing,
+        //   },
+        //   {
+        //     name: 'Hospitality',
+        //     data: programmesAggBySector?.hospitality,
+        //   },
+        //   {
+        //     name: 'Forestry',
+        //     data: programmesAggBySector?.forestry,
+        //   },
+        //   {
+        //     name: 'Waste',
+        //     data: programmesAggBySector?.waste,
+        //   },
+        //   {
+        //     name: 'Agriculture',
+        //     data: programmesAggBySector?.agriculture,
+        //   },
+        //   {
+        //     name: 'Other',
+        //     data: programmesAggBySector?.other,
+        //   },
+        // ];
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
