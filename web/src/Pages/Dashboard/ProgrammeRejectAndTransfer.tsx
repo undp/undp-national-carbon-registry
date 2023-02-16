@@ -74,7 +74,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
                 <div className="icon-container reject">
                   <XCircle
                     style={{
-                      color: '#6c6c6c',
+                      color: '#FF4D4F',
                       fontSize: '25px',
                     }}
                   />
@@ -90,7 +90,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
                     showInfo={false}
                     percent={(rejected / totalPrgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#F0F0F0', to: '#D8D8D8' }}
+                    strokeColor={{ from: '#FFA6A6', to: '#FF8183' }}
                   />
                 </div>
               </div>
@@ -98,7 +98,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
             <div className="transfered-details margin-top-1">
               <div className="icon">
                 <div className="icon-container pending">
-                  <ClockHistory color="#FF4D4F" size={25} />
+                  <ClockHistory color="#6c6c6c" size={25} />
                 </div>
               </div>
               <div className="details">
@@ -111,7 +111,7 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
                     showInfo={false}
                     percent={(pending / totalPrgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#FFA6A6', to: '#FF8183' }}
+                    strokeColor={{ from: '#F0F0F0', to: '#D8D8D8' }}
                   />
                 </div>
               </div>

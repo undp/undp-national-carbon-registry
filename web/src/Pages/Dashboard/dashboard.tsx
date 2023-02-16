@@ -829,14 +829,14 @@ const Dashboard = () => {
     }
 
     if (properties.cluster_id) {
-      programmeStageCounts = [properties.authorised, properties.pending, properties.rejected];
+      programmeStageCounts = [properties.authorised, properties.rejected, properties.pending];
     } else {
       if (properties?.stage === 'AwaitingAuthorization') {
-        programmeStageCounts = [0, properties.count, 0];
+        programmeStageCounts = [0, 0, properties.count];
       } else if (properties?.stage === 'Authorised') {
         programmeStageCounts = [properties.count, 0, 0];
       } else if (properties?.stage === 'Rejected') {
-        programmeStageCounts = [0, 0, properties.count];
+        programmeStageCounts = [0, properties.count, 0];
       }
     }
     let total = 0;
@@ -1289,8 +1289,8 @@ ${total}
                   </div>
                   <div className="stage-legends">
                     <LegendItem text="Authorised" color="#6ACDFF" />
-                    <LegendItem text="Pending" color="#FF8183" />
-                    <LegendItem text="Rejected" color="#CDCDCD" />
+                    <LegendItem text="Rejected" color="#FF8183" />
+                    <LegendItem text="Pending" color="#CDCDCD" />
                   </div>
                   <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
