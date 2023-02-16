@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { DatePicker, Skeleton } from 'antd';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
+import { InfoCircle } from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 
@@ -24,7 +25,12 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
         </div>
       ) : (
         <>
-          <div className="pie-charts-title">{title}</div>
+          <div className="pie-charts-top">
+            <div className="pie-charts-title">{title}</div>
+            <div className="info-container">
+              <InfoCircle color="#000000" size={20} />
+            </div>
+          </div>
           <div className="pie-charts-section">
             <Chart options={options} series={series} type="donut" height="320px" />
           </div>

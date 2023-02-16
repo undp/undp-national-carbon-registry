@@ -24,6 +24,7 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
+  InfoCircle,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
@@ -527,7 +528,6 @@ const Dashboard = () => {
           }
         });
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
-
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
       }
       if (totalCreditsCertifiedStats) {
@@ -1276,7 +1276,12 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Programme Locations</div>
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">Programme Locations</div>
+                <div className="info-container">
+                  <InfoCircle color="#000000" size={20} />
+                </div>
+              </div>
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />
@@ -1303,7 +1308,12 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Transfer Locations International</div>
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">Transfer Locations International</div>
+                <div className="info-container">
+                  <InfoCircle color="#000000" size={20} />
+                </div>
+              </div>
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />
