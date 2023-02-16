@@ -96,9 +96,6 @@ const Dashboard = () => {
   const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
     any[]
   >([]);
-  // const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  // const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  // const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
