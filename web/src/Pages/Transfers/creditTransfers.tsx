@@ -139,13 +139,16 @@ const CreditTransfer = () => {
           key: 'programmeTitle',
           operation: 'like',
           value: `${search}%`,
-        },
-        {
+        }
+      ];
+      if (!isNaN(num)) {
+        interFilterOr.push({
           key: 'requestId',
           operation: '=',
           value: `${search}`,
-        },
-      ];
+        })
+      }
+      
       filter.push({
         value: {
           page: currentPage,
@@ -756,7 +759,7 @@ const CreditTransfer = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={'Search by programme name or request Id'}
+                  placeholder={'Search'}
                   allowClear
                   onChange={(e) => setSearchText(e.target.value)}
                   onSearch={setSearch}
