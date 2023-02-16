@@ -6,6 +6,7 @@ export class SectorGroupedByTimedata {
   manufacturing: any[];
   hospitality: any[];
   forestry: any[];
+  waste: any[];
   agriculture: any[];
   other: any[];
 }
@@ -18,6 +19,7 @@ export class SectorGroupedByTimedataThere {
   manufacturing: boolean;
   hospitality: boolean;
   forestry: boolean;
+  waste: boolean;
   agriculture: boolean;
   other: boolean;
 }

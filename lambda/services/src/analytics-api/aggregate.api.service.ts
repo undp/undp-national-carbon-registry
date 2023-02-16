@@ -182,33 +182,19 @@ export class AggregateAPIService {
       acc[time_group].push(curr);
       return acc;
     }, {});
-
-    let result: SectorGroupedByTimedata = {
-      energy: [],
-      health: [],
-      education: [],
-      transport: [],
-      manufacturing: [],
-      hospitality: [],
-      forestry: [],
-      agriculture: [],
-      other: [],
-    };
+    let result: any = {};
+    const sectorsArray = Object.values(Sector);
+    sectorsArray?.map((sector) => {
+      result[this.firstLower(sector)] = [];
+    });
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
     for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
       const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
+      let resultThere: any = {};
       const sectorsArray = Object.values(Sector);
-      let resultThere: SectorGroupedByTimedataThere = {
-        energy: false,
-        health: false,
-        education: false,
-        transport: false,
-        manufacturing: false,
-        hospitality: false,
-        forestry: false,
-        agriculture: false,
-        other: false,
-      };
+      sectorsArray?.map((sector) => {
+        resultThere[this.firstLower(sector)] = false;
+      });
       for (
         let arrResultForTimeGroupIndex = 0;
         arrResultForTimeGroupIndex < arrResultForTimeGroup.length;
@@ -1133,18 +1119,18 @@ export class AggregateAPIService {
     let filt = this.getFilterAndByStatFilter(stat.statFilter, null, "txTime");
 
     if (filt == null) {
-      filt = []
+      filt = [];
     }
     filt.push({
-      key: 'status',
-      operation: '=',
-      value: TransferStatus.PENDING
+      key: "status",
+      operation: "=",
+      value: TransferStatus.PENDING,
     });
     filt.push({
-      key: 'isRetirement',
-      operation: '!=',
-      value: true
-    })
+      key: "isRetirement",
+      operation: "!=",
+      value: true,
+    });
 
     const filterOr = [
       {

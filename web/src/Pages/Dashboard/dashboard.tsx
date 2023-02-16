@@ -519,10 +519,12 @@ const Dashboard = () => {
         const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
         const sectorsArray = Object.values(Sector);
         sectorsArray?.map((sector: any) => {
-          progarmmesSectorSeriesData.push({
-            name: sector,
-            data: programmesAggBySector[firstLower(sector)],
-          });
+          if (programmesAggBySector[firstLower(sector)] !== undefined) {
+            progarmmesSectorSeriesData.push({
+              name: sector,
+              data: programmesAggBySector[firstLower(sector)],
+            });
+          }
         });
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
 
@@ -817,7 +819,7 @@ const Dashboard = () => {
 
   // code for creating an SVG donut chart from feature properties
   function createDonutChart(properties: any) {
-    console.log('properties of donut creator --- > ', properties);
+    // console.log('properties of donut creator --- > ', properties);
     const offsets = [];
     const offsetsStage = [];
     let counts: any = [];
@@ -1028,7 +1030,7 @@ ${total}
             // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
             // and add it to the map if it's not there already
             for (const feature of features) {
-              console.log(feature.properties);
+              // console.log(feature.properties);
               const coords = feature.geometry.coordinates;
               const properties = feature.properties;
               // if (!properties.cluster) continue;
