@@ -32,8 +32,8 @@ import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
   totalCreditsSeriesInitialValues,
-  totalProgrammesInitialValues,
-  totalProgrammmesSectorInitialValues,
+  getTotalProgrammesInitialValues,
+  getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
 import { Sector } from '../../Casl/enums/sector.enum';
 import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
@@ -73,13 +73,13 @@ const Dashboard = () => {
 
   // states for totalProgrammes chart
   const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
-    totalProgrammesInitialValues
+    getTotalProgrammesInitialValues()
   );
   const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
 
   // states for totalProgrammes sub sector chart
   const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
-    totalProgrammmesSectorInitialValues
+    getTotalProgrammesSectorInitialValues()
   );
   const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
     any[]
@@ -524,47 +524,6 @@ const Dashboard = () => {
             data: programmesAggBySector[firstLower(sector)],
           });
         });
-        //   {
-        //     name: 'Energy',
-        //     data: programmesAggBySector?.energy,
-        //   },
-        //   {
-        //     name: 'Health',
-        //     data: programmesAggBySector?.health,
-        //   },
-        //   {
-        //     name: 'Education',
-        //     data: programmesAggBySector?.education,
-        //   },
-        //   {
-        //     name: 'Transport',
-        //     data: programmesAggBySector?.transport,
-        //   },
-        //   {
-        //     name: 'Manufacturing',
-        //     data: programmesAggBySector?.manufacturing,
-        //   },
-        //   {
-        //     name: 'Hospitality',
-        //     data: programmesAggBySector?.hospitality,
-        //   },
-        //   {
-        //     name: 'Forestry',
-        //     data: programmesAggBySector?.forestry,
-        //   },
-        //   {
-        //     name: 'Waste',
-        //     data: programmesAggBySector?.waste,
-        //   },
-        //   {
-        //     name: 'Agriculture',
-        //     data: programmesAggBySector?.agriculture,
-        //   },
-        //   {
-        //     name: 'Other',
-        //     data: programmesAggBySector?.other,
-        //   },
-        // ];
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;

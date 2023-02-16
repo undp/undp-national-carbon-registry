@@ -1,7 +1,22 @@
+import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
+import { Sector } from '../../Casl/enums/sector.enum';
+
 export interface ChartSeriesItem {
   name: string;
   data: any[];
 }
+
+export const getTotalProgrammesInitialValues = () => {
+  const totalProgrammmesStatusInitialValues: ChartSeriesItem[] = [];
+  const statusArray = Object.values(ProgrammeStageLegend);
+  statusArray?.map((sector: any) => {
+    totalProgrammmesStatusInitialValues.push({
+      name: sector,
+      data: [],
+    });
+  });
+  return totalProgrammmesStatusInitialValues;
+};
 
 export const totalProgrammesInitialValues = [
   {
@@ -18,48 +33,17 @@ export const totalProgrammesInitialValues = [
   },
 ];
 
-export const totalProgrammmesSectorInitialValues = [
-  {
-    name: 'Energy',
-    data: [],
-  },
-  {
-    name: 'Health',
-    data: [],
-  },
-  {
-    name: 'Education',
-    data: [],
-  },
-  {
-    name: 'Transport',
-    data: [],
-  },
-  {
-    name: 'Manufacturing',
-    data: [],
-  },
-  {
-    name: 'Hospitality',
-    data: [],
-  },
-  {
-    name: 'Forestry',
-    data: [],
-  },
-  {
-    name: 'Waste',
-    data: [],
-  },
-  {
-    name: 'Agriculture',
-    data: [],
-  },
-  {
-    name: 'Other',
-    data: [],
-  },
-];
+export const getTotalProgrammesSectorInitialValues = () => {
+  const totalProgrammmesSectorInitialValues: ChartSeriesItem[] = [];
+  const sectorsArray = Object.values(Sector);
+  sectorsArray?.map((sector: any) => {
+    totalProgrammmesSectorInitialValues.push({
+      name: sector,
+      data: [],
+    });
+  });
+  return totalProgrammmesSectorInitialValues;
+};
 
 export const totalCreditsSeriesInitialValues = [
   {
