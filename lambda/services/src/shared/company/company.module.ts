@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from '../entities/company.entity';
@@ -28,7 +28,7 @@ import { EmailHelperModule } from '../email-helper/email-helper.module';
     EmailModule,
     UtilModule,
     ProgrammeLedgerModule,
-    EmailHelperModule
+    forwardRef(() => EmailHelperModule)  
   ],
   providers: [CompanyService, Logger],
   exports: [CompanyService]

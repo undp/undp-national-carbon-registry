@@ -360,4 +360,34 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `
     },
+    PROGRAMME_DEVELOPER_ORG_DEACTIVATION:{
+        id: 'PROGRAMME_DEVELOPER_ORG_DEACTIVATION',
+        subject: 'Organisation Deactivated',
+        html: `
+        Hi,<br><br>
+
+        Your organisation has been deactivated by the {{government}}. Your organisation will still be visible but not other will be able to take place. Following are the effects of deactivation:<br><br>
+         · All the users of the organisation were deactivated. <br>
+         · All the credits owned by your organisation were frozen.<br>
+         · All credit transfer requests sent and received by your organisation were cancelled.<br>
+         · All the international transfer retire requests sent by your organisation were cancelled.<br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CERTIFIER_ORG_DEACTIVATION: {
+        id: 'CERTIFIER_ORG_DEACTIVATION',
+        subject: 'Organisation Deactivated',
+        html: `
+        Hi,<br><br>
+
+        Your organisation has been deactivated by the {{government}}. Your organisation will still be visible but not other will be able to take place. Following are the effects of deactivation: <br><br>
+        · All the users of the organisation were deactivated.<br>
+        · All the certificates given by your organisation were revoked. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    }
 };

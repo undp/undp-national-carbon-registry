@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CompanyService } from "../company/company.service";
 import { EmailService } from "../email/email.service";
@@ -13,6 +13,7 @@ export class EmailHelperService {
     private userService: UserService,
     private configService: ConfigService,
     private emailService: EmailService,
+    @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService
   ) {}
@@ -269,7 +270,15 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailForRevokeCompanyCertifications(companyId){
-    
+  public async sendEmail(sender: string, template, templateData: any, companyId: number){
+    const companyDetails = await this.companyService.findByCompanyId(companyId);
+    const systemCountryName = this.configService.get("systemCountryName");
+    templateData = {
+      ...templateData,
+      countryName: systemCountryName,
+      government: companyDetails.name
+    };
+    this.emailService.sendEmail(sender, template, templateData);
   }
+
 }

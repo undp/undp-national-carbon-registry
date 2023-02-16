@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CompanyModule } from '../company/company.module';
 import { EmailModule } from '../email/email.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
@@ -8,6 +8,6 @@ import { EmailHelperService } from './email-helper.service';
 @Module({
     providers: [EmailHelperService],
     exports: [EmailHelperService],
-    imports: [UserModule, EmailModule, ProgrammeLedgerModule, CompanyModule]
+    imports: [forwardRef(() => UserModule), EmailModule, ProgrammeLedgerModule, forwardRef(() => CompanyModule)]
 })
 export class EmailHelperModule {}

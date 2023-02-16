@@ -46,7 +46,7 @@ export class EmailService {
                 this.transporter.sendMail({
                     from: this.sourceEmail,
                     to: sendToEmail,
-                    subject: template["subject"],
+                    subject: this.getTemplateMessage(template["subject"], templateData),
                     text: this.getTemplateMessage(template["text"], templateData), // plain text body
                     html: this.getTemplateMessage(template["html"], templateData), // html body
                 }, function(error, info) {
