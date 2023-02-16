@@ -74,6 +74,7 @@
       margin-top: -5px;
       font-family: 'MuseoSans';
     }
+  
   }
   .homepage-button-container {
     display: flex;
@@ -87,6 +88,14 @@
       margin-right: 30px;
       margin-left: 30px;
       text-transform: uppercase;
+    }
+    .ant-btn-primary {
+      background-color: $primary-color;
+      color: $dark-text-color;
+      border: none;
+    }
+    .ant-btn-primary:hover {
+      background-color: $gradient-background-start;
     }
   }
   .image-container {
