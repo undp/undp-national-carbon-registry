@@ -141,7 +141,7 @@ const CreditTransfer = () => {
           value: `${search}%`,
         },
       ];
-      if (!isNaN(search)) {
+      if (!isNaN(Number(search))) {
         interFilterOr.push({
           key: 'requestId',
           operation: '=',
