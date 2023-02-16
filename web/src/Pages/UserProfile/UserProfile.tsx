@@ -268,7 +268,13 @@ const UserProfile = () => {
                       {t('userProfile:website')}
                     </Col>
                     <Col span={12} className="field-value">
-                      {organisationDetails.website ? organisationDetails.website : '-'}
+                      {organisationDetails.website ? (
+                        <a target={'blank'} href={organisationDetails.website}>
+                          {organisationDetails.website}
+                        </a>
+                      ) : (
+                        '-'
+                      )}
                     </Col>
                   </Row>
                   <Row className="field">

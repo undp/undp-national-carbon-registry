@@ -148,6 +148,21 @@ const ProgrammeView = () => {
     return dt;
   };
 
+  const getCenter = (list: any[]) => {
+    let count = 0;
+    let lat = 0;
+    let long = 0;
+    for (const l of list) {
+      if (l === null || l === 'null') {
+        continue;
+      }
+      count += 1;
+      lat += l[0];
+      long += l[1];
+    }
+    return [lat / count, long / count];
+  };
+
   const drawMap = () => {
     // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
     if (!mapContainerRef || !mapContainerRef.current) {
@@ -161,7 +176,7 @@ const ProgrammeView = () => {
         mapd = new mapboxgl.Map({
           container: mapContainerRef.current || '',
           style: 'mapbox://styles/mapbox/streets-v11',
-          center: data?.geographicalLocationCordintes[0] as LngLatLike,
+          center: getCenter(data?.geographicalLocationCordintes) as LngLatLike,
           zoom: 4,
         });
 

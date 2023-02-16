@@ -1156,6 +1156,11 @@ export class AggregateAPIService {
       operation: '=',
       value: TransferStatus.PENDING
     });
+    filt.push({
+      key: 'isRetirement',
+      operation: '!=',
+      value: true
+    })
 
     const filterOr = [
       {

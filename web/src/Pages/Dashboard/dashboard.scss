@@ -95,7 +95,7 @@
   }
 
   .height-map-rem {
-    height: 470px;
+    height: 510px;
   }
 
   .map-container {
@@ -267,6 +267,14 @@
                 }
               }
             }
+          }
+
+          .stage-legends {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
           }
 
           .updated-on {
