@@ -139,16 +139,15 @@ const CreditTransfer = () => {
           key: 'programmeTitle',
           operation: 'like',
           value: `${search}%`,
-        }
+        },
       ];
       if (!isNaN(num)) {
         interFilterOr.push({
           key: 'requestId',
           operation: '=',
           value: `${search}`,
-        })
+        });
       }
-      
       filter.push({
         value: {
           page: currentPage,
