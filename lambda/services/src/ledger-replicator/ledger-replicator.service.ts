@@ -206,6 +206,7 @@ export class LedgerReplicatorService {
                   Number(company.programmeCount) +
                   (overall.txType == TxType.AUTH ? 1 : 0),
                 lastUpdateVersion: parseInt(meta["version"]),
+                creditTxTime: new Date(meta.txTime).getTime()
               };
             }
 

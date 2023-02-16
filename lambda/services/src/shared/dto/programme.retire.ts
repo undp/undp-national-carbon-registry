@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min, ValidateNested } from "class-validator";
+import { IsArray, IsEnum, IsInt, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsPositive, IsString, Length, Min, ValidateIf, ValidateNested } from "class-validator";
 import { RetireType } from "../enum/retire.type.enum";
 import { BasicOrgInfo } from "./basic.organisation.dto";
 
@@ -19,8 +19,7 @@ export class ProgrammeRetire {
 
     @ApiPropertyOptional()
     @IsArray()
-    @IsNumber({},{each: true})
-    @Min(0, { each: true })
+    @IsPositive({ each: true })
     @IsOptional()
     companyCredit: number[];
 
@@ -31,9 +30,8 @@ export class ProgrammeRetire {
     // toAccount: string;
 
     @ApiPropertyOptional()
-    @IsNotEmpty()
-    @IsNotEmpty()
-    @IsOptional()
+    @ValidateIf(o => o.type === RetireType.CROSS_BORDER)
+    @IsNotEmptyObject()
     @ValidateNested()
     @Type(() => BasicOrgInfo)
     toCompanyMeta: BasicOrgInfo;

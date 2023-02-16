@@ -74,7 +74,7 @@ export const totalProgrammesOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -187,7 +187,7 @@ export const totalProgrammesOptionsSub: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -333,7 +333,7 @@ export const totalCreditsOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -447,7 +447,7 @@ export const totalCreditsCertifiedOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -767,7 +767,7 @@ export const optionDonutPieA: any = {
     showForNullSeries: true,
     showForZeroSeries: true,
     position: 'bottom',
-    horizontalAlign: 'center',
+    horizontalAlign: 'left',
     floating: false,
     fontSize: '14px',
     fontFamily: 'Inter',
@@ -778,7 +778,7 @@ export const optionDonutPieA: any = {
     height: undefined,
     tooltipHoverFormatter: undefined,
     customLegendItems: [],
-    offsetX: 0,
+    offsetX: 20,
     offsetY: 5,
     labels: {
       colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
@@ -797,8 +797,8 @@ export const optionDonutPieA: any = {
       offsetY: 0,
     },
     itemMargin: {
-      horizontal: 5,
-      vertical: 0,
+      horizontal: 10,
+      vertical: 3,
     },
     onItemClick: {
       toggleDataSeries: true,
@@ -853,7 +853,7 @@ export const optionDonutPieB: any = {
     showForNullSeries: true,
     showForZeroSeries: true,
     position: 'bottom',
-    horizontalAlign: 'center',
+    horizontalAlign: 'left',
     floating: false,
     fontSize: '14px',
     fontFamily: 'Inter',
@@ -864,7 +864,7 @@ export const optionDonutPieB: any = {
     height: undefined,
     tooltipHoverFormatter: undefined,
     customLegendItems: [],
-    offsetX: 0,
+    offsetX: 15,
     offsetY: 5,
     labels: {
       colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
@@ -883,8 +883,8 @@ export const optionDonutPieB: any = {
       offsetY: 0,
     },
     itemMargin: {
-      horizontal: 5,
-      vertical: 0,
+      horizontal: 10,
+      vertical: 3,
     },
     onItemClick: {
       toggleDataSeries: true,

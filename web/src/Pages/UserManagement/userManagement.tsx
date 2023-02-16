@@ -65,6 +65,7 @@ import { User } from '../../Casl/entities/User';
 import { plainToClass } from 'class-transformer';
 import { Action } from '../../Casl/enums/action.enum';
 import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -92,6 +93,7 @@ const UserManagement = () => {
   const [actionInfo, setActionInfo] = useState<any>({});
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
+  const { userInfoState } = useUserContext();
 
   document.addEventListener('mousedown', (event: any) => {
     const userFilterArea1 = document.querySelector('.filter-bar');
@@ -317,7 +319,8 @@ const UserManagement = () => {
       render: (_: any, record: TableDataType) => {
         return (
           (ability.can(Action.Update, plainToClass(User, record)) ||
-            ability.can(Action.Delete, plainToClass(User, record))) && (
+            ability.can(Action.Delete, plainToClass(User, record))) &&
+          record.id !== userInfoState?.id && (
             <Popover placement="bottomRight" content={actionMenu(record)} trigger="click">
               <EllipsisOutlined
                 rotate={90}

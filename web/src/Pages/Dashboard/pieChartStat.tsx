@@ -26,7 +26,7 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
         <>
           <div className="pie-charts-title">{title}</div>
           <div className="pie-charts-section">
-            <Chart options={options} series={series} type="donut" width="350px" />
+            <Chart options={options} series={series} type="donut" height="320px" />
           </div>
           <div className="updated-on margin-top-2">
             <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>

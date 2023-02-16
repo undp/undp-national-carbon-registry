@@ -77,11 +77,13 @@ const Login = () => {
     <div className="login-container">
       <Row>
         <Col md={24} lg={15} flex="auto">
-          <div className="login-img-container">
-            <span>
-              {t('login:carbon')} <br /> {t('login:credit')} <br />
-              {t('login:management')}
-            </span>
+          <div className="login-img-container container-image">
+            <div className="text-ctn">
+              <span>
+                {t('login:carbon')} <br /> {t('login:credit')} <br />
+                {t('login:management')}
+              </span>
+            </div>
           </div>
         </Col>
         <Col md={24} lg={9} flex="auto">
@@ -90,7 +92,13 @@ const Login = () => {
               <Row>
                 <Col lg={{ span: 9, offset: 15 }} md={{ span: 24 }} flex="auto">
                   <div className="login-country-logo">
-                    <img src={countryLogo} alt="country-logo" />
+                    <img
+                      src={countryLogo}
+                      alt="country-logo"
+                      onClick={() => {
+                        navigate('/');
+                      }}
+                    />
                   </div>
                   <div className="login-country-name">
                     <div className="title">

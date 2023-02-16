@@ -132,11 +132,26 @@ const CreditTransfer = () => {
     if (statusFilter) {
       filter.push(statusFilter);
     }
+
     if (search && search !== '') {
+      const interFilterOr = [
+        {
+          key: 'programmeTitle',
+          operation: 'like',
+          value: `${search}%`,
+        },
+        {
+          key: 'requestId',
+          operation: '=',
+          value: `${search}`,
+        },
+      ];
       filter.push({
-        key: 'programmeTitle',
-        operation: 'like',
-        value: `${search}%`,
+        value: {
+          page: currentPage,
+          size: pageSize,
+          filterOr: interFilterOr,
+        },
       });
     }
 
@@ -517,7 +532,7 @@ const CreditTransfer = () => {
                     color={TooltipColor}
                     key={TooltipColor}
                   >
-                    {itemObj.toCompanyMeta.country && (
+                    {itemObj.toCompanyMeta && itemObj.toCompanyMeta.country && (
                       <CircleFlag
                         className="profile-icon flag-ret-icon"
                         countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
@@ -741,7 +756,7 @@ const CreditTransfer = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={'Search by programme name'}
+                  placeholder={'Search by programme name or request Id'}
                   allowClear
                   onChange={(e) => setSearchText(e.target.value)}
                   onSearch={setSearch}

@@ -1,25 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
-import Chart from 'react-apexcharts';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   optionDonutPieA,
   optionDonutPieB,
-  seriesY,
   totalCreditsCertifiedOptions,
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
-} from './DUMMY_DATAS';
+} from './CHART_OPTIONS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import mapboxgl from 'mapbox-gl';
-import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
@@ -29,11 +24,19 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
-  BoxArrowInLeft,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import TransferLocationsMap from './transferLocations';
+import LegendItem from '../../Components/LegendItem/legendItem';
+import {
+  ChartSeriesItem,
+  totalCertifiedCreditsSeriesInitialValues,
+  totalCreditsSeriesInitialValues,
+  getTotalProgrammesInitialValues,
+  getTotalProgrammesSectorInitialValues,
+} from './dashboardTypesInitialValues';
+import { Sector } from '../../Casl/enums/sector.enum';
+import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
 
 const { RangePicker } = DatePicker;
 
@@ -63,38 +66,38 @@ const Dashboard = () => {
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
   const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<any>();
-  const [estimatedCredits, setEstimatedCredits] = useState<number>();
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
   const [categoryType, setCategoryType] = useState<string>('overall');
 
-  const [authorisedProgrammes, setAuthorisedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  // states for totalProgrammes chart
+  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
+    getTotalProgrammesInitialValues()
+  );
+  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
 
   // states for totalProgrammes sub sector chart
-  const [energyProgrammes, setEnergyProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [healthProgrammes, setHealthProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [educationProgrammes, setEducationProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [transportProgrammes, setTransportProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [manufacturingProgrammes, setManufacturingProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [hospitalityProgrammes, setHospitalityProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [forestryProgrammes, setForestryProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [wasteProgrammes, setWasteProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [agricultureProgrammes, setAgricultureProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
+    getTotalProgrammesSectorInitialValues()
+  );
+  const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
+    any[]
+  >([]);
 
   // states for totalCredits chart
-  const [authorizedCredits, setAuthorizedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCreditsSeries, setTotalCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCreditsSeriesInitialValues
+  );
+  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<any[]>([]);
 
   // states for totalCreditsCertified chart
-  const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCertifiedCreditsSeriesInitialValues
+  );
+  const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
+    any[]
+  >([]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
@@ -110,9 +113,6 @@ const Dashboard = () => {
   const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
 
   const currentYear = new Date();
-  const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
-  const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
-  console.log({ currentYear, startOfTheYear, endOfTheYear });
 
   const getUserProfileDetails = async () => {
     try {
@@ -144,15 +144,17 @@ const Dashboard = () => {
           type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'CERTIFIED_REVOKED_BY_ME',
+          type: 'UNCERTIFIED_BY_ME',
+        },
+        {
+          type: 'CERTIFIED_BY_ME',
         },
       ],
-      category: 'overall',
     };
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (companyRole === 'ProgrammeDeveloper') {
       return {
         stats: [
           {
@@ -164,6 +166,44 @@ const Dashboard = () => {
           },
           {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -194,46 +234,179 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-          statFilter: {
-            startTime: startTime !== 0 ? startTime : undefined,
-            endTime: endTime !== 0 ? endTime : undefined,
-            timeGroup: true,
+    if (companyRole === 'ProgrammeDeveloper') {
+      return {
+        stats: [
+          {
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
           },
-        },
-      ],
-    };
-  };
-
-  const getAllProgrammeAnalyticsStatsChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'TOTAL_PROGRAMS',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_SECTOR',
-        },
-        {
-          type: 'TOTAL_CREDITS',
-        },
-        {
-          type: 'TOTAL_CREDITS_CERTIFIED',
-        },
-        {
-          type: 'PROGRAMME_LOCATIONS',
-        },
-        {
-          type: 'TRANSFER_LOCATIONS',
-        },
-      ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
-    };
+          {
+            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    }
   };
 
   const onChangeRange = async (dateMoment: any, dateString: any) => {
@@ -255,235 +428,138 @@ const Dashboard = () => {
     }
   };
 
-  const getAllProgrammeAnalyticsStatsCharts = async () => {
+  const firstLower = (lower: any) => {
+    return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
+  };
+
+  const getAllProgrammesAggChartStats = async () => {
     setLoading(true);
     try {
-      const pendingProgrames: any = [];
-      const authorisedProgrames: any = [];
-      const rejectedProgrames: any = [];
-      const timeLabelsProgrames: any = [];
-
-      const energyProgrames: any = [];
-      const healthProgrames: any = [];
-      const educationProgrames: any = [];
-      const transportProgrames: any = [];
-      const manufacturingProgrames: any = [];
-      const hospitalityProgrames: any = [];
-      const forestryProgrames: any = [];
-      const wasteProgrames: any = [];
-      const agricultureProgrames: any = [];
-      const otherProgrames: any = [];
-
-      const authorizedCredit: any = [];
-      const issuedCredit: any = [];
-      const retiredCredit: any = [];
-      const transferredCredit: any = [];
-
-      const certifiedCredit: any = [];
-      const unCertifiedCredit: any = [];
-      const revokedCredit: any = [];
-
-      const response: any = await post(
-        'stats/programme/dashboardCharts',
-        getAllProgrammeAnalyticsStatsChartsParams()
-      );
-      console.log(response?.data?.stats);
-      if (response?.data?.stats?.TOTAL_PROGRAMS) {
-        const totalProgrammes = response?.data?.stats?.TOTAL_PROGRAMS;
-        if (totalProgrammes?.awaitingAuthorization) {
-          const pendings = totalProgrammes?.awaitingAuthorization;
-          pendings?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            const label = Object.getOwnPropertyNames(item);
-            const date = new Date(parseInt(label[0]));
-            const formattedDate = moment(date).format('DD-MM-YYYY');
-            pendingProgrames.push(programesCount[0]);
-            timeLabelsProgrames.push(formattedDate);
-          });
-        }
-        if (totalProgrammes?.authorised) {
-          const authorised = totalProgrammes?.authorised;
-          authorised?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            authorisedProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammes?.rejected) {
-          const rejected = totalProgrammes?.rejected;
-          rejected?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            rejectedProgrames.push(programesCount[0]);
-          });
-        }
+      const response: any = await post('stats/programme/agg', getAllChartsParams());
+      let programmesAggByStatus: any;
+      let programmesAggBySector: any;
+      let totalCreditsCertifiedStats: any;
+      let programmeLocationsStats: any;
+      let transferLocationsStats: any;
+      if (companyRole === 'ProgrammeDeveloper') {
+        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
+      } else {
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       }
-      if (response?.data?.stats?.TOTAL_PROGRAMS_SECTOR) {
-        const totalProgrammesSector = response?.data?.stats?.TOTAL_PROGRAMS_SECTOR;
-        if (totalProgrammesSector?.agriculture) {
-          const agriculture = totalProgrammesSector?.agriculture;
-          agriculture?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            agricultureProgrames.push(programesCount[0]);
+      let timeLabelDataStatus = [];
+      let formattedTimeLabelDataStatus: any = [];
+      let timeLabelDataSector = [];
+      let formattedTimeLabelDataSector: any = [];
+      let timeLabelCertifiedCreditsStats = [];
+      let formattedTimeLabelCertifiedCreditsStats: any = [];
+      if (programmesAggByStatus) {
+        timeLabelDataStatus = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+        setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
+        const statusArray = Object.values(ProgrammeStageLegend);
+        const totalProgrammesValues: ChartSeriesItem[] = [];
+        statusArray?.map((status: any) => {
+          totalProgrammesValues.push({
+            name: status === 'AwaitingAuthorization' ? 'Pending' : status,
+            data: programmesAggByStatus[firstLower(status)],
           });
-        }
-        if (totalProgrammesSector?.education) {
-          const education = totalProgrammesSector?.education;
-          education?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            educationProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.energy) {
-          const energy = totalProgrammesSector?.energy;
-          energy?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            energyProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.forestry) {
-          const forestry = totalProgrammesSector?.forestry;
-          forestry?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            forestryProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.health) {
-          const health = totalProgrammesSector?.health;
-          health?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            healthProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.hospitality) {
-          const hospitality = totalProgrammesSector?.hospitality;
-          hospitality?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            hospitalityProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.manufacturing) {
-          const manufacturing = totalProgrammesSector?.manufacturing;
-          manufacturing?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            manufacturingProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.other) {
-          const other = totalProgrammesSector?.other;
-          other?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            otherProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.transport) {
-          const transport = totalProgrammesSector?.transport;
-          transport?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            transportProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.waste) {
-          const waste = totalProgrammesSector?.waste;
-          waste?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            wasteProgrames.push(programesCount[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.TOTAL_CREDITS) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS;
-        if (totalCredits?.authorized) {
-          const authorized = totalCredits?.authorized;
-          authorized?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            authorizedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.issued) {
-          const issued = totalCredits?.issued;
-          issued?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            issuedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.retired) {
-          const retired = totalCredits?.retired;
-          retired?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            retiredCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.transferred) {
-          const transferred = totalCredits?.transferred;
-          transferred?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            transferredCredit.push(credit[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
-        const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
-        setProgrammeLocations(locations);
-      }
-      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
-        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
-        setProgrammeTransferLocations(locations);
-      }
-      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
-        if (totalCredits?.certified) {
-          const certified = totalCredits?.certified;
-          certified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            certifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.uncertified) {
-          const uncertified = totalCredits?.uncertified;
-          uncertified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            unCertifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.revoked) {
-          const revoked = totalCredits?.revoked;
-          revoked?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            revokedCredit.push(credit[0]);
-          });
-        }
-      }
-      console.log({
-        pendingProgrames,
-        authorisedProgrames,
-        rejectedProgrames,
-        timeLabelsProgrames,
-      });
-      setPendingProgrammes(pendingProgrames);
-      setAuthorisedProgrammes(authorisedProgrames);
-      setRejectedProgrammes(rejectedProgrames);
+        });
+        setTotalProgrammesSeries(totalProgrammesValues);
+        totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
 
-      setEnergyProgrammes(energyProgrames);
-      setHealthProgrammes(healthProgrames);
-      setEducationProgrammes(educationProgrames);
-      setTransportProgrammes(transportProgrames);
-      setManufacturingProgrammes(manufacturingProgrames);
-      setHospitalityProgrammes(hospitalityProgrames);
-      setForestryProgrammes(forestryProgrames);
-      setWasteProgrammes(wasteProgrames);
-      setAgricultureProgrammes(agricultureProgrames);
-      setOtherProgrammes(otherProgrames);
+        const totalCreditsValues: ChartSeriesItem[] = [
+          {
+            name: 'Authorised',
+            data: programmesAggByStatus?.authorisedCredits,
+          },
+          {
+            name: 'Issued',
+            data: programmesAggByStatus?.issuedCredits,
+          },
+          {
+            name: 'Transferred',
+            data: programmesAggByStatus?.transferredCredits,
+          },
+          {
+            name: 'Retired',
+            data: programmesAggByStatus?.retiredCredits,
+          },
+        ];
+        setTotalCreditsSeries(totalCreditsValues);
+        totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
+      }
+      if (programmesAggBySector) {
+        timeLabelDataSector = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+        setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
+        const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
+        const sectorsArray = Object.values(Sector);
+        sectorsArray?.map((sector: any) => {
+          progarmmesSectorSeriesData.push({
+            name: sector,
+            data: programmesAggBySector[firstLower(sector)],
+          });
+        });
+        setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
 
-      setAuthorizedCredits(authorizedCredit);
-      setIssuedCredits(issuedCredit);
-      setRetiredCredits(retiredCredit);
-      setTransferredCredits(transferredCredit);
-      setCertifiedCredits(certifiedCredit);
-      setUnCertifiedCredits(unCertifiedCredit);
-      setRevokedCredits(revokedCredit);
-      totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
-      totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
-      totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
-      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
+        totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+      }
+      if (totalCreditsCertifiedStats) {
+        timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
+        formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
+          (item: any) => {
+            return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          }
+        );
+        const totalCertifiedCreditsSeriesValues = [
+          {
+            name: 'Certified',
+            data: totalCreditsCertifiedStats?.certifiedSum,
+          },
+          {
+            name: 'Uncertified',
+            data: totalCreditsCertifiedStats?.uncertifiedSum,
+          },
+          {
+            name: 'Revoked',
+            data: totalCreditsCertifiedStats?.revokedSum,
+          },
+        ];
+        setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
+        setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
+
+        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
+      }
+      if (transferLocationsStats) {
+        setProgrammeTransferLocations(transferLocationsStats);
+      }
+      if (programmeLocationsStats) {
+        setProgrammeLocations(programmeLocationsStats);
+      }
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -504,7 +580,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
-      console.log('stats data  -- > ', response?.data);
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
       const pendingTransferInitAggregationResponse =
@@ -512,7 +587,8 @@ const Dashboard = () => {
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
       const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       const programmeByStatusAggregationResponseLastUpdate =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
@@ -533,13 +609,15 @@ const Dashboard = () => {
         setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
       }
       if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
-        setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
+        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
         setCreditCertifiedBalanceWithoutTimeRange(
           certifiedByMeAggregationResponse?.certifiedSum === null
             ? 0
-            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
+            : parseFloat(certifiedByMeAggregationResponse?.sum)
         );
+      }
+      if (unCertifiedByMeAggregationResponse) {
+        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -563,14 +641,22 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParams()
       );
-      console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      if (companyRole === 'ProgrammeDeveloper') {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
@@ -587,7 +673,6 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
           if (responseItem?.currentStage === 'AwaitingAuthorization') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
@@ -647,8 +732,6 @@ const Dashboard = () => {
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
-
-      console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
       setLastUpdate(response?.data?.lastUpdate);
@@ -670,10 +753,6 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    console.log('rejected projects hanges --- ', rejectedProjects);
-  }, [rejectedProjects]);
-
-  useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (companyRole === 'ProgrammeDeveloper') {
       setCategoryType('mine');
@@ -682,113 +761,41 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
-    getAllProgrammeAnalyticsStatsCharts();
-  }, [startTime, endTime, categoryType]);
-
-  const seriesTotalProgrammesY = [
-    {
-      name: 'Authorised',
-      data: authorisedProgrammes,
-    },
-    {
-      name: 'Rejected',
-      data: rejectedProgrammes,
-    },
-    {
-      name: 'Pending',
-      data: pendingProgrammes,
-    },
-  ];
-
-  const seriesTotalProgrammesSubY = [
-    {
-      name: 'Energy',
-      data: energyProgrammes,
-    },
-    {
-      name: 'Health',
-      data: healthProgrammes,
-    },
-    {
-      name: 'Education',
-      data: educationProgrammes,
-    },
-    {
-      name: 'Transport',
-      data: transportProgrammes,
-    },
-    {
-      name: 'Manufacturing',
-      data: manufacturingProgrammes,
-    },
-    {
-      name: 'Hospitality',
-      data: hospitalityProgrammes,
-    },
-    {
-      name: 'Forestry',
-      data: forestryProgrammes,
-    },
-    {
-      name: 'Waste',
-      data: wasteProgrammes,
-    },
-    {
-      name: 'Agriculture',
-      data: agricultureProgrammes,
-    },
-    {
-      name: 'Other',
-      data: otherProgrammes,
-    },
-  ];
-
-  const seriesTotalCreditsY = [
-    {
-      name: 'Authorised',
-      data: authorizedCredits,
-    },
-    {
-      name: 'Issued',
-      data: issuedCredits,
-    },
-    {
-      name: 'Transferred',
-      data: transferredCredits,
-    },
-    {
-      name: 'Retired',
-      data: retiredCredits,
-    },
-  ];
-
-  const seriesTotalCreditsCertifiedY = [
-    {
-      name: 'Certified',
-      data: certifiedCredits,
-    },
-    {
-      name: 'UnCertified',
-      data: unCertifiedCredits,
-    },
-    {
-      name: 'Revoked',
-      data: revokedCredits,
-    },
-  ];
+    getAllProgrammesAggChartStats();
+  }, [startTime, endTime, categoryType, companyRole]);
 
   useEffect(() => {
-    console.log('transfr credit --- > ', transferredCredits);
-  }, [transferredCredits]);
+    ApexCharts.exec('total-programmes-sector', 'updateSeries', {
+      series: totalProgrammesSectorSeries,
+    });
+  }, [totalProgrammesSectorSeries]);
 
-  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
-  const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
-  const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
-  const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
-  const count5 = ['>=', ['get', 'count'], 16];
+  useEffect(() => {
+    ApexCharts.exec('total-programmes', 'updateSeries', {
+      series: totalProgrammesSeries,
+    });
+  }, [totalProgrammesSeries]);
+
+  useEffect(() => {
+    ApexCharts.exec('total-credits', 'updateSeries', {
+      series: totalCreditsSeries,
+    });
+  }, [totalCreditsSeries]);
+
+  useEffect(() => {
+    ApexCharts.exec('total-credits-certified', 'updateSeries', {
+      series: totalCertifiedCreditsSeries,
+    });
+  }, [totalCertifiedCreditsSeries]);
+
+  const countS = ['all', ['>=', ['get', 'count'], 0]];
+  const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
+  const authorised = ['==', ['get', 'stage'], 'Authorised'];
+  const rejected = ['==', ['get', 'stage'], 'Rejected'];
 
   // colors to use for the categories
-  const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+  // const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 
   function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
     if (end - start === 1) end -= 0.00001;
@@ -812,33 +819,52 @@ const Dashboard = () => {
   function createDonutChart(properties: any) {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
+    const offsetsStage = [];
     let counts: any = [];
-    if (properties.count1) {
-      counts = [
-        properties.count1,
-        properties.count2,
-        properties.count3,
-        properties.count4,
-        properties.count5,
-      ];
-    } else {
+    let programmeStageCounts: any = [];
+    if (properties.count) {
       counts = [properties.count];
+    }
+
+    if (properties.cluster_id) {
+      programmeStageCounts = [properties.authorised, properties.pending, properties.rejected];
+    } else {
+      if (properties?.stage === 'AwaitingAuthorization') {
+        programmeStageCounts = [0, properties.count, 0];
+      } else if (properties?.stage === 'Authorised') {
+        programmeStageCounts = [properties.count, 0, 0];
+      } else if (properties?.stage === 'Rejected') {
+        programmeStageCounts = [0, 0, properties.count];
+      }
     }
     let total = 0;
     for (const count of counts) {
       offsets.push(total);
       total += count;
     }
-    const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
-    const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+    let totalStage = 0;
+    for (const count of programmeStageCounts) {
+      offsetsStage.push(totalStage);
+      totalStage += count;
+    }
+    const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
+    const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
     const r0 = Math.round(r * 0.6);
     const w = r * 2;
 
     let html = `<div>
 <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
 
-    for (let i = 0; i < counts.length; i++) {
-      html += donutSegment(offsets[i] / total, (offsets[i] + counts[i]) / total, r, r0, colors[i]);
+    for (let i = 0; i < programmeStageCounts?.length; i++) {
+      if (programmeStageCounts[i] !== 0) {
+        html += donutSegment(
+          offsetsStage[i] === 0 ? 0 : offsetsStage[i] / totalStage,
+          (offsetsStage[i] + programmeStageCounts[i]) / totalStage,
+          r,
+          r0,
+          colors[i]
+        );
+      }
     }
     html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
 <text dominant-baseline="central" transform="translate(${r}, ${r})">
@@ -854,78 +880,112 @@ ${total}
 
   useEffect(() => {
     setTimeout(() => {
-      const map = new mapboxgl.Map({
-        container: mapContainerInternationalRef.current || '',
-        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [12, 50],
-        zoom: 0.5,
-      });
-
-      // Add markers to the map.
-      map.on('load', () => {
-        map.addSource('countries', {
-          type: 'vector',
-          url: 'mapbox://mapbox.country-boundaries-v1',
+      if (mapContainerInternationalRef?.current) {
+        const map = new mapboxgl.Map({
+          container: mapContainerInternationalRef?.current || '',
+          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: [12, 50],
+          zoom: 0.5,
         });
 
-        // Build a GL match expression that defines the color for every vector tile feature
-        // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-        const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+        // Add markers to the map.
+        map.on('load', () => {
+          map.addSource('countries', {
+            type: 'vector',
+            url: 'mapbox://mapbox.country-boundaries-v1',
+          });
 
-        const transferLocations: any = [...programmeTransferLocations];
+          // Build a GL match expression that defines the color for every vector tile feature
+          // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+          const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+          const txLocationMap: any = {};
 
-        // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
-          // Convert the range of data values to a suitable color
-          // const blue = row.ratio * 255;
+          const transferLocations: any = [...programmeTransferLocations];
 
-          const color =
-            row.ratio < 0.25
-              ? `#FFC343`
-              : row.ratio < 0.5
-              ? '#FFAC6F'
-              : row.ratio < 0.75
-              ? '#FF923D'
-              : '#FE8163';
+          // Calculate color values for each country based on 'hdi' value
+          for (const row of transferLocations) {
+            // Convert the range of data values to a suitable color
+            // const blue = row.ratio * 255;
 
-          matchExpression.push(row.code, color);
-        }
+            const color =
+              row.count < 2
+                ? `#4da6ff`
+                : row.count < 10
+                ? '#0080ff'
+                : row.count < 50
+                ? '#0059b3'
+                : row.count < 100
+                ? '#003366'
+                : '#000d1a';
 
-        function getCountryCodes(dataSet: any) {
-          return dataSet.map((item: any) => item.code);
-        }
+            matchExpression.push(row.country, color);
+            txLocationMap[row.country] = row.count;
+          }
 
-        // Last value is the default, used where there is no data
-        matchExpression.push('rgba(0, 0, 0, 0)');
+          function getCountryCodes(dataSet: any) {
+            return dataSet.map((item: any) => item.code);
+          }
 
-        map.addLayer(
-          {
-            id: 'countries-join',
-            type: 'fill',
-            source: 'countries',
-            'source-layer': 'country_boundaries',
-            paint: {
-              'fill-color': matchExpression,
+          map.on('click', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            if (!features.length) {
+              return;
+            }
+
+            const feature = features[0];
+            if (!txLocationMap[feature.properties?.iso_3166_1]) {
+              return;
+            }
+            console.log(feature);
+
+            const popup = new mapboxgl.Popup()
+              .setLngLat(map.unproject(e.point))
+              .setHTML(
+                `${feature.properties?.name_en} : ${txLocationMap[feature.properties?.iso_3166_1]}`
+              )
+              .addTo(map);
+          });
+
+          // Use the same approach as above to indicate that the symbols are clickable
+          // by changing the cursor style to 'pointer'.
+          map.on('mousemove', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            map.getCanvas().style.cursor =
+              features.length > 0 && txLocationMap[features[0].properties?.iso_3166_1]
+                ? 'pointer'
+                : '';
+          });
+
+          // Last value is the default, used where there is no data
+          matchExpression.push('rgba(0, 0, 0, 0)');
+
+          map.addLayer(
+            {
+              id: 'countries-join',
+              type: 'fill',
+              source: 'countries',
+              'source-layer': 'country_boundaries',
+              paint: {
+                'fill-color': matchExpression,
+              },
             },
-          },
-          'admin-1-boundary-bg'
-        );
-      });
+            'admin-1-boundary-bg'
+          );
+        });
+      }
     }, 1000);
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    // const address = programmeLocations[0];
-
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
-          container: mapContainerRef.current || '',
+          container: mapContainerRef?.current || '',
           zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
-            : [54.44073, 16.39371],
+            : [7.4924165, 5.5324032],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',
         });
@@ -938,11 +998,10 @@ ${total}
             clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
-              count1: ['+', ['case', count1, 1, 0]],
-              count2: ['+', ['case', count2, 1, 0]],
-              count3: ['+', ['case', count3, 1, 0]],
-              count4: ['+', ['case', count4, 1, 0]],
-              count5: ['+', ['case', count5, 1, 0]],
+              count: ['+', ['case', countS, ['get', 'count'], 0]],
+              pending: ['+', ['case', pending, ['get', 'count'], 0]],
+              authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
+              rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
@@ -952,18 +1011,7 @@ ${total}
             source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
             paint: {
-              'circle-color': [
-                'case',
-                count1,
-                colors[0],
-                count2,
-                colors[1],
-                count3,
-                colors[2],
-                count4,
-                colors[3],
-                colors[4],
-              ],
+              'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
               'circle-opacity': 1,
               'circle-radius': 10,
             },
@@ -1178,18 +1226,20 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-programmes"
               title="Total Programmes"
               options={totalProgrammesOptions}
-              series={seriesTotalProgrammesY}
+              series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Programmes:Sector"
+              id="total-programmes-sector"
+              title="Total Programmes: Sector"
               options={totalProgrammesOptionsSub}
-              series={seriesTotalProgrammesSubY}
+              series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
@@ -1200,18 +1250,20 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-credits"
               title="Total Credits"
               options={totalCreditsOptions}
-              series={seriesTotalCreditsY}
+              series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Credit Certified"
+              id="total-credits-certified"
+              title="Total Credits Certified"
               options={totalCreditsCertifiedOptions}
-              series={seriesTotalCreditsCertifiedY}
+              series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
@@ -1233,7 +1285,12 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="stage-legends">
+                    <LegendItem text="Authorised" color="#6ACDFF" />
+                    <LegendItem text="Pending" color="#FF8183" />
+                    <LegendItem text="Rejected" color="#CDCDCD" />
+                  </div>
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(parseInt(lastUpdateProgrammesStats)).fromNow()}
                     </div>
@@ -1255,7 +1312,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
