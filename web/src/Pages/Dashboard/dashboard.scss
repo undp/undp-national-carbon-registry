@@ -12,6 +12,18 @@
   margin-top: 1rem;
 }
 
+.cards-title {
+  font-family: 'Inter';
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-style: normal;
+  font-weight: 600;
+  height: 50px;
+  font-size: 1.15rem;
+  margin-top: 1rem;
+  color: $card-title;
+}
+
 .dashboard-main-container {
   width: 100%;
   display: flex;
@@ -219,7 +231,7 @@
                 }
 
                 .reject {
-                  background-color: rgba(164, 162, 168, 0.5);
+                  background-color: rgba(255, 166, 166, 0.4);
                 }
 
                 .transfer {
@@ -227,7 +239,7 @@
                 }
 
                 .pending {
-                  background-color: rgba(255, 166, 166, 0.4);
+                  background-color: rgba(164, 162, 168, 0.5);
                 }
 
                 .authorized {
@@ -296,17 +308,28 @@
             }
           }
 
-          .pie-charts-title {
-            font-family: 'Inter';
-            align-items: flex-start;
-            justify-content: flex-start;
-            font-style: normal;
-            font-weight: 600;
-            height: 50px;
-            font-size: 1.15rem;
-            margin-top: 1rem;
-            padding: 0 1rem 1rem 1rem;
-            color: $card-title;
+          .pie-charts-top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 0 1rem 0 1rem;
+            .pie-charts-title {
+              font-family: 'Inter';
+              align-items: flex-start;
+              justify-content: flex-start;
+              font-style: normal;
+              font-weight: 600;
+              height: 50px;
+              font-size: 1.15rem;
+              margin-top: 1rem;
+              color: $card-title;
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
           }
 
           .pie-charts-section {

@@ -24,6 +24,7 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
+  InfoCircle,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
@@ -527,7 +528,6 @@ const Dashboard = () => {
           }
         });
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
-
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
       }
       if (totalCreditsCertifiedStats) {
@@ -829,14 +829,14 @@ const Dashboard = () => {
     }
 
     if (properties.cluster_id) {
-      programmeStageCounts = [properties.authorised, properties.pending, properties.rejected];
+      programmeStageCounts = [properties.authorised, properties.rejected, properties.pending];
     } else {
       if (properties?.stage === 'AwaitingAuthorization') {
-        programmeStageCounts = [0, properties.count, 0];
+        programmeStageCounts = [0, 0, properties.count];
       } else if (properties?.stage === 'Authorised') {
         programmeStageCounts = [properties.count, 0, 0];
       } else if (properties?.stage === 'Rejected') {
-        programmeStageCounts = [0, 0, properties.count];
+        programmeStageCounts = [0, properties.count, 0];
       }
     }
     let total = 0;
@@ -1276,7 +1276,12 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Programme Locations</div>
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">Programme Locations</div>
+                <div className="info-container">
+                  <InfoCircle color="#000000" size={20} />
+                </div>
+              </div>
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />
@@ -1289,8 +1294,8 @@ ${total}
                   </div>
                   <div className="stage-legends">
                     <LegendItem text="Authorised" color="#6ACDFF" />
-                    <LegendItem text="Pending" color="#FF8183" />
-                    <LegendItem text="Rejected" color="#CDCDCD" />
+                    <LegendItem text="Rejected" color="#FF8183" />
+                    <LegendItem text="Pending" color="#CDCDCD" />
                   </div>
                   <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">
@@ -1303,7 +1308,12 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Transfer Locations International</div>
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">Transfer Locations International</div>
+                <div className="info-container">
+                  <InfoCircle color="#000000" size={20} />
+                </div>
+              </div>
               {loading ? (
                 <div className="margin-top-2">
                   <Skeleton active />

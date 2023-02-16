@@ -188,6 +188,9 @@ export const totalProgrammesOptionsSub: any = {
   ],
   xaxis: {
     categories: [],
+    labels: {
+      rotatealways: true,
+    },
   },
   yaxis: {
     show: true,
