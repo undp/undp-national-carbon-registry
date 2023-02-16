@@ -286,26 +286,39 @@ const ProgrammeView = () => {
     setLoadingAll(false);
   };
 
-  const getTxActivityLog = (transfer: ProgrammeTransfer) => {
-    const createdTime = transfer.createdTime ? transfer.createdTime : transfer.txTime!;
-    const hist: any = [{
+  const addElement = (e: any, time: number, hist: any) => {
+    if (!hist[time]) {
+      hist[time] = [];
+    }
+    hist[time].push(e);
+  };
+
+  const getTxActivityLog = (transfers: ProgrammeTransfer[]) => {
+    const hist: any = {};
+    for (const transfer of transfers) {
+      const createdTime = transfer.createdTime ? transfer.createdTime : transfer.txTime!;
+      const d: any = {
         status: 'default',
         title: 'Transfer Initiated',
         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
         description: `${addCommSep(
           transfer.creditAmount
-        )} ${creditUnit} credits of this programme were requested to be transferred from African Development Bank to Nestle by Federal Republic of Nigeria `, //via Kento Yatsumono
+        )} ${creditUnit} credits of this programme were requested to be transferred from ${
+          transfer.sender.name
+        } to ${transfer.receiver.name} by ${transfer.requester.name} `, //via Kento Yatsumono
         icon: (
           <span className="step-icon tx-step">
             <Icon.ClockHistory />
           </span>
         ),
-    }]
-    if (transfer.status === CreditTransferStage.Rejected) {
+      };
+      addElement(d, createdTime, hist);
 
-    }  
+      if (transfer.status === CreditTransferStage.Rejected) {
+      }
+    }
     return hist;
-  }
+  };
 
   const getProgrammeHistory = async (programmeId: number) => {
     setLoadingHistory(true);
