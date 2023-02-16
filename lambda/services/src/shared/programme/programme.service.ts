@@ -890,7 +890,7 @@ export class ProgrammeService {
         if (program.creditEst < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed estimated credit amount", HttpStatus.BAD_REQUEST);
         }
-        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRef(user))
+        const updated: any = await this.programmeLedger.authProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRefWithRemarks(user, req.comment))
         if (!updated) {
             return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
         }
@@ -931,11 +931,11 @@ export class ProgrammeService {
     }
 
     private getUserRef = (user: any) => {
-        return `${user.companyId}#${user.companyName}#${user.id}#${user.name}`;
+        return `${user.companyId}#${user.companyName}#${user.id}`;
     }
 
     private getUserRefWithRemarks = (user: any, remarks: string) => {
-        return `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${remarks}`;
+        return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
     }
 
     

@@ -85,6 +85,7 @@ import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
 import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 
 mapboxgl.accessToken =
   '';
@@ -293,17 +294,26 @@ const ProgrammeView = () => {
     hist[time].push(e);
   };
 
+  const formatString = (langTag: string, vargs: any[]) => {
+    const str = t('view:' + langTag);
+    const parts = str.split('{}');
+    let insertAt = 1;
+    for (const arg of vargs) {
+      parts.splice(insertAt, 0, arg);
+      insertAt += 2;
+    }
+    return parts.join('');
+  };
+
   const getTxActivityLog = (transfers: ProgrammeTransfer[]) => {
     const hist: any = {};
     for (const transfer of transfers) {
       const createdTime = transfer.createdTime ? transfer.createdTime : transfer.txTime!;
       const d: any = {
         status: 'default',
-        title: 'Transfer Initiated',
+        title: t('view:tlInitTitle'),
         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
-        description: `${addCommSep(
-          transfer.creditAmount
-        )} ${creditUnit} credits of this programme were requested to be transferred from ${
+        description: `${addCommSep(transfer.creditAmount)} ${creditUnit} ${t('view:tlDescInit')} ${
           transfer.sender.name
         } to ${transfer.receiver.name} by ${transfer.requester.name} `, //via Kento Yatsumono
         icon: (
@@ -315,6 +325,39 @@ const ProgrammeView = () => {
       addElement(d, createdTime, hist);
 
       if (transfer.status === CreditTransferStage.Rejected) {
+        const dx: any = {
+          status: 'default',
+          title: t('view:tlRejectTitle'),
+          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+          description: `The request to transfer ${addCommSep(
+            transfer.creditAmount
+          )} ${creditUnit} credits from ${transfer.sender.name} to ${
+            transfer.receiver.name
+          } was rejected by ${transfer.requester.name} `, //via Kento Yatsumono
+          icon: (
+            <span className="step-icon tx-step">
+              <Icon.ClockHistory />
+            </span>
+          ),
+        };
+        addElement(dx, createdTime, hist);
+      } else if (transfer.status === CreditTransferStage.Cancelled) {
+        const dx: any = {
+          status: 'default',
+          title: t('view:tlCancelTitle'),
+          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+          description: `The request to transfer ${addCommSep(
+            transfer.creditAmount
+          )} ${creditUnit} credits from ${transfer.sender.name} to ${
+            transfer.receiver.name
+          } was rejected by ${transfer.requester.name} `, //via Kento Yatsumono
+          icon: (
+            <span className="step-icon tx-step">
+              <Icon.ClockHistory />
+            </span>
+          ),
+        };
+        addElement(dx, createdTime, hist);
       }
     }
     return hist;
@@ -345,11 +388,16 @@ const ProgrammeView = () => {
         if (activity.data.txType === TxType.CREATE) {
           el = {
             status: 'process',
-            title: 'Programme Created',
+            title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was created with a valuation of ${addCommSep(
-              activity.data.creditEst
-            )} ${creditUnit} credits.`,
+            description: (
+              <TimelineBody
+                text={formatString('view:tlCreateDesc', [
+                  addCommSep(activity.data.creditEst),
+                  creditUnit,
+                ])}
+              />
+            ),
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -359,23 +407,21 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.AUTH) {
           el = {
             status: 'process',
-            title: `Authorised`,
+            title: t('view:tlAuth'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: `The programme was authorised for ${addCommSep(
-              activity.data.creditEst
-            )} ${creditUnit} credits until ${DateTime.fromMillis(
-              activity.data.endTime * 1000
-            ).toFormat(dateFormat)} with the Serial Number ${
-              activity.data.serialNo
-            } by the ${getTxRefValues(activity.data.txRef, 1)} via ${getTxRefValues(
-              activity.data.txRef,
-              3
-            )}`,
+            description: formatString('view:tlAuthDesc', [
+              addCommSep(activity.data.creditEst),
+              creditUnit,
+              DateTime.fromMillis(activity.data.endTime * 1000).toFormat(dateFormat),
+              activity.data.serialNo,
+              getTxRefValues(activity.data.txRef, 1),
+            ]),
             icon: (
               <span className="step-icon auth-step">
                 <Icon.ClipboardCheck />
               </span>
             ),
+            remark: getTxRefValues(activity.data.txRef, 3),
           };
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {

@@ -126,6 +126,12 @@ export class LedgerReplicatorService {
                 } else if (programme.txType === TxType.AUTH) {
                   programme.authTime = programme.txTime;
                 }
+
+                if ([TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(programme.txType)) {
+                  programme.statusUpdateTime = programme.txTime;
+                } else if ([TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(programme.txType)) {
+                  programme.creditUpdateTime = programme.txTime;
+                }
               }
             } catch (error) {
               console.log(

@@ -73,6 +73,17 @@
     "company": "Company",
     "accept": "Accept",
     "certifier": "Certifier",
-    "seeMine": "Mine"
+    "seeMine": "Mine",
+    "tlRejectTitle": "Transfer Rejected",
+    "tlInitTitle": "Transfer Initiated",
+    "tlCancelTitle": "Transfer Request Cancelled",
+    "tlRejectRetireTitle": "Retirement Not Recognised",
+    "tlInitRetireTitle": "Retirement Initiated",
+    "tlCancelRetireTitle": "Retire Request Cancelled",
+    "tlDescInit": "credits of this programme were requested to be transferred from",
+    "tlCreate": "Programme Created",
+    "tlCreateDesc": "The programme was created with a valuation of {} {} credits.",
+    "tlAuth": "Authorised",
+    "tlAuthDesc": "The programme was authorised for {} {} credits until {} with the Serial Number {} by {}"
 
 }
