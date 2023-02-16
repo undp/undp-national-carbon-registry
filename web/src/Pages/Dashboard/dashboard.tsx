@@ -800,10 +800,27 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
-      options: totalProgrammesOptionsSub,
       series: totalProgrammesSectorSeries,
     });
   }, [totalProgrammesSectorSeries]);
+
+  useEffect(() => {
+    ApexCharts.exec('total-programmes', 'updateSeries', {
+      series: totalProgrammesSeries,
+    });
+  }, [totalProgrammesSeries]);
+
+  useEffect(() => {
+    ApexCharts.exec('total-credits', 'updateSeries', {
+      series: totalCreditsSeries,
+    });
+  }, [totalCreditsSeries]);
+
+  useEffect(() => {
+    ApexCharts.exec('total-credits-certified', 'updateSeries', {
+      series: totalCertifiedCreditsSeries,
+    });
+  }, [totalCertifiedCreditsSeries]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
