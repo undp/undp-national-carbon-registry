@@ -74,7 +74,7 @@ export const totalProgrammesOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -187,7 +187,7 @@ export const totalProgrammesOptionsSub: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -333,7 +333,7 @@ export const totalCreditsOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,
@@ -447,7 +447,7 @@ export const totalCreditsCertifiedOptions: any = {
     },
   ],
   xaxis: {
-    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+    categories: [],
   },
   yaxis: {
     show: true,

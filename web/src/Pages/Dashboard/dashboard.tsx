@@ -1,25 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
-import Chart from 'react-apexcharts';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   optionDonutPieA,
   optionDonutPieB,
-  seriesY,
   totalCreditsCertifiedOptions,
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
-} from './DUMMY_DATAS';
+} from './CHART_OPTIONS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import mapboxgl from 'mapbox-gl';
-import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
@@ -29,11 +24,17 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
-  BoxArrowInLeft,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import TransferLocationsMap from './transferLocations';
+import LegendItem from '../../Components/LegendItem/legendItem';
+import {
+  ChartSeriesItem,
+  totalCertifiedCreditsSeriesInitialValues,
+  totalCreditsSeriesInitialValues,
+  totalProgrammesInitialValues,
+  totalProgrammmesSectorInitialValues,
+} from './dashboardTypesInitialValues';
 
 const { RangePicker } = DatePicker;
 
@@ -63,38 +64,41 @@ const Dashboard = () => {
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
   const [lastUpdate, setLastUpdate] = useState<any>();
   const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<any>();
-  const [estimatedCredits, setEstimatedCredits] = useState<number>();
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
   const [categoryType, setCategoryType] = useState<string>('overall');
 
-  const [authorisedProgrammes, setAuthorisedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  // states for totalProgrammes chart
+  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
+    totalProgrammesInitialValues
+  );
+  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
 
   // states for totalProgrammes sub sector chart
-  const [energyProgrammes, setEnergyProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [healthProgrammes, setHealthProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [educationProgrammes, setEducationProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [transportProgrammes, setTransportProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [manufacturingProgrammes, setManufacturingProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [hospitalityProgrammes, setHospitalityProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [forestryProgrammes, setForestryProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [wasteProgrammes, setWasteProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [agricultureProgrammes, setAgricultureProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
+    totalProgrammmesSectorInitialValues
+  );
+  const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
+    any[]
+  >([]);
 
   // states for totalCredits chart
-  const [authorizedCredits, setAuthorizedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCreditsSeries, setTotalCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCreditsSeriesInitialValues
+  );
+  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<any[]>([]);
 
   // states for totalCreditsCertified chart
-  const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCertifiedCreditsSeriesInitialValues
+  );
+  const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
+    any[]
+  >([]);
+  // const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  // const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
+  // const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
@@ -110,8 +114,6 @@ const Dashboard = () => {
   const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
 
   const currentYear = new Date();
-  const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
-  const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
 
   const getUserProfileDetails = async () => {
     try {
@@ -472,16 +474,43 @@ const Dashboard = () => {
         formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
-
-        setAuthorisedProgrammes(programmesAggByStatus?.authorised);
-        setPendingProgrammes(programmesAggByStatus?.awaitingAuthorization);
-        setRejectedProgrammes(programmesAggByStatus?.rejected);
+        setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
+        const totalProgrammesValues: ChartSeriesItem[] = [
+          {
+            name: 'Authorised',
+            data: programmesAggByStatus?.authorised,
+          },
+          {
+            name: 'Rejected',
+            data: programmesAggByStatus?.awaitingAuthorization,
+          },
+          {
+            name: 'Pending',
+            data: programmesAggByStatus?.rejected,
+          },
+        ];
+        setTotalProgrammesSeries(totalProgrammesValues);
         totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
 
-        setAuthorizedCredits(programmesAggByStatus?.authorisedCredits);
-        setIssuedCredits(programmesAggByStatus?.issuedCredits);
-        setTransferredCredits(programmesAggByStatus?.transferredCredits);
-        setRetiredCredits(programmesAggByStatus?.retiredCredits);
+        const totalCreditsValues: ChartSeriesItem[] = [
+          {
+            name: 'Authorised',
+            data: programmesAggByStatus?.authorisedCredits,
+          },
+          {
+            name: 'Issued',
+            data: programmesAggByStatus?.issuedCredits,
+          },
+          {
+            name: 'Transferred',
+            data: programmesAggByStatus?.transferredCredits,
+          },
+          {
+            name: 'Retired',
+            data: programmesAggByStatus?.retiredCredits,
+          },
+        ];
+        setTotalCreditsSeries(totalCreditsValues);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
       }
       if (programmesAggBySector) {
@@ -489,17 +518,50 @@ const Dashboard = () => {
         formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
-
-        setAgricultureProgrammes(programmesAggBySector?.agriculture);
-        setEducationProgrammes(programmesAggBySector?.education);
-        setEnergyProgrammes(programmesAggBySector?.energy);
-        setForestryProgrammes(programmesAggBySector?.forestry);
-        setHealthProgrammes(programmesAggBySector?.health);
-        setHospitalityProgrammes(programmesAggBySector?.hospitality);
-        setManufacturingProgrammes(programmesAggBySector?.manufacturing);
-        setOtherProgrammes(programmesAggBySector?.other);
-        setTransportProgrammes(programmesAggBySector?.transport);
-        setWasteProgrammes(programmesAggBySector?.waste);
+        setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
+        const progarmmesSectorSeriesData: ChartSeriesItem[] = [
+          {
+            name: 'Energy',
+            data: programmesAggBySector?.energy,
+          },
+          {
+            name: 'Health',
+            data: programmesAggBySector?.health,
+          },
+          {
+            name: 'Education',
+            data: programmesAggBySector?.education,
+          },
+          {
+            name: 'Transport',
+            data: programmesAggBySector?.transport,
+          },
+          {
+            name: 'Manufacturing',
+            data: programmesAggBySector?.manufacturing,
+          },
+          {
+            name: 'Hospitality',
+            data: programmesAggBySector?.hospitality,
+          },
+          {
+            name: 'Forestry',
+            data: programmesAggBySector?.forestry,
+          },
+          {
+            name: 'Waste',
+            data: programmesAggBySector?.waste,
+          },
+          {
+            name: 'Agriculture',
+            data: programmesAggBySector?.agriculture,
+          },
+          {
+            name: 'Other',
+            data: programmesAggBySector?.other,
+          },
+        ];
+        setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
 
         totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
       }
@@ -510,9 +572,22 @@ const Dashboard = () => {
             return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
           }
         );
-        setCertifiedCredits(totalCreditsCertifiedStats?.certifiedSum);
-        setUnCertifiedCredits(totalCreditsCertifiedStats?.uncertifiedSum);
-        setRevokedCredits(totalCreditsCertifiedStats?.revokedSum);
+        const totalCertifiedCreditsSeriesValues = [
+          {
+            name: 'Certified',
+            data: totalCreditsCertifiedStats?.certifiedSum,
+          },
+          {
+            name: 'Uncertified',
+            data: totalCreditsCertifiedStats?.uncertifiedSum,
+          },
+          {
+            name: 'Revoked',
+            data: totalCreditsCertifiedStats?.revokedSum,
+          },
+        ];
+        setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
+        setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
 
         totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
       }
@@ -726,110 +801,21 @@ const Dashboard = () => {
     getAllProgrammesAggChartStats();
   }, [startTime, endTime, categoryType, companyRole]);
 
-  const seriesTotalProgrammesY = [
-    {
-      name: 'Authorised',
-      data: authorisedProgrammes,
-    },
-    {
-      name: 'Rejected',
-      data: rejectedProgrammes,
-    },
-    {
-      name: 'Pending',
-      data: pendingProgrammes,
-    },
-  ];
+  useEffect(() => {
+    ApexCharts.exec('total-programmes-sector', 'updateSeries', {
+      options: totalProgrammesOptionsSub,
+      series: totalProgrammesSectorSeries,
+    });
+  }, [totalProgrammesSectorSeries]);
 
-  const seriesTotalProgrammesSubY = [
-    {
-      name: 'Energy',
-      data: energyProgrammes,
-    },
-    {
-      name: 'Health',
-      data: healthProgrammes,
-    },
-    {
-      name: 'Education',
-      data: educationProgrammes,
-    },
-    {
-      name: 'Transport',
-      data: transportProgrammes,
-    },
-    {
-      name: 'Manufacturing',
-      data: manufacturingProgrammes,
-    },
-    {
-      name: 'Hospitality',
-      data: hospitalityProgrammes,
-    },
-    {
-      name: 'Forestry',
-      data: forestryProgrammes,
-    },
-    {
-      name: 'Waste',
-      data: wasteProgrammes,
-    },
-    {
-      name: 'Agriculture',
-      data: agricultureProgrammes,
-    },
-    {
-      name: 'Other',
-      data: otherProgrammes,
-    },
-  ];
-
-  const seriesTotalCreditsY = [
-    {
-      name: 'Authorised',
-      data: authorizedCredits,
-    },
-    {
-      name: 'Issued',
-      data: issuedCredits,
-    },
-    {
-      name: 'Transferred',
-      data: transferredCredits,
-    },
-    {
-      name: 'Retired',
-      data: retiredCredits,
-    },
-  ];
-
-  const seriesTotalCreditsCertifiedY = [
-    {
-      name: 'Certified',
-      data: certifiedCredits,
-    },
-    {
-      name: 'Uncertified',
-      data: unCertifiedCredits,
-    },
-    {
-      name: 'Revoked',
-      data: revokedCredits,
-    },
-  ];
-
-  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 50]];
-  const count2 = ['all', ['>=', ['get', 'count'], 50], ['<', ['get', 'count'], 250]];
-  const count3 = ['all', ['>=', ['get', 'count'], 250], ['<', ['get', 'count'], 600]];
-  const count4 = ['all', ['>=', ['get', 'count'], 600], ['<', ['get', 'count'], 1000]];
-  const count5 = ['>=', ['get', 'count'], 1000];
+  const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
   const authorised = ['==', ['get', 'stage'], 'Authorised'];
   const rejected = ['==', ['get', 'stage'], 'Rejected'];
 
   // colors to use for the categories
   // const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
-  const colors = ['#6ACDFF', '#CDCDCD', '#FF8183'];
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 
   function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
     if (end - start === 1) end -= 0.00001;
@@ -856,18 +842,11 @@ const Dashboard = () => {
     const offsetsStage = [];
     let counts: any = [];
     let programmeStageCounts: any = [];
-    if (properties.count1) {
-      counts = [
-        properties.count1,
-        properties.count2,
-        properties.count3,
-        properties.count4,
-        properties.count5,
-      ];
-    } else {
-      counts = [parseInt(properties.count)];
+    if (properties.count) {
+      counts = [properties.count];
     }
-    if (properties.count1) {
+
+    if (properties.cluster_id) {
       programmeStageCounts = [properties.authorised, properties.pending, properties.rejected];
     } else {
       if (properties?.stage === 'AwaitingAuthorization') {
@@ -888,8 +867,8 @@ const Dashboard = () => {
       offsetsStage.push(totalStage);
       totalStage += count;
     }
-    const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
-    const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+    const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
+    const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
     const r0 = Math.round(r * 0.6);
     const w = r * 2;
 
@@ -1019,8 +998,6 @@ ${total}
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    console.log(programmeLocations);
-
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
@@ -1041,11 +1018,7 @@ ${total}
             clusterRadius: 40,
             clusterProperties: {
               // keep separate counts for each countnitude category in a cluster
-              count1: ['+', ['case', count1, ['get', 'count'], 0]],
-              count2: ['+', ['case', count2, ['get', 'count'], 0]],
-              count3: ['+', ['case', count3, ['get', 'count'], 0]],
-              count4: ['+', ['case', count4, ['get', 'count'], 0]],
-              count5: ['+', ['case', count5, ['get', 'count'], 0]],
+              count: ['+', ['case', countS, ['get', 'count'], 0]],
               pending: ['+', ['case', pending, ['get', 'count'], 0]],
               authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
               rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
@@ -1273,18 +1246,20 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-programmes"
               title="Total Programmes"
               options={totalProgrammesOptions}
-              series={seriesTotalProgrammesY}
+              series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-programmes-sector"
               title="Total Programmes: Sector"
               options={totalProgrammesOptionsSub}
-              series={seriesTotalProgrammesSubY}
+              series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
@@ -1295,18 +1270,20 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-credits"
               title="Total Credits"
               options={totalCreditsOptions}
-              series={seriesTotalCreditsY}
+              series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
+              id="total-credits-certified"
               title="Total Credits Certified"
               options={totalCreditsCertifiedOptions}
-              series={seriesTotalCreditsCertifiedY}
+              series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
             />
@@ -1327,6 +1304,11 @@ ${total}
                 <>
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
+                  </div>
+                  <div className="stage-legends">
+                    <LegendItem text="Authorised" color="#6ACDFF" />
+                    <LegendItem text="Pending" color="#FF8183" />
+                    <LegendItem text="Rejected" color="#CDCDCD" />
                   </div>
                   <div className="updated-on margin-top-1">
                     <div className="updated-moment-container">

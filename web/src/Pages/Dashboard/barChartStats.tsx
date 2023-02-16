@@ -4,6 +4,7 @@ import Chart from 'react-apexcharts';
 import moment from 'moment';
 
 export interface BarChartStatsProps {
+  id: string;
   title: string;
   options: any;
   series: any;
@@ -12,7 +13,7 @@ export interface BarChartStatsProps {
 }
 
 const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
-  const { title, options, series, lastUpdate, loading } = props;
+  const { id, title, options, series, lastUpdate, loading } = props;
   return (
     <div className="stastics-and-pie-card height-bar-rem">
       <div className="pie-charts-title">{title}</div>
@@ -24,7 +25,14 @@ const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
       ) : (
         <>
           <div className="pie-charts-section">
-            <Chart options={options} series={series} type="bar" height="350px" width="490px" />
+            <Chart
+              id={id}
+              options={options}
+              series={series}
+              type="bar"
+              height="350px"
+              width="490px"
+            />
           </div>
           <div className="updated-on">
             <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
