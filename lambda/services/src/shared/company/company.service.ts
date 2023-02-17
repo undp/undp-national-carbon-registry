@@ -168,7 +168,8 @@ export class CompanyService {
       .createQueryBuilder()
       .select([
         '"companyId"',
-        '"name"'
+        '"name"',
+        '"state"'
       ])
       .where(
         this.helperService.generateWhereSQL(
