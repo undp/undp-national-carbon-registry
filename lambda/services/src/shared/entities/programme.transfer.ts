@@ -66,9 +66,6 @@ export class ProgrammeTransfer implements EntitySubject {
 
     @Column({type: "bigint", nullable: true})
     createdTime: number;
-    
-    @Column({nullable: true})
-    txRef: string;
 
     @Column({
         type: "enum",

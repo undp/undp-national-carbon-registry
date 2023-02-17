@@ -56,7 +56,7 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Programme, true))
     @Get('getHistory')
     async getHistory(@Query('programmeId') programmeId: string, @Request() req) {
-        return this.programmeService.getProgrammeEvents(programmeId, req.user.companyId)
+        return this.programmeService.getProgrammeEvents(programmeId, req.user)
     }
 
     @ApiBearerAuth()

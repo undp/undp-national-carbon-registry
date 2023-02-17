@@ -41,17 +41,22 @@ import { ProgrammeReject } from '../dto/programme.reject';
 import { ProgrammeIssue } from '../dto/programme.issue';
 import { RetireType } from '../enum/retire.type.enum';
 import { EmailHelperService } from '../email-helper/email-helper.service';
+import { UserService } from '../user/user.service';
+import { use } from 'passport';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
 @Injectable()
 export class ProgrammeService {
 
+    private userNameCache: any;
+    
     constructor(
         private programmeLedger: ProgrammeLedgerService,
         private counterService: CounterService,
         private configService: ConfigService,
         private companyService: CompanyService,
+        private userService: UserService,
         private emailService: EmailService,
         private helperService: HelperService,
         private emailHelperService: EmailHelperService,
@@ -61,7 +66,9 @@ export class ProgrammeService {
         @InjectRepository(Company) private companyRepo: Repository<Company>,
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
-        private logger: Logger) { }
+        private logger: Logger) {
+            this.userNameCache = {}
+        }
 
     private toProgramme(programmeDto: ProgrammeDto): Programme {
         const data = instanceToPlain(programmeDto);
@@ -160,6 +167,9 @@ export class ProgrammeService {
           .limit(query.size)
           .getManyAndCount();
     
+        if (query.size === 1 && resp.length > 0) {
+            resp[0]['userName'] = await this.getUserName(resp[0]['initiator'])
+        }
         if (resp.length > 0) {
             resp[0] = resp[0].map( e => {
                 e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
@@ -255,7 +265,7 @@ export class ProgrammeService {
                 {credits : transfer.creditAmount}, approver.companyId, transfer.programmeId );
         }
 
-        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}`, req.comment, transfer.isRetirement)
+        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}}#${giver.companyId}#${giver.name}`, req.comment, transfer.isRetirement)
     }
 
     private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
@@ -600,12 +610,16 @@ export class ProgrammeService {
         );
     }
 
-    async getProgrammeEvents(programmeId: string, companyId: number): Promise<any> {
+    async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
-        // const comp = await this.companyService.findByCompanyId(companyId)
-        // if (resp.length > 0 && comp.state == CompanyState.SUSPENDED) {
-            
-        // }
+        if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+            resp.map( async el => {
+                const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
+                if (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId) {
+                    el.data['userName'] = (await this.getUserName(refs.id))
+                }
+            })
+        }
         return resp == null ? [] : resp;
     }
 
@@ -850,7 +864,7 @@ export class ProgrammeService {
         if (program.creditEst - program.creditIssued < req.issueAmount) {
             throw new HttpException("Programme issue credit amount can not exceed pending credit amount", HttpStatus.BAD_REQUEST);
         }
-        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRef(user))
+        const updated: any = await this.programmeLedger.issueProgrammeStatus(req.programmeId, this.configService.get('systemCountry'), program.companyId, req.issueAmount, this.getUserRefWithRemarks(user, req.comment))
         if (!updated) {
             return new BasicResponseDto(HttpStatus.BAD_REQUEST, `Does not found a pending programme for the given programme id ${req.programmeId}`)
         }
@@ -928,6 +942,38 @@ export class ProgrammeService {
         await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_REJECTION,{reason: req.comment})
 
         return new BasicResponseDto(HttpStatus.OK, "Successfully updated")
+    }
+
+    private getUserName = async (userId: string) => {
+        if (!userId) {
+            return null;
+        }
+        if (this.userNameCache[userId]) {
+            return this.userNameCache[userId];
+        }
+        const n = (await this.userService.findById(Number(userId)))?.name;
+        if (n) {
+            this.userNameCache[userId] = n;
+        }
+    }
+
+    private getCompanyIdAndUserIdFromRef = (ref: string) => {
+        if (!ref) {
+            return null;
+        }
+        const parts = ref.split('#');
+        if (parts.length > 2) {
+            return {
+                id: parts[2],
+                companyId: Number(parts[0])
+            }
+        }
+        if (parts.length > 0) {
+            return {
+                companyId: Number(parts[0])
+            }
+        } 
+        return null;
     }
 
     private getUserRef = (user: any) => {
