@@ -1,12 +1,18 @@
 import React, { FC } from 'react';
-import { DatePicker, Progress, Skeleton } from 'antd';
+import { DatePicker, Progress, Skeleton, Tooltip } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import fileText from '../../Assets/Images/fileText.svg';
 import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { ClockHistory, HandThumbsUp, XCircle, Clipboard2Pulse } from 'react-bootstrap-icons';
+import {
+  ClockHistory,
+  HandThumbsUp,
+  XCircle,
+  Clipboard2Pulse,
+  InfoCircle,
+} from 'react-bootstrap-icons';
 
 const { RangePicker } = DatePicker;
 
@@ -22,12 +28,14 @@ export interface ProgrammeRejectAndTransferCardItemProps {
   rejected: number;
   updatedDate: any;
   loading: boolean;
+  toolTipText: string;
 }
 
 const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = (
   props: ProgrammeRejectAndTransferCardItemProps
 ) => {
-  const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading } = props;
+  const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading, toolTipText } =
+    props;
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (
@@ -37,9 +45,21 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
         </div>
       ) : (
         <>
+          <div className="title-section">
+            <div className="title">Programmes</div>
+            <div className="info-container">
+              <Tooltip
+                arrowPointAtCenter
+                placement="bottomRight"
+                trigger="click"
+                title={toolTipText}
+              >
+                <InfoCircle color="#000000" size={17} />
+              </Tooltip>
+            </div>
+          </div>
           <div className="total-programme-details">
             <div className="details">
-              <div className="title">Programmes</div>
               <div className="detail">Total</div>
               <div className="value">{totalPrgrammes}</div>
             </div>

@@ -128,12 +128,20 @@ export class AggregateAPIService {
       const statusArray = Object.values(ProgrammeStage);
       arrResultForTimeGroup?.map((timeGroupItem) => {
         console.log("status array ----- > ", statusArray);
-        authorisedCreditsSum =
-          authorisedCreditsSum +
-          (parseFloat(timeGroupItem?.totalestcredit) -
-            parseFloat(timeGroupItem?.totalissuedcredit));
+        if (timeGroupItem?.currentStage === ProgrammeStage.AUTHORISED) {
+          authorisedCreditsSum =
+            authorisedCreditsSum +
+            (parseFloat(timeGroupItem?.totalestcredit) -
+              parseFloat(timeGroupItem?.totalissuedcredit));
+        } else {
+          authorisedCreditsSum = authorisedCreditsSum + 0;
+        }
         issuedCreditsSum =
-          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
+          issuedCreditsSum +
+          (parseFloat(timeGroupItem?.totalissuedcredit) -
+            parseFloat(timeGroupItem?.totaltxcredit) -
+            parseFloat(timeGroupItem?.totalretiredcredit) -
+            parseFloat(timeGroupItem?.totalfreezecredit));
         transferredCreditsSum =
           transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
