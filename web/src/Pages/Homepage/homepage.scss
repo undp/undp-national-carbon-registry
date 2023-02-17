@@ -29,6 +29,7 @@
       color: $logo-text-color;
       font-weight: 700;
       margin-right: 0.5rem;
+      
     }
 
     .title-sub {
@@ -36,11 +37,12 @@
       font-family: 'MuseoSans';
       font-size: 1.2rem;
       color: $logo-text-color;
+      
     }
 
     .logo {
       height: 55px;
-      width: 80px;
+      width: 75px;
       padding-left: 2vw;
       img {
         object-fit: cover;
@@ -55,6 +57,9 @@
       color: $logo-text-color;
       margin-top: -5px;
       font-family: 'MuseoSans';
+      margin-left: 0.1rem;
+      
+      
     }
   }
   .homepage-button-container {
