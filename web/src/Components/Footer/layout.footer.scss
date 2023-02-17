@@ -8,8 +8,6 @@
     min-height: 200px;
     height: 100%;
     align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
     padding: 1rem 2rem 0 1rem;
     cursor: pointer;
 
@@ -68,12 +66,11 @@
         font-family: 'MuseoSans';
         font-size: 2rem;
         color: $dark-text-color;
-
-        // padding-bottom: 3px;
       }
 
       .logo {
         height: 97px;
+        width:110px;
         img {
           object-fit: cover;
           height: auto;

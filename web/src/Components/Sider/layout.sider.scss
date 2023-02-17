@@ -36,7 +36,6 @@
   .layout-sider-menu-container {
     background-color: $background-color;
     padding-top: 12px;
-    // padding-left: 10px;
 
     .ant-menu-inline-collapsed {
       .ant-menu-item-icon {
@@ -52,8 +51,6 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      // margin-bottom: 2vw;
-      // padding-left: 2rem;
       padding: 0rem 2rem 0 1rem;
       cursor: pointer;
 
@@ -70,19 +67,12 @@
         font-family: 'MuseoSans';
         font-size: 1.2rem;
         color: $logo-text-color;
-        // padding-bottom: 3px;
       }
 
       .logo {
-        // display: flex;
-        // flex-direction: row;
-        // justify-content: flex-start;
-        // align-items: center;
         height: 52px;
-        // overflow: hidden;
-        // margin-right: 0.8rem;
+        width: 80px;
 
-        // background-color: red;
         img {
           object-fit: cover;
           height: auto;
@@ -109,7 +99,6 @@
     }
 
     .ant-menu-submenu-selected {
-
       .ant-menu-item::after {
         border-left: 2px solid $primary-color;
       }
@@ -119,7 +108,7 @@
         color: $dark-text-color;
         border-top-right-radius: 22px;
         border-bottom-right-radius: 22px;
-        
+
         .ant-menu-submenu-arrow {
           color: $dark-text-color;
         }
@@ -131,10 +120,8 @@
 
       .ant-menu-item-selected {
         background: none;
-        // border-left: 1px solid $primary-color;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
-        
 
         a {
           color: $primary-color;
@@ -152,5 +139,3 @@
     }
   }
 }
-
-
