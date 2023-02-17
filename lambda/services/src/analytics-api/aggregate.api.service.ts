@@ -266,7 +266,7 @@ export class AggregateAPIService {
     abilityCondition: string,
     lastTimeForWhere: any,
     statCache: any,
-    timeCol: string,
+    timeCol: string[],
     timeGroupingCol?: string,
     timeGroupingAccuracy?: string
   ) {
@@ -356,15 +356,27 @@ export class AggregateAPIService {
     let d = await queryBuild.getRawMany();
     let dTimeGrouped;
 
-    let t = 0;
+    let lastTime: any;
     if (timeCol) {
       const cacheKey = whereC + " from " + tableName;
       if (lastTimeForWhere[cacheKey]) {
         console.log("Last time hit from the cache");
-        t = lastTimeForWhere[cacheKey];
+        lastTime = lastTimeForWhere[cacheKey];
       } else {
-        t = await this.getLastTime(repo, tableName, whereC, timeCol);
-        lastTimeForWhere[cacheKey] = t;
+        const allTimes = {};
+        let maxTime = 0;
+        for (const tc of timeCol) {
+          const colTime = await this.getLastTime(repo, tableName, whereC, tc);
+          allTimes[tc] = colTime;
+          if (colTime > maxTime) {
+            maxTime = colTime;
+          }
+        }
+        lastTime = {
+          max: maxTime,
+          all: allTimes
+        };
+        lastTimeForWhere[cacheKey] = lastTime;
       }
     }
     for (const row of d) {
@@ -394,8 +406,12 @@ export class AggregateAPIService {
     }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
-      last: t,
+      last: lastTime.max
     };
+
+    if (lastTime.all && Object.keys(lastTime.all).length > 0) {
+      statCache[key]['all'] = lastTime.all
+    }
 
     return statCache[key];
   }
@@ -443,7 +459,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["statusUpdateTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -480,7 +496,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime"
+      ["certifiedTime"]
     );
   }
 
@@ -552,7 +568,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["certifiedTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -709,7 +725,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          "createdTime",
+          ["certifiedTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
           stat.statFilter?.timeGroup ? "day" : undefined
         );
@@ -791,7 +807,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          "txTime"
+          ["createdTime"]
         );
         break;
     }
@@ -1156,7 +1172,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "txTime"
+      ["txTime"]
     );
   }
   async generateProgrammeAggregates(
@@ -1209,7 +1225,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["statusUpdateTime", "creditUpdateTime"],
       stat.statFilter?.timeGroup ? "createdAt" : undefined,
       stat.statFilter?.timeGroup ? "day" : undefined
     );

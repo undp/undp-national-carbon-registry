@@ -592,7 +592,7 @@ const Dashboard = () => {
       const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
       const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       const programmeByStatusAggregationResponseLastUpdate =
-        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
         if (responseItem?.currentStage === 'AwaitingAuthorization') {
           setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));

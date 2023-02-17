@@ -99,7 +99,7 @@ export class LedgerReplicatorService {
             try {
               let address: any[] = [];
               if (programme && programme.programmeProperties) {
-                if (programme.currentStage === "AwaitingAuthorization") {
+                if (programme.txType === TxType.CREATE) {
                   const programmeProperties = programme.programmeProperties;
                   if (programmeProperties.geographicalLocation) {
                     for (
@@ -121,6 +121,16 @@ export class LedgerReplicatorService {
                       programme.geographicalLocationCordintes = [...response];
                     }
                   );
+                } else if (programme.txType === TxType.CERTIFY || programme.txType === TxType.REVOKE) {
+                  programme.certifiedTime = programme.txTime;
+                } else if (programme.txType === TxType.AUTH) {
+                  programme.authTime = programme.txTime;
+                }
+
+                if ([TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(programme.txType)) {
+                  programme.statusUpdateTime = programme.txTime;
+                } else if ([TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(programme.txType)) {
+                  programme.creditUpdateTime = programme.txTime;
                 }
               }
             } catch (error) {
