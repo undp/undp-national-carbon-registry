@@ -37,8 +37,10 @@ export class LedgerReplicatorService {
         encodeURIComponent(address[index]) +
         ".json?access_token=" +
         ACCESS_TOKEN +
-        "&limit=1"+ 
-        `&country=${this.configService.get('systemCountry')}&autocomplete=false&types=region%2Cdistrict`
+        "&limit=1" +
+        `&country=${this.configService.get(
+          "systemCountry"
+        )}&autocomplete=false&types=region%2Cdistrict`;
       console.log("geocoding request urls -> ", index, url);
       await axios
         .get(url)
@@ -52,7 +54,7 @@ export class LedgerReplicatorService {
           if (response?.data?.features.length > 0) {
             geoCodinates.push([...response?.data?.features[0]?.center]);
           } else {
-            geoCodinates.push(null)
+            geoCodinates.push(null);
           }
         })
         .catch((err) => {
@@ -96,68 +98,87 @@ export class LedgerReplicatorService {
               Programme,
               JSON.parse(JSON.stringify(payload))
             );
-            try {
-              let address: any[] = [];
-              if (programme && programme.programmeProperties) {
-                if (programme.txType === TxType.CREATE) {
-                  const programmeProperties = programme.programmeProperties;
-                  if (programmeProperties.geographicalLocation) {
-                    for (
-                      let index = 0;
-                      index < programmeProperties.geographicalLocation.length;
-                      index++
-                    ) {
-                      address.push(
-                        programmeProperties.geographicalLocation[index]
-                      );
-                    }
-                  }
-                  await this.forwardGeocoding([...address]).then(
-                    (response: any) => {
-                      console.log(
-                        "response from forwardGeoCoding function -> ",
-                        response
-                      );
-                      programme.geographicalLocationCordintes = [...response];
-                    }
-                  );
-                } else if (programme.txType === TxType.CERTIFY || programme.txType === TxType.REVOKE) {
-                  programme.certifiedTime = programme.txTime;
-                } else if (programme.txType === TxType.AUTH) {
-                  programme.authTime = programme.txTime;
-                }
 
-                if ([TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(programme.txType)) {
-                  programme.statusUpdateTime = programme.txTime;
-                } else if ([TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(programme.txType)) {
-                  programme.creditUpdateTime = programme.txTime;
+            if (programme != null) {
+              try {
+                let address: any[] = [];
+                if (programme && programme.programmeProperties) {
+                  if (programme.txType === TxType.CREATE) {
+                    const programmeProperties = programme.programmeProperties;
+                    if (programmeProperties.geographicalLocation) {
+                      for (
+                        let index = 0;
+                        index < programmeProperties.geographicalLocation.length;
+                        index++
+                      ) {
+                        address.push(
+                          programmeProperties.geographicalLocation[index]
+                        );
+                      }
+                    }
+                    await this.forwardGeocoding([...address]).then(
+                      (response: any) => {
+                        console.log(
+                          "response from forwardGeoCoding function -> ",
+                          response
+                        );
+                        programme.geographicalLocationCordintes = [...response];
+                      }
+                    );
+                  } else if (
+                    programme.txType === TxType.CERTIFY ||
+                    programme.txType === TxType.REVOKE
+                  ) {
+                    programme.certifiedTime = programme.txTime;
+                  } else if (programme.txType === TxType.AUTH) {
+                    programme.authTime = programme.txTime;
+                  }
+
+                  if (
+                    [TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(
+                      programme.txType
+                    )
+                  ) {
+                    programme.statusUpdateTime = programme.txTime;
+                  } else if (
+                    [TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(
+                      programme.txType
+                    )
+                  ) {
+                    programme.creditUpdateTime = programme.txTime;
+                  }
                 }
+              } catch (error) {
+                console.log(
+                  "Getting cordinates with forward geocoding failed -> ",
+                  error
+                );
+              } finally {
+                programme.updatedAt = new Date(programme.txTime);
+                programme.createdAt = new Date(programme.createdTime);
+                const columns =
+                  this.programmeRepo.manager.connection.getMetadata(
+                    "Programme"
+                  ).columns;
+                const columnNames = columns
+                  .filter(function (item) {
+                    return (
+                      item.propertyName !== "programmeId" &&
+                      item.propertyName !== "geographicalLocationCordintes"
+                    );
+                  })
+                  .map((e) => e.propertyName);
+
+                this.logger.debug(
+                  `${columnNames} ${JSON.stringify(programme)}`
+                );
+                return await this.programmeRepo
+                  .createQueryBuilder()
+                  .insert()
+                  .values(programme)
+                  .orUpdate(columnNames, ["programmeId"])
+                  .execute();
               }
-            } catch (error) {
-              console.log(
-                "Getting cordinates with forward geocoding failed -> ",
-                error
-              );
-            } finally {
-              programme.updatedAt = new Date(programme.txTime)
-              programme.createdAt = new Date(programme.createdTime)
-              const columns =
-                this.programmeRepo.manager.connection.getMetadata(
-                  "Programme"
-                ).columns;
-              const columnNames = columns
-                .filter(function (item) {
-                  return (item.propertyName !== "programmeId" && item.propertyName !== "geographicalLocationCordintes");
-                })
-                .map((e) => e.propertyName);
-              
-              this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
-              return await this.programmeRepo
-                .createQueryBuilder()
-                .insert()
-                .values(programme)
-                .orUpdate(columnNames, ["programmeId"])
-                .execute();
             }
           } else if (
             tableName == this.configService.get("ledger.companyTable")
@@ -195,7 +216,10 @@ export class LedgerReplicatorService {
 
             let updateObj;
             if (account) {
-              if (company.secondaryAccountBalance && company.secondaryAccountBalance[account]) {
+              if (
+                company.secondaryAccountBalance &&
+                company.secondaryAccountBalance[account]
+              ) {
                 company.secondaryAccountBalance[account]["total"] =
                   overall.credit;
                 company.secondaryAccountBalance[account]["count"] += 1;
@@ -216,7 +240,7 @@ export class LedgerReplicatorService {
                   Number(company.programmeCount) +
                   (overall.txType == TxType.AUTH ? 1 : 0),
                 lastUpdateVersion: parseInt(meta["version"]),
-                creditTxTime: new Date(meta.txTime).getTime()
+                creditTxTime: new Date(meta.txTime).getTime(),
               };
             }
 
