@@ -42,6 +42,9 @@ const LayoutFooter = () => {
         </Col>
         <Col md={12} lg={12}>
           <div className="footertext-link-container">
+            <a href="https://status.carbreg.org/" target={'blank'} className="footertext-links">
+              {t('homepage:Status')}
+            </a>
             <a href="/cookie" className="footertext-links">
               {t('homepage:Cookie')}
             </a>

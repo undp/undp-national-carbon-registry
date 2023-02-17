@@ -55,7 +55,7 @@
   .cookie-body-container {
     text-align: center;
     justify-content: center;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: #fff;
     margin-top: 5px;
     margin-bottom: 5px;
     padding-bottom: 60px;
@@ -88,7 +88,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -114,7 +113,6 @@
     }
     .cookie-card-container {
       text-align: left;
-      // justify-content: center;
       margin: 30px 200px 30px 200px;
       padding: 30px;
       border-style: solid;
