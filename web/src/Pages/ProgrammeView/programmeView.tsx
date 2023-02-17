@@ -1241,7 +1241,7 @@ const ProgrammeView = () => {
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
-            {getStageEnumVal(data.currentStage) !== ProgrammeStage.AwaitingAuthorization ? (
+            {getStageEnumVal(data.currentStage) === ProgrammeStage.Authorised ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
