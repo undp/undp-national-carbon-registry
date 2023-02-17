@@ -40,6 +40,7 @@ import { Sector } from '../../Casl/enums/sector.enum';
 import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import { toolTipTextGen } from './toolTipTextGen';
+import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
 
 const { RangePicker } = DatePicker;
 
@@ -1089,10 +1090,10 @@ ${total}
               }
               title={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? 'Programmes Pending'
+                  ? StatsCardsTypes.PROGRAMMES_PENDING
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Transfer Requests Received'
-                  : 'Programmes Uncertified'
+                  ? StatsCardsTypes.TRANSFER_REQUEST_RECEIVED
+                  : StatsCardsTypes.PROGRAMMES_UNCERTIFIED
               }
               updatedDate={parseInt(lastUpdateProgrammesStats) / 1000}
               icon={
@@ -1125,10 +1126,10 @@ ${total}
               }
               title={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? 'Transfer Requests Sent'
+                  ? StatsCardsTypes.TRANSFER_REQUEST_SENT
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Transfer Requests Sent'
-                  : 'Programmes Certified'
+                  ? StatsCardsTypes.TRANSFER_REQUEST_SENT
+                  : StatsCardsTypes.PROGRAMMES_CERTIFIED
               }
               updatedDate={lastUpdate}
               icon={
@@ -1161,10 +1162,10 @@ ${total}
               }
               title={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? 'Credit Balance'
+                  ? StatsCardsTypes.CREDIT_BALANCE
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Credit Balance'
-                  : 'Credit Certified'
+                  ? StatsCardsTypes.CREDIT_BALANCE
+                  : StatsCardsTypes.CREDIT_CERTIFIED
               }
               updatedDate={lastUpdate}
               icon={
@@ -1227,48 +1228,48 @@ ${total}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Programmes', true)
-                  : toolTipTextGen(companyRole, 'Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
               }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
-              title="Credits"
+              title={StatsCardsTypes.CREDITS}
               options={optionDonutPieA}
               series={creditsPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Credits', true)
-                  : toolTipTextGen(companyRole, 'Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
               }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
-              title="Certified Credits"
+              title={StatsCardsTypes.CERTIFIED_CREDITS}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Certified credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Certified credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Certified credits', true)
-                  : toolTipTextGen(companyRole, 'Certified credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
               }
             />
           </Col>
@@ -1279,38 +1280,38 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-programmes"
-              title="Total Programmes"
+              title={StatsCardsTypes.TOTAL_PROGRAMMES}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Total Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Total Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Total Programmes', true)
-                  : toolTipTextGen(companyRole, 'Total Programmes')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
               }
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-programmes-sector"
-              title="Total Programmes: Sector"
+              title={StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector', true)
-                  : toolTipTextGen(companyRole, 'Total Programmes:Sector')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
               }
             />
           </Col>
@@ -1321,38 +1322,38 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-credits"
-              title="Total Credits"
+              title={StatsCardsTypes.TOTAL_CREDITS}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Total Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Total Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Total Credits', true)
-                  : toolTipTextGen(companyRole, 'Total Credits')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
               }
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-credits-certified"
-              title="Total Credits Certified"
+              title={StatsCardsTypes.TOTAL_CREDITS_CERTIFIED}
               options={totalCreditsCertifiedOptions}
               series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
               toolTipText={
                 companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, 'Total Credits Certified')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
                   : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, 'Total Credits Certified')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, 'Total Credits Certified', true)
-                  : toolTipTextGen(companyRole, 'Total Credits Certified')
+                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED, true)
+                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
               }
             />
           </Col>
@@ -1363,7 +1364,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
               <div className="pie-charts-top">
-                <div className="pie-charts-title">Programme Locations</div>
+                <div className="pie-charts-title">{StatsCardsTypes.PROGRAMME_LOCATIONS}</div>
                 <div className="info-container">
                   <div className="info-container">
                     <Tooltip
@@ -1372,12 +1373,12 @@ ${total}
                       trigger="click"
                       title={
                         companyRole === CompanyRole.GOVERNMENT
-                          ? toolTipTextGen(companyRole, 'Programme Locations')
+                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
                           : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? toolTipTextGen(companyRole, 'Programme Locations')
+                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
                           : categoryType === 'mine'
-                          ? toolTipTextGen(companyRole, 'Programme Locations', true)
-                          : toolTipTextGen(companyRole, 'Programme Locations')
+                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS, true)
+                          : toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
                       }
                     >
                       <InfoCircle color="#000000" size={17} />
@@ -1412,7 +1413,9 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
               <div className="pie-charts-top">
-                <div className="pie-charts-title">Transfer Locations International</div>
+                <div className="pie-charts-title">
+                  {StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL}
+                </div>
                 <div className="info-container">
                   <Tooltip
                     arrowPointAtCenter
@@ -1420,12 +1423,25 @@ ${total}
                     trigger="click"
                     title={
                       companyRole === CompanyRole.GOVERNMENT
-                        ? toolTipTextGen(companyRole, 'Transfer Locations International')
+                        ? toolTipTextGen(
+                            companyRole,
+                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
+                          )
                         : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                        ? toolTipTextGen(companyRole, 'Transfer Locations International')
+                        ? toolTipTextGen(
+                            companyRole,
+                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
+                          )
                         : categoryType === 'mine'
-                        ? toolTipTextGen(companyRole, 'Transfer Locations International', true)
-                        : toolTipTextGen(companyRole, 'Transfer Locations International')
+                        ? toolTipTextGen(
+                            companyRole,
+                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL,
+                            true
+                          )
+                        : toolTipTextGen(
+                            companyRole,
+                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
+                          )
                     }
                   >
                     <InfoCircle color="#000000" size={17} />
