@@ -50,7 +50,7 @@ export class EmailService {
             }
         }
 
-        return `🇦🇶 Carbon Registry: ${template}`;
+        return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
     }
 
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
