@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CompanyService } from "../company/company.service";
 import { EmailService } from "../email/email.service";
@@ -13,6 +13,7 @@ export class EmailHelperService {
     private userService: UserService,
     private configService: ConfigService,
     private emailService: EmailService,
+    @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService
   ) {}
@@ -20,17 +21,67 @@ export class EmailHelperService {
   public async sendEmailToProgrammeOwnerAdmins(
     programmeId: string,
     template: any,
-    templateData: {}
+    templateData: {},
+    companyId ?: number,
+    governmentId?: number
   ) {
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
+    let companyDetails:Company;
+
     switch (template.id) {
       case "PROGRAMME_REJECTION":
         templateData = {
           ...templateData,
           programmeName: programme.title,
           date: new Date(programme.txTime),
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_CERT':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME':
+        companyDetails = await this.companyService.findByCompanyId(
+          companyId
+        );
+        const government = await this.companyService.findByCompanyId(
+          governmentId
+        );
+        templateData = {
+          ...templateData,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          serialNumber: programme.serialNo,
+          organisationName: companyDetails.name,
+          government: government.name,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
 
@@ -93,7 +144,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           serialNumber: programme.serialNo,
           programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
         };
         break;
 
@@ -107,7 +158,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           serialNumber: programme.serialNo,
           programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagement/view/${programmeId}`,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
         };
         break;
 
@@ -139,6 +190,41 @@ export class EmailHelperService {
         };
         break;
 
+      case "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          government: companyDetails.name,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          credits: programme.creditBalance,
+          pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
+        };
+        break;
+
+      case "CREDIT_RETIREMENT_RECOGNITION":
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_RETIREMENT_NOT_RECOGNITION":
+        programme = await this.programmeLedger.getProgrammeById(programmeId);
+        templateData = {
+          ...templateData,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+        
       default:
         break;
     }
@@ -190,6 +276,16 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_RETIREMENT_CANCEL":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
+          serialNumber: programme.serialNo,
+          programmeName: programme.title,
+          pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
       default:
         break;
     }
@@ -203,4 +299,16 @@ export class EmailHelperService {
       this.emailService.sendEmail(user.user_email, template, templateData);
     });
   }
+
+  public async sendEmail(sender: string, template, templateData: any, companyId: number){
+    const companyDetails = await this.companyService.findByCompanyId(companyId);
+    const systemCountryName = this.configService.get("systemCountryName");
+    templateData = {
+      ...templateData,
+      countryName: systemCountryName,
+      government: companyDetails.name
+    };
+    this.emailService.sendEmail(sender, template, templateData);
+  }
+
 }

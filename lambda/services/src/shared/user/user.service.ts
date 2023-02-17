@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
   UseFilters,
@@ -48,6 +50,7 @@ export class UserService {
     private configService: ConfigService,
     private helperService: HelperService,
     @InjectEntityManager() private entityManger: EntityManager,
+    @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private counterService: CounterService
   ) {}

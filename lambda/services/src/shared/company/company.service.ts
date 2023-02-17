@@ -1,5 +1,5 @@
 import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrganisationDto } from "../dto/organisation.dto";
@@ -18,6 +18,9 @@ import { DataResponseDto } from "../dto/data.response.dto";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { User } from "../entities/user.entity";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { Programme } from "../entities/programme.entity";
+import { EmailTemplates } from "../email/email.template";
 
 @Injectable()
 export class CompanyService {
@@ -27,6 +30,8 @@ export class CompanyService {
     private configService: ConfigService,
     private helperService: HelperService,
     private programmeLedgerService: ProgrammeLedgerService,
+    @Inject(forwardRef(() => EmailHelperService))
+    private emailHelperService: EmailHelperService,
     @InjectRepository(ProgrammeTransfer)
     private programmeTransferRepo: Repository<ProgrammeTransfer>
   ) {}
@@ -80,12 +85,25 @@ export class CompanyService {
           company.name
         );
         await this.companyTransferCancel(companyId);
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
           remarks,
-          user.id.toString()
+          user.id.toString(),
+          async (programme:Programme) => {
+            const hostAddress = this.configService.get("host");
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(programme.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,{
+              organisationName: company.name,
+              programmeName: programme.title,
+              credits: programme.creditBalance,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + `/programmeManagement/view?id=${programme.programmeId}`
+            })
+          }
         );
+
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
       }
       return new BasicResponseDto(
         HttpStatus.OK,

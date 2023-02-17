@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../shared/entities/user.entity';
 import { UserService } from './user.service';
@@ -24,7 +24,7 @@ import { UtilModule } from '../util/util.module';
     TypeOrmModule.forFeature([User]),
     CaslModule,
     EmailModule,
-    CompanyModule,
+    forwardRef(() => CompanyModule),
     UtilModule
   ],
   providers: [UserService, Logger],
