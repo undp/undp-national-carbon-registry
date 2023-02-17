@@ -17,7 +17,7 @@ const TimelineBody: FC<TimelineBodyProps> = (props: TimelineBodyProps) => {
         {text}
         {via && <span>{` ${t('view:via')} ${via}`}</span>}
       </div>
-      {remark && remark != 'undefined' && (
+      {remark && remark !== 'undefined' && (
         <div className="remark">
           <div className="remark-title">{t('view:remarks')}</div>
           <div className="remark-body">{remark}</div>
