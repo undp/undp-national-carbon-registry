@@ -8,6 +8,8 @@ import coin from '../../Assets/Images/coin.svg';
 import { Skeleton, Tooltip } from 'antd';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { ClockHistory, BoxArrowRight, Diamond, Gem, InfoCircle } from 'react-bootstrap-icons';
+import { toolTipTextGen } from '../../Pages/Dashboard/toolTipTextGen';
+import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
 
 export interface StasticCardItemProps {
   value: number;
@@ -15,30 +17,11 @@ export interface StasticCardItemProps {
   updatedDate: any;
   icon: any;
   loading: boolean;
-  toolTipText: string;
+  companyRole: string;
 }
 
 const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
-  const { value, title, updatedDate, icon, loading, toolTipText } = props;
-
-  const cardBackgroundColor = (type: string) => {
-    switch (type) {
-      case '1':
-        return '#023c66';
-      case '2':
-        return '#034b7f';
-      case '3':
-        return '#035998';
-      case '4':
-        return '#0468b1';
-      case '5':
-        return '#0577ca';
-      case '6':
-        return '#0585e3';
-      default:
-        return '#0894f9';
-    }
-  };
+  const { value, title, updatedDate, icon, loading, companyRole } = props;
 
   return (
     <div className="stastic-card-main-container">
@@ -52,8 +35,8 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
               <Tooltip
                 arrowPointAtCenter
                 placement="bottomRight"
-                trigger="click"
-                title={toolTipText}
+                trigger="hover"
+                title={toolTipTextGen(companyRole, title)}
               >
                 <InfoCircle color="#000000" size={17} />
               </Tooltip>

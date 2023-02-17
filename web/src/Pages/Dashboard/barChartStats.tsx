@@ -21,7 +21,7 @@ const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
       <div className="pie-charts-top">
         <div className="pie-charts-title">{title}</div>
         <div className="info-container">
-          <Tooltip arrowPointAtCenter placement="bottomRight" trigger="click" title={toolTipText}>
+          <Tooltip arrowPointAtCenter placement="bottomRight" trigger="hover" title={toolTipText}>
             <InfoCircle color="#000000" size={17} />
           </Tooltip>
         </div>

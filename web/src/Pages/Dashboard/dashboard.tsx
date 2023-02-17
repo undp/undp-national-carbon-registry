@@ -1106,13 +1106,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Pending state programmes awaiting authorisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Pending credit transfer requests received by your organisation'
-                  : 'Number of programmes not yet certified including certificates revoked by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1142,13 +1136,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Pending credit transfer requests sent to programme owners initiated by your organisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Pending local credit transfer requests initiated by your organisation'
-                  : 'Number of programmes certified by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1178,13 +1166,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Total credit balance owned by your organisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Credit Balance - Total credit balance owned by your organisation '
-                  : 'Number of credits certified by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
         </Row>

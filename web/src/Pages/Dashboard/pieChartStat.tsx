@@ -32,7 +32,7 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
               <Tooltip
                 arrowPointAtCenter
                 placement="bottomRight"
-                trigger="click"
+                trigger="hover"
                 title={toolTipText}
               >
                 <InfoCircle color="#000000" size={17} />
