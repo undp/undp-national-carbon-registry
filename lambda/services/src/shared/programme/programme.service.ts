@@ -50,7 +50,7 @@ export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnTy
 export class ProgrammeService {
 
     private userNameCache: any;
-    
+
     constructor(
         private programmeLedger: ProgrammeLedgerService,
         private counterService: CounterService,
@@ -627,7 +627,7 @@ export class ProgrammeService {
         if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
             resp.map( async el => {
                 const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
-                if (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId) {
+                if (refs && (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId)) {
                     el.data['userName'] = (await this.getUserName(refs.id))
                 }
             })

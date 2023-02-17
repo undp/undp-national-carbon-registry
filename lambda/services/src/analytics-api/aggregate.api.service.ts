@@ -597,6 +597,8 @@ export class AggregateAPIService {
       case StatType.AGG_PROGRAMME_BY_SECTOR:
       case StatType.MY_AGG_PROGRAMME_BY_STATUS:
       case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
+      case StatType.AGG_AUTH_PROGRAMME_BY_STATUS:
+      case StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS:
         results[key] = await this.generateProgrammeAggregates(
           stat,
           frzAgg,
@@ -1195,18 +1197,48 @@ export class AggregateAPIService {
       [
         StatType.MY_AGG_PROGRAMME_BY_SECTOR,
         StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
       ].includes(stat.type)
     ) {
       stat.statFilter
         ? (stat.statFilter.onlyMine = true)
         : (stat.statFilter = { onlyMine: true });
     }
+
+    let filterAnd = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      {
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      },
+      "createdTime"
+    )
+
+    if (
+      [
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+    ) {
+      if (!filterAnd) {
+        filterAnd = [];
+      }
+      filterAnd.push({
+        value: ProgrammeStage.AUTHORISED,
+        key: "currentStage",
+        operation: "=",
+      })
+    }
+  
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
       [
         StatType.AGG_PROGRAMME_BY_STATUS,
         StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
       ].includes(stat.type)
         ? ["currentStage"]
         : ["sector"],
@@ -1219,15 +1251,7 @@ export class AggregateAPIService {
         new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
         frzAgg,
       ],
-      this.getFilterAndByStatFilter(
-        stat.statFilter,
-        {
-          value: companyId,
-          key: "companyId",
-          operation: "ANY",
-        },
-        "createdTime"
-      ),
+      filterAnd,
       null,
       stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
