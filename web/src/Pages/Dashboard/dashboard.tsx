@@ -169,6 +169,13 @@ const Dashboard = () => {
             },
           },
           {
+            type: 'MY_AGG_AUTH_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
@@ -182,6 +189,13 @@ const Dashboard = () => {
         stats: [
           {
             type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'AUTH_CERTIFIED_BY_ME_BY_STATE',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -207,6 +221,13 @@ const Dashboard = () => {
             },
           },
           {
+            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
             type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
@@ -220,6 +241,13 @@ const Dashboard = () => {
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -647,23 +675,32 @@ const Dashboard = () => {
         getAllProgrammeAnalyticsStatsParams()
       );
       let programmeByStatusAggregationResponse: any;
+      let programmeByStatusAuthAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
       if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'mine') {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (companyRole === 'Certifier' && categoryType === 'overall') {
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
@@ -673,6 +710,7 @@ const Dashboard = () => {
       let totalRetiredCredits = 0;
       let totalBalancecredit = 0;
       let totalTxCredits = 0;
+      let totalFrozenCredits = 0;
       let totalCertifiedCredit = 0;
       let totalUnCertifiedredit = 0;
       let totalRevokedCredits = 0;
@@ -680,32 +718,14 @@ const Dashboard = () => {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
           if (responseItem?.currentStage === 'AwaitingAuthorization') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
             setPendingProjects(parseInt(responseItem?.count));
           }
           if (responseItem?.currentStage === 'Rejected') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
             setRejectedProjects(parseInt(responseItem?.count));
           }
           if (responseItem?.currentStage === 'Authorised') {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
             setAuthorisedProjects(parseInt(responseItem?.count));
           }
         });
@@ -716,6 +736,16 @@ const Dashboard = () => {
         setRejectedProjects(0);
         setTotalProjects(0);
       }
+      if (programmeByStatusAuthAggregationResponse?.length > 0) {
+        programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+        });
+      }
       if (certifiedRevokedAggregationResponse) {
         totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
         totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
@@ -724,7 +754,9 @@ const Dashboard = () => {
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
       pieSeriesCreditsData.push(creditAuthorized);
-      pieSeriesCreditsData.push(totalBalancecredit);
+      pieSeriesCreditsData.push(
+        totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits
+      );
       pieSeriesCreditsData.push(totalTxCredits);
       pieSeriesCreditsData.push(totalRetiredCredits);
 
@@ -1106,13 +1138,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Pending state programmes awaiting authorisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Pending credit transfer requests received by your organisation'
-                  : 'Number of programmes not yet certified including certificates revoked by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1142,13 +1168,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Pending credit transfer requests sent to programme owners initiated by your organisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Pending local credit transfer requests initiated by your organisation'
-                  : 'Number of programmes certified by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1178,13 +1198,7 @@ ${total}
                 )
               }
               loading={loadingWithoutTimeRange}
-              toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? 'Total credit balance owned by your organisation'
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'Credit Balance - Total credit balance owned by your organisation '
-                  : 'Number of credits certified by your organisation'
-              }
+              companyRole={companyRole}
             />
           </Col>
         </Row>

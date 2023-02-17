@@ -382,7 +382,7 @@ export class AggregateAPIService {
         }
         lastTime = {
           max: maxTime,
-          all: allTimes
+          all: allTimes,
         };
         lastTimeForWhere[cacheKey] = lastTime;
       }
@@ -414,11 +414,11 @@ export class AggregateAPIService {
     }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
-      last: lastTime.max
+      last: lastTime.max,
     };
 
     if (lastTime.all && Object.keys(lastTime.all).length > 0) {
-      statCache[key]['all'] = lastTime.all
+      statCache[key]["all"] = lastTime.all;
     }
 
     return statCache[key];
@@ -699,6 +699,7 @@ export class AggregateAPIService {
         break;
       case StatType.CERTIFIED_BY_ME_BY_STATE:
       case StatType.CERTIFIED_BY_ME_BY_SECTOR:
+      case StatType.AUTH_CERTIFIED_BY_ME_BY_STATE:
         if (stat.statFilter) {
           stat.statFilter.onlyMine = true;
         } else {
@@ -714,10 +715,24 @@ export class AggregateAPIService {
           "createdTime"
         );
 
+        if (stat.type === StatType.AUTH_CERTIFIED_BY_ME_BY_STATE) {
+          if (!filtCState) {
+            filtCState = [];
+          }
+          filtCState.push({
+            value: ProgrammeStage.AUTHORISED,
+            key: "currentStage",
+            operation: "=",
+          });
+        }
+
         results[key] = await this.genAggregateTypeOrmQuery(
           this.programmeRepo,
           "programme",
-          stat.type === StatType.CERTIFIED_BY_ME_BY_STATE
+          [
+            StatType.AUTH_CERTIFIED_BY_ME_BY_STATE,
+            StatType.CERTIFIED_BY_ME_BY_STATE,
+          ].includes(stat.type)
             ? ["currentStage"]
             : ["sector"],
           [
@@ -1213,7 +1228,7 @@ export class AggregateAPIService {
         operation: "ANY",
       },
       "createdTime"
-    )
+    );
 
     if (
       [
@@ -1228,9 +1243,9 @@ export class AggregateAPIService {
         value: ProgrammeStage.AUTHORISED,
         key: "currentStage",
         operation: "=",
-      })
+      });
     }
-  
+
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
