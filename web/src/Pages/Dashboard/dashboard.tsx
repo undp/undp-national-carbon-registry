@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
+import { Col, DatePicker, Progress, Radio, Row, Skeleton, Tooltip, message } from 'antd';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
@@ -38,6 +38,8 @@ import {
 } from './dashboardTypesInitialValues';
 import { Sector } from '../../Casl/enums/sector.enum';
 import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
+import { CompanyRole } from '../../Casl/enums/company.role.enum';
+import { toolTipTextGen } from './toolTipTextGen';
 
 const { RangePicker } = DatePicker;
 
@@ -155,7 +157,7 @@ const Dashboard = () => {
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper') {
+    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
         stats: [
           {
@@ -235,7 +237,7 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper') {
+    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
         stats: [
           {
@@ -442,7 +444,7 @@ const Dashboard = () => {
       let totalCreditsCertifiedStats: any;
       let programmeLocationsStats: any;
       let transferLocationsStats: any;
-      if (companyRole === 'ProgrammeDeveloper') {
+      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
@@ -645,7 +647,7 @@ const Dashboard = () => {
       );
       let programmeByStatusAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === 'ProgrammeDeveloper') {
+      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         certifiedRevokedAggregationResponse =
@@ -756,7 +758,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
-    if (companyRole === 'ProgrammeDeveloper') {
+    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       setCategoryType('mine');
     }
   }, [companyRole]);
@@ -1079,88 +1081,109 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? pendingProjectsWithoutTimeRange
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestReceived
                   : programmesUnCertifed
               }
               title={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? 'Programmes Pending'
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'Transfer Requests Received'
                   : 'Programmes Uncertified'
               }
               updatedDate={parseInt(lastUpdateProgrammesStats) / 1000}
               icon={
-                companyRole === 'Government' ? (
+                companyRole === CompanyRole.GOVERNMENT ? (
                   <ClockHistory color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowInRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldX color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? 'Pending state programmes awaiting authorisation'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'Pending credit transfer requests received by your organisation'
+                  : 'Number of programmes not yet certified including certificates revoked by your organisation'
+              }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? transferRequestSent
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestSent
                   : programmesCertifed
               }
               title={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? 'Transfer Requests Sent'
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'Transfer Requests Sent'
                   : 'Programmes Certified'
               }
               updatedDate={lastUpdate}
               icon={
-                companyRole === 'Government' ? (
+                companyRole === CompanyRole.GOVERNMENT ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldCheck color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? 'Pending credit transfer requests sent to programme owners initiated by your organisation'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'Pending local credit transfer requests initiated by your organisation'
+                  : 'Number of programmes certified by your organisation'
+              }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? creditBalanceWithoutTimeRange
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? creditBalanceWithoutTimeRange
                   : creditCertiedBalanceWithoutTimeRange
               }
               title={
-                companyRole === 'Government'
+                companyRole === CompanyRole.GOVERNMENT
                   ? 'Credit Balance'
-                  : companyRole === 'ProgrammeDeveloper'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'Credit Balance'
                   : 'Credit Certified'
               }
               updatedDate={lastUpdate}
               icon={
-                companyRole === 'Government' ? (
+                companyRole === CompanyRole.GOVERNMENT ? (
                   <Gem color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <Gem color="#16B1FF" size={80} />
                 ) : (
                   <ShieldExclamation color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? 'Total credit balance owned by your organisation'
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'Credit Balance - Total credit balance owned by your organisation '
+                  : 'Number of credits certified by your organisation'
+              }
             />
           </Col>
         </Row>
@@ -1202,6 +1225,15 @@ ${total}
               authorized={authorisedProjects}
               updatedDate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Programmes')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Programmes')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Programmes', true)
+                  : toolTipTextGen(companyRole, 'Programmes')
+              }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1211,6 +1243,15 @@ ${total}
               series={creditsPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Credits')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Credits')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Credits', true)
+                  : toolTipTextGen(companyRole, 'Credits')
+              }
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1220,6 +1261,15 @@ ${total}
               series={creditsCertifiedPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Certified credits')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Certified credits')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Certified credits', true)
+                  : toolTipTextGen(companyRole, 'Certified credits')
+              }
             />
           </Col>
         </Row>
@@ -1234,6 +1284,15 @@ ${total}
               series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Total Programmes')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Total Programmes')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Total Programmes', true)
+                  : toolTipTextGen(companyRole, 'Total Programmes')
+              }
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
@@ -1244,6 +1303,15 @@ ${total}
               series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Total Programmes:Sector', true)
+                  : toolTipTextGen(companyRole, 'Total Programmes:Sector')
+              }
             />
           </Col>
         </Row>
@@ -1258,6 +1326,15 @@ ${total}
               series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Total Credits')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Total Credits')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Total Credits', true)
+                  : toolTipTextGen(companyRole, 'Total Credits')
+              }
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
@@ -1268,6 +1345,15 @@ ${total}
               series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStats)}
               loading={loading}
+              toolTipText={
+                companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(companyRole, 'Total Credits Certified')
+                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(companyRole, 'Total Credits Certified')
+                  : categoryType === 'mine'
+                  ? toolTipTextGen(companyRole, 'Total Credits Certified', true)
+                  : toolTipTextGen(companyRole, 'Total Credits Certified')
+              }
             />
           </Col>
         </Row>
@@ -1279,7 +1365,24 @@ ${total}
               <div className="pie-charts-top">
                 <div className="pie-charts-title">Programme Locations</div>
                 <div className="info-container">
-                  <InfoCircle color="#000000" size={20} />
+                  <div className="info-container">
+                    <Tooltip
+                      arrowPointAtCenter
+                      placement="bottomRight"
+                      trigger="click"
+                      title={
+                        companyRole === CompanyRole.GOVERNMENT
+                          ? toolTipTextGen(companyRole, 'Programme Locations')
+                          : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                          ? toolTipTextGen(companyRole, 'Programme Locations')
+                          : categoryType === 'mine'
+                          ? toolTipTextGen(companyRole, 'Programme Locations', true)
+                          : toolTipTextGen(companyRole, 'Programme Locations')
+                      }
+                    >
+                      <InfoCircle color="#000000" size={17} />
+                    </Tooltip>
+                  </div>
                 </div>
               </div>
               {loading ? (
@@ -1311,7 +1414,22 @@ ${total}
               <div className="pie-charts-top">
                 <div className="pie-charts-title">Transfer Locations International</div>
                 <div className="info-container">
-                  <InfoCircle color="#000000" size={20} />
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="bottomRight"
+                    trigger="click"
+                    title={
+                      companyRole === CompanyRole.GOVERNMENT
+                        ? toolTipTextGen(companyRole, 'Transfer Locations International')
+                        : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                        ? toolTipTextGen(companyRole, 'Transfer Locations International')
+                        : categoryType === 'mine'
+                        ? toolTipTextGen(companyRole, 'Transfer Locations International', true)
+                        : toolTipTextGen(companyRole, 'Transfer Locations International')
+                    }
+                  >
+                    <InfoCircle color="#000000" size={17} />
+                  </Tooltip>
                 </div>
               </div>
               {loading ? (
@@ -1324,7 +1442,7 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on margin-top-1">
+                  <div className="updated-on margin-top-2">
                     <div className="updated-moment-container">
                       {moment(lastUpdate * 1000).fromNow()}
                     </div>
