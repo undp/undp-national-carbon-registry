@@ -16,8 +16,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
     padding: 0rem 0rem 0 0vw;
     cursor: pointer;
 
@@ -38,20 +36,12 @@
       font-family: 'MuseoSans';
       font-size: 1.2rem;
       color: $logo-text-color;
-      // padding-bottom: 3px;
     }
 
     .logo {
-      // display: flex;
-      // flex-direction: row;
-      // justify-content: flex-start;
-      // align-items: center;
-      height: 53px;
+      height: 55px;
+      width: 80px;
       padding-left: 2vw;
-      // overflow: hidden;
-      // margin-right: 0.8rem;
-
-      // background-color: red;
       img {
         object-fit: cover;
         height: auto;
@@ -59,15 +49,7 @@
         margin-top: 6px;
       }
     }
-    // button {
-    //   margin-top: 6px;
-    //   margin-right: 10px;
-    //   margin-left: 30px;
-    //   text-transform: uppercase;
-    //   // font-size: 1.25rem;
-    //   // font-weight: 500;
-    //   // color: $primary-color;
-    // }
+
     .country-name {
       font-size: 0.65rem;
       color: $logo-text-color;
@@ -87,6 +69,14 @@
       margin-right: 30px;
       margin-left: 30px;
       text-transform: uppercase;
+    }
+    .ant-btn-primary {
+      background-color: $primary-color;
+      color: $dark-text-color;
+      border: none;
+    }
+    .ant-btn-primary:hover {
+      background-color: $gradient-background-start;
     }
   }
   .image-container {
@@ -108,7 +98,6 @@
     flex: 1;
     text-align: left;
 
-    // background-size: 500vh;
 
     @media (max-width: $lg-size) {
       text-align: center;
@@ -201,7 +190,6 @@
         font-size: 3rem;
         margin-top: 1rem;
         margin-bottom: unset;
-        // width: 100vw;
         line-height: 1.5em;
         padding-top: 50vh;
       }
@@ -224,7 +212,6 @@
   }
   .homepage-content-containerwhite {
     background-color: $outside-background-color;
-    // height: 35vh;
     height: fit-content;
     padding: 10px 60px 10px 60px;
     text-align: center;
@@ -248,7 +235,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -265,7 +251,6 @@
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
       .homepagebody_aboutusline1 {
@@ -308,7 +293,6 @@
       text-align: center;
     }
     .aboutus-card-main-container:hover {
-      // background: linear-gradient(to top,$gradient-background-end,$gradient-background-start);
       background: $gradient-background-end;
       cursor: pointer;
     }
@@ -363,7 +347,6 @@
   }
   .homepage-image-content-container {
     background-color: $outside-background-color;
-    // height: 35vh;
     padding-left: 60px;
     text-align: right;
     margin-top: 5px;
@@ -379,15 +362,6 @@
       line-height: 40px;
     }
 
-    // img {
-    //   max-height: 50vh;
-    //   min-height: 50vh;
-
-    //   @media (max-width: $lg-size) {
-    //     max-height: 500px;
-    //   }
-    // }
-
     .title {
       font-size: 2rem;
       font-weight: 700;
@@ -402,7 +376,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -419,14 +392,12 @@
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
   }
   .homepage-resources-content-container {
     background-color: $outside-background-color;
-    // height: 35vh;
     height: fit-content;
     padding-left: 60px;
 
@@ -469,7 +440,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -478,14 +448,12 @@
       font-weight: 400;
       font-family: $primary-font-family;
       color: $body-text-color;
-      // justify-content: left;
       margin: 20px 60px 20px 60px;
 
       @media (max-width: $lg-size) {
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }

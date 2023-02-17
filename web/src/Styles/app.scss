@@ -216,8 +216,6 @@ body {
   background-color: $outside-background-color;
   border-radius: 10px;
   width: 100%;
-  // height: calc(100vh - 200px);
-  // overflow: auto;
   .action-bar {
     padding: 1.6rem 1.3rem 1.6rem 1.3rem;
 
@@ -237,7 +235,6 @@ body {
     .search-bar {
       display: flex;
       flex-direction: row-reverse;
-      // width: 95%;
     }
 
     .filter-bar {
@@ -339,7 +336,6 @@ body {
 }
 
 .ant-tag {
-  // border: none;
   padding: 1px 10px;
 }
 
@@ -506,13 +502,8 @@ body {
 .ant-tag-processing {
   color: $primary-color;
   background: rgba($color: #b9e2f4, $alpha: 0.4);
-  // border: none;
-  // border-color: #91d5ff;
 }
 
-// .apexcharts-tooltip.apexcharts-theme-dark{
-//   background: $primary-color !important;
-// }
 
 .filter-section input {
   font-family: 'Inter';
@@ -662,11 +653,7 @@ body {
 }
 
 .ant-message-notice-content {
-  // border-radius: 5px;
-  // font-family: $primary-font-family;
-  // font-size: 0.8rem;
-  // height: 100%;
-  // vertical-align: middle;
+
   padding: 0px;
   border-radius: 5px;
 
