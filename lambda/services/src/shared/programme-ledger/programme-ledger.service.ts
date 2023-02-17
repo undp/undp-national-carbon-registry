@@ -505,7 +505,8 @@ export class ProgrammeLedgerService {
   public async revokeCompanyCertifications(
     companyId: number,
     reason: string,
-    user: string
+    user: string,
+    sendRevokeEmail: Function
   ): Promise<number[]> {
     this.logger.log(
       `Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`
@@ -556,6 +557,8 @@ export class ProgrammeLedgerService {
           };
 
           programmesId.push(programme.programmeId);
+
+          sendRevokeEmail(programme);
         }
         // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];

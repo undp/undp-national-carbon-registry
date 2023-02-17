@@ -132,7 +132,11 @@ export class ProgrammeService {
         );
 
         if (result.affected > 0) {
-            if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+            if(pTransfer.isRetirement){
+                await this.emailHelperService.sendEmailToOrganisationAdmins(pTransfer.fromCompanyId,EmailTemplates.CREDIT_RETIREMENT_NOT_RECOGNITION,{
+                    credits: pTransfer.creditAmount, country: pTransfer.toCompanyMeta.country
+                },0,pTransfer.programmeId)
+            }else if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
                 this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_TRANSFER_GOV_REJECTED,{credits : pTransfer.creditAmount},
                     pTransfer.programmeId,pTransfer.fromCompanyId)
             }else{
@@ -242,7 +246,11 @@ export class ProgrammeService {
             transfer.initiatorCompanyId
         );
 
-        if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+        if(transfer.isRetirement){
+            await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId,EmailTemplates.CREDIT_RETIREMENT_RECOGNITION,{
+                credits: transfer.creditAmount, country: transfer.toCompanyMeta.country
+            },0,transfer.programmeId)
+        }else if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
             await this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR, 
                 {credits : transfer.creditAmount},transfer.programmeId ,approver.companyId );
             await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.toCompanyId,EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER,
@@ -303,7 +311,11 @@ export class ProgrammeService {
 
         if (result.affected > 0) {
             const initiatorCompanyDetails = await this.companyService.findByCompanyId(transfer.initiatorCompanyId);
-            if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
+            if(transfer.isRetirement){
+                await this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_RETIREMENT_CANCEL,{
+                    credits : transfer.creditAmount, organisationName: initiatorCompanyDetails.name, country: transfer.toCompanyMeta.country
+                },transfer.programmeId)
+            }else if(initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT){
                 await this.emailHelperService.sendEmailToOrganisationAdmins(transfer.fromCompanyId,EmailTemplates.CREDIT_TRANSFER_GOV_CANCELLATION,
                     {credits : transfer.creditAmount, government: initiatorCompanyDetails.name}, transfer.toCompanyId, transfer.programmeId);
             }else{
@@ -563,7 +575,7 @@ export class ProgrammeService {
         const hostAddress = this.configService.get("host");
         this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.PROGRAMME_CREATE,{
             organisationName: orgNamesList,
-            programmePageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`
+            programmePageLink: hostAddress + `/programmeManagement/view?id=${programme.programmeId}`
         })
 
         return await this.programmeLedger.createProgramme(programme);
@@ -673,6 +685,23 @@ export class ProgrammeService {
                 where: { companyId: In(updated.certifierId) },
             })
         }
+
+        if(add){
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION,{
+            },user.companyId)
+        }else{
+            if(user.companyRole === CompanyRole.GOVERNMENT){
+                await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME,{
+                },req.certifierId,user.companyId)
+                await this.emailHelperService.sendEmailToOrganisationAdmins(req.certifierId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT,{
+                },user.companyId,req.programmeId)
+            }else {
+                await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(req.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_CERT,{
+                },user.companyId)
+            }
+        }
+
+
         return new DataResponseDto(HttpStatus.OK, updated)
     }
 
@@ -796,21 +825,28 @@ export class ProgrammeService {
             transfer.retirementType = req.type;
             // await this.programmeTransferRepo.save(transfer);
 
+            const hostAddress = this.configService.get("host");
             if (requester.companyId != toCompany.companyId) {
                 transfer.status = TransferStatus.PENDING;
-                await this.emailService.sendEmail(
-                    toCompany.email,
-                    EmailTemplates.RETIRE_REQUEST,
-                    {
-                        "name": fromCompany.name,
-                        "requestedCompany": requestedCompany.name,
-                        "credits": transfer.creditAmount,
-                        "serialNo": programme.serialNo,
-                        "programmeName": programme.title
-                    });
+                this.emailHelperService.sendEmailToGovernmentAdmins(EmailTemplates.CREDIT_RETIREMENT_BY_DEV,{
+                    credits: transfer.creditAmount,
+                    programmeName: programme.title,
+                    serialNumber: programme.serialNo,
+                    organisationName: fromCompany.name,
+                    pageLink: hostAddress + "/creditTransfers/viewAll",
+                })
             } else {
                 transfer.status = TransferStatus.PROCESSING;
                 autoApproveTransferList.push(transfer);
+                this.emailHelperService.sendEmailToOrganisationAdmins(fromCompany.companyId,EmailTemplates.CREDIT_RETIREMENT_BY_GOV,{
+                    credits: transfer.creditAmount,
+                    programmeName: programme.title,
+                    serialNumber: programme.serialNo,
+                    government: toCompany.name,
+                    reason: req.comment,
+                    pageLink: hostAddress + "/creditTransfers/viewAll",
+                })
+
             }
             allTransferList.push(transfer);
         }
@@ -864,7 +900,7 @@ export class ProgrammeService {
                 programmeName: updated.title,
                 credits: updated.creditIssued,
                 serialNumber: updated.serialNo,
-                pageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+                pageLink: hostAddress + `/programmeManagement/view?id=${updated.programmeId}`
             })
         });
 
@@ -904,7 +940,7 @@ export class ProgrammeService {
                 programmeName: updated.title,
                 authorisedDate: new Date(updated.txTime),
                 serialNumber: updated.serialNo,
-                programmePageLink: hostAddress + `/programmeManagement/view/${updated.programmeId}`
+                programmePageLink: hostAddress + `/programmeManagement/view?id=${updated.programmeId}`
             })
         });
 
