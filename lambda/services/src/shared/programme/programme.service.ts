@@ -623,6 +623,9 @@ export class ProgrammeService {
 
     async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
+        if (resp == null) {
+            return [];
+        }
         if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
             for (const el of resp) {
                 const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
@@ -631,7 +634,7 @@ export class ProgrammeService {
                 }
             }
         }
-        return resp == null ? [] : resp;
+        return resp;
     }
 
     async updateCustomConstants(customConstantType: TypeOfMitigation, constants: ConstantUpdateDto) {
@@ -993,6 +996,7 @@ export class ProgrammeService {
         if (user) {
             this.logger.debug(`Getting user - user ${user.name}`);
             this.userNameCache[userId] = user.name;
+            return user.name;
         }
         return null;
     }
