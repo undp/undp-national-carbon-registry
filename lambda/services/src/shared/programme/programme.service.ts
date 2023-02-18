@@ -981,16 +981,19 @@ export class ProgrammeService {
     }
 
     private getUserName = async (userId: string) => {
+        this.logger.debug('Getting user', userId);
         if (!userId) {
             return null;
         }
         if (this.userNameCache[userId]) {
+            this.logger.debug(`Cached user ${userId} ${this.userNameCache[userId]}`);
             return this.userNameCache[userId];
         }
         const n = (await this.userService.findById(Number(userId)))?.name;
         if (n) {
             this.userNameCache[userId] = n;
         }
+        this.logger.debug(`User ${userId} ${this.userNameCache[userId]} ${n}`);
         return n;
     }
 
