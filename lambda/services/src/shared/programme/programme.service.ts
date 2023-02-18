@@ -991,6 +991,7 @@ export class ProgrammeService {
         if (n) {
             this.userNameCache[userId] = n;
         }
+        return n;
     }
 
     private getCompanyIdAndUserIdFromRef = (ref: string) => {
