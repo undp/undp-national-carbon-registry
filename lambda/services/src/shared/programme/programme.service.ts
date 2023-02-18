@@ -49,7 +49,7 @@ export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnTy
 @Injectable()
 export class ProgrammeService {
 
-    private userNameCache: any;
+    private userNameCache: any = {};
 
     constructor(
         private programmeLedger: ProgrammeLedgerService,
@@ -67,7 +67,6 @@ export class ProgrammeService {
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
         private logger: Logger) {
-            this.userNameCache = {}
         }
 
     private toProgramme(programmeDto: ProgrammeDto): Programme {
@@ -625,7 +624,7 @@ export class ProgrammeService {
     async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
         if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-            resp.map( async el => {
+            await resp.map( async el => {
                 const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
                 if (refs && (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId)) {
                     el.data['userName'] = (await this.getUserName(refs.id))
@@ -981,7 +980,7 @@ export class ProgrammeService {
     }
 
     private getUserName = async (userId: string) => {
-        this.logger.debug('Getting user', userId);
+        this.logger.debug(`Getting user ${userId}`);
         if (userId == undefined || userId == null) {
             return null;
         }
