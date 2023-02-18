@@ -624,12 +624,12 @@ export class ProgrammeService {
     async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
         if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-            await resp.map( async el => {
+            for (const el of resp) {
                 const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
                 if (refs && (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId)) {
-                    el.data['userName'] = (await this.getUserName(refs.id))
+                    el.data['userName'] = await this.getUserName(refs.id);
                 }
-            })
+            }
         }
         return resp == null ? [] : resp;
     }
@@ -988,12 +988,13 @@ export class ProgrammeService {
             this.logger.debug(`Getting user - cached ${userId} ${this.userNameCache[userId]}`);
             return this.userNameCache[userId];
         }
-        const n = (await this.userService.findById(Number(userId)))?.name;
-        if (n) {
-            this.userNameCache[userId] = n;
+        const user = await this.userService.findById(Number(userId));
+        this.logger.debug(`Getting user - user ${user}`);
+        if (user) {
+            this.logger.debug(`Getting user - user ${user.name}`);
+            this.userNameCache[userId] = user.name;
         }
-        this.logger.debug(`Getting user - db ${userId} ${this.userNameCache[userId]} ${n}`);
-        return n;
+        return null;
     }
 
     private getCompanyIdAndUserIdFromRef = (ref: string) => {
