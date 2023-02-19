@@ -193,7 +193,7 @@ export class ProgrammeService {
                     usrId = e['initiator'];
                     userCompany = e['initiatorCompanyId']
                 }
-                if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId))) {
+                if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId)) && usrId) {
                     e['userName'] = await this.getUserName(usrId);
                 }
             }
