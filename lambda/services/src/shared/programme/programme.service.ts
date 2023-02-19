@@ -296,7 +296,7 @@ export class ProgrammeService {
                 {credits : transfer.creditAmount}, approver.companyId, transfer.programmeId );
         }
 
-        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}}#${giver.companyId}#${giver.name}`, req.comment, transfer.isRetirement)
+        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}#${giver.companyId}#${giver.name}`, req.comment, transfer.isRetirement)
     }
 
     private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
