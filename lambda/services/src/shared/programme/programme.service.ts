@@ -174,33 +174,29 @@ export class ProgrammeService {
           .limit(query.size)
           .getManyAndCount();
     
-        if (query.size === 1 && resp.length > 0) {
-
-            let usrId = undefined;
-            let userCompany = undefined;
-            if (resp[0]['txRef'] != undefined && resp[0]['txRef'] != null ) {
-                const parts =  resp[0]['txRef']?.split('#')
-                if (parts.length > 2) {
-                    usrId = parts[2];
-                    userCompany = parts[1];
-                }
-            } else {
-                usrId = resp[0]['initiator'];
-                userCompany = resp[0]['initiatorCompanyId']
-            }
-            if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId))) {
-                resp[0]['userName'] = await this.getUserName(usrId);
-            }
-            //  = await this.getUserName(resp[0]['initiator'])
-        }
-        if (resp.length > 0) {
-            resp[0] = resp[0].map( e => {
+        if (resp && resp.length > 0) {
+            for (const e of resp[0]) {
                 e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
                 if (e.isRetirement && e.retirementType == RetireType.CROSS_BORDER && e.toCompanyMeta.country) {
-                    e.toCompanyMeta['countryName'] = this.countryService.getCountryName(e.toCompanyMeta.country)
+                    e.toCompanyMeta['countryName'] = (await this.countryService.getCountryName(e.toCompanyMeta.country))
                 }
-                return e;
-            })
+
+                let usrId = undefined;
+                let userCompany = undefined;
+                if (e['txRef'] != undefined && e['txRef'] != null ) {
+                    const parts =  e['txRef']?.split('#')
+                    if (parts.length > 2) {
+                        usrId = parts[2];
+                        userCompany = parts[1];
+                    }
+                } else {
+                    usrId = e['initiator'];
+                    userCompany = e['initiatorCompanyId']
+                }
+                if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId))) {
+                    e['userName'] = await this.getUserName(usrId);
+                }
+            }
         }
         return new DataListResponseDto(
           resp.length > 0 ? resp[0] : undefined,

@@ -134,7 +134,7 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferCancel')
     async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
-        return this.programmeService.transferCancel(body, req.user.companyId)
+        return this.programmeService.transferCancel(body, req.user)
     }
 
     @ApiBearerAuth()
