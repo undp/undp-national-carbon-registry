@@ -262,6 +262,7 @@ export class ProgrammeService {
 
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
+        console.log(e)
         e.certifier =
           e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
         if (
@@ -281,10 +282,12 @@ export class ProgrammeService {
             usrId = parts[2];
             userCompany = parts[1];
           }
+          this.logger.debug(`TxRef ${e["txRef"]}`)
         } else {
           usrId = e["initiator"];
           userCompany = e["initiatorCompanyId"];
         }
+        
         if (
           (user.companyRole === CompanyRole.GOVERNMENT ||
             Number(userCompany) === Number(user.companyId))
@@ -1593,7 +1596,7 @@ export class ProgrammeService {
   }
 
   private getUserName = async (usrId: string) => {
-    this.logger.debug(`Getting user ${usrId}`);
+    this.logger.debug(`Getting user [${usrId}]`);
     const userId = Number(usrId);
     if (userId == undefined || userId == null) {
       return null;
