@@ -629,7 +629,7 @@ export class ProgrammeService {
         if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
             for (const el of resp) {
                 const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
-                if (refs && (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId)) {
+                if (refs && (user.companyRole === CompanyRole.GOVERNMENT || Number(refs?.companyId) === Number(user.companyId))) {
                     el.data['userName'] = await this.getUserName(refs.id);
                 }
             }
