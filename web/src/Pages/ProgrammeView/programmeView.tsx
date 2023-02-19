@@ -382,7 +382,10 @@ const ProgrammeView = () => {
 
       addElement(d, createdTime, hist);
 
-      if (transfer.status === CreditTransferStage.Rejected || transfer.status === CreditTransferStage.NotRecognised) {
+      if (
+        transfer.status === CreditTransferStage.Rejected ||
+        transfer.status === CreditTransferStage.NotRecognised
+      ) {
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetRejectTitle' : 'view:tlRejectTitle'),
