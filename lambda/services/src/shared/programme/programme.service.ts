@@ -219,7 +219,7 @@ export class ProgrammeService {
         );
 
         if (receiver.state === CompanyState.SUSPENDED) {
-          await this.companyService.companyTransferCancel(transfer.toCompanyId);
+          await this.companyService.companyTransferCancel(transfer.toCompanyId, transfer.comment);
           throw new HttpException(
             "Receive company suspended",
             HttpStatus.BAD_REQUEST
@@ -228,7 +228,8 @@ export class ProgrammeService {
 
         if (giver.state === CompanyState.SUSPENDED) {
           await this.companyService.companyTransferCancel(
-            transfer.fromCompanyId
+            transfer.fromCompanyId,
+            transfer.comment
           );
           throw new HttpException(
             "Credit sending company suspended",
@@ -412,12 +413,12 @@ export class ProgrammeService {
 
         const hostAddress = this.configService.get("host");
         
-        const fromCompanyList = [];
+        const fromCompanyListMap = {};
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
-            fromCompanyList.push(fromCompany);
+            fromCompanyListMap[fromCompanyId] = fromCompany;
 
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
@@ -473,7 +474,7 @@ export class ProgrammeService {
             this.logger.log(`Credit send received ${trf}`)
             const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
             console.log('To Company', toCompany)
-            updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}`, req.comment, false)).data;
+            updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}#${fromCompanyListMap[trf.fromCompanyId].companyId}#${fromCompanyListMap[trf.fromCompanyId].name}`, req.comment, false)).data;
             this.emailHelperService.sendEmailToOrganisationAdmins(trf.toCompanyId, EmailTemplates.CREDIT_SEND_DEVELOPER,{
                 organisationName : requestedCompany.name,
                 credits : trf.creditAmount,
@@ -800,11 +801,12 @@ export class ProgrammeService {
             }
         }
         
+        const fromCompanyMap = {}
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Retire request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
-
+            fromCompanyMap[fromCompanyId] = fromCompany;
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("Retire request from company does own the programme", HttpStatus.BAD_REQUEST)
             }
@@ -879,7 +881,7 @@ export class ProgrammeService {
         let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Retire auto approve received ${trf}`)
-            updateProgramme = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)).data;
+            updateProgramme = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}#${fromCompanyMap[trf.fromCompanyId].companyId}#${fromCompanyMap[trf.fromCompanyId].name}`, req.comment, true)).data;
         }
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
