@@ -287,11 +287,7 @@ export class ProgrammeService {
         }
         if (
           (user.companyRole === CompanyRole.GOVERNMENT ||
-            Number(userCompany) === Number(user.companyId)) &&
-          usrId &&
-          usrId != undefined &&
-          usrId != null &&
-          usrId != "null"
+            Number(userCompany) === Number(user.companyId))
         ) {
           e["userName"] = await this.getUserName(usrId);
         }
@@ -1596,8 +1592,9 @@ export class ProgrammeService {
     return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
   }
 
-  private getUserName = async (userId: string) => {
-    this.logger.debug(`Getting user ${userId}`);
+  private getUserName = async (usrId: string) => {
+    this.logger.debug(`Getting user ${usrId}`);
+    const userId = Number(usrId);
     if (userId == undefined || userId == null) {
       return null;
     }
