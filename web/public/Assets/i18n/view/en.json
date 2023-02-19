@@ -91,7 +91,7 @@
     "tlTransfer": "Transferred",
     "tlTransferDesc": "{} {} credits of this programme were transferred from {} to {} by {}",
     "tlRevoke": "Certificate Revoked",
-    "tlRevokeDesc": "The certification of this programme was revoked by {}",
+    "tlRevokeDesc": "The certification of this programme was revoked {} by {}",
     "tlCertify": "Certified",
     "tlCertifyDesc": "The programme was certified by {}",
     "tlRetire": "Credits Retired",
@@ -104,5 +104,7 @@
     "tlTxRetRejectDesc": "The request to transfer {} {} credits from {} to {} was not recognised by {}",
     "tlRetCancelTitle": "Retire request cancelled",
     "tlTxCancelTitle": "Transfer Request Cancelled",
-    "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}"
+    "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}",
+    "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by the government"
+
 }

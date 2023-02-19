@@ -43,13 +43,15 @@ import { RetireType } from '../enum/retire.type.enum';
 import { EmailHelperService } from '../email-helper/email-helper.service';
 import { UserService } from '../user/user.service';
 import { use } from 'passport';
+import { SystemActionType } from '../enum/system.action.type';
+import { CountryService } from '../util/country.service';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
 @Injectable()
 export class ProgrammeService {
 
-    private userNameCache: any;
+    private userNameCache: any = {};
 
     constructor(
         private programmeLedger: ProgrammeLedgerService,
@@ -60,6 +62,7 @@ export class ProgrammeService {
         private emailService: EmailService,
         private helperService: HelperService,
         private emailHelperService: EmailHelperService,
+        private readonly countryService: CountryService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
@@ -67,7 +70,6 @@ export class ProgrammeService {
         @InjectRepository(ProgrammeTransfer) private programmeTransferRepo: Repository<ProgrammeTransfer>,
         @InjectRepository(ConstantEntity) private constantRepo: Repository<ConstantEntity>,
         private logger: Logger) {
-            this.userNameCache = {}
         }
 
     private toProgramme(programmeDto: ProgrammeDto): Programme {
@@ -101,9 +103,9 @@ export class ProgrammeService {
         throw Error("Not implemented for mitigation type " + programmeDto.typeOfMitigation)
     }
 
-    async transferReject(req: ProgrammeTransferReject, approverCompanyId: number) {
+    async transferReject(req: ProgrammeTransferReject, approver: User) {
 
-        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approverCompanyId}`);
+        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approver.companyId}`);
 
         const pTransfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
@@ -117,10 +119,10 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approverCompanyId) {
+        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
         }
-        if (pTransfer.isRetirement && pTransfer.toCompanyId != approverCompanyId) {
+        if (pTransfer.isRetirement && pTransfer.toCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
@@ -129,7 +131,8 @@ export class ProgrammeService {
             status: TransferStatus.PENDING
         }, {
             status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISED : TransferStatus.REJECTED,
-            txTime: new Date().getTime()
+            txTime: new Date().getTime(),
+            txRef: `${req.comment}#${approver.companyId}#${approver.id}`
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -157,7 +160,7 @@ export class ProgrammeService {
         throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
     }
 
-    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string): Promise<any> {
+    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string, user: User): Promise<any> {
         const resp = await this.programmeTransferViewRepo
           .createQueryBuilder('programme_transfer')
           .where(
@@ -171,14 +174,29 @@ export class ProgrammeService {
           .limit(query.size)
           .getManyAndCount();
     
-        if (query.size === 1 && resp.length > 0) {
-            resp[0]['userName'] = await this.getUserName(resp[0]['initiator'])
-        }
-        if (resp.length > 0) {
-            resp[0] = resp[0].map( e => {
+        if (resp && resp.length > 0) {
+            for (const e of resp[0]) {
                 e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
-                return e;
-            })
+                if (e.isRetirement && e.retirementType == RetireType.CROSS_BORDER && e.toCompanyMeta.country) {
+                    e.toCompanyMeta['countryName'] = (await this.countryService.getCountryName(e.toCompanyMeta.country))
+                }
+
+                let usrId = undefined;
+                let userCompany = undefined;
+                if (e['txRef'] != undefined && e['txRef'] != null ) {
+                    const parts =  e['txRef']?.split('#')
+                    if (parts.length > 2) {
+                        usrId = parts[2];
+                        userCompany = parts[1];
+                    }
+                } else {
+                    usrId = e['initiator'];
+                    userCompany = e['initiatorCompanyId']
+                }
+                if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId)) && usrId) {
+                    e['userName'] = await this.getUserName(usrId);
+                }
+            }
         }
         return new DataListResponseDto(
           resp.length > 0 ? resp[0] : undefined,
@@ -220,7 +238,7 @@ export class ProgrammeService {
         );
 
         if (receiver.state === CompanyState.SUSPENDED) {
-          await this.companyService.companyTransferCancel(transfer.toCompanyId);
+          await this.companyService.companyTransferCancel(transfer.toCompanyId, `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`);
           throw new HttpException(
             "Receive company suspended",
             HttpStatus.BAD_REQUEST
@@ -229,7 +247,8 @@ export class ProgrammeService {
 
         if (giver.state === CompanyState.SUSPENDED) {
           await this.companyService.companyTransferCancel(
-            transfer.fromCompanyId
+            transfer.fromCompanyId,
+            `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`
           );
           throw new HttpException(
             "Credit sending company suspended",
@@ -273,7 +292,7 @@ export class ProgrammeService {
                 {credits : transfer.creditAmount}, approver.companyId, transfer.programmeId );
         }
 
-        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}}#${giver.companyId}#${giver.name}`, req.comment, transfer.isRetirement)
+        return await this.doTransfer(transfer, `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}#${giver.companyId}#${giver.name}`, req.comment, transfer.isRetirement)
     }
 
     private async doTransfer(transfer: ProgrammeTransfer, user: string, reason: string, isRetirement: boolean) {
@@ -317,7 +336,8 @@ export class ProgrammeService {
             status: TransferStatus.PENDING
         }, {
             status: TransferStatus.CANCELLED,
-            txTime: new Date().getTime()
+            txTime: new Date().getTime(),
+            txRef: `${req.comment}#${requester.companyId}#${requester.id}`
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -413,12 +433,12 @@ export class ProgrammeService {
 
         const hostAddress = this.configService.get("host");
         
-        const fromCompanyList = [];
+        const fromCompanyListMap = {};
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
-            fromCompanyList.push(fromCompany);
+            fromCompanyListMap[fromCompanyId] = fromCompany;
 
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("From company mentioned in the request does own the programme", HttpStatus.BAD_REQUEST)
@@ -474,7 +494,7 @@ export class ProgrammeService {
             this.logger.log(`Credit send received ${trf}`)
             const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
             console.log('To Company', toCompany)
-            updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}`, req.comment, false)).data;
+            updateProgramme  = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}#${fromCompanyListMap[trf.fromCompanyId].companyId}#${fromCompanyListMap[trf.fromCompanyId].name}`, req.comment, false)).data;
             this.emailHelperService.sendEmailToOrganisationAdmins(trf.toCompanyId, EmailTemplates.CREDIT_SEND_DEVELOPER,{
                 organisationName : requestedCompany.name,
                 credits : trf.creditAmount,
@@ -624,15 +644,16 @@ export class ProgrammeService {
 
     async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
         const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
-        if (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-            resp.map( async el => {
-                const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
-                if (refs && (user.companyRole === CompanyRole.GOVERNMENT || refs?.companyId === user.companyId)) {
-                    el.data['userName'] = (await this.getUserName(refs.id))
-                }
-            })
+        if (resp == null) {
+            return [];
         }
-        return resp == null ? [] : resp;
+        for (const el of resp) {
+            const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
+            if (refs && (user.companyRole === CompanyRole.GOVERNMENT || Number(refs?.companyId) === Number(user.companyId))) {
+                el.data['userName'] = await this.getUserName(refs.id);
+            }
+        }
+        return resp;
     }
 
     async updateCustomConstants(customConstantType: TypeOfMitigation, constants: ConstantUpdateDto) {
@@ -695,7 +716,7 @@ export class ProgrammeService {
             certifierId = user.companyId;
         }
 
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRef(user))
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRefWithRemarks(user, req.comment))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })
@@ -800,11 +821,12 @@ export class ProgrammeService {
             }
         }
         
+        const fromCompanyMap = {}
         for (const j in req.fromCompanyIds) {
             const fromCompanyId = req.fromCompanyIds[j]
             this.logger.log(`Retire request from ${fromCompanyId} to programme owned by ${programme.companyId}`)
             const fromCompany = await this.companyService.findByCompanyId(fromCompanyId);
-
+            fromCompanyMap[fromCompanyId] = fromCompany;
             if (!programme.companyId.includes(fromCompanyId)) {
                 throw new HttpException("Retire request from company does own the programme", HttpStatus.BAD_REQUEST)
             }
@@ -879,7 +901,7 @@ export class ProgrammeService {
         let updateProgramme = undefined;
         for (const trf of autoApproveTransferList) {
             this.logger.log(`Retire auto approve received ${trf}`)
-            updateProgramme = (await this.doTransfer(trf, this.getUserRef(requester), req.comment, true)).data;
+            updateProgramme = (await this.doTransfer(trf, `${this.getUserRef(requester)}#${toCompany.companyId}#${toCompany.name}#${fromCompanyMap[trf.fromCompanyId].companyId}#${fromCompanyMap[trf.fromCompanyId].name}`, req.comment, true)).data;
         }
         if (updateProgramme) {
             return new DataResponseDto(HttpStatus.OK, updateProgramme)
@@ -981,16 +1003,22 @@ export class ProgrammeService {
     }
 
     private getUserName = async (userId: string) => {
-        if (!userId) {
+        this.logger.debug(`Getting user ${userId}`);
+        if (userId == undefined || userId == null) {
             return null;
         }
         if (this.userNameCache[userId]) {
+            this.logger.debug(`Getting user - cached ${userId} ${this.userNameCache[userId]}`);
             return this.userNameCache[userId];
         }
-        const n = (await this.userService.findById(Number(userId)))?.name;
-        if (n) {
-            this.userNameCache[userId] = n;
+        const user = await this.userService.findById(Number(userId));
+        this.logger.debug(`Getting user - user ${user}`);
+        if (user) {
+            this.logger.debug(`Getting user - user ${user.name}`);
+            this.userNameCache[userId] = user.name;
+            return user.name;
         }
+        return null;
     }
 
     private getCompanyIdAndUserIdFromRef = (ref: string) => {

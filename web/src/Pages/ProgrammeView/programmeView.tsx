@@ -336,9 +336,9 @@ const ProgrammeView = () => {
               text={formatString('view:tlInitDesc', [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
-                transfer.sender.name,
-                transfer.receiver.name,
-                transfer.requester.name,
+                transfer.sender[0]?.name,
+                transfer.receiver[0]?.name,
+                transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
               via={transfer.userName}
@@ -360,13 +360,13 @@ const ProgrammeView = () => {
               text={formatString('view:tlRetInitDesc', [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
-                transfer.sender.name,
+                transfer.sender[0]?.name,
                 transfer.retirementType === RetireType.CROSS_BORDER
                   ? 'cross border transfer'
                   : transfer.retirementType === RetireType.LEGAL_ACTION
                   ? 'legal action'
                   : 'other',
-                transfer.requester.name,
+                transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
               via={transfer.userName}
@@ -382,7 +382,10 @@ const ProgrammeView = () => {
 
       addElement(d, createdTime, hist);
 
-      if (transfer.status === CreditTransferStage.Rejected) {
+      if (
+        transfer.status === CreditTransferStage.Rejected ||
+        transfer.status === CreditTransferStage.NotRecognised
+      ) {
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetRejectTitle' : 'view:tlRejectTitle'),
@@ -394,12 +397,14 @@ const ProgrammeView = () => {
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
-                  transfer.sender.name,
-                  transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
-                  transfer.requester.name,
+                  transfer.sender[0]?.name,
+                  transfer.isRetirement
+                    ? transfer.toCompanyMeta?.countryName
+                    : transfer.receiver[0]?.name,
+                  transfer.requester[0]?.name,
                 ]
               )}
-              remark={transfer.comment}
+              remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
             />
           ),
@@ -413,20 +418,26 @@ const ProgrammeView = () => {
         };
         addElement(dx, Number(transfer.txTime!), hist);
       } else if (transfer.status === CreditTransferStage.Cancelled) {
+        const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
           subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlTxCancelDesc', [
-                addCommSep(transfer.creditAmount),
-                creditUnit,
-                transfer.sender.name,
-                transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
-                transfer.requester.name,
-              ])}
-              remark={transfer.comment}
+              text={formatString(
+                systemCancel ? 'view:tlTxCancelSystemDesc' : 'view:tlTxCancelDesc',
+                [
+                  addCommSep(transfer.creditAmount),
+                  creditUnit,
+                  transfer.sender[0]?.name,
+                  transfer.isRetirement
+                    ? transfer.toCompanyMeta.country
+                    : transfer.receiver[0]?.name,
+                  systemCancel ? transfer.txRef?.split('#')[3] : transfer.requester[0]?.name,
+                ]
+              )}
+              remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
             />
           ),
@@ -564,7 +575,7 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 4),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
-                remark={getTxRefValues(activity.data.txRef, 3)}
+                remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
               />
             ),
@@ -575,13 +586,21 @@ const ProgrammeView = () => {
             ),
           };
         } else if (activity.data.txType === TxType.REVOKE) {
+          const type = getTxRefValues(activity.data.txRef, 4);
+          let revokeComp = undefined;
+          if (type === 'SUSPEND_REVOKE') {
+            revokeComp = getTxRefValues(activity.data.txRef, 5);
+          }
           el = {
             status: 'process',
             title: t('view:tlRevoke'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRevokeDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString('view:tlRevokeDesc', [
+                  revokeComp !== undefined ? `due to the deactivation of ${revokeComp}` : '',
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
               />
@@ -628,7 +647,7 @@ const ProgrammeView = () => {
                   getRetirementTypeString(getTxRefValues(activity.data.txRef, 4))?.toLowerCase(),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
-                remark={getTxRefValues(activity.data.txRef, 3)}
+                remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
               />
             ),
@@ -645,7 +664,7 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRetireDesc', [
+                text={formatString('view:tlFrozenDesc', [
                   addCommSep(activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
@@ -675,6 +694,10 @@ const ProgrammeView = () => {
           toDelete.forEach((e) => delete txList[e]);
           activityList.unshift(el);
         }
+      }
+
+      for (const txT in txList) {
+        activityList.unshift(...txList[txT]);
       }
 
       setHistoryData(activityList);

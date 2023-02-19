@@ -127,14 +127,14 @@ export class ProgrammeController {
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferReject')
     async transferReject(@Body() body: ProgrammeTransferReject, @Request() req) {
-        return this.programmeService.transferReject(body, req.user.companyId)
+        return this.programmeService.transferReject(body, req.user)
     }
 
     @ApiBearerAuth()
     @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferCancel')
     async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
-        return this.programmeService.transferCancel(body, req.user.companyId)
+        return this.programmeService.transferCancel(body, req.user)
     }
 
     @ApiBearerAuth()
@@ -142,6 +142,6 @@ export class ProgrammeController {
     @Post('transferQuery')
     queryUser(@Body()query: QueryDto, @Request() req) {
       console.log(req.abilityCondition)
-      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition)
+      return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition, req.user)
     }
 }

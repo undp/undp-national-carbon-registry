@@ -76,7 +76,7 @@ export class AggregateAPIService {
       .createQueryBuilder(tableName)
       .select(`"${timeCol}"`)
       .where(whereC)
-      .orderBy(`"${timeCol}"`, "DESC")
+      .orderBy(`"${timeCol}"`, "DESC", "NULLS LAST")
       .limit(1)
       .getRawOne();
 

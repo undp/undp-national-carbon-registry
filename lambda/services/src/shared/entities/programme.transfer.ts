@@ -61,6 +61,9 @@ export class ProgrammeTransfer implements EntitySubject {
     @Column({nullable: true})
     comment: string;
 
+    @Column({nullable: true})
+    txRef: string;
+
     @Column({type: "bigint"})
     txTime: number;
 

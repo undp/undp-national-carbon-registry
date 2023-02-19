@@ -160,14 +160,21 @@ export class LedgerReplicatorService {
                   this.programmeRepo.manager.connection.getMetadata(
                     "Programme"
                   ).columns;
+                // const columnNames = columns
+                //   .filter(function (item) {
+                //     return (
+                //       item.propertyName !== "programmeId" &&
+                //       item.propertyName !== "geographicalLocationCordintes"
+                //     );
+                //   })
+                //   .map((e) => e.propertyName);
                 const columnNames = columns
-                  .filter(function (item) {
-                    return (
-                      item.propertyName !== "programmeId" &&
-                      item.propertyName !== "geographicalLocationCordintes"
-                    );
-                  })
-                  .map((e) => e.propertyName);
+                .filter(function (item) {
+                  return (
+                    programme[item.propertyName] != undefined
+                  );
+                })
+                .map((e) => e.propertyName);
 
                 this.logger.debug(
                   `${columnNames} ${JSON.stringify(programme)}`
