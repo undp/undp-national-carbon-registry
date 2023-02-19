@@ -591,7 +591,10 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRevokeDesc', [ revokeComp ? `due to the deactivation of ${revokeComp}`: '', getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString('view:tlRevokeDesc', [
+                  revokeComp ? `due to the deactivation of ${revokeComp}` : '',
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
               />
