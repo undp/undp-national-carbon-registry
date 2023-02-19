@@ -160,7 +160,21 @@ export class ProgrammeService {
         throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
     }
 
-    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string, user: User): Promise<any> {
+    async getTransferByProgrammeId(programmeId: string, abilityCondition: string, user: User): Promise<any> {
+        const query: QueryDto = {
+            page: 1,
+            size: 30,
+            filterAnd: [
+                {
+                    key: 'programmeId',
+                    operation: '=',
+                    value: String(programmeId),
+                },
+            ],
+            filterOr: undefined,
+            sort: undefined
+        }
+
         const resp = await this.programmeTransferViewRepo
           .createQueryBuilder('programme_transfer')
           .where(
@@ -196,6 +210,31 @@ export class ProgrammeService {
                 if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId)) && usrId) {
                     e['userName'] = await this.getUserName(usrId);
                 }
+            }
+        }
+        return new DataListResponseDto(
+          resp.length > 0 ? resp[0] : undefined,
+          resp.length > 1 ? resp[1] : undefined
+        );
+      }
+
+    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string, user: User): Promise<any> {
+        const resp = await this.programmeTransferViewRepo
+          .createQueryBuilder('programme_transfer')
+          .where(
+            this.helperService.generateWhereSQL(
+              query,
+              this.helperService.parseMongoQueryToSQLWithTable("programme_transfer", abilityCondition)
+            )
+          )
+          .orderBy(query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key), query?.sort?.order)
+          .offset(query.size * query.page - query.size)
+          .limit(query.size)
+          .getManyAndCount();
+    
+        if (resp && resp.length > 0) {
+            for (const e of resp[0]) {
+                e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
             }
         }
         return new DataListResponseDto(
