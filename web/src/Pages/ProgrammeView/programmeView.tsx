@@ -396,12 +396,12 @@ const ProgrammeView = () => {
                   creditUnit,
                   transfer.sender[0]?.name,
                   transfer.isRetirement
-                    ? transfer.toCompanyMeta.country
+                    ? transfer.toCompanyMeta?.countryName
                     : transfer.receiver[0]?.name,
                   transfer.requester[0]?.name,
                 ]
               )}
-              remark={transfer.comment}
+              remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
             />
           ),
@@ -415,6 +415,7 @@ const ProgrammeView = () => {
         };
         addElement(dx, Number(transfer.txTime!), hist);
       } else if (transfer.status === CreditTransferStage.Cancelled) {
+        const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
@@ -422,9 +423,7 @@ const ProgrammeView = () => {
           description: (
             <TimelineBody
               text={formatString(
-                transfer.comment?.indexOf('#SUSPEND_AUTO_CANCEL#')
-                  ? 'view:tlTxCancelSystemDesc'
-                  : 'view:tlTxCancelDesc',
+                systemCancel ? 'view:tlTxCancelSystemDesc' : 'view:tlTxCancelDesc',
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -432,10 +431,10 @@ const ProgrammeView = () => {
                   transfer.isRetirement
                     ? transfer.toCompanyMeta.country
                     : transfer.receiver[0]?.name,
-                  transfer.requester[0]?.name,
+                  systemCancel ? transfer.txRef?.split('#')[3] : transfer.requester[0]?.name,
                 ]
               )}
-              remark={transfer.comment?.split('#')[0]}
+              remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
             />
           ),
@@ -573,7 +572,7 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 4),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
-                remark={getTxRefValues(activity.data.txRef, 7)}
+                remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
               />
             ),
@@ -596,7 +595,7 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlRevokeDesc', [
-                  revokeComp ? `due to the deactivation of ${revokeComp}` : '',
+                  revokeComp !== undefined ? `due to the deactivation of ${revokeComp}` : '',
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
@@ -645,7 +644,7 @@ const ProgrammeView = () => {
                   getRetirementTypeString(getTxRefValues(activity.data.txRef, 4))?.toLowerCase(),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
-                remark={getTxRefValues(activity.data.txRef, 3)}
+                remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
               />
             ),
@@ -692,6 +691,10 @@ const ProgrammeView = () => {
           toDelete.forEach((e) => delete txList[e]);
           activityList.unshift(el);
         }
+      }
+
+      for (const txT in txList) {
+        activityList.unshift(...txList[txT]);
       }
 
       setHistoryData(activityList);

@@ -83,7 +83,7 @@ export class CompanyService {
           companyId,
           this.getUserRefWithRemarks(user, `${remarks}#${company.name}`)
         );
-        await this.companyTransferCancel(companyId, `${remarks}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
+        await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
         await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
@@ -327,7 +327,7 @@ export class CompanyService {
     await this.programmeTransferRepo
       .createQueryBuilder()
       .update(ProgrammeTransfer)
-      .set({ status: TransferStatus.CANCELLED, comment: remark })
+      .set({ status: TransferStatus.CANCELLED, txRef: remark })
       .where(
         "(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status",
         {

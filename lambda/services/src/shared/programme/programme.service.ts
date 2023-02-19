@@ -43,6 +43,8 @@ import { RetireType } from '../enum/retire.type.enum';
 import { EmailHelperService } from '../email-helper/email-helper.service';
 import { UserService } from '../user/user.service';
 import { use } from 'passport';
+import { SystemActionType } from '../enum/system.action.type';
+import { CountryService } from '../util/country.service';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -60,6 +62,7 @@ export class ProgrammeService {
         private emailService: EmailService,
         private helperService: HelperService,
         private emailHelperService: EmailHelperService,
+        private readonly countryService: CountryService,
         @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
         @InjectRepository(ProgrammeQueryEntity) private programmeViewRepo: Repository<ProgrammeQueryEntity>,
         @InjectRepository(ProgrammeTransferViewEntityQuery) private programmeTransferViewRepo: Repository<ProgrammeTransferViewEntityQuery>,
@@ -100,9 +103,9 @@ export class ProgrammeService {
         throw Error("Not implemented for mitigation type " + programmeDto.typeOfMitigation)
     }
 
-    async transferReject(req: ProgrammeTransferReject, approverCompanyId: number) {
+    async transferReject(req: ProgrammeTransferReject, approver: User) {
 
-        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approverCompanyId}`);
+        this.logger.log(`Programme reject ${JSON.stringify(req)} ${approver.companyId}`);
 
         const pTransfer = await this.programmeTransferRepo.findOneBy({
             requestId: req.requestId,
@@ -116,10 +119,10 @@ export class ProgrammeService {
             throw new HttpException("Transfer request already cancelled", HttpStatus.BAD_REQUEST)
         }
 
-        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approverCompanyId) {
+        if (!pTransfer.isRetirement && pTransfer.fromCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the transfer request", HttpStatus.FORBIDDEN)
         }
-        if (pTransfer.isRetirement && pTransfer.toCompanyId != approverCompanyId) {
+        if (pTransfer.isRetirement && pTransfer.toCompanyId != approver.companyId) {
             throw new HttpException("Invalid approver for the retirement request", HttpStatus.FORBIDDEN)
         }
 
@@ -128,7 +131,8 @@ export class ProgrammeService {
             status: TransferStatus.PENDING
         }, {
             status: pTransfer.isRetirement ? TransferStatus.NOTRECOGNISED : TransferStatus.REJECTED,
-            txTime: new Date().getTime()
+            txTime: new Date().getTime(),
+            txRef: `${req.comment}#${approver.companyId}#${approver.id}`
         }).catch((err) => {
             this.logger.error(err);
             return err;
@@ -156,7 +160,7 @@ export class ProgrammeService {
         throw new HttpException("No pending transfer request found", HttpStatus.BAD_REQUEST)
     }
 
-    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string): Promise<any> {
+    async queryProgrammeTransfers(query: QueryDto, abilityCondition: string, user: User): Promise<any> {
         const resp = await this.programmeTransferViewRepo
           .createQueryBuilder('programme_transfer')
           .where(
@@ -171,11 +175,30 @@ export class ProgrammeService {
           .getManyAndCount();
     
         if (query.size === 1 && resp.length > 0) {
-            resp[0]['userName'] = await this.getUserName(resp[0]['initiator'])
+
+            let usrId = undefined;
+            let userCompany = undefined;
+            if (resp[0]['txRef']) {
+                const parts =  resp[0]['txRef']?.split('#')
+                if (parts.length > 2) {
+                    usrId = parts[2];
+                    userCompany = parts[1];
+                }
+            } else {
+                usrId = resp[0]['initiator'];
+                userCompany = resp[0]['initiatorCompanyId']
+            }
+            if ((user.companyRole === CompanyRole.GOVERNMENT || Number(userCompany) === Number(user.companyId))) {
+                resp[0]['userName'] = await this.getUserName(usrId);
+            }
+            //  = await this.getUserName(resp[0]['initiator'])
         }
         if (resp.length > 0) {
             resp[0] = resp[0].map( e => {
                 e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? []: e.certifier
+                if (e.isRetirement && e.retirementType == RetireType.CROSS_BORDER && e.toCompanyMeta.country) {
+                    e.toCompanyMeta['countryName'] = this.countryService.getCountryName(e.toCompanyMeta.country)
+                }
                 return e;
             })
         }
@@ -219,7 +242,7 @@ export class ProgrammeService {
         );
 
         if (receiver.state === CompanyState.SUSPENDED) {
-          await this.companyService.companyTransferCancel(transfer.toCompanyId, transfer.comment);
+          await this.companyService.companyTransferCancel(transfer.toCompanyId, `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`);
           throw new HttpException(
             "Receive company suspended",
             HttpStatus.BAD_REQUEST
@@ -229,7 +252,7 @@ export class ProgrammeService {
         if (giver.state === CompanyState.SUSPENDED) {
           await this.companyService.companyTransferCancel(
             transfer.fromCompanyId,
-            transfer.comment
+            `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`
           );
           throw new HttpException(
             "Credit sending company suspended",
@@ -317,7 +340,8 @@ export class ProgrammeService {
             status: TransferStatus.PENDING
         }, {
             status: TransferStatus.CANCELLED,
-            txTime: new Date().getTime()
+            txTime: new Date().getTime(),
+            txRef: `${req.comment}#${requester.companyId}#${requester.id}`
         }).catch((err) => {
             this.logger.error(err);
             return err;

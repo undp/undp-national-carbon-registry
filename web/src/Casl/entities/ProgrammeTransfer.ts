@@ -25,6 +25,8 @@ export class ProgrammeTransfer implements BaseEntity {
 
   comment?: string;
 
+  txRef?: string;
+
   txTime?: number;
 
   status?: CreditTransferStage;
