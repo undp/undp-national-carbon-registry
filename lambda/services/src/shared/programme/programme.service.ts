@@ -282,7 +282,6 @@ export class ProgrammeService {
             usrId = parts[2];
             userCompany = parts[1];
           }
-          this.logger.debug(`TxRef ${e["txRef"]}`)
         } else {
           usrId = e["initiator"];
           userCompany = e["initiatorCompanyId"];
@@ -1597,6 +1596,9 @@ export class ProgrammeService {
 
   private getUserName = async (usrId: string) => {
     this.logger.debug(`Getting user [${usrId}]`);
+    if (usrId == 'undefined' || usrId == 'null') {
+        return null;
+    }
     const userId = Number(usrId);
     if (userId == undefined || userId == null) {
       return null;
