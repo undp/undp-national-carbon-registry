@@ -695,7 +695,7 @@ export class ProgrammeService {
             certifierId = user.companyId;
         }
 
-        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRef(user))
+        const updated = await this.programmeLedger.updateCertifier(req.programmeId, certifierId, add, this.getUserRefWithRemarks(user, req.comment))
         updated.company = await this.companyRepo.find({
             where: { companyId: In(updated.companyId) },
         })

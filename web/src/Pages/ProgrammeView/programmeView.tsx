@@ -336,9 +336,9 @@ const ProgrammeView = () => {
               text={formatString('view:tlInitDesc', [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
-                transfer.sender.name,
-                transfer.receiver.name,
-                transfer.requester.name,
+                transfer.sender[0]?.name,
+                transfer.receiver[0]?.name,
+                transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
               via={transfer.userName}
@@ -360,13 +360,13 @@ const ProgrammeView = () => {
               text={formatString('view:tlRetInitDesc', [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
-                transfer.sender.name,
+                transfer.sender[0]?.name,
                 transfer.retirementType === RetireType.CROSS_BORDER
                   ? 'cross border transfer'
                   : transfer.retirementType === RetireType.LEGAL_ACTION
                   ? 'legal action'
                   : 'other',
-                transfer.requester.name,
+                transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
               via={transfer.userName}
@@ -394,9 +394,11 @@ const ProgrammeView = () => {
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
-                  transfer.sender.name,
-                  transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
-                  transfer.requester.name,
+                  transfer.sender[0]?.name,
+                  transfer.isRetirement
+                    ? transfer.toCompanyMeta.country
+                    : transfer.receiver[0]?.name,
+                  transfer.requester[0]?.name,
                 ]
               )}
               remark={transfer.comment}
@@ -426,9 +428,11 @@ const ProgrammeView = () => {
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
-                  transfer.sender.name,
-                  transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
-                  transfer.requester.name,
+                  transfer.sender[0]?.name,
+                  transfer.isRetirement
+                    ? transfer.toCompanyMeta.country
+                    : transfer.receiver[0]?.name,
+                  transfer.requester[0]?.name,
                 ]
               )}
               remark={transfer.comment?.split('#')[0]}
@@ -569,7 +573,7 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 4),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
-                remark={getTxRefValues(activity.data.txRef, 3)}
+                remark={getTxRefValues(activity.data.txRef, 7)}
                 via={activity.data.userName}
               />
             ),
