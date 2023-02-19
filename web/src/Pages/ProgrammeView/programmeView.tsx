@@ -419,14 +419,19 @@ const ProgrammeView = () => {
           subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlTxCancelDesc', [
-                addCommSep(transfer.creditAmount),
-                creditUnit,
-                transfer.sender.name,
-                transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
-                transfer.requester.name,
-              ])}
-              remark={transfer.comment}
+              text={formatString(
+                transfer.comment?.indexOf('#SUSPEND_AUTO_CANCEL#')
+                  ? 'view:tlTxCancelSystemDesc'
+                  : 'view:tlTxCancelDesc',
+                [
+                  addCommSep(transfer.creditAmount),
+                  creditUnit,
+                  transfer.sender.name,
+                  transfer.isRetirement ? transfer.toCompanyMeta.country : transfer.receiver.name,
+                  transfer.requester.name,
+                ]
+              )}
+              remark={transfer.comment?.split('#')[0]}
               via={transfer.userName}
             />
           ),
@@ -575,13 +580,18 @@ const ProgrammeView = () => {
             ),
           };
         } else if (activity.data.txType === TxType.REVOKE) {
+          const type = getTxRefValues(activity.data.txRef, 4);
+          let revokeComp = undefined;
+          if (type === 'SUSPEND_REVOKE') {
+            revokeComp = getTxRefValues(activity.data.txRef, 5);
+          }
           el = {
             status: 'process',
             title: t('view:tlRevoke'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRevokeDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString('view:tlRevokeDesc', [ revokeComp ? `due to the deactivation of ${revokeComp}`: '', getTxRefValues(activity.data.txRef, 1)])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
               />
@@ -645,7 +655,7 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRetireDesc', [
+                text={formatString('view:tlFrozenDesc', [
                   addCommSep(activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
