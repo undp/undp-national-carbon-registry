@@ -178,7 +178,7 @@ export class ProgrammeService {
 
             let usrId = undefined;
             let userCompany = undefined;
-            if (resp[0]['txRef']) {
+            if (resp[0]['txRef'] != undefined && resp[0]['txRef'] != null ) {
                 const parts =  resp[0]['txRef']?.split('#')
                 if (parts.length > 2) {
                     usrId = parts[2];
