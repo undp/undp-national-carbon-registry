@@ -294,5 +294,165 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `
+    },
+    PROGRAMME_CERTIFICATION:{
+        id: 'PROGRAMME_CERTIFICATION',
+        subject: 'Programme Certified by {{organisationName}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} of your Organisation has been certified by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_CERT:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_CERT',
+        subject: 'Programme Certificate Revoked by {{organisationName}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification of the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by {{organisationName}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME',
+        subject: 'Programme Certificate Revoked by {{government}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the {{government}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT',
+        subject: 'Programme Certificate Revoked by {{government}}',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by your organisation for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the {{government}}. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM:{
+        id: 'PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM',
+        subject: 'Programme Certificate Revoked by the System',
+        html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the programme {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the system as {{organisationName}} was deactivated. <br><br>
+        Click here {{pageLink}} for more details of the certification. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    PROGRAMME_DEVELOPER_ORG_DEACTIVATION:{
+        id: 'PROGRAMME_DEVELOPER_ORG_DEACTIVATION',
+        subject: 'Organisation Deactivated',
+        html: `
+        Hi,<br><br>
+
+        Your organisation has been deactivated by the {{government}}. Your organisation will still be visible but not other will be able to take place. Following are the effects of deactivation:<br><br>
+         · All the users of the organisation were deactivated. <br>
+         · All the credits owned by your organisation were frozen.<br>
+         · All credit transfer requests sent and received by your organisation were cancelled.<br>
+         · All the international transfer retire requests sent by your organisation were cancelled.<br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CERTIFIER_ORG_DEACTIVATION: {
+        id: 'CERTIFIER_ORG_DEACTIVATION',
+        subject: 'Organisation Deactivated',
+        html: `
+        Hi,<br><br>
+
+        Your organisation has been deactivated by the {{government}}. Your organisation will still be visible but not other will be able to take place. Following are the effects of deactivation: <br><br>
+        · All the users of the organisation were deactivated.<br>
+        · All the certificates given by your organisation were revoked. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_BY_GOV:{
+        id: 'CREDIT_RETIREMENT_BY_GOV',
+        subject: 'Credits Retired',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{credits}} credits of the programme {{programmeName}} with the serial number {{serialNumber}} has been retired by the {{government}} as {{reason}}.<br><br>
+        Click here {{pageLink}} for more details of the retirement. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_BY_DEV:{
+        id: 'CREDIT_RETIREMENT_BY_DEV',
+        subject: 'International Transfer Retire Request Received',
+        html: `
+        Hi {{name}},<br><br>
+
+        {{organisationName}} has requested an international transfer retirement of {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}. <br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_CANCEL:{
+        id: 'CREDIT_RETIREMENT_CANCEL',
+        subject: 'International Transfer Retire Request Cancelled',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by {{organisationName}} has been cancelled.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_RECOGNITION:{
+        id: 'CREDIT_RETIREMENT_RECOGNITION',
+        subject: 'International Transfer Retire Request Recognised',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your organisation has been recognised.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    CREDIT_RETIREMENT_NOT_RECOGNITION:{
+        id: 'CREDIT_RETIREMENT_NOT_RECOGNITION',
+        subject: 'International Transfer Retire Request Not Recognised',
+        html: `
+        Hi {{name}},<br><br>
+
+        Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your organisation has not been recognised.<br><br>
+        Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
     }
 };

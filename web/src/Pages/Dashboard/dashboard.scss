@@ -1,7 +1,7 @@
 @import '../Common/colors.dashboard.scss';
 
 .margin-top-6 {
-  margin-top: 6rem;
+  margin-top: 7.5rem;
 }
 
 .margin-top-2 {
@@ -99,11 +99,11 @@
   }
 
   .height-pie-rem {
-    height: 25.75rem;
+    height: 26.2rem;
   }
 
   .height-bar-rem {
-    height: 30rem;
+    height: 29rem;
   }
 
   .height-map-rem {
@@ -130,12 +130,39 @@
           flex-direction: column;
           background-color: $white;
           border-radius: 10px;
-          padding: 0 1rem 1rem 1rem;
+          padding: 0 1rem 0.7rem 1rem;
           width: 100%;
 
           .margin-top-2 {
             width: 100%;
             margin-top: 2rem;
+          }
+
+          .title-section {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1rem 1rem 0 1rem;
+
+            .title {
+              font-family: 'Inter';
+              font-style: normal;
+              font-weight: 600;
+              width: 90%;
+              font-size: 1.15rem;
+              color: $card-title;
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              width: 10%;
+              height: 30px;
+              align-items: center;
+              justify-content: flex-end;
+            }
           }
 
           .total-programme-details {
@@ -144,24 +171,13 @@
             align-items: center;
             justify-content: space-between;
             height: 150px;
+            margin-top: -1rem;
 
             .details {
               display: flex;
               flex-direction: column;
               width: 70%;
               padding: 0 1rem 0 0.8rem;
-
-              .title {
-                font-family: 'Inter';
-                align-items: flex-start;
-                justify-content: flex-start;
-                font-style: normal;
-                font-weight: 600;
-                height: 50px;
-                font-size: 1.15rem;
-                padding-left: 0.125rem;
-                color: $card-title;
-              }
 
               .detail {
                 font-family: 'Inter';
@@ -205,6 +221,8 @@
             justify-content: flex-start;
             height: 100px;
             width: 100%;
+            margin-top: -1rem;
+            margin-bottom: 0.5rem;
             padding: 0 0.5rem 0 0.5rem;
 
             .rejected-details,
@@ -300,9 +318,9 @@
             .updated-moment-container {
               display: flex;
               flex-direction: row;
-              font-size: 0.813rem;
+              font-size: 0.75rem;
               border-radius: 3.125rem;
-              padding: 0 0.5rem 0 0.5rem;
+              padding: 0.05rem 0.8rem 0.05rem 0.8rem;
               color: $primary-blue;
               background-color: rgba($color: #b9e2f4, $alpha: 0.4);
             }

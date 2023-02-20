@@ -21,6 +21,12 @@ export class CountryService {
         })) != null;
     }
 
+    async getCountryName(alpha2: string) {
+        return (await this.countryRepo.findOneBy({
+            alpha2: alpha2
+        }))?.name;
+    }
+
     async getCountryList(query: QueryDto) {
 
         const resp = await this.countryRepo

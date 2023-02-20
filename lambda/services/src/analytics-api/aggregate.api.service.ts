@@ -76,7 +76,7 @@ export class AggregateAPIService {
       .createQueryBuilder(tableName)
       .select(`"${timeCol}"`)
       .where(whereC)
-      .orderBy(`"${timeCol}"`, "DESC")
+      .orderBy(`"${timeCol}"`, "DESC", "NULLS LAST")
       .limit(1)
       .getRawOne();
 
@@ -128,12 +128,20 @@ export class AggregateAPIService {
       const statusArray = Object.values(ProgrammeStage);
       arrResultForTimeGroup?.map((timeGroupItem) => {
         console.log("status array ----- > ", statusArray);
-        authorisedCreditsSum =
-          authorisedCreditsSum +
-          (parseFloat(timeGroupItem?.totalestcredit) -
-            parseFloat(timeGroupItem?.totalissuedcredit));
+        if (timeGroupItem?.currentStage === ProgrammeStage.AUTHORISED) {
+          authorisedCreditsSum =
+            authorisedCreditsSum +
+            (parseFloat(timeGroupItem?.totalestcredit) -
+              parseFloat(timeGroupItem?.totalissuedcredit));
+        } else {
+          authorisedCreditsSum = authorisedCreditsSum + 0;
+        }
         issuedCreditsSum =
-          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
+          issuedCreditsSum +
+          (parseFloat(timeGroupItem?.totalissuedcredit) -
+            parseFloat(timeGroupItem?.totaltxcredit) -
+            parseFloat(timeGroupItem?.totalretiredcredit) -
+            parseFloat(timeGroupItem?.totalfreezecredit));
         transferredCreditsSum =
           transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
@@ -266,7 +274,7 @@ export class AggregateAPIService {
     abilityCondition: string,
     lastTimeForWhere: any,
     statCache: any,
-    timeCol: string,
+    timeCol: string[],
     timeGroupingCol?: string,
     timeGroupingAccuracy?: string
   ) {
@@ -356,15 +364,27 @@ export class AggregateAPIService {
     let d = await queryBuild.getRawMany();
     let dTimeGrouped;
 
-    let t = 0;
+    let lastTime: any;
     if (timeCol) {
       const cacheKey = whereC + " from " + tableName;
       if (lastTimeForWhere[cacheKey]) {
         console.log("Last time hit from the cache");
-        t = lastTimeForWhere[cacheKey];
+        lastTime = lastTimeForWhere[cacheKey];
       } else {
-        t = await this.getLastTime(repo, tableName, whereC, timeCol);
-        lastTimeForWhere[cacheKey] = t;
+        const allTimes = {};
+        let maxTime = 0;
+        for (const tc of timeCol) {
+          const colTime = await this.getLastTime(repo, tableName, whereC, tc);
+          allTimes[tc] = colTime;
+          if (colTime > maxTime) {
+            maxTime = colTime;
+          }
+        }
+        lastTime = {
+          max: maxTime,
+          all: allTimes,
+        };
+        lastTimeForWhere[cacheKey] = lastTime;
       }
     }
     for (const row of d) {
@@ -394,8 +414,12 @@ export class AggregateAPIService {
     }
     statCache[key] = {
       data: timeGroupingCol && timeGroupingAccuracy ? dTimeGrouped : d,
-      last: t,
+      last: lastTime.max,
     };
+
+    if (lastTime.all && Object.keys(lastTime.all).length > 0) {
+      statCache[key]["all"] = lastTime.all;
+    }
 
     return statCache[key];
   }
@@ -443,7 +467,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["statusUpdateTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -480,7 +504,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime"
+      ["certifiedTime"]
     );
   }
 
@@ -552,7 +576,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["certifiedTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -573,6 +597,8 @@ export class AggregateAPIService {
       case StatType.AGG_PROGRAMME_BY_SECTOR:
       case StatType.MY_AGG_PROGRAMME_BY_STATUS:
       case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
+      case StatType.AGG_AUTH_PROGRAMME_BY_STATUS:
+      case StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS:
         results[key] = await this.generateProgrammeAggregates(
           stat,
           frzAgg,
@@ -673,6 +699,7 @@ export class AggregateAPIService {
         break;
       case StatType.CERTIFIED_BY_ME_BY_STATE:
       case StatType.CERTIFIED_BY_ME_BY_SECTOR:
+      case StatType.AUTH_CERTIFIED_BY_ME_BY_STATE:
         if (stat.statFilter) {
           stat.statFilter.onlyMine = true;
         } else {
@@ -688,10 +715,24 @@ export class AggregateAPIService {
           "createdTime"
         );
 
+        if (stat.type === StatType.AUTH_CERTIFIED_BY_ME_BY_STATE) {
+          if (!filtCState) {
+            filtCState = [];
+          }
+          filtCState.push({
+            value: ProgrammeStage.AUTHORISED,
+            key: "currentStage",
+            operation: "=",
+          });
+        }
+
         results[key] = await this.genAggregateTypeOrmQuery(
           this.programmeRepo,
           "programme",
-          stat.type === StatType.CERTIFIED_BY_ME_BY_STATE
+          [
+            StatType.AUTH_CERTIFIED_BY_ME_BY_STATE,
+            StatType.CERTIFIED_BY_ME_BY_STATE,
+          ].includes(stat.type)
             ? ["currentStage"]
             : ["sector"],
           [
@@ -709,7 +750,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          "createdTime",
+          ["certifiedTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
           stat.statFilter?.timeGroup ? "day" : undefined
         );
@@ -791,7 +832,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          "txTime"
+          ["createdTime"]
         );
         break;
     }
@@ -1156,7 +1197,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "txTime"
+      ["txTime"]
     );
   }
   async generateProgrammeAggregates(
@@ -1171,18 +1212,48 @@ export class AggregateAPIService {
       [
         StatType.MY_AGG_PROGRAMME_BY_SECTOR,
         StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
       ].includes(stat.type)
     ) {
       stat.statFilter
         ? (stat.statFilter.onlyMine = true)
         : (stat.statFilter = { onlyMine: true });
     }
+
+    let filterAnd = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      {
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      },
+      "createdTime"
+    );
+
+    if (
+      [
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+    ) {
+      if (!filterAnd) {
+        filterAnd = [];
+      }
+      filterAnd.push({
+        value: ProgrammeStage.AUTHORISED,
+        key: "currentStage",
+        operation: "=",
+      });
+    }
+
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
       [
         StatType.AGG_PROGRAMME_BY_STATUS,
         StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
       ].includes(stat.type)
         ? ["currentStage"]
         : ["sector"],
@@ -1195,21 +1266,13 @@ export class AggregateAPIService {
         new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
         frzAgg,
       ],
-      this.getFilterAndByStatFilter(
-        stat.statFilter,
-        {
-          value: companyId,
-          key: "companyId",
-          operation: "ANY",
-        },
-        "createdTime"
-      ),
+      filterAnd,
       null,
       stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      "createdTime",
+      ["statusUpdateTime", "creditUpdateTime"],
       stat.statFilter?.timeGroup ? "createdAt" : undefined,
       stat.statFilter?.timeGroup ? "day" : undefined
     );

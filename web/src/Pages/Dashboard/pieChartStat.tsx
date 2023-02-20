@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { DatePicker, Skeleton } from 'antd';
+import { DatePicker, Skeleton, Tooltip } from 'antd';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
 import { InfoCircle } from 'react-bootstrap-icons';
@@ -12,10 +12,11 @@ export interface PieChartStatsProps {
   series: any;
   lastUpdate: number;
   loading: boolean;
+  toolTipText: string;
 }
 
 const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
-  const { title, options, series, lastUpdate, loading } = props;
+  const { title, options, series, lastUpdate, loading, toolTipText } = props;
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (
@@ -28,7 +29,14 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
           <div className="pie-charts-top">
             <div className="pie-charts-title">{title}</div>
             <div className="info-container">
-              <InfoCircle color="#000000" size={20} />
+              <Tooltip
+                arrowPointAtCenter
+                placement="bottomRight"
+                trigger="hover"
+                title={toolTipText}
+              >
+                <InfoCircle color="#000000" size={17} />
+              </Tooltip>
             </div>
           </div>
           <div className="pie-charts-section">

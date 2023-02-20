@@ -53,55 +53,53 @@ const Homepage = () => {
       <Row>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-img-container image-container">
-            <div className="background-image">
-              <Row>
-                <Col md={21} lg={21} flex="auto">
-                  <div className="homepage-header-container">
-                    <div className="logo">
-                      <img src={sliderLogo} alt="slider-logo" />
+            <Row>
+              <Col md={21} lg={21} flex="auto">
+                <div className="homepage-header-container">
+                  <div className="logo">
+                    <img src={sliderLogo} alt="slider-logo" />
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex' }}>
+                      <div className="title">{'CARBON'}</div>
+                      <div className="title-sub">{'REGISTRY'}</div>
                     </div>
-                    <div>
-                      <div style={{ display: 'flex' }}>
-                        <div className="title">{'CARBON'}</div>
-                        <div className="title-sub">{'REGISTRY'}</div>
-                      </div>
-                      <div className="country-name">
-                        {process.env.COUNTRY_NAME || 'Antarctic Region'}
-                      </div>
+                    <div className="country-name">
+                      {process.env.COUNTRY_NAME || 'Antarctic Region'}
                     </div>
                   </div>
-                </Col>
-                <Col md={3} lg={3} flex="auto">
-                  <div className="homepage-button-container">
-                    <div className="button">
-                      <Button type="primary" onClick={() => navigate('/login')}>
-                        SIGN IN
-                      </Button>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <div className="text-ctn">
-                  <span>
-                    {t('homepage:carbon')} {t('homepage:credit')} <br />
-                    {t('homepage:registry')}
-                  </span>
-                  <div className="subhome">{t('homepage:lorem')}</div>
                 </div>
-              </Row>
-              <Row>
-                {Visible && (
-                  <nav className={'arrows'}>
-                    <svg onClick={handleClickScroll}>
-                      <path className="a1" d="M0 0 L30 32 L60 0"></path>
-                      <path className="a2" d="M0 20 L30 52 L60 20"></path>
-                      <path className="a3" d="M0 40 L30 72 L60 40"></path>
-                    </svg>
-                  </nav>
-                )}
-              </Row>
-            </div>
+              </Col>
+              <Col md={3} lg={3} flex="auto">
+                <div className="homepage-button-container">
+                  <div className="button">
+                    <Button type="primary" onClick={() => navigate('/login')}>
+                      SIGN IN
+                    </Button>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <div className="text-ctn">
+                <span>
+                  {t('homepage:carbon')} {t('homepage:credit')} <br />
+                  {t('homepage:registry')}
+                </span>
+                <div className="subhome">{t('homepage:lorem')}</div>
+              </div>
+            </Row>
+            <Row>
+              {Visible && (
+                <nav className={'arrows'}>
+                  <svg onClick={handleClickScroll}>
+                    <path className="a1" d="M0 0 L30 32 L60 0"></path>
+                    <path className="a2" d="M0 20 L30 52 L60 20"></path>
+                    <path className="a3" d="M0 40 L30 72 L60 40"></path>
+                  </svg>
+                </nav>
+              )}
+            </Row>
           </div>
         </Col>
       </Row>
