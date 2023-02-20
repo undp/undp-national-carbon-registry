@@ -118,7 +118,7 @@ const CookiePolicy = () => {
               <a target="_blank" href="http://www.youronlinechoices.com">
                 {' '}
                 http://www.youronlinechoices.com
-              </a>{' '}
+              </a>
               .
               <br /> The specific types of first and third party cookies served through our Websites
               and the purposes they perform are described in the table below (please note that the
@@ -144,8 +144,8 @@ const CookiePolicy = () => {
                   <td>Purpose:</td>
                   <td>
                     Used to maintain an anonymous user session by the server in Java™ 2 Platform
-                    Enterprise Edition web applications. It is a necessary cookie that expires at
-                    the end of a session.
+                    Enterprise Edition web applications.
+                    <br /> It is a necessary cookie that expires at the end of a session.
                   </td>
                 </tr>
                 <tr>
@@ -213,9 +213,10 @@ const CookiePolicy = () => {
                   <td>Type:</td>
                   <td>http_cookie</td>
                 </tr>
+
                 <tr>
                   <td>Expires in:</td>
-                  <td>1 year</td>
+                  <td>5 months 27 days</td>
                 </tr>
               </table>
             </div>
@@ -278,7 +279,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org/</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>/
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -348,8 +351,8 @@ const CookiePolicy = () => {
                   <td>Purpose:</td>
                   <td>
                     Used to distinguish individual users by means of designation of a randomly
-                    generated number as client identifier, which allows calculation of visits and
-                    sessions
+                    generated number as client identifier,
+                    <br /> which allows calculation of visits and sessions
                   </td>
                 </tr>
                 <tr>
@@ -405,7 +408,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -493,7 +498,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -607,7 +614,7 @@ const CookiePolicy = () => {
               us at digital@undp.org or by post to:
               <br />
               <br />
-              <br /> United Nations Development Programme 1 United Nations Plaza New York,
+              <br /> United Nations Development Programme 1 United Nations Plaza,
               <br /> New York United States
               <br /> Phone: +260-211-263258
               <br /> This cookie policy was created using Termly's{' '}

@@ -7,10 +7,6 @@
   overflow-x: hidden;
   background-color: $background-color;
 
-  // .ant-row {
-  //   display: block;
-  // }
-
   .code-header-container {
     background-color: rgba(255, 255, 255, 0.8);
     height: 90px;
@@ -59,7 +55,7 @@
   .code-body-container {
     text-align: left;
     justify-content: left;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color:white;
     margin-top: 5px;
     margin-bottom: 5px;
     padding-bottom: 60px;
@@ -96,7 +92,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -104,7 +99,7 @@
       display: flex;
       text-align: left;
       justify-content: left;
-      background-color: rgba(255, 255, 255, 0.8);
+      background-color: #fff;
       color: $title-text-color;
       padding-top: 30px;
       font-size: 20px;
@@ -123,7 +118,6 @@
     }
     .code-card-container {
       text-align: left;
-      // justify-content: center;
       margin: 30px 60px 30px 60px;
       padding: 30px;
       border-style: solid;

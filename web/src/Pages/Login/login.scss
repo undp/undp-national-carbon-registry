@@ -22,7 +22,6 @@
     font-size: 0.7rem;
     color: $logo-text-color;
     padding-left: 6px;
-    // padding-bottom: 3px;
   }
 
   .country-name {
@@ -65,7 +64,6 @@
 
     .ant-select {
       width: 100px;
-      // margin-left: 10px;
     }
   }
   .container-image{
@@ -108,7 +106,6 @@
         font-size: 2.2rem;
         margin-top: 1rem;
         margin-bottom: unset;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -119,9 +116,6 @@
     align-items: center;
     display: flex;
 
-    @media (max-width: $lg-size) {
-      // width: 100vw;;
-    }
 
     img {
       margin-top: 20px;
@@ -195,7 +189,6 @@
       }
 
       .ant-form-item-explain-error {
-        // padding-left: 1rem;
         margin-bottom: 0.2rem;
       }
 
@@ -276,7 +269,6 @@
         height: 2.8rem;
         font-size: 0.8rem;
         border-radius: 0.3rem;
-        // border: 1px solid $line-colors;
         padding-left: 0.8rem;
         box-shadow: none;
       }
@@ -304,8 +296,6 @@
   }
 
   .ant-btn-primary {
-    // background-color: $login-red;
-    // color: $login-white;
     background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
     border: none;
     height: 2.4rem;

@@ -8,8 +8,6 @@
     min-height: 200px;
     height: 100%;
     align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
     padding: 1rem 2rem 0 1rem;
     cursor: pointer;
 
@@ -61,6 +59,7 @@
         color: $dark-text-color;
         font-weight: 700;
         margin-right: 0.5rem;
+        margin-left: 0.5rem;
       }
 
       .title-sub {
@@ -68,12 +67,11 @@
         font-family: 'MuseoSans';
         font-size: 2rem;
         color: $dark-text-color;
-
-        // padding-bottom: 3px;
       }
 
       .logo {
         height: 97px;
+        width:110px;
         img {
           object-fit: cover;
           height: auto;
@@ -85,6 +83,7 @@
         font-size: 0.875rem;
         color: $dark-text-color;
         font-family: 'MuseoSans';
+        margin-left: 0.6rem;
       }
     }
   }
