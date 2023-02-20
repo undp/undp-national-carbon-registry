@@ -636,7 +636,7 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.RETIRE) {
           const reqID = getTxRefValues(activity.data.txRef, 7);
           const tx = reqID ? txDetails[reqID!] : undefined;
-          const crossCountry = tx.toCompanyMeta?.countryName;
+          const crossCountry = tx ? tx.toCompanyMeta?.countryName : undefined;
           el = {
             status: 'process',
             title: t('view:tlRetire'),
