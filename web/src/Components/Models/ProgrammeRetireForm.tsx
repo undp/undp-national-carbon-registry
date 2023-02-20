@@ -17,6 +17,7 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { addCommSep, Programme } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { creditUnit } from '../../Pages/Common/configs';
 
@@ -91,7 +92,11 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
   let totalCredits = 0;
   let companyName = undefined;
   for (const index in programme.creditOwnerPercentage) {
-    if (hideType && Number(programme.companyId[index]) !== myCompanyId) {
+    if (
+      (hideType && Number(programme.companyId[index]) !== myCompanyId) ||
+      parseInt(companies[Number(programme.companyId[index])].state) ===
+        CompanyState.SUSPENDED.valueOf()
+    ) {
       continue;
     } else {
       companyName = companies[Number(programme.companyId[index])].name;

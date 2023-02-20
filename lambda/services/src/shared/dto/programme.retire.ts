@@ -19,7 +19,7 @@ export class ProgrammeRetire {
 
     @ApiPropertyOptional()
     @IsArray()
-    @IsPositive({ each: true })
+    @Min(0, { each: true })
     @IsOptional()
     companyCredit: number[];
 

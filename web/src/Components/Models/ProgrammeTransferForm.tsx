@@ -14,6 +14,7 @@ import {
 import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import {
   addCommSep,
   CompanyRole,
@@ -83,9 +84,9 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
       });
       setCompanyList(
         resp.data
-          .map((d: any) => ({ label: d.name, value: d.companyId }))
+          .map((d: any) => ({ label: d.name, value: d.companyId, state: d.state }))
           .filter((d: any) => {
-            return d.value !== userCompanyId;
+            return d.value !== userCompanyId && parseInt(d.state) === CompanyState.ACTIVE.valueOf();
           })
       );
     } else {
@@ -118,10 +119,12 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
   const companyCredit = [];
   for (const index in programme.creditOwnerPercentage) {
     if (
-      (toCompanyDefault && userCompanyId !== Number(programme.companyId[index])) ||
-      (!toCompanyDefault &&
-        (userCompanyId === Number(programme.companyId[index]) ||
-          companyRole === CompanyRole.GOVERNMENT))
+      ((toCompanyDefault && userCompanyId !== Number(programme.companyId[index])) ||
+        (!toCompanyDefault &&
+          (userCompanyId === Number(programme.companyId[index]) ||
+            companyRole === CompanyRole.GOVERNMENT))) &&
+      parseInt(companies[Number(programme.companyId[index])].state) ===
+        CompanyState.ACTIVE.valueOf()
     ) {
       const companyAvailableTotal =
         ((programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *

@@ -85,6 +85,7 @@ import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
+import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 
@@ -321,9 +322,10 @@ const ProgrammeView = () => {
     return parts.join('');
   };
 
-  const getTxActivityLog = (transfers: ProgrammeTransfer[]) => {
+  const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
     const hist: any = {};
     for (const transfer of transfers) {
+      txDetails[transfer.requestId!] = transfer;
       const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
       let d: any;
       if (!transfer.isRetirement) {
@@ -361,6 +363,11 @@ const ProgrammeView = () => {
                 addCommSep(transfer.creditAmount),
                 creditUnit,
                 transfer.sender[0]?.name,
+                `${
+                  transfer.toCompanyMeta?.countryName
+                    ? `to ${transfer.toCompanyMeta?.countryName} `
+                    : ''
+                }`,
                 transfer.retirementType === RetireType.CROSS_BORDER
                   ? 'cross border transfer'
                   : transfer.retirementType === RetireType.LEGAL_ACTION
@@ -398,7 +405,7 @@ const ProgrammeView = () => {
                   addCommSep(transfer.creditAmount),
                   creditUnit,
                   transfer.sender[0]?.name,
-                  transfer.isRetirement
+                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta?.countryName
                     : transfer.receiver[0]?.name,
                   transfer.requester[0]?.name,
@@ -431,7 +438,7 @@ const ProgrammeView = () => {
                   addCommSep(transfer.creditAmount),
                   creditUnit,
                   transfer.sender[0]?.name,
-                  transfer.isRetirement
+                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta.country
                     : transfer.receiver[0]?.name,
                   systemCancel ? transfer.txRef?.split('#')[3] : transfer.requester[0]?.name,
@@ -465,7 +472,8 @@ const ProgrammeView = () => {
 
       const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
 
-      const txList = await getTxActivityLog(transfers.data);
+      const txDetails: any = {};
+      const txList = await getTxActivityLog(transfers.data, txDetails);
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
@@ -626,6 +634,9 @@ const ProgrammeView = () => {
             certifiedTime[cid] = DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy');
           }
         } else if (activity.data.txType === TxType.RETIRE) {
+          const reqID = getTxRefValues(activity.data.txRef, 7);
+          const tx = reqID ? txDetails[reqID!] : undefined;
+          const crossCountry = tx.toCompanyMeta?.countryName;
           el = {
             status: 'process',
             title: t('view:tlRetire'),
@@ -636,7 +647,8 @@ const ProgrammeView = () => {
                   addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 6),
-                  getRetirementTypeString(getTxRefValues(activity.data.txRef, 4))?.toLowerCase(),
+                  `${crossCountry ? 'to ' + crossCountry : ''} `,
+                  getRetirementTypeString(tx?.retirementType)?.toLowerCase(),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
@@ -668,7 +680,7 @@ const ProgrammeView = () => {
             ),
             icon: (
               <span className="step-icon freeze-step">
-                <CloseCircleOutlined />
+                <Icon.Stopwatch />
               </span>
             ),
           };
@@ -1351,9 +1363,11 @@ const ProgrammeView = () => {
                               0 && (
                               <div>
                                 {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                                  data.companyId
+                                  (data.companyId
                                     .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
+                                    .includes(userInfoState!.companyId) &&
+                                    userInfoState!.companyState !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
                                   <span>
                                     <Button
                                       danger
@@ -1447,9 +1461,9 @@ const ProgrammeView = () => {
                                   </span>
                                 )}
                                 {(data.companyId.length !== 1 ||
-                                  !data.companyId
-                                    .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
+                                  (data.companyId[0] !== userInfoState!.companyId &&
+                                    parseInt(data.company[0].state) !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
                                   <Button
                                     type="primary"
                                     onClick={() => {

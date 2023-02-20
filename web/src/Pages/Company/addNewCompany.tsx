@@ -104,9 +104,11 @@ const AddNewCompany = () => {
       requestData.company.logo = logoUrls[1];
       const response = await post('national/user/add', requestData);
       if (response.status === 200 || response.status === 201) {
-        setUserInfo({
-          companyLogo: response.data.logo,
-        } as UserProps);
+        if (isUpdate) {
+          setUserInfo({
+            companyLogo: response.data.logo,
+          } as UserProps);
+        }
         message.open({
           type: 'success',
           content: 'Company added Successfully!',
