@@ -1,5 +1,14 @@
 @import '../Common/colors.dashboard.scss';
 
+.mapboxgl-popup-content {
+  background-color: $white !important;
+  color: $card-title !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: $white !important;
+}
+
 .margin-top-6 {
   margin-top: 7.5rem;
 }
