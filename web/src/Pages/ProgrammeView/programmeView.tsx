@@ -85,6 +85,7 @@ import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
+import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 
@@ -1362,9 +1363,11 @@ const ProgrammeView = () => {
                               0 && (
                               <div>
                                 {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                                  data.companyId
+                                  (data.companyId
                                     .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
+                                    .includes(userInfoState!.companyId) &&
+                                    userInfoState!.companyState !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
                                   <span>
                                     <Button
                                       danger
@@ -1458,9 +1461,9 @@ const ProgrammeView = () => {
                                   </span>
                                 )}
                                 {(data.companyId.length !== 1 ||
-                                  !data.companyId
-                                    .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId)) && (
+                                  (data.companyId[0] !== userInfoState!.companyId &&
+                                    parseInt(data.company[0].state) !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
                                   <Button
                                     type="primary"
                                     onClick={() => {
