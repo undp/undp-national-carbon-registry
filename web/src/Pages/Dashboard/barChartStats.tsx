@@ -44,7 +44,9 @@ const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
             />
           </div>
           <div className="updated-on">
-            <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
+            {lastUpdate !== 0 && (
+              <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
+            )}
           </div>
         </>
       )}

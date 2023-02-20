@@ -138,7 +138,9 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
             </div>
           </div>
           <div className="updated-on margin-top-6">
-            <div className="updated-moment-container">{moment(updatedDate).fromNow()}</div>
+            {updatedDate !== 0 && (
+              <div className="updated-moment-container">{moment(updatedDate).fromNow()}</div>
+            )}
           </div>
         </>
       )}
