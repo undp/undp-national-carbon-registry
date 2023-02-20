@@ -9,6 +9,18 @@
   border-top-color: $white !important;
 }
 
+.mapboxgl-popup-close-button,
+.mapboxgl-popup-close-button:hover {
+  display: none;
+  // z-index: -1 !important;
+}
+
+.total-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+}
+
 .margin-top-6 {
   margin-top: 7.5rem;
 }

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { DatePicker, Progress, Skeleton, Tooltip } from 'antd';
 import Chart from 'react-apexcharts';
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
@@ -36,6 +36,10 @@ const ProgrammeRejectAndTransfer: FC<ProgrammeRejectAndTransferCardItemProps> = 
 ) => {
   const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading, toolTipText } =
     props;
+
+  useEffect(() => {
+    console.log({ pending, totalPrgrammes });
+  });
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (

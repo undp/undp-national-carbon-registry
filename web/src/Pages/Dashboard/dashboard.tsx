@@ -37,7 +37,7 @@ import {
   getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
 import { Sector } from '../../Casl/enums/sector.enum';
-import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
+import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import { toolTipTextGen } from './toolTipTextGen';
 import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
@@ -129,6 +129,10 @@ const Dashboard = () => {
   const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<any>(0);
 
   const currentYear = new Date();
+
+  const pieChartTotalElement = (value: any) => {
+    return `<div className="total-container">${value}</div>`;
+  };
 
   const getUserProfileDetails = async () => {
     try {
@@ -985,15 +989,16 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          if (responseItem?.currentStage === 'AwaitingAuthorization') {
+          if (responseItem?.currentStage === ProgrammeStage.AWAITING_AUTHORIZATION) {
+            console.table(programmeByStatusAggregationResponse);
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             setPendingProjects(parseInt(responseItem?.count));
           }
-          if (responseItem?.currentStage === 'Rejected') {
+          if (responseItem?.currentStage === ProgrammeStage.REJECTED) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             setRejectedProjects(parseInt(responseItem?.count));
           }
-          if (responseItem?.currentStage === 'Authorised') {
+          if (responseItem?.currentStage === ProgrammeStage.AUTHORISED) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             setAuthorisedProjects(parseInt(responseItem?.count));
           }
@@ -1058,14 +1063,18 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    getAllProgrammeAnalyticsStatsWithoutTimeRange();
-    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      setCategoryType('mine');
+    if (companyRole) {
+      getAllProgrammeAnalyticsStatsWithoutTimeRange();
+      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        setCategoryType('mine');
+      }
     }
   }, [companyRole]);
 
   useEffect(() => {
-    getAllProgrammeAnalyticsStats();
+    if (companyRole) {
+      getAllProgrammeAnalyticsStats();
+    }
     getAllProgrammesAggChartStats();
   }, [startTime, endTime, categoryType, companyRole]);
 
@@ -1535,6 +1544,7 @@ ${total}
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
+              id="credits"
               title={StatsCardsTypes.CREDITS}
               options={optionDonutPieA}
               series={creditsPieSeries}
@@ -1553,6 +1563,7 @@ ${total}
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
+              id="certified-credits"
               title={StatsCardsTypes.CERTIFIED_CREDITS}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}

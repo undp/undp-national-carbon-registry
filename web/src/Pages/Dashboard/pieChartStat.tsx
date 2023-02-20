@@ -7,6 +7,7 @@ import { InfoCircle } from 'react-bootstrap-icons';
 const { RangePicker } = DatePicker;
 
 export interface PieChartStatsProps {
+  id: string;
   title: string;
   options: any;
   series: any;
@@ -16,7 +17,7 @@ export interface PieChartStatsProps {
 }
 
 const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
-  const { title, options, series, lastUpdate, loading, toolTipText } = props;
+  const { id, title, options, series, lastUpdate, loading, toolTipText } = props;
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (
@@ -40,7 +41,7 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
             </div>
           </div>
           <div className="pie-charts-section">
-            <Chart options={options} series={series} type="donut" height="320px" />
+            <Chart id={id} options={options} series={series} type="donut" height="320px" />
           </div>
           <div className="updated-on margin-top-2">
             {lastUpdate !== 0 && (
