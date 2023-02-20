@@ -760,7 +760,11 @@ const CreditTransfer = () => {
                   onPressEnter={onSearch}
                   placeholder={'Search'}
                   allowClear
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) =>
+                    e.target.value === ''
+                      ? setSearch(e.target.value)
+                      : setSearchText(e.target.value)
+                  }
                   onSearch={setSearch}
                   style={{ width: 265 }}
                 />
