@@ -459,17 +459,9 @@ const ProgrammeView = () => {
     setLoadingHistory(true);
     try {
       const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
-      const transferPromise = post('national/programme/transferQuery', {
-        page: 1,
-        size: 30,
-        filterAnd: [
-          {
-            key: 'programmeId',
-            operation: '=',
-            value: String(programmeId),
-          },
-        ],
-      });
+      const transferPromise = get(
+        `national/programme/transfersByProgrammeId?programmeId=${programmeId}`
+      );
 
       const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
 

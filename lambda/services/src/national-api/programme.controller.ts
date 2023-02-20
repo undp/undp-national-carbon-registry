@@ -144,4 +144,12 @@ export class ProgrammeController {
       console.log(req.abilityCondition)
       return this.programmeService.queryProgrammeTransfers(query, req.abilityCondition, req.user)
     }
+
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true))
+    @Get('transfersByProgrammeId')
+    transfersByProgrammeId(@Query('programmeId') programmeId: string, @Request() req) {
+      console.log(req.abilityCondition)
+      return this.programmeService.getTransferByProgrammeId(programmeId, req.abilityCondition, req.user)
+    }
 }
