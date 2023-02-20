@@ -42,6 +42,7 @@ import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import { toolTipTextGen } from './toolTipTextGen';
 import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { useTranslation } from 'react-i18next';
 
 const { RangePicker } = DatePicker;
 
@@ -53,6 +54,7 @@ const Dashboard = () => {
   const mapContainerRef = useRef(null);
   const mapContainerInternationalRef = useRef(null);
   const { userInfoState } = useUserContext();
+  const { i18n, t } = useTranslation(['dashboard']);
   const [loading, setLoading] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<any>([]);
   const [companyRole, setCompanyRole] = useState<any>(userInfoState?.companyRole);
@@ -1377,13 +1379,13 @@ ${total}
                   ? transferRequestReceived
                   : programmesUnCertifed
               }
-              title={
+              title={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? StatsCardsTypes.PROGRAMMES_PENDING
+                  ? 'programmesPending'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? StatsCardsTypes.TRANSFER_REQUEST_RECEIVED
-                  : StatsCardsTypes.PROGRAMMES_UNCERTIFIED
-              }
+                  ? 'trasnferReqReceived'
+                  : 'programmesUnCertified'
+              )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdateProgrammesStats)
@@ -1413,13 +1415,13 @@ ${total}
                   ? transferRequestSent
                   : programmesCertifed
               }
-              title={
+              title={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? StatsCardsTypes.TRANSFER_REQUEST_SENT
+                  ? 'trasnferReqInit'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? StatsCardsTypes.TRANSFER_REQUEST_SENT
-                  : StatsCardsTypes.PROGRAMMES_CERTIFIED
-              }
+                  ? 'trasnferReqInit'
+                  : 'programmesCertified'
+              )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdatePendingTransferSent)
@@ -1449,13 +1451,13 @@ ${total}
                   ? creditBalanceWithoutTimeRange
                   : creditCertiedBalanceWithoutTimeRange
               }
-              title={
+              title={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? StatsCardsTypes.CREDIT_BALANCE
+                  ? 'creditBal'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? StatsCardsTypes.CREDIT_BALANCE
-                  : StatsCardsTypes.CREDIT_CERTIFIED
-              }
+                  ? 'creditBal'
+                  : 'creditCertified'
+              )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdateCreditBalance)
@@ -1493,7 +1495,7 @@ ${total}
           />
         </div>
         <div className="radio-selection">
-          {userInfoState?.companyRole === 'Certifier' && (
+          {userInfoState?.companyRole === CompanyRole.CERTIFIER && (
             <Radio.Group value={categoryType} onChange={onChangeCategory}>
               <Radio.Button className="overall" value="overall">
                 OVERALL
@@ -1529,7 +1531,7 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
               id="credits"
-              title={StatsCardsTypes.CREDITS}
+              title={t('credits')}
               options={optionDonutPieA}
               series={creditsPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesCreditsStats)}
@@ -1548,7 +1550,7 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
               id="certified-credits"
-              title={StatsCardsTypes.CERTIFIED_CREDITS}
+              title={t('certifiedCredits')}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
               lastUpdate={parseInt(lastUpdateCertifiedCreditsStats)}
@@ -1575,7 +1577,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-programmes"
-              title={StatsCardsTypes.TOTAL_PROGRAMMES}
+              title={t('totalProgrammes')}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStatsC)}
@@ -1598,7 +1600,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-programmes-sector"
-              title={StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR}
+              title={t('totalProgrammesSector')}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesSectorStatsC)}
@@ -1634,7 +1636,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-credits"
-              title={StatsCardsTypes.TOTAL_CREDITS}
+              title={t('totalCredits')}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateTotalCredits)}
@@ -1653,7 +1655,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
               id="total-credits-certified"
-              title={StatsCardsTypes.TOTAL_CREDITS_CERTIFIED}
+              title={t('totalCreditsCertified')}
               options={totalCreditsCertifiedOptions}
               series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateTotalCreditsCertified)}
@@ -1689,7 +1691,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
               <div className="pie-charts-top">
-                <div className="pie-charts-title">{StatsCardsTypes.PROGRAMME_LOCATIONS}</div>
+                <div className="pie-charts-title">{t('programmeLocations')}</div>
                 <div className="info-container">
                   <div className="info-container">
                     <Tooltip
@@ -1751,9 +1753,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
               <div className="pie-charts-top">
-                <div className="pie-charts-title">
-                  {StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL}
-                </div>
+                <div className="pie-charts-title">{t('trasnferLocations')}</div>
                 <div className="info-container">
                   <Tooltip
                     arrowPointAtCenter
