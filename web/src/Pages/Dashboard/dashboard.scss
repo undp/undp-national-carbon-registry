@@ -353,6 +353,8 @@
             justify-content: space-between;
             padding: 0 1rem 0 1rem;
             .pie-charts-title {
+              display: flex;
+              flex-direction: row;
               font-family: 'Inter';
               align-items: flex-start;
               justify-content: flex-start;
@@ -362,6 +364,15 @@
               font-size: 1.15rem;
               margin-top: 1rem;
               color: $card-title;
+
+              .unit {
+                display: flex;
+                margin: 0 0 0 0.5rem;
+                font-family: 'Inter';
+                font-size: 1.15rem;
+                font-weight: 500;
+                color: rgba(58, 53, 65, 0.5);
+              }
             }
 
             .info-container {

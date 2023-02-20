@@ -41,6 +41,7 @@ import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import { toolTipTextGen } from './toolTipTextGen';
 import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const { RangePicker } = DatePicker;
 
@@ -51,13 +52,14 @@ const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
   const mapContainerRef = useRef(null);
   const mapContainerInternationalRef = useRef(null);
+  const { userInfoState } = useUserContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<any>([]);
-  const [companyRole, setCompanyRole] = useState<any>();
+  const [companyRole, setCompanyRole] = useState<any>(userInfoState?.companyRole);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
-  const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
+  const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
   const [authorisedProjects, setAuthorisedProjects] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
@@ -66,6 +68,8 @@ const Dashboard = () => {
     useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
+  const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
+  const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
@@ -130,24 +134,6 @@ const Dashboard = () => {
 
   const currentYear = new Date();
 
-  const pieChartTotalElement = (value: any) => {
-    return `<div className="total-container">${value}</div>`;
-  };
-
-  const getUserProfileDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await get('national/User/profile');
-      if (response.data) {
-        setUserDetails(response.data.user);
-        setCompanyRole(response.data.user?.companyRole);
-      }
-    } catch (exception) {
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
       stats: [
@@ -174,7 +160,7 @@ const Dashboard = () => {
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
         stats: [
           {
@@ -200,7 +186,7 @@ const Dashboard = () => {
           },
         ],
       };
-    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
       return {
         stats: [
           {
@@ -226,7 +212,7 @@ const Dashboard = () => {
           },
         ],
       };
-    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
       return {
         stats: [
           {
@@ -282,7 +268,7 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
         stats: [
           {
@@ -325,7 +311,7 @@ const Dashboard = () => {
           },
         ],
       };
-    } else if (companyRole === 'Certifier' && categoryType === 'mine') {
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
       return {
         stats: [
           {
@@ -368,7 +354,7 @@ const Dashboard = () => {
           },
         ],
       };
-    } else if (companyRole === 'Certifier' && categoryType === 'overall') {
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
       return {
         stats: [
           {
@@ -489,7 +475,7 @@ const Dashboard = () => {
       let totalCreditsCertifiedStats: any;
       let programmeLocationsStats: any;
       let transferLocationsStats: any;
-      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         if (
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
@@ -531,7 +517,7 @@ const Dashboard = () => {
           setLastUpdateTransferLocations(response?.data?.stats?.MY_TRANSFER_LOCATION?.last);
         }
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
-      } else if (companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
           String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !== '0'
@@ -567,7 +553,10 @@ const Dashboard = () => {
         }
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
-      } else if (companyRole === CompanyRole.CERTIFIER && categoryType === 'overall') {
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === 'overall'
+      ) {
         if (
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
@@ -852,7 +841,7 @@ const Dashboard = () => {
       let programmeByStatusAggregationResponse: any;
       let programmeByStatusAuthAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         if (
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
           String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
@@ -884,7 +873,7 @@ const Dashboard = () => {
         }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-      } else if (companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime &&
           String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime) !== '0'
@@ -916,7 +905,10 @@ const Dashboard = () => {
         }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-      } else if (companyRole === CompanyRole.CERTIFIER && categoryType === 'overall') {
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === 'overall'
+      ) {
         if (
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
@@ -989,8 +981,8 @@ const Dashboard = () => {
       let totalRevokedCredits = 0;
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+          console.log('mine --> check -- > ', programmeByStatusAggregationResponse);
           if (responseItem?.currentStage === ProgrammeStage.AWAITING_AUTHORIZATION) {
-            console.table(programmeByStatusAggregationResponse);
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             setPendingProjects(parseInt(responseItem?.count));
           }
@@ -1045,6 +1037,8 @@ const Dashboard = () => {
         '' + addCommSep(totalCreditsCertified);
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
+      setCreditsPieChartTotal(totalEstCredits);
+      setCertifiedCreditsPieChartTotal(totalCreditsCertified);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -1059,24 +1053,16 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getUserProfileDetails();
+    getAllProgrammeAnalyticsStatsWithoutTimeRange();
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      setCategoryType('mine');
+    }
   }, []);
 
   useEffect(() => {
-    if (companyRole) {
-      getAllProgrammeAnalyticsStatsWithoutTimeRange();
-      if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        setCategoryType('mine');
-      }
-    }
-  }, [companyRole]);
-
-  useEffect(() => {
-    if (companyRole) {
-      getAllProgrammeAnalyticsStats();
-    }
+    getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
-  }, [startTime, endTime, categoryType, companyRole]);
+  }, [startTime, endTime, categoryType]);
 
   useEffect(() => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
@@ -1107,8 +1093,6 @@ const Dashboard = () => {
   const authorised = ['==', ['get', 'stage'], 'Authorised'];
   const rejected = ['==', ['get', 'stage'], 'Rejected'];
 
-  // colors to use for the categories
-  // const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
   const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 
   function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
@@ -1387,109 +1371,109 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? pendingProjectsWithoutTimeRange
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestReceived
                   : programmesUnCertifed
               }
               title={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? StatsCardsTypes.PROGRAMMES_PENDING
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? StatsCardsTypes.TRANSFER_REQUEST_RECEIVED
                   : StatsCardsTypes.PROGRAMMES_UNCERTIFIED
               }
               updatedDate={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdateProgrammesStats)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? parseInt(lastUpdatePendingTransferReceived)
                   : parseInt(lastUpdateProgrammesCertifiable)
               }
               icon={
-                companyRole === CompanyRole.GOVERNMENT ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <ClockHistory color="#16B1FF" size={80} />
-                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowInRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldX color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
-              companyRole={companyRole}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? transferRequestSent
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestSent
                   : programmesCertifed
               }
               title={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? StatsCardsTypes.TRANSFER_REQUEST_SENT
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? StatsCardsTypes.TRANSFER_REQUEST_SENT
                   : StatsCardsTypes.PROGRAMMES_CERTIFIED
               }
               updatedDate={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdatePendingTransferSent)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? parseInt(lastUpdatePendingTransferSent)
                   : parseInt(lastUpdateProgrammesCertified)
               }
               icon={
-                companyRole === CompanyRole.GOVERNMENT ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
-                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldCheck color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
-              companyRole={companyRole}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? creditBalanceWithoutTimeRange
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? creditBalanceWithoutTimeRange
                   : creditCertiedBalanceWithoutTimeRange
               }
               title={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? StatsCardsTypes.CREDIT_BALANCE
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? StatsCardsTypes.CREDIT_BALANCE
                   : StatsCardsTypes.CREDIT_CERTIFIED
               }
               updatedDate={
-                companyRole === CompanyRole.GOVERNMENT
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? parseInt(lastUpdateCreditBalance)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? parseInt(lastUpdateCreditBalance)
                   : parseInt(lastUpdateProgrammesCertified)
               }
               icon={
-                companyRole === CompanyRole.GOVERNMENT ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <Gem color="#16B1FF" size={80} />
-                ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <Gem color="#16B1FF" size={80} />
                 ) : (
                   <ShieldExclamation color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
-              companyRole={companyRole}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
         </Row>
@@ -1509,7 +1493,7 @@ ${total}
           />
         </div>
         <div className="radio-selection">
-          {companyRole === 'Certifier' && (
+          {userInfoState?.companyRole === 'Certifier' && (
             <Radio.Group value={categoryType} onChange={onChangeCategory}>
               <Radio.Button className="overall" value="overall">
                 OVERALL
@@ -1532,13 +1516,13 @@ ${total}
               updatedDate={parseInt(lastUpdateProgrammesStatsC)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMMES)
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES, true)
+                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
               }
             />
           </Col>
@@ -1551,13 +1535,13 @@ ${total}
               lastUpdate={parseInt(lastUpdateProgrammesCreditsStats)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CREDITS, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.CREDITS)
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS, true)
+                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
               }
             />
           </Col>
@@ -1570,13 +1554,17 @@ ${total}
               lastUpdate={parseInt(lastUpdateCertifiedCreditsStats)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.CERTIFIED_CREDITS,
+                      true
+                    )
+                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
               }
             />
           </Col>
@@ -1593,13 +1581,17 @@ ${total}
               lastUpdate={parseInt(lastUpdateProgrammesStatsC)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_PROGRAMMES,
+                      true
+                    )
+                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
               }
             />
           </Col>
@@ -1612,13 +1604,26 @@ ${total}
               lastUpdate={parseInt(lastUpdateProgrammesSectorStatsC)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
+                    )
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
+                    )
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR)
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR,
+                      true
+                    )
+                  : toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
+                    )
               }
             />
           </Col>
@@ -1635,13 +1640,13 @@ ${total}
               lastUpdate={parseInt(lastUpdateTotalCredits)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS)
+                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS, true)
+                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
               }
             />
           </Col>
@@ -1654,13 +1659,26 @@ ${total}
               lastUpdate={parseInt(lastUpdateTotalCreditsCertified)}
               loading={loading}
               toolTipText={
-                companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
-                  : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
+                    )
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
+                    )
                   : categoryType === 'mine'
-                  ? toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED, true)
-                  : toolTipTextGen(companyRole, StatsCardsTypes.TOTAL_CREDITS_CERTIFIED)
+                  ? toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED,
+                      true
+                    )
+                  : toolTipTextGen(
+                      userInfoState?.companyRole,
+                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
+                    )
               }
             />
           </Col>
@@ -1679,13 +1697,26 @@ ${total}
                       placement="bottomRight"
                       trigger="hover"
                       title={
-                        companyRole === CompanyRole.GOVERNMENT
-                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
-                          : companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
+                        userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                          ? toolTipTextGen(
+                              userInfoState?.companyRole,
+                              StatsCardsTypes.PROGRAMME_LOCATIONS
+                            )
+                          : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                          ? toolTipTextGen(
+                              userInfoState?.companyRole,
+                              StatsCardsTypes.PROGRAMME_LOCATIONS
+                            )
                           : categoryType === 'mine'
-                          ? toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS, true)
-                          : toolTipTextGen(companyRole, StatsCardsTypes.PROGRAMME_LOCATIONS)
+                          ? toolTipTextGen(
+                              userInfoState?.companyRole,
+                              StatsCardsTypes.PROGRAMME_LOCATIONS,
+                              true
+                            )
+                          : toolTipTextGen(
+                              userInfoState?.companyRole,
+                              StatsCardsTypes.PROGRAMME_LOCATIONS
+                            )
                       }
                     >
                       <InfoCircle color="#000000" size={17} />
@@ -1729,24 +1760,24 @@ ${total}
                     placement="bottomRight"
                     trigger="hover"
                     title={
-                      companyRole === CompanyRole.GOVERNMENT
+                      userInfoState?.companyRole === CompanyRole.GOVERNMENT
                         ? toolTipTextGen(
-                            companyRole,
+                            userInfoState?.companyRole,
                             StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
                           )
-                        : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                        : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                         ? toolTipTextGen(
-                            companyRole,
+                            userInfoState?.companyRole,
                             StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
                           )
                         : categoryType === 'mine'
                         ? toolTipTextGen(
-                            companyRole,
+                            userInfoState?.companyRole,
                             StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL,
                             true
                           )
                         : toolTipTextGen(
-                            companyRole,
+                            userInfoState?.companyRole,
                             StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
                           )
                     }

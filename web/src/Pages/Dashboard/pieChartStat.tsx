@@ -3,12 +3,13 @@ import { DatePicker, Skeleton, Tooltip } from 'antd';
 import Chart from 'react-apexcharts';
 import moment from 'moment';
 import { InfoCircle } from 'react-bootstrap-icons';
+import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
 
 const { RangePicker } = DatePicker;
 
 export interface PieChartStatsProps {
   id: string;
-  title: string;
+  title: any;
   options: any;
   series: any;
   lastUpdate: number;
@@ -28,7 +29,12 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
       ) : (
         <>
           <div className="pie-charts-top">
-            <div className="pie-charts-title">{title}</div>
+            <div className="pie-charts-title">
+              {title}
+              {[StatsCardsTypes.CREDITS, StatsCardsTypes.CERTIFIED_CREDITS].includes(title) && (
+                <div className="unit">(ITMOs)</div>
+              )}
+            </div>
             <div className="info-container">
               <Tooltip
                 arrowPointAtCenter
