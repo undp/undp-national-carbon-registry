@@ -262,7 +262,7 @@ export class ProgrammeService {
 
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
-        console.log(e)
+        console.log(e);
         e.certifier =
           e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
         if (
@@ -286,10 +286,10 @@ export class ProgrammeService {
           usrId = e["initiator"];
           userCompany = e["initiatorCompanyId"];
         }
-        
+
         if (
-          (user.companyRole === CompanyRole.GOVERNMENT ||
-            Number(userCompany) === Number(user.companyId))
+          user.companyRole === CompanyRole.GOVERNMENT ||
+          Number(userCompany) === Number(user.companyId)
         ) {
           e["userName"] = await this.getUserName(usrId);
         }
@@ -1197,6 +1197,16 @@ export class ProgrammeService {
       `Programme ${req.programmeId} retiring Comment: ${req.comment} type: ${req.type}`
     );
 
+    if (
+      req.companyCredit &&
+      req.companyCredit.reduce((a, b) => a + b, 0) <= 0
+    ) {
+      throw new HttpException(
+        "Total Amount should be greater than 0",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
     if (req.fromCompanyIds && req.fromCompanyIds.length > 1) {
       if (
         req.companyCredit &&
@@ -1596,8 +1606,8 @@ export class ProgrammeService {
 
   private getUserName = async (usrId: string) => {
     this.logger.debug(`Getting user [${usrId}]`);
-    if (usrId == 'undefined' || usrId == 'null') {
-        return null;
+    if (usrId == "undefined" || usrId == "null") {
+      return null;
     }
     const userId = Number(usrId);
     if (userId == undefined || userId == null) {
