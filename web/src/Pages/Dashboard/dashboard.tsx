@@ -56,7 +56,6 @@ const Dashboard = () => {
   const { userInfoState } = useUserContext();
   const { i18n, t } = useTranslation(['dashboard']);
   const [loading, setLoading] = useState<boolean>(false);
-  const [userDetails, setUserDetails] = useState<any>([]);
   const [companyRole, setCompanyRole] = useState<any>(userInfoState?.companyRole);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
