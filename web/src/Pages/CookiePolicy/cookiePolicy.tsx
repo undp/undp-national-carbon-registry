@@ -279,7 +279,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org/</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>/
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -406,7 +408,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -494,7 +498,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
