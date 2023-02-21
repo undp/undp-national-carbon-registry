@@ -157,12 +157,15 @@ const CreditTransfer = () => {
       });
     }
 
-    let sort;
+    let sort: any;
     if (sortOrder && sortField) {
       sort = {
         key: sortField,
         order: sortOrder,
       };
+      if (sortField === 'programmeCertifierId') {
+        sort.nullFirst = sortOrder === 'ASC';
+      }
     } else {
       sort = {
         key: 'requestId',
@@ -434,8 +437,8 @@ const CreditTransfer = () => {
     {
       title: t('creditTransfer:certifier'),
       dataIndex: 'certifier',
-      key: 'certifier',
-      sorter: false,
+      key: 'programmeCertifierId',
+      sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
