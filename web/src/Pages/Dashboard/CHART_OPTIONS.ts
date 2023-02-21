@@ -1,8 +1,22 @@
 export const totalProgrammesOptions: any = {
   states: {
-    active: {
+    normal: {
       filter: {
         type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
       },
     },
   },
@@ -111,11 +125,26 @@ export const totalProgrammesOptions: any = {
     },
   },
 };
+
 export const totalProgrammesOptionsSub: any = {
   states: {
-    active: {
+    normal: {
       filter: {
         type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
       },
     },
   },
@@ -262,9 +291,23 @@ export const totalProgrammesOptionsSub: any = {
 };
 export const totalCreditsOptions: any = {
   states: {
-    active: {
+    normal: {
       filter: {
         type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
       },
     },
   },
@@ -376,9 +419,23 @@ export const totalCreditsOptions: any = {
 
 export const totalCreditsCertifiedOptions: any = {
   states: {
-    active: {
+    normal: {
       filter: {
         type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
       },
     },
   },
@@ -489,6 +546,27 @@ export const totalCreditsCertifiedOptions: any = {
 };
 
 export const optionDonutPieA: any = {
+  states: {
+    normal: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
+      },
+    },
+  },
   chart: {
     type: 'donut',
   },
@@ -575,6 +653,27 @@ export const optionDonutPieA: any = {
 };
 
 export const optionDonutPieB: any = {
+  states: {
+    normal: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    hover: {
+      filter: {
+        type: 'none',
+        value: 0,
+      },
+    },
+    active: {
+      allowMultipleDataPointsSelection: true,
+      filter: {
+        type: 'darken',
+        value: 0.7,
+      },
+    },
+  },
   chart: {
     type: 'donut',
   },
