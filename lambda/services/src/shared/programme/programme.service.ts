@@ -448,45 +448,7 @@ export class ProgrammeService {
       transfer.initiatorCompanyId
     );
 
-    if (transfer.isRetirement) {
-      await this.emailHelperService.sendEmailToOrganisationAdmins(
-        transfer.fromCompanyId,
-        EmailTemplates.CREDIT_RETIREMENT_RECOGNITION,
-        {
-          credits: transfer.creditAmount,
-          country: transfer.toCompanyMeta.country,
-        },
-        0,
-        transfer.programmeId
-      );
-    } else if (initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT) {
-      await this.emailHelperService.sendEmailToGovernmentAdmins(
-        EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR,
-        { credits: transfer.creditAmount },
-        transfer.programmeId,
-        approver.companyId
-      );
-      await this.emailHelperService.sendEmailToOrganisationAdmins(
-        transfer.toCompanyId,
-        EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER,
-        {
-          credits: transfer.creditAmount,
-          government: initiatorCompanyDetails.name,
-        },
-        transfer.fromCompanyId,
-        transfer.programmeId
-      );
-    } else {
-      await this.emailHelperService.sendEmailToOrganisationAdmins(
-        transfer.toCompanyId,
-        EmailTemplates.CREDIT_TRANSFER_ACCEPTED,
-        { credits: transfer.creditAmount },
-        approver.companyId,
-        transfer.programmeId
-      );
-    }
-
-    return await this.doTransfer(
+    const transferResult = await this.doTransfer(
       transfer,
       `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}#${
         giver.companyId
@@ -494,6 +456,48 @@ export class ProgrammeService {
       req.comment,
       transfer.isRetirement
     );
+
+    if(transferResult.statusCode === 200){
+      if (transfer.isRetirement) {
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
+          transfer.fromCompanyId,
+          EmailTemplates.CREDIT_RETIREMENT_RECOGNITION,
+          {
+            credits: transfer.creditAmount,
+            country: transfer.toCompanyMeta.country,
+          },
+          0,
+          transfer.programmeId
+        );
+      } else if (initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT) {
+        await this.emailHelperService.sendEmailToGovernmentAdmins(
+          EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR,
+          { credits: transfer.creditAmount },
+          transfer.programmeId,
+          approver.companyId
+        );
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
+          transfer.toCompanyId,
+          EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER,
+          {
+            credits: transfer.creditAmount,
+            government: initiatorCompanyDetails.name,
+          },
+          transfer.fromCompanyId,
+          transfer.programmeId
+        );
+      } else {
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
+          transfer.toCompanyId,
+          EmailTemplates.CREDIT_TRANSFER_ACCEPTED,
+          { credits: transfer.creditAmount },
+          approver.companyId,
+          transfer.programmeId
+        );
+      }
+    }
+
+    return transferResult;
   }
 
   private async doTransfer(
@@ -991,19 +995,22 @@ export class ProgrammeService {
       orgNamesList = companyNames.join(",") + " and " + lastItem;
     } else {
       orgNamesList = companyNames[0];
+    } 
+
+    const savedProgramme = await this.programmeLedger.createProgramme(programme);
+    if(savedProgramme){
+      const hostAddress = this.configService.get("host");
+      this.emailHelperService.sendEmailToGovernmentAdmins(
+        EmailTemplates.PROGRAMME_CREATE,
+        {
+          organisationName: orgNamesList,
+          programmePageLink:
+            hostAddress + `/programmeManagement/view?id=${programme.programmeId}`,
+        }
+      );
     }
 
-    const hostAddress = this.configService.get("host");
-    this.emailHelperService.sendEmailToGovernmentAdmins(
-      EmailTemplates.PROGRAMME_CREATE,
-      {
-        organisationName: orgNamesList,
-        programmePageLink:
-          hostAddress + `/programmeManagement/view?id=${programme.programmeId}`,
-      }
-    );
-
-    return await this.programmeLedger.createProgramme(programme);
+    return savedProgramme;
   }
 
   async query(

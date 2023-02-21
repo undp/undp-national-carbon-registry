@@ -201,12 +201,24 @@ const ProgrammeManagement = () => {
     },
     {
       title: t('programme:certifiers'),
-      dataIndex: 'certifier',
+      dataIndex: 'certifierId',
       key: 'certifierId',
       align: 'left' as const,
       sorter: true,
       render: (item: any, itemObj: any) => {
-        const elements = item.map((obj: any) => {
+        if (item === null) {
+          return;
+        }
+        const cMap: any = {};
+        for (const c of itemObj.certifier) {
+          cMap[c.companyId] = c;
+        }
+
+        const elements = item.map((id: any) => {
+          const obj = cMap[id];
+          if (!obj) {
+            return;
+          }
           return (
             <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
               <div>
