@@ -373,7 +373,26 @@ export class UserService {
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
+
+      if(company.email){
+        await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
+          organisationName: company.name,
+          countryName: this.configService.get("systemCountryName"),
+          organisationRole: company.companyRole,
+          home: hostAddress,
+        });
+      }
     }
+
+    await this.emailService.sendEmail(u.email, EmailTemplates.USER_CREATE, {
+      name: u.name,
+      countryName: this.configService.get("systemCountryName"),
+      tempPassword: u.password,
+      home: hostAddress,
+      email: u.email,
+      liveChat: this.configService.get("liveChat"),
+      helpDoc: this.configService.get("helpDocumentation"),
+    });
 
     u.createdTime = new Date().getTime();
 
@@ -419,26 +438,6 @@ export class UserService {
       });
 
     const { apiKey, password, ...resp } = usr;
-
-    
-    if(company && company.email){
-      await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
-        organisationName: company.name,
-        countryName: this.configService.get("systemCountryName"),
-        organisationRole: company.companyRole,
-        home: hostAddress,
-      });
-    }
-
-    await this.emailService.sendEmail(u.email, EmailTemplates.USER_CREATE, {
-      name: u.name,
-      countryName: this.configService.get("systemCountryName"),
-      tempPassword: u.password,
-      home: hostAddress,
-      email: u.email,
-      liveChat: this.configService.get("liveChat"),
-      helpDoc: this.configService.get("helpDocumentation"),
-    });
 
     return resp;
   }
