@@ -438,6 +438,7 @@ export class UserService {
       });
 
     const { apiKey, password, ...resp } = usr;
+
     return resp;
   }
 

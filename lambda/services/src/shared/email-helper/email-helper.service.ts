@@ -10,6 +10,7 @@ import { UserService } from "../user/user.service";
 @Injectable()
 export class EmailHelperService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private configService: ConfigService,
     private emailService: EmailService,
