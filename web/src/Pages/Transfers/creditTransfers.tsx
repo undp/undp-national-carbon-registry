@@ -436,16 +436,27 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:certifier'),
-      dataIndex: 'certifier',
+      dataIndex: 'programmeCertifierId',
       key: 'programmeCertifierId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
+        if (item === null) {
+          return;
+        }
+        const cMap: any = {};
+        for (const c of itemObj.certifier) {
+          cMap[c.companyId] = c;
+        }
+
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.certifier &&
-              itemObj.certifier &&
-              itemObj.certifier.map((v: any, i: any) => {
+            {itemObj.programmeCertifierId &&
+              itemObj.programmeCertifierId.map((id: any, i: any) => {
+                const v = cMap[id];
+                if (!v) {
+                  return;
+                }
                 return (
                   <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                     <div>
