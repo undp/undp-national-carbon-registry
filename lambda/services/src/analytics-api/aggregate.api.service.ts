@@ -463,7 +463,7 @@ export class AggregateAPIService {
       ],
       filtAuth,
       null,
-      timeGroup ? { key: "time_group", order: "ASC" } : null,
+      timeGroup ? { key: "time_group", order: "ASC", nullFirst: false } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
@@ -572,7 +572,7 @@ export class AggregateAPIService {
       ],
       filters,
       filterOr,
-      timeGroup ? { key: "time_group", order: "ASC" } : null,
+      timeGroup ? { key: "time_group", order: "ASC", nullFirst: false } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
@@ -1268,7 +1268,9 @@ export class AggregateAPIService {
       ],
       filterAnd,
       null,
-      stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
+      stat.statFilter?.timeGroup
+        ? { key: "time_group", order: "ASC", nullFirst: false }
+        : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
