@@ -13,5 +13,5 @@ export class SortEntry {
     order: any;
 
     @ApiPropertyOptional()
-    nullFirst: boolean;
+    nullFirst?: boolean;
 }
