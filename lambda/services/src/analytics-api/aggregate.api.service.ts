@@ -865,7 +865,8 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      stat.statFilter?.timeGroup ? true : false
+      stat.statFilter?.timeGroup ? true : false,
+      companyId
     );
 
     const certified = await this.getCertifiedProgrammes(
