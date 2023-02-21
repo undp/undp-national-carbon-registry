@@ -1516,15 +1516,15 @@ ${total}
               authorized={authorisedProjects}
               updatedDate={parseInt(lastUpdateProgrammesStatsC)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
+                  ? 'tTProgrammesGoverment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
+                  ? 'tTProgrammesProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES, true)
-                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.PROGRAMMES)
-              }
+                  ? 'tTProgrammesCertifierMine'
+                  : 'tTProgrammesCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1535,15 +1535,15 @@ ${total}
               series={creditsPieSeries}
               lastUpdate={parseInt(lastUpdateProgrammesCreditsStats)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
+                  ? 'tTCreditsGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
+                  ? 'tTCreditsProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS, true)
-                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CREDITS)
-              }
+                  ? 'tTCreditsCertifierMine'
+                  : 'tTCreditsCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -1554,19 +1554,15 @@ ${total}
               series={creditsCertifiedPieSeries}
               lastUpdate={parseInt(lastUpdateCertifiedCreditsStats)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
+                  ? 'tTCertifiedCreditsGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
+                  ? 'tTCertifiedCreditsProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.CERTIFIED_CREDITS,
-                      true
-                    )
-                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.CERTIFIED_CREDITS)
-              }
+                  ? 'tTCertifiedCreditsCertifierMine'
+                  : 'tTCertifiedCreditsCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1581,19 +1577,15 @@ ${total}
               series={totalProgrammesSeries}
               lastUpdate={parseInt(lastUpdateProgrammesStatsC)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
+                  ? 'tTTotalProgrammesGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
+                  ? 'tTTotalProgrammesProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_PROGRAMMES,
-                      true
-                    )
-                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_PROGRAMMES)
-              }
+                  ? 'tTTotalProgrammesCertifierMine'
+                  : 'tTTotalProgrammesCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
@@ -1604,28 +1596,15 @@ ${total}
               series={totalProgrammesSectorSeries}
               lastUpdate={parseInt(lastUpdateProgrammesSectorStatsC)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
-                    )
+                  ? 'tTTotalProgrammesSectorGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
-                    )
+                  ? 'tTTotalProgrammesSecProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR,
-                      true
-                    )
-                  : toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_PROGRAMMES_SECTOR
-                    )
-              }
+                  ? 'tTTotalProgrammesSecCertifierMine'
+                  : 'tTTotalProgrammesSecCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1640,15 +1619,15 @@ ${total}
               series={totalCreditsSeries}
               lastUpdate={parseInt(lastUpdateTotalCredits)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
+                  ? 'tTTotalCreditsGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
+                  ? 'tTTotalCreditsProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS, true)
-                  : toolTipTextGen(userInfoState?.companyRole, StatsCardsTypes.TOTAL_CREDITS)
-              }
+                  ? 'tTTotalCreditsCertifierMine'
+                  : 'tTTotalCreditsCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
@@ -1659,28 +1638,15 @@ ${total}
               series={totalCertifiedCreditsSeries}
               lastUpdate={parseInt(lastUpdateTotalCreditsCertified)}
               loading={loading}
-              toolTipText={
+              toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
-                    )
+                  ? 'tTTotalCreditsCertifiedGovernment'
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
-                    )
+                  ? 'tTTotalCertifiedCreditsProgrammeDev'
                   : categoryType === 'mine'
-                  ? toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED,
-                      true
-                    )
-                  : toolTipTextGen(
-                      userInfoState?.companyRole,
-                      StatsCardsTypes.TOTAL_CREDITS_CERTIFIED
-                    )
-              }
+                  ? 'tTTotalCertifiedCreditsCertifierMine'
+                  : 'tTTotalCertifiedCreditsCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1697,28 +1663,15 @@ ${total}
                       arrowPointAtCenter
                       placement="bottomRight"
                       trigger="hover"
-                      title={
+                      title={t(
                         userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          ? toolTipTextGen(
-                              userInfoState?.companyRole,
-                              StatsCardsTypes.PROGRAMME_LOCATIONS
-                            )
+                          ? 'tTProgrammeLocationsGovernment'
                           : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? toolTipTextGen(
-                              userInfoState?.companyRole,
-                              StatsCardsTypes.PROGRAMME_LOCATIONS
-                            )
+                          ? 'tTProgrammeLocationsProgrammeDev'
                           : categoryType === 'mine'
-                          ? toolTipTextGen(
-                              userInfoState?.companyRole,
-                              StatsCardsTypes.PROGRAMME_LOCATIONS,
-                              true
-                            )
-                          : toolTipTextGen(
-                              userInfoState?.companyRole,
-                              StatsCardsTypes.PROGRAMME_LOCATIONS
-                            )
-                      }
+                          ? 'tTProgrammeLocationsCertifierMine'
+                          : 'tTProgrammeLocationsCertifierOverall'
+                      )}
                     >
                       <InfoCircle color="#000000" size={17} />
                     </Tooltip>
@@ -1758,28 +1711,15 @@ ${total}
                     arrowPointAtCenter
                     placement="bottomRight"
                     trigger="hover"
-                    title={
+                    title={t(
                       userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                        ? toolTipTextGen(
-                            userInfoState?.companyRole,
-                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
-                          )
+                        ? 'tTTransferLocationsGovernment'
                         : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                        ? toolTipTextGen(
-                            userInfoState?.companyRole,
-                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
-                          )
+                        ? 'tTTrasnferLocationsProgrammeDev'
                         : categoryType === 'mine'
-                        ? toolTipTextGen(
-                            userInfoState?.companyRole,
-                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL,
-                            true
-                          )
-                        : toolTipTextGen(
-                            userInfoState?.companyRole,
-                            StatsCardsTypes.TRANSFER_LOCATIONS_INTERNATIONAL
-                          )
-                    }
+                        ? 'tTTrasnferLocationsCertifierMine'
+                        : 'tTTrasnferLocationsCertifierOverall'
+                    )}
                   >
                     <InfoCircle color="#000000" size={17} />
                   </Tooltip>

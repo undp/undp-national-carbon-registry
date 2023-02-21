@@ -41,7 +41,7 @@ export const toolTipTextGen = (companyRole: any, cardType: any, mine?: boolean) 
     }
   } else if (companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
     if (cardType === StatsCardsTypes.TRANSFER_REQUEST_RECEIVED) {
-      text = ' Pending credit transfer requests received by your organisation';
+      text = 'Pending credit transfer requests received by your organisation';
     } else if (cardType === StatsCardsTypes.TRANSFER_REQUEST_SENT) {
       text = 'Pending local credit transfer requests initiated by your organisation';
     } else if (cardType === StatsCardsTypes.CREDIT_BALANCE) {
