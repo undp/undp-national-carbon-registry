@@ -17,7 +17,7 @@ export interface StasticCardItemProps {
   updatedDate: any;
   icon: any;
   loading: boolean;
-  companyRole: string;
+  companyRole: any;
 }
 
 const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
