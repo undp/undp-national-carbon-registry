@@ -310,7 +310,7 @@ export class AggregateAPIService {
       queryBuild = queryBuild.orderBy(
         sort?.key && `"${sort?.key}"`,
         sort?.order,
-        "NULLS LAST"
+        sort?.nullFirst ? "NULLS FIRST" : "NULLS LAST"
       );
     }
 
