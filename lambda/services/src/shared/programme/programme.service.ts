@@ -986,19 +986,22 @@ export class ProgrammeService {
       orgNamesList = companyNames.join(",") + " and " + lastItem;
     } else {
       orgNamesList = companyNames[0];
+    } 
+
+    const savedProgramme = await this.programmeLedger.createProgramme(programme);
+    if(savedProgramme){
+      const hostAddress = this.configService.get("host");
+      this.emailHelperService.sendEmailToGovernmentAdmins(
+        EmailTemplates.PROGRAMME_CREATE,
+        {
+          organisationName: orgNamesList,
+          programmePageLink:
+            hostAddress + `/programmeManagement/view?id=${programme.programmeId}`,
+        }
+      );
     }
 
-    const hostAddress = this.configService.get("host");
-    this.emailHelperService.sendEmailToGovernmentAdmins(
-      EmailTemplates.PROGRAMME_CREATE,
-      {
-        organisationName: orgNamesList,
-        programmePageLink:
-          hostAddress + `/programmeManagement/view?id=${programme.programmeId}`,
-      }
-    );
-
-    return await this.programmeLedger.createProgramme(programme);
+    return savedProgramme;
   }
 
   async query(
