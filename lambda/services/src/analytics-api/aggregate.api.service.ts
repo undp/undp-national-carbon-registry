@@ -310,7 +310,7 @@ export class AggregateAPIService {
       queryBuild = queryBuild.orderBy(
         sort?.key && `"${sort?.key}"`,
         sort?.order,
-        sort?.nullFirst ? "NULLS FIRST" : "NULLS LAST"
+        "NULLS LAST"
       );
     }
 
@@ -463,7 +463,7 @@ export class AggregateAPIService {
       ],
       filtAuth,
       null,
-      timeGroup ? { key: "time_group", order: "ASC", nullFirst: false } : null,
+      timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
@@ -572,7 +572,7 @@ export class AggregateAPIService {
       ],
       filters,
       filterOr,
-      timeGroup ? { key: "time_group", order: "ASC", nullFirst: false } : null,
+      timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
@@ -1268,9 +1268,7 @@ export class AggregateAPIService {
       ],
       filterAnd,
       null,
-      stat.statFilter?.timeGroup
-        ? { key: "time_group", order: "ASC", nullFirst: false }
-        : null,
+      stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
       abilityCondition,
       lastTimeForWhere,
       statCache,
