@@ -966,17 +966,42 @@ export class AggregateAPIService {
         }
       }
 
+      const timeLabel = Object.getOwnPropertyNames(groupedData);
+      timeLabel.sort((a: any, b: any) => {
+        let dateA: any = new Date(a);
+        let dateB: any = new Date(b);
+        return dateA - dateB;
+      });
+
+      const sortedGroupedData = {};
+      timeLabel?.map((time) => {
+        if (!sortedGroupedData[time]) {
+          sortedGroupedData[time] = {
+            certifiedSum: groupedData[time]["certifiedSum"],
+            uncertifiedSum: groupedData[time]["uncertifiedSum"],
+            revokedSum: groupedData[time]["revokedSum"],
+          };
+        } else {
+          sortedGroupedData[time]["certifiedSum"] =
+            groupedData[time]["certifiedSum"];
+          sortedGroupedData[time]["uncertifiedSum"] =
+            groupedData[time]["uncertifiedSum"];
+          sortedGroupedData[time]["revokedSum"] =
+            groupedData[time]["revokedSum"];
+        }
+      });
+
       const chartData = {
         timeLabel: [],
         certifiedSum: [],
         uncertifiedSum: [],
         revokedSum: [],
       };
-      for (const tg in groupedData) {
+      for (const tg in sortedGroupedData) {
         chartData.timeLabel.push(tg);
-        chartData.certifiedSum.push(groupedData[tg]["certifiedSum"]);
-        chartData.uncertifiedSum.push(groupedData[tg]["uncertifiedSum"]);
-        chartData.revokedSum.push(groupedData[tg]["revokedSum"]);
+        chartData.certifiedSum.push(sortedGroupedData[tg]["certifiedSum"]);
+        chartData.uncertifiedSum.push(sortedGroupedData[tg]["uncertifiedSum"]);
+        chartData.revokedSum.push(sortedGroupedData[tg]["revokedSum"]);
       }
 
       return {

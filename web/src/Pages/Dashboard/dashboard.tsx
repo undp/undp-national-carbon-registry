@@ -1089,6 +1089,18 @@ const Dashboard = () => {
     });
   }, [totalCertifiedCreditsSeries]);
 
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     // Creates an interval which will update the current data every minute
+  //     // This will trigger a rerender every component that uses the useDate hook.
+  //     setLastUpdateProgrammesStats((prev: any) => prev);
+  //     setLastUpdateProgrammesCreditsStats(parseInt(lastUpdateProgrammesCreditsStats) + 1);
+  //   }, 60 * 1000);
+  //   return () => {
+  //     clearInterval(timer); // Return a funtion to clear the timer so that it will stop being called on unmount
+  //   };
+  // }, []);
+
   const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
   const authorised = ['==', ['get', 'stage'], 'Authorised'];
