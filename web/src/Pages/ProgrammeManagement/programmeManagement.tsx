@@ -202,8 +202,9 @@ const ProgrammeManagement = () => {
     {
       title: t('programme:certifiers'),
       dataIndex: 'certifier',
-      key: 'certifier',
+      key: 'certifierId',
       align: 'left' as const,
+      sorter: true,
       render: (item: any, itemObj: any) => {
         const elements = item.map((obj: any) => {
           return (
@@ -249,12 +250,15 @@ const ProgrammeManagement = () => {
       });
     }
 
-    let sort;
+    let sort: any;
     if (sortOrder && sortField) {
       sort = {
         key: sortField,
         order: sortOrder,
       };
+      if (sortField === 'certifierId') {
+        sort.nullFirst = sortOrder === 'ASC';
+      }
     } else {
       sort = {
         key: 'programmeId',

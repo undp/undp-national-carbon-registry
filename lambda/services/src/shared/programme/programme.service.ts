@@ -320,7 +320,12 @@ export class ProgrammeService {
       .orderBy(
         query?.sort?.key &&
           this.helperService.generateSortCol(query?.sort?.key),
-        query?.sort?.order
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
       )
       .offset(query.size * query.page - query.size)
       .limit(query.size)
@@ -1020,7 +1025,12 @@ export class ProgrammeService {
       )
       .orderBy(
         query?.sort?.key && `"programme"."${query?.sort?.key}"`,
-        query?.sort?.order
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
       )
       .offset(skip)
       .limit(query.size)
