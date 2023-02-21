@@ -72,7 +72,13 @@
     data-tf-tooltip="Hey 👋&nbsp;&nbsp;How can I help you? " data-tf-chat data-tf-medium="snippet"
     data-tf-hidden="utm_source=xxxxx,utm_medium=xxxxx,utm_campaign=xxxxx,utm_term=xxxxx,utm_content=xxxxx"
     style="all:unset;"></div>
-  <script async defer src="//embed.typeform.com/next/embed.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () =>{
+        var tag = document.createElement("script");
+        tag.src = "//embed.typeform.com/next/embed.js";
+        document.getElementsByTagName("head")[0].appendChild(tag);
+      });
+    </script>
 </body>
 
 </html>
