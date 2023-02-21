@@ -2,7 +2,6 @@ import { Button, Col, Form, Input, message, Row, Select } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
-// import sha1 from 'sha1';
 import countryLogo from '../../Assets/Images/logo-slider.png';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
