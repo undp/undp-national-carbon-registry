@@ -980,23 +980,30 @@ const Dashboard = () => {
       let totalCertifiedCredit = 0;
       let totalUnCertifiedredit = 0;
       let totalRevokedCredits = 0;
+      let pendingProgrammesC = 0;
+      let authorisedProgrammesC = 0;
+      let rejectedProgrammesC = 0;
+      const programmeStatusA = Object.values(ProgrammeStageLegend);
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
           console.log('mine --> check -- > ', programmeByStatusAggregationResponse);
-          if (responseItem?.currentStage === ProgrammeStage.AWAITING_AUTHORIZATION) {
+          if ([ProgrammeStage.AWAITING_AUTHORIZATION].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            setPendingProjects(parseInt(responseItem?.count));
+            pendingProgrammesC = parseInt(responseItem?.count);
           }
-          if (responseItem?.currentStage === ProgrammeStage.REJECTED) {
+          if ([ProgrammeStage.REJECTED].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            setRejectedProjects(parseInt(responseItem?.count));
+            rejectedProgrammesC = parseInt(responseItem?.count);
           }
-          if (responseItem?.currentStage === ProgrammeStage.AUTHORISED) {
+          if ([ProgrammeStage.AUTHORISED].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            setAuthorisedProjects(parseInt(responseItem?.count));
+            authorisedProgrammesC = parseInt(responseItem?.count);
           }
         });
         setTotalProjects(totalProgrammes);
+        setPendingProjects(pendingProgrammesC);
+        setAuthorisedProjects(authorisedProgrammesC);
+        setRejectedProjects(rejectedProgrammesC);
       } else {
         setPendingProjects(0);
         setAuthorisedProjects(0);
