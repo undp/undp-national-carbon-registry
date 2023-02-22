@@ -569,7 +569,8 @@ export class ProgrammeLedgerService {
 
   public async freezeCompany(
     companyId: number,
-    user: any
+    user: any,
+    isFreeze: boolean
   ): Promise<number[]> {
     this.logger.log(
       `Freezing programme credits companyId:${companyId} user:${user}`
@@ -605,31 +606,41 @@ export class ProgrammeLedgerService {
             );
           }
 
-          if (programme.companyId.length > 1) {
-            if (!programme.creditOwnerPercentage) {
-              throw new HttpException(
-                "Not ownership percentage for the company",
-                HttpStatus.BAD_REQUEST
-              );
+          if(isFreeze){
+            if (programme.companyId.length > 1) {
+              if (!programme.creditOwnerPercentage) {
+                throw new HttpException(
+                  "Not ownership percentage for the company",
+                  HttpStatus.BAD_REQUEST
+                );
+              }
+            } else {
+              programme.creditOwnerPercentage = [100];
             }
-          } else {
-            programme.creditOwnerPercentage = [100];
-          }
 
-          const freezeCredit =
-            (programme.creditBalance * programme.creditOwnerPercentage[index]) /
-            100;
-          if (!programme.creditFrozen) {
-            programme.creditFrozen = new Array(
-              programme.creditOwnerPercentage.length
-            ).fill(0);
+            const freezeCredit =this.round2Precision(
+              (programme.creditBalance * programme.creditOwnerPercentage[index]) /
+              100);
+            if (!programme.creditFrozen) {
+              programme.creditFrozen = new Array(
+                programme.creditOwnerPercentage.length
+              ).fill(0);
+            }
+            if(freezeCredit === 0)
+              continue;
+            programme.creditFrozen[index] = freezeCredit;
+          }else{
+            const unFrozenCredit = this.round2Precision(programme.creditFrozen[index]);
+            if(unFrozenCredit === 0)
+              continue;
+            programme.creditChange = unFrozenCredit;
+            programme.creditFrozen[index] = 0;
           }
 
           const prvTxTime = programme.txTime;
           (programme.txTime = new Date().getTime()),
             (programme.txRef = user),
-            (programme.txType = TxType.FREEZE);
-          programme.creditFrozen[index] = freezeCredit;
+            (programme.txType = isFreeze ? TxType.FREEZE : TxType.UNFREEZE);
 
           updateMap[this.ledger.tableName + "#" + programme.programmeId] = {
             currentStage: programme.currentStage,

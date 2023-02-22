@@ -454,5 +454,17 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `
+    },
+    ORG_REACTIVATION:{
+        id: 'ORG_REACTIVATION',
+        subject: 'Organisation Reactivated',
+        html: `
+        Hi <br><br>
+
+        Your organisation has been reactivated by the {{government}}. Your organisation will be able to perform actions as before and all the users of the organisation will be reactivated.  <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
     }
 };
