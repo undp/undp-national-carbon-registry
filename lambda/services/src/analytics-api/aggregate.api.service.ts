@@ -1131,6 +1131,8 @@ export class AggregateAPIService {
       statCache,
       false
     );
+
+    console.log('Credit minus allAuth', allAuth)
     const certified = await this.getCertifiedByMePrgrammes(
       stat.statFilter,
       companyId,
@@ -1141,6 +1143,7 @@ export class AggregateAPIService {
       companyRole
     );
 
+    console.log('Credit minus certified', certified)
     if (!onlyUncertified) {
       const revoked = await this.getCertifiedByMePrgrammes(
         stat.statFilter,
@@ -1151,6 +1154,8 @@ export class AggregateAPIService {
         statCache,
         companyRole
       );
+
+      console.log('Credit minus revoked', revoked)
 
       return {
         last: Math.max(revoked.last, certified.last, allAuth.last),
