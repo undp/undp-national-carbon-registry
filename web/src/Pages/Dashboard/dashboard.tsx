@@ -1071,25 +1071,25 @@ const Dashboard = () => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
       series: totalProgrammesSectorSeries,
     });
-  }, [totalProgrammesSectorSeries]);
+  }, [totalProgrammesSectorSeries, categoryType]);
 
   useEffect(() => {
     ApexCharts.exec('total-programmes', 'updateSeries', {
       series: totalProgrammesSeries,
     });
-  }, [totalProgrammesSeries]);
+  }, [totalProgrammesSeries, categoryType]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits', 'updateSeries', {
       series: totalCreditsSeries,
     });
-  }, [totalCreditsSeries]);
+  }, [totalCreditsSeries, categoryType]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits-certified', 'updateSeries', {
       series: totalCertifiedCreditsSeries,
     });
-  }, [totalCertifiedCreditsSeries]);
+  }, [totalCertifiedCreditsSeries, categoryType]);
 
   // useEffect(() => {
   //   const timer = setInterval(() => {
