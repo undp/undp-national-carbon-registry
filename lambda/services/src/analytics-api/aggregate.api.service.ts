@@ -22,6 +22,7 @@ import {
   StatusGroupedByTimedataThere,
 } from "../shared/dto/programmeStatus.timeGrouped.result";
 import { TransferStatus } from "../shared/enum/transform.status.enum";
+import { CompanyRole } from "../shared/enum/company.role.enum";
 
 @Injectable()
 export class AggregateAPIService {
@@ -294,14 +295,22 @@ export class AggregateAPIService {
 
     if (aggregates) {
       const selectQuery = aggregates
-        .map(
-          (a) =>
-            `${a.operation}(${
-              a.outerQuery ? "(" + a.outerQuery + "(" : ""
-            }"${tableName}"."${a.key}"${a.outerQuery ? ")s )" : ""}) as ${
-              a.fieldName
-            }`
-        )
+        .map((a) => {
+          const fieldCol = `${
+            a.outerQuery ? "(" + a.outerQuery + "(" : ""
+          }"${tableName}"."${a.key}"${a.outerQuery ? ")s )" : ""}
+      `;
+          return `${a.operation}
+            (
+            ${
+              a.mineCompanyId
+                ? `
+                  "${tableName}"."creditOwnerPercentage"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100
+                `
+                : fieldCol
+            }
+            ) as ${a.fieldName}`;
+        })
         .join(",");
       queryBuild = queryBuild.select(selectQuery);
     }
@@ -459,7 +468,12 @@ export class AggregateAPIService {
       null,
       [
         new AggrEntry("programmeId", "COUNT", "count"),
-        new AggrEntry("creditEst", "SUM", "sum"),
+        {
+          "key": "creditEst", 
+          "operation": "SUM", 
+          "fieldName": "sum", 
+          "mineCompanyId": (stat?.statFilter?.onlyMine && companyId) ? companyId : undefined
+        }
       ],
       filtAuth,
       null,
@@ -479,7 +493,8 @@ export class AggregateAPIService {
     certifyField,
     abilityCondition,
     lastTimeForWhere,
-    statCache
+    statCache,
+    companyRole
   ) {
     const filtC = this.getFilterAndByStatFilter(
       statFilter,
@@ -497,6 +512,12 @@ export class AggregateAPIService {
       [
         new AggrEntry("programmeId", "COUNT", "count"),
         new AggrEntry("creditEst", "SUM", "sum"),
+        {
+          "key": "creditEst", 
+          "operation": "SUM", 
+          "fieldName": "sum", 
+          "mineCompanyId": (statFilter?.onlyMine && companyId && companyRole === CompanyRole.PROGRAMME_DEVELOPER) ? companyId : undefined
+        }
       ],
       filtC,
       null,
@@ -517,6 +538,7 @@ export class AggregateAPIService {
     cardinalityFilters: FilterEntry[],
     frzAgg,
     companyField: string,
+    companyRole: CompanyRole,
     timeGroup?: boolean
   ) {
     let filters = this.getFilterAndByStatFilter(
@@ -558,16 +580,43 @@ export class AggregateAPIService {
       ];
     }
 
+    frzAgg.mineCompanyId = statFilter?.onlyMine && companyRole === CompanyRole.PROGRAMME_DEVELOPER ? companyId : undefined;
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
       null,
       [
         new AggrEntry("programmeId", "COUNT", "count"),
-        new AggrEntry("creditEst", "SUM", "totalEstCredit"),
-        new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
-        new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
-        new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+        {
+          "key": "creditEst", 
+          "operation": "SUM", 
+          "fieldName": "totalEstCredit", 
+          "mineCompanyId": frzAgg.mineCompanyId
+        },
+        {
+          "key": "creditIssued", 
+          "operation": "SUM", 
+          "fieldName": "totalIssuedCredit", 
+          "mineCompanyId": frzAgg.mineCompanyId
+        },
+        {
+          "key": "creditBalance", 
+          "operation": "SUM", 
+          "fieldName": "totalBalanceCredit", 
+          "mineCompanyId": frzAgg.mineCompanyId 
+        },
+        {
+          "key": "creditRetired", 
+          "operation": "SUM", 
+          "fieldName": "totalRetiredCredit", 
+          "mineCompanyId": frzAgg.mineCompanyId 
+        },
+        {
+          "key": "creditTransferred", 
+          "operation": "SUM", 
+          "fieldName": "totalTxCredit", 
+          "mineCompanyId": frzAgg.mineCompanyId 
+        },
         frzAgg,
       ],
       filters,
@@ -589,7 +638,8 @@ export class AggregateAPIService {
     abilityCondition,
     lastTimeForWhere,
     statCache,
-    companyId
+    companyId,
+    companyRole
   ) {
     const key = stat.key ? stat.key : stat.type;
     switch (stat.type) {
@@ -635,7 +685,8 @@ export class AggregateAPIService {
             : "revokedCertifierId",
           abilityCondition,
           lastTimeForWhere,
-          statCache
+          statCache,
+          undefined
         );
         break;
       case StatType.CERTIFIED_REVOKED_BY_ME:
@@ -652,7 +703,8 @@ export class AggregateAPIService {
           lastTimeForWhere,
           statCache,
           companyId,
-          StatType.UNCERTIFIED_BY_ME === stat.type
+          StatType.UNCERTIFIED_BY_ME === stat.type,
+          companyRole
         );
         break;
       case StatType.ALL_AUTH_PROGRAMMES:
@@ -694,7 +746,8 @@ export class AggregateAPIService {
           lastTimeForWhere,
           statCache,
           companyId,
-          frzAgg
+          frzAgg,
+          companyRole
         );
         break;
       case StatType.CERTIFIED_BY_ME_BY_STATE:
@@ -846,7 +899,8 @@ export class AggregateAPIService {
     lastTimeForWhere,
     statCache,
     companyId,
-    frzAgg
+    frzAgg,
+    companyRole
   ): Promise<any> {
     const revoked = await this.getCertifiedProgrammes(
       stat.statFilter,
@@ -857,6 +911,7 @@ export class AggregateAPIService {
       [{ key: "certifierId", operation: "=", value: 0 }],
       frzAgg,
       "revokedCertifierId",
+      companyRole,
       stat.statFilter?.timeGroup ? true : false
     );
 
@@ -878,6 +933,7 @@ export class AggregateAPIService {
       [{ key: "certifierId", operation: ">", value: 0 }],
       frzAgg,
       "certifierId",
+      companyRole,
       stat.statFilter?.timeGroup ? true : false
     );
 
@@ -1023,7 +1079,8 @@ export class AggregateAPIService {
   async getAggregateQuery(
     abilityCondition: string,
     query: StatList,
-    companyId: any
+    companyId: any,
+    companyRole: CompanyRole
   ): Promise<DataCountResponseDto> {
     let results = {};
     let lastTimeForWhere = {};
@@ -1040,7 +1097,8 @@ export class AggregateAPIService {
         abilityCondition,
         lastTimeForWhere,
         statCache,
-        companyId
+        companyId,
+        companyRole
       );
     }
     return new DataCountResponseDto(results);
@@ -1053,7 +1111,8 @@ export class AggregateAPIService {
     lastTimeForWhere,
     statCache,
     companyId,
-    onlyUncertified
+    onlyUncertified,
+    companyRole
   ): Promise<any> {
     const allAuth = await this.getAllAuthProgramme(
       stat,
@@ -1068,7 +1127,8 @@ export class AggregateAPIService {
       "certifierId",
       abilityCondition,
       lastTimeForWhere,
-      statCache
+      statCache,
+      companyRole
     );
 
     if (!onlyUncertified) {
@@ -1078,7 +1138,8 @@ export class AggregateAPIService {
         "revokedCertifierId",
         abilityCondition,
         lastTimeForWhere,
-        statCache
+        statCache,
+        companyRole
       );
 
       return {
@@ -1272,6 +1333,8 @@ export class AggregateAPIService {
       });
     }
 
+    frzAgg.mineCompanyId = stat?.statFilter?.onlyMine ? companyId : undefined;
+    
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
@@ -1285,11 +1348,36 @@ export class AggregateAPIService {
         : ["sector"],
       [
         new AggrEntry("programmeId", "COUNT", "count"),
-        new AggrEntry("creditEst", "SUM", "totalEstCredit"),
-        new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
-        new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
-        new AggrEntry("creditRetired", "SUM", "totalRetiredCredit"),
-        new AggrEntry("creditTransferred", "SUM", "totalTxCredit"),
+        {
+          "key": "creditEst", 
+          "operation": "SUM", 
+          "fieldName": "totalEstCredit", 
+          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+        },
+        {
+          "key": "creditIssued", 
+          "operation": "SUM", 
+          "fieldName": "totalIssuedCredit", 
+          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+        },
+        {
+          "key": "creditBalance", 
+          "operation": "SUM", 
+          "fieldName": "totalBalanceCredit", 
+          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+        },
+        {
+          "key": "creditRetired", 
+          "operation": "SUM", 
+          "fieldName": "totalRetiredCredit", 
+          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+        },
+        {
+          "key": "creditTransferred", 
+          "operation": "SUM", 
+          "fieldName": "totalTxCredit", 
+          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+        },
         frzAgg,
       ],
       filterAnd,
