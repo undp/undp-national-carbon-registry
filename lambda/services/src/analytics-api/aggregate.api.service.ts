@@ -23,6 +23,7 @@ import {
 } from "../shared/dto/programmeStatus.timeGrouped.result";
 import { TransferStatus } from "../shared/enum/transform.status.enum";
 import { CompanyRole } from "../shared/enum/company.role.enum";
+import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
 
 @Injectable()
 export class AggregateAPIService {
@@ -400,6 +401,8 @@ export class AggregateAPIService {
       for (const k in row) {
         if (row[k] === null) {
           row[k] = 0;
+        } else if (row[k] !== undefined && !isNaN(row[k]) && row[k] % 1 !== 0){
+          row[k] = parseFloat(Number(row[k]).toFixed(PRECISION))
         }
       }
     }
