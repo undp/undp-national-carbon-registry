@@ -12,7 +12,7 @@ export interface PieChartStatsProps {
   title: any;
   options: any;
   series: any;
-  lastUpdate: number;
+  lastUpdate: any;
   loading: boolean;
   toolTipText: string;
 }
@@ -50,9 +50,7 @@ const PieChartsStat: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
             <Chart id={id} options={options} series={series} type="donut" height="320px" />
           </div>
           <div className="updated-on margin-top-2">
-            {lastUpdate !== 0 && (
-              <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
-            )}
+            {lastUpdate !== '0' && <div className="updated-moment-container">{lastUpdate}</div>}
           </div>
         </>
       )}

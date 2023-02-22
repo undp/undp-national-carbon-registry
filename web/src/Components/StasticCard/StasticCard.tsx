@@ -55,7 +55,7 @@ const StasticCard: FC<StasticCardItemProps> = (props: StasticCardItemProps) => {
             </div>
             <div className="icon-section">{icon}</div>
           </div>
-          {updatedDate !== 0 && <div className="updated-on">{moment(updatedDate).fromNow()}</div>}
+          {updatedDate !== '0' && <div className="updated-on">{updatedDate}</div>}
         </>
       )}
     </div>
