@@ -884,6 +884,11 @@ export class AggregateAPIService {
           key: "retirementType",
           operation: "=",
         });
+        filtCom.push({
+          value: TransferStatus.RECOGNISED,
+          key: "status",
+          operation: "=",
+        });
 
         let filterOr = undefined;
         if (stat.statFilter && stat.statFilter.onlyMine) {
