@@ -59,6 +59,11 @@ export const totalProgrammesOptions: any = {
         cssClass: 'apexcharts-yaxis-title',
       },
     },
+    labels: {
+      formatter: (value: any) => {
+        return parseInt(value);
+      },
+    },
   },
   fill: {
     opacity: 1,
@@ -188,6 +193,11 @@ export const totalProgrammesOptionsSub: any = {
         fontFamily: 'Inter',
         fontWeight: 500,
         cssClass: 'apexcharts-yaxis-title',
+      },
+    },
+    labels: {
+      formatter: (value: any) => {
+        return parseInt(value);
       },
     },
   },
@@ -350,6 +360,11 @@ export const totalCreditsOptions: any = {
         cssClass: 'apexcharts-yaxis-title',
       },
     },
+    labels: {
+      formatter: (value: any) => {
+        return parseFloat(value).toFixed(2);
+      },
+    },
   },
   fill: {
     opacity: 1,
@@ -476,6 +491,11 @@ export const totalCreditsCertifiedOptions: any = {
         fontFamily: 'Inter-Regular',
         fontWeight: 500,
         cssClass: 'apexcharts-yaxis-title',
+      },
+    },
+    labels: {
+      formatter: (value: any) => {
+        return parseFloat(value).toFixed(2);
       },
     },
   },

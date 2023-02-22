@@ -205,7 +205,7 @@ const Dashboard = () => {
             },
           },
           {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            type: 'CERTIFIED_REVOKED_BY_ME',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -332,7 +332,7 @@ const Dashboard = () => {
             },
           },
           {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            type: 'CERTIFIED_REVOKED_BY_ME',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
