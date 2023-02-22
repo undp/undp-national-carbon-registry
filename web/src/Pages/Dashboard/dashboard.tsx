@@ -538,14 +538,12 @@ const Dashboard = () => {
         }
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         if (
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
         ) {
-          setLastUpdateTotalCreditsCertified(
-            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
-          );
+          setLastUpdateTotalCreditsCertified(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last);
         }
-        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
         if (
           response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
           String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
@@ -897,15 +895,12 @@ const Dashboard = () => {
         programmeByStatusAuthAggregationResponse =
           response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
         ) {
-          setLastUpdateCertifiedCreditsStats(
-            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
-          );
+          setLastUpdateCertifiedCreditsStats(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last);
         }
-        certifiedRevokedAggregationResponse =
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       } else if (
         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
         categoryType === 'overall'
