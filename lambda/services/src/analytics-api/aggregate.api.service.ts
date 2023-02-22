@@ -401,8 +401,8 @@ export class AggregateAPIService {
       for (const k in row) {
         if (row[k] === null) {
           row[k] = 0;
-        } else if (row[k] !== undefined && !isNaN(row[k]) && row[k] % 1 !== 0){
-          row[k] = parseFloat(Number(row[k]).toFixed(PRECISION))
+        } else if (row[k] !== undefined && !isNaN(row[k]) && row[k] % 1 !== 0) {
+          row[k] = parseFloat(Number(row[k]).toFixed(PRECISION));
         }
       }
     }
@@ -472,11 +472,12 @@ export class AggregateAPIService {
       [
         new AggrEntry("programmeId", "COUNT", "count"),
         {
-          "key": "creditEst", 
-          "operation": "SUM", 
-          "fieldName": "sum", 
-          "mineCompanyId": (stat?.statFilter?.onlyMine && companyId) ? companyId : undefined
-        }
+          key: "creditEst",
+          operation: "SUM",
+          fieldName: "sum",
+          mineCompanyId:
+            stat?.statFilter?.onlyMine && companyId ? companyId : undefined,
+        },
       ],
       filtAuth,
       null,
@@ -497,7 +498,8 @@ export class AggregateAPIService {
     abilityCondition,
     lastTimeForWhere,
     statCache,
-    companyRole
+    companyRole,
+    timeGroup?: boolean
   ) {
     let filtC = this.getFilterAndByStatFilter(
       statFilter,
@@ -526,11 +528,16 @@ export class AggregateAPIService {
         new AggrEntry("programmeId", "COUNT", "count"),
         new AggrEntry("creditEst", "SUM", "sum"),
         {
-          "key": "creditEst", 
-          "operation": "SUM", 
-          "fieldName": "sum", 
-          "mineCompanyId": (statFilter?.onlyMine && companyId && companyRole === CompanyRole.PROGRAMME_DEVELOPER) ? companyId : undefined
-        }
+          key: "creditEst",
+          operation: "SUM",
+          fieldName: "sum",
+          mineCompanyId:
+            statFilter?.onlyMine &&
+            companyId &&
+            companyRole === CompanyRole.PROGRAMME_DEVELOPER
+              ? companyId
+              : undefined,
+        },
       ],
       filtC,
       null,
@@ -538,7 +545,9 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      ["certifiedTime"]
+      ["certifiedTime"],
+      timeGroup ? "createdAt" : undefined,
+      timeGroup ? "day" : undefined
     );
   }
 
@@ -593,7 +602,10 @@ export class AggregateAPIService {
       ];
     }
 
-    frzAgg.mineCompanyId = statFilter?.onlyMine && companyRole === CompanyRole.PROGRAMME_DEVELOPER ? companyId : undefined;
+    frzAgg.mineCompanyId =
+      statFilter?.onlyMine && companyRole === CompanyRole.PROGRAMME_DEVELOPER
+        ? companyId
+        : undefined;
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
@@ -601,34 +613,34 @@ export class AggregateAPIService {
       [
         new AggrEntry("programmeId", "COUNT", "count"),
         {
-          "key": "creditEst", 
-          "operation": "SUM", 
-          "fieldName": "totalEstCredit", 
-          "mineCompanyId": frzAgg.mineCompanyId
+          key: "creditEst",
+          operation: "SUM",
+          fieldName: "totalEstCredit",
+          mineCompanyId: frzAgg.mineCompanyId,
         },
         {
-          "key": "creditIssued", 
-          "operation": "SUM", 
-          "fieldName": "totalIssuedCredit", 
-          "mineCompanyId": frzAgg.mineCompanyId
+          key: "creditIssued",
+          operation: "SUM",
+          fieldName: "totalIssuedCredit",
+          mineCompanyId: frzAgg.mineCompanyId,
         },
         {
-          "key": "creditBalance", 
-          "operation": "SUM", 
-          "fieldName": "totalBalanceCredit", 
-          "mineCompanyId": frzAgg.mineCompanyId 
+          key: "creditBalance",
+          operation: "SUM",
+          fieldName: "totalBalanceCredit",
+          mineCompanyId: frzAgg.mineCompanyId,
         },
         {
-          "key": "creditRetired", 
-          "operation": "SUM", 
-          "fieldName": "totalRetiredCredit", 
-          "mineCompanyId": frzAgg.mineCompanyId 
+          key: "creditRetired",
+          operation: "SUM",
+          fieldName: "totalRetiredCredit",
+          mineCompanyId: frzAgg.mineCompanyId,
         },
         {
-          "key": "creditTransferred", 
-          "operation": "SUM", 
-          "fieldName": "totalTxCredit", 
-          "mineCompanyId": frzAgg.mineCompanyId 
+          key: "creditTransferred",
+          operation: "SUM",
+          fieldName: "totalTxCredit",
+          mineCompanyId: frzAgg.mineCompanyId,
         },
         frzAgg,
       ],
@@ -1073,9 +1085,15 @@ export class AggregateAPIService {
       };
       for (const tg in sortedGroupedData) {
         chartData.timeLabel.push(tg);
-        chartData.certifiedSum.push(sortedGroupedData[tg]["certifiedSum"]);
-        chartData.uncertifiedSum.push(sortedGroupedData[tg]["uncertifiedSum"]);
-        chartData.revokedSum.push(sortedGroupedData[tg]["revokedSum"]);
+        chartData.certifiedSum.push(
+          parseFloat(sortedGroupedData[tg]["certifiedSum"])
+        );
+        chartData.uncertifiedSum.push(
+          parseFloat(sortedGroupedData[tg]["uncertifiedSum"])
+        );
+        chartData.revokedSum.push(
+          parseFloat(sortedGroupedData[tg]["revokedSum"])
+        );
       }
 
       return {
@@ -1137,10 +1155,10 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      false
+      stat.statFilter?.timeGroup ? true : false
     );
 
-    console.log('Credit minus allAuth', allAuth)
+    console.log("Credit minus allAuth", allAuth);
     const certified = await this.getCertifiedByMePrgrammes(
       stat.statFilter,
       companyId,
@@ -1148,10 +1166,11 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      companyRole
+      companyRole,
+      stat.statFilter?.timeGroup ? true : false
     );
 
-    console.log('Credit minus certified', certified)
+    console.log("Credit minus certified", certified);
     if (!onlyUncertified) {
       const revoked = await this.getCertifiedByMePrgrammes(
         stat.statFilter,
@@ -1160,56 +1179,161 @@ export class AggregateAPIService {
         abilityCondition,
         lastTimeForWhere,
         statCache,
-        companyRole
+        companyRole,
+        stat.statFilter?.timeGroup ? true : false
       );
-
-      console.log('Credit minus revoked', revoked)
-
-      return {
-        last: Math.max(revoked.last, certified.last, allAuth.last),
-        data: {
-          certifiedCount: Number(
-            certified && certified.data.length > 0
-              ? certified.data[0]["count"]
-              : 0
-          ),
-          revokedCount: Number(
-            revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0
-          ),
-          uncertifiedCount:
-            Number(
-              allAuth && allAuth.data.length > 0 ? allAuth.data[0]["count"] : 0
-            ) -
-            Number(
-              revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0
-            ) -
-            Number(
+      if (!stat.statFilter || stat.statFilter.timeGroup != true) {
+        return {
+          last: Math.max(revoked.last, certified.last, allAuth.last),
+          data: {
+            certifiedCount: Number(
               certified && certified.data.length > 0
                 ? certified.data[0]["count"]
                 : 0
             ),
-          revokedSum: Number(
-            revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0
-          ),
-          certifiedSum: Number(
-            certified && certified.data.length > 0
-              ? certified.data[0]["sum"]
-              : 0
-          ),
-          uncertifiedSum:
-            Number(
-              allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0
-            ) -
-            Number(
+            revokedCount: Number(
+              revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0
+            ),
+            uncertifiedCount:
+              Number(
+                allAuth && allAuth.data.length > 0
+                  ? allAuth.data[0]["count"]
+                  : 0
+              ) -
+              Number(
+                revoked && revoked.data.length > 0
+                  ? revoked.data[0]["count"]
+                  : 0
+              ) -
+              Number(
+                certified && certified.data.length > 0
+                  ? certified.data[0]["count"]
+                  : 0
+              ),
+            revokedSum: Number(
               revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0
-            ) -
-            Number(
+            ),
+            certifiedSum: Number(
               certified && certified.data.length > 0
                 ? certified.data[0]["sum"]
                 : 0
             ),
-        },
-      };
+            uncertifiedSum:
+              Number(
+                allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0
+              ) -
+              Number(
+                revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0
+              ) -
+              Number(
+                certified && certified.data.length > 0
+                  ? certified.data[0]["sum"]
+                  : 0
+              ),
+          },
+        };
+      } else {
+        const groupedData = {};
+        for (const d in certified.data) {
+          groupedData[d] = {
+            certifiedSum: Number(
+              certified && certified.data[d] && certified.data[d].length > 0
+                ? certified.data[d][0]["sum"]
+                : 0
+            ),
+            revokedSum: 0,
+          };
+        }
+        for (const d in revoked.data) {
+          if (!groupedData[d]) {
+            groupedData[d] = {
+              revokedSum: Number(
+                revoked && revoked.data[d] && revoked.data[d].length > 0
+                  ? revoked.data[d][0]["sum"]
+                  : 0
+              ),
+              certifiedSum: 0,
+            };
+          } else {
+            groupedData[d]["revokedSum"] = Number(
+              revoked && revoked.data[d] && revoked.data[d].length > 0
+                ? revoked.data[d][0]["sum"]
+                : 0
+            );
+          }
+        }
+        for (const d in allAuth.data) {
+          if (!groupedData[d]) {
+            groupedData[d] = {
+              revokedSum: 0,
+              certifiedSum: 0,
+              uncertifiedSum: Number(
+                allAuth && allAuth.data[d] && allAuth.data[d].length > 0
+                  ? allAuth.data[d][0]["sum"]
+                  : 0
+              ),
+            };
+          } else {
+            groupedData[d]["uncertifiedSum"] =
+              Number(
+                allAuth && allAuth.data[d] && allAuth.data[d].length > 0
+                  ? allAuth.data[d][0]["sum"]
+                  : 0
+              ) -
+              groupedData[d]["certifiedSum"] -
+              groupedData[d]["revokedSum"];
+          }
+        }
+
+        const timeLabel = Object.getOwnPropertyNames(groupedData);
+        timeLabel.sort((a: any, b: any) => {
+          let dateA: any = new Date(a);
+          let dateB: any = new Date(b);
+          return dateA - dateB;
+        });
+
+        const sortedGroupedData = {};
+        timeLabel?.map((time) => {
+          if (!sortedGroupedData[time]) {
+            sortedGroupedData[time] = {
+              certifiedSum: groupedData[time]["certifiedSum"],
+              uncertifiedSum: groupedData[time]["uncertifiedSum"],
+              revokedSum: groupedData[time]["revokedSum"],
+            };
+          } else {
+            sortedGroupedData[time]["certifiedSum"] =
+              groupedData[time]["certifiedSum"];
+            sortedGroupedData[time]["uncertifiedSum"] =
+              groupedData[time]["uncertifiedSum"];
+            sortedGroupedData[time]["revokedSum"] =
+              groupedData[time]["revokedSum"];
+          }
+        });
+
+        const chartData = {
+          timeLabel: [],
+          certifiedSum: [],
+          uncertifiedSum: [],
+          revokedSum: [],
+        };
+        for (const tg in sortedGroupedData) {
+          chartData.timeLabel.push(tg);
+          chartData.certifiedSum.push(
+            parseFloat(sortedGroupedData[tg]["certifiedSum"])
+          );
+          chartData.uncertifiedSum.push(
+            parseFloat(sortedGroupedData[tg]["uncertifiedSum"])
+          );
+          chartData.revokedSum.push(
+            parseFloat(sortedGroupedData[tg]["revokedSum"])
+          );
+        }
+
+        return {
+          last: Math.max(allAuth.last, certified.last, revoked.last),
+          data: chartData,
+        };
+      }
     } else {
       return {
         last: Math.max(certified.last, allAuth.last),
@@ -1357,7 +1481,7 @@ export class AggregateAPIService {
     }
 
     frzAgg.mineCompanyId = stat?.statFilter?.onlyMine ? companyId : undefined;
-    
+
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
@@ -1372,34 +1496,34 @@ export class AggregateAPIService {
       [
         new AggrEntry("programmeId", "COUNT", "count"),
         {
-          "key": "creditEst", 
-          "operation": "SUM", 
-          "fieldName": "totalEstCredit", 
-          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+          key: "creditEst",
+          operation: "SUM",
+          fieldName: "totalEstCredit",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
         },
         {
-          "key": "creditIssued", 
-          "operation": "SUM", 
-          "fieldName": "totalIssuedCredit", 
-          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+          key: "creditIssued",
+          operation: "SUM",
+          fieldName: "totalIssuedCredit",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
         },
         {
-          "key": "creditBalance", 
-          "operation": "SUM", 
-          "fieldName": "totalBalanceCredit", 
-          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+          key: "creditBalance",
+          operation: "SUM",
+          fieldName: "totalBalanceCredit",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
         },
         {
-          "key": "creditRetired", 
-          "operation": "SUM", 
-          "fieldName": "totalRetiredCredit", 
-          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+          key: "creditRetired",
+          operation: "SUM",
+          fieldName: "totalRetiredCredit",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
         },
         {
-          "key": "creditTransferred", 
-          "operation": "SUM", 
-          "fieldName": "totalTxCredit", 
-          "mineCompanyId": stat?.statFilter?.onlyMine ? companyId : undefined
+          key: "creditTransferred",
+          operation: "SUM",
+          fieldName: "totalTxCredit",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
         },
         frzAgg,
       ],
