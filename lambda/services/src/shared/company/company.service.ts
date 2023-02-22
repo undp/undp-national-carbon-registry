@@ -81,10 +81,11 @@ export class CompanyService {
       if (company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         await this.programmeLedgerService.freezeCompany(
           companyId,
-          this.getUserRefWithRemarks(user, `${remarks}#${company.name}`)
+          this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
+          true
         );
         await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
-        await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
+        this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
@@ -101,7 +102,7 @@ export class CompanyService {
           }
         );
 
-        await this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
+        this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
       }
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -114,7 +115,7 @@ export class CompanyService {
     );
   }
 
-  async activate(companyId: number, abilityCondition: string): Promise<any> {
+  async activate(companyId: number,user: User, remarks: string, abilityCondition: string): Promise<any> {
     this.logger.verbose("revoke company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -148,6 +149,12 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      await this.programmeLedgerService.freezeCompany(
+        companyId,
+        this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
+        false
+      );
+      this.emailHelperService.sendEmail(company.email,EmailTemplates.ORG_REACTIVATION,{},user.companyId);
       return new BasicResponseDto(
         HttpStatus.OK,
         "Successfully activated company"

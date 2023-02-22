@@ -209,59 +209,63 @@ export class LedgerReplicatorService {
               companyId: companyId,
             });
 
-            const meta = JSON.parse(
-              JSON.stringify(
-                ionRecord.get("payload").get("revision").get("metadata")
-              )
-            );
-
-            if (company && meta["version"]) {
-              if (company.lastUpdateVersion >= parseInt(meta["version"])) {
-                return;
+            if (company) {
+              const meta = JSON.parse(
+                JSON.stringify(
+                  ionRecord.get("payload").get("revision").get("metadata")
+                )
+              );
+  
+              if (company && meta["version"]) {
+                if (company.lastUpdateVersion >= parseInt(meta["version"])) {
+                  return;
+                }
               }
-            }
-
-            let updateObj;
-            if (account) {
-              if (
-                company.secondaryAccountBalance &&
-                company.secondaryAccountBalance[account]
-              ) {
-                company.secondaryAccountBalance[account]["total"] =
-                  overall.credit;
-                company.secondaryAccountBalance[account]["count"] += 1;
+  
+              let updateObj;
+              if (account) {
+                if (
+                  company.secondaryAccountBalance &&
+                  company.secondaryAccountBalance[account]
+                ) {
+                  company.secondaryAccountBalance[account]["total"] =
+                    overall.credit;
+                  company.secondaryAccountBalance[account]["count"] += 1;
+                } else {
+                  company.secondaryAccountBalance = {
+                    account: { total: overall.credit, count: 1 },
+                  };
+                }
+  
+                updateObj = {
+                  secondaryAccountBalance: company.secondaryAccountBalance,
+                  lastUpdateVersion: parseInt(meta["version"]),
+                };
               } else {
-                company.secondaryAccountBalance = {
-                  account: { total: overall.credit, count: 1 },
+                updateObj = {
+                  creditBalance: overall.credit,
+                  programmeCount:
+                    Number(company.programmeCount) +
+                    (overall.txType == TxType.AUTH ? 1 : 0),
+                  lastUpdateVersion: parseInt(meta["version"]),
+                  creditTxTime: new Date(meta.txTime).getTime(),
                 };
               }
-
-              updateObj = {
-                secondaryAccountBalance: company.secondaryAccountBalance,
-                lastUpdateVersion: parseInt(meta["version"]),
-              };
+  
+              const response = await this.companyRepo
+                .update(
+                  {
+                    companyId: parseInt(overall.txId),
+                  },
+                  updateObj
+                )
+                .catch((err: any) => {
+                  this.logger.error(err);
+                  return err;
+                });
             } else {
-              updateObj = {
-                creditBalance: overall.credit,
-                programmeCount:
-                  Number(company.programmeCount) +
-                  (overall.txType == TxType.AUTH ? 1 : 0),
-                lastUpdateVersion: parseInt(meta["version"]),
-                creditTxTime: new Date(meta.txTime).getTime(),
-              };
+              this.logger.error('Unexpected programme. Company does not found', companyId)
             }
-
-            const response = await this.companyRepo
-              .update(
-                {
-                  companyId: parseInt(overall.txId),
-                },
-                updateObj
-              )
-              .catch((err: any) => {
-                this.logger.error(err);
-                return err;
-              });
           }
         }
       })
