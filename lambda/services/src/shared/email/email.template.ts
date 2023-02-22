@@ -1,7 +1,7 @@
 export const EmailTemplates = {
     ORGANISATION_CREATE:{
         id: 'ORGANISATION_CREATE',
-        subject: 'Carbon Registry: Welcome!',
+        subject: 'Welcome!',
         html: `
         Welcome {{organisationName}},<br><br> 
         Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br> 
@@ -13,12 +13,12 @@ export const EmailTemplates = {
     },
     USER_CREATE: {
         id: 'USER_CREATE',
-        subject: 'Carbon Registry: Welcome!',
+        subject: 'Welcome!',
         html: `
         Welcome {{name}}, <br><br>
         
         Your account has been created for the {{countryName}} Carbon Credit 
-        Registry. Your account has been created. You can access your account using the temporary Homepage: {{home}} <br><br>
+        Registry. You can access your account using the temporary Homepage: {{home}} <br><br>
 
         User: {{email}} <br>
         Password (temporary): {{tempPassword}} <br><br>
@@ -89,7 +89,7 @@ export const EmailTemplates = {
         subject: 'Carbon Registry: Your password was changed',
         html: `
         Hi {{name}},<br><br>
-        The password of your Carbon Registry account was changed successfully. <br>
+        The password of your Carbon Registry account was changed successfully. <br><br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
         <a href="mailto: help@carbreg.org?subject=Password Problem With The {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
@@ -106,7 +106,7 @@ export const EmailTemplates = {
         html:`
         Hi {{name}}, <br><br>
 
-        A new programme owned by {{organisationName}} is awaiting authorisation. <br>
+        A new programme owned by {{organisationName}} is awaiting authorisation. <br><br>
         
         <a href="{{programmePageLink}}">Click here</a> to access all the programmes that require authorisation. 
         <br><br>
@@ -122,7 +122,7 @@ export const EmailTemplates = {
         Hi {{name}},  <br><br>
 
         {{programmeName}}  of your organisation has been authorised on {{authorisedDate}} with the serial number {{serialNumber}}. 
-        <br>
+        <br><br>
          
         <a href="{{programmePageLink}}">Click here</a> for more details of the programme. 
         <br><br>
@@ -450,6 +450,18 @@ export const EmailTemplates = {
 
         Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your organisation has not been recognised.<br><br>
         Click here {{pageLink}} for more details of the international transfer retire request. <br><br>
+        
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `
+    },
+    ORG_REACTIVATION:{
+        id: 'ORG_REACTIVATION',
+        subject: 'Organisation Reactivated',
+        html: `
+        Hi <br><br>
+
+        Your organisation has been reactivated by the {{government}}. Your organisation will be able to perform actions as before and all the users of the organisation will be reactivated.  <br><br>
         
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team

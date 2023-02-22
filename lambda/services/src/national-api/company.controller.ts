@@ -46,13 +46,13 @@ export class CompanyController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, Company))
+    @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Company))
     @Put('activate')
-    revoke(@Query('id') companyId: number, @Request() req) {
+    revoke(@Query('id') companyId: number, @Body() body: OrganisationSuspendDto, @Request() req) {
         if (companyId == req.user.companyId) {
             throw new HttpException("Can not activate your own company", HttpStatus.FORBIDDEN)
         }
-        return this.companyService.activate(companyId, req.abilityCondition)
+        return this.companyService.activate(companyId, req.user, body.remarks, req.abilityCondition)
     }
 
     @ApiBearerAuth()

@@ -105,6 +105,7 @@
     "tlRetCancelTitle": "Retire request cancelled",
     "tlTxCancelTitle": "Transfer Request Cancelled",
     "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}",
-    "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by the government"
-
+    "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by the government",
+    "tlUnFrozen": "Credits Unfrozen",
+    "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}"
 }

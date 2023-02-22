@@ -462,7 +462,7 @@ const ProgrammeView = () => {
     return hist;
   };
 
-  const getProgrammeHistory = async (programmeId: number) => {
+  const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
     try {
       const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
@@ -684,6 +684,29 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+        } else if (activity.data.txType === TxType.UNFREEZE) {
+          el = {
+            status: 'process',
+            title: t('view:tlUnFrozen'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: (
+              <TimelineBody
+                text={formatString('view:tlUnFrozenDesc', [
+                  addCommSep(activity.data.creditChange),
+                  creditUnit,
+                  getTxRefValues(activity.data.txRef, 4),
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
+                remark={getTxRefValues(activity.data.txRef, 3)}
+                via={activity.data.userName}
+              />
+            ),
+            icon: (
+              <span className="step-icon freeze-step">
+                <Icon.ArrowCounterclockwise />
+              </span>
+            ),
+          };
         }
         if (el) {
           const toDelete = [];
@@ -773,7 +796,7 @@ const ProgrammeView = () => {
       } else {
         error = response.message;
       }
-      await getProgrammeHistory(Number(data?.programmeId));
+      await getProgrammeHistory(data?.programmeId as string);
       return error;
     } catch (e: any) {
       error = e.message;
@@ -862,7 +885,7 @@ const ProgrammeView = () => {
           error = response.message;
         }
 
-        await getProgrammeHistory(Number(data?.programmeId));
+        await getProgrammeHistory(data?.programmeId as string);
 
         setConfirmLoading(false);
         return error;
@@ -913,7 +936,7 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     if (data) {
-      getProgrammeHistory(Number(data.programmeId));
+      getProgrammeHistory(data.programmeId);
       drawMap();
     }
   }, [data]);
