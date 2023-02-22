@@ -496,7 +496,7 @@ export class AggregateAPIService {
     statCache,
     companyRole
   ) {
-    const filtC = this.getFilterAndByStatFilter(
+    let filtC = this.getFilterAndByStatFilter(
       statFilter,
       {
         value: companyId,
@@ -505,6 +505,16 @@ export class AggregateAPIService {
       },
       "createdTime"
     );
+
+    if (!filtC) {
+      filtC = [];
+    }
+    filtC.push({
+      value: ProgrammeStage.AUTHORISED,
+      key: "currentStage",
+      operation: "=",
+    });
+
     return await this.genAggregateTypeOrmQuery(
       this.programmeRepo,
       "programme",
