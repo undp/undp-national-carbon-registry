@@ -1182,6 +1182,8 @@ export class AggregateAPIService {
         companyRole,
         stat.statFilter?.timeGroup ? true : false
       );
+
+      console.log("Credit minus revoked", revoked);
       if (!stat.statFilter || stat.statFilter.timeGroup != true) {
         return {
           last: Math.max(revoked.last, certified.last, allAuth.last),
