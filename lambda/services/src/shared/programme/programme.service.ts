@@ -335,6 +335,10 @@ export class ProgrammeService {
       for (const e of resp[0]) {
         e.certifier =
           e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
+
+        if (e.toCompanyMeta && e.toCompanyMeta.country) {
+            e.toCompanyMeta['countryName'] = await this.countryService.getCountryName(e.toCompanyMeta.country)
+        }
       }
     }
     return new DataListResponseDto(
