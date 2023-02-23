@@ -198,7 +198,7 @@ export class LedgerReplicatorService {
                     .execute();
                 }
               } else {
-                this.logger.error(`Skipping the programme due to old record ${JSON.stringify(programme)} ${JSON.stringify(previousProgramme)}`)
+                this.logger.error(`Skipping the programme due to old record ${JSON.stringify(programme)} ${previousProgramme}`)
               }
             }
           } else if (
