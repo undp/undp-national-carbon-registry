@@ -271,7 +271,7 @@ export const getRetirementTypeString = (retirementType: string | null) => {
 };
 
 export const sumArray = (arrList: any[]) => {
-  if (!arrList === undefined || arrList === null) {
+  if (arrList === undefined || arrList === null) {
     return 0;
   }
 
