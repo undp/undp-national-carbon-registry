@@ -309,7 +309,7 @@ export class AggregateAPIService {
               "creditFrozen",
             ].includes(a.key)
               ? `"${tableName}"."${a.key}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]`
-              : `"${tableName}"."creditOwnerPercentage"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`;
+              : `"${tableName}"."${a.key === 'creditBalance' ? 'creditOwnerPercentage': 'proponentPercentage'}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`;
           }
           return `${a.operation}(${mineCompField}) as ${a.fieldName}`;
         })

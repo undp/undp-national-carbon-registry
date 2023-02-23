@@ -256,9 +256,9 @@ const ProgrammeView = () => {
         <div className="">
           <div className="cert-info">
             {isBase64(cert.logo) ? (
-              <img src={'data:image/jpeg;base64,' + cert.logo} />
+              <img alt="certifier logo" src={'data:image/jpeg;base64,' + cert.logo} />
             ) : cert.logo ? (
-              <img src={cert.logo} />
+              <img alt="certifier logo" src={cert.logo} />
             ) : cert.name ? (
               <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
             ) : (
@@ -966,9 +966,9 @@ const ProgrammeView = () => {
       <div className="">
         <div className="company-info">
           {isBase64(ele.company.logo) ? (
-            <img src={'data:image/jpeg;base64,' + ele.company.logo} />
+            <img alt="company logo" src={'data:image/jpeg;base64,' + ele.company.logo} />
           ) : ele.company.logo ? (
-            <img src={ele.company.logo} />
+            <img alt="company logo" src={ele.company.logo} />
           ) : ele.company.name ? (
             <div className="programme-logo">{ele.company.name.charAt(0).toUpperCase()}</div>
           ) : (
