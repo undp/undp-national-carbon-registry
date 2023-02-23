@@ -1264,7 +1264,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
-      series: totalProgrammesSectorSeries,
+      data: totalProgrammesSectorSeries,
     });
     ApexCharts.exec('total-programmes-sector', 'updateOptions', {
       xaxis: {
@@ -1275,7 +1275,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-programmes', 'updateSeries', {
-      series: totalProgrammesSeries,
+      data: totalProgrammesSeries,
     });
     ApexCharts.exec('total-programmes', 'updateOptions', {
       xaxis: {
@@ -1286,7 +1286,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-credits', 'updateSeries', {
-      series: totalCreditsSeries,
+      data: totalCreditsSeries,
     });
     ApexCharts.exec('total-credits', 'updateOptions', {
       xaxis: {
@@ -1297,7 +1297,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-credits-certified', 'updateSeries', {
-      series: totalCertifiedCreditsSeries,
+      data: totalCertifiedCreditsSeries,
     });
     ApexCharts.exec('total-credits-certified', 'updateOptions', {
       xaxis: {
