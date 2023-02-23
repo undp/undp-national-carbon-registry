@@ -9,7 +9,7 @@ export interface BarChartStatsProps {
   title: string;
   options: any;
   series: any;
-  lastUpdate: number;
+  lastUpdate: any;
   loading: boolean;
   toolTipText: string;
 }
@@ -44,9 +44,7 @@ const BarChartsStat: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
             />
           </div>
           <div className="updated-on">
-            {lastUpdate !== 0 && (
-              <div className="updated-moment-container">{moment(lastUpdate).fromNow()}</div>
-            )}
+            {lastUpdate !== '0' && <div className="updated-moment-container">{lastUpdate}</div>}
           </div>
         </>
       )}

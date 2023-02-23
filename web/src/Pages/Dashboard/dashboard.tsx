@@ -117,21 +117,60 @@ const Dashboard = () => {
   const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
 
   //last time updates
-  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<any>(0);
-  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] = useState<any>(0);
-  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] = useState<any>(0);
-  const [lastUpdateTotalCreditsCertified, setLastUpdateTotalCreditsCertified] = useState<any>(0);
-  const [lastUpdateProgrammeLocations, setLastUpdateProgrammeLocations] = useState<any>(0);
-  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<any>(0);
-  const [lastUpdateProgrammesSectorStatsC, setLastUpdateProgrammesSectorStatsC] = useState<any>(0);
-  const [lastUpdateProgrammesCreditsStats, setLastUpdateProgrammesCreditsStats] = useState<any>(0);
-  const [lastUpdateCertifiedCreditsStats, setLastUpdateCertifiedCreditsStats] = useState<any>(0);
-  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] = useState<any>(0);
+  const [lastUpdateProgrammesStatsEpoch, setLastUpdateProgrammesStatsEpoch] = useState<number>(0);
+  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<string>('0');
+
+  const [lastUpdatePendingTransferSentEpoch, setLastUpdatePendingTransferSentEpoch] =
+    useState<number>(0);
+  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] = useState<string>('0');
+
+  const [lastUpdateCreditBalanceEpoch, setLastUpdateCreditBalanceEpoch] = useState<number>(0);
+  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] = useState<string>('0');
+
+  const [lastUpdatePendingTransferReceivedEpoch, setLastUpdatePendingTransferReceivedEpoch] =
+    useState<number>(0);
   const [lastUpdatePendingTransferReceived, setLastUpdatePendingTransferReceived] =
-    useState<any>(0);
-  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] = useState<any>(0);
-  const [lastUpdateProgrammesCertifiable, setLastUpdateProgrammesCertifiable] = useState<any>(0);
-  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<any>(0);
+    useState<string>('0');
+
+  const [lastUpdateProgrammesCertifiableEpoch, setLastUpdateProgrammesCertifiableEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCertifiable, setLastUpdateProgrammesCertifiable] =
+    useState<string>('0');
+
+  const [lastUpdateCertifiedCreditsStatsEpoch, setLastUpdateCertifiedCreditsStatsEpoch] =
+    useState<number>(0);
+  const [lastUpdateCertifiedCreditsStats, setLastUpdateCertifiedCreditsStats] =
+    useState<string>('0');
+
+  const [lastUpdateProgrammesCertifiedEpoch, setLastUpdateProgrammesCertifiedEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<string>('0');
+
+  const [lastUpdateProgrammesStatsCEpoch, setLastUpdateProgrammesStatsCEpoch] = useState<number>(0);
+  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] = useState<string>('0');
+
+  const [lastUpdateProgrammesCreditsStatsEpoch, setLastUpdateProgrammesCreditsStatsEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCreditsStats, setLastUpdateProgrammesCreditsStats] =
+    useState<string>('0');
+
+  const [lastUpdateProgrammesSectorStatsCEpoch, setLastUpdateProgrammesSectorStatsCEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesSectorStatsC, setLastUpdateProgrammesSectorStatsC] =
+    useState<string>('0');
+  const [lastUpdateTotalCreditsEpoch, setLastUpdateTotalCreditsEpoch] = useState<number>(0);
+  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] = useState<string>('0');
+
+  const [lastUpdateTotalCreditsCertifiedEpoch, setLastUpdateTotalCreditsCertifiedEpoch] =
+    useState<number>(0);
+  const [lastUpdateTotalCreditsCertified, setLastUpdateTotalCreditsCertified] =
+    useState<string>('0');
+
+  const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
+    useState<number>(0);
+  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
+  const [creditsPieTotal, setCreditsPieTotal] = useState<any>(0);
+  const [creditsCertifiedPieTotal, setCreditsCertifiedPieTotal] = useState<any>(0);
 
   const currentYear = new Date();
 
@@ -481,8 +520,13 @@ const Dashboard = () => {
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateTotalCredits(
-            response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
@@ -490,8 +534,13 @@ const Dashboard = () => {
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
           String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesSectorStatsC(
-            response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
@@ -499,8 +548,11 @@ const Dashboard = () => {
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateTotalCreditsCertified(
-            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
@@ -508,23 +560,27 @@ const Dashboard = () => {
           response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
           String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
         ) {
-          setLastUpdateTransferLocations(response?.data?.stats?.MY_TRANSFER_LOCATION?.last);
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+          );
         }
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
-        if (
-          response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
-        ) {
-          setLastUpdateTransferLocations(response?.data?.stats?.MY_TRANSFER_LOCATION?.last);
-        }
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
           String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+          );
           setLastUpdateTotalCredits(
-            response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
@@ -532,8 +588,13 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime &&
           String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesSectorStatsC(
-            response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
@@ -541,14 +602,24 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
         ) {
-          setLastUpdateTotalCreditsCertified(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last);
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+          );
+          setLastUpdateTotalCreditsCertified(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+          );
         }
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
         if (
           response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
           String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
         ) {
-          setLastUpdateTransferLocations(response?.data?.stats?.MY_TRANSFER_LOCATION?.last);
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+          );
         }
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
@@ -560,8 +631,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateTotalCredits(
-            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -569,8 +645,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesSectorStatsC(
-            response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
@@ -578,8 +659,11 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateTotalCreditsCertified(
-            response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
@@ -587,7 +671,12 @@ const Dashboard = () => {
           response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
           String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
         ) {
-          setLastUpdateTransferLocations(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last);
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+          );
         }
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
@@ -596,8 +685,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateTotalCredits(
-            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -605,8 +699,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesSectorStatsC(
-            response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
@@ -614,8 +713,11 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateTotalCreditsCertified(
-            response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
@@ -623,7 +725,12 @@ const Dashboard = () => {
           response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
           String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
         ) {
-          setLastUpdateTransferLocations(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last);
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+          );
         }
         transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
@@ -781,39 +888,67 @@ const Dashboard = () => {
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
         String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
       ) {
+        setLastUpdateProgrammesStatsEpoch(
+          parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+        );
         setLastUpdateProgrammesStats(
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime
+          moment(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          ).fromNow()
         );
       }
       if (
         response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime &&
         String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !== '0'
       ) {
-        setLastUpdatePendingTransferSent(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime);
+        setLastUpdatePendingTransferSentEpoch(
+          parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
+        );
+        setLastUpdatePendingTransferSent(
+          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)).fromNow()
+        );
       }
       if (
         response?.data?.stats?.MY_CREDIT?.last &&
         String(response?.data?.stats?.MY_CREDIT?.last) !== '0'
       ) {
-        setLastUpdateCreditBalance(response?.data?.stats?.MY_CREDIT?.last);
+        setLastUpdateCreditBalanceEpoch(parseInt(response?.data?.stats?.MY_CREDIT?.last));
+        setLastUpdateCreditBalance(
+          moment(parseInt(response?.data?.stats?.MY_CREDIT?.last)).fromNow()
+        );
       }
       if (
         response?.data?.stats?.UNCERTIFIED_BY_ME?.last &&
         String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
       ) {
-        setLastUpdateProgrammesCertifiable(response?.data?.stats?.UNCERTIFIED_BY_ME?.last);
+        setLastUpdateProgrammesCertifiableEpoch(
+          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
+        );
+        setLastUpdateProgrammesCertifiable(
+          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
+        );
       }
       if (
         response?.data?.stats?.CERTIFIED_BY_ME?.last &&
         String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== '0'
       ) {
-        setLastUpdateProgrammesCertified(response?.data?.stats?.CERTIFIED_BY_ME?.last);
+        setLastUpdateProgrammesCertifiedEpoch(
+          parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
+        );
+        setLastUpdateProgrammesCertified(
+          moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)).fromNow()
+        );
       }
       if (
         response?.data?.stats?.PENDING_TRANSFER_RECV?.last &&
         String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== '0'
       ) {
-        setLastUpdatePendingTransferReceived(response?.data?.stats?.PENDING_TRANSFER_RECV?.last);
+        setLastUpdatePendingTransferReceivedEpoch(
+          parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
+        );
+        setLastUpdatePendingTransferReceived(
+          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)).fromNow()
+        );
       }
     } catch (error: any) {
       console.log('Error in getting users', error);
@@ -845,8 +980,13 @@ const Dashboard = () => {
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
           String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesStatsC(
-            response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAggregationResponse =
@@ -856,8 +996,15 @@ const Dashboard = () => {
           String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
             '0'
         ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateProgrammesCreditsStats(
-            response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(
+                response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+              )
+            ).fromNow()
           );
         }
         programmeByStatusAuthAggregationResponse =
@@ -866,8 +1013,11 @@ const Dashboard = () => {
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateCertifiedCreditsStats(
-            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
@@ -877,8 +1027,13 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime &&
           String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesStatsC(
-            response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAggregationResponse =
@@ -888,8 +1043,13 @@ const Dashboard = () => {
           String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !==
             '0'
         ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+          );
           setLastUpdateProgrammesCreditsStats(
-            response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAuthAggregationResponse =
@@ -898,7 +1058,12 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
         ) {
-          setLastUpdateCertifiedCreditsStats(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last);
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+          );
+          setLastUpdateCertifiedCreditsStats(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+          );
         }
         certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       } else if (
@@ -909,8 +1074,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesStatsC(
-            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -918,8 +1088,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateProgrammesCreditsStats(
-            response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAuthAggregationResponse =
@@ -928,8 +1103,11 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateCertifiedCreditsStats(
-            response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
@@ -939,8 +1117,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
           String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
           setLastUpdateProgrammesStatsC(
-            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -948,8 +1131,13 @@ const Dashboard = () => {
           response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
         ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
           setLastUpdateProgrammesCreditsStats(
-            response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+            moment(
+              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
           );
         }
         programmeByStatusAuthAggregationResponse =
@@ -958,8 +1146,11 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
         ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
           setLastUpdateCertifiedCreditsStats(
-            response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
@@ -1034,6 +1225,10 @@ const Dashboard = () => {
       pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
       const totalCreditsCertified =
         totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
+      setCreditsPieChartTotal(
+        String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+      );
+      setCreditsCertifiedPieTotal(addCommSep(totalCreditsCertified));
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
@@ -1069,39 +1264,148 @@ const Dashboard = () => {
 
   useEffect(() => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
-      series: totalProgrammesSectorSeries,
+      data: totalProgrammesSectorSeries,
     });
-  }, [totalProgrammesSectorSeries]);
+    ApexCharts.exec('total-programmes-sector', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesSectorOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-programmes', 'updateSeries', {
-      series: totalProgrammesSeries,
+      data: totalProgrammesSeries,
     });
-  }, [totalProgrammesSeries]);
+    ApexCharts.exec('total-programmes', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits', 'updateSeries', {
-      series: totalCreditsSeries,
+      data: totalCreditsSeries,
     });
-  }, [totalCreditsSeries]);
+    ApexCharts.exec('total-credits', 'updateOptions', {
+      xaxis: {
+        categories: totalCreditsOptionsLabels,
+      },
+    });
+  }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits-certified', 'updateSeries', {
-      series: totalCertifiedCreditsSeries,
+      data: totalCertifiedCreditsSeries,
     });
-  }, [totalCertifiedCreditsSeries]);
+    ApexCharts.exec('total-credits-certified', 'updateOptions', {
+      xaxis: {
+        categories: totalCertifiedCreditsOptionsLabels,
+      },
+    });
+  }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
 
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     // Creates an interval which will update the current data every minute
-  //     // This will trigger a rerender every component that uses the useDate hook.
-  //     setLastUpdateProgrammesStats((prev: any) => prev);
-  //     setLastUpdateProgrammesCreditsStats(parseInt(lastUpdateProgrammesCreditsStats) + 1);
-  //   }, 60 * 1000);
-  //   return () => {
-  //     clearInterval(timer); // Return a funtion to clear the timer so that it will stop being called on unmount
-  //   };
-  // }, []);
+  useEffect(() => {
+    ApexCharts.exec('credits', 'updateSeries', {
+      series: creditsPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => creditsPieChartTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
+
+  useEffect(() => {
+    ApexCharts.exec('certified-credits', 'updateSeries', {
+      series: creditsCertifiedPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => creditsCertifiedPieTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsCertifiedPieSeries, categoryType, creditsCertifiedPieTotal]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (lastUpdateProgrammesStatsEpoch !== 0) {
+        setLastUpdateProgrammesStats(moment(lastUpdateProgrammesStatsEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesStatsCEpoch !== 0) {
+        setLastUpdateProgrammesStatsC(moment(lastUpdateProgrammesStatsCEpoch).fromNow());
+      }
+      if (lastUpdatePendingTransferSentEpoch !== 0) {
+        setLastUpdatePendingTransferSent(moment(lastUpdatePendingTransferSentEpoch).fromNow());
+      }
+      if (lastUpdateCreditBalanceEpoch !== 0) {
+        setLastUpdateCreditBalance(moment(lastUpdateCreditBalanceEpoch).fromNow());
+      }
+      if (lastUpdatePendingTransferReceivedEpoch !== 0) {
+        setLastUpdatePendingTransferReceived(
+          moment(lastUpdatePendingTransferReceivedEpoch).fromNow()
+        );
+      }
+      if (lastUpdateProgrammesCertifiableEpoch !== 0) {
+        setLastUpdateProgrammesCertifiable(moment(lastUpdateProgrammesCertifiableEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesCertifiedEpoch !== 0) {
+        setLastUpdateProgrammesCertified(moment(lastUpdateProgrammesCertifiedEpoch).fromNow());
+      }
+      if (lastUpdateCertifiedCreditsStatsEpoch !== 0) {
+        setLastUpdateCertifiedCreditsStats(moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesCreditsStatsEpoch !== 0) {
+        setLastUpdateProgrammesCreditsStats(
+          moment(lastUpdateProgrammesCreditsStatsEpoch).fromNow()
+        );
+      }
+      if (lastUpdateProgrammesSectorStatsCEpoch !== 0) {
+        setLastUpdateProgrammesSectorStatsC(
+          moment(lastUpdateProgrammesSectorStatsCEpoch).fromNow()
+        );
+      }
+      if (lastUpdateTotalCreditsEpoch !== 0) {
+        setLastUpdateTotalCredits(moment(lastUpdateTotalCreditsEpoch).fromNow());
+      }
+      if (lastUpdateTotalCreditsCertifiedEpoch !== 0) {
+        setLastUpdateTotalCreditsCertified(moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow());
+      }
+      if (lastUpdateTransferLocationsEpoch !== 0) {
+        setLastUpdateTransferLocations(moment(lastUpdateTransferLocationsEpoch).fromNow());
+      }
+    }, 60 * 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [
+    lastUpdateProgrammesStatsEpoch,
+    lastUpdateProgrammesStatsCEpoch,
+    lastUpdatePendingTransferSentEpoch,
+    lastUpdateCreditBalanceEpoch,
+    lastUpdatePendingTransferReceivedEpoch,
+    lastUpdateProgrammesCertifiableEpoch,
+    lastUpdateProgrammesCertifiedEpoch,
+    lastUpdateProgrammesCreditsStatsEpoch,
+    lastUpdateCertifiedCreditsStatsEpoch,
+    lastUpdateProgrammesSectorStatsCEpoch,
+    lastUpdateTotalCreditsEpoch,
+    lastUpdateTotalCreditsCertifiedEpoch,
+    lastUpdateTransferLocationsEpoch,
+  ]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
@@ -1401,10 +1705,10 @@ ${total}
               )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? parseInt(lastUpdateProgrammesStats)
+                  ? lastUpdateProgrammesStats
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? parseInt(lastUpdatePendingTransferReceived)
-                  : parseInt(lastUpdateProgrammesCertifiable)
+                  ? lastUpdatePendingTransferReceived
+                  : lastUpdateProgrammesCertifiable
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
@@ -1437,10 +1741,10 @@ ${total}
               )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? parseInt(lastUpdatePendingTransferSent)
+                  ? lastUpdatePendingTransferSent
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? parseInt(lastUpdatePendingTransferSent)
-                  : parseInt(lastUpdateProgrammesCertified)
+                  ? lastUpdatePendingTransferSent
+                  : lastUpdateProgrammesCertified
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
@@ -1473,10 +1777,10 @@ ${total}
               )}
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? parseInt(lastUpdateCreditBalance)
+                  ? lastUpdateCreditBalance
                   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? parseInt(lastUpdateCreditBalance)
-                  : parseInt(lastUpdateProgrammesCertified)
+                  ? lastUpdateCreditBalance
+                  : lastUpdateProgrammesCertified
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
@@ -1528,7 +1832,7 @@ ${total}
               pending={pendingProjects}
               rejected={rejectedProjects}
               authorized={authorisedProjects}
-              updatedDate={parseInt(lastUpdateProgrammesStatsC)}
+              updatedDate={lastUpdateProgrammesStatsC}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1541,13 +1845,13 @@ ${total}
               )}
             />
           </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col pie">
             <PieChartsStat
               id="credits"
               title={t('credits')}
               options={optionDonutPieA}
               series={creditsPieSeries}
-              lastUpdate={parseInt(lastUpdateProgrammesCreditsStats)}
+              lastUpdate={lastUpdateProgrammesCreditsStats}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1566,7 +1870,7 @@ ${total}
               title={t('certifiedCredits')}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
-              lastUpdate={parseInt(lastUpdateCertifiedCreditsStats)}
+              lastUpdate={lastUpdateCertifiedCreditsStats}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1589,7 +1893,7 @@ ${total}
               title={t('totalProgrammes')}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
-              lastUpdate={parseInt(lastUpdateProgrammesStatsC)}
+              lastUpdate={lastUpdateProgrammesStatsC}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1608,7 +1912,7 @@ ${total}
               title={t('totalProgrammesSector')}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
-              lastUpdate={parseInt(lastUpdateProgrammesSectorStatsC)}
+              lastUpdate={lastUpdateProgrammesSectorStatsC}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1631,7 +1935,7 @@ ${total}
               title={t('totalCredits')}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
-              lastUpdate={parseInt(lastUpdateTotalCredits)}
+              lastUpdate={lastUpdateTotalCredits}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1650,7 +1954,7 @@ ${total}
               title={t('totalCreditsCertified')}
               options={totalCreditsCertifiedOptions}
               series={totalCertifiedCreditsSeries}
-              lastUpdate={parseInt(lastUpdateTotalCreditsCertified)}
+              lastUpdate={lastUpdateTotalCreditsCertified}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -1708,9 +2012,7 @@ ${total}
                     <LegendItem text="Pending" color="#CDCDCD" />
                   </div>
                   <div className="updated-on margin-top-1">
-                    <div className="updated-moment-container">
-                      {moment(parseInt(lastUpdateProgrammesStatsC)).fromNow()}
-                    </div>
+                    <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
                   </div>
                 </>
               )}
@@ -1751,8 +2053,7 @@ ${total}
                   </div>
                   <div className="updated-on margin-top-2">
                     <div className="updated-moment-container">
-                      {lastUpdateTransferLocations !== 0 &&
-                        moment(parseInt(lastUpdateTransferLocations)).fromNow()}
+                      {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
                     </div>
                   </div>
                 </>
