@@ -1158,12 +1158,12 @@ const Dashboard = () => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
       let totalProgrammes: any = 0;
-      let totalEstCredits: any = 0.0;
-      let totalIssuedCredits: any = 0.0;
-      let totalRetiredCredits: any = 0.0;
-      let totalBalancecredit: any = 0.0;
-      let totalTxCredits: any = 0.0;
-      let totalFrozenCredits: any = 0.0;
+      let totalEstCredits: any = 0;
+      let totalIssuedCredits: any = 0;
+      let totalRetiredCredits: any = 0;
+      let totalBalancecredit: any = 0;
+      let totalTxCredits: any = 0;
+      let totalFrozenCredits: any = 0;
       let totalCertifiedCredit: any = 0;
       let totalUnCertifiedredit: any = 0;
       let totalRevokedCredits: any = 0;
