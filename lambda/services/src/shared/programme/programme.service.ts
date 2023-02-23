@@ -997,6 +997,10 @@ export class ProgrammeService {
       orgNamesList = companyNames[0];
     } 
 
+    if (programme.companyId.length === 1 && !programme.proponentPercentage) {
+        programme.proponentPercentage = [100];
+        programme.creditOwnerPercentage = [100];
+    }
     const savedProgramme = await this.programmeLedger.createProgramme(programme);
     if(savedProgramme){
       const hostAddress = this.configService.get("host");
