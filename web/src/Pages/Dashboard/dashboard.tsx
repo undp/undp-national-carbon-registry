@@ -58,6 +58,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [companyRole, setCompanyRole] = useState<any>(userInfoState?.companyRole);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
+  const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
   const [pendingProjects, setPendingProjects] = useState<number>(0);
@@ -507,7 +508,7 @@ const Dashboard = () => {
   };
 
   const getAllProgrammesAggChartStats = async () => {
-    setLoading(true);
+    setLoadingCharts(true);
     try {
       const response: any = await post('stats/programme/agg', getAllChartsParams());
       let programmesAggByStatus: any;
@@ -839,7 +840,7 @@ const Dashboard = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
@@ -1156,19 +1157,19 @@ const Dashboard = () => {
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
-      let totalProgrammes = 0;
-      let totalEstCredits = 0;
-      let totalIssuedCredits = 0;
-      let totalRetiredCredits = 0;
-      let totalBalancecredit = 0;
-      let totalTxCredits = 0;
-      let totalFrozenCredits = 0;
-      let totalCertifiedCredit = 0;
-      let totalUnCertifiedredit = 0;
-      let totalRevokedCredits = 0;
-      let pendingProgrammesC = 0;
-      let authorisedProgrammesC = 0;
-      let rejectedProgrammesC = 0;
+      let totalProgrammes: any = 0;
+      let totalEstCredits: any = 0.0;
+      let totalIssuedCredits: any = 0.0;
+      let totalRetiredCredits: any = 0.0;
+      let totalBalancecredit: any = 0.0;
+      let totalTxCredits: any = 0.0;
+      let totalFrozenCredits: any = 0.0;
+      let totalCertifiedCredit: any = 0;
+      let totalUnCertifiedredit: any = 0;
+      let totalRevokedCredits: any = 0;
+      let pendingProgrammesC: any = 0;
+      let authorisedProgrammesC: any = 0;
+      let rejectedProgrammesC: any = 0;
       const programmeStatusA = Object.values(ProgrammeStageLegend);
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
@@ -1198,12 +1199,16 @@ const Dashboard = () => {
       }
       if (programmeByStatusAuthAggregationResponse?.length > 0) {
         programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+          totalEstCredits = totalEstCredits + Math.round(parseFloat(responseItem?.totalestcredit));
+          totalIssuedCredits =
+            totalIssuedCredits + Math.round(parseFloat(responseItem?.totalissuedcredit));
+          totalRetiredCredits =
+            totalRetiredCredits + Math.round(parseFloat(responseItem?.totalretiredcredit));
+          totalBalancecredit =
+            totalBalancecredit + Math.round(parseFloat(responseItem?.totalbalancecredit));
+          totalTxCredits = totalTxCredits + Math.round(parseFloat(responseItem?.totaltxcredit));
+          totalFrozenCredits =
+            totalFrozenCredits + Math.round(parseFloat(responseItem?.totalfreezecredit));
         });
       }
       if (certifiedRevokedAggregationResponse) {
@@ -1229,6 +1234,7 @@ const Dashboard = () => {
         String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
       );
       setCreditsCertifiedPieTotal(addCommSep(totalCreditsCertified));
+      const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
@@ -1895,7 +1901,7 @@ ${total}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
               lastUpdate={lastUpdateProgrammesStatsC}
-              loading={loading}
+              loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? 'tTTotalProgrammesGovernment'
@@ -1914,7 +1920,7 @@ ${total}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
               lastUpdate={lastUpdateProgrammesSectorStatsC}
-              loading={loading}
+              loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? 'tTTotalProgrammesSectorGovernment'
@@ -1937,7 +1943,7 @@ ${total}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
               lastUpdate={lastUpdateTotalCredits}
-              loading={loading}
+              loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? 'tTTotalCreditsGovernment'
@@ -1956,7 +1962,7 @@ ${total}
               options={totalCreditsCertifiedOptions}
               series={totalCertifiedCreditsSeries}
               lastUpdate={lastUpdateTotalCreditsCertified}
-              loading={loading}
+              loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? 'tTTotalCreditsCertifiedGovernment'
@@ -1997,7 +2003,7 @@ ${total}
                   </div>
                 </div>
               </div>
-              {loading ? (
+              {loadingCharts ? (
                 <div className="margin-top-2">
                   <Skeleton active />
                   <Skeleton active />
@@ -2042,7 +2048,7 @@ ${total}
                   </Tooltip>
                 </div>
               </div>
-              {loading ? (
+              {loadingCharts ? (
                 <div className="margin-top-2">
                   <Skeleton active />
                   <Skeleton active />
