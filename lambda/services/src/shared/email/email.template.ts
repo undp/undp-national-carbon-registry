@@ -4,7 +4,7 @@ export const EmailTemplates = {
         subject: 'Welcome!',
         html: `
         Welcome {{organisationName}},<br><br> 
-        Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br> 
+        Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br><br>
         Explore the Registry here {{home}}. <br><br> 
         
         Sincerely,<br> 
