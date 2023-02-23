@@ -169,6 +169,8 @@ const Dashboard = () => {
   const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
     useState<number>(0);
   const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
+  const [creditsPieTotal, setCreditsPieTotal] = useState<any>(0);
+  const [creditsCertifiedPieTotal, setCreditsCertifiedPieTotal] = useState<any>(0);
 
   const currentYear = new Date();
 
@@ -1223,6 +1225,10 @@ const Dashboard = () => {
       pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
       const totalCreditsCertified =
         totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
+      setCreditsPieChartTotal(
+        String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+      );
+      setCreditsCertifiedPieTotal(addCommSep(totalCreditsCertified));
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
@@ -1260,25 +1266,79 @@ const Dashboard = () => {
     ApexCharts.exec('total-programmes-sector', 'updateSeries', {
       series: totalProgrammesSectorSeries,
     });
-  }, [totalProgrammesSectorSeries, categoryType]);
+    ApexCharts.exec('total-programmes-sector', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesSectorOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-programmes', 'updateSeries', {
       series: totalProgrammesSeries,
     });
-  }, [totalProgrammesSeries, categoryType]);
+    ApexCharts.exec('total-programmes', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits', 'updateSeries', {
       series: totalCreditsSeries,
     });
-  }, [totalCreditsSeries, categoryType]);
+    ApexCharts.exec('total-credits', 'updateOptions', {
+      xaxis: {
+        categories: totalCreditsOptionsLabels,
+      },
+    });
+  }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('total-credits-certified', 'updateSeries', {
       series: totalCertifiedCreditsSeries,
     });
-  }, [totalCertifiedCreditsSeries, categoryType]);
+    ApexCharts.exec('total-credits-certified', 'updateOptions', {
+      xaxis: {
+        categories: totalCertifiedCreditsOptionsLabels,
+      },
+    });
+  }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
+
+  useEffect(() => {
+    ApexCharts.exec('credits', 'updateSeries', {
+      series: creditsPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => creditsPieChartTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
+
+  useEffect(() => {
+    ApexCharts.exec('certified-credits', 'updateSeries', {
+      series: creditsCertifiedPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => creditsCertifiedPieTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsCertifiedPieSeries, categoryType, creditsCertifiedPieTotal]);
 
   useEffect(() => {
     const timer = setInterval(() => {
