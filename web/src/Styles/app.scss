@@ -504,7 +504,6 @@ body {
   background: rgba($color: #b9e2f4, $alpha: 0.4);
 }
 
-
 .filter-section input {
   font-family: 'Inter';
   font-size: 0.8rem !important;
@@ -612,7 +611,7 @@ body {
 .loading-center {
   margin: auto;
   text-align: center;
-  position:absolute;
+  position: absolute;
   top: 50%;
   left: 50%;
 }
@@ -653,7 +652,6 @@ body {
 }
 
 .ant-message-notice-content {
-
   padding: 0px;
   border-radius: 5px;
 
@@ -689,4 +687,16 @@ body {
 
 .mg-bottom-0 {
   margin-bottom: 0px;
+}
+
+.ellipsis-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.nextline-overflow {
+  overflow-wrap: break-word;
 }
