@@ -210,7 +210,7 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:taxId')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {companyDetails.taxId ? companyDetails.taxId : '-'}
                     </Col>
                   </Row>
@@ -226,7 +226,7 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {companyDetails.email ? companyDetails.email : '-'}
                     </Col>
                   </Row>
