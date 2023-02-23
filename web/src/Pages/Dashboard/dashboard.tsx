@@ -1434,7 +1434,7 @@ const Dashboard = () => {
 
   // code for creating an SVG donut chart from feature properties
   function createDonutChart(properties: any) {
-    // console.log('properties of donut creator --- > ', properties);
+    console.log('properties of donut creator --- > ', properties);
     const offsets = [];
     const offsetsStage = [];
     let counts: any = [];
@@ -1595,6 +1595,7 @@ ${total}
   }, [programmeTransferLocations]);
 
   useEffect(() => {
+    console.log('programme locations ---- > ', programmeLocations);
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
