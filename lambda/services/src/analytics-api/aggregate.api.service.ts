@@ -246,19 +246,21 @@ export class AggregateAPIService {
     let features: any[] = [];
     locationsGeoData.type = "FeatureCollection";
     locationData?.map((locationDataItem, index) => {
-      let programmeGeoData: any = {};
-      let location: any = locationDataItem?.loc;
-      programmeGeoData.type = "Feature";
-      let properties: any = {};
-      let geometry: any = {};
-      properties.id = String(index);
-      properties.count = parseInt(locationDataItem?.count);
-      properties.stage = locationDataItem?.stage;
-      geometry.type = "Point";
-      geometry.coordinates = location;
-      programmeGeoData.properties = properties;
-      programmeGeoData.geometry = geometry;
-      features.push(programmeGeoData);
+      if (locationDataItem?.loc && locationDataItem !== null) {
+        let programmeGeoData: any = {};
+        let location: any = locationDataItem?.loc;
+        programmeGeoData.type = "Feature";
+        let properties: any = {};
+        let geometry: any = {};
+        properties.id = String(index);
+        properties.count = parseInt(locationDataItem?.count);
+        properties.stage = locationDataItem?.stage;
+        geometry.type = "Point";
+        geometry.coordinates = location;
+        programmeGeoData.properties = properties;
+        programmeGeoData.geometry = geometry;
+        features.push(programmeGeoData);
+      }
     });
 
     locationsGeoData.features = [...features];
@@ -309,7 +311,13 @@ export class AggregateAPIService {
               "creditFrozen",
             ].includes(a.key)
               ? `"${tableName}"."${a.key}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]`
-              : `"${tableName}"."${a.key === 'creditBalance' ? 'creditOwnerPercentage': 'proponentPercentage'}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`;
+              : `"${tableName}"."${
+                  a.key === "creditBalance"
+                    ? "creditOwnerPercentage"
+                    : "proponentPercentage"
+                }"[array_position("${tableName}"."companyId", ${
+                  a.mineCompanyId
+                })]*${fieldCol}/100`;
           }
           return `${a.operation}(${mineCompField}) as ${a.fieldName}`;
         })
