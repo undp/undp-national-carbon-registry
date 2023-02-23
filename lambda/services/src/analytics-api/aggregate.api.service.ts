@@ -300,12 +300,16 @@ export class AggregateAPIService {
           const fieldCol = `${
             a.outerQuery ? "(" + a.outerQuery + "(" : ""
           }"${tableName}"."${a.key}"${a.outerQuery ? ")s )" : ""}`;
-          
+
           let mineCompField = fieldCol;
           if (a.mineCompanyId) {
-            mineCompField = ["creditTransferred", "creditRetired", "creditFrozen"].includes(a.key) ?  
-            `"${tableName}"."${a.key}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]` : 
-            `"${tableName}"."creditOwnerPercentage"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`
+            mineCompField = [
+              "creditTransferred",
+              "creditRetired",
+              "creditFrozen",
+            ].includes(a.key)
+              ? `"${tableName}"."${a.key}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]`
+              : `"${tableName}"."creditOwnerPercentage"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`;
           }
           return `${a.operation}(${mineCompField}) as ${a.fieldName}`;
         })
@@ -632,14 +636,14 @@ export class AggregateAPIService {
           operation: "SUM",
           fieldName: "totalRetiredCredit",
           mineCompanyId: frzAgg.mineCompanyId,
-          outerQuery: 'select sum(s) from unnest'
+          outerQuery: "select sum(s) from unnest",
         },
         {
           key: "creditTransferred",
           operation: "SUM",
           fieldName: "totalTxCredit",
           mineCompanyId: frzAgg.mineCompanyId,
-          outerQuery: 'select sum(s) from unnest'
+          outerQuery: "select sum(s) from unnest",
         },
         frzAgg,
       ],
@@ -821,13 +825,13 @@ export class AggregateAPIService {
               key: "creditRetired",
               operation: "SUM",
               fieldName: "totalRetiredCredit",
-              outerQuery: 'select sum(s) from unnest'
+              outerQuery: "select sum(s) from unnest",
             },
             {
               key: "creditTransferred",
               operation: "SUM",
               fieldName: "totalTxCredit",
-              outerQuery: 'select sum(s) from unnest'
+              outerQuery: "select sum(s) from unnest",
             },
             frzAgg,
           ],
@@ -1529,14 +1533,14 @@ export class AggregateAPIService {
           operation: "SUM",
           fieldName: "totalRetiredCredit",
           mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
-          outerQuery: 'select sum(s) from unnest'
+          outerQuery: "select sum(s) from unnest",
         },
         {
           key: "creditTransferred",
           operation: "SUM",
           fieldName: "totalTxCredit",
           mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
-          outerQuery: 'select sum(s) from unnest'
+          outerQuery: "select sum(s) from unnest",
         },
         frzAgg,
       ],
