@@ -666,6 +666,13 @@ export class ProgrammeService {
         );
       }
     }
+    
+    if (req.fromCompanyIds && req.companyCredit && req.fromCompanyIds.length != req.companyCredit.length) {
+        throw new HttpException(
+            "Invalid company credit for given from companies",
+            HttpStatus.BAD_REQUEST
+          );
+    }
 
     const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
     if (indexTo >= 0 && req.companyCredit[indexTo] > 0) {
