@@ -37,7 +37,6 @@
       font-family: 'MuseoSans';
       font-size: 1.2rem;
       color: $logo-text-color;
-      
     }
 
     .logo {
@@ -52,7 +51,6 @@
         height: 40px;
         width: 36px;
         // padding-right: 5px;
-       
       }
     }
 
@@ -62,8 +60,6 @@
       margin-top: -5px;
       font-family: 'MuseoSans';
       margin-left: 6px;
-      
-      
     }
   }
   .homepage-button-container {
@@ -88,15 +84,35 @@
       background-color: $gradient-background-start;
     }
   }
+  // .image-container {
+  //   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
+  //   url('../../Assets/Images/factory.webp') left 10% bottom 20% / cover no-repeat border-box;
+  //   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
+  //     image-set(
+  //       '../../Assets/Images/factory.webp' left 10% bottom 20% / cover no-repeat border-box
+  //         type('image/webp'),
+  //       '../../Assets/Images/factory.png' type('image/png')
+  //     );
+  // }
   .image-container {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
-      url('../../Assets/Images/factory.webp') left 10% bottom 20% / cover no-repeat border-box;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(22, 177, 255, 0.4) 40%
+      ),
+      url('../../Assets/Images/factory.webp');
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(22, 177, 255, 0.4) 40%
+      ),
+      image-set(
+        '../../Assets/Images/factory.png' type('image/png'),
+        '../../Assets/Images/factory.webp' type('image/webp')
+      );
+    background-size: cover;
   }
 
-  .no-image-container {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
-      url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
-  }
   .homepage-img-container {
     height: 100vh;
     background-position-x: 100%;
@@ -106,7 +122,6 @@
     display: flex;
     flex: 1;
     text-align: left;
-
 
     @media (max-width: $lg-size) {
       text-align: center;
@@ -252,7 +267,7 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
+      color: $title-text-color;
       justify-content: center;
       margin: 20px 60px 20px 60px;
 
@@ -393,7 +408,7 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
+      color: $title-text-color;
       justify-content: left;
       margin: 20px 10px 20px 60px;
 
@@ -456,7 +471,7 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
+      color: $title-text-color;
       margin: 20px 60px 20px 60px;
 
       @media (max-width: $lg-size) {
