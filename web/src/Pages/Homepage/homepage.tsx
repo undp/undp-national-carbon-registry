@@ -1,32 +1,58 @@
-import { Button, Col, Divider, Form, Input, message, Row, Select, Statistic } from 'antd';
+import { Button, Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
-import undpLogo from '../../Assets/Images/undp.png';
-import forest from '../../Assets/Images/forest.png';
-import resources from '../../Assets/Images/resources.png';
+import undpLogo from '../../Assets/Images/undp.webp';
+import undpLogofall from '../../Assets/Images/undp.png';
+import forest from '../../Assets/Images/forest.webp';
+import forestfall from '../../Assets/Images/forest.png';
+import resources from '../../Assets/Images/resources.webp';
+import resourcesfall from '../../Assets/Images/resources.png';
+import LayoutFooter from '../../Components/Footer/layout.footer';
+import ImgWithFallback from '../../Components/ImgwithFallback/ImgWithFallback';
 import './homepage.scss';
-import { BarChart, Gem, Calculator, CcCircle } from 'react-bootstrap-icons';
+import { BarChart, Gem, Calculator } from 'react-bootstrap-icons';
 const Homepage = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
+  const [Visible, setVisible] = useState(true);
+
+  const controlDownArrow = () => {
+    if (window.scrollY > 150) {
+      setVisible(false);
+    } else {
+      setVisible(true);
+    }
+  };
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
+  };
+
+  const handleClickScroll = () => {
+    const element = document.getElementById('scrollhome');
+    if (element) {
+      // 👇 Will scroll smoothly to the top of the next section
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   useEffect(() => {
     if (localStorage.getItem('i18nextLng')!.length > 2) {
       i18next.changeLanguage('en');
     }
+    window.addEventListener('scroll', controlDownArrow);
+    return () => {
+      window.removeEventListener('scroll', controlDownArrow);
+    };
   }, []);
   return (
     <div className="homepage-container">
       <Row>
         <Col md={24} lg={24} flex="auto">
-          <div className="homepage-img-container">
+          <div className="homepage-img-container image-container">
             <Row>
               <Col md={21} lg={21} flex="auto">
                 <div className="homepage-header-container">
@@ -63,13 +89,26 @@ const Homepage = () => {
                 <div className="subhome">{t('homepage:lorem')}</div>
               </div>
             </Row>
+            <Row>
+              {Visible && (
+                <nav className={'arrows'}>
+                  <svg onClick={handleClickScroll}>
+                    <path className="a1" d="M0 0 L30 32 L60 0"></path>
+                    <path className="a2" d="M0 20 L30 52 L60 20"></path>
+                    <path className="a3" d="M0 40 L30 72 L60 40"></path>
+                  </svg>
+                </nav>
+              )}
+            </Row>
           </div>
         </Col>
       </Row>
       <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
-            <div className="title">{t('homepage:aboutustitle')}</div>
+            <div id="scrollhome" className="title">
+              {t('homepage:aboutustitle')}
+            </div>
             <div className="homepagebody">
               <div className="homepagebody_aboutusline1">{t('homepage:aboutusline1')}</div>
               <div className="homepagebody_subtitle">{t('homepage:Keyfeatures')}</div>
@@ -133,7 +172,14 @@ const Homepage = () => {
               <Row className="homepagebody_aboutuslines">{t('homepage:aboutusline3')}</Row>
               <div className="homepagebody_aboutusline1">Developed in Partnership with</div>
               <Row gutter={[8, 8]} className="undplogocontainer">
-                <img className="undplogocontainer" src={undpLogo} alt="undp logo" />
+                <ImgWithFallback
+                  className="undplogocontainer"
+                  src={undpLogo}
+                  fallbackSrc={undpLogofall}
+                  mediaType="image/webp"
+                  alt="undplogo"
+                />
+                {/* <img className="undplogocontainer" src={undpLogo} alt="undp logo" /> */}
               </Row>
             </div>
           </div>
@@ -156,7 +202,14 @@ const Homepage = () => {
                 </div>
               </Col>
               <Col flex={3} md={12} lg={12}>
-                <img className="image" src={forest} alt="forest" />
+                <ImgWithFallback
+                  className="image"
+                  src={forest}
+                  fallbackSrc={forestfall}
+                  mediaType="image/webp"
+                  alt="forestry"
+                />
+                {/* <img className="image" src={forest} alt="forest" /> */}
               </Col>
             </Row>
           </div>
@@ -167,7 +220,14 @@ const Homepage = () => {
           <div className="homepage-resources-content-container">
             <Row>
               <Col className="resource-image-container" md={12} lg={12}>
-                <img className="image" src={resources} alt="resources" />
+                <ImgWithFallback
+                  className="image"
+                  src={resources}
+                  fallbackSrc={resourcesfall}
+                  mediaType="image/webp"
+                  alt="resources"
+                />
+                {/* <img className="image" src={resources} alt="resources" /> */}
               </Col>
               <Col md={12} lg={12}>
                 <div className="title">{t('homepage:resource')}</div>
@@ -183,63 +243,7 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <div className="homepage-footer-container">
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="logocontainer">
-              <div className="logo">
-                <img src={sliderLogo} alt="slider-logo" />
-              </div>
-              <div>
-                <div style={{ display: 'flex' }}>
-                  <div className="title">{'CARBON'}</div>
-                  <div className="title-sub">{'REGISTRY'}</div>
-                </div>
-                <div className="footer-country-name">
-                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="footertext">{t('homepage:footertext1')}</div>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={4.8} lg={12}>
-            <div className="footertext-bottom">
-              {process.env.COUNTRY_NAME || 'Antarctic Region'}
-              <CcCircle className="cc" color="#FFFF" size="10px" />
-            </div>
-          </Col>
-          <Col className="footertext-link-container" md={4.8} lg={12}>
-            <div onClick={() => navigate('/cookie')} className="footertext-links">
-              {t('homepage:Cookie')}
-            </div>
-            <div onClick={() => navigate('/codeconduct')} className="footertext-links">
-              {t('homepage:codeconduct')}
-            </div>
-            <div onClick={() => navigate('/terms')} className="footertext-links">
-              {t('homepage:terms')}
-            </div>
-            <div onClick={() => navigate('/privacy')} className="footertext-links">
-              {t('homepage:privacy')}
-            </div>
-          </Col>
-        </Row>
-      </div>
-
-      {/* <Row>
-        <Col md={24} lg={24} flex="auto">
-          <div className="homepage-content-containerwhite">
-            <div className="title">Contact Us</div>
-            <div className="homepagebody">{t('homepage:name')}</div>
-          </div>
-        </Col>
-      </Row> */}
+      <LayoutFooter />
     </div>
   );
 };

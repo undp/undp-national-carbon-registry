@@ -8,4 +8,5 @@ export enum TxType {
     REVOKE = '6',
     FREEZE = '7',
     AUTH = '8',
+    UNFREEZE = '9',
 }

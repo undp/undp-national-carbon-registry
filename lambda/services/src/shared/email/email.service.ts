@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer = require('nodemailer');
-import { EmailTemplates } from './email.template';
 
 @Injectable()
 export class EmailService {
@@ -30,22 +29,39 @@ export class EmailService {
         }
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
-                template = template.replace(`{{${key}}}`, data[key])
+                var find = `{{${key}}}`;
+                var re = new RegExp(find, 'g');
+                template = template.replace(re, data[key]);
             }
         }
 
         return template;
     }
 
+    private getSubjectMessage(template: string, data) :string{
+        if (template == undefined) {
+            return template;
+        }
+        for (const key in data) {
+            if (data.hasOwnProperty(key)) {
+                var find = `{{${key}}}`;
+                var re = new RegExp(find, 'g');
+                template = template.replace(re, data[key]);
+            }
+        }
+
+        return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
+    }
+
     public async sendEmail(sendToEmail: string, template, templateData: any): Promise<any> {
         this.logger.log('Sending email', JSON.stringify(sendToEmail))
         // this.configService.get('stage') != 'local' && !sendToEmail.endsWith(this.configService.get<string>('email.skipSuffix'))
-        if (sendToEmail && sendToEmail.endsWith('@undp.org')) {
+        if (sendToEmail && !sendToEmail.endsWith('@xeptagon.com')) {
             return new Promise((resolve, reject) => {
                 this.transporter.sendMail({
                     from: this.sourceEmail,
                     to: sendToEmail,
-                    subject: template["subject"],
+                    subject: this.getSubjectMessage(template["subject"], templateData),
                     text: this.getTemplateMessage(template["text"], templateData), // plain text body
                     html: this.getTemplateMessage(template["html"], templateData), // html body
                 }, function(error, info) {

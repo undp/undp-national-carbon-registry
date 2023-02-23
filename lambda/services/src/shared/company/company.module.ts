@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from '../entities/company.entity';
@@ -10,6 +10,7 @@ import { CompanyService } from './company.service';
 import { UtilModule } from '../util/util.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
+import { EmailHelperModule } from '../email-helper/email-helper.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ProgrammeTransfer } from '../entities/programme.transfer';
     CaslModule,
     EmailModule,
     UtilModule,
-    ProgrammeLedgerModule
+    ProgrammeLedgerModule,
+    forwardRef(() => EmailHelperModule)  
   ],
   providers: [CompanyService, Logger],
   exports: [CompanyService]

@@ -12,6 +12,7 @@ import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
 import * as Icon from 'react-bootstrap-icons';
+import { Role } from '../../Casl/enums/role.enum';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);
@@ -26,6 +27,7 @@ const UserProfile = () => {
   const [openPasswordChangeModal, setopenPasswordChangeModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [isLoading, setIsLoading] = useState(false);
+  const { userInfoState } = useUserContext();
 
   const signOut = (): void => {
     updateToken();
@@ -116,12 +118,14 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            <Button
-              className="mg-left-1 btn-danger mg-bottom-1"
-              onClick={() => onDeleteProfileUser()}
-            >
-              {t('userProfile:delete')}
-            </Button>
+            {userInfoState?.userRole !== Role.Root && (
+              <Button
+                className="mg-left-1 btn-danger mg-bottom-1"
+                onClick={() => onDeleteProfileUser()}
+              >
+                {t('userProfile:delete')}
+              </Button>
+            )}
             <Button
               className="mg-left-1 mg-bottom-1"
               type="primary"
@@ -149,7 +153,7 @@ const UserProfile = () => {
             <Card className="card-container">
               <Row justify="center">
                 <Skeleton loading={isLoading} active>
-                  <img className="profile-img" src={organisationDetails.logo} />
+                  <img className="profile-img" alt="profile-img" src={organisationDetails.logo} />
                 </Skeleton>
               </Row>
               <Row justify="center">
@@ -187,7 +191,7 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {userDetails.email ? userDetails.email : '-'}
                     </Col>
                   </Row>
@@ -247,7 +251,7 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {organisationDetails.email ? organisationDetails.email : '-'}
                     </Col>
                   </Row>
@@ -263,8 +267,14 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:website')}
                     </Col>
-                    <Col span={12} className="field-value">
-                      {organisationDetails.website ? organisationDetails.website : '-'}
+                    <Col span={12} className="field-value ellipsis-overflow">
+                      {organisationDetails.website ? (
+                        <a target={'blank'} href={organisationDetails.website}>
+                          {organisationDetails.website}
+                        </a>
+                      ) : (
+                        '-'
+                      )}
                     </Col>
                   </Row>
                   <Row className="field">

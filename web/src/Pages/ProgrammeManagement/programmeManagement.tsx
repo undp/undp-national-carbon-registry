@@ -26,6 +26,7 @@ import {
   getStageEnumVal,
   getStageTagType,
   ProgrammeStage,
+  sumArray,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -196,16 +197,29 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item ? addCommSep(Number(item)) : '-';
+        return item ? addCommSep(sumArray(item)) : '-';
       },
     },
     {
       title: t('programme:certifiers'),
-      dataIndex: 'certifier',
-      key: 'certifier',
+      dataIndex: 'certifierId',
+      key: 'certifierId',
       align: 'left' as const,
+      sorter: true,
       render: (item: any, itemObj: any) => {
-        const elements = item.map((obj: any) => {
+        if (item === null) {
+          return;
+        }
+        const cMap: any = {};
+        for (const c of itemObj.certifier) {
+          cMap[c.companyId] = c;
+        }
+
+        const elements = item.map((id: any) => {
+          const obj = cMap[id];
+          if (!obj) {
+            return;
+          }
           return (
             <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
               <div>
@@ -249,12 +263,15 @@ const ProgrammeManagement = () => {
       });
     }
 
-    let sort;
+    let sort: any;
     if (sortOrder && sortField) {
       sort = {
         key: sortField,
         order: sortOrder,
       };
+      if (sortField === 'certifierId') {
+        sort.nullFirst = sortOrder === 'ASC';
+      }
     } else {
       sort = {
         key: 'programmeId',
@@ -372,7 +389,12 @@ const ProgrammeManagement = () => {
                   onPressEnter={onSearch}
                   placeholder={'Search by programme name'}
                   allowClear
-                  onChange={(e) => setSearchText(e.target.value)}
+                  // onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) =>
+                    e.target.value === ''
+                      ? setSearch(e.target.value)
+                      : setSearchText(e.target.value)
+                  }
                   onSearch={setSearch}
                   style={{ width: 265 }}
                 />

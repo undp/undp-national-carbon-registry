@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
+import LayoutFooter from '../../Components/Footer/layout.footer';
 import './codeofConduct.scss';
+import { CcCircle } from 'react-bootstrap-icons';
 const CodeOfConduct = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
@@ -37,8 +39,8 @@ const CodeOfConduct = () => {
         </Col>
       </Row>
       <div className="code-body-container">
-        <Row>
-          <Col>
+        <Row className="code-raw">
+          <Col md={24} lg={24}>
             <div className="codetitle">CONTRIBUTOR COVENANT CODE OF CONDUCT</div>
           </Col>
         </Row>
@@ -230,9 +232,9 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">Attribution</div>
             <div className="code-body">
               <p>
-                This Code of Conduct is adapted from the{' '}
-                <a href="https://www.contributor-covenant.org">Contributor Covenant</a>, version
-                2.0, available at
+                This Code of Conduct is adapted from the
+                <a href="https://www.contributor-covenant.org"> Contributor Covenant</a>, version
+                2.0, available at{' '}
                 <a href="https://www.contributor-covenant.org/version/2/0/code_of_conduct.html">
                   https://www.contributor-covenant.org/version/2/0/code_of_conduct.html
                 </a>
@@ -241,12 +243,13 @@ const CodeOfConduct = () => {
               <p>
                 Community Impact Guidelines were inspired by
                 <a href="https://github.com/mozilla/diversity">
+                  {' '}
                   Mozilla &rsquo;s code of conduct enforcement ladder
                 </a>
                 .
               </p>
               <p>
-                For answers to common questions about this code of conduct, see the FAQ at
+                For answers to common questions about this code of conduct, see the FAQ at{' '}
                 <a href="https://www.contributor-covenant.org/faq">
                   https://www.contributor-covenant.org/faq
                 </a>
@@ -259,6 +262,55 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
+      </div>
+      <div className="homepage-footer-container">
+        {/* <Row>
+          <Col md={24} lg={24}>
+            <div className="logocontainer">
+              <div className="logo">
+                <img src={sliderLogo} alt="slider-logo" />
+              </div>
+              <div>
+                <div style={{ display: 'flex' }}>
+                  <div className="title">{'CARBON'}</div>
+                  <div className="title-sub">{'REGISTRY'}</div>
+                </div>
+                <div className="footer-country-name">
+                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
+        <Row>
+          <Col md={24} lg={24}>
+            <div className="footertext">{t('homepage:footertext1')}</div>
+          </Col>
+        </Row>
+        <Row className="footer-raw">
+          <Col md={4.8} lg={12}>
+            <div className="footertext-bottom">
+              {process.env.COUNTRY_NAME || 'Antarctic Region'}
+              <CcCircle className="cc" color="#FFFF" size="10px" />
+            </div>
+          </Col>
+          <Col className="footertext-link-container" md={4.8} lg={12}>
+            <a href="/cookie" className="footertext-links">
+              {t('homepage:Cookie')}
+            </a>
+            <a href="codeconduct" className="footertext-links">
+              {t('homepage:codeconduct')}
+            </a>
+            <a href="/terms#termuse" className="footertext-links">
+              {t('homepage:terms')}
+            </a>
+            <a href="/privacy" className="footertext-links">
+              {t('homepage:privacy')}
+            </a>
+          </Col>
+        </Row> */}
+        <LayoutFooter />
       </div>
     </div>
   );

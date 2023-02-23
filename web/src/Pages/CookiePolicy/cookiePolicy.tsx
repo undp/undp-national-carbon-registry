@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import './cookiePolicy.scss';
+import { CcCircle } from 'react-bootstrap-icons';
 const CookiePolicy = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
@@ -38,16 +39,18 @@ const CookiePolicy = () => {
       </Row>
       <div className="cookie-body-container">
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookietitle">COOKIE POLICY</div>
             <div className="cookie-sub">Last updated February 02, 2023</div>
             <div className="cookie-body">
               This Cookie Policy explains how United Nations Development Programme (<b>"Company"</b>
-              , <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) uses cookies and similar technologies to
+              , "<b>we</b>","<b>us</b>", and "<b>our</b>") uses cookies and similar technologies to
               recognize you when you visit our websites at{' '}
-              <a href="https://carbreg.org">https://carbreg.org</a>, ("Websites"). It explains what
-              these technologies are and why we use them, as well as your rights to control our use
-              of them.
+              <a target="_blank" href="https://carbreg.org">
+                https://carbreg.org
+              </a>
+              , ("<b>Websites</b>"). It explains what these technologies are and why we use them, as
+              well as your rights to control our use of them.
               <div>
                 In some cases we may use cookies to collect personal information, or that becomes
                 personal information if we combine it with other information.
@@ -82,9 +85,9 @@ const CookiePolicy = () => {
               "essential" or "strictly necessary" cookies. Other cookies also enable us to track and
               target the interests of our users to enhance the experience on our Online Properties.
               Third parties serve cookies through our Websites for advertising, analytics and other
-              purposes. This is described in more detail below. The specific types of first and
-              third party cookies served through our Websites and the purposes they perform are
-              described below
+              purposes. This is described in more detail below.
+              <br /> The specific types of first and third party cookies served through our Websites
+              and the purposes they perform are described below
               <br /> (please note that the specific cookies served may vary depending on the
               specific Online Properties you visit):
             </div>
@@ -107,8 +110,16 @@ const CookiePolicy = () => {
               browser-to-browser, you should visit your browser's help menu for more information.
               <br /> In addition, most advertising networks offer you a way to opt out of targeted
               advertising. If you would like to find out more information, please visit
-              <a href="http://www.aboutads.info/choices/">http://www.aboutads.info/choices/</a> or
-              <a href="http://www.youronlinechoices.com">http://www.youronlinechoices.com</a> .
+              <a target="_blank" href="http://www.aboutads.info/choices/">
+                {' '}
+                http://www.aboutads.info/choices/
+              </a>{' '}
+              or
+              <a target="_blank" href="http://www.youronlinechoices.com">
+                {' '}
+                http://www.youronlinechoices.com
+              </a>
+              .
               <br /> The specific types of first and third party cookies served through our Websites
               and the purposes they perform are described in the table below (please note that the
               specific cookies served may vary depending on the specific Online Properties you
@@ -117,7 +128,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-card-subtitle">Essential website cookies:</div>
             <div className="cookie-card-subtitle-text">
               These cookies are strictly necessary to provide you with services available through
@@ -133,8 +144,8 @@ const CookiePolicy = () => {
                   <td>Purpose:</td>
                   <td>
                     Used to maintain an anonymous user session by the server in Java™ 2 Platform
-                    Enterprise Edition web applications. It is a necessary cookie that expires at
-                    the end of a session.
+                    Enterprise Edition web applications.
+                    <br /> It is a necessary cookie that expires at the end of a session.
                   </td>
                 </tr>
                 <tr>
@@ -145,7 +156,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     JavaServer Pages Technologies{' '}
-                    <a href="https://www.oracle.com/legal/privacy/privacy-policy.html">
+                    <a
+                      target="_blank"
+                      href="https://www.oracle.com/legal/privacy/privacy-policy.html"
+                    >
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -185,7 +199,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     reCAPTCHA{' '}
-                    <a href="https://policies.google.com/privacy">View Service Privacy Policy</a>{' '}
+                    <a target="_blank" href="https://policies.google.com/privacy">
+                      {' '}
+                      View Service Privacy Policy
+                    </a>{' '}
                   </td>
                 </tr>
                 <tr>
@@ -196,9 +213,10 @@ const CookiePolicy = () => {
                   <td>Type:</td>
                   <td>http_cookie</td>
                 </tr>
+
                 <tr>
                   <td>Expires in:</td>
-                  <td>1 year</td>
+                  <td>5 months 27 days</td>
                 </tr>
               </table>
             </div>
@@ -219,8 +237,8 @@ const CookiePolicy = () => {
                 <tr>
                   <td>Service:</td>
                   <td>
-                    Termly
-                    <a href="https://termly.io/our-privacy-policy/">
+                    Termly{' '}
+                    <a target="_blank" href="https://termly.io/our-privacy-policy/">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -242,7 +260,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-card-subtitle">Analytics and customization cookies:</div>
             <div className="cookie-card-subtitle-text">
               These cookies collect information that is used either in aggregate form to help us
@@ -261,7 +279,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org/</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>/
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -302,7 +322,7 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Google Analytics{' '}
-                    <a href="https://policies.google.com/technologies/ads">
+                    <a target="_blank" href="https://policies.google.com/technologies/ads">
                       View Service Privacy Policy
                     </a>
                   </td>
@@ -331,8 +351,8 @@ const CookiePolicy = () => {
                   <td>Purpose:</td>
                   <td>
                     Used to distinguish individual users by means of designation of a randomly
-                    generated number as client identifier, which allows calculation of visits and
-                    sessions
+                    generated number as client identifier,
+                    <br /> which allows calculation of visits and sessions
                   </td>
                 </tr>
                 <tr>
@@ -342,8 +362,8 @@ const CookiePolicy = () => {
                 <tr>
                   <td>Service:</td>
                   <td>
-                    Google analytics
-                    <a href="https://policies.google.com/technologies/ads">
+                    Google analytics{' '}
+                    <a target="_blank" href="https://policies.google.com/technologies/ads">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -365,7 +385,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-card-subtitle">Advertising cookies:</div>
             <div className="cookie-card-subtitle-text">
               These cookies are used to make advertising messages more relevant to you. They perform
@@ -388,13 +408,15 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
                   <td>
                     Cox Digital Solutions (Fomerly Adify){' '}
-                    <a href="https://www.novomotus.com/privacy-policy/">
+                    <a target="_blank" href="https://www.novomotus.com/privacy-policy/">
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -433,7 +455,10 @@ const CookiePolicy = () => {
                   <td>Service:</td>
                   <td>
                     Facebook{' '}
-                    <a href="https://www.facebook.com/privacy/policy/?entry_point=data_policy_redirect&entry=0">
+                    <a
+                      target="_blank"
+                      href="https://www.facebook.com/privacy/policy/?entry_point=data_policy_redirect&entry=0"
+                    >
                       View Service Privacy Policy
                     </a>{' '}
                   </td>
@@ -455,7 +480,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-card-subtitle">Unclassified cookies:</div>
             <div className="cookie-card-subtitle-text">
               These are cookies that have not yet been categorized. We are in the process of
@@ -473,7 +498,9 @@ const CookiePolicy = () => {
                 </tr>
                 <tr>
                   <td>Provider:</td>
-                  <td>https://carbreg.org</td>
+                  <td>
+                    <a href="https://carbreg.org">https://carbreg.org</a>
+                  </td>
                 </tr>
                 <tr>
                   <td>Service:</td>
@@ -496,7 +523,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-subtitle">
               What about other tracking technologies, like web beacons?
             </div>
@@ -525,11 +552,17 @@ const CookiePolicy = () => {
               <br /> If you do not want Flash Cookies stored on your computer, you can adjust the
               settings of your Flash player to block Flash Cookies storage using the tools contained
               in the{' '}
-              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html">
+              <a
+                target="_blank"
+                href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html"
+              >
                 Website Storage Settings Panel
               </a>
               . You can also control Flash Cookies by going to the{' '}
-              <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html">
+              <a
+                target="_blank"
+                href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"
+              >
                 Global Storage Settings Panel
               </a>{' '}
               and following the instructions (which may include instructions that explain, for
@@ -545,7 +578,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-subtitle">Do you serve targeted advertising?</div>
             <div className="cookie-body">
               Third parties may serve cookies on your computer or mobile device to serve advertising
@@ -562,7 +595,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-subtitle">How often will you update this Cookie Policy?</div>
             <div className="cookie-body">
               We may update this Cookie Policy from time to time in order to reflect, for example,
@@ -574,14 +607,14 @@ const CookiePolicy = () => {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="cookie-subtitle">Where can I get further information?</div>
             <div className="cookie-body-contact">
               If you have any questions about our use of cookies or other technologies, please email
               us at digital@undp.org or by post to:
               <br />
               <br />
-              <br /> United Nations Development Programme 1 United Nations Plaza New York,
+              <br /> United Nations Development Programme 1 United Nations Plaza,
               <br /> New York United States
               <br /> Phone: +260-211-263258
               <br /> This cookie policy was created using Termly's{' '}
@@ -590,6 +623,54 @@ const CookiePolicy = () => {
               </a>
               .
             </div>
+          </Col>
+        </Row>
+      </div>
+      <div className="homepage-footer-container">
+        <Row>
+          <Col md={24} lg={24}>
+            <div className="logocontainer">
+              <div className="logo">
+                <img src={sliderLogo} alt="slider-logo" />
+              </div>
+              <div>
+                <div style={{ display: 'flex' }}>
+                  <div className="title">{'CARBON'}</div>
+                  <div className="title-sub">{'REGISTRY'}</div>
+                </div>
+                <div className="footer-country-name">
+                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
+        <Row>
+          <Col md={24} lg={24}>
+            <div className="footertext">{t('homepage:footertext1')}</div>
+          </Col>
+        </Row>
+        <Row className="footer-raw">
+          <Col md={4.8} lg={12}>
+            <div className="footertext-bottom">
+              {process.env.COUNTRY_NAME || 'Antarctic Region'}
+              <CcCircle className="cc" color="#FFFF" size="10px" />
+            </div>
+          </Col>
+          <Col className="footertext-link-container" md={4.8} lg={12}>
+            <a href="/cookie" className="footertext-links">
+              {t('homepage:Cookie')}
+            </a>
+            <a href="codeconduct" className="footertext-links">
+              {t('homepage:codeconduct')}
+            </a>
+            <a href="/terms#termuse" className="footertext-links">
+              {t('homepage:terms')}
+            </a>
+            <a href="/privacy" className="footertext-links">
+              {t('homepage:privacy')}
+            </a>
           </Col>
         </Row>
       </div>

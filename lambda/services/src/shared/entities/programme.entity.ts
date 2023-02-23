@@ -73,14 +73,14 @@ export class Programme implements EntitySubject {
   @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditBalance: number;
 
-  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
-  creditRetired: number;
+  @Column("real", { array: true, nullable: true })
+  creditRetired: number[];
 
   @Column("real", { array: true, nullable: true })
   creditFrozen: number[];
 
-  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
-  creditTransferred: number;
+  @Column("real", { array: true, nullable: true })
+  creditTransferred: number[];
 
   @Column({ nullable: true })
   constantVersion: string;
@@ -131,6 +131,18 @@ export class Programme implements EntitySubject {
 
   @Column({ type: "bigint" })
   createdTime: number;
+
+  @Column({ type: "bigint", nullable: true })
+  authTime: number;
+
+  @Column({ type: "bigint", nullable: true })
+  creditUpdateTime: number;
+
+  @Column({ type: "bigint", nullable: true })
+  statusUpdateTime: number;
+
+  @Column({ type: "bigint", nullable: true })
+  certifiedTime: number;
 
   @Column({ nullable: true })
   txRef: string;

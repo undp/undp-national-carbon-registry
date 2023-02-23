@@ -23,6 +23,7 @@ const CompanyProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [openDeauthorisationModal, setOpenDeauthorisationModal] = useState(false);
+  const [openReactivateModal, setOpenReactivateModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [userRole, setUserRole] = useState<any>('');
   const [companyRole, setCompanyRole] = useState<any>('');
@@ -71,8 +72,33 @@ const CompanyProfile = () => {
     }
   };
 
+  const onReactivateOrgConfirmed = async (remarks: string) => {
+    try {
+      const response: any = await put(
+        `national/organisation/activate?id=${companyDetails.companyId}`,
+        {
+          remarks: remarks,
+        }
+      );
+      setOpenReactivateModal(false);
+      message.open({
+        type: 'success',
+        content: t('companyProfile:reactivationSuccess'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      getCompanyDetails(companyDetails.companyId);
+    } catch (exception: any) {
+      setErrorMsg(exception.message);
+    }
+  };
+
   const onDeauthoriseOrgCanceled = () => {
     setOpenDeauthorisationModal(false);
+  };
+
+  const onReactivateOrgCanceled = () => {
+    setOpenReactivateModal(false);
   };
 
   const onDeauthoriseOrganisation = () => {
@@ -85,6 +111,18 @@ const CompanyProfile = () => {
     });
     setErrorMsg('');
     setOpenDeauthorisationModal(true);
+  };
+
+  const onReActivateOrganisation = () => {
+    setActionInfo({
+      action: `${t('companyProfile:reActivate')}`,
+      headerText: `${t('companyProfile:reActivateConfirmHeaderText')}`,
+      text: `${t('companyProfile:reActivateConfirmText')}`,
+      type: 'primary',
+      icon: <Icon.BuildingCheck />,
+    });
+    setErrorMsg('');
+    setOpenReactivateModal(true);
   };
 
   return (
@@ -104,6 +142,17 @@ const CompanyProfile = () => {
           ) : (
             ''
           )}
+
+          {ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
+          !isLoading &&
+          parseInt(companyDetails.state) !== 1 ? (
+            <Button className="btn-activate" onClick={onReActivateOrganisation}>
+              {t('companyProfile:reActivate')}
+            </Button>
+          ) : (
+            ''
+          )}
+
           {ability.can(Action.Update, plainToClass(Company, companyDetails)) && !isLoading && (
             <Button
               className="mg-left-1"
@@ -124,7 +173,7 @@ const CompanyProfile = () => {
             <Card className="card-container">
               <Skeleton loading={isLoading} active>
                 <Row justify="center">
-                  <img className="profile-img" src={companyDetails.logo} />
+                  <img className="profile-img" alt="profile image" src={companyDetails.logo} />
                 </Row>
                 <Row justify="center">
                   <div className="padding-top-1 company-name">{companyDetails.name}</div>
@@ -161,7 +210,7 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:taxId')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {companyDetails.taxId ? companyDetails.taxId : '-'}
                     </Col>
                   </Row>
@@ -177,7 +226,7 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {companyDetails.email ? companyDetails.email : '-'}
                     </Col>
                   </Row>
@@ -193,8 +242,14 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:website')}
                     </Col>
-                    <Col span={12} className="field-value">
-                      {companyDetails.website ? companyDetails.website : '-'}
+                    <Col span={12} className="field-value ellipsis-overflow">
+                      {companyDetails.website ? (
+                        <a target={'blank'} href={companyDetails.website}>
+                          {companyDetails.website}
+                        </a>
+                      ) : (
+                        '-'
+                      )}
                     </Col>
                   </Row>
                   <Row className="field">
@@ -245,6 +300,14 @@ const CompanyProfile = () => {
         onActionConfirmed={onDeauthoriseOrgConfirmed}
         onActionCanceled={onDeauthoriseOrgCanceled}
         openModal={openDeauthorisationModal}
+        errorMsg={errorMsg}
+      />
+
+      <UserActionConfirmationModel
+        actionInfo={actionInfo}
+        onActionConfirmed={onReactivateOrgConfirmed}
+        onActionCanceled={onReactivateOrgCanceled}
+        openModal={openReactivateModal}
         errorMsg={errorMsg}
       />
     </div>

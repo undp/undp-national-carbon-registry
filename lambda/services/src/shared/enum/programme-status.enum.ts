@@ -5,4 +5,7 @@ export enum ProgrammeStage {
   AWAITING_AUTHORIZATION = "AwaitingAuthorization",
   AUTHORISED = "Authorised",
   REJECTED = "Rejected",
+//   ISSUED = "Issued",
+//   RETIRED = "Retired",
+//   TRANSFERRED = "Transferred",
 }

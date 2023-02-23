@@ -33,12 +33,12 @@ function setupSwagger(nestApp: INestApplication, name: string, httpBase: String)
       .setVersion('0.0.1')
       .addBearerAuth()
       .addApiKey()
-      .addServer(`/${process.env.NODE_ENV}`)
+      .addServer(`${process.env.NODE_ENV === 'local' ? '/local': '/'}`)
       .build();
-  
+  // ${process.env.NODE_ENV}
     const document = SwaggerModule.createDocument(nestApp, config);
   
-    SwaggerModule.setup(`${httpBase}/docs`, nestApp, document, {
+    SwaggerModule.setup(`${httpBase}`, nestApp, document, {
       customSiteTitle: 'API Documentation',
       swaggerOptions: {
         docExpansion: 'none',

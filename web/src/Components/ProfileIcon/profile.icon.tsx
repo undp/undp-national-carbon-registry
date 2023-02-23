@@ -25,9 +25,9 @@ const ProfileIcon: FC<ProfileIconProps> = (props: ProfileIconProps) => {
   return (
     <span className="profile-icon" style={{ backgroundColor: bg }}>
       {isBase64(icon) ? (
-        <img src={'data:image/jpeg;base64,' + icon} />
+        <img alt="profile-icon" src={'data:image/jpeg;base64,' + icon} />
       ) : icon ? (
-        <img src={icon} />
+        <img alt="profile-icon" src={icon} />
       ) : name ? (
         name.charAt(0).toUpperCase()
       ) : (

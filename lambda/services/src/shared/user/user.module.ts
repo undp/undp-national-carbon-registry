@@ -1,4 +1,4 @@
-import { Logger, Module } from '@nestjs/common';
+import { forwardRef, Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../shared/entities/user.entity';
 import { UserService } from './user.service';
@@ -9,6 +9,7 @@ import configuration from '../../shared/configuration';
 import { ConfigModule } from '@nestjs/config';
 import { CompanyModule } from '../company/company.module';
 import { UtilModule } from '../util/util.module';
+import { EmailHelperModule } from '../email-helper/email-helper.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { UtilModule } from '../util/util.module';
     TypeOrmModule.forFeature([User]),
     CaslModule,
     EmailModule,
-    CompanyModule,
+    forwardRef(() => CompanyModule),
+    forwardRef(() => EmailHelperModule),
     UtilModule
   ],
   providers: [UserService, Logger],

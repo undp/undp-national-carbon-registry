@@ -1,6 +1,9 @@
 @font-face {
   font-family: 'Inter';
-  src: url('Inter-SemiBold.ttf') format('truetype');
+  src: url('Inter-SemiBold.woff2') format('woff2'),
+    /* Only serve WOFF,ttf if necessary. Otherwise,WOFF 2.0 will be served. */
+      url('Inter-SemiBold.woff') format('woff'),
+    url('Inter-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -8,7 +11,10 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('Inter-Bold.ttf') format('truetype');
+  src: url('Inter-Bold.woff2') format('woff2'),
+    /* Only serve WOFF,ttf if necessary. Otherwise,WOFF 2.0 will be served. */
+      url('Inter-Bold.woff') format('woff'),
+    url('Inter-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -22,7 +28,10 @@
 }
 @font-face {
   font-family: 'Inter';
-  src: url('Inter-Regular.ttf') format('truetype');
+  src: url('Inter-Regular.woff2') format('woff2'),
+    /* Only serve WOFF,ttf if necessary. Otherwise,WOFF 2.0 will be served. */
+      url('Inter-Regular.woff') format('woff'),
+    url('Inter-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -30,7 +39,10 @@
 
 @font-face {
   font-family: 'Inter';
-  src: url('Inter-Medium.ttf') format('truetype');
+  src: url('Inter-Medium.woff2') format('woff2'),
+    /* Only serve WOFF,ttf if necessary. Otherwise,WOFF 2.0 will be served. */
+      url('Inter-Medium.woff') format('woff'),
+    url('Inter-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;

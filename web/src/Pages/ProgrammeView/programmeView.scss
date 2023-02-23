@@ -182,25 +182,25 @@
   }
   
   .created-step {
-    background-color: rgba(#B0BEC5, 0.23);
-    color: #949599;
+    color: #FF8F56;
+    background-color: rgba(#FEF1AD, 0.5);
     font-size: 1rem;
     padding: 0.4rem 0.4rem 0.2rem 0.4rem;
   }
 
   .auth-step {
     color: #16B1FF;
-    background-color: rgba(#B9E2F4, 0.56);
+    background-color: rgba(#B9E2F4, 0.5);
   }
 
   .reject-step {
-    color: #FF4D4F;
-    background-color: rgba(#FFA6A6, 0.5);
+    color: #FF9900;
+    background-color: rgba(#FEB39F, 0.3);
   }
 
   .issue-step {
-    color: #FFA070;
-    background-color: rgba(#FFA070, 0.35);
+    color: #4F9D83;
+    background-color: rgba(#80FF00, 0.12);
   }
 
   .cert-step {
@@ -210,23 +210,23 @@
 
   .revoke-step {
     color: rgba(#FF00C7, 0.56);
-    background-color: rgba(#FF9FDE, 0.4);
+    background-color: rgba(#FF9FDE, 0.5);
   }
 
   .transfer-step {
-    color: #FF8F56;
-    background-color: rgba(#FEF1AD, 0.5);
+    background-color: rgba(#D7DFE2, 0.5);
+    color: #949599;
   }
 
   .retire-step {
-    color: #976ED7;
-    background-color: rgba(#B7A4FE, 0.5);
+    color: #FF4D4F;
+    background-color: rgba(#FFD3D3, 0.5);
     padding: 0.5rem 0.5rem 0.3rem 0.5rem;
   }
 
   .freeze-step {
-    color: rgba(#FF00C7, 0.56);
-    background-color: rgba(#FF9FDE, 0.4);
+    color: rgba(#976ED7, 1);
+    background-color: rgba(#B7A4FE, 0.3);
   }
 
   .region-list {

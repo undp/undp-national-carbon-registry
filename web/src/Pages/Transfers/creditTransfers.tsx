@@ -132,20 +132,40 @@ const CreditTransfer = () => {
     if (statusFilter) {
       filter.push(statusFilter);
     }
+
     if (search && search !== '') {
+      const interFilterOr = [
+        {
+          key: 'programmeTitle',
+          operation: 'like',
+          value: `${search}%`,
+        },
+      ];
+      if (!isNaN(Number(search))) {
+        interFilterOr.push({
+          key: 'requestId',
+          operation: '=',
+          value: `${search}`,
+        });
+      }
       filter.push({
-        key: 'programmeTitle',
-        operation: 'like',
-        value: `${search}%`,
+        value: {
+          page: currentPage,
+          size: pageSize,
+          filterOr: interFilterOr,
+        },
       });
     }
 
-    let sort;
+    let sort: any;
     if (sortOrder && sortField) {
       sort = {
         key: sortField,
         order: sortOrder,
       };
+      if (sortField === 'programmeCertifierId') {
+        sort.nullFirst = sortOrder === 'ASC';
+      }
     } else {
       sort = {
         key: 'requestId',
@@ -396,13 +416,16 @@ const CreditTransfer = () => {
       key: 'programmeTitle',
       sorter: true,
       align: 'left' as const,
-      // onCell: (record: any, rowIndex: any) => {
-      //   return {
-      //     onClick: (ev: any) => {
-      //       navigate('/programmeManagement/view', { state: { id: record.programmeId } });
-      //     },
-      //   };
-      // },
+      render: (item: any) => {
+        return <span className="clickable">{item}</span>;
+      },
+      onCell: (record: any, rowIndex: any) => {
+        return {
+          onClick: (ev: any) => {
+            navigate('/programmeManagement/view', { state: { id: record.programmeId } });
+          },
+        };
+      },
     },
     {
       title: t('creditTransfer:sector'),
@@ -413,16 +436,27 @@ const CreditTransfer = () => {
     },
     {
       title: t('creditTransfer:certifier'),
-      dataIndex: 'certifier',
-      key: 'certifier',
+      dataIndex: 'programmeCertifierId',
+      key: 'programmeCertifierId',
       sorter: true,
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
+        if (item === null) {
+          return;
+        }
+        const cMap: any = {};
+        for (const c of itemObj.certifier) {
+          cMap[c.companyId] = c;
+        }
+
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {itemObj.certifier &&
-              itemObj.certifier &&
-              itemObj.certifier.map((v: any, i: any) => {
+            {itemObj.programmeCertifierId &&
+              itemObj.programmeCertifierId.map((id: any, i: any) => {
+                const v = cMap[id];
+                if (!v) {
+                  return;
+                }
                 return (
                   <Tooltip title={v.name} color={TooltipColor} key={TooltipColor}>
                     <div>
@@ -510,11 +544,18 @@ const CreditTransfer = () => {
                   </Tooltip>
                 ) : itemObj.retirementType === '0' ? (
                   <Tooltip
-                    title={t('creditTransfer:iaccount')}
+                    title={
+                      t('creditTransfer:iaccount') +
+                      `${
+                        itemObj.toCompanyMeta && itemObj.toCompanyMeta.countryName
+                          ? ' - ' + itemObj.toCompanyMeta.countryName
+                          : ''
+                      }`
+                    }
                     color={TooltipColor}
                     key={TooltipColor}
                   >
-                    {itemObj.toCompanyMeta.country && (
+                    {itemObj.toCompanyMeta && itemObj.toCompanyMeta.country && (
                       <CircleFlag
                         className="profile-icon flag-ret-icon"
                         countryCode={itemObj.toCompanyMeta.country.toLowerCase()}
@@ -547,16 +588,16 @@ const CreditTransfer = () => {
         return <span className="clickable">{addCommSepRound(item)}</span>;
       },
     },
-    {
-      title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
-      dataIndex: 'creditBalance',
-      key: 'creditBalance',
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any, Obj: any) => {
-        return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
-      },
-    },
+    // {
+    //   title: t('creditTransfer:cBalance') + ` (${creditUnit})`,
+    //   dataIndex: 'creditBalance',
+    //   key: 'creditBalance',
+    //   sorter: true,
+    //   align: 'right' as const,
+    //   render: (item: any, Obj: any) => {
+    //     return <span>{addCommSepRound(getSendCreditBalance(Obj))}</span>;
+    //   },
+    // },
     {
       title: t('programme:status'),
       key: 'status',
@@ -722,6 +763,11 @@ const CreditTransfer = () => {
                               operation: '=',
                               value: userInfoState?.companyId,
                             },
+                            {
+                              key: 'programmeCertifierId',
+                              operation: 'ANY',
+                              value: userInfoState?.companyId,
+                            },
                           ]
                         : undefined
                     )
@@ -733,9 +779,13 @@ const CreditTransfer = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={'Search by programme name'}
+                  placeholder={'Search'}
                   allowClear
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={(e) =>
+                    e.target.value === ''
+                      ? setSearch(e.target.value)
+                      : setSearchText(e.target.value)
+                  }
                   onSearch={setSearch}
                   style={{ width: 265 }}
                 />
