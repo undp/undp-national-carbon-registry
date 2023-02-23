@@ -26,6 +26,7 @@ import {
   getStageEnumVal,
   getStageTagType,
   ProgrammeStage,
+  sumArray,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -196,7 +197,7 @@ const ProgrammeManagement = () => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return item ? addCommSep(Number(item)) : '-';
+        return item ? addCommSep(sumArray(item)) : '-';
       },
     },
     {

@@ -53,6 +53,7 @@ import {
   Programme,
   ProgrammeStage,
   RetireType,
+  sumArray,
   TxType,
   TypeOfMitigation,
   UnitField,
@@ -140,11 +141,11 @@ const ProgrammeView = () => {
     const dt = [
       numIsExist(d.creditEst) - numIsExist(d.creditIssued),
       numIsExist(d.creditIssued) -
-        numIsExist(d.creditTransferred) -
-        numIsExist(d.creditRetired) -
+        sumArray(d.creditTransferred) -
+        sumArray(d.creditRetired) -
         frozen,
-      numIsExist(d.creditTransferred),
-      numIsExist(d.creditRetired),
+      sumArray(d.creditTransferred),
+      sumArray(d.creditRetired),
       frozen,
     ];
     return dt;
