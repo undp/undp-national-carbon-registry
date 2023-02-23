@@ -100,91 +100,105 @@ export class LedgerReplicatorService {
             );
 
             if (programme != null) {
-              try {
-                let address: any[] = [];
-                if (programme && programme.programmeProperties) {
-                  if (programme.txType === TxType.CREATE) {
-                    const programmeProperties = programme.programmeProperties;
-                    if (programmeProperties.geographicalLocation) {
-                      for (
-                        let index = 0;
-                        index < programmeProperties.geographicalLocation.length;
-                        index++
-                      ) {
-                        address.push(
-                          programmeProperties.geographicalLocation[index]
-                        );
+              const previousProgramme = await this.programmeRepo.findOneBy({
+                programmeId: programme.programmeId,
+              });
+
+              if (
+                previousProgramme == null ||
+                programme.txTime == undefined ||
+                previousProgramme.txTime == undefined ||
+                previousProgramme.txTime <= programme.txTime
+              ) {
+                try {
+                  let address: any[] = [];
+                  if (programme && programme.programmeProperties) {
+                    if (programme.txType === TxType.CREATE) {
+                      const programmeProperties = programme.programmeProperties;
+                      if (programmeProperties.geographicalLocation) {
+                        for (
+                          let index = 0;
+                          index <
+                          programmeProperties.geographicalLocation.length;
+                          index++
+                        ) {
+                          address.push(
+                            programmeProperties.geographicalLocation[index]
+                          );
+                        }
                       }
+                      await this.forwardGeocoding([...address]).then(
+                        (response: any) => {
+                          console.log(
+                            "response from forwardGeoCoding function -> ",
+                            response
+                          );
+                          programme.geographicalLocationCordintes = [
+                            ...response,
+                          ];
+                        }
+                      );
+                    } else if (
+                      programme.txType === TxType.CERTIFY ||
+                      programme.txType === TxType.REVOKE
+                    ) {
+                      programme.certifiedTime = programme.txTime;
+                    } else if (programme.txType === TxType.AUTH) {
+                      programme.authTime = programme.txTime;
                     }
-                    await this.forwardGeocoding([...address]).then(
-                      (response: any) => {
-                        console.log(
-                          "response from forwardGeoCoding function -> ",
-                          response
-                        );
-                        programme.geographicalLocationCordintes = [...response];
-                      }
-                    );
-                  } else if (
-                    programme.txType === TxType.CERTIFY ||
-                    programme.txType === TxType.REVOKE
-                  ) {
-                    programme.certifiedTime = programme.txTime;
-                  } else if (programme.txType === TxType.AUTH) {
-                    programme.authTime = programme.txTime;
-                  }
 
-                  if (
-                    [TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(
-                      programme.txType
-                    )
-                  ) {
-                    programme.statusUpdateTime = programme.txTime;
-                  } else if (
-                    [TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(
-                      programme.txType
-                    )
-                  ) {
-                    programme.creditUpdateTime = programme.txTime;
+                    if (
+                      [TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(
+                        programme.txType
+                      )
+                    ) {
+                      programme.statusUpdateTime = programme.txTime;
+                    } else if (
+                      [TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER].includes(
+                        programme.txType
+                      )
+                    ) {
+                      programme.creditUpdateTime = programme.txTime;
+                    }
                   }
-                }
-              } catch (error) {
-                console.log(
-                  "Getting cordinates with forward geocoding failed -> ",
-                  error
-                );
-              } finally {
-                programme.updatedAt = new Date(programme.txTime);
-                programme.createdAt = new Date(programme.createdTime);
-                const columns =
-                  this.programmeRepo.manager.connection.getMetadata(
-                    "Programme"
-                  ).columns;
-                // const columnNames = columns
-                //   .filter(function (item) {
-                //     return (
-                //       item.propertyName !== "programmeId" &&
-                //       item.propertyName !== "geographicalLocationCordintes"
-                //     );
-                //   })
-                //   .map((e) => e.propertyName);
-                const columnNames = columns
-                .filter(function (item) {
-                  return (
-                    programme[item.propertyName] != undefined
+                } catch (error) {
+                  console.log(
+                    "Getting cordinates with forward geocoding failed -> ",
+                    error
                   );
-                })
-                .map((e) => e.propertyName);
+                } finally {
+                  programme.updatedAt = new Date(programme.txTime);
+                  programme.createdAt = new Date(programme.createdTime);
+                  const columns =
+                    this.programmeRepo.manager.connection.getMetadata(
+                      "Programme"
+                    ).columns;
+                  // const columnNames = columns
+                  //   .filter(function (item) {
+                  //     return (
+                  //       item.propertyName !== "programmeId" &&
+                  //       item.propertyName !== "geographicalLocationCordintes"
+                  //     );
+                  //   })
+                  //   .map((e) => e.propertyName);
+                  const columnNames = columns
+                    .filter(function (item) {
+                      return programme[item.propertyName] != undefined;
+                    })
+                    .map((e) => e.propertyName);
 
-                this.logger.debug(
-                  `${columnNames} ${JSON.stringify(programme)}`
-                );
-                return await this.programmeRepo
-                  .createQueryBuilder()
-                  .insert()
-                  .values(programme)
-                  .orUpdate(columnNames, ["programmeId"])
-                  .execute();
+                  this.logger.debug(
+                    `${columnNames} ${JSON.stringify(programme)}`
+                  );
+                  return await this.programmeRepo
+                    .createQueryBuilder()
+                    .insert()
+                    .values(programme)
+                    .orUpdate(columnNames, ["programmeId"])
+                    .execute();
+                }
+              } else {
+                this.logger.error(`Skipping the programme due to old record ${JSON.stringify(programme)} ${previousProgramme}`)
               }
             }
           } else if (
@@ -215,13 +229,13 @@ export class LedgerReplicatorService {
                   ionRecord.get("payload").get("revision").get("metadata")
                 )
               );
-  
+
               if (company && meta["version"]) {
                 if (company.lastUpdateVersion >= parseInt(meta["version"])) {
                   return;
                 }
               }
-  
+
               let updateObj;
               if (account) {
                 if (
@@ -236,7 +250,7 @@ export class LedgerReplicatorService {
                     account: { total: overall.credit, count: 1 },
                   };
                 }
-  
+
                 updateObj = {
                   secondaryAccountBalance: company.secondaryAccountBalance,
                   lastUpdateVersion: parseInt(meta["version"]),
@@ -251,7 +265,7 @@ export class LedgerReplicatorService {
                   creditTxTime: new Date(meta.txTime).getTime(),
                 };
               }
-  
+
               const response = await this.companyRepo
                 .update(
                   {
@@ -264,7 +278,10 @@ export class LedgerReplicatorService {
                   return err;
                 });
             } else {
-              this.logger.error('Unexpected programme. Company does not found', companyId)
+              this.logger.error(
+                "Unexpected programme. Company does not found",
+                companyId
+              );
             }
           }
         }
