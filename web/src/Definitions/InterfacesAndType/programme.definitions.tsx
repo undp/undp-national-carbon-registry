@@ -171,8 +171,8 @@ export interface Programme {
   creditIssued: number;
   creditEst: number;
   creditBalance: number;
-  creditTransferred: number;
-  creditRetired: number;
+  creditTransferred: number[];
+  creditRetired: number[];
   creditFrozen: number[];
   constantVersion: string;
   proponentTaxVatId: string[];
@@ -269,3 +269,8 @@ export const getRetirementTypeString = (retirementType: string | null) => {
       return 'OTHER';
   }
 };
+
+
+export const sumArray = (arrList: any[]) => {
+  return arrList.reduce((a, b) => Number(a) + Number(b), 0)
+}

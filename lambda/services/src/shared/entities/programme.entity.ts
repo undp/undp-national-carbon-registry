@@ -73,14 +73,14 @@ export class Programme implements EntitySubject {
   @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditBalance: number;
 
-  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
-  creditRetired: number;
+  @Column("real", { array: true, nullable: true })
+  creditRetired: number[];
 
   @Column("real", { array: true, nullable: true })
   creditFrozen: number[];
 
-  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
-  creditTransferred: number;
+  @Column("real", { array: true, nullable: true })
+  creditTransferred: number[];
 
   @Column({ nullable: true })
   constantVersion: string;

@@ -112,16 +112,16 @@ export class ProgrammeLedgerService {
     //     });
     //   }
     // }
-    // if (programme) {
-    //   await this.entityManger
-    //     .save<Programme>(plainToClass(Programme, programme))
-    //     .then((res: any) => {
-    //       console.log("create programme in repo -- ", res);
-    //     })
-    //     .catch((e: any) => {
-    //       console.log("create programme in repo -- ", e);
-    //     });
-    // }
+    if (programme) {
+      await this.entityManger
+        .save<Programme>(plainToClass(Programme, programme))
+        .then((res: any) => {
+          console.log("create programme in repo -- ", res);
+        })
+        .catch((e: any) => {
+          console.log("create programme in repo -- ", e);
+        });
+    }
     return programme;
   }
 
@@ -272,21 +272,33 @@ export class ProgrammeLedgerService {
         programme.txTime = new Date().getTime();
         programme.txRef = `${name}#${transfer.requestId}#${transfer.retirementType}#${reason}`;
 
+        const compIndex = programme.companyId.indexOf(transfer.fromCompanyId);
+        if (compIndex < 0) {
+          throw new HttpException(
+            `Company ${transfer.fromCompanyId} does not own the programme`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
         if (isRetirement) {
           // if (programme.creditBalance == transfer.creditAmount) {
           //   programme.currentStage = ProgrammeStage.RETIRED;
           // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
-            programme.creditRetired = 0;
+            programme.creditRetired =  new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
           }
-          programme.creditRetired += transfer.creditAmount;
+          programme.creditRetired[compIndex] += transfer.creditAmount;
+
         } else {
           programme.txType = TxType.TRANSFER;
           if (!programme.creditTransferred) {
-            programme.creditTransferred = 0;
+            programme.creditTransferred = new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
           }
-          programme.creditTransferred += transfer.creditAmount;
+          programme.creditTransferred[compIndex] += transfer.creditAmount;
         }
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
