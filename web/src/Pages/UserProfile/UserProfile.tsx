@@ -153,7 +153,7 @@ const UserProfile = () => {
             <Card className="card-container">
               <Row justify="center">
                 <Skeleton loading={isLoading} active>
-                  <img className="profile-img" src={organisationDetails.logo} />
+                  <img className="profile-img" alt="profile-img" src={organisationDetails.logo} />
                 </Skeleton>
               </Row>
               <Row justify="center">

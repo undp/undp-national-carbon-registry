@@ -44,7 +44,7 @@ const LayoutHeader = (props: HeaderProps) => {
             }}
           />
         </div>
-        <img src={thumbnail} style={{ display: 'none' }} />
+        <img src={thumbnail} alt="thumbnail" style={{ display: 'none' }} />
       </div>
     </div>
   );
