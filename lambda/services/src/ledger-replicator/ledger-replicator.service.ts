@@ -105,6 +105,7 @@ export class LedgerReplicatorService {
               });
 
               if (
+                previousProgramme == null ||
                 programme.txTime == undefined ||
                 previousProgramme.txTime == undefined ||
                 previousProgramme.txTime <= programme.txTime
