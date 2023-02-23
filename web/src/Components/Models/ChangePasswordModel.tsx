@@ -22,7 +22,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
       title={
         <div className="popup-header">
           <div className="icon">
-            <img src={lockIcon}></img>
+            <img alt="icon" src={lockIcon}></img>
           </div>
           <div>{t('passwordReset:changePassword')}</div>
         </div>

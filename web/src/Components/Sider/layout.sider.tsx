@@ -85,6 +85,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
           {collapsed && (
             <div className="country-flag">
               <img
+                alt="country flag"
                 src={
                   process.env.COUNTRY_FLAG_URL ||
                   'https://carbon-common-dev.s3.amazonaws.com/flag.png'
