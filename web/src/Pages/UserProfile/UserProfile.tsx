@@ -191,7 +191,7 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {userDetails.email ? userDetails.email : '-'}
                     </Col>
                   </Row>
@@ -251,7 +251,7 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:email')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value nextline-overflow">
                       {organisationDetails.email ? organisationDetails.email : '-'}
                     </Col>
                   </Row>
@@ -267,7 +267,7 @@ const UserProfile = () => {
                     <Col span={12} className="field-key">
                       {t('userProfile:website')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value ellipsis-overflow">
                       {organisationDetails.website ? (
                         <a target={'blank'} href={organisationDetails.website}>
                           {organisationDetails.website}

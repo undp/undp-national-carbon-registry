@@ -242,7 +242,7 @@ const CompanyProfile = () => {
                     <Col span={12} className="field-key">
                       {t('companyProfile:website')}
                     </Col>
-                    <Col span={12} className="field-value">
+                    <Col span={12} className="field-value ellipsis-overflow">
                       {companyDetails.website ? (
                         <a target={'blank'} href={companyDetails.website}>
                           {companyDetails.website}
