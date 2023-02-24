@@ -5,6 +5,10 @@
   color: $card-title !important;
 }
 
+.mapboxgl-ctrl-attrib-inner {
+  display: none;
+}
+
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
   border-top-color: $white !important;
 }
