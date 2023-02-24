@@ -741,6 +741,7 @@ const Dashboard = () => {
           return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
         });
         setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
+        setTotalCreditsOptionsLabels(formattedTimeLabelDataStatus);
         const statusArray = Object.values(ProgrammeStageLegend);
         const totalProgrammesValues: ChartSeriesItem[] = [];
         statusArray?.map((status: any) => {
