@@ -5,10 +5,6 @@
   color: $card-title !important;
 }
 
-.mapboxgl-ctrl-attrib-inner {
-  display: none;
-}
-
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
   border-top-color: $white !important;
 }
@@ -17,10 +13,6 @@
 .mapboxgl-popup-close-button:hover {
   display: none;
   // z-index: -1 !important;
-}
-
-.mapboxgl-ctrl-attrib.mapboxgl-compact {
-  display: none;
 }
 
 .total-container {
