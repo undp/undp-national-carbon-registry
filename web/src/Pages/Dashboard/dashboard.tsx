@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, DatePicker, Progress, Radio, Row, Skeleton, Tooltip, message } from 'antd';
+import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
@@ -39,8 +39,6 @@ import {
 import { Sector } from '../../Casl/enums/sector.enum';
 import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
-import { toolTipTextGen } from './toolTipTextGen';
-import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
 
@@ -55,9 +53,8 @@ const Dashboard = () => {
   const mapContainerInternationalRef = useRef(null);
   const { userInfoState } = useUserContext();
   const { i18n, t } = useTranslation(['dashboard']);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [companyRole, setCompanyRole] = useState<any>(userInfoState?.companyRole);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
@@ -170,10 +167,6 @@ const Dashboard = () => {
   const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
     useState<number>(0);
   const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
-  const [creditsPieTotal, setCreditsPieTotal] = useState<any>(0);
-  const [creditsCertifiedPieTotal, setCreditsCertifiedPieTotal] = useState<any>(0);
-
-  const currentYear = new Date();
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -1233,7 +1226,7 @@ const Dashboard = () => {
       setCreditsPieChartTotal(
         String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
       );
-      setCreditsCertifiedPieTotal(addCommSep(totalCreditsCertified));
+      setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
       const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
@@ -1241,8 +1234,6 @@ const Dashboard = () => {
         '' + addCommSep(totalCreditsCertified);
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
-      setCreditsPieChartTotal(totalEstCredits);
-      setCertifiedCreditsPieChartTotal(totalCreditsCertified);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -1338,13 +1329,13 @@ const Dashboard = () => {
         pie: {
           labels: {
             total: {
-              formatter: () => creditsCertifiedPieTotal,
+              formatter: () => certifiedCreditsPieChartTotal,
             },
           },
         },
       },
     });
-  }, [creditsCertifiedPieSeries, categoryType, creditsCertifiedPieTotal]);
+  }, [creditsCertifiedPieSeries, categoryType, certifiedCreditsPieChartTotal]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1420,7 +1411,7 @@ const Dashboard = () => {
 
   const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 
-  function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
+  const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
     const a0 = 2 * Math.PI * (start - 0.25);
     const a1 = 2 * Math.PI * (end - 0.25);
@@ -1436,10 +1427,10 @@ const Dashboard = () => {
     } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
       r + r0 * y1
     } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
-  }
+  };
 
   // code for creating an SVG donut chart from feature properties
-  function createDonutChart(properties: any) {
+  const createDonutChart = (properties: any) => {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
     const offsetsStage = [];
@@ -1499,7 +1490,7 @@ ${total}
     const el = document.createElement('div');
     el.innerHTML = html;
     return el.firstChild;
-  }
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -1621,7 +1612,7 @@ ${total}
             cluster: true,
             clusterRadius: 40,
             clusterProperties: {
-              // keep separate counts for each countnitude category in a cluster
+              // keep separate counts for each programmeStage category in a cluster
               count: ['+', ['case', countS, ['get', 'count'], 0]],
               pending: ['+', ['case', pending, ['get', 'count'], 0]],
               authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
