@@ -76,7 +76,7 @@
       text-transform: uppercase;
     }
     .ant-btn-primary {
-      background-color: $primary-color;
+      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
       color: $dark-text-color;
       border: none;
     }
@@ -291,7 +291,7 @@
       }
       .homepagebody_aboutuslines {
         margin-top: 1rem;
-        margin-bottom: 4rem;
+        margin-bottom: 3.5rem;
       }
 
       .homepagebody_subtitle {
@@ -360,7 +360,12 @@
     .undplogocontainer {
       display: flex;
       justify-content: center;
-      padding: 20px;
+      padding-top: 40px;
+
+      .undplogo {
+        width: 21.875rem;
+        height: 7.5rem;
+      }
     }
   }
   .aboutusicon {
@@ -376,6 +381,10 @@
     margin-top: 5px;
 
     @media (max-width: $lg-size) {
+    }
+    .forest-image {
+      height: 33.75rem;
+      width: 52.5rem;
     }
 
     ul {
@@ -444,6 +453,8 @@
       padding: 50px;
       justify-content: center;
       text-align: center;
+      width: 28.125rem;
+      height: 23.438rem;
     }
     .resource-image-container {
       display: flex;
