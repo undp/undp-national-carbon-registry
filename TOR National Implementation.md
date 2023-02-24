@@ -1,3 +1,8 @@
+# Sample Terms of Reference
+The TOR can be further specified if national details are known, e.g. about the NDC management tool. 
+These worksteps can also be intergrated with larger TORs, especially TORs covering wider NDC management / transparency. Below are sample phrases that may be used. Generally a vendor (firm) or a group of individual consultant are encouraged, as the required skills vary. 
+
+## 1. Installation
 The following work steps are suggested for the national implementation of the DPG carbon registry in any country.
 
 - Installation of a Carbon Registry from https://github.com/undp/carbon-registry
@@ -29,11 +34,7 @@ The following work steps are suggested for the national implementation of the DP
 - Training: manual. video/screen recording walkthrough. guidebook. workshops. 
 - Awareness: advertising. community outreach.
 
-Sample Terms of Reference
-The TOR can be further specified if national details are known, e.g. about the NDC management tool. 
-These worksteps can also be intergrated with larger TORs, especially TORs covering wider NDC management / transparency. Below are sample phrases that may be used. Generally a vendor (firm) or a group of individual consultant are encouraged, as the required skills vary. 
-
-1. Scope of Work
+## 2. Scope of Work
 -	Design
 	-	User Interface (UI) Design
 	-	Real-Time Reviewing & Commenting Mechanism
@@ -63,13 +64,13 @@ Planning| 	< 48 hours|	< 5 days|
 
 
 
-3. Deliverables
+## 3. Deliverables
 - Deliverable 1: 
 - Deliverable 2:
 - Deliverable 3:
 - Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
 
-## Deliverable Requirements
+### Deliverable Requirements
 
 - AGPL-3.0 software license
 - UNDP Data Principles Adherence [https://data.undp.org/data-principles/](https://data.undp.org/data-principles/)
@@ -103,7 +104,7 @@ Other items to consider:
 - 	The ToR is based on the assumption that he government entity has or will prepare a hosting environment in a cloud server. If the government does not have a server space, consider if the vendor will need to host the registry. If so, consider if the vendor can be contracted for a long term. 
 - 	Server specifications: TBD 
 
-4. Required persons / skills
+## 4. Required persons / skills
  - Developers (x2): 
 	 - At least 5 years of previous working experience in Web development with front-end and back-end is required; 
 	 - Previous experience with human-centered design and agile software development and methodology is preferred;
@@ -112,6 +113,14 @@ Other items to consider:
 	 - Demonstrated experience in Database Development: e.g. MSSQL, MariaDB, MySQL, Oracle, PostgreSQL is an asset
 	 - Demonstrated proficiency in DevOps: Azure DevOps, Docker, Git, Deployment pipeline, test automation is preferred
  - Project manager: 
+	 - Minimum of 5 years of product management experience, with at least 2 years working in a startup environment
+	 - Have shipped at least 1 digital product with proven impact.
+	 - Been working with quantitative and qualitative Data
+	 - Digitally competent and have a high drive for understanding and meeting users needs
+	 - Experience in start-ups, with Agile methodology as well as UX are a plus but not a requirement
+	 - Strong project manager and have experience in leading cross-functional project teams
+	 - Ability to solve complicated problems and understanding end-customer needs are part of your core strengths
+
  - Carbon or stakeholder engagement expert - local and/or (optional)
  	- At least 5 years experience in climate policies, carbon markets and other green financing mechanisms are required
  	- Knowledge of digital technology or digitalization is strongly desired
