@@ -7,6 +7,7 @@
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
 * [Web Frontend](#frontend)
+* [Localization](#localization)
 * [API](#api)
 * [Status Page](#status)
 * [Governance & Support](#support)
@@ -139,6 +140,11 @@ All the CRUD operations can perform as per the following table,
 ### Web Frontend
 Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
 
+<a name="localization"></a>
+### Localization
+* Languages (Current): English
+* Languages (In Progress): French. Spanish 
+For updating translations or adding new ones, reference https://github.com/undp/carbon-registry/tree/main/web/public/Assets/i18n 
 
 <a name="api"></a>
 ### Application Programming Interface (API)
