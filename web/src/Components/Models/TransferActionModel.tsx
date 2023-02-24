@@ -78,6 +78,7 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
             creditAmount: transfer.creditAmount,
             company: transfer.toCompanyMeta ? transfer.toCompanyMeta.name : null,
             country: transfer.toCompanyMeta ? transfer.toCompanyMeta.country : null,
+            countryName: transfer.toCompanyMeta ? transfer.toCompanyMeta.countryName : null,
           }}
           onChange={() => setPopupError(undefined)}
           onFinish={async (d) => {
@@ -140,7 +141,7 @@ const TransferActionModel: FC<TransferActionModelProps> = (props: TransferAction
                 <Form.Item
                   className="remarks-label"
                   label={t('creditTransfer:country')}
-                  name="country"
+                  name="countryName"
                 >
                   <Input disabled />
                 </Form.Item>

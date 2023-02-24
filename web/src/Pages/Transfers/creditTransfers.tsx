@@ -544,7 +544,14 @@ const CreditTransfer = () => {
                   </Tooltip>
                 ) : itemObj.retirementType === '0' ? (
                   <Tooltip
-                    title={t('creditTransfer:iaccount')}
+                    title={
+                      t('creditTransfer:iaccount') +
+                      `${
+                        itemObj.toCompanyMeta && itemObj.toCompanyMeta.countryName
+                          ? ' - ' + itemObj.toCompanyMeta.countryName
+                          : ''
+                      }`
+                    }
                     color={TooltipColor}
                     key={TooltipColor}
                   >
