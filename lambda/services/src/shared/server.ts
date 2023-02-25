@@ -3,7 +3,7 @@ import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-win
 import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 
-import { NestFactory } from '@nestjs/core';
+import { AbstractHttpAdapter, NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { Server } from 'http';
 import * as winston from 'winston';
@@ -69,23 +69,28 @@ export function getLogger(module) {
   });
 }
 
+export async function buildNestApp(module: any, httpBase: string, expressApp?: AbstractHttpAdapter): Promise<INestApplication> {
+  const nestApp = await NestFactory.create(module, new ExpressAdapter(expressApp), {
+    logger: getLogger(module),
+  })
+  useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
+  nestApp.setGlobalPrefix(httpBase)
+  nestApp.use(bodyParser.json({limit: '50mb'}));
+  nestApp.enableCors();
+  nestApp.useGlobalPipes(new TrimPipe());
+  nestApp.useGlobalPipes(new ValidationPipe({
+      exceptionFactory: (errors) => new ValidationException(errors)
+  }));
+  nestApp.useGlobalFilters(new ValidationExceptionFilter())
+  nestApp.use(eventContext());
+  setupSwagger(nestApp, module.name, httpBase)
+  return nestApp;
+}
+
 export async function bootstrapServer(cachedServer: Server, module: any, httpBase: string): Promise<Server> {
     if (!cachedServer) {
         const expressApp = express();
-        const nestApp = await NestFactory.create(module, new ExpressAdapter(expressApp), {
-            logger: getLogger(module),
-          })
-        useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
-        nestApp.setGlobalPrefix(httpBase)
-        nestApp.use(bodyParser.json({limit: '50mb'}));
-        nestApp.enableCors();
-        nestApp.useGlobalPipes(new TrimPipe());
-        nestApp.useGlobalPipes(new ValidationPipe({
-            exceptionFactory: (errors) => new ValidationException(errors)
-        }));
-        nestApp.useGlobalFilters(new ValidationExceptionFilter())
-        nestApp.use(eventContext());
-        setupSwagger(nestApp, module.name, httpBase)
+        const nestApp = await buildNestApp(module, httpBase, expressApp);
         await nestApp.init();
         cachedServer = createServer(expressApp, undefined, binaryMimeTypes);
     }

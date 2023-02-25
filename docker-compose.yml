@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+    db: 
+        container_name: db
+        image: postgres
+        restart: always
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_PASSWORD: ''
+            POSTGRES_USER: root
+            POSTGRES_HOST_AUTH_METHOD: trust
+            POSTGRES_DB: carbondev
+    national:
+        build:
+            context: .
+            dockerfile: ./lambda/services/Dockerfile
+        ports:
+            - '3000:3000'
+        depends_on:
+            - db
+        environment:
+            DB_HOST: db
+            DB_USER: root
+
+

@@ -10,6 +10,7 @@
     "build": "nest build",
     "build:libs": "cd ../../libs/serial-number-gen/ && yarn install && yarn run build && cd ../../libs/carbon-credit-calculator && yarn install && yarn run devBuild && cd ../../lambda/services",
     "sls:install": "yarn run build:libs && cd ../../lambda/services && yarn install --frozen-lockfile",
+    "sls:installProd": "yarn run build:libs && cd ../../lambda/services && yarn install --production --frozen-lockfile",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
