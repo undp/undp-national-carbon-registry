@@ -22,5 +22,20 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
+            RUN_MODULE: national-api
+    stats:
+        build:
+            context: .
+            dockerfile: ./lambda/services/Dockerfile
+        ports:
+            - '3100:3100'
+        depends_on:
+            - db
+            - national
+        environment:
+            DB_HOST: db
+            DB_USER: root
+            RUN_PORT: 3100
+            RUN_MODULE: analytics-api
 
 

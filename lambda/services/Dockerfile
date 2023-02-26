@@ -9,19 +9,14 @@ COPY ./lambda/services/yarn.lock ./
 
 COPY ./libs ../../libs
 
-# Build libraries
-RUN yarn run sls:installProd
 # Install app dependencies
-# RUN yarn install --production --frozen-lockfile
+RUN yarn run sls:installProd
 
 # Bundle app source
 COPY ./lambda/services .
 
-# Creates a "dist" folder with the production build
-RUN yarn run build
-RUN yarn cache clean
-
 ENV NODE_ENV production
+RUN yarn add @nestjs/cli --dev && yarn run build && yarn remove @nestjs/cli && yarn cache clean
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]

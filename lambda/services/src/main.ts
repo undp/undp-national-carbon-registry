@@ -4,8 +4,23 @@ import { NationalAPIModule } from './national-api/national.api.module';
 import { buildNestApp } from './shared/server';
 
 async function bootstrap() {
-  const app = await buildNestApp(process.env.RUN_MODULE || NationalAPIModule, '/national')
-  // await NestFactory.create(process.env.RUN_MODULE || NationalAPIModule);
+  let module;
+  let httpPath;
+  switch (process.env.RUN_MODULE) {
+    case 'national-api':
+      module = NationalAPIModule;
+      httpPath = 'national'
+      break;
+    case 'analytics-api':
+      module = AnalyticsAPIModule;
+      httpPath = 'stats'
+      break;
+    default:
+      module = NationalAPIModule;
+      httpPath = 'national'
+  }
+
+  const app = await buildNestApp(module, '/' + httpPath)
   await app.listen(process.env.RUN_PORT || 3000);
 }
 bootstrap();
