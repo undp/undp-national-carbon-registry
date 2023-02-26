@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LedgerDbService } from './ledger-db.service';
+import { QLDBLedgerService } from "./qldb-ledger.service";
 
 describe('LedgerDbService', () => {
-  let service: LedgerDbService;
+  let service: QLDBLedgerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LedgerDbService],
+      providers: [QLDBLedgerService],
     }).compile();
 
-    service = module.get<LedgerDbService>(LedgerDbService);
+    service = module.get<QLDBLedgerService>(QLDBLedgerService);
   });
 
   it('should be defined', () => {

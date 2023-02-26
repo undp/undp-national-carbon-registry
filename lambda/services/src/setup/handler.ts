@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { Role } from "../shared/casl/role.enum";
 import { UserDto } from "../shared/dto/user.dto";
 import { LedgerDbModule } from "../shared/ledger-db/ledger-db.module";
-import { LedgerDbService } from "../shared/ledger-db/ledger-db.service";
+import { QLDBLedgerService } from "../shared/ledger-db/qldb-ledger.service";
 import { getLogger } from "../shared/server";
 import { UtilModule } from "../shared/util/util.module";
 import { Country } from "../shared/entities/country.entity";
@@ -33,7 +33,7 @@ exports.handler = async (event) => {
       logger: getLogger(LedgerDbModule),
     });
     try {
-      const ledgerModule = app.get(LedgerDbService)
+      const ledgerModule = app.get(QLDBLedgerService)
 
       await ledgerModule.createTable('company');
       await ledgerModule.createIndex('txId', 'company');

@@ -7,26 +7,19 @@ import axios from "axios";
 import { generateSerialNumber } from "serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
-import { ProgrammeTransferApprove } from "../dto/programme.transfer.approve";
-import { Company } from "../entities/company.entity";
 import { CreditOverall } from "../entities/credit.overall.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
-import {
-  ArrayIn,
-  ArrayLike,
-  LedgerDbService,
-} from "../ledger-db/ledger-db.service";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
-import { User } from "../entities/user.entity";
+import { ArrayIn, ArrayLike, LedgerDBInterface } from "../ledger-db/ledger.db.interface";
 
 @Injectable()
 export class ProgrammeLedgerService {
   constructor(
     private readonly logger: Logger,
     @InjectEntityManager() private entityManger: EntityManager,
-    private ledger: LedgerDbService
+    private ledger: LedgerDBInterface
   ) {}
 
   async forwardGeocoding(address: any[]) {
