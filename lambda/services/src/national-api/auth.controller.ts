@@ -22,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("login")
-  async login(@Body() login: LoginDto, @I18n() i18n: I18nContext) {
+  async login(@Body() login: LoginDto) {
     const user = await this.authService.validateUser(
       login.username,
       login.password
