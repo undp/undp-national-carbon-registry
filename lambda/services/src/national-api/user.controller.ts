@@ -79,11 +79,16 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, User, true))
   // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
   @Put("resetPassword")
-  resetPassword(@Body() reset: PasswordUpdateDto, @Request() req) {
+  resetPassword(
+    @Body() reset: PasswordUpdateDto,
+    @Request() req,
+    @I18n() i18n: I18nContext
+  ) {
     return this.userService.resetPassword(
       req.user.id,
       reset,
-      req.abilityCondition
+      req.abilityCondition,
+      i18n
     );
   }
 

@@ -11,5 +11,6 @@
     "governmentUserAlreadyExist": "Government already exist for the country code {}",
     "companyCreateNotPermittedForTheCompanyRole": "Company create does not permitted for your company role",
     "companyUpdateFailed": "Company update failed. Please try again",
-    "propValueAlreadyExist": "{} already exist"
+    "propValueAlreadyExist": "{} already exist",
+    "taxIdExistAlready": "Company tax id already exist"
 }

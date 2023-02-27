@@ -174,7 +174,8 @@ export class UserService {
   async resetPassword(
     id: number,
     passwordResetDto: PasswordUpdateDto,
-    abilityCondition: string
+    abilityCondition: string,
+    i18n?: I18nContext
   ) {
     this.logger.verbose("User password reset received", id);
 
@@ -192,7 +193,7 @@ export class UserService {
       .getOne();
     if (!user || user.password != passwordResetDto.oldPassword) {
       throw new HttpException(
-        "Old Password is incorrect",
+        i18n.t("resetPassword.incorrectCurrentPassword"),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -442,7 +443,7 @@ export class UserService {
                 );
               } else if (err.driverError.detail.includes("taxId")) {
                 throw new HttpException(
-                  "Company tax id already exist",
+                  i18n.t("addUser.taxIdExistAlready"),
                   HttpStatus.BAD_REQUEST
                 );
               }
