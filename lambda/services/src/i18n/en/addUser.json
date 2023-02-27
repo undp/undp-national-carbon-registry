@@ -6,5 +6,10 @@
     "addUserToUnRegisteredCompany": "The programme ID is invalid",
     "createManagerOrViewerAsInitialUserOfACompany": "The initial user must be an admin",
     "createUserUnAuthorized": "This action is unauthorised",
-    "createUserToOtherCompaniesUnAuth": "This action is unauthorised"
+    "createUserToOtherCompaniesUnAuth": "This action is unauthorised",
+    "companyCreateUserShouldbeAdmin": "Company create user should be an Admin user",
+    "governmentUserAlreadyExist": "Government already exist for the country code {}",
+    "companyCreateNotPermittedForTheCompanyRole": "Company create does not permitted for your company role",
+    "companyUpdateFailed": "Company update failed. Please try again",
+    "propValueAlreadyExist": "{} already exist"
 }

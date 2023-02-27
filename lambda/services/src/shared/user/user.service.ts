@@ -12,6 +12,7 @@ import {
   InjectEntityManager,
   InjectRepository,
 } from "@nestjs/typeorm";
+import { I18n, I18nContext } from "nestjs-i18n";
 import { UserDto } from "../../shared/dto/user.dto";
 import {
   Connection,
@@ -105,11 +106,13 @@ export class UserService {
 
   async getUserProfileDetails(id: number) {
     const userProfileDetails = await this.findById(id);
-    const organisationDetails = await this.companyService.findByCompanyId(userProfileDetails.companyId);
-    return{
+    const organisationDetails = await this.companyService.findByCompanyId(
+      userProfileDetails.companyId
+    );
+    return {
       user: userProfileDetails,
-      Organisation: organisationDetails
-    }
+      Organisation: organisationDetails,
+    };
   }
 
   async findById(id: number): Promise<User | undefined> {
@@ -188,7 +191,10 @@ export class UserService {
       .addSelect(["User.password"])
       .getOne();
     if (!user || user.password != passwordResetDto.oldPassword) {
-      throw new HttpException("Old Password is incorrect", HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        "Old Password is incorrect",
+        HttpStatus.UNAUTHORIZED
+      );
     }
     const result = await this.userRepo
       .update(
@@ -272,23 +278,27 @@ export class UserService {
   async create(
     userDto: UserDto,
     companyId: number,
-    companyRole: CompanyRole
+    companyRole: CompanyRole,
+    i18n?: I18nContext
   ): Promise<User | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
 
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
-        "User already exist in the system",
+        i18n.t("addUser.createExistingUser"),
         HttpStatus.BAD_REQUEST
       );
     }
 
     let { company, ...userFields } = userDto;
     if (company) {
-      if (userFields.role && ![Role.Admin, Role.Root].includes(userFields.role)) {
+      if (
+        userFields.role &&
+        ![Role.Admin, Role.Root].includes(userFields.role)
+      ) {
         throw new HttpException(
-          "Company create user should be an Admin user",
+          i18n.t("addUser.companyCreateUserShouldbeAdmin"),
           HttpStatus.BAD_REQUEST
         );
       } else if (!userFields.role) {
@@ -313,7 +323,7 @@ export class UserService {
 
       if (companyRole != CompanyRole.GOVERNMENT) {
         throw new HttpException(
-          "Company create does not permitted for your company role",
+          i18n.t("addUser.companyCreateNotPermittedForTheCompanyRole"),
           HttpStatus.FORBIDDEN
         );
       }
@@ -327,7 +337,7 @@ export class UserService {
       userDto.companyId != companyId
     ) {
       throw new HttpException(
-        "Not authorized to add users to other companies",
+        i18n.t("addUser.createUserToOtherCompaniesUnAuth"),
         HttpStatus.FORBIDDEN
       );
     }
@@ -338,7 +348,10 @@ export class UserService {
     } else if (u.companyId) {
       const company = await this.companyService.findByCompanyId(u.companyId);
       if (!company) {
-        throw new HttpException("Invalid programme id", HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          i18n.t("addUser.addUserToUnRegisteredCompany"),
+          HttpStatus.BAD_REQUEST
+        );
       }
       u.companyRole = company.companyRole;
     } else {
@@ -369,18 +382,22 @@ export class UserService {
         company.logo = response.Location;
       } else {
         throw new HttpException(
-          "Company update failed. Please try again",
+          i18n.t("addUser.companyUpdateFailed"),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
 
-      if(company.email){
-        await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
-          organisationName: company.name,
-          countryName: this.configService.get("systemCountryName"),
-          organisationRole: company.companyRole,
-          home: hostAddress,
-        });
+      if (company.email) {
+        await this.emailService.sendEmail(
+          company.email,
+          EmailTemplates.ORGANISATION_CREATE,
+          {
+            organisationName: company.name,
+            countryName: this.configService.get("systemCountryName"),
+            organisationRole: company.companyRole,
+            home: hostAddress,
+          }
+        );
       }
     }
 
@@ -462,7 +479,7 @@ export class UserService {
         "company.companyId = user.companyId"
       )
       .orderBy(
-        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"` ,
+        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"`,
         query?.sort?.order ? query?.sort?.order : "DESC"
       )
       .offset(query.size * query.page - query.size)
@@ -525,9 +542,14 @@ export class UserService {
   async getGovAdminAndManagerUsers() {
     const result = await this.userRepo
       .createQueryBuilder("user")
-      .where("user.role in (:admin, :manager)",{admin:Role.Admin, manager:Role.Manager})
-      .andWhere("user.companyRole= :companyRole",{companyRole:CompanyRole.GOVERNMENT})
-      .select(['user.name','user.email'])
+      .where("user.role in (:admin, :manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyRole= :companyRole", {
+        companyRole: CompanyRole.GOVERNMENT,
+      })
+      .select(["user.name", "user.email"])
       .getRawMany();
 
     return result;
@@ -538,9 +560,12 @@ export class UserService {
   async getOrganisationAdminAndManagerUsers(organisationId) {
     const result = await this.userRepo
       .createQueryBuilder("user")
-      .where("user.role in (:admin,:manager)",{admin:Role.Admin, manager:Role.Manager})
-      .andWhere("user.companyId= :companyId",{companyId:organisationId})
-      .select(['user.name','user.email'])
+      .where("user.role in (:admin,:manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyId= :companyId", { companyId: organisationId })
+      .select(["user.name", "user.email"])
       .getRawMany();
 
     return result;
