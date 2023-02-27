@@ -17,7 +17,6 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import mapboxgl from 'mapbox-gl';
 import {
   addCommSep,
-  addCommSepRound,
   addRoundNumber,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
