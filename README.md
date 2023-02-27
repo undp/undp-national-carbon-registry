@@ -34,7 +34,7 @@ https://digitalprinciples.org/
 <a name="architecture"></a>
 ## System Architecture
 UNDP Carbon Registry based on Serverless Architecture. It can be ported and hosted on any Function As A Service (FaaS) stack.
-![alt text](./documention/imgs/System%20Architecture.png)
+![alt text](./documention/imgs/System%20Architecture.svg)
 
 Carbon Registry backend system has a service oriented architecture (SOA) and contains 4 main services.
 
