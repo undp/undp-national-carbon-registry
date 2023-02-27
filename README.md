@@ -1,4 +1,17 @@
+## Index
+* [About](#about)
+* [Standards](#standards)
+* [Architecture](#architecture)
+* [Project Structure](#structure)
+* [Run Services Locally](#local)
+* [Run Services on Cloud](#cloud)
+* [User Onboarding](#user)
+* [Web Frontend](#frontend)
+* [API](#api)
+* [Status Page](#status)
+* [Governance & Support](#support)
 
+<a name="about"></a>
 # Carbon Registry
 The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
 
@@ -11,16 +24,21 @@ The system has 3 key features:
 * **Carbon Credit Calculator:** Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. 
 * **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
 
-## Standard
+<a name="standards"></a>
+## Standards
 This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
+It is built according to the Principles for Digital Development:
+https://digitalprinciples.org/ 
 
+<a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry based on Serverless Architecture.
+UNDP Carbon Registry based on Serverless Architecture. It can be ported and hosted on any Function As A Service (FaaS) stack.
 ![alt text](./documention/imgs/System%20Architecture.png)
 
 Carbon Registry backend system has a service oriented architecture (SOA) and contains 4 main services.
 
+<a name="services"></a>
 ### **Services**
 #### *National Service*
 
@@ -93,6 +111,7 @@ Below diagram demonstrate the the ledger behavior on programme create, authorise
 - JWT Authentication - All endpoints based on role permissions.
 - API Key Authentication - For MRV User to programme creation.
 
+<a name="structure"></a>
 ## Project Structure
 
     .
@@ -115,6 +134,7 @@ Below diagram demonstrate the the ledger behavior on programme create, authorise
     ├── .gitignore
     └── README.md
 
+<a name="local"></a>
 ## Run Services Locally
 - Setup postgreSQL locally and create a new database.
 - Update following DB configurations in the .env.local file (If file does not exist please create a new .env.local)
@@ -129,6 +149,7 @@ Below diagram demonstrate the the ledger behavior on programme create, authorise
 - Start all the services by executing `sls offline --stage=local`
 - Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/national`
 
+<a name="cloud"></a>
 ## Deploy System on the AWS Cloud
 - Execute to create all the required resources on the AWS.
     ```
@@ -157,7 +178,7 @@ Carbon credit calculation implemented in a separate node module. [Please refer t
 ### Serial Number Generation
 Serial Number generation implemented in a separate node module. [Please refer this](./libs/serial-number-gen/README.md) for more information.
 
-
+<a name="user"></a>
 ## User Onboarding and Permissions Model
 
 ### User Roles
@@ -189,14 +210,23 @@ All the CRUD operations can perform as per the following table,
 - All users can edit own user account except Role and Email.
 - Users are not allowed to delete the own account from the system.
 
-
+<a name="frontend"></a>
 ### Web Frontend
 Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
 
 
-### Status Page
-https://github.com/undp/carbon-registry-status
+<a name="api"></a>
+### Application Programming Interface (API)
+For integration, reference RESTful Web API Documentation documentation via Swagger. To access
+- National API: api.APP_URL/national
+- Status API: api.APP_URL/stats
 
+<a name="status"></a>
+### Status Page
+For transparent uptime monitoring go to status.APP_URL
+Open source code available at https://github.com/undp/carbon-registry-status
+
+<a name="support"></a>
 ### Governance and Support
 ![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)
 

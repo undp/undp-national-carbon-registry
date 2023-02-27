@@ -1,3 +1,5 @@
+import { addCommSepRound } from '../../Definitions/InterfacesAndType/programme.definitions';
+
 export const totalProgrammesOptions: any = {
   states: {
     normal: {
@@ -61,7 +63,7 @@ export const totalProgrammesOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseInt(value);
+        return addCommSepRound(value);
       },
     },
   },
@@ -197,7 +199,7 @@ export const totalProgrammesOptionsSub: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseInt(value);
+        return addCommSepRound(value);
       },
     },
   },
@@ -362,7 +364,7 @@ export const totalCreditsOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseFloat(value).toFixed(2);
+        return addCommSepRound(value);
       },
     },
   },
@@ -495,7 +497,7 @@ export const totalCreditsCertifiedOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseFloat(value).toFixed(2);
+        return addCommSepRound(value);
       },
     },
   },
@@ -617,7 +619,7 @@ export const optionDonutPieA: any = {
     showForNullSeries: true,
     showForZeroSeries: true,
     position: 'bottom',
-    horizontalAlign: 'left',
+    horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
     fontFamily: 'Inter',
@@ -628,7 +630,7 @@ export const optionDonutPieA: any = {
     height: undefined,
     tooltipHoverFormatter: undefined,
     customLegendItems: [],
-    offsetX: 20,
+    offsetX: 0,
     offsetY: 5,
     labels: {
       colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
@@ -724,7 +726,7 @@ export const optionDonutPieB: any = {
     showForNullSeries: true,
     showForZeroSeries: true,
     position: 'bottom',
-    horizontalAlign: 'left',
+    horizontalAlign: 'center',
     floating: false,
     fontSize: '14px',
     fontFamily: 'Inter',
@@ -735,7 +737,7 @@ export const optionDonutPieB: any = {
     height: undefined,
     tooltipHoverFormatter: undefined,
     customLegendItems: [],
-    offsetX: 15,
+    offsetX: 0,
     offsetY: 5,
     labels: {
       colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
