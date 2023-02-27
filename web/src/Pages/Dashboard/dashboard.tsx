@@ -17,7 +17,6 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import mapboxgl from 'mapbox-gl';
 import {
   addCommSep,
-  addCommSepRound,
   addRoundNumber,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
@@ -1212,7 +1211,6 @@ const Dashboard = () => {
       }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
-      console.error('add comp func error  --- > ', addCommSepRound(creditAuthorized));
       pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
       pieSeriesCreditsData.push(
         addRoundNumber(

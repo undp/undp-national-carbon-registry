@@ -642,6 +642,8 @@ export class ProgrammeLedgerService {
               continue;
             programme.creditFrozen[index] = freezeCredit;
           }else{
+            if(programme.creditFrozen === undefined || programme.creditFrozen[index] === null)
+              continue;
             const unFrozenCredit = this.round2Precision(programme.creditFrozen[index]);
             if(unFrozenCredit === 0)
               continue;
@@ -865,8 +867,12 @@ export class ProgrammeLedgerService {
   }
 
   private round2Precision(val) {
-    return parseFloat(val.toFixed(PRECISION));
+    if(val)
+      return parseFloat(val.toFixed(PRECISION));
+    else
+      return 0;
   }
+
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,
