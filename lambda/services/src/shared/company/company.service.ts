@@ -85,7 +85,7 @@ export class CompanyService {
           true
         );
         await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
-        this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
@@ -102,7 +102,7 @@ export class CompanyService {
           }
         );
 
-        this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
       }
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -154,7 +154,7 @@ export class CompanyService {
         this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
         false
       );
-      this.emailHelperService.sendEmail(company.email,EmailTemplates.ORG_REACTIVATION,{},user.companyId);
+      await this.emailHelperService.sendEmail(company.email,EmailTemplates.ORG_REACTIVATION,{},user.companyId);
       return new BasicResponseDto(
         HttpStatus.OK,
         "Successfully activated company"
