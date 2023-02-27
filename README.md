@@ -109,7 +109,7 @@ Below diagram demonstrate the the ledger behavior on programme create, authorise
 
 ### **Authentication**
 - JWT Authentication - All endpoints based on role permissions.
-- API Key Authentication - For MRV User to programme creation.
+- API Key Authentication - MRV System connectivity.
 
 <a name="structure"></a>
 ## Project Structure
