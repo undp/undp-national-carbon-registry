@@ -36,6 +36,81 @@ https://digitalprinciples.org/
 UNDP Carbon Registry based on Serverless Architecture. It can be ported and hosted on any Function As A Service (FaaS) stack.
 ![alt text](./documention/imgs/System%20Architecture.png)
 
+Carbon Registry backend system has a service oriented architecture (SOA) and contains 4 main services.
+
+<a name="services"></a>
+### **Services**
+#### *National Service*
+
+Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API request related to following functionalities,
+- User and company CRUD operations.
+- User authentication.
+- Programme life cycle management. 
+- Credit life cycle management.
+
+Service is horizontally scalable and state maintained in the following locations,
+- File storage.
+- Operational Database.
+- Ledger Database.
+
+Uses the Carbon Credit Calculator and Serial Number Generator node modules to estimate the programme carbon credit amount and issue a serial number.
+Uses Ledger interface to persist programme and credit life cycles.
+
+#### *Analytics Service*
+Serve all the system analytics. Generate all the statistic using the operational database. 
+Horizontally scalable. 
+
+#### *Replicator Service*
+Replicating ledger database new items to a operational database asynchronously. During the replication process it is injecting additional query information to the data. 
+In the current setup using AWS QLDB for the ledger database. When it creates or updates data, add the change to a AWS Kinesis Data Stream. Replicator service is consuming the stream.
+
+#### *Operational Service*
+Service that use to do system operations,
+1. Database migrations.
+2. User data creation and update.
+3. Resource creation.
+
+Can trigger internally. Cannot invoke by external sources. 
+
+### **Database Architecture**
+primary/secondary database architecture using for carbon programme and account balances. 
+Ledger database - Primary database. Add/update programmes and update account balances in single transaction. Currently implemented only for AWS QLDB
+
+Operational Database - Secondary database. Eventually add data for query purposes though replicator and data stream. Implemented based on PostgresSQL
+
+**Why Two Database Approach?**
+1. Cost and Query capabilities - Ledger database (blockchain) read capabilities can be limited and costly. To support rich statistics, replicated data in to a cheap query database.
+2. Disaster recovery
+3. Scalability - Primary/secondary database architecture is scalable since additional secondary databases can be added as needed to handle more read operations.
+
+**Why Ledger Database?**
+1. Immutable and Transparent - Track and maintain a sequenced history of every carbon programme and credit change. 
+2. Data Integrity (Cryptographic verification by third party).
+3. Reconcile carbon credit and company account balance.
+
+**Ledger Database Interface**
+
+This enables the capability to add any blockchain or ledger database support to the carbon registry without application changes. Currently for the production system interface implemented for AWS QLDB. For testing purposes interface implemented for PostgresSQL as well.
+
+
+
+Single database approach use for user and company management. 
+
+
+### **Ledger Layout**
+Carbon Registry contains 3 ledger tables.
+1. Programme ledger - Contains all the programme and credit transactions.
+2. Company Account Ledger (Credit) - Contains company accounts credit transactions.
+3. Country Account Ledger (Credit) - Contains country credit transactions.
+
+Below diagram demonstrate the the ledger behavior on programme create, authorise, issue and transfer processes. Blue color document denotes a single data block in a ledger.
+
+![alt text](./documention/imgs/Ledger.png)
+
+### **Authentication**
+- JWT Authentication - All endpoints based on role permissions.
+- API Key Authentication - For MRV User to programme creation.
+
 <a name="structure"></a>
 ## Project Structure
 
