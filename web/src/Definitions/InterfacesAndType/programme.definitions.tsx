@@ -227,6 +227,10 @@ export const addCommSepRound = (value: any) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export const addRoundNumber = (value: any) => {
+  return Number(value.toFixed(2).replace('.00', ''));
+};
+
 export const addSpaces = (text: string) => {
   if (!text) {
     return text;

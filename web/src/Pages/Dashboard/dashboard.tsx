@@ -15,7 +15,11 @@ import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import mapboxgl from 'mapbox-gl';
-import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import {
+  addCommSep,
+  addCommSepRound,
+  addRoundNumber,
+} from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
   BoxArrowInRight,
@@ -1193,16 +1197,12 @@ const Dashboard = () => {
       }
       if (programmeByStatusAuthAggregationResponse?.length > 0) {
         programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
-          totalEstCredits = totalEstCredits + Math.round(parseFloat(responseItem?.totalestcredit));
-          totalIssuedCredits =
-            totalIssuedCredits + Math.round(parseFloat(responseItem?.totalissuedcredit));
-          totalRetiredCredits =
-            totalRetiredCredits + Math.round(parseFloat(responseItem?.totalretiredcredit));
-          totalBalancecredit =
-            totalBalancecredit + Math.round(parseFloat(responseItem?.totalbalancecredit));
-          totalTxCredits = totalTxCredits + Math.round(parseFloat(responseItem?.totaltxcredit));
-          totalFrozenCredits =
-            totalFrozenCredits + Math.round(parseFloat(responseItem?.totalfreezecredit));
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
         });
       }
       if (certifiedRevokedAggregationResponse) {
@@ -1212,18 +1212,22 @@ const Dashboard = () => {
       }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
-      pieSeriesCreditsData.push(creditAuthorized);
+      console.error('add comp func error  --- > ', addCommSepRound(creditAuthorized));
+      pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
       pieSeriesCreditsData.push(
-        totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits
+        addRoundNumber(
+          totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits
+        )
       );
-      pieSeriesCreditsData.push(totalTxCredits);
-      pieSeriesCreditsData.push(totalRetiredCredits);
+      pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
+      pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
 
-      pieSeriesCreditsCerifiedData.push(totalCertifiedCredit);
-      pieSeriesCreditsCerifiedData.push(totalUnCertifiedredit);
-      pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
-      const totalCreditsCertified =
-        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+      const totalCreditsCertified = addRoundNumber(
+        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+      );
       setCreditsPieChartTotal(
         String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
       );
