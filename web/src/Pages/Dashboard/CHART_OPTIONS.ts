@@ -1,3 +1,5 @@
+import { addCommSepRound } from '../../Definitions/InterfacesAndType/programme.definitions';
+
 export const totalProgrammesOptions: any = {
   states: {
     normal: {
@@ -61,7 +63,7 @@ export const totalProgrammesOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseInt(value);
+        return addCommSepRound(value);
       },
     },
   },
@@ -197,7 +199,7 @@ export const totalProgrammesOptionsSub: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseInt(value);
+        return addCommSepRound(value);
       },
     },
   },
@@ -362,7 +364,7 @@ export const totalCreditsOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseFloat(value).toFixed(2);
+        return addCommSepRound(value);
       },
     },
   },
@@ -495,7 +497,7 @@ export const totalCreditsCertifiedOptions: any = {
     },
     labels: {
       formatter: (value: any) => {
-        return parseFloat(value).toFixed(2);
+        return addCommSepRound(value);
       },
     },
   },
