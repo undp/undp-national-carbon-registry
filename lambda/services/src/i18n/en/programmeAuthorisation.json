@@ -1,0 +1,6 @@
+{
+    "authoriseProgrammeSuccess": "The programme has been authorised successfully",
+    "authoriseAlreadyAuthorisedProg": "This programme has already been auhtorised",
+    "rejectProgrammeSuccess": "The programme has been rejected successfully",
+    "rejectAlreadyRejectedProg": "This programme has already been rejected"
+}
