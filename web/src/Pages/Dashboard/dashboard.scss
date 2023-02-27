@@ -15,10 +15,6 @@
   // z-index: -1 !important;
 }
 
-.mapboxgl-ctrl-attrib.mapboxgl-compact {
-  display: none;
-}
-
 .total-container {
   display: flex;
   flex-direction: column;
@@ -125,6 +121,18 @@
 
   .height-pie-rem {
     height: 26.2rem;
+
+    .apexcharts-legend {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between !important;
+    }
+
+    .apexcharts-legend-series {
+      display: flex !important;
+      width: 38%;
+    }
   }
 
   .height-bar-rem {
@@ -196,7 +204,7 @@
             align-items: center;
             justify-content: space-between;
             height: 150px;
-            margin-top: -1rem;
+            margin-top: -0.5rem;
 
             .details {
               display: flex;
@@ -390,6 +398,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
           }
         }
       }

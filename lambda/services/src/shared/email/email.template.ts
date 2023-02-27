@@ -24,8 +24,7 @@ export const EmailTemplates = {
         Password (temporary): {{tempPassword}} <br><br>
 
         If you have any questions, feel free to email our customer success 
-        team <a href="mailto:mailto: help@carbreg.org?subject=I Need Help With The 
-        {{countryName}} Carbon Credit Registry">customer success team</a>
+        team <a href="mailto:help@carbreg.org?subject=I Need Help With The {{countryName}} Carbon Credit Registry">customer success team</a>
         (We’re lightning quick at replying.) We also offer live chat {{liveChat}}. 
         <br><br>
 
@@ -86,7 +85,7 @@ export const EmailTemplates = {
     },
     CHANGE_PASSOWRD: {
         id: 'CHANGE_PASSOWRD',
-        subject: 'Carbon Registry: Your password was changed',
+        subject: 'Your password was changed',
         html: `
         Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
@@ -108,7 +107,7 @@ export const EmailTemplates = {
 
         A new programme owned by {{organisationName}} is awaiting authorisation. <br><br>
         
-        <a href="{{programmePageLink}}">Click here</a> to access all the programmes that require authorisation. 
+        Click <a href="{{programmePageLink}}">here</a> to access all the programmes that require authorisation. 
         <br><br>
          
         Sincerely,  <br>
