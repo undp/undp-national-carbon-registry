@@ -47,6 +47,7 @@
     "fs": "^0.0.1-security",
     "ion-js": "^4.3.0",
     "jsbi": "^4.3.0",
+    "moment": "^2.29.4",
     "nanoid": "3.3.4",
     "nest-winston": "^1.8.0",
     "nodemailer": "^6.8.0",

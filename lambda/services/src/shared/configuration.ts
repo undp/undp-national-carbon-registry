@@ -31,7 +31,8 @@ export default () => ({
         endpoint: process.env.EMAIL_ENDPOINT || 'vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com',
         username: process.env.EMAIL_USERNAME || 'AKIAUMXKTXDJIOFY2QXL',
         password: process.env.SES_PASSWORD,
-        skipSuffix: '@xeptagon.com'
+        skipSuffix: '@xeptagon.com',
+        Disabled: process.env.IS_EMAIL_DISABLED === 'true' ? true : false
     },
     s3CommonBucket: {
         name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),

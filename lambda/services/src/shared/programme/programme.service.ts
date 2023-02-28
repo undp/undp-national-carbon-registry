@@ -51,6 +51,7 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
+import moment from 'moment';
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -1531,7 +1532,7 @@ export class ProgrammeService {
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
-          credits: updated.creditIssued,
+          credits: req.issueAmount,
           serialNumber: updated.serialNo,
           pageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
@@ -1598,7 +1599,7 @@ export class ProgrammeService {
         EmailTemplates.PROGRAMME_AUTHORISATION,
         {
           programmeName: updated.title,
-          authorisedDate: new Date(updated.txTime),
+          authorisedDate: moment(updated.txTime).format("DD MMMM YYYY"),
           serialNumber: updated.serialNo,
           programmePageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
