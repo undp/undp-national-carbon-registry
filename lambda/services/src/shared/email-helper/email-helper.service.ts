@@ -1,9 +1,11 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { AsyncAction, IAsyncOperationsService } from "../async-operations/async-operations.interface";
 import { CompanyService } from "../company/company.service";
 import { EmailService } from "../email/email.service";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
+import { asyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
 
@@ -16,7 +18,8 @@ export class EmailHelperService {
     private emailService: EmailService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-    private programmeLedger: ProgrammeLedgerService
+    private programmeLedger: ProgrammeLedgerService,
+    private asyncOperationsService: IAsyncOperationsService
   ) {}
 
   public async sendEmailToProgrammeOwnerAdmins(
@@ -317,5 +320,10 @@ export class EmailHelperService {
       government: companyDetails.name,
     };
     await this.emailService.sendEmail(sender, template, templateData);
+    const action:AsyncAction = {
+      actionType: asyncActionType.Email,
+      emailAddress: sender
+    }
+    this.asyncOperationsService.RegisterAction(action);
   }
 }
