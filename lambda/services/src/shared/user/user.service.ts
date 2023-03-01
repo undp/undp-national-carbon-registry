@@ -322,7 +322,11 @@ export class UserService {
         );
         if (companyGov) {
           throw new HttpException(
-            `Government already exist for the country code ${company.country}`,
+            // `Government already exist for the country code ${company.country}`,
+            this.helperService.formatReqMessagesString(
+              "addUser.governmentUserAlreadyExist",
+              [company.country]
+            ),
             HttpStatus.BAD_REQUEST
           );
         }

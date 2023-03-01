@@ -1,7 +1,5 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import * as path from "path";
-import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import { NationalAPIController } from "./national.api.controller";
 import { NationalAPIService } from "./national.api.service";
 import configuration from "../shared/configuration";
@@ -29,17 +27,6 @@ import { UtilModule } from "../shared/util/util.module";
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
       imports: undefined,
-    }),
-    I18nModule.forRoot({
-      fallbackLanguage: "en",
-      loaderOptions: {
-        path: path.join(__dirname, "../i18n/"),
-        watch: true,
-      },
-      resolvers: [
-        { use: QueryResolver, options: ["lang"] },
-        AcceptLanguageResolver,
-      ],
     }),
     AuthModule,
     UserModule,
