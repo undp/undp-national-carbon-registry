@@ -51,7 +51,6 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
-import moment from 'moment';
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -1593,13 +1592,19 @@ export class ProgrammeService {
     }
 
     const hostAddress = this.configService.get("host");
+    let authDate = new Date(updated.txTime);
+    let date = authDate.getDate().toString().padStart(2,"0");
+    let month = authDate.toLocaleString('default', { month: 'long' });
+    let year = authDate.getFullYear();
+    let formattedDate = `${date} ${month} ${year}`;
+    
     updated.company.forEach(async (company) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
         company.companyId,
         EmailTemplates.PROGRAMME_AUTHORISATION,
         {
           programmeName: updated.title,
-          authorisedDate: moment(updated.txTime).format("DD MMMM YYYY"),
+          authorisedDate: formattedDate,
           serialNumber: updated.serialNo,
           programmePageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
