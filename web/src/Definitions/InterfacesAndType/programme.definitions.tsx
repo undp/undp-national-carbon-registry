@@ -18,6 +18,12 @@ export enum ProgrammeStage {
 //   // Frozen = 'Frozen',
 // }
 
+export enum RetireType {
+  CROSS_BORDER = '0',
+  LEGAL_ACTION = '1',
+  OTHER = '2',
+}
+
 export enum CreditTransferStage {
   Pending = 'Pending',
   Approved = 'Accepted',
@@ -37,6 +43,7 @@ export enum TxType {
   REVOKE = '6',
   FREEZE = '7',
   AUTH = '8',
+  UNFREEZE = '9',
 }
 
 export enum SectoralScope {
@@ -164,8 +171,8 @@ export interface Programme {
   creditIssued: number;
   creditEst: number;
   creditBalance: number;
-  creditTransferred: number;
-  creditRetired: number;
+  creditTransferred: number[];
+  creditRetired: number[];
   creditFrozen: number[];
   constantVersion: string;
   proponentTaxVatId: string[];
@@ -220,6 +227,10 @@ export const addCommSepRound = (value: any) => {
     .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+export const addRoundNumber = (value: any) => {
+  return Number(value.toFixed(2).replace('.00', ''));
+};
+
 export const addSpaces = (text: string) => {
   if (!text) {
     return text;
@@ -261,4 +272,12 @@ export const getRetirementTypeString = (retirementType: string | null) => {
     case '2':
       return 'OTHER';
   }
+};
+
+export const sumArray = (arrList: any[]) => {
+  if (arrList === undefined || arrList === null) {
+    return 0;
+  }
+
+  return arrList.reduce((a, b) => Number(a) + Number(b), 0);
 };

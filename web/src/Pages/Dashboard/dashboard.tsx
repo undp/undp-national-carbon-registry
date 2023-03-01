@@ -1,26 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, DatePicker, Progress, Radio, Row, Skeleton, message } from 'antd';
-import Chart from 'react-apexcharts';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
+import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import MapCard from '../../Components/MapCards.tsx/MapCard';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   optionDonutPieA,
   optionDonutPieB,
-  seriesY,
   totalCreditsCertifiedOptions,
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
-} from './DUMMY_DATAS';
+} from './CHART_OPTIONS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import mapboxgl from 'mapbox-gl';
-import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
-import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import {
+  addCommSep,
+  addRoundNumber,
+} from '../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
   BoxArrowInRight,
@@ -29,11 +27,23 @@ import {
   BoxArrowRight,
   ShieldCheck,
   Gem,
-  BoxArrowInLeft,
+  InfoCircle,
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import TransferLocationsMap from './transferLocations';
+import LegendItem from '../../Components/LegendItem/legendItem';
+import {
+  ChartSeriesItem,
+  totalCertifiedCreditsSeriesInitialValues,
+  totalCreditsSeriesInitialValues,
+  getTotalProgrammesInitialValues,
+  getTotalProgrammesSectorInitialValues,
+} from './dashboardTypesInitialValues';
+import { Sector } from '../../Casl/enums/sector.enum';
+import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
+import { CompanyRole } from '../../Casl/enums/company.role.enum';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { useTranslation } from 'react-i18next';
 
 const { RangePicker } = DatePicker;
 
@@ -44,57 +54,56 @@ const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
   const mapContainerRef = useRef(null);
   const mapContainerInternationalRef = useRef(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [userDetails, setUserDetails] = useState<any>([]);
-  const [companyRole, setCompanyRole] = useState<any>();
+  const { userInfoState } = useUserContext();
+  const { i18n, t } = useTranslation(['dashboard']);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
-  const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
-  const [issuedProjects, setIssuedProjects] = useState<number>(0);
+  const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
   const [authorisedProjects, setAuthorisedProjects] = useState<number>(0);
-  const [transfererequestsSent, setTransfererequestsSent] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
   const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
   const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
     useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
   const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
-  const [lastUpdate, setLastUpdate] = useState<any>();
-  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<any>();
-  const [estimatedCredits, setEstimatedCredits] = useState<number>();
+  const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
+  const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
   const [startTime, setStartTime] = useState<number>(0);
   const [endTime, setEndTime] = useState<number>(0);
   const [categoryType, setCategoryType] = useState<string>('overall');
 
-  const [authorisedProgrammes, setAuthorisedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [rejectedProgrammes, setRejectedProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [pendingProgrammes, setPendingProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  // states for totalProgrammes chart
+  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
+    getTotalProgrammesInitialValues()
+  );
+  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
 
   // states for totalProgrammes sub sector chart
-  const [energyProgrammes, setEnergyProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [healthProgrammes, setHealthProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [educationProgrammes, setEducationProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [transportProgrammes, setTransportProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [manufacturingProgrammes, setManufacturingProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [hospitalityProgrammes, setHospitalityProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [forestryProgrammes, setForestryProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [wasteProgrammes, setWasteProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [agricultureProgrammes, setAgricultureProgrammes] = useState<number[]>([0, 0, 0, 0]);
-  const [otherProgrammes, setOtherProgrammes] = useState<number[]>([0, 0, 0, 0]);
+  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
+    getTotalProgrammesSectorInitialValues()
+  );
+  const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
+    any[]
+  >([]);
 
   // states for totalCredits chart
-  const [authorizedCredits, setAuthorizedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [issuedCredits, setIssuedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [retiredCredits, setRetiredCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [transferredCredits, setTransferredCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCreditsSeries, setTotalCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCreditsSeriesInitialValues
+  );
+  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<any[]>([]);
 
   // states for totalCreditsCertified chart
-  const [certifiedCredits, setCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [unCertifiedCredits, setUnCertifiedCredits] = useState<number[]>([0, 0, 0, 0]);
-  const [revokedCredits, setRevokedCredits] = useState<number[]>([0, 0, 0, 0]);
+  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] = useState<ChartSeriesItem[]>(
+    totalCertifiedCreditsSeriesInitialValues
+  );
+  const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
+    any[]
+  >([]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
@@ -103,30 +112,64 @@ const Dashboard = () => {
   //certifier view states
   const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
   const [programmesUnCertifed, setProgrammesUnCertifed] = useState<number>(0);
-  const [certifcationsRevoked, setCertifcationsRevoked] = useState<number>(20);
 
   //programmeDeveloper
   const [transferRequestSent, setTransferRequestSent] = useState<number>(0);
   const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
 
-  const currentYear = new Date();
-  const startOfTheYear = Date.parse(String(moment(currentYear).startOf('year')));
-  const endOfTheYear = Date.parse(String(moment(currentYear).endOf('year')));
-  console.log({ currentYear, startOfTheYear, endOfTheYear });
+  //last time updates
+  const [lastUpdateProgrammesStatsEpoch, setLastUpdateProgrammesStatsEpoch] = useState<number>(0);
+  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<string>('0');
 
-  const getUserProfileDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await get('national/User/profile');
-      if (response.data) {
-        setUserDetails(response.data.user);
-        setCompanyRole(response.data.user?.companyRole);
-      }
-    } catch (exception) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [lastUpdatePendingTransferSentEpoch, setLastUpdatePendingTransferSentEpoch] =
+    useState<number>(0);
+  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] = useState<string>('0');
+
+  const [lastUpdateCreditBalanceEpoch, setLastUpdateCreditBalanceEpoch] = useState<number>(0);
+  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] = useState<string>('0');
+
+  const [lastUpdatePendingTransferReceivedEpoch, setLastUpdatePendingTransferReceivedEpoch] =
+    useState<number>(0);
+  const [lastUpdatePendingTransferReceived, setLastUpdatePendingTransferReceived] =
+    useState<string>('0');
+
+  const [lastUpdateProgrammesCertifiableEpoch, setLastUpdateProgrammesCertifiableEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCertifiable, setLastUpdateProgrammesCertifiable] =
+    useState<string>('0');
+
+  const [lastUpdateCertifiedCreditsStatsEpoch, setLastUpdateCertifiedCreditsStatsEpoch] =
+    useState<number>(0);
+  const [lastUpdateCertifiedCreditsStats, setLastUpdateCertifiedCreditsStats] =
+    useState<string>('0');
+
+  const [lastUpdateProgrammesCertifiedEpoch, setLastUpdateProgrammesCertifiedEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<string>('0');
+
+  const [lastUpdateProgrammesStatsCEpoch, setLastUpdateProgrammesStatsCEpoch] = useState<number>(0);
+  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] = useState<string>('0');
+
+  const [lastUpdateProgrammesCreditsStatsEpoch, setLastUpdateProgrammesCreditsStatsEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesCreditsStats, setLastUpdateProgrammesCreditsStats] =
+    useState<string>('0');
+
+  const [lastUpdateProgrammesSectorStatsCEpoch, setLastUpdateProgrammesSectorStatsCEpoch] =
+    useState<number>(0);
+  const [lastUpdateProgrammesSectorStatsC, setLastUpdateProgrammesSectorStatsC] =
+    useState<string>('0');
+  const [lastUpdateTotalCreditsEpoch, setLastUpdateTotalCreditsEpoch] = useState<number>(0);
+  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] = useState<string>('0');
+
+  const [lastUpdateTotalCreditsCertifiedEpoch, setLastUpdateTotalCreditsCertifiedEpoch] =
+    useState<number>(0);
+  const [lastUpdateTotalCreditsCertified, setLastUpdateTotalCreditsCertified] =
+    useState<string>('0');
+
+  const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
+    useState<number>(0);
+  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -144,15 +187,17 @@ const Dashboard = () => {
           type: 'PENDING_TRANSFER_RECV',
         },
         {
-          type: 'CERTIFIED_REVOKED_BY_ME',
+          type: 'UNCERTIFIED_BY_ME',
+        },
+        {
+          type: 'CERTIFIED_BY_ME',
         },
       ],
-      category: 'overall',
     };
   };
 
   const getAllProgrammeAnalyticsStatsParams = () => {
-    if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
         stats: [
           {
@@ -163,7 +208,66 @@ const Dashboard = () => {
             },
           },
           {
+            type: 'MY_AGG_AUTH_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
             type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'AUTH_CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_BY_ME',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -182,6 +286,13 @@ const Dashboard = () => {
             },
           },
           {
+            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
             type: 'CERTIFIED_REVOKED_PROGRAMMES',
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
@@ -194,46 +305,179 @@ const Dashboard = () => {
   };
 
   const getAllChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-          statFilter: {
-            startTime: startTime !== 0 ? startTime : undefined,
-            endTime: endTime !== 0 ? endTime : undefined,
-            timeGroup: true,
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      return {
+        stats: [
+          {
+            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
           },
-        },
-      ],
-    };
-  };
-
-  const getAllProgrammeAnalyticsStatsChartsParams = () => {
-    return {
-      stats: [
-        {
-          type: 'TOTAL_PROGRAMS',
-        },
-        {
-          type: 'TOTAL_PROGRAMS_SECTOR',
-        },
-        {
-          type: 'TOTAL_CREDITS',
-        },
-        {
-          type: 'TOTAL_CREDITS_CERTIFIED',
-        },
-        {
-          type: 'PROGRAMME_LOCATIONS',
-        },
-        {
-          type: 'TRANSFER_LOCATIONS',
-        },
-      ],
-      category: companyRole === 'ProgrammeDeveloper' ? 'mine' : categoryType,
-      startTime: startTime !== 0 ? startTime : startOfTheYear,
-      endTime: endTime !== 0 ? endTime : endOfTheYear,
-    };
+          {
+            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
+      return {
+        stats: [
+          {
+            type: 'CERTIFIED_BY_ME_BY_STATE',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_BY_ME',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'MY_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'MY_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else {
+      return {
+        stats: [
+          {
+            type: 'AGG_PROGRAMME_BY_STATUS',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'AGG_PROGRAMME_BY_SECTOR',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+              timeGroup: true,
+            },
+          },
+          {
+            type: 'ALL_TRANSFER_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: 'ALL_PROGRAMME_LOCATION',
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    }
   };
 
   const onChangeRange = async (dateMoment: any, dateString: any) => {
@@ -255,235 +499,335 @@ const Dashboard = () => {
     }
   };
 
-  const getAllProgrammeAnalyticsStatsCharts = async () => {
-    setLoading(true);
+  const firstLower = (lower: any) => {
+    return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
+  };
+
+  const getAllProgrammesAggChartStats = async () => {
+    setLoadingCharts(true);
     try {
-      const pendingProgrames: any = [];
-      const authorisedProgrames: any = [];
-      const rejectedProgrames: any = [];
-      const timeLabelsProgrames: any = [];
-
-      const energyProgrames: any = [];
-      const healthProgrames: any = [];
-      const educationProgrames: any = [];
-      const transportProgrames: any = [];
-      const manufacturingProgrames: any = [];
-      const hospitalityProgrames: any = [];
-      const forestryProgrames: any = [];
-      const wasteProgrames: any = [];
-      const agricultureProgrames: any = [];
-      const otherProgrames: any = [];
-
-      const authorizedCredit: any = [];
-      const issuedCredit: any = [];
-      const retiredCredit: any = [];
-      const transferredCredit: any = [];
-
-      const certifiedCredit: any = [];
-      const unCertifiedCredit: any = [];
-      const revokedCredit: any = [];
-
-      const response: any = await post(
-        'stats/programme/dashboardCharts',
-        getAllProgrammeAnalyticsStatsChartsParams()
-      );
-      console.log(response?.data?.stats);
-      if (response?.data?.stats?.TOTAL_PROGRAMS) {
-        const totalProgrammes = response?.data?.stats?.TOTAL_PROGRAMS;
-        if (totalProgrammes?.awaitingAuthorization) {
-          const pendings = totalProgrammes?.awaitingAuthorization;
-          pendings?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            const label = Object.getOwnPropertyNames(item);
-            const date = new Date(parseInt(label[0]));
-            const formattedDate = moment(date).format('DD-MM-YYYY');
-            pendingProgrames.push(programesCount[0]);
-            timeLabelsProgrames.push(formattedDate);
-          });
+      const response: any = await post('stats/programme/agg', getAllChartsParams());
+      let programmesAggByStatus: any;
+      let programmesAggBySector: any;
+      let totalCreditsCertifiedStats: any;
+      let programmeLocationsStats: any;
+      let transferLocationsStats: any;
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        if (
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateTotalCredits(
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
+          );
         }
-        if (totalProgrammes?.authorised) {
-          const authorised = totalProgrammes?.authorised;
-          authorised?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            authorisedProgrames.push(programesCount[0]);
-          });
+        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesSectorStatsC(
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
+          );
         }
-        if (totalProgrammes?.rejected) {
-          const rejected = totalProgrammes?.rejected;
-          rejected?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            rejectedProgrames.push(programesCount[0]);
-          });
+        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+        if (
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateTotalCreditsCertified(
+            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
         }
+        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        if (
+          response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
+          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+        ) {
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+          );
+        }
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+        if (
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+          );
+          setLastUpdateTotalCredits(
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesSectorStatsC(
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+        ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+          );
+          setLastUpdateTotalCreditsCertified(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+          );
+        }
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+        if (
+          response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
+          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+        ) {
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+          );
+        }
+        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === 'overall'
+      ) {
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateTotalCredits(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesSectorStatsC(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateTotalCreditsCertified(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
+        }
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        if (
+          response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
+          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+        ) {
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+          );
+        }
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
+      } else {
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateTotalCreditsEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateTotalCredits(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesSectorStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesSectorStatsC(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateTotalCreditsCertifiedEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateTotalCreditsCertified(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
+        }
+        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        if (
+          response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
+          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+        ) {
+          setLastUpdateTransferLocationsEpoch(
+            parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+          );
+          setLastUpdateTransferLocations(
+            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+          );
+        }
+        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       }
-      if (response?.data?.stats?.TOTAL_PROGRAMS_SECTOR) {
-        const totalProgrammesSector = response?.data?.stats?.TOTAL_PROGRAMS_SECTOR;
-        if (totalProgrammesSector?.agriculture) {
-          const agriculture = totalProgrammesSector?.agriculture;
-          agriculture?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            agricultureProgrames.push(programesCount[0]);
+      let timeLabelDataStatus = [];
+      let formattedTimeLabelDataStatus: any = [];
+      let timeLabelDataSector = [];
+      let formattedTimeLabelDataSector: any = [];
+      let timeLabelCertifiedCreditsStats = [];
+      let formattedTimeLabelCertifiedCreditsStats: any = [];
+      if (programmesAggByStatus) {
+        timeLabelDataStatus = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+        setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
+        setTotalCreditsOptionsLabels(formattedTimeLabelDataStatus);
+        const statusArray = Object.values(ProgrammeStageLegend);
+        const totalProgrammesValues: ChartSeriesItem[] = [];
+        statusArray?.map((status: any) => {
+          totalProgrammesValues.push({
+            name: status === 'AwaitingAuthorization' ? 'Pending' : status,
+            data: programmesAggByStatus[firstLower(status)],
           });
-        }
-        if (totalProgrammesSector?.education) {
-          const education = totalProgrammesSector?.education;
-          education?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            educationProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.energy) {
-          const energy = totalProgrammesSector?.energy;
-          energy?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            energyProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.forestry) {
-          const forestry = totalProgrammesSector?.forestry;
-          forestry?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            forestryProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.health) {
-          const health = totalProgrammesSector?.health;
-          health?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            healthProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.hospitality) {
-          const hospitality = totalProgrammesSector?.hospitality;
-          hospitality?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            hospitalityProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.manufacturing) {
-          const manufacturing = totalProgrammesSector?.manufacturing;
-          manufacturing?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            manufacturingProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.other) {
-          const other = totalProgrammesSector?.other;
-          other?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            otherProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.transport) {
-          const transport = totalProgrammesSector?.transport;
-          transport?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            transportProgrames.push(programesCount[0]);
-          });
-        }
-        if (totalProgrammesSector?.waste) {
-          const waste = totalProgrammesSector?.waste;
-          waste?.map((item: any, index: any) => {
-            const programesCount = Object.values(item);
-            wasteProgrames.push(programesCount[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.TOTAL_CREDITS) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS;
-        if (totalCredits?.authorized) {
-          const authorized = totalCredits?.authorized;
-          authorized?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            authorizedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.issued) {
-          const issued = totalCredits?.issued;
-          issued?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            issuedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.retired) {
-          const retired = totalCredits?.retired;
-          retired?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            retiredCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.transferred) {
-          const transferred = totalCredits?.transferred;
-          transferred?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            transferredCredit.push(credit[0]);
-          });
-        }
-      }
-      if (response?.data?.stats?.PROGRAMME_LOCATIONS) {
-        const locations = response?.data?.stats?.PROGRAMME_LOCATIONS;
-        setProgrammeLocations(locations);
-      }
-      if (response?.data?.stats?.TRANSFER_LOCATIONS) {
-        const locations = response?.data?.stats?.TRANSFER_LOCATIONS;
-        setProgrammeTransferLocations(locations);
-      }
-      if (response?.data?.stats?.TOTAL_CREDITS_CERTIFIED) {
-        const totalCredits = response?.data?.stats?.TOTAL_CREDITS_CERTIFIED;
-        if (totalCredits?.certified) {
-          const certified = totalCredits?.certified;
-          certified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            certifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.uncertified) {
-          const uncertified = totalCredits?.uncertified;
-          uncertified?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            unCertifiedCredit.push(credit[0]);
-          });
-        }
-        if (totalCredits?.revoked) {
-          const revoked = totalCredits?.revoked;
-          revoked?.map((item: any, index: any) => {
-            const credit = Object.values(item);
-            revokedCredit.push(credit[0]);
-          });
-        }
-      }
-      console.log({
-        pendingProgrames,
-        authorisedProgrames,
-        rejectedProgrames,
-        timeLabelsProgrames,
-      });
-      setPendingProgrammes(pendingProgrames);
-      setAuthorisedProgrammes(authorisedProgrames);
-      setRejectedProgrammes(rejectedProgrames);
+        });
+        setTotalProgrammesSeries(totalProgrammesValues);
+        totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
 
-      setEnergyProgrammes(energyProgrames);
-      setHealthProgrammes(healthProgrames);
-      setEducationProgrammes(educationProgrames);
-      setTransportProgrammes(transportProgrames);
-      setManufacturingProgrammes(manufacturingProgrames);
-      setHospitalityProgrammes(hospitalityProgrames);
-      setForestryProgrammes(forestryProgrames);
-      setWasteProgrammes(wasteProgrames);
-      setAgricultureProgrammes(agricultureProgrames);
-      setOtherProgrammes(otherProgrames);
+        const totalCreditsValues: ChartSeriesItem[] = [
+          {
+            name: 'Authorised',
+            data: programmesAggByStatus?.authorisedCredits,
+          },
+          {
+            name: 'Issued',
+            data: programmesAggByStatus?.issuedCredits,
+          },
+          {
+            name: 'Transferred',
+            data: programmesAggByStatus?.transferredCredits,
+          },
+          {
+            name: 'Retired',
+            data: programmesAggByStatus?.retiredCredits,
+          },
+        ];
+        setTotalCreditsSeries(totalCreditsValues);
+        totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
+      }
+      if (programmesAggBySector) {
+        timeLabelDataSector = programmesAggByStatus?.timeLabel;
+        formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
+          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+        });
+        setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
+        const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
+        const sectorsArray = Object.values(Sector);
+        sectorsArray?.map((sector: any) => {
+          if (programmesAggBySector[firstLower(sector)] !== undefined) {
+            progarmmesSectorSeriesData.push({
+              name: sector,
+              data: programmesAggBySector[firstLower(sector)],
+            });
+          }
+        });
+        setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
+        totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+      }
+      if (totalCreditsCertifiedStats) {
+        timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
+        formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
+          (item: any) => {
+            return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          }
+        );
+        const totalCertifiedCreditsSeriesValues = [
+          {
+            name: 'Certified',
+            data: totalCreditsCertifiedStats?.certifiedSum,
+          },
+          {
+            name: 'Uncertified',
+            data: totalCreditsCertifiedStats?.uncertifiedSum,
+          },
+          {
+            name: 'Revoked',
+            data: totalCreditsCertifiedStats?.revokedSum,
+          },
+        ];
+        setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
+        setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
 
-      setAuthorizedCredits(authorizedCredit);
-      setIssuedCredits(issuedCredit);
-      setRetiredCredits(retiredCredit);
-      setTransferredCredits(transferredCredit);
-      setCertifiedCredits(certifiedCredit);
-      setUnCertifiedCredits(unCertifiedCredit);
-      setRevokedCredits(revokedCredit);
-      totalProgrammesOptions.xaxis.categories = timeLabelsProgrames;
-      totalProgrammesOptionsSub.xaxis.categories = timeLabelsProgrames;
-      totalCreditsOptions.xaxis.categories = timeLabelsProgrames;
-      totalCreditsCertifiedOptions.xaxis.categories = timeLabelsProgrames;
+        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
+      }
+      if (transferLocationsStats) {
+        setProgrammeTransferLocations(transferLocationsStats);
+      }
+      if (programmeLocationsStats) {
+        setProgrammeLocations(programmeLocationsStats);
+      }
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -493,7 +837,7 @@ const Dashboard = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
@@ -504,7 +848,6 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
       );
-      console.log('stats data  -- > ', response?.data);
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
       const pendingTransferInitAggregationResponse =
@@ -512,17 +855,13 @@ const Dashboard = () => {
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
       const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
-      const programmeByStatusAggregationResponseLastUpdate =
-        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.last;
+      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
         if (responseItem?.currentStage === 'AwaitingAuthorization') {
           setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
         }
       });
-      if (programmeByStatusAggregationResponseLastUpdate) {
-        setLastUpdateProgrammesStats(programmeByStatusAggregationResponseLastUpdate);
-      }
       if (pendingTransferInitAggregationResponse) {
         setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
       }
@@ -533,12 +872,80 @@ const Dashboard = () => {
         setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
       }
       if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.certifiedCount));
-        setProgrammesUnCertifed(parseInt(certifiedByMeAggregationResponse?.uncertifiedCount));
+        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
         setCreditCertifiedBalanceWithoutTimeRange(
           certifiedByMeAggregationResponse?.certifiedSum === null
             ? 0
-            : parseFloat(certifiedByMeAggregationResponse?.certifiedSum)
+            : parseFloat(certifiedByMeAggregationResponse?.sum)
+        );
+      }
+      if (unCertifiedByMeAggregationResponse) {
+        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
+      }
+      if (
+        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+        String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+      ) {
+        setLastUpdateProgrammesStatsEpoch(
+          parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+        );
+        setLastUpdateProgrammesStats(
+          moment(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          ).fromNow()
+        );
+      }
+      if (
+        response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime &&
+        String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !== '0'
+      ) {
+        setLastUpdatePendingTransferSentEpoch(
+          parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
+        );
+        setLastUpdatePendingTransferSent(
+          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)).fromNow()
+        );
+      }
+      if (
+        response?.data?.stats?.MY_CREDIT?.last &&
+        String(response?.data?.stats?.MY_CREDIT?.last) !== '0'
+      ) {
+        setLastUpdateCreditBalanceEpoch(parseInt(response?.data?.stats?.MY_CREDIT?.last));
+        setLastUpdateCreditBalance(
+          moment(parseInt(response?.data?.stats?.MY_CREDIT?.last)).fromNow()
+        );
+      }
+      if (
+        response?.data?.stats?.UNCERTIFIED_BY_ME?.last &&
+        String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
+      ) {
+        setLastUpdateProgrammesCertifiableEpoch(
+          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
+        );
+        setLastUpdateProgrammesCertifiable(
+          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
+        );
+      }
+      if (
+        response?.data?.stats?.CERTIFIED_BY_ME?.last &&
+        String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== '0'
+      ) {
+        setLastUpdateProgrammesCertifiedEpoch(
+          parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
+        );
+        setLastUpdateProgrammesCertified(
+          moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)).fromNow()
+        );
+      }
+      if (
+        response?.data?.stats?.PENDING_TRANSFER_RECV?.last &&
+        String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== '0'
+      ) {
+        setLastUpdatePendingTransferReceivedEpoch(
+          parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
+        );
+        setLastUpdatePendingTransferReceived(
+          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)).fromNow()
         );
       }
     } catch (error: any) {
@@ -563,68 +970,239 @@ const Dashboard = () => {
         'stats/programme/agg',
         getAllProgrammeAnalyticsStatsParams()
       );
-      console.log('stats data 2nd  -- > ', response?.data);
       let programmeByStatusAggregationResponse: any;
+      let programmeByStatusAuthAggregationResponse: any;
       let certifiedRevokedAggregationResponse: any;
-      if (companyRole === 'ProgrammeDeveloper' || categoryType === 'mine') {
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        if (
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesStatsC(
+            moment(
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
+            '0'
+        ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateProgrammesCreditsStats(
+            moment(
+              parseInt(
+                response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+              )
+            ).fromNow()
+          );
+        }
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateCertifiedCreditsStats(
+            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
+        }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-      } else {
+      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+        if (
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesStatsC(
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        if (
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !==
+            '0'
+        ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+          );
+          setLastUpdateProgrammesCreditsStats(
+            moment(
+              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+        ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+          );
+          setLastUpdateCertifiedCreditsStats(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+          );
+        }
+        certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === 'overall'
+      ) {
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesStatsC(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
         programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateProgrammesCreditsStats(
+            moment(
+              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateCertifiedCreditsStats(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
+        }
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+      } else {
+        if (
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesStatsCEpoch(
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          );
+          setLastUpdateProgrammesStatsC(
+            moment(
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+          String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+        ) {
+          setLastUpdateProgrammesCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+          );
+          setLastUpdateProgrammesCreditsStats(
+            moment(
+              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            ).fromNow()
+          );
+        }
+        programmeByStatusAuthAggregationResponse =
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+        if (
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+        ) {
+          setLastUpdateCertifiedCreditsStatsEpoch(
+            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+          );
+          setLastUpdateCertifiedCreditsStats(
+            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+          );
+        }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
-      let totalProgrammes = 0;
-      let totalEstCredits = 0;
-      let totalIssuedCredits = 0;
-      let totalRetiredCredits = 0;
-      let totalBalancecredit = 0;
-      let totalTxCredits = 0;
-      let totalCertifiedCredit = 0;
-      let totalUnCertifiedredit = 0;
-      let totalRevokedCredits = 0;
+      let totalProgrammes: any = 0;
+      let totalEstCredits: any = 0;
+      let totalIssuedCredits: any = 0;
+      let totalRetiredCredits: any = 0;
+      let totalBalancecredit: any = 0;
+      let totalTxCredits: any = 0;
+      let totalFrozenCredits: any = 0;
+      let totalCertifiedCredit: any = 0;
+      let totalUnCertifiedredit: any = 0;
+      let totalRevokedCredits: any = 0;
+      let pendingProgrammesC: any = 0;
+      let authorisedProgrammesC: any = 0;
+      let rejectedProgrammesC: any = 0;
+      const programmeStatusA = Object.values(ProgrammeStageLegend);
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          console.log('programmeByStatusAggregationResponse ---- > ', responseItem);
-          if (responseItem?.currentStage === 'AwaitingAuthorization') {
+          console.log('mine --> check -- > ', programmeByStatusAggregationResponse);
+          if ([ProgrammeStage.AWAITING_AUTHORIZATION].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-            setPendingProjects(parseInt(responseItem?.count));
+            pendingProgrammesC = parseInt(responseItem?.count);
           }
-          if (responseItem?.currentStage === 'Rejected') {
+          if ([ProgrammeStage.REJECTED].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-            setRejectedProjects(parseInt(responseItem?.count));
+            rejectedProgrammesC = parseInt(responseItem?.count);
           }
-          if (responseItem?.currentStage === 'Authorised') {
+          if ([ProgrammeStage.AUTHORISED].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-            totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-            totalRetiredCredits =
-              totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-            totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-            totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-            setAuthorisedProjects(parseInt(responseItem?.count));
+            authorisedProgrammesC = parseInt(responseItem?.count);
           }
         });
         setTotalProjects(totalProgrammes);
+        setPendingProjects(pendingProgrammesC);
+        setAuthorisedProjects(authorisedProgrammesC);
+        setRejectedProjects(rejectedProgrammesC);
       } else {
         setPendingProjects(0);
         setAuthorisedProjects(0);
         setRejectedProjects(0);
         setTotalProjects(0);
+      }
+      if (programmeByStatusAuthAggregationResponse?.length > 0) {
+        programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
+          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+        });
       }
       if (certifiedRevokedAggregationResponse) {
         totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
@@ -633,25 +1211,32 @@ const Dashboard = () => {
       }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
-      pieSeriesCreditsData.push(creditAuthorized);
-      pieSeriesCreditsData.push(totalBalancecredit);
-      pieSeriesCreditsData.push(totalTxCredits);
-      pieSeriesCreditsData.push(totalRetiredCredits);
+      pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
+      pieSeriesCreditsData.push(
+        addRoundNumber(
+          totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits
+        )
+      );
+      pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
+      pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
 
-      pieSeriesCreditsCerifiedData.push(totalCertifiedCredit);
-      pieSeriesCreditsCerifiedData.push(totalUnCertifiedredit);
-      pieSeriesCreditsCerifiedData.push(totalRevokedCredits);
-      const totalCreditsCertified =
-        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits;
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+      const totalCreditsCertified = addRoundNumber(
+        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+      );
+      setCreditsPieChartTotal(
+        String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+      );
+      setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
+      const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + addCommSep(totalCreditsCertified);
-
-      console.log({ pieSeriesCreditsData, pieSeriesCreditsCerifiedData });
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
-      setLastUpdate(response?.data?.lastUpdate);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -666,131 +1251,170 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    getUserProfileDetails();
+    getAllProgrammeAnalyticsStatsWithoutTimeRange();
+    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      setCategoryType('mine');
+    }
   }, []);
 
   useEffect(() => {
-    console.log('rejected projects hanges --- ', rejectedProjects);
-  }, [rejectedProjects]);
-
-  useEffect(() => {
-    getAllProgrammeAnalyticsStatsWithoutTimeRange();
-    if (companyRole === 'ProgrammeDeveloper') {
-      setCategoryType('mine');
-    }
-  }, [companyRole]);
-
-  useEffect(() => {
     getAllProgrammeAnalyticsStats();
-    getAllProgrammeAnalyticsStatsCharts();
+    getAllProgrammesAggChartStats();
   }, [startTime, endTime, categoryType]);
 
-  const seriesTotalProgrammesY = [
-    {
-      name: 'Authorised',
-      data: authorisedProgrammes,
-    },
-    {
-      name: 'Rejected',
-      data: rejectedProgrammes,
-    },
-    {
-      name: 'Pending',
-      data: pendingProgrammes,
-    },
-  ];
-
-  const seriesTotalProgrammesSubY = [
-    {
-      name: 'Energy',
-      data: energyProgrammes,
-    },
-    {
-      name: 'Health',
-      data: healthProgrammes,
-    },
-    {
-      name: 'Education',
-      data: educationProgrammes,
-    },
-    {
-      name: 'Transport',
-      data: transportProgrammes,
-    },
-    {
-      name: 'Manufacturing',
-      data: manufacturingProgrammes,
-    },
-    {
-      name: 'Hospitality',
-      data: hospitalityProgrammes,
-    },
-    {
-      name: 'Forestry',
-      data: forestryProgrammes,
-    },
-    {
-      name: 'Waste',
-      data: wasteProgrammes,
-    },
-    {
-      name: 'Agriculture',
-      data: agricultureProgrammes,
-    },
-    {
-      name: 'Other',
-      data: otherProgrammes,
-    },
-  ];
-
-  const seriesTotalCreditsY = [
-    {
-      name: 'Authorised',
-      data: authorizedCredits,
-    },
-    {
-      name: 'Issued',
-      data: issuedCredits,
-    },
-    {
-      name: 'Transferred',
-      data: transferredCredits,
-    },
-    {
-      name: 'Retired',
-      data: retiredCredits,
-    },
-  ];
-
-  const seriesTotalCreditsCertifiedY = [
-    {
-      name: 'Certified',
-      data: certifiedCredits,
-    },
-    {
-      name: 'UnCertified',
-      data: unCertifiedCredits,
-    },
-    {
-      name: 'Revoked',
-      data: revokedCredits,
-    },
-  ];
+  useEffect(() => {
+    ApexCharts.exec('total-programmes-sector', 'updateSeries', {
+      data: totalProgrammesSectorSeries,
+    });
+    ApexCharts.exec('total-programmes-sector', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesSectorOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
 
   useEffect(() => {
-    console.log('transfr credit --- > ', transferredCredits);
-  }, [transferredCredits]);
+    ApexCharts.exec('total-programmes', 'updateSeries', {
+      data: totalProgrammesSeries,
+    });
+    ApexCharts.exec('total-programmes', 'updateOptions', {
+      xaxis: {
+        categories: totalProgrammesOptionsLabels,
+      },
+    });
+  }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
 
-  const count1 = ['all', ['>=', ['get', 'count'], 0], ['<', ['get', 'count'], 4]];
-  const count2 = ['all', ['>=', ['get', 'count'], 4], ['<', ['get', 'count'], 6]];
-  const count3 = ['all', ['>=', ['get', 'count'], 6], ['<', ['get', 'count'], 10]];
-  const count4 = ['all', ['>=', ['get', 'count'], 10], ['<', ['get', 'count'], 16]];
-  const count5 = ['>=', ['get', 'count'], 16];
+  useEffect(() => {
+    ApexCharts.exec('total-credits', 'updateSeries', {
+      data: totalCreditsSeries,
+    });
+    ApexCharts.exec('total-credits', 'updateOptions', {
+      xaxis: {
+        categories: totalCreditsOptionsLabels,
+      },
+    });
+  }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
-  // colors to use for the categories
-  const colors = ['#33adff', '#4db8ff', '#80ccff', '#99d6ff', '#ccebff'];
+  useEffect(() => {
+    ApexCharts.exec('total-credits-certified', 'updateSeries', {
+      data: totalCertifiedCreditsSeries,
+    });
+    ApexCharts.exec('total-credits-certified', 'updateOptions', {
+      xaxis: {
+        categories: totalCertifiedCreditsOptionsLabels,
+      },
+    });
+  }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
 
-  function donutSegment(start: any, end: any, r: any, r0: any, color: any) {
+  useEffect(() => {
+    ApexCharts.exec('credits', 'updateSeries', {
+      series: creditsPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => creditsPieChartTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
+
+  useEffect(() => {
+    ApexCharts.exec('certified-credits', 'updateSeries', {
+      series: creditsCertifiedPieSeries,
+    });
+    ApexCharts.exec('credits', 'updateOptions', {
+      plotOptions: {
+        pie: {
+          labels: {
+            total: {
+              formatter: () => certifiedCreditsPieChartTotal,
+            },
+          },
+        },
+      },
+    });
+  }, [creditsCertifiedPieSeries, categoryType, certifiedCreditsPieChartTotal]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (lastUpdateProgrammesStatsEpoch !== 0) {
+        setLastUpdateProgrammesStats(moment(lastUpdateProgrammesStatsEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesStatsCEpoch !== 0) {
+        setLastUpdateProgrammesStatsC(moment(lastUpdateProgrammesStatsCEpoch).fromNow());
+      }
+      if (lastUpdatePendingTransferSentEpoch !== 0) {
+        setLastUpdatePendingTransferSent(moment(lastUpdatePendingTransferSentEpoch).fromNow());
+      }
+      if (lastUpdateCreditBalanceEpoch !== 0) {
+        setLastUpdateCreditBalance(moment(lastUpdateCreditBalanceEpoch).fromNow());
+      }
+      if (lastUpdatePendingTransferReceivedEpoch !== 0) {
+        setLastUpdatePendingTransferReceived(
+          moment(lastUpdatePendingTransferReceivedEpoch).fromNow()
+        );
+      }
+      if (lastUpdateProgrammesCertifiableEpoch !== 0) {
+        setLastUpdateProgrammesCertifiable(moment(lastUpdateProgrammesCertifiableEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesCertifiedEpoch !== 0) {
+        setLastUpdateProgrammesCertified(moment(lastUpdateProgrammesCertifiedEpoch).fromNow());
+      }
+      if (lastUpdateCertifiedCreditsStatsEpoch !== 0) {
+        setLastUpdateCertifiedCreditsStats(moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow());
+      }
+      if (lastUpdateProgrammesCreditsStatsEpoch !== 0) {
+        setLastUpdateProgrammesCreditsStats(
+          moment(lastUpdateProgrammesCreditsStatsEpoch).fromNow()
+        );
+      }
+      if (lastUpdateProgrammesSectorStatsCEpoch !== 0) {
+        setLastUpdateProgrammesSectorStatsC(
+          moment(lastUpdateProgrammesSectorStatsCEpoch).fromNow()
+        );
+      }
+      if (lastUpdateTotalCreditsEpoch !== 0) {
+        setLastUpdateTotalCredits(moment(lastUpdateTotalCreditsEpoch).fromNow());
+      }
+      if (lastUpdateTotalCreditsCertifiedEpoch !== 0) {
+        setLastUpdateTotalCreditsCertified(moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow());
+      }
+      if (lastUpdateTransferLocationsEpoch !== 0) {
+        setLastUpdateTransferLocations(moment(lastUpdateTransferLocationsEpoch).fromNow());
+      }
+    }, 60 * 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, [
+    lastUpdateProgrammesStatsEpoch,
+    lastUpdateProgrammesStatsCEpoch,
+    lastUpdatePendingTransferSentEpoch,
+    lastUpdateCreditBalanceEpoch,
+    lastUpdatePendingTransferReceivedEpoch,
+    lastUpdateProgrammesCertifiableEpoch,
+    lastUpdateProgrammesCertifiedEpoch,
+    lastUpdateProgrammesCreditsStatsEpoch,
+    lastUpdateCertifiedCreditsStatsEpoch,
+    lastUpdateProgrammesSectorStatsCEpoch,
+    lastUpdateTotalCreditsEpoch,
+    lastUpdateTotalCreditsCertifiedEpoch,
+    lastUpdateTransferLocationsEpoch,
+  ]);
+
+  const countS = ['all', ['>=', ['get', 'count'], 0]];
+  const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
+  const authorised = ['==', ['get', 'stage'], 'Authorised'];
+  const rejected = ['==', ['get', 'stage'], 'Rejected'];
+
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
+
+  const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
     const a0 = 2 * Math.PI * (start - 0.25);
     const a1 = 2 * Math.PI * (end - 0.25);
@@ -806,39 +1430,58 @@ const Dashboard = () => {
     } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
       r + r0 * y1
     } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
-  }
+  };
 
   // code for creating an SVG donut chart from feature properties
-  function createDonutChart(properties: any) {
+  const createDonutChart = (properties: any) => {
     console.log('properties of donut creator --- > ', properties);
     const offsets = [];
+    const offsetsStage = [];
     let counts: any = [];
-    if (properties.count1) {
-      counts = [
-        properties.count1,
-        properties.count2,
-        properties.count3,
-        properties.count4,
-        properties.count5,
-      ];
-    } else {
+    let programmeStageCounts: any = [];
+    if (properties.count) {
       counts = [properties.count];
+    }
+
+    if (properties.cluster_id) {
+      programmeStageCounts = [properties.authorised, properties.rejected, properties.pending];
+    } else {
+      if (properties?.stage === 'AwaitingAuthorization') {
+        programmeStageCounts = [0, 0, properties.count];
+      } else if (properties?.stage === 'Authorised') {
+        programmeStageCounts = [properties.count, 0, 0];
+      } else if (properties?.stage === 'Rejected') {
+        programmeStageCounts = [0, properties.count, 0];
+      }
     }
     let total = 0;
     for (const count of counts) {
       offsets.push(total);
       total += count;
     }
-    const fontSize = total >= 1000 ? 22 : total >= 100 ? 20 : total >= 10 ? 18 : 16;
-    const r = total >= 1000 ? 50 : total >= 100 ? 32 : total >= 10 ? 24 : 18;
+    let totalStage = 0;
+    for (const count of programmeStageCounts) {
+      offsetsStage.push(totalStage);
+      totalStage += count;
+    }
+    const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
+    const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
     const r0 = Math.round(r * 0.6);
     const w = r * 2;
 
     let html = `<div>
 <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
 
-    for (let i = 0; i < counts.length; i++) {
-      html += donutSegment(offsets[i] / total, (offsets[i] + counts[i]) / total, r, r0, colors[i]);
+    for (let i = 0; i < programmeStageCounts?.length; i++) {
+      if (programmeStageCounts[i] !== 0) {
+        html += donutSegment(
+          offsetsStage[i] === 0 ? 0 : offsetsStage[i] / totalStage,
+          (offsetsStage[i] + programmeStageCounts[i]) / totalStage,
+          r,
+          r0,
+          colors[i]
+        );
+      }
     }
     html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
 <text dominant-baseline="central" transform="translate(${r}, ${r})">
@@ -850,82 +1493,117 @@ ${total}
     const el = document.createElement('div');
     el.innerHTML = html;
     return el.firstChild;
-  }
+  };
 
   useEffect(() => {
     setTimeout(() => {
-      const map = new mapboxgl.Map({
-        container: mapContainerInternationalRef.current || '',
-        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [12, 50],
-        zoom: 0.5,
-      });
-
-      // Add markers to the map.
-      map.on('load', () => {
-        map.addSource('countries', {
-          type: 'vector',
-          url: 'mapbox://mapbox.country-boundaries-v1',
+      if (mapContainerInternationalRef?.current) {
+        const map = new mapboxgl.Map({
+          container: mapContainerInternationalRef?.current || '',
+          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: [12, 50],
+          zoom: 0.5,
         });
 
-        // Build a GL match expression that defines the color for every vector tile feature
-        // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-        const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+        // Add markers to the map.
+        map.on('load', () => {
+          map.addSource('countries', {
+            type: 'vector',
+            url: 'mapbox://mapbox.country-boundaries-v1',
+          });
 
-        const transferLocations: any = [...programmeTransferLocations];
+          // Build a GL match expression that defines the color for every vector tile feature
+          // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+          const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+          const txLocationMap: any = {};
 
-        // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
-          // Convert the range of data values to a suitable color
-          // const blue = row.ratio * 255;
+          const transferLocations: any = [...programmeTransferLocations];
 
-          const color =
-            row.ratio < 0.25
-              ? `#FFC343`
-              : row.ratio < 0.5
-              ? '#FFAC6F'
-              : row.ratio < 0.75
-              ? '#FF923D'
-              : '#FE8163';
+          // Calculate color values for each country based on 'hdi' value
+          for (const row of transferLocations) {
+            // Convert the range of data values to a suitable color
+            // const blue = row.ratio * 255;
 
-          matchExpression.push(row.code, color);
-        }
+            const color =
+              row.count < 2
+                ? `#4da6ff`
+                : row.count < 10
+                ? '#0080ff'
+                : row.count < 50
+                ? '#0059b3'
+                : row.count < 100
+                ? '#003366'
+                : '#000d1a';
 
-        function getCountryCodes(dataSet: any) {
-          return dataSet.map((item: any) => item.code);
-        }
+            matchExpression.push(row.country, color);
+            txLocationMap[row.country] = row.count;
+          }
 
-        // Last value is the default, used where there is no data
-        matchExpression.push('rgba(0, 0, 0, 0)');
+          function getCountryCodes(dataSet: any) {
+            return dataSet.map((item: any) => item.code);
+          }
 
-        map.addLayer(
-          {
-            id: 'countries-join',
-            type: 'fill',
-            source: 'countries',
-            'source-layer': 'country_boundaries',
-            paint: {
-              'fill-color': matchExpression,
+          map.on('click', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            if (!features.length) {
+              return;
+            }
+
+            const feature = features[0];
+            if (!txLocationMap[feature.properties?.iso_3166_1]) {
+              return;
+            }
+            console.log(feature);
+
+            const popup = new mapboxgl.Popup()
+              .setLngLat(map.unproject(e.point))
+              .setHTML(
+                `${feature.properties?.name_en} : ${txLocationMap[feature.properties?.iso_3166_1]}`
+              )
+              .addTo(map);
+          });
+
+          // Use the same approach as above to indicate that the symbols are clickable
+          // by changing the cursor style to 'pointer'.
+          map.on('mousemove', function (e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+            map.getCanvas().style.cursor =
+              features.length > 0 && txLocationMap[features[0].properties?.iso_3166_1]
+                ? 'pointer'
+                : '';
+          });
+
+          // Last value is the default, used where there is no data
+          matchExpression.push('rgba(0, 0, 0, 0)');
+
+          map.addLayer(
+            {
+              id: 'countries-join',
+              type: 'fill',
+              source: 'countries',
+              'source-layer': 'country_boundaries',
+              paint: {
+                'fill-color': matchExpression,
+              },
             },
-          },
-          'admin-1-boundary-bg'
-        );
-      });
+            'admin-1-boundary-bg'
+          );
+        });
+      }
     }, 1000);
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    // const address = programmeLocations[0];
-
+    console.log('programme locations ---- > ', programmeLocations);
     setTimeout(() => {
       if (mapContainerRef.current) {
         const map = new mapboxgl.Map({
-          container: mapContainerRef.current || '',
+          container: mapContainerRef?.current || '',
           zoom: 4,
           center: programmeLocations?.features[0]?.geometry?.coordinates
             ? programmeLocations?.features[0]?.geometry?.coordinates
-            : [54.44073, 16.39371],
+            : [7.4924165, 5.5324032],
           // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
           style: 'mapbox://styles/mapbox/light-v11',
         });
@@ -937,12 +1615,11 @@ ${total}
             cluster: true,
             clusterRadius: 40,
             clusterProperties: {
-              // keep separate counts for each countnitude category in a cluster
-              count1: ['+', ['case', count1, 1, 0]],
-              count2: ['+', ['case', count2, 1, 0]],
-              count3: ['+', ['case', count3, 1, 0]],
-              count4: ['+', ['case', count4, 1, 0]],
-              count5: ['+', ['case', count5, 1, 0]],
+              // keep separate counts for each programmeStage category in a cluster
+              count: ['+', ['case', countS, ['get', 'count'], 0]],
+              pending: ['+', ['case', pending, ['get', 'count'], 0]],
+              authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
+              rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
             },
           });
           // circle and symbol layers for rendering individual programmeLocations (unclustered points)
@@ -952,18 +1629,7 @@ ${total}
             source: 'programmeLocations',
             filter: ['!=', 'cluster', true],
             paint: {
-              'circle-color': [
-                'case',
-                count1,
-                colors[0],
-                count2,
-                colors[1],
-                count3,
-                colors[2],
-                count4,
-                colors[3],
-                colors[4],
-              ],
+              'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
               'circle-opacity': 1,
               'circle-radius': 10,
             },
@@ -980,7 +1646,7 @@ ${total}
             // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
             // and add it to the map if it's not there already
             for (const feature of features) {
-              console.log(feature.properties);
+              // console.log(feature.properties);
               const coords = feature.geometry.coordinates;
               const properties = feature.properties;
               // if (!properties.cluster) continue;
@@ -992,10 +1658,6 @@ ${total}
                 marker = markers[id] = new mapboxgl.Marker({
                   element: el,
                 }).setLngLat(coords);
-
-                // marker = markers[id] = new mapboxgl.Marker({
-                //   element: el,
-                // }).;
               }
               newMarkers[id] = marker;
 
@@ -1029,88 +1691,109 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? pendingProjectsWithoutTimeRange
-                  : companyRole === 'ProgrammeDeveloper'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestReceived
                   : programmesUnCertifed
               }
-              title={
-                companyRole === 'Government'
-                  ? 'Programmes Pending'
-                  : companyRole === 'ProgrammeDeveloper'
-                  ? 'Transfer Requests Received'
-                  : 'Programmes Uncertified'
+              title={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'programmesPending'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'trasnferReqReceived'
+                  : 'programmesUnCertified'
+              )}
+              updatedDate={
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? lastUpdateProgrammesStats
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? lastUpdatePendingTransferReceived
+                  : lastUpdateProgrammesCertifiable
               }
-              updatedDate={parseInt(lastUpdateProgrammesStats) / 1000}
               icon={
-                companyRole === 'Government' ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <ClockHistory color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowInRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldX color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? transferRequestSent
-                  : companyRole === 'ProgrammeDeveloper'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestSent
                   : programmesCertifed
               }
-              title={
-                companyRole === 'Government'
-                  ? 'Transfer Requests Sent'
-                  : companyRole === 'ProgrammeDeveloper'
-                  ? 'Transfer Requests Sent'
-                  : 'Programmes Certified'
+              title={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'trasnferReqInit'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'trasnferReqInit'
+                  : 'programmesCertified'
+              )}
+              updatedDate={
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? lastUpdatePendingTransferSent
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? lastUpdatePendingTransferSent
+                  : lastUpdateProgrammesCertified
               }
-              updatedDate={lastUpdate}
               icon={
-                companyRole === 'Government' ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldCheck color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
-                companyRole === 'Government'
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? creditBalanceWithoutTimeRange
-                  : companyRole === 'ProgrammeDeveloper'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? creditBalanceWithoutTimeRange
                   : creditCertiedBalanceWithoutTimeRange
               }
-              title={
-                companyRole === 'Government'
-                  ? 'Credit Balance'
-                  : companyRole === 'ProgrammeDeveloper'
-                  ? 'Credit Balance'
-                  : 'Credit Certified'
+              title={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'creditBal'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'creditBal'
+                  : 'creditCertified'
+              )}
+              updatedDate={
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? lastUpdateCreditBalance
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? lastUpdateCreditBalance
+                  : lastUpdateProgrammesCertified
               }
-              updatedDate={lastUpdate}
               icon={
-                companyRole === 'Government' ? (
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <Gem color="#16B1FF" size={80} />
-                ) : companyRole === 'ProgrammeDeveloper' ? (
+                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                   <Gem color="#16B1FF" size={80} />
                 ) : (
                   <ShieldExclamation color="#16B1FF" size={80} />
                 )
               }
               loading={loadingWithoutTimeRange}
+              companyRole={userInfoState?.companyRole}
             />
           </Col>
         </Row>
@@ -1130,7 +1813,7 @@ ${total}
           />
         </div>
         <div className="radio-selection">
-          {companyRole === 'Certifier' && (
+          {userInfoState?.companyRole === CompanyRole.CERTIFIER && (
             <Radio.Group value={categoryType} onChange={onChangeCategory}>
               <Radio.Button className="overall" value="overall">
                 OVERALL
@@ -1150,26 +1833,55 @@ ${total}
               pending={pendingProjects}
               rejected={rejectedProjects}
               authorized={authorisedProjects}
-              updatedDate={parseInt(lastUpdateProgrammesStats)}
+              updatedDate={lastUpdateProgrammesStatsC}
               loading={loading}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTProgrammesGoverment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTProgrammesProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTProgrammesCertifierMine'
+                  : 'tTProgrammesCertifierOverall'
+              )}
             />
           </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col pie">
             <PieChartsStat
-              title="Credits"
+              id="credits"
+              title={t('credits')}
               options={optionDonutPieA}
               series={creditsPieSeries}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
+              lastUpdate={lastUpdateProgrammesCreditsStats}
               loading={loading}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTCreditsGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTCreditsProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTCreditsCertifierMine'
+                  : 'tTCreditsCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <PieChartsStat
-              title="Certified Credits"
+              id="certified-credits"
+              title={t('certifiedCredits')}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
+              lastUpdate={lastUpdateCertifiedCreditsStats}
               loading={loading}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTCertifiedCreditsGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTCertifiedCreditsProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTCertifiedCreditsCertifierMine'
+                  : 'tTCertifiedCreditsCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1178,20 +1890,40 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Programmes"
+              id="total-programmes"
+              title={t('totalProgrammes')}
               options={totalProgrammesOptions}
-              series={seriesTotalProgrammesY}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
-              loading={loading}
+              series={totalProgrammesSeries}
+              lastUpdate={lastUpdateProgrammesStatsC}
+              loading={loadingCharts}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTTotalProgrammesGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTTotalProgrammesProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTTotalProgrammesCertifierMine'
+                  : 'tTTotalProgrammesCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Programmes:Sector"
+              id="total-programmes-sector"
+              title={t('totalProgrammesSector')}
               options={totalProgrammesOptionsSub}
-              series={seriesTotalProgrammesSubY}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
-              loading={loading}
+              series={totalProgrammesSectorSeries}
+              lastUpdate={lastUpdateProgrammesSectorStatsC}
+              loading={loadingCharts}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTTotalProgrammesSectorGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTTotalProgrammesSecProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTTotalProgrammesSecCertifierMine'
+                  : 'tTTotalProgrammesSecCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1200,20 +1932,40 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Credits"
+              id="total-credits"
+              title={t('totalCredits')}
               options={totalCreditsOptions}
-              series={seriesTotalCreditsY}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
-              loading={loading}
+              series={totalCreditsSeries}
+              lastUpdate={lastUpdateTotalCredits}
+              loading={loadingCharts}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTTotalCreditsGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTTotalCreditsProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTTotalCreditsCertifierMine'
+                  : 'tTTotalCreditsCertifierOverall'
+              )}
             />
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <BarChartsStat
-              title="Total Credit Certified"
+              id="total-credits-certified"
+              title={t('totalCreditsCertified')}
               options={totalCreditsCertifiedOptions}
-              series={seriesTotalCreditsCertifiedY}
-              lastUpdate={parseInt(lastUpdateProgrammesStats)}
-              loading={loading}
+              series={totalCertifiedCreditsSeries}
+              lastUpdate={lastUpdateTotalCreditsCertified}
+              loading={loadingCharts}
+              toolTipText={t(
+                userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  ? 'tTTotalCreditsCertifiedGovernment'
+                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTTotalCertifiedCreditsProgrammeDev'
+                  : categoryType === 'mine'
+                  ? 'tTTotalCertifiedCreditsCertifierMine'
+                  : 'tTTotalCertifiedCreditsCertifierOverall'
+              )}
             />
           </Col>
         </Row>
@@ -1222,8 +1974,30 @@ ${total}
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Programme Locations</div>
-              {loading ? (
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">{t('programmeLocations')}</div>
+                <div className="info-container">
+                  <div className="info-container">
+                    <Tooltip
+                      arrowPointAtCenter
+                      placement="bottomRight"
+                      trigger="hover"
+                      title={t(
+                        userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                          ? 'tTProgrammeLocationsGovernment'
+                          : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                          ? 'tTProgrammeLocationsProgrammeDev'
+                          : categoryType === 'mine'
+                          ? 'tTProgrammeLocationsCertifierMine'
+                          : 'tTProgrammeLocationsCertifierOverall'
+                      )}
+                    >
+                      <InfoCircle color="#000000" size={17} />
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+              {loadingCharts ? (
                 <div className="margin-top-2">
                   <Skeleton active />
                   <Skeleton active />
@@ -1233,10 +2007,13 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
-                    <div className="updated-moment-container">
-                      {moment(parseInt(lastUpdateProgrammesStats)).fromNow()}
-                    </div>
+                  <div className="stage-legends">
+                    <LegendItem text="Authorised" color="#6ACDFF" />
+                    <LegendItem text="Rejected" color="#FF8183" />
+                    <LegendItem text="Pending" color="#CDCDCD" />
+                  </div>
+                  <div className="updated-on margin-top-1">
+                    <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
                   </div>
                 </>
               )}
@@ -1244,8 +2021,28 @@ ${total}
           </Col>
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-title">Transfer Locations International</div>
-              {loading ? (
+              <div className="pie-charts-top">
+                <div className="pie-charts-title">{t('trasnferLocations')}</div>
+                <div className="info-container">
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="bottomRight"
+                    trigger="hover"
+                    title={t(
+                      userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                        ? 'tTTransferLocationsGovernment'
+                        : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                        ? 'tTTrasnferLocationsProgrammeDev'
+                        : categoryType === 'mine'
+                        ? 'tTTrasnferLocationsCertifierMine'
+                        : 'tTTrasnferLocationsCertifierOverall'
+                    )}
+                  >
+                    <InfoCircle color="#000000" size={17} />
+                  </Tooltip>
+                </div>
+              </div>
+              {loadingCharts ? (
                 <div className="margin-top-2">
                   <Skeleton active />
                   <Skeleton active />
@@ -1255,9 +2052,9 @@ ${total}
                   <div className="map-content">
                     <div className="map-container" ref={mapContainerInternationalRef} />
                   </div>
-                  <div className="updated-on argin-top-1">
+                  <div className="updated-on margin-top-2">
                     <div className="updated-moment-container">
-                      {moment(lastUpdate * 1000).fromNow()}
+                      {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
                     </div>
                   </div>
                 </>

@@ -6,6 +6,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   background-color: $background-color;
+  scroll-behavior: smooth;
 
   .homepage-header-container {
     background-color: rgba(255, 255, 255, 0.8);
@@ -15,10 +16,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
     padding: 0rem 0rem 0 0vw;
     cursor: pointer;
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     .title {
       font-family: 'MuseoSans';
@@ -26,6 +29,7 @@
       color: $logo-text-color;
       font-weight: 700;
       margin-right: 0.5rem;
+      padding-left: 5px;
     }
 
     .title-sub {
@@ -33,41 +37,29 @@
       font-family: 'MuseoSans';
       font-size: 1.2rem;
       color: $logo-text-color;
-      // padding-bottom: 3px;
     }
 
     .logo {
-      // display: flex;
-      // flex-direction: row;
-      // justify-content: flex-start;
-      // align-items: center;
-      height: 53px;
+      height: 40px;
+      // width: 65px;
       padding-left: 2vw;
-      // overflow: hidden;
-      // margin-right: 0.8rem;
-
-      // background-color: red;
       img {
         object-fit: cover;
-        height: auto;
-        height: 70%;
-        margin-top: 6px;
+        // height: auto;
+        // height: 100%;
+        // width: 100%;
+        height: 40px;
+        width: 36px;
+        // padding-right: 5px;
       }
     }
-    // button {
-    //   margin-top: 6px;
-    //   margin-right: 10px;
-    //   margin-left: 30px;
-    //   text-transform: uppercase;
-    //   // font-size: 1.25rem;
-    //   // font-weight: 500;
-    //   // color: $primary-color;
-    // }
+
     .country-name {
       font-size: 0.65rem;
       color: $logo-text-color;
       margin-top: -5px;
       font-family: 'MuseoSans';
+      margin-left: 6px;
     }
   }
   .homepage-button-container {
@@ -75,7 +67,7 @@
     justify-content: right;
     min-width: 150px;
     height: 90px;
-    background-color: rgba(255, 255, 255, 0.8);;
+    background-color: rgba(255, 255, 255, 0.8);
 
     button {
       margin-top: 29px;
@@ -83,10 +75,45 @@
       margin-left: 30px;
       text-transform: uppercase;
     }
+    .ant-btn-primary {
+      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+      color: $dark-text-color;
+      border: none;
+    }
+    .ant-btn-primary:hover {
+      background-color: $gradient-background-start;
+    }
   }
+  // .image-container {
+  //   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
+  //   url('../../Assets/Images/factory.webp') left 10% bottom 20% / cover no-repeat border-box;
+  //   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
+  //     image-set(
+  //       '../../Assets/Images/factory.webp' left 10% bottom 20% / cover no-repeat border-box
+  //         type('image/webp'),
+  //       '../../Assets/Images/factory.png' type('image/png')
+  //     );
+  // }
+  .image-container {
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(22, 177, 255, 0.4) 40%
+      ),
+      url('../../Assets/Images/factory.webp');
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(22, 177, 255, 0.4) 40%
+      ),
+      image-set(
+        '../../Assets/Images/factory.png' type('image/png'),
+        '../../Assets/Images/factory.webp' type('image/webp')
+      );
+    background-size: cover;
+  }
+
   .homepage-img-container {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 10%, rgba(22, 177, 255, 0.4) 40%),
-      url('../../Assets/Images/factory.png') left 10% bottom 20% / cover no-repeat border-box;
     height: 100vh;
     background-position-x: 100%;
     background-position-y: 100%;
@@ -96,12 +123,80 @@
     flex: 1;
     text-align: left;
 
-    // background-size: 500vh;
-
     @media (max-width: $lg-size) {
       text-align: center;
       justify-content: center;
       padding-top: 50vh;
+    }
+    .arrows {
+      width: 60px;
+      height: 72px;
+      position: absolute;
+      left: 50%;
+      margin-left: -30px;
+      bottom: 20px;
+      @media (max-width: $lg-size) {
+        stroke-width: 2px;
+        width: 30px;
+        height: 36px;
+      }
+    }
+
+    .arrows path {
+      stroke: #ffffff;
+      fill: transparent;
+      stroke-width: 2.5px;
+      animation: arrow 2s infinite;
+      -webkit-animation: arrow 2s infinite;
+
+      @media (max-width: $lg-size) {
+        stroke-width: 2px;
+      }
+    }
+
+    @keyframes arrow {
+      0% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @-webkit-keyframes arrow /*Safari and Chrome*/ {
+      0% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .arrows path.a1 {
+      animation-delay: -1s;
+      -webkit-animation-delay: -1s;
+    }
+
+    .arrows path.a2 {
+      animation-delay: -0.5s;
+      -webkit-animation-delay: -0.5s;
+    }
+
+    .arrows path.a3 {
+      animation-delay: 0s;
+      -webkit-animation-delay: 0s;
     }
 
     .text-ctn {
@@ -115,12 +210,12 @@
       position: relative;
       padding-top: 60vh;
 
-      @media (max-width: $lg-size) {
-        font-size: 2.2rem;
+      @media (max-width: 1800px) {
+        font-size: 3rem;
         margin-top: 1rem;
         margin-bottom: unset;
-        // width: 100vw;
         line-height: 1.5em;
+        padding-top: 50vh;
       }
     }
     .subhome {
@@ -141,7 +236,6 @@
   }
   .homepage-content-containerwhite {
     background-color: $outside-background-color;
-    // height: 35vh;
     height: fit-content;
     padding: 10px 60px 10px 60px;
     text-align: center;
@@ -165,7 +259,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -174,7 +267,7 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
+      color: $title-text-color;
       justify-content: center;
       margin: 20px 60px 20px 60px;
 
@@ -182,7 +275,6 @@
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
       .homepagebody_aboutusline1 {
@@ -199,7 +291,7 @@
       }
       .homepagebody_aboutuslines {
         margin-top: 1rem;
-        margin-bottom: 4rem;
+        margin-bottom: 3.5rem;
       }
 
       .homepagebody_subtitle {
@@ -225,7 +317,6 @@
       text-align: center;
     }
     .aboutus-card-main-container:hover {
-      // background: linear-gradient(to top,$gradient-background-end,$gradient-background-start);
       background: $gradient-background-end;
       cursor: pointer;
     }
@@ -269,7 +360,12 @@
     .undplogocontainer {
       display: flex;
       justify-content: center;
-      padding: 20px;
+      padding-top: 40px;
+
+      .undplogo {
+        width: 21.875rem;
+        height: 7.5rem;
+      }
     }
   }
   .aboutusicon {
@@ -280,12 +376,15 @@
   }
   .homepage-image-content-container {
     background-color: $outside-background-color;
-    // height: 35vh;
     padding-left: 60px;
     text-align: right;
     margin-top: 5px;
 
     @media (max-width: $lg-size) {
+    }
+    .forest-image {
+      height: 33.75rem;
+      width: 52.5rem;
     }
 
     ul {
@@ -295,15 +394,6 @@
     li {
       line-height: 40px;
     }
-
-    // img {
-    //   max-height: 50vh;
-    //   min-height: 50vh;
-
-    //   @media (max-width: $lg-size) {
-    //     max-height: 500px;
-    //   }
-    // }
 
     .title {
       font-size: 2rem;
@@ -319,7 +409,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -328,7 +417,7 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
+      color: $title-text-color;
       justify-content: left;
       margin: 20px 10px 20px 60px;
 
@@ -336,14 +425,12 @@
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
   }
   .homepage-resources-content-container {
     background-color: $outside-background-color;
-    // height: 35vh;
     height: fit-content;
     padding-left: 60px;
 
@@ -366,6 +453,8 @@
       padding: 50px;
       justify-content: center;
       text-align: center;
+      width: 28.125rem;
+      height: 23.438rem;
     }
     .resource-image-container {
       display: flex;
@@ -386,7 +475,6 @@
         font-size: 2rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
       }
     }
@@ -394,97 +482,14 @@
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
-      color: $body-text-color;
-      // justify-content: left;
+      color: $title-text-color;
       margin: 20px 60px 20px 60px;
 
       @media (max-width: $lg-size) {
         font-size: 0.8rem;
         margin-top: 1rem;
         color: $title-text-color;
-        // width: 100vw;
         line-height: 1.5em;
-      }
-    }
-  }
-  .homepage-footer-container {
-    background-color: $background-color-dark;
-    padding-top: 15px;
-    min-height: 200px;
-    height: 100%;
-    align-items: center;
-    // margin-bottom: 2vw;
-    // padding-left: 2rem;
-    padding: 0rem 2rem 0 1rem;
-    cursor: pointer;
-
-    .footertext {
-      color: $dark-text-color;
-      padding: 5px 60px 20px 60px;
-      font-size: 0.875rem;
-    }
-    .footertext-bottom {
-      color: $dark-text-color;
-      padding: 100px 60px 28px 60px;
-      font-size: 0.875rem;
-      font-family: 'MuseoSans';
-      font-weight: 100;
-
-      .cc {
-        margin: 5px;
-      }
-    }
-    .footertext-link-container {
-      display: flex;
-      color: $dark-text-color;
-      padding: 100px 60px 20px 60px;
-      font-size: 0.75rem;
-      text-decoration: underline;
-      justify-content: right;
-    }
-    .footertext-links {
-      padding-left: 30px;
-    }
-
-    .divider {
-      margin: 2px 60px 2px 60px;
-      width: calc(100% - 120px) !important;
-      min-width: calc(100% - 120px);
-    }
-    .logocontainer {
-      display: flex;
-      margin-top: 60px;
-
-      .title {
-        font-family: 'MuseoSans';
-        font-size: 2rem;
-        color: $dark-text-color;
-        font-weight: 700;
-        margin-right: 0.5rem;
-      }
-
-      .title-sub {
-        font-weight: 100 !important;
-        font-family: 'MuseoSans';
-        font-size: 2rem;
-        color: $dark-text-color;
-
-        // padding-bottom: 3px;
-      }
-
-      .logo {
-        height: 97px;
-        img {
-          object-fit: cover;
-          height: auto;
-          height: 70%;
-          margin-left: 60px;
-        }
-      }
-      .footer-country-name {
-        font-size: 0.875rem;
-        color: $dark-text-color;
-        font-family: 'MuseoSans';
       }
     }
   }

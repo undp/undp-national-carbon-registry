@@ -52,22 +52,117 @@
       font-family: 'MuseoSans';
     }
   }
-  .privacytitle {
-    font-size: 2rem;
-    font-weight: 700;
-    font-family: $primary-font-family;
-    color: $title-text-color;
-    text-align: center;
-    justify-content: center;
-    text-transform: uppercase;
-    padding: 50px 50px 10px 50px;
+  .privacy-body-container {
+    text-align: left;
+    justify-content: left;
+    background-color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-bottom: 60px;
 
-    @media (max-width: $lg-size) {
-      font-size: 2rem;
-      margin-top: 1rem;
+    .privacy-body {
       color: $title-text-color;
-      // width: 100vw;
-      line-height: 1.5em;
+      padding: 20px 200px 20px 200px;
+    }
+    p {
+      margin: 30px;
+    }
+    table {
+      text-align: left;
+      width: auto;
+      padding-top: 30px;
+    }
+    .table-row3 {
+      text-align: center;
+    }
+    .table-row1 {
+      padding: 20px;
+    }
+    .privacy-body-contact {
+      font-weight: 700;
+      color: $title-text-color;
+      text-align: left;
+      padding: 20px 200px 20px 200px;
+    }
+    .privacy-sub {
+      text-align: center;
+      justify-content: center;
+      padding-bottom: 30px;
+      font-weight: 700;
+      color: $title-text-color;
+    }
+    .privacytitle {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: $primary-font-family;
+      color: $title-text-color;
+      text-align: center;
+      justify-content: center;
+      text-transform: uppercase;
+      padding: 50px 50px 10px 50px;
+
+      @media (max-width: $lg-size) {
+        font-size: 2rem;
+        margin-top: 1rem;
+        color: $title-text-color;
+        line-height: 1.5em;
+      }
+    }
+    .privacy-subtitle {
+      display: flex;
+      text-align: left;
+      justify-content: left;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: $title-text-color;
+      padding-top: 30px;
+      font-size: 20px;
+      font-weight: 700;
+      padding-left: 200px;
+    }
+    .privacy-subtitle-summary {
+      display: flex;
+      text-align: left;
+      justify-content: left;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: $title-text-color;
+      padding-top: 30px;
+      font-size: 20px;
+      font-weight: 700;
+      padding-left: 230px;
+    }
+    .privacy-subline {
+      padding-top: 20px;
+      padding-left: 200px;
+      font-weight: 700;
+      color: $title-text-color;
+      font-size: 16px;
+    }
+
+    .privacy-card-subtitle {
+      text-decoration: underline;
+      color: $title-text-color;
+      font-size: 20px;
+      font-weight: 700;
+      padding-bottom: 20px;
+    }
+    .privacy-card-subtitle-text {
+      margin: 10px 60px 10px 60px;
+    }
+    .privacy-card-container {
+      text-align: left;
+      margin: 30px 60px 30px 60px;
+      padding: 30px;
+      border-style: solid;
+      border-color: $common-form-input-border;
+      border-width: 1px;
+      table {
+        color: $title-text-color;
+        align-items: center;
+
+        td {
+          padding-right: 20px;
+        }
+      }
     }
   }
 }

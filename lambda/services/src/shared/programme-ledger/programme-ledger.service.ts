@@ -272,21 +272,33 @@ export class ProgrammeLedgerService {
         programme.txTime = new Date().getTime();
         programme.txRef = `${name}#${transfer.requestId}#${transfer.retirementType}#${reason}`;
 
+        const compIndex = programme.companyId.indexOf(transfer.fromCompanyId);
+        if (compIndex < 0) {
+          throw new HttpException(
+            `Company ${transfer.fromCompanyId} does not own the programme`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
         if (isRetirement) {
           // if (programme.creditBalance == transfer.creditAmount) {
           //   programme.currentStage = ProgrammeStage.RETIRED;
           // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
-            programme.creditRetired = 0;
+            programme.creditRetired =  new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
           }
-          programme.creditRetired += transfer.creditAmount;
+          programme.creditRetired[compIndex] += transfer.creditAmount;
+
         } else {
           programme.txType = TxType.TRANSFER;
           if (!programme.creditTransferred) {
-            programme.creditTransferred = 0;
+            programme.creditTransferred = new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
           }
-          programme.creditTransferred += transfer.creditAmount;
+          programme.creditTransferred[compIndex] += transfer.creditAmount;
         }
         programme.creditChange = transfer.creditAmount;
         programme.creditBalance -= transfer.creditAmount;
@@ -504,11 +516,11 @@ export class ProgrammeLedgerService {
 
   public async revokeCompanyCertifications(
     companyId: number,
-    reason: string,
-    user: string
+    user: string,
+    sendRevokeEmail: Function
   ): Promise<number[]> {
     this.logger.log(
-      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user}`
+      `Freezing programme credits companyId:${companyId} user:${user}`
     );
     const getQueries = {};
     companyId = Number(companyId);
@@ -540,7 +552,7 @@ export class ProgrammeLedgerService {
 
           const prvTxTime = programme.txTime;
           programme.txTime = new Date().getTime();
-          programme.txRef = `${user}#${reason}`;
+          programme.txRef = `${user}`;
           programme.txType = TxType.REVOKE;
           programme.certifierId.splice(index, 1);
 
@@ -556,6 +568,8 @@ export class ProgrammeLedgerService {
           };
 
           programmesId.push(programme.programmeId);
+
+          sendRevokeEmail(programme);
         }
         // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
@@ -567,12 +581,11 @@ export class ProgrammeLedgerService {
 
   public async freezeCompany(
     companyId: number,
-    reason: string,
     user: any,
-    companyName: string
+    isFreeze: boolean
   ): Promise<number[]> {
     this.logger.log(
-      `Freezing programme credits reason:${reason} companyId:${companyId} user:${user.id}`
+      `Freezing programme credits companyId:${companyId} user:${user}`
     );
     const getQueries = {};
     companyId = Number(companyId);
@@ -605,31 +618,43 @@ export class ProgrammeLedgerService {
             );
           }
 
-          if (programme.companyId.length > 1) {
-            if (!programme.creditOwnerPercentage) {
-              throw new HttpException(
-                "Not ownership percentage for the company",
-                HttpStatus.BAD_REQUEST
-              );
+          if(isFreeze){
+            if (programme.companyId.length > 1) {
+              if (!programme.creditOwnerPercentage) {
+                throw new HttpException(
+                  "Not ownership percentage for the company",
+                  HttpStatus.BAD_REQUEST
+                );
+              }
+            } else {
+              programme.creditOwnerPercentage = [100];
             }
-          } else {
-            programme.creditOwnerPercentage = [100];
-          }
 
-          const freezeCredit =
-            (programme.creditBalance * programme.creditOwnerPercentage[index]) /
-            100;
-          if (!programme.creditFrozen) {
-            programme.creditFrozen = new Array(
-              programme.creditOwnerPercentage.length
-            ).fill(0);
+            const freezeCredit =this.round2Precision(
+              (programme.creditBalance * programme.creditOwnerPercentage[index]) /
+              100);
+            if (!programme.creditFrozen) {
+              programme.creditFrozen = new Array(
+                programme.creditOwnerPercentage.length
+              ).fill(0);
+            }
+            if(freezeCredit === 0)
+              continue;
+            programme.creditFrozen[index] = freezeCredit;
+          }else{
+            if(programme.creditFrozen === undefined || programme.creditFrozen[index] === null)
+              continue;
+            const unFrozenCredit = this.round2Precision(programme.creditFrozen[index]);
+            if(unFrozenCredit === 0)
+              continue;
+            programme.creditChange = unFrozenCredit;
+            programme.creditFrozen[index] = 0;
           }
 
           const prvTxTime = programme.txTime;
           (programme.txTime = new Date().getTime()),
-            (programme.txRef = `${user.companyId}#${user.companyName}#${user.id}#${user.name}#${companyName}`),
-            (programme.txType = TxType.FREEZE);
-          programme.creditFrozen[index] = freezeCredit;
+            (programme.txRef = user),
+            (programme.txType = isFreeze ? TxType.FREEZE : TxType.UNFREEZE);
 
           updateMap[this.ledger.tableName + "#" + programme.programmeId] = {
             currentStage: programme.currentStage,
@@ -842,8 +867,12 @@ export class ProgrammeLedgerService {
   }
 
   private round2Precision(val) {
-    return parseFloat(val.toFixed(PRECISION));
+    if(val)
+      return parseFloat(val.toFixed(PRECISION));
+    else
+      return 0;
   }
+
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,

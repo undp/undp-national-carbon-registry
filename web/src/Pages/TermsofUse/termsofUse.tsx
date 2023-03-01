@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import './termsofUse.scss';
+import LayoutFooter from '../../Components/Footer/layout.footer';
+import { CcCircle } from 'react-bootstrap-icons';
 const TermsOfUse = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ const TermsOfUse = () => {
       </Row>
       <div className="term-body-container">
         <Row>
-          <Col>
+          <Col md={24} lg={24}>
             <div className="termtitle">TERMS OF USE</div>
             <div className="term-sub">Last updated February 02, 2023</div>
           </Col>
@@ -123,18 +125,24 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">1. AGREEMENT TO TERMS</div>
+            <div id="agreement" className="term-subtitle">
+              1. AGREEMENT TO TERMS
+            </div>
             <div className="term-body">
               <p>
                 These Terms of Use constitute a legally binding agreement made between you, whether
                 personally or on behalf of an entity (“you”) and United Nations Development
                 Programme ("Company," “we," “us," or “our”), concerning your access to and use of
-                the https://carbreg.org website as well as any other media form, media channel,
-                mobile website or mobile application related, linked, or otherwise connected thereto
-                (collectively, the “Site”). You agree that by accessing the Site, you have read,
-                understood, and agreed to be bound by all of these Terms of Use. IF YOU DO NOT AGREE
-                WITH ALL OF THESE TERMS OF USE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE
-                SITE AND YOU MUST DISCONTINUE USE IMMEDIATELY.
+                the{' '}
+                <a target="_blank" href="https://carbreg.org">
+                  https://carbreg.org
+                </a>{' '}
+                website as well as any other media form, media channel, mobile website or mobile
+                application related, linked, or otherwise connected thereto (collectively, the
+                “Site”). You agree that by accessing the Site, you have read, understood, and agreed
+                to be bound by all of these Terms of Use. IF YOU DO NOT AGREE WITH ALL OF THESE
+                TERMS OF USE, THEN YOU ARE EXPRESSLY PROHIBITED FROM USING THE SITE AND YOU MUST
+                DISCONTINUE USE IMMEDIATELY.
               </p>
               <p>
                 Supplemental terms and conditions or documents that may be posted on the Site from
@@ -174,7 +182,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">2. INTELLECTUAL PROPERTY RIGHTS</div>
+            <div id="ip" className="term-subtitle">
+              2. INTELLECTUAL PROPERTY RIGHTS
+            </div>
             <div className="term-body">
               Works published on this website are under the{' '}
               <a href="https://creativecommons.org/licenses/by/4.0/">
@@ -216,7 +226,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">3. USER REPRESENTATIONS</div>
+            <div id="userreps" className="term-subtitle">
+              3. USER REPRESENTATIONS
+            </div>
             <div className="term-body">
               <p>
                 By using the Site, you represent and warrant that: (1) you have the legal capacity
@@ -236,7 +248,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">4. PROHIBITED ACTIVITIES</div>
+            <div id="prohibited" className="term-subtitle">
+              4. PROHIBITED ACTIVITIES
+            </div>
             <div className="term-body">
               <p>
                 You may not access or use the Site for any purpose other than that for which we make
@@ -343,7 +357,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">5. USER GENERATED CONTRIBUTIONS</div>
+            <div id="ugc" className="term-subtitle">
+              5. USER GENERATED CONTRIBUTIONS
+            </div>
             <div className="term-body">
               <p>
                 The Site may invite you to chat, contribute to, or participate in blogs, message
@@ -423,7 +439,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">6. CONTRIBUTION LICENSE</div>
+            <div id="license" className="term-subtitle">
+              6. CONTRIBUTION LICENSE
+            </div>
             <div className="term-body">
               <p>
                 By posting your Contributions to any part of the Site, you automatically grant, and
@@ -467,7 +485,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">7. SUBMISSIONS</div>
+            <div id="submissions" className="term-subtitle">
+              7. SUBMISSIONS
+            </div>
             <div className="term-body">
               <p>
                 You acknowledge and agree that any questions, comments, suggestions, ideas,
@@ -487,7 +507,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">8. THIRD-PARTY WEBSITE AND CONTENT</div>
+            <div id="thirdparty" className="term-subtitle">
+              8. THIRD-PARTY WEBSITE AND CONTENT
+            </div>
             <div className="term-body">
               <p>
                 The Site may contain (or you may be sent via the Site) links to other websites
@@ -522,7 +544,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">9. SITE MANAGEMENT</div>
+            <div id="sitemanage" className="term-subtitle">
+              9. SITE MANAGEMENT
+            </div>
             <div className="term-body">
               <p>
                 We reserve the right, but not the obligation, to: (1) monitor the Site for
@@ -542,7 +566,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">10. PRIVACY POLICY</div>
+            <div id="privacypolicy1" className="term-subtitle">
+              10. PRIVACY POLICY
+            </div>
             <div className="term-body">
               <p>
                 We care about data privacy and security. Please review our Privacy Policy:
@@ -559,7 +585,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">11. TERM AND TERMINATION</div>
+            <div id="terms" className="term-subtitle">
+              11. TERM AND TERMINATION
+            </div>
             <div className="term-body">
               <p>
                 These Terms of Use shall remain in full force and effect while you use the Site.
@@ -583,7 +611,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">12. MODIFICATIONS AND INTERRUPTIONS</div>
+            <div id="modifications" className="term-subtitle">
+              12. MODIFICATIONS AND INTERRUPTIONS
+            </div>
             <div className="term-body">
               <p>
                 We reserve the right to change, modify, or remove the contents of the Site at any
@@ -609,7 +639,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">13. GOVERNING LAW </div>
+            <div id="law" className="term-subtitle">
+              13. GOVERNING LAW{' '}
+            </div>
             <div className="term-body">
               <p>
                 These Terms of Use and your use of the Site are governed by and construed in
@@ -622,7 +654,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">14. DISPUTE RESOLUTION</div>
+            <div id="disputes" className="term-subtitle">
+              14. DISPUTE RESOLUTION
+            </div>
             <div className="term-subline">Informal Negotiations</div>
             <div className="term-body">
               <p>
@@ -646,17 +680,20 @@ const TermsOfUse = () => {
                 of the American Arbitration Association ("AAA") and, where appropriate, the AAA’s
                 Supplementary Procedures for Consumer Related Disputes ("AAA Consumer Rules"), both
                 of which are available at the AAA website:{' '}
-                <a href="https://www.adr.org/">www.adr.org</a>. Your arbitration fees and your share
-                of arbitrator compensation shall be governed by the AAA Consumer Rules and, where
-                appropriate, limited by the AAA Consumer Rules. The arbitration may be conducted in
-                person, through the submission of documents, by phone, or online. The arbitrator
-                will make a decision in writing, but need not provide a statement of reasons unless
-                requested by either Party. The arbitrator must follow applicable law, and any award
-                may be challenged if the arbitrator fails to do so. Except where otherwise required
-                by the applicable AAA rules or applicable law, the arbitration will take place in
-                Manhattan, New York. Except as otherwise provided herein, the Parties may litigate
-                in court to compel arbitration, stay proceedings pending arbitration, or to confirm,
-                modify, vacate, or enter judgment on the award entered by the arbitrator.
+                <a target="_blank" href="https://www.adr.org/">
+                  www.adr.org
+                </a>
+                . Your arbitration fees and your share of arbitrator compensation shall be governed
+                by the AAA Consumer Rules and, where appropriate, limited by the AAA Consumer Rules.
+                The arbitration may be conducted in person, through the submission of documents, by
+                phone, or online. The arbitrator will make a decision in writing, but need not
+                provide a statement of reasons unless requested by either Party. The arbitrator must
+                follow applicable law, and any award may be challenged if the arbitrator fails to do
+                so. Except where otherwise required by the applicable AAA rules or applicable law,
+                the arbitration will take place in Manhattan, New York. Except as otherwise provided
+                herein, the Parties may litigate in court to compel arbitration, stay proceedings
+                pending arbitration, or to confirm, modify, vacate, or enter judgment on the award
+                entered by the arbitrator.
               </p>
               <p>
                 If for any reason, a Dispute proceeds in court rather than arbitration, the Dispute
@@ -709,7 +746,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">15. CORRECTIONS</div>
+            <div id="corrections" className="term-subtitle">
+              15. CORRECTIONS
+            </div>
             <div className="term-body">
               <p>
                 There may be information on the Site that contains typographical errors,
@@ -723,7 +762,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">16. DISCLAIMER</div>
+            <div id="disclaimer" className="term-subtitle">
+              16. DISCLAIMER
+            </div>
             <div className="term-body">
               <p>
                 THE SITE IS PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF
@@ -756,7 +797,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">17. LIMITATIONS OF LIABILITY</div>
+            <div id="liability" className="term-subtitle">
+              17. LIMITATIONS OF LIABILITY
+            </div>
             <div className="term-body">
               <p>
                 IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY
@@ -776,7 +819,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">18. INDEMNIFICATION</div>
+            <div id="indemnification" className="term-subtitle">
+              18. INDEMNIFICATION
+            </div>
             <div className="term-body">
               <p>
                 You agree to defend, indemnify, and hold us harmless, including our subsidiaries,
@@ -799,7 +844,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">19. USER DATA</div>
+            <div id="userdata" className="term-subtitle">
+              19. USER DATA
+            </div>
             <div className="term-body">
               <p>
                 We will maintain certain data that you transmit to the Site for the purpose of
@@ -815,7 +862,7 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">
+            <div id="electronic" className="term-subtitle">
               20. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES
             </div>
             <div className="term-body">
@@ -837,7 +884,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">21. CALIFORNIA USERS AND RESIDENTS</div>
+            <div id="california" className="term-subtitle">
+              21. CALIFORNIA USERS AND RESIDENTS
+            </div>
             <div className="term-body">
               <p>
                 If any complaint with us is not satisfactorily resolved, you can contact the
@@ -850,7 +899,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">22. MISCELLANEOUS</div>
+            <div id="misc" className="term-subtitle">
+              22. MISCELLANEOUS
+            </div>
             <div className="term-body">
               <p>
                 These Terms of Use and any policies or operating rules posted by us on the Site or
@@ -875,7 +926,9 @@ const TermsOfUse = () => {
         </Row>
         <Row>
           <Col>
-            <div className="term-subtitle">23. CONTACT US</div>
+            <div id="contact" className="term-subtitle">
+              23. CONTACT US
+            </div>
             <div className="term-body-contact">
               In order to resolve a complaint regarding the Site or to receive further information
               regarding use of the Site, please contact us at:
@@ -888,13 +941,14 @@ const TermsOfUse = () => {
               <br /> Phone: +1-2129065000
               <br /> nce.digital@undp.org
               <br /> These terms of use were created using Termly's{' '}
-              <a href="https://termly.io/products/terms-and-conditions-generator/">
+              <a target="_blank" href="https://termly.io/products/terms-and-conditions-generator/">
                 Terms and Conditions Generator.
               </a>
             </div>
           </Col>
         </Row>
       </div>
+      <LayoutFooter />
     </div>
   );
 };

@@ -31,7 +31,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       : '',
     companyState: localStorage.getItem('companyState')
       ? parseInt(localStorage.getItem('companyState') as string)
-      : -1,
+      : 0,
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 

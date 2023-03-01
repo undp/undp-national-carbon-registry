@@ -8,3 +8,9 @@ export enum ProgrammeStage {
   RETIRED = 'Retired',
   TRANSFERRED = 'Transferred',
 }
+
+export enum ProgrammeStageLegend { // Up to this not used
+  AUTHORISED = 'Authorised',
+  REJECTED = 'Rejected',
+  AWAITING_AUTHORIZATION = 'AwaitingAuthorization',
+}

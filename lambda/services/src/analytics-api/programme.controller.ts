@@ -82,7 +82,8 @@ export class ProgrammeController {
     return this.aggService.getAggregateQuery(
       req.abilityCondition,
       query,
-      companyId
+      companyId,
+      req.user?.companyRole
     );
   }
 }

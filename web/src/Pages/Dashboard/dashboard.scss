@@ -1,7 +1,28 @@
 @import '../Common/colors.dashboard.scss';
 
+.mapboxgl-popup-content {
+  background-color: $white !important;
+  color: $card-title !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: $white !important;
+}
+
+.mapboxgl-popup-close-button,
+.mapboxgl-popup-close-button:hover {
+  display: none;
+  // z-index: -1 !important;
+}
+
+.total-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+}
+
 .margin-top-6 {
-  margin-top: 6rem;
+  margin-top: 7.5rem;
 }
 
 .margin-top-2 {
@@ -10,6 +31,18 @@
 
 .margin-top-1 {
   margin-top: 1rem;
+}
+
+.cards-title {
+  font-family: 'Inter';
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-style: normal;
+  font-weight: 600;
+  height: 50px;
+  font-size: 1.15rem;
+  margin-top: 1rem;
+  color: $card-title;
 }
 
 .dashboard-main-container {
@@ -87,15 +120,27 @@
   }
 
   .height-pie-rem {
-    height: 25.75rem;
+    height: 26.2rem;
+
+    .apexcharts-legend {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between !important;
+    }
+
+    .apexcharts-legend-series {
+      display: flex !important;
+      width: 38%;
+    }
   }
 
   .height-bar-rem {
-    height: 30rem;
+    height: 29rem;
   }
 
   .height-map-rem {
-    height: 470px;
+    height: 510px;
   }
 
   .map-container {
@@ -118,12 +163,39 @@
           flex-direction: column;
           background-color: $white;
           border-radius: 10px;
-          padding: 0 1rem 1rem 1rem;
+          padding: 0 1rem 0.7rem 1rem;
           width: 100%;
 
           .margin-top-2 {
             width: 100%;
             margin-top: 2rem;
+          }
+
+          .title-section {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1rem 1rem 0 1rem;
+
+            .title {
+              font-family: 'Inter';
+              font-style: normal;
+              font-weight: 600;
+              width: 90%;
+              font-size: 1.15rem;
+              color: $card-title;
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              width: 10%;
+              height: 30px;
+              align-items: center;
+              justify-content: flex-end;
+            }
           }
 
           .total-programme-details {
@@ -132,24 +204,13 @@
             align-items: center;
             justify-content: space-between;
             height: 150px;
+            margin-top: -0.5rem;
 
             .details {
               display: flex;
               flex-direction: column;
               width: 70%;
               padding: 0 1rem 0 0.8rem;
-
-              .title {
-                font-family: 'Inter';
-                align-items: flex-start;
-                justify-content: flex-start;
-                font-style: normal;
-                font-weight: 600;
-                height: 50px;
-                font-size: 1.15rem;
-                padding-left: 0.125rem;
-                color: $card-title;
-              }
 
               .detail {
                 font-family: 'Inter';
@@ -193,6 +254,8 @@
             justify-content: flex-start;
             height: 100px;
             width: 100%;
+            margin-top: -1rem;
+            margin-bottom: 0.5rem;
             padding: 0 0.5rem 0 0.5rem;
 
             .rejected-details,
@@ -219,7 +282,7 @@
                 }
 
                 .reject {
-                  background-color: rgba(164, 162, 168, 0.5);
+                  background-color: rgba(255, 166, 166, 0.4);
                 }
 
                 .transfer {
@@ -227,7 +290,7 @@
                 }
 
                 .pending {
-                  background-color: rgba(255, 166, 166, 0.4);
+                  background-color: rgba(164, 162, 168, 0.5);
                 }
 
                 .authorized {
@@ -269,6 +332,14 @@
             }
           }
 
+          .stage-legends {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+          }
+
           .updated-on {
             display: flex;
             flex-direction: row;
@@ -280,31 +351,54 @@
             .updated-moment-container {
               display: flex;
               flex-direction: row;
-              font-size: 0.813rem;
+              font-size: 0.75rem;
               border-radius: 3.125rem;
-              padding: 0 0.5rem 0 0.5rem;
+              padding: 0.05rem 0.8rem 0.05rem 0.8rem;
               color: $primary-blue;
               background-color: rgba($color: #b9e2f4, $alpha: 0.4);
             }
           }
 
-          .pie-charts-title {
-            font-family: 'Inter';
-            align-items: flex-start;
-            justify-content: flex-start;
-            font-style: normal;
-            font-weight: 600;
-            height: 50px;
-            font-size: 1.15rem;
-            margin-top: 1rem;
-            padding: 0 1rem 1rem 1rem;
-            color: $card-title;
+          .pie-charts-top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 0 1rem 0 1rem;
+            .pie-charts-title {
+              display: flex;
+              flex-direction: row;
+              font-family: 'Inter';
+              align-items: flex-start;
+              justify-content: flex-start;
+              font-style: normal;
+              font-weight: 600;
+              height: 50px;
+              font-size: 1.15rem;
+              margin-top: 1rem;
+              color: $card-title;
+
+              .unit {
+                display: flex;
+                margin: 0 0 0 0.5rem;
+                font-family: 'Inter';
+                font-size: 1.15rem;
+                font-weight: 500;
+                color: rgba(58, 53, 65, 0.5);
+              }
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
           }
 
           .pie-charts-section {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
           }
         }
       }

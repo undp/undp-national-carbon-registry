@@ -1,5 +1,5 @@
 import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrganisationDto } from "../dto/organisation.dto";
@@ -18,6 +18,10 @@ import { DataResponseDto } from "../dto/data.response.dto";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { User } from "../entities/user.entity";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { Programme } from "../entities/programme.entity";
+import { EmailTemplates } from "../email/email.template";
+import { SystemActionType } from "../enum/system.action.type";
 
 @Injectable()
 export class CompanyService {
@@ -27,6 +31,8 @@ export class CompanyService {
     private configService: ConfigService,
     private helperService: HelperService,
     private programmeLedgerService: ProgrammeLedgerService,
+    @Inject(forwardRef(() => EmailHelperService))
+    private emailHelperService: EmailHelperService,
     @InjectRepository(ProgrammeTransfer)
     private programmeTransferRepo: Repository<ProgrammeTransfer>
   ) {}
@@ -75,17 +81,28 @@ export class CompanyService {
       if (company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         await this.programmeLedgerService.freezeCompany(
           companyId,
-          remarks,
-          user,
-          company.name
+          this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
+          true
         );
-        await this.companyTransferCancel(companyId);
+        await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
-          remarks,
-          user.id.toString()
+          this.getUserRefWithRemarks(user, `${remarks}#${SystemActionType.SUSPEND_REVOKE}#${company.name}`),
+          async (programme:Programme) => {
+            const hostAddress = this.configService.get("host");
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(programme.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,{
+              organisationName: company.name,
+              programmeName: programme.title,
+              credits: programme.creditBalance,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + `/programmeManagement/view?id=${programme.programmeId}`
+            })
+          }
         );
+
+        await this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
       }
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -98,7 +115,7 @@ export class CompanyService {
     );
   }
 
-  async activate(companyId: number, abilityCondition: string): Promise<any> {
+  async activate(companyId: number,user: User, remarks: string, abilityCondition: string): Promise<any> {
     this.logger.verbose("revoke company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -132,6 +149,12 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      await this.programmeLedgerService.freezeCompany(
+        companyId,
+        this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
+        false
+      );
+      await this.emailHelperService.sendEmail(company.email,EmailTemplates.ORG_REACTIVATION,{},user.companyId);
       return new BasicResponseDto(
         HttpStatus.OK,
         "Successfully activated company"
@@ -168,7 +191,8 @@ export class CompanyService {
       .createQueryBuilder()
       .select([
         '"companyId"',
-        '"name"'
+        '"name"',
+        '"state"'
       ])
       .where(
         this.helperService.generateWhereSQL(
@@ -307,11 +331,11 @@ export class CompanyService {
     );
   }
 
-  async companyTransferCancel(companyId: number) {
+  async companyTransferCancel(companyId: number, remark: string) {
     await this.programmeTransferRepo
       .createQueryBuilder()
       .update(ProgrammeTransfer)
-      .set({ status: TransferStatus.CANCELLED })
+      .set({ status: TransferStatus.CANCELLED, txRef: remark })
       .where(
         "(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status",
         {
@@ -325,4 +349,8 @@ export class CompanyService {
         return err;
       });
   }
+
+  private getUserRefWithRemarks = (user: any, remarks: string) => {
+    return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
+}
 }
