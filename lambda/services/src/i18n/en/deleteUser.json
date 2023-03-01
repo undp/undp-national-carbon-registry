@@ -1,5 +1,0 @@
-{
-    "deleteUserSuccess": "The user has been deleted successfully",
-    "deleteOneAdminWhenOnlyOneAdmin": "The user cannot be deleted as the user is the only admin",
-    "userDeletionUnAUth": "This action is unauthorised"
-}

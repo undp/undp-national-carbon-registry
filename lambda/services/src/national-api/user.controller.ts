@@ -57,10 +57,7 @@ export class UserController {
   addUser(@Body() user: UserDto, @Request() req) {
     if (user.role == Role.Root) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "addUser.rootCreatesRoot",
-          []
-        ),
+        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
         HttpStatus.FORBIDDEN
       );
     }

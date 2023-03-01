@@ -12,5 +12,16 @@
     "companyCreateNotPermittedForTheCompanyRole": "Company create does not permitted for your company role",
     "companyUpdateFailed": "Company update failed. Please try again",
     "propValueAlreadyExist": "{} already exist",
-    "taxIdExistAlready": "Company tax id already exist"
+    "taxIdExistAlready": "Company tax id already exist",
+    "deleteUserSuccess": "The user has been deleted successfully",
+    "deleteOneAdminWhenOnlyOneAdmin": "The user cannot be deleted as the user is the only admin",
+    "userDeletionUnAUth": "This action is unauthorised",
+    "noUserFound": "No visible user found",
+    "passwordUpdateFailed": "Password update failed. Please try again",
+    "rootUserDelete": "Root user cannot be deleted",
+    "userDeletionFailed": "Delete failed. Please try again",
+    "resetSuccess": "The password has been reset successfully",
+    "samePasswordReset": "New password cannot be the same as your old password",
+    "incorrectCurrentPassword": "Entered old password is incorrect",
+    "updatedSuccess": "Successfully updated"
 }

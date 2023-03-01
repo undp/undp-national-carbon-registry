@@ -167,7 +167,10 @@ export class UserService {
     if (result.affected) {
       return new DataResponseDto(HttpStatus.OK, await this.findById(id));
     }
-    throw new HttpException("No visible user found", HttpStatus.NOT_FOUND);
+    throw new HttpException(
+      this.helperService.formatReqMessagesString("user.noUserFound", []),
+      HttpStatus.NOT_FOUND
+    );
   }
 
   async resetPassword(
@@ -220,10 +223,16 @@ export class UserService {
           countryName: this.configService.get("systemCountryName"),
         }
       );
-      return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.resetSuccess", [])
+      );
     }
     throw new HttpException(
-      "Password update failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "user.passwordUpdateFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -242,7 +251,10 @@ export class UserService {
       )
       .getOne();
     if (!user) {
-      throw new HttpException("No visible user found", HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.UNAUTHORIZED
+      );
     }
     const apiKey = await this.generateApiKey(email);
     const result = await this.userRepo
@@ -269,10 +281,16 @@ export class UserService {
         }
       );
 
-      return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.updatedSuccess", [])
+      );
     }
     throw new HttpException(
-      "Password update failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "user.passwordUpdateFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -288,7 +306,7 @@ export class UserService {
     if (user) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "addUser.createExistingUser",
+          "user.createExistingUser",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -303,7 +321,7 @@ export class UserService {
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "addUser.companyCreateUserShouldbeAdmin",
+            "user.companyCreateUserShouldbeAdmin",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -324,7 +342,7 @@ export class UserService {
           throw new HttpException(
             // `Government already exist for the country code ${company.country}`,
             this.helperService.formatReqMessagesString(
-              "addUser.governmentUserAlreadyExist",
+              "user.governmentUserAlreadyExist",
               [company.country]
             ),
             HttpStatus.BAD_REQUEST
@@ -335,7 +353,7 @@ export class UserService {
       if (companyRole != CompanyRole.GOVERNMENT) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "addUser.companyCreateNotPermittedForTheCompanyRole",
+            "user.companyCreateNotPermittedForTheCompanyRole",
             []
           ),
           HttpStatus.FORBIDDEN
@@ -367,7 +385,7 @@ export class UserService {
       if (!company) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "addUser.addUserToUnRegisteredCompany",
+            "user.addUserToUnRegisteredCompany",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -403,7 +421,7 @@ export class UserService {
       } else {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "addUser.companyUpdateFailed",
+            "user.companyUpdateFailed",
             []
           ),
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -466,7 +484,7 @@ export class UserService {
               } else if (err.driverError.detail.includes("taxId")) {
                 throw new HttpException(
                   this.helperService.formatReqMessagesString(
-                    "addUser.taxIdExistAlready",
+                    "user.taxIdExistAlready",
                     []
                   ),
                   HttpStatus.BAD_REQUEST
@@ -532,12 +550,15 @@ export class UserService {
       )
       .getMany();
     if (result.length <= 0) {
-      throw new HttpException("No visible user found", HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.NOT_FOUND
+      );
     }
 
     if (result[0].role == Role.Root) {
       throw new HttpException(
-        "Root user cannot be deleted",
+        this.helperService.formatReqMessagesString("user.rootUserDelete", []),
         HttpStatus.FORBIDDEN
       );
     } else if (result[0].role == Role.Admin) {
@@ -549,7 +570,10 @@ export class UserService {
         .getMany();
       if (admins.length <= 1) {
         throw new HttpException(
-          "Company must have at-least one admin user",
+          this.helperService.formatReqMessagesString(
+            "user.deleteOneAdminWhenOnlyOneAdmin",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -557,10 +581,13 @@ export class UserService {
 
     const result2 = await this.userRepo.delete({ email: username });
     if (result2.affected > 0) {
-      return new BasicResponseDto(HttpStatus.OK, "Successfully deleted");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.deleteUserSuccess", [])
+      );
     }
     throw new HttpException(
-      "Delete failed. Please try again",
+      this.helperService.formatReqMessagesString("user.userDeletionFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
