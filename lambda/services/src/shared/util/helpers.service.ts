@@ -7,11 +7,14 @@ import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
 import { ConfigService } from "@nestjs/config";
-import { I18n, I18nContext } from "nestjs-i18n";
+import { I18n, I18nContext, I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class HelperService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private i18n: I18nService
+  ) {}
 
   private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
@@ -65,12 +68,8 @@ export class HelperService {
     }
   }
 
-  public formatReqMessagesString(
-    i18n: I18nContext,
-    langTag: string,
-    vargs: any[]
-  ) {
-    const str: any = i18n.t(langTag);
+  public formatReqMessagesString(langTag: string, vargs: any[]) {
+    const str: any = this.i18n.t(langTag);
     const parts: any = str.split("{}");
     let insertAt = 1;
     for (const arg of vargs) {

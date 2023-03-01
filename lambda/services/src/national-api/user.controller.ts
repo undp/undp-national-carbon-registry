@@ -29,6 +29,7 @@ import { UserUpdateDto } from "../shared/dto/user.update.dto";
 import { PasswordUpdateDto } from "../shared/dto/password.update.dto";
 import { Role } from "../shared/casl/role.enum";
 import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
+import { HelperService } from "../shared/util/helpers.service";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -36,7 +37,8 @@ import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private caslAbilityFactory: CaslAbilityFactory
+    private caslAbilityFactory: CaslAbilityFactory,
+    private helperService: HelperService
   ) {}
 
   @ApiBearerAuth()
@@ -52,18 +54,20 @@ export class UserController {
     ability.can(Action.Create, Object.assign(new User(), body))
   )
   @Post("add")
-  addUser(@Body() user: UserDto, @Request() req, @I18n() i18n: I18nContext) {
+  addUser(@Body() user: UserDto, @Request() req) {
     if (user.role == Role.Root) {
       throw new HttpException(
-        i18n.t("addUser.rootCreatesRoot"),
+        this.helperService.formatReqMessagesString(
+          "addUser.rootCreatesRoot",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
     return this.userService.create(
       user,
       req.user.companyId,
-      req.user.companyRole,
-      i18n
+      req.user.companyRole
     );
   }
 
@@ -79,16 +83,11 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, User, true))
   // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
   @Put("resetPassword")
-  resetPassword(
-    @Body() reset: PasswordUpdateDto,
-    @Request() req,
-    @I18n() i18n: I18nContext
-  ) {
+  resetPassword(@Body() reset: PasswordUpdateDto, @Request() req) {
     return this.userService.resetPassword(
       req.user.id,
       reset,
-      req.abilityCondition,
-      i18n
+      req.abilityCondition
     );
   }
 

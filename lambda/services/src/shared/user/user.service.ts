@@ -12,7 +12,6 @@ import {
   InjectEntityManager,
   InjectRepository,
 } from "@nestjs/typeorm";
-import { I18n, I18nContext } from "nestjs-i18n";
 import { UserDto } from "../../shared/dto/user.dto";
 import {
   Connection,
@@ -174,8 +173,7 @@ export class UserService {
   async resetPassword(
     id: number,
     passwordResetDto: PasswordUpdateDto,
-    abilityCondition: string,
-    i18n?: I18nContext
+    abilityCondition: string
   ) {
     this.logger.verbose("User password reset received", id);
 
@@ -193,7 +191,10 @@ export class UserService {
       .getOne();
     if (!user || user.password != passwordResetDto.oldPassword) {
       throw new HttpException(
-        i18n.t("resetPassword.incorrectCurrentPassword"),
+        this.helperService.formatReqMessagesString(
+          "resetPassword.incorrectCurrentPassword",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -279,15 +280,17 @@ export class UserService {
   async create(
     userDto: UserDto,
     companyId: number,
-    companyRole: CompanyRole,
-    i18n?: I18nContext
+    companyRole: CompanyRole
   ): Promise<User | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
 
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
-        i18n.t("addUser.createExistingUser"),
+        this.helperService.formatReqMessagesString(
+          "addUser.createExistingUser",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -299,7 +302,10 @@ export class UserService {
         ![Role.Admin, Role.Root].includes(userFields.role)
       ) {
         throw new HttpException(
-          i18n.t("addUser.companyCreateUserShouldbeAdmin"),
+          this.helperService.formatReqMessagesString(
+            "addUser.companyCreateUserShouldbeAdmin",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       } else if (!userFields.role) {
@@ -324,7 +330,10 @@ export class UserService {
 
       if (companyRole != CompanyRole.GOVERNMENT) {
         throw new HttpException(
-          i18n.t("addUser.companyCreateNotPermittedForTheCompanyRole"),
+          this.helperService.formatReqMessagesString(
+            "addUser.companyCreateNotPermittedForTheCompanyRole",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -338,7 +347,10 @@ export class UserService {
       userDto.companyId != companyId
     ) {
       throw new HttpException(
-        i18n.t("addUser.createUserToOtherCompaniesUnAuth"),
+        this.helperService.formatReqMessagesString(
+          "createUserToOtherCompaniesUnAuth",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
@@ -350,7 +362,10 @@ export class UserService {
       const company = await this.companyService.findByCompanyId(u.companyId);
       if (!company) {
         throw new HttpException(
-          i18n.t("addUser.addUserToUnRegisteredCompany"),
+          this.helperService.formatReqMessagesString(
+            "addUser.addUserToUnRegisteredCompany",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -383,7 +398,10 @@ export class UserService {
         company.logo = response.Location;
       } else {
         throw new HttpException(
-          i18n.t("addUser.companyUpdateFailed"),
+          this.helperService.formatReqMessagesString(
+            "addUser.companyUpdateFailed",
+            []
+          ),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
@@ -443,7 +461,10 @@ export class UserService {
                 );
               } else if (err.driverError.detail.includes("taxId")) {
                 throw new HttpException(
-                  i18n.t("addUser.taxIdExistAlready"),
+                  this.helperService.formatReqMessagesString(
+                    "addUser.taxIdExistAlready",
+                    []
+                  ),
                   HttpStatus.BAD_REQUEST
                 );
               }
