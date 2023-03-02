@@ -1,7 +1,0 @@
-{
-    "certifyPendingProgramme": "The programme has been certified successfully",
-    "certifyRejectedProgramme": "This action is unauthorised",
-    "certifyProgrammeAlreadyCertifiedBySameCertifier": "This programme has already been certified",
-    "unAuthorizedCertification": "This action is unauthorised",
-    "certificationRevocation": "The certificate has been revoked successfully"
-}
