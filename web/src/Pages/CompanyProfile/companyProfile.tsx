@@ -53,6 +53,7 @@ const CompanyProfile = () => {
 
   const onDeauthoriseOrgConfirmed = async (remarks: string) => {
     try {
+      setIsLoading(true);
       const response: any = await put(
         `national/organisation/suspend?id=${companyDetails.companyId}`,
         {
@@ -69,11 +70,14 @@ const CompanyProfile = () => {
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
       setErrorMsg(exception.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const onReactivateOrgConfirmed = async (remarks: string) => {
     try {
+      setIsLoading(true);
       const response: any = await put(
         `national/organisation/activate?id=${companyDetails.companyId}`,
         {
@@ -90,6 +94,8 @@ const CompanyProfile = () => {
       getCompanyDetails(companyDetails.companyId);
     } catch (exception: any) {
       setErrorMsg(exception.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -301,6 +307,7 @@ const CompanyProfile = () => {
         onActionCanceled={onDeauthoriseOrgCanceled}
         openModal={openDeauthorisationModal}
         errorMsg={errorMsg}
+        loading={isLoading}
       />
 
       <UserActionConfirmationModel
@@ -309,6 +316,7 @@ const CompanyProfile = () => {
         onActionCanceled={onReactivateOrgCanceled}
         openModal={openReactivateModal}
         errorMsg={errorMsg}
+        loading={isLoading}
       />
     </div>
   );
