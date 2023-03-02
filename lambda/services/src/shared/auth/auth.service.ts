@@ -54,7 +54,6 @@ export class AuthService {
       parseInt(organisationDetails.state)
     );
     const ability = this.caslAbilityFactory.createForUser(user);
-    // return this.I18n.t("lang.here");
     return {
       access_token: this.jwtService.sign(instanceToPlain(payload)),
       role: user.role,
