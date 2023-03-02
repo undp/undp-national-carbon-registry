@@ -4,6 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import configuration from "../configuration";
 import { TypeOrmConfigService } from "../typeorm.config.service";
 import { LedgerDBInterface } from "./ledger.db.interface";
+import { PgSqlLedgerService } from "./pgsql-ledger.service";
 import { QLDBLedgerService } from "./qldb-ledger.service";
 
 @Module({
@@ -24,7 +25,7 @@ import { QLDBLedgerService } from "./qldb-ledger.service";
       useClass:
         process.env.LEDGER_TYPE === "QLDB"
           ? QLDBLedgerService
-          : QLDBLedgerService,
+          : PgSqlLedgerService,
     },
   ],
   exports: [LedgerDBInterface],

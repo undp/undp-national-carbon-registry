@@ -38,6 +38,15 @@ export class QLDBLedgerService implements LedgerDBInterface {
         return resp;
     }
 
+    private async executeTxn<TM>(txn: TransactionExecutor, sql, ...parameters: any[]): Promise<Result> {
+        this.logger.debug(`Statement: ${sql}, parameter: ${JSON.stringify(parameters)}`);
+        if (parameters.length > 0) {
+            return await txn.execute(sql, ...parameters);
+        } else {
+            return await txn.execute(sql);
+        }
+    }
+
     public async createTable(tableName?: string): Promise<void> {
         await (await this.execute(`create table ${tableName ? tableName : this.tableName}`));
     }
@@ -100,7 +109,7 @@ export class QLDBLedgerService implements LedgerDBInterface {
                         }
                         return (`${k} = ?`);
                     }).join(' and ');
-                    const r = (await this.execute(`SELECT * FROM ${t} WHERE ${wc}`, ...this.getValuesList(getQueries[t])))?.getResultList();
+                    const r = (await this.executeTxn(txn, `SELECT * FROM ${t} WHERE ${wc}`, ...this.getValuesList(getQueries[t])))?.getResultList();
                     getResults[t] = r;
                 }
             }
@@ -111,7 +120,7 @@ export class QLDBLedgerService implements LedgerDBInterface {
                 if (update.hasOwnProperty(qk) && updateWhere.hasOwnProperty(qk)) {
                     const whereClause = Object.keys(updateWhere[qk]).map(k => (`${k} = ?`)).join(' and ');
                     const updateClause = Object.keys(update[qk]).map(k => (`${k} = ?`)).join(',');
-                    updateResults[qk] = (await this.execute(`UPDATE ${tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update[qk]), ...Object.values(updateWhere[qk])))?.getResultList();
+                    updateResults[qk] = (await this.executeTxn(txn, `UPDATE ${tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update[qk]), ...Object.values(updateWhere[qk])))?.getResultList();
                 }
             }
 
@@ -119,7 +128,7 @@ export class QLDBLedgerService implements LedgerDBInterface {
             for (const qk in insert) {
                 const tableName = qk.split('#')[0];
                 if (insert.hasOwnProperty(qk)) {
-                    updateResults[qk] = (await this.execute(`INSERT INTO ${tableName ? tableName : this.tableName} ?`, insert[qk]))?.getResultList();
+                    updateResults[qk] = (await this.executeTxn(txn, `INSERT INTO ${tableName ? tableName : this.tableName} ?`, insert[qk]))?.getResultList();
                 }
             }
 

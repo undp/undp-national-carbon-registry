@@ -1,172 +1,345 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { dom } from "ion-js";
-import { ArrayIn, ArrayLike, LedgerDBInterface } from './ledger.db.interface';
-import { Pool } from "pg";
-// import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Programme } from '../entities/programme.entity';
+import { ArrayIn, ArrayLike, LedgerDBInterface } from "./ledger.db.interface";
+import { Pool, QueryResult, Client } from "pg";
+import { Programme } from "../entities/programme.entity";
 
-// @Entity()
 class MetaEntity {
-    // @PrimaryGeneratedColumn()
-    version: number;
-
-    // @CreateDateColumn()
-    txTime: Date;    
+  version: number;
+  txTime: Date;
 }
 
-// @Entity()
 export class PgProgrammeEventEntity {
-    // @Column({
-    //     type: "jsonb",
-    //     array: false,
-    //   })
-    data: Programme;
+  data: Programme;
+  meta: MetaEntity;
+  hash: number;
+}
 
-    // @Column({
-    //     type: "jsonb",
-    //     array: false,
-    //   })
-    meta: MetaEntity;
-
-    // @PrimaryGeneratedColumn()
-    hash: number;
+export class TxElement {
+  sql: string;
+  params?: any[];
 }
 
 @Injectable()
 export class PgSqlLedgerService implements LedgerDBInterface {
+  public tableName: string;
+  public overallTableName: string;
+  public companyTableName: string;
+  public ledgerName: string;
+  private dbCon: Pool;
 
-    public tableName: string;
-    public overallTableName: string;
-    public companyTableName: string;
-    public ledgerName: string;
-    private dbCon: Pool;
+  constructor(
+    private readonly logger: Logger,
+    private readonly configService: ConfigService
+  ) {
+    this.ledgerName = configService.get<string>("ledger.name");
+    this.tableName = configService.get<string>("ledger.table");
+    this.overallTableName = configService.get<string>("ledger.overallTable");
+    this.companyTableName = configService.get<string>("ledger.companyTable");
+    let dbConfig = this.configService.get<any>("database");
+    dbConfig["database"] = dbConfig["database"] + "Events";
+    this.dbCon = new Pool(dbConfig);
+    logger.log("PgSQL Ledger init ", this.ledgerName);
+  }
 
-    constructor(private readonly logger: Logger, private readonly configService: ConfigService) {
-        this.ledgerName = configService.get<string>('ledger.name');
-        this.tableName = configService.get<string>('ledger.table');
-        this.overallTableName = configService.get<string>('ledger.overallTable');
-        this.companyTableName = configService.get<string>('ledger.companyTable');
-        logger.log("PgSQL Ledger init ", this.ledgerName);
+  // TODO: Handler session expire
+  private async execute<TM>(queries: TxElement[]): Promise<QueryResult> {
+    console.log(`Statement: ${JSON.stringify(queries)}`);
+    const client = await this.dbCon.connect();
+    try {
+      const responses = [];
+      await client.query("BEGIN");
+      for (const c of queries) {
+        const resp = await client.query(c.sql, c.params);
+        responses.push(resp);
+        console.log("Execute resp", resp);
+      }
+      await client.query("COMMIT");
+      return responses;
+    } catch (e) {
+      console.log("Error", e);
+      await client.query("ROLLBACK");
+      throw e;
+    } finally {
+      client.release();
     }
-    getAndUpdateTx<TM>(getQueries: Record<string, Record<string, any>>, processGetFn: (results: Record<string, dom.Value[]>) => [Record<string, any>, Record<string, any>, Record<string, any>]): Promise<Record<string, dom.Value[]>> {
-        throw new Error('Method not implemented.');
+  }
+
+  private async executeTxn<TM>(
+    client: Client,
+    queries: { [key: string]: TxElement }
+  ): Promise<{ [key: string]: QueryResult }> {
+    console.log(`Statement: ${JSON.stringify(queries)}`);
+    try {
+      const responses = {};
+      await client.query("BEGIN");
+      for (const k in queries) {
+        const c = queries[k];
+        const resp = await client.query(c.sql, c.params);
+        responses[k] = resp;
+        console.log("Execute resp", resp);
+      }
+      await client.query("COMMIT");
+      return responses;
+    } catch (e) {
+      console.log("Error", e);
+      await client.query("ROLLBACK");
+      throw e;
     }
+  }
 
-    // TODO: Handler session expire
-    private async execute<TM>(sql, ...parameters: any[]): Promise<any> {
-        this.logger.debug(`Statement: ${sql}, parameter: ${JSON.stringify(parameters)}`);
-
-        let dbConfig = this.configService.get<any>('database');
-        dbConfig['database'] = dbConfig['database'] + 'Events';
-        this.dbCon = new Pool()
-        const resp = await this.dbCon.query(
-            sql,
-            ...parameters
-        );
-        this.logger.debug('Response', JSON.stringify(resp));
-        this.dbCon.close();
-        return resp;
-    }
-
-    public async createTable(tableName?: string): Promise<void> {
-        const sql = `CREATE TABLE IF NOT EXISTS ${tableName ? tableName : this.tableName}
+  public async createTable(tableName?: string): Promise<void> {
+    const sql = `CREATE SEQUENCE ${
+      tableName ? tableName : this.tableName
+    }_hash_seq; 
+        CREATE TABLE IF NOT EXISTS ${tableName ? tableName : this.tableName}
         (
             data jsonb NOT NULL,
             meta jsonb NOT NULL,
-            hash integer NOT NULL DEFAULT nextval('${tableName ? tableName : this.tableName}_hash_seq'::regclass),
+            hash integer NOT NULL DEFAULT nextval('${
+              tableName ? tableName : this.tableName
+            }_hash_seq'::regclass),
             PRIMARY KEY (hash)
-        )`
-        await (await this.execute(sql));
-    }
+        );`;
+    await await this.execute([{ sql }]);
+  }
 
-    public async createIndex(indexCol: string, tableName?: string): Promise<void> {
-        return null;
-        // await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
-    }
+  public async createIndex(
+    indexCol: string,
+    tableName?: string
+  ): Promise<void> {
+    return null;
+    // await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
+  }
 
-    public async insertRecord(document: Record<string, any>, tableName?: string): Promise<void> {
-        await (await this.execute(`INSERT INTO ${tableName ? tableName : this.tableName} ?`, document));
-    }
+  public async insertRecord(
+    document: Record<string, any>,
+    tableName?: string
+  ): Promise<void> {
+    await this.execute([
+      {
+        sql: `INSERT INTO "${
+          tableName ? tableName : this.tableName
+        }" ("data", "meta") VALUES ($1, $2)`,
+        params: [
+          document,
+          {
+            version: 0,
+            txTime: new Date(),
+          },
+        ],
+      },
+    ]);
+  }
 
-    public async fetchRecords(where: Record<string, any>): Promise<dom.Value[]> {
-        const whereClause = Object.keys(where).map(k => (`${k} = ?`)).join(' and ');
-        return (await this.execute(`SELECT * FROM ${this.tableName} WHERE ${whereClause}`, ...Object.values(where)))?.getResultList();
-    }
+  public async fetchRecords(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
+    const whereClause = Object.keys(where)
+      .map((k, i) => `data->>'${k}' = $${i + 1}`)
+      .join(" and ");
+    const fieldList = Object.keys(where)
+      .map((k) => `data->>'${k}'`)
+      .join(", ");
+    return (
+      await this.execute([
+        {
+          sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${
+            tableName ? tableName : this.tableName
+          } WHERE ${whereClause} order by ${fieldList}, hash desc`,
+          params: Object.values(where),
+        },
+      ])
+    )[0]?.rows.map((e) => e.data);
+  }
 
-    public async fetchHistory(where: Record<string, any>): Promise<dom.Value[]> {
-        const whereClause = Object.keys(where).map(k => (`h.data.${k} = ?`)).join(' and ');
-        const x = (await this.execute(`SELECT * FROM history(${this.tableName}) as h WHERE ${whereClause}`, ...Object.values(where)))?.getResultList();
-        console.log('Results', x);
-        return x;
-    }
+  public async fetchHistory(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
+    const whereClause = Object.keys(where)
+      .map((k, i) => `data->>'${k}' = $${i + 1}`)
+      .join(" and ");
+    const x = (
+      await this.execute([
+        {
+          sql: `SELECT * FROM ${
+            tableName ? tableName : this.tableName
+          } as h WHERE ${whereClause} order by hash desc`,
+          params: Object.values(where),
+        },
+      ])
+    )[0]?.rows;
+    console.log("Results", x);
+    return x;
+  }
 
-    public async updateRecords(update: Record<string, any>, where: Record<string, any>): Promise<dom.Value[]> {
-        const whereClause = Object.keys(where).map(k => (`${k} = ?`)).join(' and ');
-        const updateClause = Object.keys(update).map(k => (`${k} = ?`)).join(',');
-        return (await this.execute(`UPDATE ${this.tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update), ...Object.values(where)))?.getResultList();
-    };
-
-    private getValuesList(filterObj: any): any {
-        const list = [];
-        for (const k in filterObj) {
-            const v = filterObj[k];
-            if (v instanceof ArrayIn) {
-                list.push(v.value);
-            } else if (v instanceof ArrayLike) {
-                list.push(v.value);
-            } else {
-                list.push(v);
-            }
+  public async updateRecords(
+    update: Record<string, any>,
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
+    // const whereClause = Object.keys(where)
+    //   .map((k) => `${k} = ?`)
+    //   .join(" and ");
+    // const updateClause = Object.keys(update)
+    //   .map((k) => `${k} = ?`)
+    //   .join(",");
+    const table = tableName ? tableName : this.tableName;
+    const getQueries = {};
+    getQueries[table] = where;
+    const r = await this.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const resTable = results[table];
+        console.log("Res table", resTable);
+        const insertMap = {};
+        for (const obj in resTable) {
+          for (const k in update) {
+            resTable[obj][k] = update[k];
+          }
+          insertMap[table] = resTable[obj];
         }
-        return list;
+        return [{}, {}, insertMap];
+      }
+    );
+
+    return r[table];
+  }
+
+  private getValuesList(filterObj: any): any {
+    const list = [];
+    for (const k in filterObj) {
+      const v = filterObj[k];
+      if (v instanceof ArrayIn) {
+        list.push(v.value);
+      } else if (v instanceof ArrayLike) {
+        list.push(v.value);
+      } else {
+        list.push(v);
+      }
     }
+    return list;
+  }
 
-    // public async getAndUpdateTx<TM>(getQueries: Record<string, Record<string, any>>, processGetFn: (results: Record<string, dom.Value[]>) => [Record<string, any>, Record<string, any>, Record<string, any>]): Promise<Record<string, dom.Value[]>> {
-    //     this.logger.debug(``);
-    //     this.driver = new QldbDriver(this.ledgerName);
-    //     const resp = await this.driver.executeLambda(async (txn: TransactionExecutor) => {
-    //         const getResults = {};
-    //         for (const t in getQueries) {
-    //             if (getQueries.hasOwnProperty(t)) {
-    //                 const wc = Object.keys(getQueries[t]).map(k => {
-    //                     if (getQueries[t][k] instanceof Array) {
-    //                         return (`${k} in ?`);
-    //                     } else if (getQueries[t][k] instanceof ArrayIn) {
-    //                         return (`? IN "${getQueries[t][k].key}"`);
-    //                     } else if (getQueries[t][k] instanceof ArrayLike) {
-    //                         return (`${k} LIKE ?`);
-    //                     }
-    //                     return (`${k} = ?`);
-    //                 }).join(' and ');
-    //                 const r = (await this.execute(`SELECT * FROM ${t} WHERE ${wc}`, ...this.getValuesList(getQueries[t])))?.getResultList();
-    //                 getResults[t] = r;
-    //             }
-    //         }
-    //         const [update, updateWhere, insert] = processGetFn(getResults);
-    //         const updateResults = {};
-    //         for (const qk in update) {
-    //             const tableName = qk.split('#')[0];
-    //             if (update.hasOwnProperty(qk) && updateWhere.hasOwnProperty(qk)) {
-    //                 const whereClause = Object.keys(updateWhere[qk]).map(k => (`${k} = ?`)).join(' and ');
-    //                 const updateClause = Object.keys(update[qk]).map(k => (`${k} = ?`)).join(',');
-    //                 updateResults[qk] = (await this.execute(`UPDATE ${tableName} SET ${updateClause} WHERE ${whereClause}`, ...Object.values(update[qk]), ...Object.values(updateWhere[qk])))?.getResultList();
-    //             }
-    //         }
+  public async getAndUpdateTx<TM>(
+    getQueries: Record<string, Record<string, any>>,
+    processGetFn: (
+      results: Record<string, dom.Value[]>
+    ) => [Record<string, any>, Record<string, any>, Record<string, any>]
+  ): Promise<Record<string, dom.Value[]>> {
+    this.logger.debug(``);
 
-    //         this.logger.verbose(`Insert queries`, JSON.stringify(insert));
-    //         for (const qk in insert) {
-    //             const tableName = qk.split('#')[0];
-    //             if (insert.hasOwnProperty(qk)) {
-    //                 updateResults[qk] = (await this.execute(`INSERT INTO ${tableName ? tableName : this.tableName} ?`, insert[qk]))?.getResultList();
-    //             }
-    //         }
+    let updateResults = {};
+    const client = await this.dbCon.connect();
+    try {
+      const getTxElements = {};
+      for (const t in getQueries) {
+        if (getQueries.hasOwnProperty(t)) {
+          const wc = Object.keys(getQueries[t])
+            .map((k, i) => {
+              if (getQueries[t][k] instanceof Array) {
+                return `data->>'${k}' in $${i + 1}`;
+              } else if (getQueries[t][k] instanceof ArrayIn) {
+                return `$${i + 1} IN data->>'${k}'`;
+              } else if (getQueries[t][k] instanceof ArrayLike) {
+                return `data->>'${k}' LIKE $${i + 1}`;
+              }
+              return `data->>'${k}' = $${i + 1}`;
+            })
+            .join(" and ");
+          const fieldList = Object.keys(getQueries[t])
+            .map((k) => `data->>'${k}'`)
+            .join(", ");
+          getTxElements[t] = {
+            sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${t} WHERE ${wc} order by ${fieldList}, hash desc`,
+            params: this.getValuesList(getQueries[t]),
+          };
+        }
+      }
+      const list = await this.executeTxn(client, getTxElements);
 
-    //         return updateResults;
-    //     });
-    //     this.logger.debug('Response', JSON.stringify(resp));
-    //     this.driver.close();
-    //     return resp;
-    // }
+      const mapped = {};
+      for (const el in list) {
+        mapped[el] = list[el].rows.map((e) => e.data);
+      }
+      let [update, updateWhere, insert] = processGetFn(mapped);
+      const updateGetElements = {};
 
+      if (update && Object.keys(update).length > 0) {
+        for (const t in updateWhere) {
+          const tableName = t.split("#")[0];
+          if (updateWhere.hasOwnProperty(t)) {
+            const wc = Object.keys(updateWhere[t])
+              .map((k, i) => {
+                if (updateWhere[t][k] instanceof Array) {
+                  return `data->>'${k}' in $${i + 1}`;
+                } else if (updateWhere[t][k] instanceof ArrayIn) {
+                  return `$${i + 1} IN data->>'${k}'`;
+                } else if (updateWhere[t][k] instanceof ArrayLike) {
+                  return `data->>'${k}' LIKE $${i + 1}`;
+                }
+                return `data->>'${k}' = $${i + 1}`;
+              })
+              .join(" and ");
+            const fieldList = Object.keys(updateWhere[t])
+              .map((k) => `data->>'${k}'`)
+              .join(", ");
+            updateGetElements[t] = {
+              sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${tableName} WHERE ${wc} order by ${fieldList}, hash desc`,
+              params: this.getValuesList(updateWhere[t]),
+            };
+          }
+        }
+
+        console.log("TEST", updateGetElements);
+        const obj = await this.executeTxn(client, updateGetElements);
+        const updatingObj = {};
+        for (const el in list) {
+          updatingObj[el] = obj[el].rows.map((e) => e.data);
+        }
+
+        if (!insert) {
+          insert = {};
+        }
+        for (const t in updatingObj) {
+          if (updatingObj.hasOwnProperty(t)) {
+            for (const obj in updatingObj[t]) {
+              for (const k in update) {
+                updatingObj[t][obj][k] = update[k];
+              }
+              insert[t] = updatingObj[t][obj];
+            }
+          }
+        }
+      }
+
+      const updateTxElements = {};
+      this.logger.verbose(`Insert queries`, JSON.stringify(insert));
+      for (const qk in insert) {
+        const tableName = qk.split("#")[0];
+        if (insert.hasOwnProperty(qk)) {
+          updateTxElements[qk] = {
+            sql: `INSERT INTO "${
+              tableName ? tableName : this.tableName
+            }" ("data", "meta") VALUES ($1, $2)`,
+            params: [
+              insert[qk],
+              {
+                version: 0,
+                txTime: new Date(),
+              },
+            ],
+          };
+        }
+      }
+      updateResults = await this.executeTxn(client, updateTxElements);
+    } finally {
+      client.release();
+    }
+    this.logger.debug("Response", JSON.stringify(updateResults));
+    return updateResults;
+  }
 }
