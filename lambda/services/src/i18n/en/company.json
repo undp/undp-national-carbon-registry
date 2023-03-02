@@ -1,0 +1,12 @@
+{
+    "noActiveCompany": "No active company found",
+    "suspendCompanySuccess": "Successfully suspended company",
+    "suspendFailed": "Company suspend failed. Please try again",
+    "noSuspendedCompany": "No suspended company found",
+    "companyActivationSuccess": "Successfully activated company",
+    "companyActivationFailed": "Company activate failed. Please try again",
+    "companyTaxIdExist": "Company tax id already exist",
+    "companyUpdateFailed": "Company update failed. Please try again",
+    "cantSuspendUrOwn": "Can not suspend your own company",
+    "cantActivateUrOwn": "Can not activate your own company"
+}

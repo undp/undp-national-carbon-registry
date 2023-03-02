@@ -1,16 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import e from "express";
 import { QueryDto } from "../dto/query.dto";
-import { StatList } from "../dto/stat.list.dto";
 import { ProgrammeStage } from "../enum/programme-status.enum";
-import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
 import { ConfigService } from "@nestjs/config";
+import { I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class HelperService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private i18n: I18nService
+  ) {}
 
   private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
@@ -29,27 +31,50 @@ export class HelperService {
 
   private prepareKey(col: string, table?: string) {
     let key;
-    if (col.includes('->>')) {
-      const parts = col.split('->>');
-      key = `"${parts[0]}"->>'${parts[1]}'`
+    if (col.includes("->>")) {
+      const parts = col.split("->>");
+      key = `"${parts[0]}"->>'${parts[1]}'`;
     } else {
-      key = `"${col}"`
+      key = `"${col}"`;
     }
-    return `${table ? table + "." : ""}${key}`
+    return `${table ? table + "." : ""}${key}`;
   }
 
   private isLower(key: string) {
-    if (["email", "name", "companyName", "taxId", "country", "title", "externalId", "serialNo", "programmeTitle"].includes(key))
+    if (
+      [
+        "email",
+        "name",
+        "companyName",
+        "taxId",
+        "country",
+        "title",
+        "externalId",
+        "serialNo",
+        "programmeTitle",
+      ].includes(key)
+    )
       return true;
   }
 
   public generateSortCol(col: string) {
-    if (col.includes('->>')) {
-      const parts = col.split('->>');
-      return `"${parts[0]}"->>'${parts[1]}'`
+    if (col.includes("->>")) {
+      const parts = col.split("->>");
+      return `"${parts[0]}"->>'${parts[1]}'`;
     } else {
-      return `"${col}"`
+      return `"${col}"`;
     }
+  }
+
+  public formatReqMessagesString(langTag: string, vargs: any[]) {
+    const str: any = this.i18n.t(langTag);
+    const parts: any = str.split("{}");
+    let insertAt = 1;
+    for (const arg of vargs) {
+      parts.splice(insertAt, 0, arg);
+      insertAt += 2;
+    }
+    return parts.join("");
   }
 
   public generateWhereSQLChartStastics(
@@ -104,7 +129,11 @@ export class HelperService {
   }
 
   private isQueryDto(obj) {
-    if (obj && typeof obj === "object" && (obj["filterAnd"] || obj["filterOr"])) {
+    if (
+      obj &&
+      typeof obj === "object" &&
+      (obj["filterAnd"] || obj["filterOr"])
+    ) {
       return true;
     }
     return false;
@@ -231,8 +260,11 @@ export class HelperService {
         .map((e) => {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
-          } else if (e.operation === 'ANY') {
-            return `${this.prepareValue(e.value, table)} = ANY(${this.prepareKey(e.key, table)})`;
+          } else if (e.operation === "ANY") {
+            return `${this.prepareValue(
+              e.value,
+              table
+            )} = ANY(${this.prepareKey(e.key, table)})`;
           } else if (e.keyOperation) {
             return `${e.keyOperation}(${this.prepareKey(e.key, table)}) ${
               e.operation
@@ -254,16 +286,23 @@ export class HelperService {
         .map((e) => {
           if (this.isQueryDto(e.value)) {
             return `(${this.prepareValue(e.value, table)})`;
-          } else if (e.operation === 'ANY') {
-            return `${this.prepareValue(e.value, table)} = ANY(${this.prepareKey(e.key, table)})`;
+          } else if (e.operation === "ANY") {
+            return `${this.prepareValue(
+              e.value,
+              table
+            )} = ANY(${this.prepareKey(e.key, table)})`;
           } else if (e.keyOperation) {
             return `${e.keyOperation}(${this.prepareKey(e.key, table)}) ${
               e.operation
             } ${this.prepareValue(e.value, table, true)}`;
           } else if (this.isLower(e.key) && typeof e.value === "string") {
-            return `LOWER(${this.prepareKey(e.key, table)}) ${e.operation} ${this.prepareValue(e.value, table, true)}`;
+            return `LOWER(${this.prepareKey(e.key, table)}) ${
+              e.operation
+            } ${this.prepareValue(e.value, table, true)}`;
           } else {
-            return `${this.prepareKey(e.key, table)} ${e.operation} ${this.prepareValue(e.value, table)}`;
+            return `${this.prepareKey(e.key, table)} ${
+              e.operation
+            } ${this.prepareValue(e.value, table)}`;
           }
         })
         .join(" or ");
@@ -364,7 +403,7 @@ export class HelperService {
       ContentEncoding: "base64",
       ContentType: "image/png",
     };
-    
+
     uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
 
     return await s3

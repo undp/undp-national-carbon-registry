@@ -1,5 +1,12 @@
 import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrganisationDto } from "../dto/organisation.dto";
@@ -57,7 +64,10 @@ export class CompanyService {
       .getOne();
     if (!company) {
       throw new HttpException(
-        "No active company found",
+        this.helperService.formatReqMessagesString(
+          "company.noActiveCompany",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -84,38 +94,68 @@ export class CompanyService {
           this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
           true
         );
-        await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
-        await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
+        await this.companyTransferCancel(
+          companyId,
+          `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`
+        );
+        await this.emailHelperService.sendEmail(
+          company.email,
+          EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,
+          {},
+          user.companyId
+        );
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
-          this.getUserRefWithRemarks(user, `${remarks}#${SystemActionType.SUSPEND_REVOKE}#${company.name}`),
-          async (programme:Programme) => {
+          this.getUserRefWithRemarks(
+            user,
+            `${remarks}#${SystemActionType.SUSPEND_REVOKE}#${company.name}`
+          ),
+          async (programme: Programme) => {
             const hostAddress = this.configService.get("host");
-            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(programme.programmeId,EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,{
-              organisationName: company.name,
-              programmeName: programme.title,
-              credits: programme.creditBalance,
-              serialNumber: programme.serialNo,
-              pageLink: hostAddress + `/programmeManagement/view?id=${programme.programmeId}`
-            })
+            await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
+              programme.programmeId,
+              EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,
+              {
+                organisationName: company.name,
+                programmeName: programme.title,
+                credits: programme.creditBalance,
+                serialNumber: programme.serialNo,
+                pageLink:
+                  hostAddress +
+                  `/programmeManagement/view?id=${programme.programmeId}`,
+              }
+            );
           }
         );
 
-        await this.emailHelperService.sendEmail(company.email,EmailTemplates.CERTIFIER_ORG_DEACTIVATION,{},user.companyId)
+        await this.emailHelperService.sendEmail(
+          company.email,
+          EmailTemplates.CERTIFIER_ORG_DEACTIVATION,
+          {},
+          user.companyId
+        );
       }
       return new BasicResponseDto(
         HttpStatus.OK,
-        "Successfully suspended company"
+        this.helperService.formatReqMessagesString(
+          "company.suspendCompanySuccess",
+          []
+        )
       );
     }
     throw new HttpException(
-      "Company suspend failed. Please try again",
+      this.helperService.formatReqMessagesString("company.suspendFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
-  async activate(companyId: number,user: User, remarks: string, abilityCondition: string): Promise<any> {
+  async activate(
+    companyId: number,
+    user: User,
+    remarks: string,
+    abilityCondition: string
+  ): Promise<any> {
     this.logger.verbose("revoke company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
@@ -130,7 +170,10 @@ export class CompanyService {
       .getOne();
     if (!company) {
       throw new HttpException(
-        "No suspended company found",
+        this.helperService.formatReqMessagesString(
+          "company.noSuspendedCompany",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -154,14 +197,25 @@ export class CompanyService {
         this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
         false
       );
-      await this.emailHelperService.sendEmail(company.email,EmailTemplates.ORG_REACTIVATION,{},user.companyId);
+      await this.emailHelperService.sendEmail(
+        company.email,
+        EmailTemplates.ORG_REACTIVATION,
+        {},
+        user.companyId
+      );
       return new BasicResponseDto(
         HttpStatus.OK,
-        "Successfully activated company"
+        this.helperService.formatReqMessagesString(
+          "company.companyActivationSuccess",
+          []
+        )
       );
     }
     throw new HttpException(
-      "Company activate failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "company.companyActivationFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -189,11 +243,7 @@ export class CompanyService {
   async queryNames(query: QueryDto, abilityCondition: string): Promise<any> {
     const resp = await this.companyRepo
       .createQueryBuilder()
-      .select([
-        '"companyId"',
-        '"name"',
-        '"state"'
-      ])
+      .select(['"companyId"', '"name"', '"state"'])
       .where(
         this.helperService.generateWhereSQL(
           query,
@@ -204,12 +254,9 @@ export class CompanyService {
       .offset(query.size * query.page - query.size)
       .limit(query.size)
       .getRawMany();
-    
-    console.log(resp)
-    return new DataListResponseDto(
-      resp,
-      undefined
-    );
+
+    console.log(resp);
+    return new DataListResponseDto(resp, undefined);
   }
 
   async findByTaxId(taxId: string): Promise<Company | undefined> {
@@ -230,15 +277,17 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async findByCompanyIds(req: FindOrganisationQueryDto): Promise<Company[] | undefined> {
-    const data: Company[] = []
-    for (let i = 0; i < req.companyIds.length; i++){
+  async findByCompanyIds(
+    req: FindOrganisationQueryDto
+  ): Promise<Company[] | undefined> {
+    const data: Company[] = [];
+    for (let i = 0; i < req.companyIds.length; i++) {
       const companies = await this.companyRepo.find({
         where: {
           companyId: req.companyIds[i],
         },
       });
-      data.push(companies[0])
+      data.push(companies[0]);
     }
     return data && data.length > 0 ? data : undefined;
   }
@@ -261,7 +310,10 @@ export class CompanyService {
         switch (err.driverError.code) {
           case PG_UNIQUE_VIOLATION:
             throw new HttpException(
-              "Company tax id already exist",
+              this.helperService.formatReqMessagesString(
+                "company.companyTaxIdExist",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
         }
@@ -284,24 +336,30 @@ export class CompanyService {
       .getOne();
     if (!company) {
       throw new HttpException(
-        "No active company found",
+        this.helperService.formatReqMessagesString(
+          "company.noActiveCompany",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (companyUpdateDto.logo) {
-    const response: any = await this.helperService.uploadCompanyLogoS3(
-      companyUpdateDto.companyId,
-      companyUpdateDto.logo
-    );
-
-    if (response.Location) {
-      companyUpdateDto.logo = response.Location;
-    } else {
-      throw new HttpException(
-        "Company update failed. Please try again",
-        HttpStatus.INTERNAL_SERVER_ERROR
+      const response: any = await this.helperService.uploadCompanyLogoS3(
+        companyUpdateDto.companyId,
+        companyUpdateDto.logo
       );
+
+      if (response.Location) {
+        companyUpdateDto.logo = response.Location;
+      } else {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "company.companyUpdateFailed",
+            []
+          ),
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
       }
     }
 
@@ -326,7 +384,10 @@ export class CompanyService {
     }
 
     throw new HttpException(
-      "Company update failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "company.companyUpdateFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -352,5 +413,5 @@ export class CompanyService {
 
   private getUserRefWithRemarks = (user: any, remarks: string) => {
     return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
-}
+  };
 }
