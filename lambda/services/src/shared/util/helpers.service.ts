@@ -1,13 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import e from "express";
 import { QueryDto } from "../dto/query.dto";
-import { StatList } from "../dto/stat.list.dto";
 import { ProgrammeStage } from "../enum/programme-status.enum";
-import { Stat } from "../dto/stat.dto";
 import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
 import { ConfigService } from "@nestjs/config";
-import { I18n, I18nContext, I18nService } from "nestjs-i18n";
+import { I18nService } from "nestjs-i18n";
 
 @Injectable()
 export class HelperService {
