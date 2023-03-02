@@ -32,7 +32,7 @@ export default () => ({
         username: process.env.EMAIL_USERNAME || 'AKIAUMXKTXDJIOFY2QXL',
         password: process.env.SES_PASSWORD,
         skipSuffix: '@xeptagon.com',
-        Disabled: process.env.IS_EMAIL_DISABLED === 'true' ? true : false
+        disabled: process.env.IS_EMAIL_DISABLED === 'true' ? true : false
     },
     s3CommonBucket: {
         name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),
