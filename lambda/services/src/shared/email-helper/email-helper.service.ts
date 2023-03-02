@@ -9,6 +9,8 @@ import { UserService } from "../user/user.service";
 
 @Injectable()
 export class EmailHelperService {
+  isEmailDisabled: boolean;
+
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
@@ -17,7 +19,9 @@ export class EmailHelperService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService
-  ) {}
+  ) {
+    this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
+  }
 
   public async sendEmailToProgrammeOwnerAdmins(
     programmeId: string,
@@ -26,6 +30,9 @@ export class EmailHelperService {
     companyId?: number,
     governmentId?: number
   ) {
+
+    if(this.isEmailDisabled)
+      return;
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
     let companyDetails: Company;
@@ -96,6 +103,8 @@ export class EmailHelperService {
     receiverCompanyId?: number,
     programmeId?: string
   ) {
+    if(this.isEmailDisabled)
+      return;
     const systemCountryName = this.configService.get("systemCountryName");
     const users = await this.userService.getOrganisationAdminAndManagerUsers(
       companyId
@@ -244,6 +253,8 @@ export class EmailHelperService {
     programmeId?: string,
     companyId?: number
   ) {
+    if(this.isEmailDisabled)
+      return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getGovAdminAndManagerUsers();
@@ -309,6 +320,8 @@ export class EmailHelperService {
     templateData: any,
     companyId: number
   ) {
+    if(this.isEmailDisabled)
+      return;
     const companyDetails = await this.companyService.findByCompanyId(companyId);
     const systemCountryName = this.configService.get("systemCountryName");
     templateData = {
