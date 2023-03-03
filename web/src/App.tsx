@@ -23,6 +23,7 @@ import PrivacyPolicy from './Pages/PrivacyPolicy/privacyPolicy';
 import CodeOfConduct from './Pages/CodeofConduct/codeofConduct';
 import CookiePolicy from './Pages/CookiePolicy/cookiePolicy';
 import TermsOfUse from './Pages/TermsofUse/termsofUse';
+import CarbonHelp from './Pages/Help/help';
 import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
@@ -67,6 +68,7 @@ const App = () => {
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="help" element={<CarbonHelp />} />
               <Route path="codeconduct" element={<CodeOfConduct />} />
               <Route path="cookie" element={<CookiePolicy />} />
               <Route path="terms" element={<TermsOfUse />} />
