@@ -197,14 +197,14 @@ export class ProgrammeService {
       } else if (
         initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT
       ) {
-        this.emailHelperService.sendEmailToGovernmentAdmins(
+        await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_TRANSFER_GOV_REJECTED,
           { credits: pTransfer.creditAmount },
           pTransfer.programmeId,
           pTransfer.fromCompanyId
         );
       } else {
-        this.emailHelperService.sendEmailToOrganisationAdmins(
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
           pTransfer.initiatorCompanyId,
           EmailTemplates.CREDIT_TRANSFER_REJECTED,
           { credits: pTransfer.creditAmount },
@@ -840,7 +840,7 @@ export class ProgrammeService {
           false
         )
       ).data;
-      this.emailHelperService.sendEmailToOrganisationAdmins(
+      await this.emailHelperService.sendEmailToOrganisationAdmins(
         trf.toCompanyId,
         EmailTemplates.CREDIT_SEND_DEVELOPER,
         {
@@ -858,7 +858,7 @@ export class ProgrammeService {
 
     allTransferList.forEach(async (transfer) => {
       if (requester.companyRole === CompanyRole.GOVERNMENT) {
-        this.emailHelperService.sendEmailToOrganisationAdmins(
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
           EmailTemplates.CREDIT_TRANSFER_GOV,
           {
@@ -871,7 +871,7 @@ export class ProgrammeService {
           transfer.toCompanyId
         );
       } else if (requester.companyId != transfer.fromCompanyId) {
-        this.emailHelperService.sendEmailToOrganisationAdmins(
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
           EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,
           {
@@ -1015,7 +1015,7 @@ export class ProgrammeService {
     const savedProgramme = await this.programmeLedger.createProgramme(programme);
     if(savedProgramme){
       const hostAddress = this.configService.get("host");
-      this.emailHelperService.sendEmailToGovernmentAdmins(
+      await this.emailHelperService.sendEmailToGovernmentAdmins(
         EmailTemplates.PROGRAMME_CREATE,
         {
           organisationName: orgNamesList,
@@ -1419,7 +1419,7 @@ export class ProgrammeService {
       const hostAddress = this.configService.get("host");
       if (requester.companyId != toCompany.companyId) {
         transfer.status = TransferStatus.PENDING;
-        this.emailHelperService.sendEmailToGovernmentAdmins(
+        await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_RETIREMENT_BY_DEV,
           {
             credits: transfer.creditAmount,
@@ -1432,7 +1432,7 @@ export class ProgrammeService {
       } else {
         transfer.status = TransferStatus.PROCESSING;
         autoApproveTransferList.push(transfer);
-        this.emailHelperService.sendEmailToOrganisationAdmins(
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
           fromCompany.companyId,
           EmailTemplates.CREDIT_RETIREMENT_BY_GOV,
           {
@@ -1526,12 +1526,12 @@ export class ProgrammeService {
 
     const hostAddress = this.configService.get("host");
     updated.company.forEach(async (company) => {
-      this.emailHelperService.sendEmailToOrganisationAdmins(
+      await this.emailHelperService.sendEmailToOrganisationAdmins(
         company.companyId,
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
-          credits: updated.creditIssued,
+          credits: req.issueAmount,
           serialNumber: updated.serialNo,
           pageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
@@ -1592,13 +1592,19 @@ export class ProgrammeService {
     }
 
     const hostAddress = this.configService.get("host");
+    let authDate = new Date(updated.txTime);
+    let date = authDate.getDate().toString().padStart(2,"0");
+    let month = authDate.toLocaleString('default', { month: 'long' });
+    let year = authDate.getFullYear();
+    let formattedDate = `${date} ${month} ${year}`;
+    
     updated.company.forEach(async (company) => {
-      this.emailHelperService.sendEmailToOrganisationAdmins(
+      await this.emailHelperService.sendEmailToOrganisationAdmins(
         company.companyId,
         EmailTemplates.PROGRAMME_AUTHORISATION,
         {
           programmeName: updated.title,
-          authorisedDate: new Date(updated.txTime),
+          authorisedDate: formattedDate,
           serialNumber: updated.serialNo,
           programmePageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,

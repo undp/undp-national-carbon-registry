@@ -64,12 +64,15 @@ const UserProfile = () => {
 
   const onDeleteProfileUserConfirmed = async () => {
     try {
+      setIsLoading(true);
       const response = await del(`national/user/delete?email=${userDetails.email}`);
       setOpenDeleteConfirmationModal(false);
       setErrorMsg('');
       signOut();
     } catch (exception: any) {
       setErrorMsg(exception.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -316,6 +319,7 @@ const UserProfile = () => {
         onActionCanceled={onDeleteProfileUserCanceled}
         openModal={openDeleteConfirmationModal}
         errorMsg={errorMsg}
+        loading={isLoading}
       />
 
       <ChangePasswordModel
