@@ -352,7 +352,7 @@ const CookiePolicy = () => {
                   <td>
                     Used to distinguish individual users by means of designation of a randomly
                     generated number as client identifier,
-                    <br /> which allows calculation of visits and sessions
+                    <br /> which allows calculation of visits and sessions.
                   </td>
                 </tr>
                 <tr>
@@ -614,10 +614,15 @@ const CookiePolicy = () => {
               us at digital@undp.org or by post to:
               <br />
               <br />
-              <br /> United Nations Development Programme 1 United Nations Plaza,
-              <br /> New York United States
-              <br /> Phone: +260-211-263258
-              <br /> This cookie policy was created using Termly's{' '}
+              <br />
+              United Nations Development Programme
+              <br />1 United Nations Plaza,
+              <br />
+              New York United States
+              <br />
+              Phone: +260-211-263258
+              <br />
+              This cookie policy was created using Termly's{' '}
               <a href="https://termly.io/products/cookie-consent-manager/">
                 Cookie Consent Manager
               </a>
