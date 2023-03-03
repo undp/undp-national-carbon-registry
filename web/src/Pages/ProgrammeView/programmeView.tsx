@@ -73,8 +73,6 @@ import {
   ViewColor,
 } from '../Common/role.color.constants';
 import { DateTime } from 'luxon';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import mapboxgl, { LngLatLike } from 'mapbox-gl';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -89,9 +87,8 @@ import Loading from '../../Components/Loading/Loading';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
-
-mapboxgl.accessToken =
-  '';
+import MapComponent from '../../Components/Maps/MapComponent';
+import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -104,7 +101,6 @@ const ProgrammeView = () => {
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
-  const mapContainerRef = useRef(null);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
@@ -112,6 +108,9 @@ const ProgrammeView = () => {
   const [certs, setCerts] = useState<any>([]);
   const [certTimes, setCertTimes] = useState<any>({});
   const [retireReason, setRetireReason] = useState<any>();
+  const [markers, setMarkers] = useState<MarkerData[]>([]);
+  const [centerPoint, setCenterPoint] = useState<number[]>([]);
+  const mapType = MapTypes.Mapbox;
 
   const showModal = () => {
     setOpenModal(true);
@@ -167,39 +166,33 @@ const ProgrammeView = () => {
   };
 
   const drawMap = () => {
-    // const address = state.record?.programmeProperties.geographicalLocation.join(', ') || '';
-    if (!mapContainerRef || !mapContainerRef.current) {
-      return;
-    }
     setTimeout(async () => {
-      // let mapd: any = undefined;
-
-      let mapd: any;
       if (data?.geographicalLocationCordintes && data?.geographicalLocationCordintes.length > 0) {
-        mapd = new mapboxgl.Map({
-          container: mapContainerRef.current || '',
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: getCenter(data?.geographicalLocationCordintes) as LngLatLike,
-          zoom: 4,
-        });
-
+        setCenterPoint(getCenter(data?.geographicalLocationCordintes));
+        const markerList = [];
         for (const iloc in data?.geographicalLocationCordintes) {
-          // const popup = new mapboxgl.Popup()
-          //   .setText(state.record?.programmeProperties.geographicalLocation[iloc])
-          //   .addTo(mapd);
-
           if (data?.geographicalLocationCordintes[iloc] !== null) {
-            new mapboxgl.Marker({
+            const markerData: MarkerData = {
               color: locationColors[(Number(iloc) + 1) % locationColors.length],
-            })
-              .setLngLat(data?.geographicalLocationCordintes[iloc] as LngLatLike)
-              .addTo(mapd);
+              location: data?.geographicalLocationCordintes[iloc],
+            };
+
+            markerList.push(markerData);
           }
-          // .setPopup(popup);
         }
+
+        setMarkers(markerList);
       } else {
+        let accessToken =
+          '';
+        if (mapType === MapTypes.Mapbox && process.env.MAPBOXGL_ACCESS_TOKEN) {
+          accessToken = process.env.MAPBOXGL_ACCESS_TOKEN;
+        }
+
+        if (!accessToken) return;
+
         for (const address of data!.programmeProperties.geographicalLocation) {
-          const response = await Geocoding({ accessToken: mapboxgl.accessToken })
+          const response = await Geocoding({ accessToken: accessToken })
             .forwardGeocode({
               query: address,
               autocomplete: false,
@@ -220,20 +213,11 @@ const ProgrammeView = () => {
             return;
           }
           const feature = response.body.features[0];
-          if (mapContainerRef.current) {
-            if (mapd === undefined) {
-              mapd = new mapboxgl.Map({
-                container: mapContainerRef.current || '',
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: feature.center as LngLatLike,
-                zoom: 4,
-              });
-            }
-
-            // const popup = new mapboxgl.Popup().setText(address).addTo(mapd);
-            new mapboxgl.Marker().setLngLat(feature.center as LngLatLike).addTo(mapd);
-            // .setPopup(popup);
-          }
+          setCenterPoint(feature.center);
+          const marker: MarkerData = {
+            location: feature.center,
+          };
+          setMarkers([marker]);
         }
       }
     }, 1000);
@@ -1604,7 +1588,14 @@ const ProgrammeView = () => {
                   <span className="title-text">{t('view:location')}</span>
                 </div>
                 <div className="map-content">
-                  <div className="map-container" ref={mapContainerRef} />
+                  <MapComponent
+                    mapType={mapType}
+                    center={centerPoint}
+                    zoom={4}
+                    markers={markers}
+                    height={250}
+                    style="mapbox://styles/mapbox/streets-v11"
+                  ></MapComponent>
                   <Row className="region-list">
                     {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
                       <Col className="loc-tag">
