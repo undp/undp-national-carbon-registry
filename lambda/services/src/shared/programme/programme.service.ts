@@ -1531,7 +1531,7 @@ export class ProgrammeService {
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
-          credits: updated.creditIssued,
+          credits: req.issueAmount,
           serialNumber: updated.serialNo,
           pageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
@@ -1592,13 +1592,19 @@ export class ProgrammeService {
     }
 
     const hostAddress = this.configService.get("host");
+    let authDate = new Date(updated.txTime);
+    let date = authDate.getDate().toString().padStart(2,"0");
+    let month = authDate.toLocaleString('default', { month: 'long' });
+    let year = authDate.getFullYear();
+    let formattedDate = `${date} ${month} ${year}`;
+    
     updated.company.forEach(async (company) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
         company.companyId,
         EmailTemplates.PROGRAMME_AUTHORISATION,
         {
           programmeName: updated.title,
-          authorisedDate: new Date(updated.txTime),
+          authorisedDate: formattedDate,
           serialNumber: updated.serialNo,
           programmePageLink:
             hostAddress + `/programmeManagement/view?id=${updated.programmeId}`,
