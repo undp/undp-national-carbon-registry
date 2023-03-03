@@ -18,10 +18,12 @@
   }
 
   .action-btns {
-    align-items: center !important;
     justify-content: center !important;
-    button {
-      margin-left: 15px;
+    button:first-child {
+      margin-right: 15px;
+    }
+    button:last-child {
+      margin-right: 15px;
     }
   }
 
@@ -146,6 +148,8 @@
   }
 
   .map-content {
+    display: flex;
+    flex-direction: column;
     margin-left: 20px;
     padding: 15px 0px;
   }
