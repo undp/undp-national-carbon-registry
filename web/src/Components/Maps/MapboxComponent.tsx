@@ -18,12 +18,12 @@ const MapboxComponent = (props: MapComponentProps) => {
     mapSource,
     onClick,
     showPopupOnClick,
-    clickedPopupData,
     onMouseMove,
     layer,
     height,
     style,
     zoom,
+    onRender,
   } = props;
 
   useEffect(() => {
@@ -39,17 +39,19 @@ const MapboxComponent = (props: MapComponentProps) => {
     });
 
     map.on('load', () => {
+      const currentMarkes: any = {};
+
       if (mapSource) {
         map.addSource(mapSource.key, mapSource.data);
       }
 
       if (onClick) {
         map.on('click', function (e) {
-          onClick(map, e);
-          if (showPopupOnClick && clickedPopupData) {
+          const popupContent = onClick(map, e);
+          if (showPopupOnClick && popupContent) {
             const popup = new mapboxgl.Popup()
               .setLngLat(map.unproject(e.point))
-              .setHTML(clickedPopupData.html)
+              .setHTML(popupContent)
               .addTo(map);
           }
         });
@@ -63,6 +65,32 @@ const MapboxComponent = (props: MapComponentProps) => {
 
       if (layer) {
         map.addLayer(layer);
+      }
+
+      if (onRender) {
+        map.on('render', () => {
+          const markersList: MarkerData[] = onRender(map);
+          if (markersList) {
+            markersList.forEach((marker: MarkerData) => {
+              if (!currentMarkes[marker.id as number]) {
+                const createdMarker = new mapboxgl.Marker({
+                  color: marker.color,
+                  element: marker.element ? marker.element : undefined,
+                })
+                  .setLngLat([marker.location[0], marker.location[1]])
+                  .addTo(map);
+                currentMarkes[marker.id as number] = createdMarker;
+              }
+            });
+
+            for (const id in currentMarkes) {
+              if (!markersList?.some((marker: MarkerData) => marker.id?.toString() === id)) {
+                currentMarkes[id].remove();
+                delete currentMarkes[id];
+              }
+            }
+          }
+        });
       }
     });
 

@@ -3,6 +3,7 @@ export enum MapTypes {
 }
 
 export interface MarkerData {
+  id?: number;
   color?: string;
   location: number[];
   element?: any;
@@ -25,9 +26,9 @@ export interface MapComponentProps {
   mapSource?: MapSourceData;
   onClick?: any;
   showPopupOnClick?: boolean;
-  clickedPopupData?: MapPopupData;
   onMouseMove?: any;
   layer?: any;
   height: number;
   style: string;
+  onRender?: any;
 }

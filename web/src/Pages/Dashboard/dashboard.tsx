@@ -173,14 +173,11 @@ const Dashboard = () => {
 
   const [transferLocationsMapSource, setTransferLocationsMapSource] = useState<MapSourceData>();
   const [txLocationMapData, setTxLocationMapData] = useState<any>();
-  const [transferLocationsMapClickedPopupData, setTransferLocationsMapClickedPopupData] =
-    useState<MapPopupData>();
   const [transferLocationsMapLayer, setTransferLocationsMapLayer] = useState<any>();
 
   const [programmeLocationsMapCenter, setProgrammeLocationsMapCenter] = useState<number[]>([]);
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
-  const [programmeLocationsMapMarkers, setProgrammeLocationsMapMarkers] = useState<any>();
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -1588,19 +1585,6 @@ ${total}
 
       setProgrammeLocationsMapSource(mapSource);
 
-      const markersArray = [];
-      if (programmeLocations.features) {
-        for (const feature of programmeLocations.features) {
-          const el: any = createDonutChart(feature.properties);
-          const marker: MarkerData = {
-            element: el,
-            location: feature.geometry.coordinates,
-          };
-          markersArray.push(marker);
-        }
-        setProgrammeLocationsMapMarkers(markersArray);
-      }
-
       setProgrammeLocationsMapLayer({
         id: 'programmes_circle',
         type: 'circle',
@@ -1631,9 +1615,7 @@ ${total}
       return;
     }
 
-    setTransferLocationsMapClickedPopupData({
-      html: `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`,
-    });
+    return `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`;
   };
 
   // Use the same approach as above to indicate that the symbols are clickable
@@ -1643,6 +1625,32 @@ ${total}
     const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
     map.getCanvas().style.cursor =
       features.length > 0 && txLocationMapData[features[0].properties?.iso_3166_1] ? 'pointer' : '';
+  };
+
+  const programmeLocationsMapOnRender = function (map: any) {
+    if (!map.isSourceLoaded('programmeLocations')) return;
+
+    const currentMarkers: MarkerData[] = [];
+    const features: any = map.querySourceFeatures('programmeLocations');
+
+    // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+    // and add it to the map if it's not there already
+    for (const feature of features) {
+      const coords = feature.geometry.coordinates;
+      const properties = feature.properties;
+      const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
+
+      const el: any = createDonutChart(properties);
+      const marker = {
+        id: id,
+        element: el,
+        location: coords,
+      };
+
+      currentMarkers.push(marker);
+    }
+
+    return currentMarkers;
   };
 
   return (
@@ -1973,8 +1981,8 @@ ${total}
                       mapSource={programmeLocationsMapSource}
                       layer={programmeLocationsMapLayer}
                       height={360}
-                      markers={programmeLocationsMapMarkers}
                       style="mapbox://styles/mapbox/light-v11"
+                      onRender={programmeLocationsMapOnRender}
                     ></MapComponent>
                   </div>
                   <div className="stage-legends">
@@ -2027,7 +2035,6 @@ ${total}
                       mapSource={transferLocationsMapSource}
                       onClick={transferLocationsMapOnClick}
                       showPopupOnClick={true}
-                      clickedPopupData={transferLocationsMapClickedPopupData}
                       onMouseMove={transferLocationsMapOnMouseMove}
                       layer={transferLocationsMapLayer}
                       height={360}
