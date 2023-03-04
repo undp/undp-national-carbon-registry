@@ -5,6 +5,7 @@ import {
   MapComponentProps,
   MarkerData,
 } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
+import './MapboxComponent.scss';
 
 mapboxgl.accessToken = process.env.MAPBOXGL_ACCESS_TOKEN
   ? process.env.MAPBOXGL_ACCESS_TOKEN

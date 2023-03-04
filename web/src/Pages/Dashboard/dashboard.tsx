@@ -44,7 +44,6 @@ import { useUserContext } from '../../Context/UserInformationContext/userInforma
 import { useTranslation } from 'react-i18next';
 import MapComponent from '../../Components/Maps/MapComponent';
 import {
-  MapPopupData,
   MapSourceData,
   MapTypes,
   MarkerData,
