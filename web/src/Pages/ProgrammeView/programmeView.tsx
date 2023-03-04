@@ -712,7 +712,7 @@ const ProgrammeView = () => {
         if (el) {
           const toDelete = [];
           for (const txT in txList) {
-            if (activity.data.txTime > txT) {
+            if (Number(activity.data.txTime) > Number(txT)) {
               activityList.unshift(...txList[txT]);
               toDelete.push(txT);
             } else {
