@@ -22,6 +22,7 @@ package:
     - ".env"
     - .env.${self:provider.stage}
     - "countries.json"
+    - "regions.csv"
 
 plugins:
   - "serverless-plugin-typescript"
