@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import configuration from '../configuration';
 import { StorageType } from '../enum/storage.type';
@@ -8,6 +8,7 @@ import { S3FileHandlerService } from './s3.filehandler.service';
 
 @Module({
     providers: [
+        Logger,
         {
             provide: FileHandlerInterface,
             useClass:
