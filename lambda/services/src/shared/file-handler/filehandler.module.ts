@@ -11,7 +11,7 @@ import { S3FileHandlerService } from './s3.filehandler.service';
         {
             provide: FileHandlerInterface,
             useClass:
-              process.env.LOCATION_SERVICE === StorageType.S3
+              process.env.FILE_SERVICE === StorageType.S3
                 ? S3FileHandlerService
                 : LocalFileHandlerService,
           }
