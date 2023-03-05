@@ -1,12 +1,6 @@
-import { forwardRef, Inject, Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
-import { CompanyService } from "../company/company.service";
-import { EmailService } from "../email/email.service";
-import { Company } from "../entities/company.entity";
-import { Programme } from "../entities/programme.entity";
-import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
-import { UserService } from "../user/user.service";
 import { LocationInterface } from "./location.interface";
 
 @Injectable()
