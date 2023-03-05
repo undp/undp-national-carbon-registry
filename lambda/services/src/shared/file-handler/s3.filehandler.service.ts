@@ -24,17 +24,9 @@ export class S3FileHandlerService implements FileHandlerInterface {
     
     // uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
     uploadParams.Key = path
-    return await s3
-      .upload(uploadParams, function (err, data) {
-        console.log(data, err)
-        if (err) {
-          return undefined;
-        }
-        if (data) {
-          return data.Location;
-        }
-      })
-      .promise();
+    return (await s3
+      .upload(uploadParams)
+      .promise())?.Location;
   }
 
 
