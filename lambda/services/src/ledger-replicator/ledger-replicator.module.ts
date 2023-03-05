@@ -11,7 +11,7 @@ import { PgSqlReplicatorService } from './pgsql-replicator.service';
 import { ProcessEventService } from './process.event.service';
 import { Counter } from '../shared/entities/counter.entity';
 import { LocationModule } from '../shared/location/location.module';
-import { LedgerType } from 'src/shared/enum/ledger.type';
+import { LedgerType } from '../shared/enum/ledger.type';
 
 @Module({
   imports: [
