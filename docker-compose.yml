@@ -1,4 +1,7 @@
 version: '3.3'
+volumes:
+    data:
+        driver: local
 services:
     db: 
         container_name: db
@@ -7,10 +10,14 @@ services:
         ports:
             - '5432:5432'
         environment:
-            POSTGRES_PASSWORD: ''
+            POSTGRES_PASSWORD: '1234'
             POSTGRES_USER: root
-            POSTGRES_HOST_AUTH_METHOD: trust
-            POSTGRES_DB: carbondev
+            PSQL_USERNAME: root
+            # POSTGRES_HOST_AUTH_METHOD: trust
+            PGDATA: /data/postgres
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - data:/data/postgres
     national:
         build:
             context: .
@@ -22,7 +29,12 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
+            DB_PASSWORD: '1234'
             RUN_MODULE: national-api
+            rootEmail: palinda@xeptagon.com
+            systemCountryCode: 'NG'
+            name: 'Antactic Region'
+            logoBase64: 'sss'
     stats:
         build:
             context: .
@@ -35,7 +47,36 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
+            DB_PASSWORD: '1234'
             RUN_PORT: 3100
             RUN_MODULE: analytics-api
+    replicator:
+        build:
+            context: .
+            dockerfile: ./lambda/services/Dockerfile
+        depends_on:
+            - db
+            - national
+        environment:
+            DB_HOST: db
+            DB_USER: root
+            DB_PASSWORD: '1234'
+            RUN_MODULE: replicator
+    web:
+        build:
+            context: .
+            dockerfile: ./web/Dockerfile
+            args:
+                PORT: 3030
+                REACT_APP_BACKEND: http://localhost:3000
+                REACT_APP_STAT_URL: http://localhost:3100
+                COUNTRY_NAME: 'Antarctic Region'
+                COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
+                COUNTRY_CODE: 'NG'
+        ports:
+            - '3030:3030'
+        depends_on:
+            - db
+            - national
 
 

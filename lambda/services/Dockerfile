@@ -1,5 +1,5 @@
 # Base image
-FROM node:alpine3.16
+FROM node:16-alpine
 
 # Create app directory
 WORKDIR /app/lambda/services

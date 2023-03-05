@@ -15,11 +15,16 @@ import { CompanyService } from "../shared/company/company.service";
 import { UserModule } from "../shared/user/user.module";
 import { UserService } from "../shared/user/user.service";
 import { TxType } from "../shared/enum/txtype.enum";
+import { LedgerDBInterface } from "../shared/ledger-db/ledger.db.interface";
+import { Handler } from 'aws-lambda';
 const fs = require('fs')
 
-exports.handler = async (event) => {
-    console.log(`Setup Handler Started with: ${JSON.stringify(event)}`)
+export const handler: Handler = async (event) => {
+    console.log(`Setup Handler Started with: ${event}`)
 
+    if (!event) {
+      event = process.env;
+    }
     const userApp = await NestFactory.createApplicationContext(UserModule, {
       logger: getLogger(UserModule),
     });
@@ -33,7 +38,7 @@ exports.handler = async (event) => {
       logger: getLogger(LedgerDbModule),
     });
     try {
-      const ledgerModule = app.get(QLDBLedgerService)
+      const ledgerModule = app.get(LedgerDBInterface)
 
       await ledgerModule.createTable('company');
       await ledgerModule.createIndex('txId', 'company');
@@ -67,24 +72,27 @@ exports.handler = async (event) => {
       user.role = Role.Root;
       user.phoneNo = '-';
       user.company = company;
+
+      console.log('Adding company', company);
+      console.log('Adding user', user)
       
       await userService.create(user, -1, CompanyRole.GOVERNMENT)
     } catch (e) {
       console.log(`User ${event['rootEmail']} failed to create`, e) 
     }
 
-    const countryData = fs.readFileSync('countries.json', 'utf8');
-    const jsonCountryData = JSON.parse(countryData);
-    const utils = await NestFactory.createApplicationContext(UtilModule)
-    const countryService = utils.get(CountryService)
+    // const countryData = fs.readFileSync('countries.json', 'utf8');
+    // const jsonCountryData = JSON.parse(countryData);
+    // const utils = await NestFactory.createApplicationContext(UtilModule)
+    // const countryService = utils.get(CountryService)
 
-    jsonCountryData.forEach(async countryItem => {
-      if(countryItem["UN Member States"] === "x"){
-        const country = new Country()
-        country.alpha2 = countryItem["ISO-alpha2 Code"]
-        country.alpha3 = countryItem["ISO-alpha3 Code"]
-        country.name = countryItem["English short"]
-        await countryService.insertCountry(country)
-      }
-    });
+    // jsonCountryData.forEach(async countryItem => {
+    //   if(countryItem["UN Member States"] === "x"){
+    //     const country = new Country()
+    //     country.alpha2 = countryItem["ISO-alpha2 Code"]
+    //     country.alpha3 = countryItem["ISO-alpha3 Code"]
+    //     country.name = countryItem["English short"]
+    //     await countryService.insertCountry(country)
+    //   }
+    // });
 }

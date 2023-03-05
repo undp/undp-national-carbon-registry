@@ -37,9 +37,17 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     this.tableName = configService.get<string>("ledger.table");
     this.overallTableName = configService.get<string>("ledger.overallTable");
     this.companyTableName = configService.get<string>("ledger.companyTable");
-    let dbConfig = this.configService.get<any>("database");
-    dbConfig["database"] = dbConfig["database"] + "Events";
-    this.dbCon = new Pool(dbConfig);
+
+    let dbc = this.configService.get<any>("database");
+
+    const config = {
+      host: dbc["host"],
+      port: dbc["port"],
+      user: dbc["username"],
+      password: dbc["password"],
+      database: dbc["database"] + "Events",
+    };
+    this.dbCon = new Pool(config);
     logger.log("PgSQL Ledger init ", this.ledgerName);
   }
 
@@ -167,7 +175,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         {
           sql: `SELECT * FROM ${
             tableName ? tableName : this.tableName
-          } as h WHERE ${whereClause} order by hash desc`,
+          } as h WHERE ${whereClause} order by hash`,
           params: Object.values(where),
         },
       ])
@@ -194,17 +202,22 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       getQueries,
       (results: Record<string, dom.Value[]>) => {
         const resTable = results[table];
-        console.log("Res table", resTable);
+        console.log("Res table", resTable, update);
         const insertMap = {};
-        for (const obj in resTable) {
+        for (const obj of resTable) {
           for (const k in update) {
-            resTable[obj][k] = update[k];
+            obj[k] = update[k];
           }
-          insertMap[table] = resTable[obj];
+          insertMap[table] = obj;
+      
         }
+        console.log('Updating records', insertMap)
         return [{}, {}, insertMap];
       }
     );
+
+    console.log(r);
+    
 
     return r[table];
   }
@@ -241,7 +254,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           const wc = Object.keys(getQueries[t])
             .map((k, i) => {
               if (getQueries[t][k] instanceof Array) {
-                return `data->>'${k}' in $${i + 1}`;
+                return `data->>'${k}' in ($${i + 1})`;
               } else if (getQueries[t][k] instanceof ArrayIn) {
                 return `$${i + 1} IN data->>'${k}'`;
               } else if (getQueries[t][k] instanceof ArrayLike) {
@@ -263,7 +276,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
 
       const mapped = {};
       for (const el in list) {
-        mapped[el] = list[el].rows.map((e) => e.data);
+        mapped[el] = list[el]?.rows.map((e) => e.data);
       }
       let [update, updateWhere, insert] = processGetFn(mapped);
       const updateGetElements = {};
@@ -275,7 +288,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             const wc = Object.keys(updateWhere[t])
               .map((k, i) => {
                 if (updateWhere[t][k] instanceof Array) {
-                  return `data->>'${k}' in $${i + 1}`;
+                  return `data->>'${k}' in ($${i + 1})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
                   return `$${i + 1} IN data->>'${k}'`;
                 } else if (updateWhere[t][k] instanceof ArrayLike) {
@@ -298,22 +311,30 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         const obj = await this.executeTxn(client, updateGetElements);
         const updatingObj = {};
         for (const el in list) {
-          updatingObj[el] = obj[el].rows.map((e) => e.data);
+          updatingObj[el] = obj[el]?.rows.map((e) => e.data);
         }
 
         if (!insert) {
           insert = {};
         }
+
+        console.log("Update property", updatingObj, update);
         for (const t in updatingObj) {
           if (updatingObj.hasOwnProperty(t)) {
-            for (const obj in updatingObj[t]) {
-              for (const k in update) {
-                updatingObj[t][obj][k] = update[k];
+            if (updatingObj[t]) {
+              console.log("Length", updatingObj[t].length);
+              for (const o of updatingObj[t]) {
+                if (update[t]) {
+                  for (const f in update[t]) {
+                    o[f] = update[t][f];
+                  }
+                  insert[t] = o;
+                }
               }
-              insert[t] = updatingObj[t][obj];
             }
           }
         }
+        console.log("Updated prop", insert);
       }
 
       const updateTxElements = {};
@@ -340,6 +361,11 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       client.release();
     }
     this.logger.debug("Response", JSON.stringify(updateResults));
-    return updateResults;
+
+    const processedResponse = {}
+    for (const k in updateResults) {
+      processedResponse[k] = Array(updateResults[k]?.rowCount).fill(0)
+    }
+    return processedResponse;
   }
 }

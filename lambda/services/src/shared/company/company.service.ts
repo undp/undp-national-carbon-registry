@@ -295,14 +295,14 @@ export class CompanyService {
       companyUpdateDto.logo
     );
 
-    if (response.Location) {
-      companyUpdateDto.logo = response.Location;
-    } else {
-      throw new HttpException(
-        "Company update failed. Please try again",
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-      }
+    // if (response.Location) {
+    //   companyUpdateDto.logo = response.Location;
+    // } else {
+    //   throw new HttpException(
+    //     "Company update failed. Please try again",
+    //     HttpStatus.INTERNAL_SERVER_ERROR
+    //   );
+    //   }
     }
 
     const { companyId, ...companyUpdateFields } = companyUpdateDto;

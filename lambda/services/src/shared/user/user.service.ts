@@ -298,6 +298,8 @@ export class UserService {
       if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
         company.country = this.configService.get("systemCountry");
       }
+      
+      console.log('Company Log', company, this.configService.get("systemCountry"))
 
       if (company.companyRole == CompanyRole.GOVERNMENT) {
         const companyGov = await this.companyService.findGovByCountry(
@@ -365,14 +367,14 @@ export class UserService {
         company.companyId,
         company.logo
       );
-      if (response.Location) {
-        company.logo = response.Location;
-      } else {
-        throw new HttpException(
-          "Company update failed. Please try again",
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
+      // if (response && response.Location) {
+      //   company.logo = response.Location;
+      // } else {
+      //   throw new HttpException(
+      //     "Company update failed. Please try again",
+      //     HttpStatus.INTERNAL_SERVER_ERROR
+      //   );
+      // }
 
       if(company.email){
         await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {

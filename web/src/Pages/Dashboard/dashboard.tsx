@@ -510,7 +510,12 @@ const Dashboard = () => {
   const getAllProgrammesAggChartStats = async () => {
     setLoadingCharts(true);
     try {
-      const response: any = await post('stats/programme/agg', getAllChartsParams());
+      const response: any = await post(
+        'stats/programme/agg',
+        getAllChartsParams(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
+      );
       let programmesAggByStatus: any;
       let programmesAggBySector: any;
       let totalCreditsCertifiedStats: any;
@@ -849,7 +854,9 @@ const Dashboard = () => {
     try {
       const response: any = await post(
         'stats/programme/agg',
-        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
+        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
       );
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -971,7 +978,9 @@ const Dashboard = () => {
     try {
       const response: any = await post(
         'stats/programme/agg',
-        getAllProgrammeAnalyticsStatsParams()
+        getAllProgrammeAnalyticsStatsParams(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
       );
       let programmeByStatusAggregationResponse: any;
       let programmeByStatusAuthAggregationResponse: any;

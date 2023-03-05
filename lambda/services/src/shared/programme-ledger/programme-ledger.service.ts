@@ -1046,7 +1046,7 @@ export class ProgrammeLedgerService {
     issueCredit: number,
     user: string
   ): Promise<Programme> {
-    this.logger.log(`Authorizing programme ${programmeId}`);
+    this.logger.log(`Issue programme credit ${programmeId}`);
 
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
