@@ -7,6 +7,7 @@
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
 * [Web Frontend](#frontend)
+* [Localization](#localization)
 * [API](#api)
 * [Status Page](#status)
 * [Governance & Support](#support)
@@ -15,7 +16,7 @@
 # Carbon Registry
 The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
 
-As an online database, the National Carbon Registry uses standards national and international standards for quantifying and verifying greenhouse gas emissions reductions of programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
+As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
 
 The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more. 
 
@@ -33,16 +34,16 @@ https://digitalprinciples.org/
 
 <a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry based on Serverless Architecture. It can be ported and hosted on any Function As A Service (FaaS) stack.
-![alt text](./documention/imgs/System%20Architecture.png)
+UNDP Carbon Registry is based on service oriented architecture (SOA). It can be ported and hosted on any Function As A Service (FaaS) stack.
+![alt text](./documention/imgs/System%20Architecture.svg)
 
-Carbon Registry backend system has a service oriented architecture (SOA) and contains 4 main services.
+As per the above diagram, system contains 4 main services.
 
 <a name="services"></a>
 ### **Services**
 #### *National Service*
 
-Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API request related to following functionalities,
+Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API requests related to the following functionalities,
 - User and company CRUD operations.
 - User authentication.
 - Programme life cycle management. 
@@ -61,40 +62,40 @@ Serve all the system analytics. Generate all the statistic using the operational
 Horizontally scalable. 
 
 #### *Replicator Service*
-Replicating ledger database new items to a operational database asynchronously. During the replication process it is injecting additional query information to the data. 
-In the current setup using AWS QLDB for the ledger database. When it creates or updates data, add the change to a AWS Kinesis Data Stream. Replicator service is consuming the stream.
+Replicate ledger database new items to a operational database asynchronously. During the replication process it injects additional query information to the data. 
+The current setup uses AWS QLDB as the ledger database. When it creates or updates data, the change is added to a AWS Kinesis Data Stream and the Replicator service consumes the stream.
 
 #### *Operational Service*
-Service that use to do system operations,
-1. Database migrations.
+Service that use to do following system operations,
+1. Data migrations.
 2. User data creation and update.
 3. Resource creation.
 
-Can trigger internally. Cannot invoke by external sources. 
+Internal service. Cannot be invoked by external sources. 
 
 ### **Database Architecture**
-primary/secondary database architecture using for carbon programme and account balances. 
-Ledger database - Primary database. Add/update programmes and update account balances in single transaction. Currently implemented only for AWS QLDB
+Primary/secondary database architecture used to store carbon programme and account balances. 
+Ledger database is the primary database. Add/update programmes and update account balances in a single transaction. Currently implemented only for AWS QLDB
 
-Operational Database - Secondary database. Eventually add data for query purposes though replicator and data stream. Implemented based on PostgresSQL
+Operational Database is the secondary database. Eventually replicated to this from primary database via data stream. Implemented based on PostgresSQL
 
 **Why Two Database Approach?**
-1. Cost and Query capabilities - Ledger database (blockchain) read capabilities can be limited and costly. To support rich statistics, replicated data in to a cheap query database.
+1. Cost and Query capabilities - Ledger database (blockchain) read capabilities can be limited and costly. To support rich statistics and minimize the cost, data is replicated in to a cheap query database.
 2. Disaster recovery
 3. Scalability - Primary/secondary database architecture is scalable since additional secondary databases can be added as needed to handle more read operations.
 
 **Why Ledger Database?**
 1. Immutable and Transparent - Track and maintain a sequenced history of every carbon programme and credit change. 
 2. Data Integrity (Cryptographic verification by third party).
-3. Reconcile carbon credit and company account balance.
+3. Reconcile carbon credits and company account balance.
 
 **Ledger Database Interface**
 
-This enables the capability to add any blockchain or ledger database support to the carbon registry without application changes. Currently for the production system interface implemented for AWS QLDB. For testing purposes interface implemented for PostgresSQL as well.
+This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently the production system interface is implemented for AWS QLDB. For testing purposes the interface is implemented for PostgresSQL as well.
 
 
 
-Single database approach use for user and company management. 
+Single database approach used for user and company management. 
 
 
 ### **Ledger Layout**
@@ -103,7 +104,7 @@ Carbon Registry contains 3 ledger tables.
 2. Company Account Ledger (Credit) - Contains company accounts credit transactions.
 3. Country Account Ledger (Credit) - Contains country credit transactions.
 
-Below diagram demonstrate the the ledger behavior on programme create, authorise, issue and transfer processes. Blue color document denotes a single data block in a ledger.
+The below diagram demonstrates the the ledger behavior of programme create, authorise, issue and transfer processes. Blue color document icon denotes a single data block in a ledger.
 
 ![alt text](./documention/imgs/Ledger.png)
 
@@ -137,7 +138,7 @@ Below diagram demonstrate the the ledger behavior on programme create, authorise
 <a name="local"></a>
 ## Run Services Locally
 - Setup postgreSQL locally and create a new database.
-- Update following DB configurations in the .env.local file (If file does not exist please create a new .env.local)
+- Update following DB configurations in the .env.local file (If the file does not exist please create a new .env.local)
     - DB_HOST (Default localhost)
     - DB_PORT (Default 5432)
     - DB_USER (Default root)
@@ -182,7 +183,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 ## User Onboarding and Permissions Model
 
 ### User Roles
-System pre-defined user roles as follows,
+System pre-defined user roles are as follows,
 - Root
 - Company Level (National Government, Programme and Certification Company come under this level) 
     - Admin 
@@ -199,7 +200,7 @@ System pre-defined user roles as follows,
 
 ### User Management 
 
-All the CRUD operations can perform as per the following table,
+All the CRUD operations can be performed as per the following table,
 
 | Company Role | New User Role | Authorized User Roles (Company) |
 | --- | --- | --- |
@@ -214,6 +215,11 @@ All the CRUD operations can perform as per the following table,
 ### Web Frontend
 Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
 
+<a name="localization"></a>
+### Localization
+* Languages (Current): English
+* Languages (In Progress): French. Spanish 
+For updating translations or adding new ones, reference https://github.com/undp/carbon-registry/tree/main/web/public/Assets/i18n 
 
 <a name="api"></a>
 ### Application Programming Interface (API)
