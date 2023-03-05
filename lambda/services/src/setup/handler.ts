@@ -2,7 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { Role } from "../shared/casl/role.enum";
 import { UserDto } from "../shared/dto/user.dto";
 import { LedgerDbModule } from "../shared/ledger-db/ledger-db.module";
-import { LedgerDbService } from "../shared/ledger-db/ledger-db.service";
+import { QLDBLedgerService } from "../shared/ledger-db/qldb-ledger.service";
 import { getLogger } from "../shared/server";
 import { UtilModule } from "../shared/util/util.module";
 import { Country } from "../shared/entities/country.entity";
@@ -15,11 +15,16 @@ import { CompanyService } from "../shared/company/company.service";
 import { UserModule } from "../shared/user/user.module";
 import { UserService } from "../shared/user/user.service";
 import { TxType } from "../shared/enum/txtype.enum";
+import { LedgerDBInterface } from "../shared/ledger-db/ledger.db.interface";
+import { Handler } from 'aws-lambda';
 const fs = require('fs')
 
-exports.handler = async (event) => {
-    console.log(`Setup Handler Started with: ${JSON.stringify(event)}`)
+export const handler: Handler = async (event) => {
+    console.log(`Setup Handler Started with: ${event}`)
 
+    if (!event) {
+      event = process.env;
+    }
     const userApp = await NestFactory.createApplicationContext(UserModule, {
       logger: getLogger(UserModule),
     });
@@ -33,7 +38,7 @@ exports.handler = async (event) => {
       logger: getLogger(LedgerDbModule),
     });
     try {
-      const ledgerModule = app.get(LedgerDbService)
+      const ledgerModule = app.get(LedgerDBInterface)
 
       await ledgerModule.createTable('company');
       await ledgerModule.createIndex('txId', 'company');
@@ -67,6 +72,9 @@ exports.handler = async (event) => {
       user.role = Role.Root;
       user.phoneNo = '-';
       user.company = company;
+
+      console.log('Adding company', company);
+      console.log('Adding user', user)
       
       await userService.create(user, -1, CompanyRole.GOVERNMENT)
     } catch (e) {

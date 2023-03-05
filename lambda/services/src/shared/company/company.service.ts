@@ -22,6 +22,7 @@ import { EmailHelperService } from "../email-helper/email-helper.service";
 import { Programme } from "../entities/programme.entity";
 import { EmailTemplates } from "../email/email.template";
 import { SystemActionType } from "../enum/system.action.type";
+import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 
 @Injectable()
 export class CompanyService {
@@ -34,7 +35,8 @@ export class CompanyService {
     @Inject(forwardRef(() => EmailHelperService))
     private emailHelperService: EmailHelperService,
     @InjectRepository(ProgrammeTransfer)
-    private programmeTransferRepo: Repository<ProgrammeTransfer>
+    private programmeTransferRepo: Repository<ProgrammeTransfer>,
+    private fileHandler: FileHandlerInterface,
   ) {}
 
   async suspend(
@@ -290,13 +292,13 @@ export class CompanyService {
     }
 
     if (companyUpdateDto.logo) {
-    const response: any = await this.helperService.uploadCompanyLogoS3(
-      companyUpdateDto.companyId,
+    const response: any = await this.fileHandler.uploadFile(
+      `profile_images/${companyUpdateDto.companyId}_${new Date().getTime()}.png`,
       companyUpdateDto.logo
     );
 
-    if (response.Location) {
-      companyUpdateDto.logo = response.Location;
+    if (response) {
+      companyUpdateDto.logo = response;
     } else {
       throw new HttpException(
         "Company update failed. Please try again",

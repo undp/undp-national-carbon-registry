@@ -90,6 +90,7 @@ functions:
           enabled: true
     ssmToEnvironment:
       - DB_PASSWORD
+      - MAPBOX_PK
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -127,6 +128,7 @@ custom:
     USER_JWT_SECRET: /${self:provider.stage}/USER_JWT_SECRET~true
     ADMIN_JWT_SECRET: /${self:provider.stage}/ADMIN_JWT_SECRET~true
     SES_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
+    MAPBOX_PK: /${self:provider.stage}/MAPBOX_PK~true
   # sesTemplates:
   #   addStage: true                             # Specifies whether to add stage to template name (default false)
   #   configFile: './src/shared/email/email.template.ts' # Config file path (default './ses-email-templates/index.js')

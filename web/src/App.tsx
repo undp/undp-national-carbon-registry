@@ -38,6 +38,7 @@ const App = () => {
   const ability = defineAbility();
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
+    console.log(process.env.REACT_APP_STAT_URL);
     if (
       localStorage.getItem('companyId') &&
       localStorage.getItem('userRole') &&

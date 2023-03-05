@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CompanyModule } from '../company/company.module';
 import { UtilModule } from '../util/util.module';
 import { EmailHelperModule } from '../email-helper/email-helper.module';
+import { FileHandlerModule } from '../file-handler/filehandler.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { EmailHelperModule } from '../email-helper/email-helper.module';
     EmailModule,
     forwardRef(() => CompanyModule),
     forwardRef(() => EmailHelperModule),
-    UtilModule
+    UtilModule,
+    FileHandlerModule,
   ],
   providers: [UserService, Logger],
   exports: [UserService]

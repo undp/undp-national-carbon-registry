@@ -11,6 +11,7 @@ import { UtilModule } from '../util/util.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { EmailHelperModule } from '../email-helper/email-helper.module';
+import { FileHandlerModule } from '../file-handler/filehandler.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EmailHelperModule } from '../email-helper/email-helper.module';
     EmailModule,
     UtilModule,
     ProgrammeLedgerModule,
+    FileHandlerModule,
     forwardRef(() => EmailHelperModule)  
   ],
   providers: [CompanyService, Logger],

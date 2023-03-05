@@ -14,7 +14,7 @@ export default () => ({
         database: (process.env.DB_NAME || 'carbondev'),
         synchronize: process.env.NODE_ENV == 'prod' ? true : true,
         autoLoadEntities: true,
-        logging: ["query", "error"]
+        logging: ["error"]
     },
     jwt: {
         userSecret: process.env.USER_JWT_SECRET || '1324',
@@ -40,4 +40,7 @@ export default () => ({
     host: process.env.HOST || 'https://test.carbreg.org',
     liveChat : 'https://undp2020cdo.typeform.com/to/emSWOmDo',
     helpDocumentation: 'carbreg.org/help',
+    mapbox: {
+        key: process.env.MAPBOX_PK
+    }
 });

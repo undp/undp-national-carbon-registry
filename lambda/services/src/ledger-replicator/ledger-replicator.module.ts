@@ -4,8 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Programme } from '../shared/entities/programme.entity';
 import configuration from '../shared/configuration';
 import { TypeOrmConfigService } from '../shared/typeorm.config.service';
-import { LedgerReplicatorService } from './ledger-replicator.service';
+import { QLDBKinesisReplicatorService } from './qldb-kinesis-replicator.service';
 import { Company } from '../shared/entities/company.entity';
+import { LedgerReplicatorInterface } from './replicator-interface.service';
+import { PgSqlReplicatorService } from './pgsql-replicator.service';
+import { ProcessEventService } from './process.event.service';
+import { Counter } from '../shared/entities/counter.entity';
+import { LocationModule } from '../shared/location/location.module';
+import { LedgerType } from 'src/shared/enum/ledger.type';
 
 @Module({
   imports: [
@@ -17,8 +23,15 @@ import { Company } from '../shared/entities/company.entity';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    TypeOrmModule.forFeature([Programme, Company])
+    TypeOrmModule.forFeature([Programme, Company, Counter]),
+    LocationModule
   ],
-  providers: [LedgerReplicatorService, Logger]
+  providers: [{
+    provide: LedgerReplicatorInterface,
+    useClass:
+      process.env.LEDGER_TYPE === LedgerType.QLDB
+        ? QLDBKinesisReplicatorService
+        : PgSqlReplicatorService,
+  }, Logger, ProcessEventService]
 })
 export class LedgerReplicatorModule {}

@@ -35,6 +35,7 @@ export class UserController {
       if (user.role == Role.Root) {
         throw new HttpException("Forbidden", HttpStatus.FORBIDDEN)
       }
+      global.baseUrl = `${req.protocol}://${req.get('Host')}`;
       return this.userService.create(user, req.user.companyId, req.user.companyRole)
     }
 
@@ -43,6 +44,7 @@ export class UserController {
     // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
     @Put('update')
     updateUser(@Body()user: UserUpdateDto, @Request() req) {
+      global.baseUrl = `${req.protocol}://${req.get('Host')}`;
       return this.userService.update(user, req.abilityCondition)
     }
 

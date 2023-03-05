@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LedgerReplicatorService } from './ledger-replicator.service';
+import { LedgerReplicatorService } from './qldb-kinesis-replicator.service';
 
 describe('LedgerReplicatorService', () => {
   let service: LedgerReplicatorService;

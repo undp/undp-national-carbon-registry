@@ -47,6 +47,7 @@ export class OrganisationDto {
     logo: string;
 
     @IsValidCountry()
+    @IsOptional()
     @ApiPropertyOptional()
     country: string;
 

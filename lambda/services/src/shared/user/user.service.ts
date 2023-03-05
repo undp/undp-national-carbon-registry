@@ -40,6 +40,7 @@ import { CompanyService } from "../company/company.service";
 import { HelperService } from "../util/helpers.service";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
+import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 
 @Injectable()
 export class UserService {
@@ -52,7 +53,8 @@ export class UserService {
     @InjectEntityManager() private entityManger: EntityManager,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-    private counterService: CounterService
+    private counterService: CounterService,
+    private fileHandler: FileHandlerInterface
   ) {}
 
   private generateRandomPassword() {
@@ -298,6 +300,8 @@ export class UserService {
       if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
         company.country = this.configService.get("systemCountry");
       }
+      
+      console.log('Company Log', company, this.configService.get("systemCountry"))
 
       if (company.companyRole == CompanyRole.GOVERNMENT) {
         const companyGov = await this.companyService.findGovByCountry(
@@ -361,12 +365,12 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      const response: any = await this.helperService.uploadCompanyLogoS3(
-        company.companyId,
+      const response: any = await this.fileHandler.uploadFile(
+        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
         company.logo
       );
-      if (response.Location) {
-        company.logo = response.Location;
+      if (response) {
+        company.logo = response;
       } else {
         throw new HttpException(
           "Company update failed. Please try again",
