@@ -173,7 +173,7 @@ const Homepage = () => {
               <div className="homepagebody_aboutusline1">Developed in Partnership with</div>
               <Row gutter={[8, 8]} className="undplogocontainer">
                 <ImgWithFallback
-                  className="undplogocontainer"
+                  className="undplogo"
                   src={undpLogo}
                   fallbackSrc={undpLogofall}
                   mediaType="image/webp"
@@ -203,7 +203,7 @@ const Homepage = () => {
               </Col>
               <Col flex={3} md={12} lg={12}>
                 <ImgWithFallback
-                  className="image"
+                  className="forest-image"
                   src={forest}
                   fallbackSrc={forestfall}
                   mediaType="image/webp"

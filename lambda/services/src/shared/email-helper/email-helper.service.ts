@@ -9,6 +9,8 @@ import { UserService } from "../user/user.service";
 
 @Injectable()
 export class EmailHelperService {
+  isEmailDisabled: boolean;
+
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
@@ -17,18 +19,23 @@ export class EmailHelperService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService
-  ) {}
+  ) {
+    this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
+  }
 
   public async sendEmailToProgrammeOwnerAdmins(
     programmeId: string,
     template: any,
     templateData: {},
-    companyId ?: number,
+    companyId?: number,
     governmentId?: number
   ) {
+
+    if(this.isEmailDisabled)
+      return;
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
-    let companyDetails:Company;
+    let companyDetails: Company;
 
     switch (template.id) {
       case "PROGRAMME_REJECTION":
@@ -40,10 +47,8 @@ export class EmailHelperService {
         };
         break;
 
-      case 'PROGRAMME_CERTIFICATION':
-        companyDetails = await this.companyService.findByCompanyId(
-          companyId
-        );
+      case "PROGRAMME_CERTIFICATION":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
         templateData = {
           ...templateData,
           programmeName: programme.title,
@@ -54,10 +59,8 @@ export class EmailHelperService {
         };
         break;
 
-      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_CERT':
-        companyDetails = await this.companyService.findByCompanyId(
-          companyId
-        );
+      case "PROGRAMME_CERTIFICATION_REVOKE_BY_CERT":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
         templateData = {
           ...templateData,
           programmeName: programme.title,
@@ -68,10 +71,8 @@ export class EmailHelperService {
         };
         break;
 
-      case 'PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME':
-        companyDetails = await this.companyService.findByCompanyId(
-          companyId
-        );
+      case "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
         const government = await this.companyService.findByCompanyId(
           governmentId
         );
@@ -102,6 +103,8 @@ export class EmailHelperService {
     receiverCompanyId?: number,
     programmeId?: string
   ) {
+    if(this.isEmailDisabled)
+      return;
     const systemCountryName = this.configService.get("systemCountryName");
     const users = await this.userService.getOrganisationAdminAndManagerUsers(
       companyId
@@ -225,18 +228,22 @@ export class EmailHelperService {
           pageLink: hostAddress + "/creditTransfers/viewAll",
         };
         break;
-        
+
       default:
         break;
     }
 
-    users.forEach((user: any) => {
+    users.forEach(async (user: any) => {
       templateData = {
         ...templateData,
         name: user.user_name,
         countryName: systemCountryName,
       };
-      this.emailService.sendEmail(user.user_email, template, templateData);
+      await this.emailService.sendEmail(
+        user.user_email,
+        template,
+        templateData
+      );
     });
   }
 
@@ -246,6 +253,8 @@ export class EmailHelperService {
     programmeId?: string,
     companyId?: number
   ) {
+    if(this.isEmailDisabled)
+      return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getGovAdminAndManagerUsers();
@@ -291,25 +300,35 @@ export class EmailHelperService {
         break;
     }
 
-    users.forEach((user: any) => {
+    users.forEach(async (user: any) => {
       templateData = {
         ...templateData,
         name: user.user_name,
         countryName: systemCountryName,
       };
-      this.emailService.sendEmail(user.user_email, template, templateData);
+      await this.emailService.sendEmail(
+        user.user_email,
+        template,
+        templateData
+      );
     });
   }
 
-  public async sendEmail(sender: string, template, templateData: any, companyId: number){
+  public async sendEmail(
+    sender: string,
+    template,
+    templateData: any,
+    companyId: number
+  ) {
+    if(this.isEmailDisabled)
+      return;
     const companyDetails = await this.companyService.findByCompanyId(companyId);
     const systemCountryName = this.configService.get("systemCountryName");
     templateData = {
       ...templateData,
       countryName: systemCountryName,
-      government: companyDetails.name
+      government: companyDetails.name,
     };
-    this.emailService.sendEmail(sender, template, templateData);
+    await this.emailService.sendEmail(sender, template, templateData);
   }
-
 }

@@ -1,4 +1,17 @@
+## Index
+* [About](#about)
+* [Standards](#standards)
+* [Architecture](#architecture)
+* [Project Structure](#structure)
+* [Run Services Locally](#local)
+* [Run Services on Cloud](#cloud)
+* [User Onboarding](#user)
+* [Web Frontend](#frontend)
+* [API](#api)
+* [Status Page](#status)
+* [Governance & Support](#support)
 
+<a name="about"></a>
 # Carbon Registry
 The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
 
@@ -11,14 +24,94 @@ The system has 3 key features:
 * **Carbon Credit Calculator:** Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. 
 * **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
 
-## Standard
+<a name="standards"></a>
+## Standards
 This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
+It is built according to the Principles for Digital Development:
+https://digitalprinciples.org/ 
 
+<a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry based on Serverless Architecture.
+UNDP Carbon Registry based on Serverless Architecture. It can be ported and hosted on any Function As A Service (FaaS) stack.
 ![alt text](./documention/imgs/System%20Architecture.png)
 
+Carbon Registry backend system has a service oriented architecture (SOA) and contains 4 main services.
+
+<a name="services"></a>
+### **Services**
+#### *National Service*
+
+Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API request related to following functionalities,
+- User and company CRUD operations.
+- User authentication.
+- Programme life cycle management. 
+- Credit life cycle management.
+
+Service is horizontally scalable and state maintained in the following locations,
+- File storage.
+- Operational Database.
+- Ledger Database.
+
+Uses the Carbon Credit Calculator and Serial Number Generator node modules to estimate the programme carbon credit amount and issue a serial number.
+Uses Ledger interface to persist programme and credit life cycles.
+
+#### *Analytics Service*
+Serve all the system analytics. Generate all the statistic using the operational database. 
+Horizontally scalable. 
+
+#### *Replicator Service*
+Replicating ledger database new items to a operational database asynchronously. During the replication process it is injecting additional query information to the data. 
+In the current setup using AWS QLDB for the ledger database. When it creates or updates data, add the change to a AWS Kinesis Data Stream. Replicator service is consuming the stream.
+
+#### *Operational Service*
+Service that use to do system operations,
+1. Database migrations.
+2. User data creation and update.
+3. Resource creation.
+
+Can trigger internally. Cannot invoke by external sources. 
+
+### **Database Architecture**
+primary/secondary database architecture using for carbon programme and account balances. 
+Ledger database - Primary database. Add/update programmes and update account balances in single transaction. Currently implemented only for AWS QLDB
+
+Operational Database - Secondary database. Eventually add data for query purposes though replicator and data stream. Implemented based on PostgresSQL
+
+**Why Two Database Approach?**
+1. Cost and Query capabilities - Ledger database (blockchain) read capabilities can be limited and costly. To support rich statistics, replicated data in to a cheap query database.
+2. Disaster recovery
+3. Scalability - Primary/secondary database architecture is scalable since additional secondary databases can be added as needed to handle more read operations.
+
+**Why Ledger Database?**
+1. Immutable and Transparent - Track and maintain a sequenced history of every carbon programme and credit change. 
+2. Data Integrity (Cryptographic verification by third party).
+3. Reconcile carbon credit and company account balance.
+
+**Ledger Database Interface**
+
+This enables the capability to add any blockchain or ledger database support to the carbon registry without application changes. Currently for the production system interface implemented for AWS QLDB. For testing purposes interface implemented for PostgresSQL as well.
+
+
+
+Single database approach use for user and company management. 
+
+
+### **Ledger Layout**
+Carbon Registry contains 3 ledger tables.
+1. Programme ledger - Contains all the programme and credit transactions.
+2. Company Account Ledger (Credit) - Contains company accounts credit transactions.
+3. Country Account Ledger (Credit) - Contains country credit transactions.
+
+Below diagram demonstrate the the ledger behavior on programme create, authorise, issue and transfer processes. Blue color document denotes a single data block in a ledger.
+
+![alt text](./documention/imgs/Ledger.png)
+
+### **Authentication**
+- JWT Authentication - All endpoints based on role permissions.
+- API Key Authentication - MRV System connectivity.
+
+<a name="structure"></a>
 ## Project Structure
 
     .
@@ -41,6 +134,7 @@ UNDP Carbon Registry based on Serverless Architecture.
     ├── .gitignore
     └── README.md
 
+<a name="local"></a>
 ## Run Services Locally
 - Setup postgreSQL locally and create a new database.
 - Update following DB configurations in the .env.local file (If file does not exist please create a new .env.local)
@@ -55,6 +149,7 @@ UNDP Carbon Registry based on Serverless Architecture.
 - Start all the services by executing `sls offline --stage=local`
 - Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/national`
 
+<a name="cloud"></a>
 ## Deploy System on the AWS Cloud
 - Execute to create all the required resources on the AWS.
     ```
@@ -83,7 +178,7 @@ Carbon credit calculation implemented in a separate node module. [Please refer t
 ### Serial Number Generation
 Serial Number generation implemented in a separate node module. [Please refer this](./libs/serial-number-gen/README.md) for more information.
 
-
+<a name="user"></a>
 ## User Onboarding and Permissions Model
 
 ### User Roles
@@ -115,14 +210,23 @@ All the CRUD operations can perform as per the following table,
 - All users can edit own user account except Role and Email.
 - Users are not allowed to delete the own account from the system.
 
-
+<a name="frontend"></a>
 ### Web Frontend
 Web frontend implemented using ReactJS framework. Please refer [getting started with react app](./web/README.md) for more information.
 
 
-### Status Page
-https://github.com/undp/carbon-registry-status
+<a name="api"></a>
+### Application Programming Interface (API)
+For integration, reference RESTful Web API Documentation documentation via Swagger. To access
+- National API: api.APP_URL/national
+- Status API: api.APP_URL/stats
 
+<a name="status"></a>
+### Status Page
+For transparent uptime monitoring go to status.APP_URL
+Open source code available at https://github.com/undp/carbon-registry-status
+
+<a name="support"></a>
 ### Governance and Support
 ![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)
 

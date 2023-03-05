@@ -1,34 +1,38 @@
-import React, { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ConnectionContextProvider } from './Context/ConnectionContext/connectionContext';
 import 'antd/dist/antd.css';
 import './Styles/app.scss';
+import Login from './Pages/Login/login';
 import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
+import PrivateRoute from './Components/PrivateRoute/privateRoute';
+import SignUp from './Pages/Signup/signup';
+import CustomLayout from './Components/Layout/layout';
+import AddUser from './Pages/AddUser/addUser';
+import UserManagement from './Pages/UserManagement/userManagement';
+import Dashboard from './Pages/Dashboard/dashboard';
+import AddNewCompany from './Pages/Company/addNewCompany';
+import CompanyManagement from './Pages/CompanyManagement/companyManagement';
+import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
+import ProgrammeView from './Pages/ProgrammeView/programmeView';
+import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import CreditTransfers from './Pages/Transfers/creditTransfers';
+import Homepage from './Pages/Homepage/homepage';
+import PrivacyPolicy from './Pages/PrivacyPolicy/privacyPolicy';
+import CodeOfConduct from './Pages/CodeofConduct/codeofConduct';
+import CookiePolicy from './Pages/CookiePolicy/cookiePolicy';
+import TermsOfUse from './Pages/TermsofUse/termsofUse';
+import CarbonHelp from './Pages/Help/help';
+import UserProfile from './Pages/UserProfile/UserProfile';
+import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
+import { message } from 'antd';
 
-const Login = React.lazy(() => import('./Pages/Login/login'));
-const SignUp = React.lazy(() => import('./Pages/Signup/signup'));
-const CustomLayout = React.lazy(() => import('./Components/Layout/layout'));
-const AddUser = React.lazy(() => import('./Pages/AddUser/addUser'));
-const UserManagement = React.lazy(() => import('./Pages/UserManagement/userManagement'));
-const Dashboard = React.lazy(() => import('./Pages/Dashboard/dashboard'));
-const AddNewCompany = React.lazy(() => import('./Pages/Company/addNewCompany'));
-const CompanyManagement = React.lazy(() => import('./Pages/CompanyManagement/companyManagement'));
-const ProgrammeManagement = React.lazy(
-  () => import('./Pages/ProgrammeManagement/programmeManagement')
-);
-const ProgrammeView = React.lazy(() => import('./Pages/ProgrammeView/programmeView'));
-const CreditTransfers = React.lazy(() => import('./Pages/Transfers/creditTransfers'));
-const Homepage = React.lazy(() => import('./Pages/Homepage/homepage'));
-const PrivacyPolicy = React.lazy(() => import('./Pages/PrivacyPolicy/privacyPolicy'));
-const CodeOfConduct = React.lazy(() => import('./Pages/CodeofConduct/codeofConduct'));
-const CookiePolicy = React.lazy(() => import('./Pages/CookiePolicy/cookiePolicy'));
-const PrivateRoute = React.lazy(() => import('./Components/PrivateRoute/privateRoute'));
-const TermsOfUse = React.lazy(() => import('./Pages/TermsofUse/termsofUse'));
-const UserProfile = React.lazy(() => import('./Pages/UserProfile/UserProfile'));
-const CompanyProfile = React.lazy(() => import('./Pages/CompanyProfile/companyProfile'));
+// message.config({
+//   duration: 60,
+// });
 
 const App = () => {
   const ability = defineAbility();
@@ -65,6 +69,7 @@ const App = () => {
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="help" element={<CarbonHelp />} />
               <Route path="codeconduct" element={<CodeOfConduct />} />
               <Route path="cookie" element={<CookiePolicy />} />
               <Route path="terms" element={<TermsOfUse />} />
