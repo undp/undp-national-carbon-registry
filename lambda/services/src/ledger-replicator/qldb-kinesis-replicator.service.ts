@@ -20,47 +20,6 @@ export class QLDBKinesisReplicatorService implements LedgerReplicatorInterface{
     private configService: ConfigService
   ) {}
 
-  async forwardGeocoding(address: any[]) {
-    console.log("addresses passed to forwardGeocoding function -> ", address);
-    let geoCodinates: any[] = [];
-    const ACCESS_TOKEN =
-      "";
-
-    for (let index = 0; index < address.length; index++) {
-      const url =
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-        encodeURIComponent(address[index]) +
-        ".json?access_token=" +
-        ACCESS_TOKEN +
-        "&limit=1" +
-        `&country=${this.configService.get(
-          "systemCountry"
-        )}&autocomplete=false&types=region%2Cdistrict`;
-      console.log("geocoding request urls -> ", index, url);
-      await axios
-        .get(url)
-        .then(function (response) {
-          // handle success
-          console.log(
-            "cordinates data in replicator -> ",
-            response?.data?.features[0],
-            response?.data?.features[0]?.center
-          );
-          if (response?.data?.features.length > 0) {
-            geoCodinates.push([...response?.data?.features[0]?.center]);
-          } else {
-            geoCodinates.push(null);
-          }
-        })
-        .catch((err) => {
-          this.logger.error("Geocoding failed - ", err);
-          return err;
-        });
-    }
-
-    return geoCodinates;
-  }
-
   async processRecords(records) {
     return await Promise.all(
       records.map(async (record) => {

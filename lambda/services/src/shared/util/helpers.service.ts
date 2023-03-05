@@ -353,7 +353,7 @@ export class HelperService {
     return final;
   }
 
-  public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
+  // public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
     // var AWS = require("aws-sdk");
     // const s3 = new AWS.S3();
     // const imgBuffer = Buffer.from(companyLogo, "base64");
@@ -383,5 +383,5 @@ export class HelperService {
     //     }
     //   })
     //   .promise();
-  }
+  // }
 }

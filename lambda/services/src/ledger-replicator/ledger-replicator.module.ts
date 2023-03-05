@@ -10,6 +10,8 @@ import { LedgerReplicatorInterface } from './replicator-interface.service';
 import { PgSqlReplicatorService } from './pgsql-replicator.service';
 import { ProcessEventService } from './process.event.service';
 import { Counter } from '../shared/entities/counter.entity';
+import { LocationModule } from '../shared/location/location.module';
+import { LedgerType } from 'src/shared/enum/ledger.type';
 
 @Module({
   imports: [
@@ -21,12 +23,13 @@ import { Counter } from '../shared/entities/counter.entity';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    TypeOrmModule.forFeature([Programme, Company, Counter])
+    TypeOrmModule.forFeature([Programme, Company, Counter]),
+    LocationModule
   ],
   providers: [{
     provide: LedgerReplicatorInterface,
     useClass:
-      process.env.LEDGER_TYPE === "QLDB"
+      process.env.LEDGER_TYPE === LedgerType.QLDB
         ? QLDBKinesisReplicatorService
         : PgSqlReplicatorService,
   }, Logger, ProcessEventService]

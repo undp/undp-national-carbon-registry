@@ -22,38 +22,6 @@ export class ProgrammeLedgerService {
     private ledger: LedgerDBInterface
   ) {}
 
-  async forwardGeocoding(address: any[]) {
-    let geoCodinates: any[] = [];
-    const ACCESS_TOKEN =
-      "";
-
-    for (let index = 0; index < address.length; index++) {
-      const url =
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-        encodeURIComponent(address[index]) +
-        ".json?access_token=" +
-        ACCESS_TOKEN +
-        "&limit=1";
-      await axios
-        .get(url)
-        .then(function (response) {
-          // handle success
-          console.log(
-            "cordinates data in replicator -> ",
-            response?.data?.features[0],
-            response?.data?.features[0]?.center
-          );
-          geoCodinates.push([...response?.data?.features[0]?.center]);
-        })
-        .catch((err) => {
-          this.logger.error(err);
-          return err;
-        });
-    }
-
-    return geoCodinates;
-  }
-
   public async createProgramme(programme: Programme): Promise<Programme> {
     this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;

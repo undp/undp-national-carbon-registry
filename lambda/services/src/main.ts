@@ -1,9 +1,9 @@
-import { NestFactory } from "@nestjs/core";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
 import { handler } from "./ledger-replicator/handler";
 import * as setupHandler from "./setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
-import { buildNestApp, getLogger } from "./shared/server";
+import { buildNestApp } from "./shared/server";
+import { join } from "path";
 
 async function bootstrap() {
   let module;
@@ -27,8 +27,12 @@ async function bootstrap() {
 
   const app = await buildNestApp(module, "/" + httpPath);
   if (process.env.RUN_MODULE == "national-api") {
+    const staticPath = join(__dirname, '..', 'public')
+    console.log('Static file path:', staticPath)
+    app.useStaticAssets(staticPath);
     await setupHandler.handler();
   }
   await app.listen(process.env.RUN_PORT || 3000);
+  // global.baseUrl = await app.getUrl();
 }
 bootstrap();

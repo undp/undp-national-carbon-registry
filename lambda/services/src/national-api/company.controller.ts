@@ -72,6 +72,7 @@ export class CompanyController {
     @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, Company))
     @Put("update")
     async updateCompany(@Body() company: OrganisationUpdateDto, @Request() req) {
+        global.baseUrl = `${req.protocol}://${req.get('Host')}`;
         return await this.companyService.update(company, req.abilityCondition);
     }
     

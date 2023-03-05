@@ -40,6 +40,7 @@ import { CompanyService } from "../company/company.service";
 import { HelperService } from "../util/helpers.service";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
+import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 
 @Injectable()
 export class UserService {
@@ -52,7 +53,8 @@ export class UserService {
     @InjectEntityManager() private entityManger: EntityManager,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-    private counterService: CounterService
+    private counterService: CounterService,
+    private fileHandler: FileHandlerInterface
   ) {}
 
   private generateRandomPassword() {
@@ -363,18 +365,18 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      const response: any = await this.helperService.uploadCompanyLogoS3(
-        company.companyId,
+      const response: any = await this.fileHandler.uploadFile(
+        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
         company.logo
       );
-      // if (response && response.Location) {
-      //   company.logo = response.Location;
-      // } else {
-      //   throw new HttpException(
-      //     "Company update failed. Please try again",
-      //     HttpStatus.INTERNAL_SERVER_ERROR
-      //   );
-      // }
+      if (response) {
+        company.logo = response;
+      } else {
+        throw new HttpException(
+          "Company update failed. Please try again",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
 
       if(company.email){
         await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {

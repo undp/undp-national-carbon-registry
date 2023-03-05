@@ -4,7 +4,7 @@ import { createServer, proxy } from 'aws-serverless-express';
 import { eventContext } from 'aws-serverless-express/middleware';
 
 import { AbstractHttpAdapter, NestFactory } from '@nestjs/core';
-import { ExpressAdapter } from '@nestjs/platform-express';
+import { ExpressAdapter, NestExpressApplication } from '@nestjs/platform-express';
 import { Server } from 'http';
 import * as winston from 'winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -69,8 +69,8 @@ export function getLogger(module) {
   });
 }
 
-export async function buildNestApp(module: any, httpBase: string, expressApp?: AbstractHttpAdapter): Promise<INestApplication> {
-  const nestApp = await NestFactory.create(module, new ExpressAdapter(expressApp), {
+export async function buildNestApp(module: any, httpBase: string, expressApp?: AbstractHttpAdapter): Promise<NestExpressApplication> {
+  const nestApp = await NestFactory.create<NestExpressApplication>(module, new ExpressAdapter(expressApp), {
     logger: getLogger(module),
   })
   useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });

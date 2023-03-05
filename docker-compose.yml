@@ -2,6 +2,8 @@ version: '3.3'
 volumes:
     data:
         driver: local
+    filestore:
+        driver: local
 services:
     db: 
         container_name: db
@@ -35,6 +37,9 @@ services:
             systemCountryCode: 'NG'
             name: 'Antactic Region'
             logoBase64: 'sss'
+            IS_EMAIL_DISABLED: 'true'
+        volumes:
+          - filestore:/app/lambda/services/public
     stats:
         build:
             context: .

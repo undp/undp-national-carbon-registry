@@ -209,15 +209,13 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             obj[k] = update[k];
           }
           insertMap[table] = obj;
-      
         }
-        console.log('Updating records', insertMap)
+        console.log("Updating records", insertMap);
         return [{}, {}, insertMap];
       }
     );
 
     console.log(r);
-    
 
     return r[table];
   }
@@ -230,6 +228,8 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         list.push(v.value);
       } else if (v instanceof ArrayLike) {
         list.push(v.value);
+      } else if (v instanceof Array) {
+        list.push(...v)
       } else {
         list.push(v);
       }
@@ -243,35 +243,59 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       results: Record<string, dom.Value[]>
     ) => [Record<string, any>, Record<string, any>, Record<string, any>]
   ): Promise<Record<string, dom.Value[]>> {
-    this.logger.debug(``);
+    this.logger.log(`getQueries: ${JSON.stringify(getQueries)}`);
 
     let updateResults = {};
     const client = await this.dbCon.connect();
     try {
       const getTxElements = {};
       for (const t in getQueries) {
+        console.log("getQueries t", t);
         if (getQueries.hasOwnProperty(t)) {
+          const isHistoryQuery = t.includes("history(");
+          let table = t;
+          if (isHistoryQuery) {
+            table = t.replace("history(", "").replace(")", "");
+          }
+          let j = 0;
           const wc = Object.keys(getQueries[t])
             .map((k, i) => {
-              if (getQueries[t][k] instanceof Array) {
-                return `data->>'${k}' in ($${i + 1})`;
-              } else if (getQueries[t][k] instanceof ArrayIn) {
-                return `$${i + 1} IN data->>'${k}'`;
-              } else if (getQueries[t][k] instanceof ArrayLike) {
-                return `data->>'${k}' LIKE $${i + 1}`;
+              if (isHistoryQuery) {
+                k = k.replace("data.", "");
               }
-              return `data->>'${k}' = $${i + 1}`;
+              if (getQueries[t][k] instanceof Array) {
+                return `data->>'${k}' in (${getQueries[t][k].map((e) => {
+                  j += 1;
+                  return "$" + j;
+                }).join(', ')})`;
+              } else if (getQueries[t][k] instanceof ArrayIn) {
+                j += 1;
+                return `$${j} IN data->>'${k}'`;
+              } else if (getQueries[t][k] instanceof ArrayLike) {
+                j += 1;
+                return `data->>'${k}' LIKE $${j}`;
+              }
+              j += 1;
+              return `data->>'${k}' = $${j}`;
             })
             .join(" and ");
           const fieldList = Object.keys(getQueries[t])
-            .map((k) => `data->>'${k}'`)
+            .map((k) => {
+              if (isHistoryQuery) {
+                k = k.replace("data.", "");
+              }
+              return `data->>'${k}'`;
+            })
             .join(", ");
           getTxElements[t] = {
-            sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${t} WHERE ${wc} order by ${fieldList}, hash desc`,
+            sql: `SELECT ${
+              isHistoryQuery ? "" : `DISTINCT ON (${fieldList})`
+            } data FROM ${table} WHERE ${wc} order by ${fieldList}, hash desc`,
             params: this.getValuesList(getQueries[t]),
           };
         }
       }
+      console.log("Get elements", getTxElements);
       const list = await this.executeTxn(client, getTxElements);
 
       const mapped = {};
@@ -279,22 +303,31 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         mapped[el] = list[el]?.rows.map((e) => e.data);
       }
       let [update, updateWhere, insert] = processGetFn(mapped);
+
+      console.log("processGetFn", update, updateWhere, insert);
       const updateGetElements = {};
 
       if (update && Object.keys(update).length > 0) {
         for (const t in updateWhere) {
           const tableName = t.split("#")[0];
           if (updateWhere.hasOwnProperty(t)) {
+            let j = 0;
             const wc = Object.keys(updateWhere[t])
               .map((k, i) => {
                 if (updateWhere[t][k] instanceof Array) {
-                  return `data->>'${k}' in ($${i + 1})`;
+                  return `data->>'${k}' in (${updateWhere[t][k].map((e) => {
+                    j += 1;
+                    return "$" + j;
+                  }).join(', ')})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
-                  return `$${i + 1} IN data->>'${k}'`;
+                  j += 1;
+                  return `$${j} IN data->>'${k}'`;
                 } else if (updateWhere[t][k] instanceof ArrayLike) {
-                  return `data->>'${k}' LIKE $${i + 1}`;
+                  j += 1;
+                  return `data->>'${k}' LIKE $${j}`;
                 }
-                return `data->>'${k}' = $${i + 1}`;
+                j += 1;
+                return `data->>'${k}' = $${j}`;
               })
               .join(" and ");
             const fieldList = Object.keys(updateWhere[t])
@@ -310,8 +343,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         console.log("TEST", updateGetElements);
         const obj = await this.executeTxn(client, updateGetElements);
         const updatingObj = {};
-        for (const el in list) {
+        for (const el in obj) {
           updatingObj[el] = obj[el]?.rows.map((e) => e.data);
+          console.log('updateGetElements TEST', el, JSON.stringify(obj[el]))
         }
 
         if (!insert) {
@@ -338,7 +372,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       }
 
       const updateTxElements = {};
-      this.logger.verbose(`Insert queries`, JSON.stringify(insert));
+      this.logger.log(`Insert queries`, JSON.stringify(insert));
       for (const qk in insert) {
         const tableName = qk.split("#")[0];
         if (insert.hasOwnProperty(qk)) {
@@ -362,9 +396,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     }
     this.logger.debug("Response", JSON.stringify(updateResults));
 
-    const processedResponse = {}
+    const processedResponse = {};
     for (const k in updateResults) {
-      processedResponse[k] = Array(updateResults[k]?.rowCount).fill(0)
+      processedResponse[k] = Array(updateResults[k]?.rowCount).fill(0);
     }
     return processedResponse;
   }

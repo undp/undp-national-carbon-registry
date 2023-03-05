@@ -1,11 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TxType } from "../shared/enum/txtype.enum";
 import { Repository } from "typeorm";
 import { Company } from "../shared/entities/company.entity";
 import { Programme } from "../shared/entities/programme.entity";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
+import { LocationInterface } from "../shared/location/location.interface";
 
 @Injectable()
 export class ProcessEventService {
@@ -13,7 +13,7 @@ export class ProcessEventService {
     private logger: Logger,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
-    private configService: ConfigService
+    private locationService: LocationInterface,
   ) {}
 
   async process(programme: Programme, overall: CreditOverall, version: number, txTime: number): Promise<any> {
@@ -43,15 +43,15 @@ export class ProcessEventService {
                   address.push(programmeProperties.geographicalLocation[index]);
                 }
               }
-              // await this.forwardGeocoding([...address]).then(
-              //   (response: any) => {
-              //     console.log(
-              //       "response from forwardGeoCoding function -> ",
-              //       response
-              //     );
-              //     programme.geographicalLocationCordintes = [...response];
-              //   }
-              // );
+              await this.locationService.getCoordinatesForRegion([...address]).then(
+                (response: any) => {
+                  console.log(
+                    "response from forwardGeoCoding function -> ",
+                    response
+                  );
+                  programme.geographicalLocationCordintes = [...response];
+                }
+              );
             } else if (
               programme.txType === TxType.CERTIFY ||
               programme.txType === TxType.REVOKE
