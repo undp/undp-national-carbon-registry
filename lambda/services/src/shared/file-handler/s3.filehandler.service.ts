@@ -26,7 +26,7 @@ export class S3FileHandlerService implements FileHandlerInterface {
     uploadParams.Key = path
     return (await s3
       .upload(uploadParams)
-      .promise())?.map( e => e.Location);
+      .promise())?.Location;
   }
 
 
