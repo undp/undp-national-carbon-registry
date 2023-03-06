@@ -442,7 +442,7 @@ const ProgrammeView = () => {
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta.country
                     : transfer.receiver[0]?.name,
-                  systemCancel ? transfer.txRef?.split('#')[3] : transfer.requester[0]?.name,
+                  systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
                 ]
               )}
               remark={transfer.txRef?.split('#')[0]}
