@@ -12,7 +12,7 @@ services:
         ports:
             - '5432:5432'
         environment:
-            POSTGRES_PASSWORD: '1234'
+            POSTGRES_PASSWORD: '<ANY PASSOWORD>'
             POSTGRES_USER: root
             PSQL_USERNAME: root
             # POSTGRES_HOST_AUTH_METHOD: trust
@@ -31,9 +31,9 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
-            DB_PASSWORD: '1234'
+            DB_PASSWORD: '<ANY PASSOWORD>'
             RUN_MODULE: national-api
-            rootEmail: palinda@xeptagon.com
+            rootEmail: <ROOT EMAIL>
             systemCountryCode: 'NG'
             name: 'Antactic Region'
             logoBase64: 'sss'
@@ -52,7 +52,7 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
-            DB_PASSWORD: '1234'
+            DB_PASSWORD: '<ANY PASSOWORD>'
             RUN_PORT: 3100
             RUN_MODULE: analytics-api
     replicator:
@@ -65,7 +65,7 @@ services:
         environment:
             DB_HOST: db
             DB_USER: root
-            DB_PASSWORD: '1234'
+            DB_PASSWORD: '<ANY PASSOWORD>'
             RUN_MODULE: replicator
     web:
         build:
