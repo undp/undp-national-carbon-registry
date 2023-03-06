@@ -34,10 +34,10 @@ https://digitalprinciples.org/
 
 <a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry is based on service oriented architecture (SOA). It can be ported and hosted on any Function As A Service (FaaS) stack.
-![alt text](./documention/imgs/System%20Architecture.svg)
+UNDP Carbon Registry is based on service oriented architecture (SOA).
+![alt text](./documention/imgs/System%20Architecture.png)
 
-As per the above diagram, system contains 4 main services.
+System contains 4 main services.
 
 <a name="services"></a>
 ### **Services**
@@ -73,6 +73,33 @@ Service that use to do following system operations,
 
 Internal service. Cannot be invoked by external sources. 
 
+### **Deployment**
+System services can deploy in 2 ways.
+- **As a Container** - Each service boundary containerized in to a docker container and deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
+- **As a Function** - Each service boundary packaged as function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./lambda/services/serverless.yml)
+
+
+### **External Service Providers**
+All the external services consumed by the system services through a generic interface. It will enable better use of multiple service providers based on the availability and extendability. 
+
+**Location Service** 
+
+Currently implemented for 2 options.
+1. File based approach. User has to manually enter the regions with the geo coordinates. [Sample File](./lambda/services/regions.csv). Once the file update for a change, replicator service needs to restart. 
+2. [Mapbox](https://mapbox.com). Dynamically query geo coordinates from the Mapbox free API. 
+
+Can add more options by implementing [location interface](./lambda/services/src/shared/location/location.interface.ts)
+
+
+**File Service**
+
+Implemented 2 options for static file hosting.
+1. NestJS static file hosting using the location storage.
+2. AWS S3 file storage.
+
+Can add more options by implementing [file handler interface](./lambda/services/src/shared/file-handler/filehandler.interface.ts)
+
+
 ### **Database Architecture**
 Primary/secondary database architecture used to store carbon programme and account balances. 
 Ledger database is the primary database. Add/update programmes and update account balances in a single transaction. Currently implemented only for AWS QLDB
@@ -91,8 +118,9 @@ Operational Database is the secondary database. Eventually replicated to this fr
 
 **Ledger Database Interface**
 
-This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently the production system interface is implemented for AWS QLDB. For testing purposes the interface is implemented for PostgresSQL as well.
+This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently implemented for PostgresSQL and AWS QLDB.
 
+**PostgresSQL Ledger Implementation** storage all the carbon programme and credit events in a separate event database with the sequence number. Support all the ledger functionalities except immutability.  
 
 
 Single database approach used for user and company management. 
@@ -134,6 +162,16 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     ├── web                             # System web frontend implementation [ReactJS]
     ├── .gitignore
     └── README.md
+
+<a name="container"></a>
+## Run Services As a Containers
+- Update [docker compose file](./docker-compose.yml) env variables as required.
+- Run `docker-compose up -d`. This will build and start containers for following servicers,
+    - PostgresDB container
+    - National service
+    - Analytics service
+    - Replicator service
+    - React web server with Nginx. 
 
 <a name="local"></a>
 ## Run Services Locally
