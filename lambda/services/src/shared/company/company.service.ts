@@ -337,7 +337,7 @@ export class CompanyService {
     await this.programmeTransferRepo
       .createQueryBuilder()
       .update(ProgrammeTransfer)
-      .set({ status: TransferStatus.CANCELLED, txRef: remark })
+      .set({ status: TransferStatus.CANCELLED, txRef: remark, txTime: new Date().getTime() })
       .where(
         "(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status",
         {
