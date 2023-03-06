@@ -38,9 +38,8 @@ UNDP Carbon Registry is based on service oriented architecture (SOA). Following 
 
 ![alt text](./documention/imgs/System%20Architecture.svg)
 
-According to above diagram system contains 3 main services. 
 <a name="services"></a>
-### **Services**
+### **System Services**
 #### *National Service*
 
 Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API requests related to the following functionalities,
@@ -58,28 +57,28 @@ Uses the Carbon Credit Calculator and Serial Number Generator node modules to es
 Uses Ledger interface to persist programme and credit life cycles.
 
 #### *Analytics Service*
-Serve all the system analytics. Generate all the statistic using the operational database. 
+Serve all the system analytics. Generate all the statistics using the operational database. 
 Horizontally scalable. 
 
 #### *Replicator Service*
-Replicate ledger database new items to a operational database asynchronously. During the replication process it injects additional query information to the data. 
-Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replicator interface](./backend/services/src/ledger-replicator/replicator-interface.service.ts) as add more replicators for new ledger databases. 
+Asynchronously replicate ledger database events in to the operational database. During the replication process it injects additional information to the data for query purposes (Eg: Location information). 
+Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replicator interface](./backend/services/src/ledger-replicator/replicator-interface.service.ts) can support more ledger replicators. 
 
 
 ### **Deployment**
 System services can deploy in 2 ways.
 - **As a Container** - Each service boundary containerized in to a docker container and can deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
-- **As a Function** - Each service boundary packaged as function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./backend/services/serverless.yml)
+- **As a Function** - Each service boundary packaged as a function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./backend/services/serverless.yml)
 
 
 ### **External Service Providers**
-All the external services consumed by the system services through a generic interface. It will enable better use of multiple service providers based on the availability and extendability. 
+All the external services access through a generic interface. It will decouple the system implementation from the external services and enable extendability to multiple services.
 
 **Geo Location Service** 
 
 Currently implemented for 2 options.
-1. File based approach. User has to manually enter the regions with the geo coordinates. [Sample File](./backend/services/regions.csv). Once the file update for a change, replicator service needs to restart. 
-2. [Mapbox](https://mapbox.com). Dynamically query geo coordinates from the Mapbox free API. 
+1. File based approach. User has to manually add the regions with the geo coordinates. [Sample File](./backend/services/regions.csv). To apply new file changes, replicator service needs to restart. 
+2. [Mapbox](https://mapbox.com). Dynamically query geo coordinates from the Mapbox API. 
 
 Can add more options by implementing [location interface](./backend/services/src/shared/location/location.interface.ts)
 
@@ -87,7 +86,7 @@ Can add more options by implementing [location interface](./backend/services/src
 **File Service**
 
 Implemented 2 options for static file hosting.
-1. NestJS static file hosting using the location storage.
+1. NestJS static file hosting using the local storage and container volumes.
 2. AWS S3 file storage.
 
 Can add more options by implementing [file handler interface](./backend/services/src/shared/file-handler/filehandler.interface.ts)
@@ -143,7 +142,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
         ├── services                    # Services implementation [NestJS application]
             ├── src
                 ├── national-api        # National API [NestJS module]      
-                ├── stats-api           # Statistic API [NestJS module]
+                ├── stats-api           # Statistics API [NestJS module]
                 ├── ledger-replicator   # Blockchain Database data replicator [QLDB to Postgres]
                 ├── shared              # Shared resources [NestJS module]     
             ├── serverless.yml          # Service deployment scripts [Serverless + AWS Lambda]
@@ -158,7 +157,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
 <a name="container"></a>
 ## Run Services As Containers
 - Update [docker compose file](./docker-compose.yml) env variables as required.
-- Run `docker-compose up -d`. This will build and start containers for following servicers,
+- Run `docker-compose up -d`. This will build and start containers for following services,
     - PostgresDB container
     - National service
     - Analytics service
