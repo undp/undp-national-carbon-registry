@@ -68,7 +68,7 @@ Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replica
 
 ### **Deployment**
 System services can deploy in 2 ways.
-- **As a Container** - Each service boundary containerized in to a docker container and deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
+- **As a Container** - Each service boundary containerized in to a docker container and can deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
 - **As a Function** - Each service boundary packaged as function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./backend/services/serverless.yml)
 
 
@@ -156,7 +156,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     └── README.md
 
 <a name="container"></a>
-## Run Services As a Containers
+## Run Services As Containers
 - Update [docker compose file](./docker-compose.yml) env variables as required.
 - Run `docker-compose up -d`. This will build and start containers for following servicers,
     - PostgresDB container
