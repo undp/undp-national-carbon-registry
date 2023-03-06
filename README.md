@@ -34,11 +34,11 @@ https://digitalprinciples.org/
 
 <a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry is based on service oriented architecture (SOA).
-![alt text](./documention/imgs/System%20Architecture.png)
+UNDP Carbon Registry is based on service oriented architecture (SOA). Following diagram visualize the basic components in the system.
 
-System contains 4 main services.
+![alt text](./documention/imgs/System%20Architecture.svg)
 
+According to above diagram system contains 3 main services. 
 <a name="services"></a>
 ### **Services**
 #### *National Service*
@@ -63,15 +63,8 @@ Horizontally scalable.
 
 #### *Replicator Service*
 Replicate ledger database new items to a operational database asynchronously. During the replication process it injects additional query information to the data. 
-The current setup uses AWS QLDB as the ledger database. When it creates or updates data, the change is added to a AWS Kinesis Data Stream and the Replicator service consumes the stream.
+Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replicator interface](./backend/services/src/ledger-replicator/replicator-interface.service.ts) as add more replicators for new ledger databases. 
 
-#### *Operational Service*
-Service that use to do following system operations,
-1. Data migrations.
-2. User data creation and update.
-3. Resource creation.
-
-Internal service. Cannot be invoked by external sources. 
 
 ### **Deployment**
 System services can deploy in 2 ways.
@@ -82,7 +75,7 @@ System services can deploy in 2 ways.
 ### **External Service Providers**
 All the external services consumed by the system services through a generic interface. It will enable better use of multiple service providers based on the availability and extendability. 
 
-**Location Service** 
+**Geo Location Service** 
 
 Currently implemented for 2 options.
 1. File based approach. User has to manually enter the regions with the geo coordinates. [Sample File](./backend/services/regions.csv). Once the file update for a change, replicator service needs to restart. 
