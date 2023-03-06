@@ -76,7 +76,7 @@ Internal service. Cannot be invoked by external sources.
 ### **Deployment**
 System services can deploy in 2 ways.
 - **As a Container** - Each service boundary containerized in to a docker container and deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
-- **As a Function** - Each service boundary packaged as function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./lambda/services/serverless.yml)
+- **As a Function** - Each service boundary packaged as function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./backend/services/serverless.yml)
 
 
 ### **External Service Providers**
@@ -85,10 +85,10 @@ All the external services consumed by the system services through a generic inte
 **Location Service** 
 
 Currently implemented for 2 options.
-1. File based approach. User has to manually enter the regions with the geo coordinates. [Sample File](./lambda/services/regions.csv). Once the file update for a change, replicator service needs to restart. 
+1. File based approach. User has to manually enter the regions with the geo coordinates. [Sample File](./backend/services/regions.csv). Once the file update for a change, replicator service needs to restart. 
 2. [Mapbox](https://mapbox.com). Dynamically query geo coordinates from the Mapbox free API. 
 
-Can add more options by implementing [location interface](./lambda/services/src/shared/location/location.interface.ts)
+Can add more options by implementing [location interface](./backend/services/src/shared/location/location.interface.ts)
 
 
 **File Service**
@@ -97,7 +97,7 @@ Implemented 2 options for static file hosting.
 1. NestJS static file hosting using the location storage.
 2. AWS S3 file storage.
 
-Can add more options by implementing [file handler interface](./lambda/services/src/shared/file-handler/filehandler.interface.ts)
+Can add more options by implementing [file handler interface](./backend/services/src/shared/file-handler/filehandler.interface.ts)
 
 
 ### **Database Architecture**
@@ -146,10 +146,8 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     .
     ├── .github                         # CI/CD [Github Actions files]
     ├── deployment                      # Declarative configuration files for initial resource creation and setup [AWS Cloudformation]
-    ├── lambda                          # System service implementation [NestJS applications, Serverless + AWS Lambda]
-        ├── layer                       # Service dependency layer [AWS Lambda Layers]
-            ├── serverless.yml          # Service dependency layer deployment scripts [ Serverless + AWS Lambda Layer]
-        ├── services                    # Services implementation [AWS lambda - NestJS application]
+    ├── backend                         # System service implementation
+        ├── services                    # Services implementation [NestJS application]
             ├── src
                 ├── national-api        # National API [NestJS module]      
                 ├── stats-api           # Statistic API [NestJS module]
@@ -161,6 +159,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
         ├── serial-number-gen           # Implementation for the carbon programme serial number calculation [Node module + Typescript]
     ├── web                             # System web frontend implementation [ReactJS]
     ├── .gitignore
+    ├── docker-compose.yml              # Docker container definitions
     └── README.md
 
 <a name="container"></a>
@@ -182,7 +181,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     - DB_USER (Default root)
     - DB_PASSWORD
     - DB_NAME (Default carbondbdev)
-- Move to folder `cd lambda/service`
+- Move to folder `cd backend/service`
 - Run `yarn run sls:install `
 - Initial user data setup `serverless invoke local --stage=local --function setup --data '{"rootEmail": "<Root user email>","systemCountryCode": "<System country Alpha 2 code>", "name": "<System country name>", "logoBase64": "<System country logo base64>"}'`
 - Start all the services by executing `sls offline --stage=local`

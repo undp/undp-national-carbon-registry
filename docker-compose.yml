@@ -23,7 +23,7 @@ services:
     national:
         build:
             context: .
-            dockerfile: ./lambda/services/Dockerfile
+            dockerfile: ./backend/services/Dockerfile
         ports:
             - '3000:3000'
         depends_on:
@@ -39,11 +39,11 @@ services:
             logoBase64: 'sss'
             IS_EMAIL_DISABLED: 'true'
         volumes:
-          - filestore:/app/lambda/services/public
+          - filestore:/app/backend/services/public
     stats:
         build:
             context: .
-            dockerfile: ./lambda/services/Dockerfile
+            dockerfile: ./backend/services/Dockerfile
         ports:
             - '3100:3100'
         depends_on:
@@ -58,7 +58,7 @@ services:
     replicator:
         build:
             context: .
-            dockerfile: ./lambda/services/Dockerfile
+            dockerfile: ./backend/services/Dockerfile
         depends_on:
             - db
             - national

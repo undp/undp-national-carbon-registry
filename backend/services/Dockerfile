@@ -2,10 +2,10 @@
 FROM node:16-alpine
 
 # Create app directory
-WORKDIR /app/lambda/services
+WORKDIR /app/backend/services
 
-COPY ./lambda/services/package.json ./
-COPY ./lambda/services/yarn.lock ./
+COPY ./backend/services/package.json ./
+COPY ./backend/services/yarn.lock ./
 
 COPY ./libs ../../libs
 
@@ -13,7 +13,7 @@ COPY ./libs ../../libs
 RUN yarn run sls:installProd
 
 # Bundle app source
-COPY ./lambda/services .
+COPY ./backend/services .
 
 ENV NODE_ENV production
 RUN yarn add @nestjs/cli --dev && yarn run build && yarn remove @nestjs/cli && yarn cache clean
