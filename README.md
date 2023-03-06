@@ -126,7 +126,7 @@ Carbon Registry contains 3 ledger tables.
 
 The below diagram demonstrates the the ledger behavior of programme create, authorise, issue and transfer processes. Blue color document icon denotes a single data block in a ledger.
 
-![alt text](./documention/imgs/Ledger.png)
+![alt text](./documention/imgs/Ledger.svg)
 
 ### **Authentication**
 - JWT Authentication - All endpoints based on role permissions.
