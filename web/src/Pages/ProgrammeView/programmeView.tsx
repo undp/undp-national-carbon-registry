@@ -430,7 +430,7 @@ const ProgrammeView = () => {
                 ]
               )}
               remark={transfer.txRef?.split('#')[0]}
-              via={transfer.userName}
+              via={systemCancel ? undefined : transfer.userName}
             />
           ),
           icon: (
