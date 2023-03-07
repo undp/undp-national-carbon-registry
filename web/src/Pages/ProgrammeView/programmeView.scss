@@ -21,6 +21,7 @@
     justify-content: center !important;
     button:first-child {
       margin-right: 15px;
+      margin-left: 10px;
     }
     button:last-child {
       margin-right: 15px;
@@ -148,7 +149,6 @@
   }
 
   .map-content {
-    margin-left: 20px;
     padding: 15px 0px;
   }
   .ant-steps-item-subtitle {
