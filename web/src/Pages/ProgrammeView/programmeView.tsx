@@ -427,10 +427,11 @@ const ProgrammeView = () => {
                     ? transfer.toCompanyMeta.country
                     : transfer.receiver[0]?.name,
                   systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
+                  transfer.txRef?.split('#')[5],
                 ]
               )}
               remark={transfer.txRef?.split('#')[0]}
-              via={systemCancel ? undefined : transfer.userName}
+              via={transfer.userName}
             />
           ),
           icon: (
@@ -1469,7 +1470,7 @@ const ProgrammeView = () => {
                                   </span>
                                 )}
                                 {(data.companyId.length !== 1 ||
-                                  (data.companyId[0] !== userInfoState!.companyId &&
+                                  (Number(data.companyId[0]) !== Number(userInfoState!.companyId) &&
                                     parseInt(data.company[0].state) !==
                                       CompanyState.SUSPENDED.valueOf())) && (
                                   <Button

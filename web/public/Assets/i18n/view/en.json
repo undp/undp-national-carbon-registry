@@ -99,13 +99,13 @@
     "tlFrozen": "Credits Frozen",
     "tlFrozenDesc": "{} {} credits were frozen due to the deactivation of {} by {}",
     "tlRetInit": "Retirement Initiated",
-    "tlRetInitDesc": "{} {} credits of this programme were requested to be transferred from {} {}as {} by {}",
+    "tlRetInitDesc": "Retirement of {} {} credits of this programme from {} {}as {} was initiated by {}",
     "tlRetRejectTitle": "Retirement Not Recognised",
     "tlTxRetRejectDesc": "The request to transfer {} {} credits from {} to {} was not recognised by {}",
     "tlRetCancelTitle": "Retire request cancelled",
     "tlTxCancelTitle": "Transfer Request Cancelled",
     "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}",
-    "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by the government",
+    "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by {}",
     "tlUnFrozen": "Credits Unfrozen",
     "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}"
 }
