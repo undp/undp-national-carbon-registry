@@ -290,6 +290,7 @@ const ProgrammeView = () => {
   };
 
   const addElement = (e: any, time: number, hist: any) => {
+    time = Number(time);
     if (!hist[time]) {
       hist[time] = [];
     }
@@ -460,6 +461,7 @@ const ProgrammeView = () => {
 
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
+      let txListKeys = Object.keys(txList).sort();
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
@@ -696,7 +698,7 @@ const ProgrammeView = () => {
         }
         if (el) {
           const toDelete = [];
-          for (const txT in txList) {
+          for (const txT of txListKeys) {
             if (Number(activity.data.txTime) > Number(txT)) {
               activityList.unshift(...txList[txT]);
               toDelete.push(txT);
@@ -705,11 +707,12 @@ const ProgrammeView = () => {
             }
           }
           toDelete.forEach((e) => delete txList[e]);
+          txListKeys = Object.keys(txList).sort();
           activityList.unshift(el);
         }
       }
 
-      for (const txT in txList) {
+      for (const txT of txListKeys) {
         activityList.unshift(...txList[txT]);
       }
 
