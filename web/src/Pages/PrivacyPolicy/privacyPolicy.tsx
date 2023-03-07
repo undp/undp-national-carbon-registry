@@ -75,15 +75,15 @@ const PrivacyPolicy = () => {
                   This summary provides key points from our privacy notice, but you can find out
                   more details about any of these topics by clicking the link following each key
                   point or by using our table of contents below to find the section you are looking
-                  for. You can also <a href="#toc">click here</a> to go directly to our table of
+                  for. You can also click<a href="#toc"> here</a> to go directly to our table of
                   contents.
                 </b>
               </p>
               <p>
-                <b>What personal information do we process?</b>When you visit, use, or navigate our
+                <b>What personal information do we process? </b>When you visit, use, or navigate our
                 Services, we may process personal information depending on how you interact with
                 United Nations Development Programme and the Services, the choices you make, and the
-                products and features you use. <a href="#infocollect">Click here</a> to learn more.
+                products and features you use. Click<a href="#infocollect"> here</a> to learn more.
               </p>
               <p>
                 <b>Do we process any sensitive personal information?</b> We do not process sensitive
@@ -99,12 +99,13 @@ const PrivacyPolicy = () => {
                 improve, and administer our Services, communicate with you, for security and fraud
                 prevention, and to comply with law. We may also process your information for other
                 purposes with your consent. We process your information only when we have a valid
-                legal reason to do so.<a href="#infouse"> Click here</a> to learn more.
+                legal reason to do so. Click<a href="#infouse"> here</a> to learn more.
               </p>
               <p>
                 <b>In what situations and with which parties do we share personal information?</b>{' '}
                 We may share information in specific situations and with specific third parties.
-                <a href="#whoshare">Click here</a> to learn more.
+                Click
+                <a href="#whoshare"> here</a> to learn more.
               </p>
               <p>
                 <b>How do we keep your information safe?</b> We have organizational and technical
@@ -112,13 +113,13 @@ const PrivacyPolicy = () => {
                 electronic transmission over the internet or information storage technology can be
                 guaranteed to be 100% secure, so we cannot promise or guarantee that hackers,
                 cybercriminals, or other unauthorized third parties will not be able to defeat our
-                security and improperly collect, access, steal, or modify your information.{' '}
-                <a href="#infosafe">Click here</a> to learn more.
+                security and improperly collect, access, steal, or modify your information. Click
+                <a href="#infosafe"> here</a> to learn more.
               </p>
               <p>
                 <b>What are your rights?</b> Depending on where you are located geographically, the
                 applicable privacy law may mean you have certain rights regarding your personal
-                information. <a href="#privacyrights">Click here</a> to learn more.
+                information. Click<a href="#privacyrights"> here</a> to learn more.
               </p>
               <p>
                 <b>How do I exercise my rights? </b> The easiest way to exercise your rights is by
@@ -132,7 +133,7 @@ const PrivacyPolicy = () => {
               </p>
               <p>
                 Want to learn more about what United Nations Development Programme does with any
-                information we collect? <a href="#toc">Click here</a> to review the notice in full.
+                information we collect? Click <a href="#toc"> here</a> to review the notice in full.
               </p>
             </div>
           </Col>
@@ -215,7 +216,7 @@ const PrivacyPolicy = () => {
             </div>
             <div className="privacy-body">
               <p>
-                <b>Personal information you disclose to us</b>
+                <b>Personal information you disclose to us.</b>
               </p>
               <p>
                 <i>
@@ -347,8 +348,8 @@ const PrivacyPolicy = () => {
                   <b>To send you marketing and promotional communications.</b> We may process the
                   personal information you send to us for our marketing purposes, if this is in
                   accordance with your marketing preferences. You can opt out of our marketing
-                  emails at any time. For more information, see "WHAT ARE YOUR PRIVACY RIGHTS?"
-                  below.
+                  emails at any time. For more information, see "
+                  <a href="#privacyrights">WHAT ARE YOUR PRIVACY RIGHTS?</a>" below.
                 </li>
                 <li>
                   <b>To deliver targeted advertising to you.</b> We may process your information to
@@ -386,7 +387,7 @@ const PrivacyPolicy = () => {
             <div className="privacy-body">
               <p>
                 <i>
-                  <b>In Short:</b>We only process your personal information when we believe it is
+                  <b>In Short: </b>We only process your personal information when we believe it is
                   necessary and we have a valid legal reason (i.e., legal basis) to do so under
                   applicable law, like with your consent, to comply with laws, to provide you with
                   services to enter into or fulfill our contractual obligations, to protect your
@@ -409,7 +410,7 @@ const PrivacyPolicy = () => {
                 <li>
                   <b>Consent.</b> We may process your information if you have given us permission
                   (i.e., consent) to use your personal information for a specific purpose. You can
-                  withdraw your consent at any time. <a href="#withdrawconsent">Click here</a> to
+                  withdraw your consent at any time. Click<a href="#withdrawconsent"> here</a> to
                   learn more.
                 </li>
                 <li>
@@ -473,7 +474,8 @@ const PrivacyPolicy = () => {
                 We may process your information if you have given us specific permission (i.e.,
                 express consent) to use your personal information for a specific purpose, or in
                 situations where your permission can be inferred (i.e., implied consent). You can
-                withdraw your consent at any time. Click here to learn more.
+                withdraw your consent at any time. Click <a href="#withdrawconsent">here</a> to
+                learn more.
               </p>
               <p>
                 In some exceptional cases, we may be legally permitted under applicable law to
@@ -531,7 +533,7 @@ const PrivacyPolicy = () => {
             <div className="privacy-body">
               <p>
                 <i>
-                  <b>In Short:</b>We may share information in specific situations described in this
+                  <b>In Short:</b> We may share information in specific situations described in this
                   section and/or with the following third parties.
                 </i>
               </p>
@@ -667,8 +669,8 @@ const PrivacyPolicy = () => {
                 erasure; (iii) to restrict the processing of your personal information; and (iv) if
                 applicable, to data portability. In certain circumstances, you may also have the
                 right to object to the processing of your personal information. You can make such a
-                request by contacting us by using the contact details provided in the section “HOW
-                CAN YOU CONTACT US ABOUT THIS NOTICE?” below.
+                request by contacting us by using the contact details provided in the section "
+                <a href="#contact">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a>" below.
               </p>
               <p>
                 We will consider and act upon any request in accordance with applicable data
@@ -678,14 +680,15 @@ const PrivacyPolicy = () => {
                 If you are located in the EEA or UK and you believe we are unlawfully processing
                 your personal information, you also have the right to complain to your local data
                 protection supervisory authority. You can find their contact details here:
-                <a href=" https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm.">
-                  https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm.
+                <a href=" https://ec.europa.eu/newsroom/article29/items/612080">
+                  {' '}
+                  https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.html.
                 </a>
               </p>
               <p>
                 If you are located in Switzerland, the contact details for the data protection
                 authorities are available here:
-                <a href="https://www.edoeb.admin.ch/edoeb/en/home.html.">
+                <a href="https://www.edoeb.admin.ch/edoeb/en/home.html">
                   {' '}
                   https://www.edoeb.admin.ch/edoeb/en/home.html.
                 </a>
@@ -699,8 +702,8 @@ const PrivacyPolicy = () => {
                   If we are relying on your consent to process your personal information, which may
                   be express and/or implied consent depending on the applicable law, you have the
                   right to withdraw your consent at any time. You can withdraw your consent at any
-                  time by contacting us by using the contact details provided in the section{' '}
-                  <a href="#privacyrights">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?"</a> below.
+                  time by contacting us by using the contact details provided in the section "
+                  <a href="#contact">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a>" below.
                 </p>
               </div>
 
@@ -717,8 +720,8 @@ const PrivacyPolicy = () => {
                 You can unsubscribe from our marketing and promotional communications at any time by
                 clicking on the unsubscribe link in the emails that we send, replying “STOP” or
                 “UNSUBSCRIBE” to the SMS messages that we send, or by contacting us using the
-                details provided in the section{' '}
-                <a href="#contact">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?"</a> below. You will
+                details provided in the section "
+                <a href="#contact">HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</a>" below. You will
                 then be removed from the marketing lists — however, we may still communicate with
                 you, for example to send you service-related messages that are necessary for the
                 administration and use of your account, to respond to service requests, or for other
@@ -937,7 +940,7 @@ const PrivacyPolicy = () => {
                 <li>Receiving help through our customer support channels;</li>
                 <li>Participation in customer surveys or contests; and</li>
                 <li>
-                  Facilitation in the delivery of our Services and to respond to your inquiries
+                  Facilitation in the delivery of our Services and to respond to your inquiries.
                 </li>
               </ul>
               <p>
@@ -1106,17 +1109,6 @@ const PrivacyPolicy = () => {
               <p>
                 If you have questions or comments about this notice, you may contact our Data
                 Protection Officer (DPO) by email at info@panos.org.zm, or by post to:
-              </p>
-              <p>
-                We cannot guarantee the Site will be available at all times. We may experience
-                hardware, software, or other problems or need to perform maintenance related to the
-                Site, resulting in interruptions, delays, or errors. We reserve the right to change,
-                revise, update, suspend, discontinue, or otherwise modify the Site at any time or
-                for any reason without notice to you. You agree that we have no liability whatsoever
-                for any loss, damage, or inconvenience caused by your inability to access or use the
-                Site during any downtime or discontinuance of the Site. Nothing in these privacys of
-                Use will be construed to obligate us to maintain and support the Site or to supply
-                any corrections, updates, or releases in connection therewith.
               </p>
               <p>
                 United Nations Development Programme

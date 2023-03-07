@@ -20,7 +20,7 @@ export interface Response<T> {
 }
 
 export type ConnectionProps = {
-  post<T = any, R = Response<T>>(path: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
+  post<T = any, R = Response<T>>(path: string, data?: any, config?: AxiosRequestConfig, extraUrl? :string): Promise<R>;
   get<T = any, R = Response<T>>(path: string, config?: AxiosRequestConfig): Promise<R>;
   delete<T = any, R = Response<T>>(path: string, config?: AxiosRequestConfig): Promise<R>;
   put<T = any, R = Response<T>>(path: string, data?: any, config?: AxiosRequestConfig): Promise<R>;

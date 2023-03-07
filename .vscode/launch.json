@@ -8,7 +8,7 @@
         "name": "Launch Serverless",
         "request": "launch",
         "type": "pwa-node",
-        "cwd": "${workspaceFolder}/lambda/services/",
+        "cwd": "${workspaceFolder}/backend/services/",
         "program": "/usr/local/bin/serverless",
         "args": [
           "offline",

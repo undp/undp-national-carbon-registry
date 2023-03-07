@@ -2,7 +2,9 @@
 **/.serverless/
 **/dist/
 **/.build/
-lambda/services/.env.local
+backend/services/.env.local
 **/yarn-error.log
 **/coverage
 .env.local
+./data/*
+!./data/README.md

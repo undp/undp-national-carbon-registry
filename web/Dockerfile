@@ -1,0 +1,37 @@
+FROM node:16-alpine as build
+WORKDIR /app
+COPY ./web .
+RUN apk add python3 make g++ && rm -rf /var/cache/apk/*
+RUN CI=false yarn install --frozen-lockfile
+
+ARG PORT
+ENV PORT $PORT
+
+ARG REACT_APP_BACKEND
+ENV REACT_APP_BACKEND $REACT_APP_BACKEND
+
+ARG REACT_APP_STAT_URL
+ENV REACT_APP_STAT_URL $REACT_APP_STAT_URL
+
+ARG COUNTRY_NAME
+ENV COUNTRY_NAME $COUNTRY_NAME
+
+ARG COUNTRY_NAME
+ENV COUNTRY_NAME $COUNTRY_NAME
+
+ARG COUNTRY_FLAG_URL
+ENV COUNTRY_FLAG_URL $COUNTRY_FLAG_URL
+
+ARG COUNTRY_CODE
+ENV COUNTRY_CODE $COUNTRY_CODE
+
+# Build the app
+RUN CI=false yarn build
+
+# production environment
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+COPY ./web/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE $PORT
+CMD ["nginx", "-g", "daemon off;"]
