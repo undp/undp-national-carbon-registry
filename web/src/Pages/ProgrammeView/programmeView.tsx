@@ -425,7 +425,7 @@ const ProgrammeView = () => {
                   creditUnit,
                   transfer.sender[0]?.name,
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta.country
+                    ? transfer.toCompanyMeta.countryName
                     : transfer.receiver[0]?.name,
                   systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
                   transfer.txRef?.split('#')[5],
