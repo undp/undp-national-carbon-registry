@@ -34,13 +34,13 @@ const LayoutFooter = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={12} lg={12}>
+        <Col md={10} lg={10}>
           <div className="footertext-bottom">
             {process.env.COUNTRY_NAME || 'Antarctic Region'}
             <CcCircle className="cc" color="#FFFF" size="10px" />
           </div>
         </Col>
-        <Col md={12} lg={12}>
+        <Col md={14} lg={14}>
           <div className="footertext-link-container">
             <a href="/help" target={'blank'} className="footertext-links">
               {t('homepage:Help')}
