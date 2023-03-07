@@ -189,9 +189,9 @@ const Login = () => {
                       <span className="ant-form-item-explain-error">Invalid login credentials</span>
                     </div>
                   )}
-                  <div className="login-forget-pwd-container">
+                  {/* <div className="login-forget-pwd-container">
                     <span className="login-forget-pwd-txt">{t('login:forgot-pwd')}?</span>
-                  </div>
+                  </div> */}
                   <Form.Item>
                     <div className="login-submit-btn-container">
                       <Button type="primary" size="large" htmlType="submit" block loading={loading}>
