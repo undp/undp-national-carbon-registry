@@ -110,7 +110,7 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
-  const mapType = MapTypes.Mapbox;
+  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
 
   const showModal = () => {
     setOpenModal(true);
@@ -1585,41 +1585,45 @@ const ProgrammeView = () => {
                 <InfoView data={generalInfo} title={t('view:general')} icon={<BulbOutlined />} />
               </div>
             </Card>
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<Icon.PinMap />}</span>
-                  <span className="title-text">{t('view:location')}</span>
+            {mapType !== MapTypes.None ? (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<Icon.PinMap />}</span>
+                    <span className="title-text">{t('view:location')}</span>
+                  </div>
+                  <div className="map-content">
+                    <MapComponent
+                      mapType={mapType}
+                      center={centerPoint}
+                      zoom={4}
+                      markers={markers}
+                      height={250}
+                      style="mapbox://styles/mapbox/streets-v11"
+                    ></MapComponent>
+                    <Row className="region-list">
+                      {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                        <Col className="loc-tag">
+                          {data.geographicalLocationCordintes &&
+                            data.geographicalLocationCordintes[idx] !== null &&
+                            data.geographicalLocationCordintes[idx] !== undefined && (
+                              <span
+                                style={{ color: locationColors[(idx + 1) % locationColors.length] }}
+                                className="loc-icon"
+                              >
+                                {<Icon.GeoAltFill />}
+                              </span>
+                            )}
+                          <span className="loc-text">{e}</span>
+                        </Col>
+                      ))}
+                    </Row>
+                  </div>
                 </div>
-                <div className="map-content">
-                  <MapComponent
-                    mapType={mapType}
-                    center={centerPoint}
-                    zoom={4}
-                    markers={markers}
-                    height={250}
-                    style="mapbox://styles/mapbox/streets-v11"
-                  ></MapComponent>
-                  <Row className="region-list">
-                    {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
-                      <Col className="loc-tag">
-                        {data.geographicalLocationCordintes &&
-                          data.geographicalLocationCordintes[idx] !== null &&
-                          data.geographicalLocationCordintes[idx] !== undefined && (
-                            <span
-                              style={{ color: locationColors[(idx + 1) % locationColors.length] }}
-                              className="loc-icon"
-                            >
-                              {<Icon.GeoAltFill />}
-                            </span>
-                          )}
-                        <span className="loc-text">{e}</span>
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            ) : (
+              ''
+            )}
             <Card className="card-container">
               <div>
                 <InfoView
