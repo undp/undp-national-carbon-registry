@@ -1,5 +1,6 @@
 export enum MapTypes {
   Mapbox,
+  None,
 }
 
 export interface MarkerData {

@@ -178,6 +178,8 @@ const Dashboard = () => {
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
+  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
+
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
       stats: [
@@ -1947,13 +1949,69 @@ ${total}
           </Col>
         </Row>
       </div>
-      <div className="stastics-and-charts-container center">
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-top">
-                <div className="pie-charts-title">{t('programmeLocations')}</div>
-                <div className="info-container">
+      {mapType !== MapTypes.None ? (
+        <div className="stastics-and-charts-container center">
+          <Row gutter={[40, 40]} className="stastic-card-row">
+            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+              <div className="stastics-and-pie-card height-map-rem">
+                <div className="pie-charts-top">
+                  <div className="pie-charts-title">{t('programmeLocations')}</div>
+                  <div className="info-container">
+                    <div className="info-container">
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="bottomRight"
+                        trigger="hover"
+                        title={t(
+                          userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                            ? 'tTProgrammeLocationsGovernment'
+                            : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                            ? 'tTProgrammeLocationsProgrammeDev'
+                            : categoryType === 'mine'
+                            ? 'tTProgrammeLocationsCertifierMine'
+                            : 'tTProgrammeLocationsCertifierOverall'
+                        )}
+                      >
+                        <InfoCircle color="#000000" size={17} />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+                {loadingCharts ? (
+                  <div className="margin-top-2">
+                    <Skeleton active />
+                    <Skeleton active />
+                  </div>
+                ) : (
+                  <>
+                    <div className="map-content">
+                      <MapComponent
+                        mapType={mapType}
+                        center={programmeLocationsMapCenter}
+                        zoom={4}
+                        mapSource={programmeLocationsMapSource}
+                        layer={programmeLocationsMapLayer}
+                        height={360}
+                        style="mapbox://styles/mapbox/light-v11"
+                        onRender={programmeLocationsMapOnRender}
+                      ></MapComponent>
+                    </div>
+                    <div className="stage-legends">
+                      <LegendItem text="Authorised" color="#6ACDFF" />
+                      <LegendItem text="Rejected" color="#FF8183" />
+                      <LegendItem text="Pending" color="#CDCDCD" />
+                    </div>
+                    <div className="updated-on margin-top-1">
+                      <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+              <div className="stastics-and-pie-card height-map-rem">
+                <div className="pie-charts-top">
+                  <div className="pie-charts-title">{t('trasnferLocations')}</div>
                   <div className="info-container">
                     <Tooltip
                       arrowPointAtCenter
@@ -1961,105 +2019,53 @@ ${total}
                       trigger="hover"
                       title={t(
                         userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          ? 'tTProgrammeLocationsGovernment'
+                          ? 'tTTransferLocationsGovernment'
                           : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? 'tTProgrammeLocationsProgrammeDev'
+                          ? 'tTTrasnferLocationsProgrammeDev'
                           : categoryType === 'mine'
-                          ? 'tTProgrammeLocationsCertifierMine'
-                          : 'tTProgrammeLocationsCertifierOverall'
+                          ? 'tTTrasnferLocationsCertifierMine'
+                          : 'tTTrasnferLocationsCertifierOverall'
                       )}
                     >
                       <InfoCircle color="#000000" size={17} />
                     </Tooltip>
                   </div>
                 </div>
-              </div>
-              {loadingCharts ? (
-                <div className="margin-top-2">
-                  <Skeleton active />
-                  <Skeleton active />
-                </div>
-              ) : (
-                <>
-                  <div className="map-content">
-                    <MapComponent
-                      mapType={MapTypes.Mapbox}
-                      center={programmeLocationsMapCenter}
-                      zoom={4}
-                      mapSource={programmeLocationsMapSource}
-                      layer={programmeLocationsMapLayer}
-                      height={360}
-                      style="mapbox://styles/mapbox/light-v11"
-                      onRender={programmeLocationsMapOnRender}
-                    ></MapComponent>
+                {loadingCharts ? (
+                  <div className="margin-top-2">
+                    <Skeleton active />
+                    <Skeleton active />
                   </div>
-                  <div className="stage-legends">
-                    <LegendItem text="Authorised" color="#6ACDFF" />
-                    <LegendItem text="Rejected" color="#FF8183" />
-                    <LegendItem text="Pending" color="#CDCDCD" />
-                  </div>
-                  <div className="updated-on margin-top-1">
-                    <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-top">
-                <div className="pie-charts-title">{t('trasnferLocations')}</div>
-                <div className="info-container">
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="bottomRight"
-                    trigger="hover"
-                    title={t(
-                      userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                        ? 'tTTransferLocationsGovernment'
-                        : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                        ? 'tTTrasnferLocationsProgrammeDev'
-                        : categoryType === 'mine'
-                        ? 'tTTrasnferLocationsCertifierMine'
-                        : 'tTTrasnferLocationsCertifierOverall'
-                    )}
-                  >
-                    <InfoCircle color="#000000" size={17} />
-                  </Tooltip>
-                </div>
-              </div>
-              {loadingCharts ? (
-                <div className="margin-top-2">
-                  <Skeleton active />
-                  <Skeleton active />
-                </div>
-              ) : (
-                <>
-                  <div className="map-content">
-                    <MapComponent
-                      mapType={MapTypes.Mapbox}
-                      center={[12, 50]}
-                      zoom={0.5}
-                      mapSource={transferLocationsMapSource}
-                      onClick={transferLocationsMapOnClick}
-                      showPopupOnClick={true}
-                      onMouseMove={transferLocationsMapOnMouseMove}
-                      layer={transferLocationsMapLayer}
-                      height={360}
-                      style="mapbox://styles/mapbox/streets-v11"
-                    ></MapComponent>
-                  </div>
-                  <div className="updated-on margin-top-2">
-                    <div className="updated-moment-container">
-                      {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
+                ) : (
+                  <>
+                    <div className="map-content">
+                      <MapComponent
+                        mapType={mapType}
+                        center={[12, 50]}
+                        zoom={0.5}
+                        mapSource={transferLocationsMapSource}
+                        onClick={transferLocationsMapOnClick}
+                        showPopupOnClick={true}
+                        onMouseMove={transferLocationsMapOnMouseMove}
+                        layer={transferLocationsMapLayer}
+                        height={360}
+                        style="mapbox://styles/mapbox/streets-v11"
+                      ></MapComponent>
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </div>
+                    <div className="updated-on margin-top-2">
+                      <div className="updated-moment-container">
+                        {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+          </Row>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };
