@@ -90,6 +90,7 @@ Planning| 	< 48 hours|	< 5 days|
   - Domain & security certificate management
   - Containerized
 - Accessibility Compliance (W3C)
+- SEO Configuration: Schema.org standards
 - Audit: Internal
 - Multi-Language Support
 - Ticketing system
@@ -97,9 +98,13 @@ Planning| 	< 48 hours|	< 5 days|
 - Platform(s): Desktop Web
 - Integrations
   - UNDP ITMO Platform
-- Privacy & Security
+- Testing
   - Security audit: External
   - Privacy audit: Internal documentation of adherence to UNDP Data Principles
+  - Functional tests: Automated scripts
+  - Performance test: Internal
+  - Interface test: User-based. (Including browser compatibility testing on Firefox, Chrome, Edge, and Safari for desktop, mobile and tablet including Windows 10+, MacOS, Android 9+ and iOS alongside responsive web design/screen size checking for 480px, >768px, >992px and >1200px, which covers Phones, Tablets, Desktops and Wide Screens)
+- Code Package: Access rights to online git (Github, Gitlab, etc) code repository OR bundled in following file types: .git or .zip containing the full repository of files (such as .yml, .md, .sql, .json, .ts, .html, .svg, .js, etc. ). The latter can be shared via online file sharing services ([Send](https://send.vis.ee), Dropbox, Sharepoint, WeTransfer, etc) as the files will be too large to attach directly in email.
 
 Other items to consider:
 - Hosting / clound server:
