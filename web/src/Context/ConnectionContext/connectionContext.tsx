@@ -33,9 +33,9 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   }, [token]);
 
   const send = useCallback(
-    (method: Methods, path: string, data?: any, config?: AxiosRequestConfig) => {
+    (method: Methods, path: string, data?: any, config?: AxiosRequestConfig, extraUrl?: string) => {
       return new Promise((resolve, reject) => {
-        const url = `${serverURL}/${path}`;
+        const url = `${extraUrl ? extraUrl : serverURL}/${path}`;
         let headers: any;
         if (token) {
           headers = { authorization: `Bearer ${token.toString()}` };
@@ -112,8 +112,8 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     [token, serverURL]
   );
   const post = useCallback(
-    (path: string, data?: any, config?: AxiosRequestConfig) => {
-      return send('post', path, data, config);
+    (path: string, data?: any, config?: AxiosRequestConfig, extraUrl?: string) => {
+      return send('post', path, data, config, extraUrl);
     },
     [send]
   );

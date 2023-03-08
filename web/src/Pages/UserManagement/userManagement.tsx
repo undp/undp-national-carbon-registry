@@ -709,6 +709,7 @@ const UserManagement = () => {
         onActionCanceled={handleCancel}
         openModal={openDeleteConfirmationModal}
         errorMsg={errorMsg}
+        loading={loading}
       />
     </div>
   );

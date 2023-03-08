@@ -5,7 +5,7 @@ on:
       - develop
       - main
     paths:
-      - lambda/**
+      - backend/**
       - libs/**
     
 env:
@@ -24,7 +24,7 @@ jobs:
         fetch-depth: 0
     - id: check_file_changed
       run: |
-        if [[ $(git diff --name-only HEAD^ HEAD | grep lambda/services/package.json) ]] || [[ $(git diff --name-only HEAD^ HEAD | grep libs/) ]]; then
+        if [[ $(git diff --name-only HEAD^ HEAD | grep backend/services/package.json) ]] || [[ $(git diff --name-only HEAD^ HEAD | grep libs/) ]]; then
           echo "deps_changed=True" >> $GITHUB_OUTPUT
         else
           echo "deps_changed=False" >> $GITHUB_OUTPUT
@@ -54,15 +54,15 @@ jobs:
         run: yarn run build
       - name: Copy package.json
         if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./lambda/layer/dependency_layer
+        working-directory: ./backend/layer/dependency_layer
         run: cp ../../services/package.json ./ && cp ../../services/yarn.lock ./ && cp -r ../../../libs ../../
       - name: Install Dependency
         if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./lambda/layer/dependency_layer
+        working-directory: ./backend/layer/dependency_layer
         run: yarn install --production --frozen-lockfile
       # - name: Copy Dependency
       #   if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-      #   working-directory: ./lambda/layer
+      #   working-directory: ./backend/layer
       #   run: |
       #     cp -r node_modules ./dependency_layer
       #     ls
@@ -70,13 +70,13 @@ jobs:
         if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' && github.ref == 'refs/heads/develop'}}
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd ./lambda/layer && serverless deploy --stage dev"
+          args: -c "cd ./backend/layer && serverless deploy --stage dev"
           entrypoint: /bin/sh
       - name: serverless deploy main
         if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' && github.ref == 'refs/heads/main'}}
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd ./lambda/layer && serverless deploy --stage prod"
+          args: -c "cd ./backend/layer && serverless deploy --stage prod"
           entrypoint: /bin/sh
   deploy:
     name: deploy
@@ -89,7 +89,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependency
-        working-directory: ./lambda/services
+        working-directory: ./backend/services
         run: yarn install --frozen-lockfile
       - name: version
         run: |
@@ -106,13 +106,13 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd ./lambda/services && serverless deploy --stage dev --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
+          args: -c "cd ./backend/services && serverless deploy --stage dev --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
           entrypoint: /bin/sh
       - name: serverless deploy main
         if: github.ref == 'refs/heads/main'
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd ./lambda/services && serverless deploy --stage prod"
+          args: -c "cd ./backend/services && serverless deploy --stage prod"
           entrypoint: /bin/sh
 
   # automated-api-tests:

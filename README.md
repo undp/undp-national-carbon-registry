@@ -3,6 +3,7 @@
 * [Standards](#standards)
 * [Architecture](#architecture)
 * [Project Structure](#structure)
+* [Run as Containers](#container)
 * [Run Services Locally](#local)
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
@@ -34,13 +35,12 @@ https://digitalprinciples.org/
 
 <a name="architecture"></a>
 ## System Architecture
-UNDP Carbon Registry is based on service oriented architecture (SOA). It can be ported and hosted on any Function As A Service (FaaS) stack.
+UNDP Carbon Registry is based on service oriented architecture (SOA). Following diagram visualize the basic components in the system.
+
 ![alt text](./documention/imgs/System%20Architecture.svg)
 
-As per the above diagram, system contains 4 main services.
-
 <a name="services"></a>
-### **Services**
+### **System Services**
 #### *National Service*
 
 Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API requests related to the following functionalities,
@@ -58,20 +58,42 @@ Uses the Carbon Credit Calculator and Serial Number Generator node modules to es
 Uses Ledger interface to persist programme and credit life cycles.
 
 #### *Analytics Service*
-Serve all the system analytics. Generate all the statistic using the operational database. 
+Serve all the system analytics. Generate all the statistics using the operational database. 
 Horizontally scalable. 
 
 #### *Replicator Service*
-Replicate ledger database new items to a operational database asynchronously. During the replication process it injects additional query information to the data. 
-The current setup uses AWS QLDB as the ledger database. When it creates or updates data, the change is added to a AWS Kinesis Data Stream and the Replicator service consumes the stream.
+Asynchronously replicate ledger database events in to the operational database. During the replication process it injects additional information to the data for query purposes (Eg: Location information). 
+Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replicator interface](./backend/services/src/ledger-replicator/replicator-interface.service.ts) can support more ledger replicators. 
+Replicator select based on the `LEDGER_TYPE` environment variable. Support types `QLDB`, `PGSQL(Default)`.
 
-#### *Operational Service*
-Service that use to do following system operations,
-1. Data migrations.
-2. User data creation and update.
-3. Resource creation.
+### **Deployment**
+System services can deploy in 2 ways.
+- **As a Container** - Each service boundary containerized in to a docker container and can deploy on any container orchestration service. [Please refer Docker Compose file](./docker-compose.yml)
+- **As a Function** - Each service boundary packaged as a function (Serverless) and host on any Function As A Service (FaaS) stack. [Please refer Serverless configuration file](./backend/services/serverless.yml)
 
-Internal service. Cannot be invoked by external sources. 
+
+### **External Service Providers**
+All the external services access through a generic interface. It will decouple the system implementation from the external services and enable extendability to multiple services.
+
+**Geo Location Service** 
+
+Currently implemented for 2 options.
+1. File based approach. User has to manually add the regions with the geo coordinates. [Sample File](./backend/services/regions.csv). To apply new file changes, replicator service needs to restart. 
+2. [Mapbox](https://mapbox.com). Dynamically query geo coordinates from the Mapbox API. 
+
+Can add more options by implementing [location interface](./backend/services/src/shared/location/location.interface.ts)
+
+Change by environment variable `LOCATION_SERVICE`. Supported types `MAPBOX`, `FILE(Default)`
+
+**File Service**
+
+Implemented 2 options for static file hosting.
+1. NestJS static file hosting using the local storage and container volumes.
+2. AWS S3 file storage.
+
+Can add more options by implementing [file handler interface](./backend/services/src/shared/file-handler/filehandler.interface.ts)
+
+Change by environment variable `FILE_SERVICE`. Supported types `S3`, `LOCAL(Default)`
 
 ### **Database Architecture**
 Primary/secondary database architecture used to store carbon programme and account balances. 
@@ -91,8 +113,9 @@ Operational Database is the secondary database. Eventually replicated to this fr
 
 **Ledger Database Interface**
 
-This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently the production system interface is implemented for AWS QLDB. For testing purposes the interface is implemented for PostgresSQL as well.
+This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently implemented for PostgresSQL and AWS QLDB.
 
+**PostgresSQL Ledger Implementation** storage all the carbon programme and credit events in a separate event database with the sequence number. Support all the ledger functionalities except immutability.  
 
 
 Single database approach used for user and company management. 
@@ -106,7 +129,7 @@ Carbon Registry contains 3 ledger tables.
 
 The below diagram demonstrates the the ledger behavior of programme create, authorise, issue and transfer processes. Blue color document icon denotes a single data block in a ledger.
 
-![alt text](./documention/imgs/Ledger.png)
+![alt text](./documention/imgs/Ledger.svg)
 
 ### **Authentication**
 - JWT Authentication - All endpoints based on role permissions.
@@ -118,13 +141,11 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     .
     ├── .github                         # CI/CD [Github Actions files]
     ├── deployment                      # Declarative configuration files for initial resource creation and setup [AWS Cloudformation]
-    ├── lambda                          # System service implementation [NestJS applications, Serverless + AWS Lambda]
-        ├── layer                       # Service dependency layer [AWS Lambda Layers]
-            ├── serverless.yml          # Service dependency layer deployment scripts [ Serverless + AWS Lambda Layer]
-        ├── services                    # Services implementation [AWS lambda - NestJS application]
+    ├── backend                         # System service implementation
+        ├── services                    # Services implementation [NestJS application]
             ├── src
                 ├── national-api        # National API [NestJS module]      
-                ├── stats-api           # Statistic API [NestJS module]
+                ├── stats-api           # Statistics API [NestJS module]
                 ├── ledger-replicator   # Blockchain Database data replicator [QLDB to Postgres]
                 ├── shared              # Shared resources [NestJS module]     
             ├── serverless.yml          # Service deployment scripts [Serverless + AWS Lambda]
@@ -133,7 +154,18 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
         ├── serial-number-gen           # Implementation for the carbon programme serial number calculation [Node module + Typescript]
     ├── web                             # System web frontend implementation [ReactJS]
     ├── .gitignore
+    ├── docker-compose.yml              # Docker container definitions
     └── README.md
+
+<a name="container"></a>
+## Run Services As Containers
+- Update [docker compose file](./docker-compose.yml) env variables as required.
+- Run `docker-compose up -d`. This will build and start containers for following services,
+    - PostgresDB container
+    - National service
+    - Analytics service
+    - Replicator service
+    - React web server with Nginx. 
 
 <a name="local"></a>
 ## Run Services Locally
@@ -144,7 +176,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     - DB_USER (Default root)
     - DB_PASSWORD
     - DB_NAME (Default carbondbdev)
-- Move to folder `cd lambda/service`
+- Move to folder `cd backend/service`
 - Run `yarn run sls:install `
 - Initial user data setup `serverless invoke local --stage=local --function setup --data '{"rootEmail": "<Root user email>","systemCountryCode": "<System country Alpha 2 code>", "name": "<System country name>", "logoBase64": "<System country logo base64>"}'`
 - Start all the services by executing `sls offline --stage=local`
