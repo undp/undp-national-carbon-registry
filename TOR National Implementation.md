@@ -23,15 +23,17 @@ The following work steps are suggested for the national implementation of the DP
 	- status page for monitoring uptime, utlizing https://github.com/undp/carbon-registry-status 
 	- *(Deliverable: Fully localized Carbon Registry running on staging (test) environment & productive (live) environment)*
  
-- Successful end-to-end test of the registry. This test needs to cover the full lifecycle of one dummy project including at least project creation, authorization, implementation, MRV, issuance and transfer. 
+- Build carbon credit calculators for locally-determined sectors & according to local regulations. Referencing https://github.com/undp/carbon-registry/tree/main/libs/carbon-credit-calculator . Push new calculators to main codebase.
+- [Optional] Creation of new features / modules. Reporting update on https://github.com/undp/carbon-registry/tree/main/modules.
+- - Successful end-to-end test of the registry. This test needs to cover the full lifecycle of one dummy project including at least project creation, authorization, implementation, MRV, issuance and transfer. 
 *(Deliverable: Test Report)*
 - Creation of a nationally appropriate signup proceedure for non-government accounts
 - Hand over to official government use
 *(Deliverable: Government Acceptance. Source code submission (ideally on `GitHub`) approved.)*
-- Testing: Security, Privacy, Accessability. *(Deliverable: 3rd party and/or automated tests.)*
+- Testing: Security, Privacy, Accessibility, Performance, Load. *(Deliverable: 3rd party and/or automated tests.)*
 - Ticketing system: For submitting, tracking, & responding to platform requests & bugs.
 - Warranty: Supporting long term web hosting and operation (DevOps) of the registry
-- Training: manual. video/screen recording walkthrough. guidebook. workshops. 
+- Training: interactive tutorial. manual. video/screen recording walkthrough. guidebook. workshops. help page. chatbot.
 - Awareness: advertising. community outreach.
 
 ## 2. Scope of Work
