@@ -308,6 +308,10 @@ export class CompanyService {
     }
 
     const { companyId, ...companyUpdateFields } = companyUpdateDto;
+    if(!companyUpdateFields.hasOwnProperty('website')){
+      companyUpdateFields['website'] = '';
+    }
+
     const result = await this.companyRepo
       .update(
         {
