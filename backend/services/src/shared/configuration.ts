@@ -39,7 +39,6 @@ export default () => ({
     },
     host: process.env.HOST || 'https://test.carbreg.org',
     liveChat : 'https://undp2020cdo.typeform.com/to/emSWOmDo',
-    helpDocumentation: 'carbreg.org/help',
     mapbox: {
         key: process.env.MAPBOX_PK
     },

@@ -33,7 +33,7 @@ export const EmailTemplates = {
 
         <div style="font-size:12px">
             P.S.Need immediate help getting started? Check out our help 
-            documentation {{helpDoc}}. Or, just reply to this email, the 
+            <a href="{{helpDoc}}">documentation</a>. Or, just reply to this email, the 
             {{countryName}} Carbon Credit Registry Team is always ready to help! 
         </div>
         <br>
