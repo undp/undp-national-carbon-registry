@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { UserProps } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
+import validator from 'validator';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -97,8 +98,11 @@ const AddNewCompany = () => {
     try {
       requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
-      if (requestData.company.website)
+      if (requestData.company.website) {
         requestData.company.website = 'https://' + requestData.company.website;
+      } else {
+        requestData.company.website = undefined;
+      }
       const logoBase64 = await getBase64(requestData?.company?.logo[0]?.originFileObj as RcFile);
       const logoUrls = logoBase64.split(',');
       requestData.company.logo = logoUrls[1];
@@ -151,6 +155,8 @@ const AddNewCompany = () => {
 
       if (formOneValues.website) {
         values.website = 'https://' + formOneValues.website;
+      } else {
+        values.website = undefined;
       }
 
       if (formOneValues.logo) {
@@ -302,7 +308,15 @@ const AddNewCompany = () => {
                     label="Website"
                     initialValue={state?.record?.website?.split('://')[1]}
                     name="website"
-                    rules={[{ required: false }]}
+                    rules={[
+                      {
+                        required: false,
+                        validator: async (rule, value) => {
+                          if (value && !validator.isURL('https://' + value))
+                            throw new Error('Website is invalid!');
+                        },
+                      },
+                    ]}
                   >
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
