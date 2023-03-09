@@ -27,7 +27,7 @@ const Login = () => {
   };
 
   const onSubmit = async (values: LoginProps) => {
-    const redirectLocation = state?.from?.pathname;
+    const redirectLocation = state?.from?.pathname + state?.from?.search;
     setLoading(true);
     setShowError(false);
     try {
