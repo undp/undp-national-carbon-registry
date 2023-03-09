@@ -3,6 +3,7 @@
 * [Standards](#standards)
 * [Architecture](#architecture)
 * [Project Structure](#structure)
+* [Run as Containers](#container)
 * [Run Services Locally](#local)
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
@@ -63,7 +64,7 @@ Horizontally scalable.
 #### *Replicator Service*
 Asynchronously replicate ledger database events in to the operational database. During the replication process it injects additional information to the data for query purposes (Eg: Location information). 
 Currently implemented for QLDB and PostgresSQL ledgers. By implementing [replicator interface](./backend/services/src/ledger-replicator/replicator-interface.service.ts) can support more ledger replicators. 
-
+Replicator select based on the `LEDGER_TYPE` environment variable. Support types `QLDB`, `PGSQL(Default)`.
 
 ### **Deployment**
 System services can deploy in 2 ways.
@@ -82,6 +83,7 @@ Currently implemented for 2 options.
 
 Can add more options by implementing [location interface](./backend/services/src/shared/location/location.interface.ts)
 
+Change by environment variable `LOCATION_SERVICE`. Supported types `MAPBOX`, `FILE(Default)`
 
 **File Service**
 
@@ -91,6 +93,7 @@ Implemented 2 options for static file hosting.
 
 Can add more options by implementing [file handler interface](./backend/services/src/shared/file-handler/filehandler.interface.ts)
 
+Change by environment variable `FILE_SERVICE`. Supported types `S3`, `LOCAL(Default)`
 
 ### **Database Architecture**
 Primary/secondary database architecture used to store carbon programme and account balances. 

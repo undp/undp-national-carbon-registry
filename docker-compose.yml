@@ -12,9 +12,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "1441"
-      POSTGRES_USER: postgres
-      PSQL_USERNAME: postgres
+      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
+      POSTGRES_USER: root
+      PSQL_USERNAME: root
       # POSTGRES_HOST_AUTH_METHOD: trust
       PGDATA: /data/postgres
     volumes:
@@ -30,14 +30,15 @@ services:
       - db
     environment:
       DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: "1441"
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
-      rootEmail: yathurshant@xeptagon.com
+      rootEmail: <ROOT EMAIL>
       systemCountryCode: "NG"
-      name: "Root"
+      name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      LOCATION_SERVICE: OPENSTREET
     volumes:
       - filestore:/app/backend/services/public
   stats:
@@ -51,8 +52,8 @@ services:
       - national
     environment:
       DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: "1441"
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
   replicator:
@@ -64,9 +65,10 @@ services:
       - national
     environment:
       DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: "1441"
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: replicator
+      LOCATION_SERVICE: OPENSTREET
   web:
     build:
       context: .

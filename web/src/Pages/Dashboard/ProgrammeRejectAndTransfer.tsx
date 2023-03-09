@@ -1,11 +1,5 @@
-import React, { FC, useEffect } from 'react';
-import { DatePicker, Progress, Skeleton, Tooltip } from 'antd';
-import Chart from 'react-apexcharts';
-import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import fileText from '../../Assets/Images/fileText.svg';
-import { CarOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import { FC, useEffect } from 'react';
+import { Progress, Skeleton, Tooltip } from 'antd';
 import {
   ClockHistory,
   HandThumbsUp,
@@ -13,13 +7,6 @@ import {
   Clipboard2Pulse,
   InfoCircle,
 } from 'react-bootstrap-icons';
-
-const { RangePicker } = DatePicker;
-
-const Map = ReactMapboxGl({
-  accessToken:
-    'pk.eyJ1IjoiZmFicmljOCIsImEiOiJjaWc5aTV1ZzUwMDJwdzJrb2w0dXRmc2d0In0.p6GGlfyV-WksaDV_KdN27A',
-});
 
 export interface ProgrammeRejectAndTransferCardItemProps {
   totalPrgrammes: number;

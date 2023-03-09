@@ -277,7 +277,6 @@ export class UserService {
     companyRole: CompanyRole
   ): Promise<User | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
-
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
@@ -399,6 +398,10 @@ export class UserService {
     });
 
     u.createdTime = new Date().getTime();
+
+    if(!company.hasOwnProperty('website')){
+      company['website'] = '';
+    }
 
     const usr = await this.entityManger
       .transaction(async (em) => {

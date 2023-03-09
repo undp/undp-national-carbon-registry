@@ -42,5 +42,8 @@ export default () => ({
     helpDocumentation: 'carbreg.org/help',
     mapbox: {
         key: process.env.MAPBOX_PK
+    },
+    openstreet: {
+        retrieve: process.env.OPENSTREET_QUERY === 'true' || false
     }
 });
