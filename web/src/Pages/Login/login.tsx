@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LoginProps } from '../../Definitions/InterfacesAndType/userLogin.definitions';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { AbilityContext } from '../../Casl/Can';
 import { updateUserAbility } from '../../Casl/ability';
@@ -20,12 +20,14 @@ const Login = () => {
   const [showError, setShowError] = useState<boolean>(false);
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
+  const { state } = useLocation();
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };
 
   const onSubmit = async (values: LoginProps) => {
+    const redirectLocation = state?.from?.pathname;
     setLoading(true);
     setShowError(false);
     try {
@@ -56,7 +58,9 @@ const Login = () => {
           companyState: response.data.companyState,
         });
         removeToken();
-        return IsAuthenticated() ? navigate('/dashboard', { replace: true }) : navigate('/login');
+        return IsAuthenticated()
+          ? navigate(redirectLocation ? redirectLocation : '/dashboard', { replace: true })
+          : navigate('/login');
       }
     } catch (error: any) {
       console.log('Error in Login', error);

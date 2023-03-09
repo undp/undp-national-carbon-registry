@@ -907,13 +907,15 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     console.log(state);
-
-    if (!state) {
+    const queryParams = new URLSearchParams(window.location.search);
+    const programmeId = queryParams.get('id');
+    if (!state && !programmeId) {
       console.log(state);
       navigate('/programmeManagement', { replace: true });
     } else {
       if (!state.record) {
-        if (state.id) {
+        if (programmeId) getProgrammeById(parseInt(programmeId));
+        else if (state.id) {
           getProgrammeById(state.id);
         }
       } else {
