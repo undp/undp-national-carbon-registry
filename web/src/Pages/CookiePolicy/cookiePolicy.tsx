@@ -617,9 +617,9 @@ const CookiePolicy = () => {
               <br />
               <br />
               United Nations Development Programme
-              <br />1 United Nations Plaza,
+              <br />1 United Nations Plaza
               <br />
-              New York United States
+              New York,New York United States
               <br />
               Phone: +260-211-263258
               <br />
