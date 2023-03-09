@@ -1999,7 +1999,9 @@ ${total}
                     <LegendItem text="Pending" color="#CDCDCD" />
                   </div>
                   <div className="updated-on margin-top-1">
-                    <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
+                    <div className="updated-moment-container">
+                      {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
+                    </div>
                   </div>
                 </>
               )}
