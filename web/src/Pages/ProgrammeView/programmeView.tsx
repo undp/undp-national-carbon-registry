@@ -183,8 +183,7 @@ const ProgrammeView = () => {
 
         setMarkers(markerList);
       } else {
-        let accessToken =
-          '';
+        let accessToken;
         if (mapType === MapTypes.Mapbox && process.env.MAPBOXGL_ACCESS_TOKEN) {
           accessToken = process.env.MAPBOXGL_ACCESS_TOKEN;
         }

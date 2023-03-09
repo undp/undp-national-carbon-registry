@@ -15,7 +15,7 @@ jobs:
       COUNTRY_NAME: 'Antarctic Region'
       COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
       COUNTRY_CODE: 'NG'
-      MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
+      MAPBOXGL_ACCESS_TOKEN: ''
     steps:
       - uses: actions/checkout@v3
       - name: Cache modules
