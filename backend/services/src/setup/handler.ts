@@ -17,6 +17,8 @@ import { UserService } from "../shared/user/user.service";
 import { TxType } from "../shared/enum/txtype.enum";
 import { LedgerDBInterface } from "../shared/ledger-db/ledger.db.interface";
 import { Handler } from 'aws-lambda';
+import { LocationModule } from "../shared/location/location.module";
+import { LocationInterface } from "../shared/location/location.interface";
 const fs = require('fs')
 
 export const handler: Handler = async (event) => {
@@ -95,4 +97,10 @@ export const handler: Handler = async (event) => {
         await countryService.insertCountry(country)
       }
     });
+
+    const locationApp = await NestFactory.createApplicationContext(LocationModule, {
+      logger: getLogger(UserModule),
+    });
+    const locationInterface = locationApp.get(LocationInterface);
+    await locationInterface.init()
 }

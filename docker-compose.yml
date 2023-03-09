@@ -38,6 +38,7 @@ services:
             name: 'Antactic Region'
             logoBase64: 'sss'
             IS_EMAIL_DISABLED: 'true'
+            LOCATION_SERVICE: OPENSTREET
         volumes:
           - filestore:/app/backend/services/public
     stats:
@@ -67,6 +68,7 @@ services:
             DB_USER: root
             DB_PASSWORD: '<ANY PASSOWORD>'
             RUN_MODULE: replicator
+            LOCATION_SERVICE: OPENSTREET
     web:
         build:
             context: .
