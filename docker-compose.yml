@@ -1,89 +1,87 @@
-version: '3.3'
+version: "3.3"
 volumes:
-    data:
-        driver: local
-    filestore:
-        driver: local
+  data:
+    driver: local
+  filestore:
+    driver: local
 services:
-    db: 
-        container_name: db
-        image: postgres
-        restart: always
-        ports:
-            - '5432:5432'
-        environment:
-            POSTGRES_PASSWORD: '<ANY PASSOWORD>'
-            POSTGRES_USER: root
-            PSQL_USERNAME: root
-            # POSTGRES_HOST_AUTH_METHOD: trust
-            PGDATA: /data/postgres
-        volumes:
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-            - data:/data/postgres
-    national:
-        build:
-            context: .
-            dockerfile: ./backend/services/Dockerfile
-        ports:
-            - '3000:3000'
-        depends_on:
-            - db
-        environment:
-            DB_HOST: db
-            DB_USER: root
-            DB_PASSWORD: '<ANY PASSOWORD>'
-            RUN_MODULE: national-api
-            rootEmail: <ROOT EMAIL>
-            systemCountryCode: 'NG'
-            name: 'Antactic Region'
-            logoBase64: 'sss'
-            IS_EMAIL_DISABLED: 'true'
-            LOCATION_SERVICE: OPENSTREET
-        volumes:
-          - filestore:/app/backend/services/public
-    stats:
-        build:
-            context: .
-            dockerfile: ./backend/services/Dockerfile
-        ports:
-            - '3100:3100'
-        depends_on:
-            - db
-            - national
-        environment:
-            DB_HOST: db
-            DB_USER: root
-            DB_PASSWORD: '<ANY PASSOWORD>'
-            RUN_PORT: 3100
-            RUN_MODULE: analytics-api
-    replicator:
-        build:
-            context: .
-            dockerfile: ./backend/services/Dockerfile
-        depends_on:
-            - db
-            - national
-        environment:
-            DB_HOST: db
-            DB_USER: root
-            DB_PASSWORD: '<ANY PASSOWORD>'
-            RUN_MODULE: replicator
-            LOCATION_SERVICE: OPENSTREET
-    web:
-        build:
-            context: .
-            dockerfile: ./web/Dockerfile
-            args:
-                PORT: 3030
-                REACT_APP_BACKEND: http://localhost:3000
-                REACT_APP_STAT_URL: http://localhost:3100
-                COUNTRY_NAME: 'Antarctic Region'
-                COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
-                COUNTRY_CODE: 'NG'
-        ports:
-            - '3030:3030'
-        depends_on:
-            - db
-            - national
-
-
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
+      POSTGRES_USER: root
+      PSQL_USERNAME: root
+      # POSTGRES_HOST_AUTH_METHOD: trust
+      PGDATA: /data/postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - data:/data/postgres
+  national:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
+      RUN_MODULE: national-api
+      rootEmail: <ROOT EMAIL>
+      systemCountryCode: "NG"
+      name: "Antactic Region"
+      logoBase64: "sss"
+      IS_EMAIL_DISABLED: "true"
+      LOCATION_SERVICE: OPENSTREET
+    volumes:
+      - filestore:/app/backend/services/public
+  stats:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    ports:
+      - "3100:3100"
+    depends_on:
+      - db
+      - national
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
+      RUN_PORT: 3100
+      RUN_MODULE: analytics-api
+  replicator:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    depends_on:
+      - db
+      - national
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
+      RUN_MODULE: replicator
+      LOCATION_SERVICE: OPENSTREET
+  web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+      args:
+        PORT: 3030
+        REACT_APP_BACKEND: http://localhost:3000
+        REACT_APP_STAT_URL: http://localhost:3100
+        COUNTRY_NAME: "Antarctic Region"
+        COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+        COUNTRY_CODE: "NG"
+    ports:
+      - "3030:3030"
+    depends_on:
+      - db
+      - national

@@ -337,7 +337,8 @@ export class ProgrammeService {
           e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
 
         if (e.toCompanyMeta && e.toCompanyMeta.country) {
-            e.toCompanyMeta['countryName'] = await this.countryService.getCountryName(e.toCompanyMeta.country)
+          e.toCompanyMeta["countryName"] =
+            await this.countryService.getCountryName(e.toCompanyMeta.country);
         }
       }
     }
@@ -461,7 +462,7 @@ export class ProgrammeService {
       transfer.isRetirement
     );
 
-    if(transferResult.statusCode === 200){
+    if (transferResult.statusCode === 200) {
       if (transfer.isRetirement) {
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -473,7 +474,9 @@ export class ProgrammeService {
           0,
           transfer.programmeId
         );
-      } else if (initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT) {
+      } else if (
+        initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT
+      ) {
         await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR,
           { credits: transfer.creditAmount },
@@ -670,12 +673,16 @@ export class ProgrammeService {
         );
       }
     }
-    
-    if (req.fromCompanyIds && req.companyCredit && req.fromCompanyIds.length != req.companyCredit.length) {
-        throw new HttpException(
-            "Invalid company credit for given from companies",
-            HttpStatus.BAD_REQUEST
-          );
+
+    if (
+      req.fromCompanyIds &&
+      req.companyCredit &&
+      req.fromCompanyIds.length != req.companyCredit.length
+    ) {
+      throw new HttpException(
+        "Invalid company credit for given from companies",
+        HttpStatus.BAD_REQUEST
+      );
     }
 
     const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
@@ -1006,21 +1013,24 @@ export class ProgrammeService {
       orgNamesList = companyNames.join(",") + " and " + lastItem;
     } else {
       orgNamesList = companyNames[0];
-    } 
+    }
 
     if (programme.companyId.length === 1 && !programme.proponentPercentage) {
-        programme.proponentPercentage = [100];
-        programme.creditOwnerPercentage = [100];
+      programme.proponentPercentage = [100];
+      programme.creditOwnerPercentage = [100];
     }
-    const savedProgramme = await this.programmeLedger.createProgramme(programme);
-    if(savedProgramme){
+    const savedProgramme = await this.programmeLedger.createProgramme(
+      programme
+    );
+    if (savedProgramme) {
       const hostAddress = this.configService.get("host");
       await this.emailHelperService.sendEmailToGovernmentAdmins(
         EmailTemplates.PROGRAMME_CREATE,
         {
           organisationName: orgNamesList,
           programmePageLink:
-            hostAddress + `/programmeManagement/view?id=${programme.programmeId}`,
+            hostAddress +
+            `/programmeManagement/view?id=${programme.programmeId}`,
         }
       );
     }
@@ -1593,11 +1603,11 @@ export class ProgrammeService {
 
     const hostAddress = this.configService.get("host");
     let authDate = new Date(updated.txTime);
-    let date = authDate.getDate().toString().padStart(2,"0");
-    let month = authDate.toLocaleString('default', { month: 'long' });
+    let date = authDate.getDate().toString().padStart(2, "0");
+    let month = authDate.toLocaleString("default", { month: "long" });
     let year = authDate.getFullYear();
     let formattedDate = `${date} ${month} ${year}`;
-    
+
     updated.company.forEach(async (company) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
         company.companyId,
