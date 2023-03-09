@@ -33,6 +33,5 @@ async function bootstrap() {
     await setupHandler.handler();
   }
   await app.listen(process.env.RUN_PORT || 3000);
-  // global.baseUrl = await app.getUrl();
 }
 bootstrap();
