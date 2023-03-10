@@ -385,7 +385,7 @@ export class UserService {
         await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
           organisationName: company.name,
           countryName: this.configService.get("systemCountryName"),
-          organisationRole: company.companyRole,
+          organisationRole: company.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? "Programme Developer":company.companyRole,
           home: hostAddress,
         });
       }
