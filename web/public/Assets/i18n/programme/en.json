@@ -9,5 +9,8 @@
     "noProgrammes": "No Programmes",
     "serialNoh": "Serial Number",
     "certifiers": "Certifiers",
-    "title": "Programme Name"
+    "title": "Programme Name",
+    "gettingProgrammeError": "Error in getting programme",
+    "all": "All",
+    "searchByName": "Search by programme name"
 }

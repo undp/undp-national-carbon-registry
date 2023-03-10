@@ -333,13 +333,13 @@ const CompanyManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by Organisation Type</div>
+          <div className="filter-title">{t('company:creditBalance')}</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
-              <Radio value="All">All</Radio>
-              <Radio value="Government">Government</Radio>
-              <Radio value="ProgrammeDeveloper">Developer</Radio>
-              <Radio value="Certifier">Certifier</Radio>
+              <Radio value="All">{t('company:all')}</Radio>
+              <Radio value="Government">{t('company:gov')}</Radio>
+              <Radio value="ProgrammeDeveloper">{t('company:developer')}</Radio>
+              <Radio value="Certifier">{t('company:certifier')}</Radio>
             </Space>
           </Radio.Group>
         </div>
@@ -402,7 +402,9 @@ const CompanyManagement = () => {
                 <Search
                   onPressEnter={onSearch}
                   placeholder={
-                    searchByTermOrganisation === 'email' ? 'Search by email' : 'Search by name'
+                    searchByTermOrganisation === 'email'
+                      ? `${t('company:searchMail')}`
+                      : `${t('company:searchName')}`
                   }
                   allowClear
                   onChange={(e) =>
