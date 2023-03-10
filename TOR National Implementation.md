@@ -17,6 +17,8 @@ The following work steps are suggested for the national implementation of the DP
 	- purchase domain, hosting, & security certificate
 	- register & connect supporting services (analytics, forms, etc.)
 	- adjust sectors to match the sectors specified in the nationally determined contribution 
+	- adjust maps to match local regions
+	- adjust to local regulatory & legal requirements
 	- integration with existing NDC management tools (if applicable) [API]
 	- adjustment of user types to national requirements
 	- creation of government accounts
@@ -40,6 +42,7 @@ The following work steps are suggested for the national implementation of the DP
 -	Design
 	-	User Interface (UI) Design
 	-	Real-Time Reviewing & Commenting Mechanism
+	-	Carbon Policy Guide
 -	Quality Assurance (QA) & User Testing
 	-	Internal Test with SME for the MVP version
 -	Software Development
@@ -67,10 +70,14 @@ Planning| 	< 48 hours|	< 5 days|
 
 
 ## 3. Deliverables
-- Deliverable 1: 
-- Deliverable 2:
-- Deliverable 3:
-- Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
+- Deliverable 1: Governance: Strategy and Metrics, Policy and Compliance, Education and Guidance
+- Deliverable 2: Design: User Interface, Graphics, Threat Assessment, Language Files, Security Requirements
+- Deliverable 3: Implementation: Secure Build, Secure Deployment, Defect Management
+- Deliverable 4: Verification: Architecture Assessment, Requirements-driven Testing, Security Testing
+- Deliverable 5: Maintenance Operations [Incident Management, Environment Management, Operational Management]
+- Deliverable 6: Distribution [Analytics, Advertising, Training]
+
+(List developed with inspiration from [OWASP Software Assurance Maturity Model](https://owaspsamm.org/))
 
 ### Deliverable Requirements
 
