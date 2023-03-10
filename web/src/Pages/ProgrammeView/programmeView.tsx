@@ -258,7 +258,7 @@ const ProgrammeView = () => {
     setCerts(c);
   };
 
-  const getProgrammeById = async (programmeId: number) => {
+  const getProgrammeById = async (programmeId: string) => {
     try {
       const response: any = await post('national/programme/query', {
         page: 1,
@@ -906,10 +906,12 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     console.log(state);
-
-    if (!state) {
-      console.log(state);
-      navigate('/programmeManagement', { replace: true });
+    const queryParams = new URLSearchParams(window.location.search);
+    const programmeId = queryParams.get('id');
+    if (programmeId) {
+      getProgrammeById(programmeId);
+    } else if (!state) {
+      navigate('/programmeManagement/viewAll', { replace: true });
     } else {
       if (!state.record) {
         if (state.id) {
