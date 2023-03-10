@@ -356,7 +356,7 @@ const ProgrammeManagement = () => {
                 checked={checkAll}
                 defaultChecked={true}
               >
-                All
+                {t('programme:all')}
               </Checkbox>
               <Checkbox.Group
                 disabled={loading}
@@ -390,7 +390,7 @@ const ProgrammeManagement = () => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={'Search by programme name'}
+                  placeholder={`${t('programme:searchByName')}`}
                   allowClear
                   // onChange={(e) => setSearchText(e.target.value)}
                   onChange={(e) =>

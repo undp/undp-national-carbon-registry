@@ -865,7 +865,7 @@ export class AggregateAPIService {
         whereC.push(`p."programmeId" != 'null'`);
         if (stat.statFilter && stat.statFilter.onlyMine) {
           whereC.push(
-            `${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId")`
+            `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
           );
         }
         if (stat.statFilter && stat.statFilter.startTime) {

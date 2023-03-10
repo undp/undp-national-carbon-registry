@@ -110,7 +110,7 @@ export const toolTipTextGen = (companyRole: any, cardType: any, mine?: boolean) 
       text =
         'Locations of credits of international transfer requests of programmes certified by your organisation recognised during the specified period';
     }
-  } else if (companyRole === CompanyRole.CERTIFIER && !mine) {
+  } else if (companyRole === CompanyRole.CERTIFIER) {
     if (cardType === StatsCardsTypes.PROGRAMMES_UNCERTIFIED) {
       text =
         'Number of programmes not yet certified including certificates revoked by your organisation';
