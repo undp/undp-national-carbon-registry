@@ -623,6 +623,7 @@ export class ProgrammeLedgerService {
             txTime: programme.txTime,
             txRef: programme.txRef,
             creditFrozen: programme.creditFrozen,
+            creditChange: programme.creditChange
           };
           updateWhere[this.ledger.tableName + "#" + programme.programmeId] = {
             programmeId: programme.programmeId,
