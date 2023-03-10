@@ -619,9 +619,12 @@ const CookiePolicy = () => {
               United Nations Development Programme
               <br />1 United Nations Plaza
               <br />
-              New York,New York United States
+              New York, New York
+              <br />
+              United States
               <br />
               Phone: +260-211-263258
+              <br />
               <br />
               This cookie policy was created using Termly's{' '}
               <a href="https://termly.io/products/cookie-consent-manager/">
