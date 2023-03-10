@@ -41,7 +41,7 @@ export class CompanyService {
 
   async suspend(
     companyId: number,
-    user: User,
+    user: any,
     remarks: string,
     abilityCondition: string
   ): Promise<any> {
@@ -86,7 +86,7 @@ export class CompanyService {
           this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
           true
         );
-        await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}`);
+        await this.companyTransferCancel(companyId, `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}#${user.companyName}`);
         await this.emailHelperService.sendEmail(company.email,EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,{},user.companyId)
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
@@ -308,6 +308,10 @@ export class CompanyService {
     }
 
     const { companyId, ...companyUpdateFields } = companyUpdateDto;
+    if(!companyUpdateFields.hasOwnProperty('website')){
+      companyUpdateFields['website'] = '';
+    }
+
     const result = await this.companyRepo
       .update(
         {

@@ -10,6 +10,10 @@ export class MapboxLocationService implements LocationInterface {
     private logger: Logger,
     private configService: ConfigService
   ) {}
+  
+  public init(): Promise<void> {
+    return null;
+  }
 
   public async getCoordinatesForRegion(regions: string[]): Promise<number[][]> {
     

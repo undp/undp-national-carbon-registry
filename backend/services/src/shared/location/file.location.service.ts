@@ -33,6 +33,10 @@ export class FileLocationService implements LocationInterface {
     this.logger.log(`Regions loaded: ${Object.values(this.regionMap).length}`)
   }
   
+  public init(): Promise<void> {
+    return null;
+  }
+
   public getCoordinatesForRegion(regions: string[]): Promise<number[][]> {
     return new Promise((resolve, reject) => {
       resolve(regions.map( (region) => {

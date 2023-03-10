@@ -277,7 +277,6 @@ export class UserService {
     companyRole: CompanyRole
   ): Promise<User | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
-
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
@@ -378,6 +377,10 @@ export class UserService {
         );
       }
 
+      if(!company.hasOwnProperty('website')){
+        company['website'] = '';
+      }
+
       if(company.email){
         await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
           organisationName: company.name,
@@ -395,7 +398,7 @@ export class UserService {
       home: hostAddress,
       email: u.email,
       liveChat: this.configService.get("liveChat"),
-      helpDoc: this.configService.get("helpDocumentation"),
+      helpDoc: hostAddress+ '/help',
     });
 
     u.createdTime = new Date().getTime();

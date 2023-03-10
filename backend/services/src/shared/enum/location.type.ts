@@ -1,4 +1,5 @@
 export enum LocationType {
   MAPBOX = "MAPBOX",
-  FILE = "FILE"
+  FILE = "FILE",
+  OPENSTREET = "OPENSTREET"
 }

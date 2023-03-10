@@ -56,7 +56,7 @@ function setupSwagger(
     .topbar-wrapper img {content:url(\'https://carbon-common-dev.s3.amazonaws.com/logo-h.png\'); height:50px; width:auto;}
     .swagger-ui .topbar { background-color: #f4f5fa; }
     .swagger-ui { background-color: white; }
-    #links-header { position: absolute; top: 25px; right: 25px; }
+    #links-header { position: absolute; top: 25px; right: calc((100% - 1440px)/2); }
     #links-header a { margin-right: 15px;}
     `,
     swaggerOptions: {

@@ -183,9 +183,9 @@ const ProgrammeView = () => {
 
         setMarkers(markerList);
       } else {
-        let accessToken = '';
-        if (mapType === MapTypes.Mapbox && process.env.MAPBOXGL_ACCESS_TOKEN) {
-          accessToken = process.env.MAPBOXGL_ACCESS_TOKEN;
+        let accessToken;
+        if (mapType === MapTypes.Mapbox && process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN) {
+          accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
         }
 
         if (!accessToken) return;
@@ -289,6 +289,7 @@ const ProgrammeView = () => {
   };
 
   const addElement = (e: any, time: number, hist: any) => {
+    time = Number(time);
     if (!hist[time]) {
       hist[time] = [];
     }
@@ -423,13 +424,14 @@ const ProgrammeView = () => {
                   creditUnit,
                   transfer.sender[0]?.name,
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta.country
+                    ? transfer.toCompanyMeta.countryName
                     : transfer.receiver[0]?.name,
                   systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
+                  transfer.txRef?.split('#')[5],
                 ]
               )}
               remark={transfer.txRef?.split('#')[0]}
-              via={systemCancel ? undefined : transfer.userName}
+              via={transfer.userName}
             />
           ),
           icon: (
@@ -458,6 +460,7 @@ const ProgrammeView = () => {
 
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
+      let txListKeys = Object.keys(txList).sort();
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
@@ -694,7 +697,7 @@ const ProgrammeView = () => {
         }
         if (el) {
           const toDelete = [];
-          for (const txT in txList) {
+          for (const txT of txListKeys) {
             if (Number(activity.data.txTime) > Number(txT)) {
               activityList.unshift(...txList[txT]);
               toDelete.push(txT);
@@ -703,11 +706,12 @@ const ProgrammeView = () => {
             }
           }
           toDelete.forEach((e) => delete txList[e]);
+          txListKeys = Object.keys(txList).sort();
           activityList.unshift(el);
         }
       }
 
-      for (const txT in txList) {
+      for (const txT of txListKeys) {
         activityList.unshift(...txList[txT]);
       }
 
@@ -1468,7 +1472,7 @@ const ProgrammeView = () => {
                                   </span>
                                 )}
                                 {(data.companyId.length !== 1 ||
-                                  (data.companyId[0] !== userInfoState!.companyId &&
+                                  (Number(data.companyId[0]) !== Number(userInfoState!.companyId) &&
                                     parseInt(data.company[0].state) !==
                                       CompanyState.SUSPENDED.valueOf())) && (
                                   <Button

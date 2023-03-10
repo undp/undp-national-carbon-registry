@@ -269,8 +269,11 @@ const ProgrammeManagement = () => {
         key: sortField,
         order: sortOrder,
       };
+
       if (sortField === 'certifierId') {
         sort.nullFirst = sortOrder === 'ASC';
+      } else {
+        sort.nullFirst = false;
       }
     } else {
       sort = {
