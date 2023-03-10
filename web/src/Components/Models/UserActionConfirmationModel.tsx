@@ -33,6 +33,7 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
       open={openModal}
       width={Math.min(400, window.innerWidth)}
       centered={true}
+      onCancel={onActionCanceled}
       destroyOnClose={true}
       footer={null}
     >
