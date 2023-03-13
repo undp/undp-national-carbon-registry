@@ -1,7 +1,0 @@
-{
-    "retirementReSentSuccess": "The international transfer retire request has been sent successfully",
-    "retiredSuccess": "The credits have been retired successfully",
-    "retirementReqCancellationSuccess": "The international transfer retire request has been cancelled successfully",
-    "transferReqRejectedSuccess": "The international transfer retire request has been rejected successfully",
-    "transferReqAcceptSuccess": "The international transfer retire request has been accepted successfully"
-}
