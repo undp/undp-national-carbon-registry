@@ -270,7 +270,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                 }).join(', ')})`;
               } else if (getQueries[t][k] instanceof ArrayIn) {
                 j += 1;
-                return `$${j} IN data->>'${k}'`;
+                return `$${j} IN (data->>'${k}')`;
               } else if (getQueries[t][k] instanceof ArrayLike) {
                 j += 1;
                 return `data->>'${k}' LIKE $${j}`;
@@ -321,7 +321,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                   }).join(', ')})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
                   j += 1;
-                  return `$${j} IN data->>'${k}'`;
+                  return `$${j} IN (data->>'${k}')`;
                 } else if (updateWhere[t][k] instanceof ArrayLike) {
                   j += 1;
                   return `data->>'${k}' LIKE $${j}`;
