@@ -141,3 +141,17 @@ Other items to consider:
  	- Direct experience related to mitigation outcome agreements at the national or international level is strongly desired
  	- Direct experience in developing or overseeing digital systems related to climate or carbon reporting, accounting, measurement, verification is strongly desired
  	- Experience in business development and entrepreneurship is an asset
+ 	
+	## Deliverables in less digital jargon:
+	- Deliverable: Fully localized Carbon Registry running on staging (test) environment & productive (live) environment
+	- Deliverable: End to End Test Report
+	- Deliverable: Government Acceptance. Source code submission (ideally on Git) approved.
+	- Deliverable: 3rd party and/or automated tests.
+	- Deliverable: Training: interactive tutorial. manual. video/screen recording walkthrough. guidebook. workshops. help page. chatbot.
+
+	## Long Term Maintenance Tasks
+	- Training of new Staff
+	- Ticketing system: For submitting, tracking, & responding to platform requests & bugs.
+	- Warranty: Supporting long term web hosting and operation (DevOps) of the registry
+	- Awareness: advertising. community outreach.
+
