@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { CompanyRole } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { UserProps } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
+import validator from 'validator';
 
 const AddNewCompany = () => {
   const { Step } = Steps;
@@ -97,8 +98,11 @@ const AddNewCompany = () => {
     try {
       requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
-      if (requestData.company.website)
+      if (requestData.company.website) {
         requestData.company.website = 'https://' + requestData.company.website;
+      } else {
+        requestData.company.website = undefined;
+      }
       const logoBase64 = await getBase64(requestData?.company?.logo[0]?.originFileObj as RcFile);
       const logoUrls = logoBase64.split(',');
       requestData.company.logo = logoUrls[1];
@@ -111,7 +115,7 @@ const AddNewCompany = () => {
         }
         message.open({
           type: 'success',
-          content: 'Company added Successfully!',
+          content: t('companyAddedSuccess'),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -121,7 +125,7 @@ const AddNewCompany = () => {
     } catch (error: any) {
       message.open({
         type: 'error',
-        content: `Error in adding user! ${error.message}`,
+        content: `${t('errorInAddUser')} ${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -151,6 +155,8 @@ const AddNewCompany = () => {
 
       if (formOneValues.website) {
         values.website = 'https://' + formOneValues.website;
+      } else {
+        values.website = undefined;
       }
 
       if (formOneValues.logo) {
@@ -168,7 +174,7 @@ const AddNewCompany = () => {
         } as UserProps);
         message.open({
           type: 'success',
-          content: 'Company updated Successfully!',
+          content: t('companyUpdatedSuccess'),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -178,7 +184,7 @@ const AddNewCompany = () => {
     } catch (error: any) {
       message.open({
         type: 'error',
-        content: `Error in updating company! ${error.message}`,
+        content: `${t('errorInUpdatingCompany')} ${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -229,7 +235,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Name is required!');
+                            throw new Error(`Name ${t('isRequired')}`);
                           }
                         },
                       },
@@ -255,7 +261,7 @@ const AddNewCompany = () => {
                               value === null ||
                               value === undefined
                             ) {
-                              throw new Error('Tax ID is required!');
+                              throw new Error(`Tax ID ${t('isRequired')}`);
                             }
                           },
                         },
@@ -281,14 +287,14 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Email is required!');
+                            throw new Error(`Email ${t('isRequired')}`);
                           } else {
                             const val = value.trim();
                             const reg =
                               /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                             const matches = val.match(reg) ? val.match(reg) : [];
                             if (matches.length === 0) {
-                              throw new Error('Email is invalid!');
+                              throw new Error(`Email ${t('isInvalid')}`);
                             }
                           }
                         },
@@ -302,7 +308,15 @@ const AddNewCompany = () => {
                     label="Website"
                     initialValue={state?.record?.website?.split('://')[1]}
                     name="website"
-                    rules={[{ required: false }]}
+                    rules={[
+                      {
+                        required: false,
+                        validator: async (rule, value) => {
+                          if (value && !validator.isURL('https://' + value))
+                            throw new Error(`Website ${t('isInvalid')}`);
+                        },
+                      },
+                    ]}
                   >
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
@@ -317,10 +331,10 @@ const AddNewCompany = () => {
                         validator: async (rule, file) => {
                           if (file === null || file === undefined) {
                             if (!state?.record?.logo)
-                              throw new Error('Organisation Logo is required!');
+                              throw new Error(`Organisation Logo ${t('isRequired')}`);
                           } else {
                             if (file.length === 0) {
-                              throw new Error('Organisation Logo is required!');
+                              throw new Error(`Organisation Logo ${t('isRequired')}`);
                             } else {
                               let isCorrectFormat = false;
                               if (file[0]?.type === 'image/png') {
@@ -331,10 +345,10 @@ const AddNewCompany = () => {
                                 isCorrectFormat = true;
                               }
                               if (!isCorrectFormat) {
-                                throw new Error('Unsupported file format!');
+                                throw new Error(`t('unsupportedFormat')`);
                               } else if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error('Maximum upload file size is 3MB!');
+                                throw new Error(`t('maxUploadSize')`);
                               }
                             }
                           }
@@ -371,7 +385,7 @@ const AddNewCompany = () => {
                     rules={[
                       {
                         required: true,
-                        message: 'Role is required!',
+                        message: `Role ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -434,7 +448,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Phone Number is required!');
+                            throw new Error(`Phone Number ${t('isRequired')}`);
                           }
                         },
                       },
@@ -464,7 +478,7 @@ const AddNewCompany = () => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error('Address is required!');
+                            throw new Error(`Address ${t('isRequired')}`);
                           }
                         },
                       },
@@ -529,7 +543,7 @@ const AddNewCompany = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Name is required!');
+                          throw new Error(`Name ${t('isRequired')}`);
                         }
                       },
                     },
@@ -575,14 +589,14 @@ const AddNewCompany = () => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error('Email is required!');
+                          throw new Error(`Email ${t('isRequired')}`);
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error('Email is invalid!');
+                            throw new Error(`Email ${t('isInvalid')}`);
                           }
                         }
                       },

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
@@ -14,7 +13,6 @@ import {
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import mapboxgl from 'mapbox-gl';
 import {
   addCommSep,
   addRoundNumber,
@@ -44,16 +42,17 @@ import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
+import MapComponent from '../../Components/Maps/MapComponent';
+import {
+  MapSourceData,
+  MapTypes,
+  MarkerData,
+} from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 
 const { RangePicker } = DatePicker;
 
-mapboxgl.accessToken =
-  '';
-
 const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
-  const mapContainerRef = useRef(null);
-  const mapContainerInternationalRef = useRef(null);
   const { userInfoState } = useUserContext();
   const { i18n, t } = useTranslation(['dashboard']);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
@@ -170,6 +169,16 @@ const Dashboard = () => {
   const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
     useState<number>(0);
   const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
+
+  const [transferLocationsMapSource, setTransferLocationsMapSource] = useState<MapSourceData>();
+  const [txLocationMapData, setTxLocationMapData] = useState<any>();
+  const [transferLocationsMapLayer, setTransferLocationsMapLayer] = useState<any>();
+
+  const [programmeLocationsMapCenter, setProgrammeLocationsMapCenter] = useState<number[]>([]);
+  const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
+  const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
+
+  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -506,7 +515,12 @@ const Dashboard = () => {
   const getAllProgrammesAggChartStats = async () => {
     setLoadingCharts(true);
     try {
-      const response: any = await post('stats/programme/agg', getAllChartsParams());
+      const response: any = await post(
+        'stats/programme/agg',
+        getAllChartsParams(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
+      );
       let programmesAggByStatus: any;
       let programmesAggBySector: any;
       let totalCreditsCertifiedStats: any;
@@ -846,7 +860,9 @@ const Dashboard = () => {
     try {
       const response: any = await post(
         'stats/programme/agg',
-        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange()
+        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
       );
       const programmeByStatusAggregationResponse =
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
@@ -968,7 +984,9 @@ const Dashboard = () => {
     try {
       const response: any = await post(
         'stats/programme/agg',
-        getAllProgrammeAnalyticsStatsParams()
+        getAllProgrammeAnalyticsStatsParams(),
+        undefined,
+        process.env.REACT_APP_STAT_URL
       );
       let programmeByStatusAggregationResponse: any;
       let programmeByStatusAuthAggregationResponse: any;
@@ -1497,191 +1515,152 @@ ${total}
 
   useEffect(() => {
     setTimeout(() => {
-      if (mapContainerInternationalRef?.current) {
-        const map = new mapboxgl.Map({
-          container: mapContainerInternationalRef?.current || '',
-          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-          style: 'mapbox://styles/mapbox/streets-v11',
-          center: [12, 50],
-          zoom: 0.5,
-        });
+      const mapSource: MapSourceData = {
+        key: 'countries',
+        data: {
+          type: 'vector',
+          url: 'mapbox://mapbox.country-boundaries-v1',
+        },
+      };
 
-        // Add markers to the map.
-        map.on('load', () => {
-          map.addSource('countries', {
-            type: 'vector',
-            url: 'mapbox://mapbox.country-boundaries-v1',
-          });
+      setTransferLocationsMapSource(mapSource);
 
-          // Build a GL match expression that defines the color for every vector tile feature
-          // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-          const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-          const txLocationMap: any = {};
+      // Build a GL match expression that defines the color for every vector tile feature
+      // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+      const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+      const txLocationMap: any = {};
 
-          const transferLocations: any = [...programmeTransferLocations];
+      const transferLocations: any = [...programmeTransferLocations];
 
-          // Calculate color values for each country based on 'hdi' value
-          for (const row of transferLocations) {
-            // Convert the range of data values to a suitable color
-            // const blue = row.ratio * 255;
+      // Calculate color values for each country based on 'hdi' value
+      for (const row of transferLocations) {
+        // Convert the range of data values to a suitable color
+        // const blue = row.ratio * 255;
 
-            const color =
-              row.count < 2
-                ? `#4da6ff`
-                : row.count < 10
-                ? '#0080ff'
-                : row.count < 50
-                ? '#0059b3'
-                : row.count < 100
-                ? '#003366'
-                : '#000d1a';
+        const color =
+          row.count < 2
+            ? `#4da6ff`
+            : row.count < 10
+            ? '#0080ff'
+            : row.count < 50
+            ? '#0059b3'
+            : row.count < 100
+            ? '#003366'
+            : '#000d1a';
 
-            matchExpression.push(row.country, color);
-            txLocationMap[row.country] = row.count;
-          }
-
-          function getCountryCodes(dataSet: any) {
-            return dataSet.map((item: any) => item.code);
-          }
-
-          map.on('click', function (e) {
-            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
-            if (!features.length) {
-              return;
-            }
-
-            const feature = features[0];
-            if (!txLocationMap[feature.properties?.iso_3166_1]) {
-              return;
-            }
-            console.log(feature);
-
-            const popup = new mapboxgl.Popup()
-              .setLngLat(map.unproject(e.point))
-              .setHTML(
-                `${feature.properties?.name_en} : ${txLocationMap[feature.properties?.iso_3166_1]}`
-              )
-              .addTo(map);
-          });
-
-          // Use the same approach as above to indicate that the symbols are clickable
-          // by changing the cursor style to 'pointer'.
-          map.on('mousemove', function (e) {
-            const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
-            map.getCanvas().style.cursor =
-              features.length > 0 && txLocationMap[features[0].properties?.iso_3166_1]
-                ? 'pointer'
-                : '';
-          });
-
-          // Last value is the default, used where there is no data
-          matchExpression.push('rgba(0, 0, 0, 0)');
-
-          map.addLayer(
-            {
-              id: 'countries-join',
-              type: 'fill',
-              source: 'countries',
-              'source-layer': 'country_boundaries',
-              paint: {
-                'fill-color': matchExpression,
-              },
-            },
-            'admin-1-boundary-bg'
-          );
-        });
+        matchExpression.push(row.country, color);
+        txLocationMap[row.country] = row.count;
       }
+
+      setTxLocationMapData(txLocationMap);
+
+      matchExpression.push('rgba(0, 0, 0, 0)');
+
+      setTransferLocationsMapLayer({
+        id: 'countries-join',
+        type: 'fill',
+        source: 'countries',
+        'source-layer': 'country_boundaries',
+        paint: {
+          'fill-color': matchExpression,
+        },
+      });
     }, 1000);
   }, [programmeTransferLocations]);
 
   useEffect(() => {
-    console.log('programme locations ---- > ', programmeLocations);
     setTimeout(() => {
-      if (mapContainerRef.current) {
-        const map = new mapboxgl.Map({
-          container: mapContainerRef?.current || '',
-          zoom: 4,
-          center: programmeLocations?.features[0]?.geometry?.coordinates
-            ? programmeLocations?.features[0]?.geometry?.coordinates
-            : [7.4924165, 5.5324032],
-          // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-          style: 'mapbox://styles/mapbox/light-v11',
-        });
-        map.on('load', () => {
-          // add a clustered GeoJSON source for a sample set of programmeLocations
-          map.addSource('programmeLocations', {
-            type: 'geojson',
-            data: programmeLocations,
-            cluster: true,
-            clusterRadius: 40,
-            clusterProperties: {
-              // keep separate counts for each programmeStage category in a cluster
-              count: ['+', ['case', countS, ['get', 'count'], 0]],
-              pending: ['+', ['case', pending, ['get', 'count'], 0]],
-              authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
-              rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
-            },
-          });
-          // circle and symbol layers for rendering individual programmeLocations (unclustered points)
-          map.addLayer({
-            id: 'programmes_circle',
-            type: 'circle',
-            source: 'programmeLocations',
-            filter: ['!=', 'cluster', true],
-            paint: {
-              'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
-              'circle-opacity': 1,
-              'circle-radius': 10,
-            },
-          });
+      setProgrammeLocationsMapCenter(
+        programmeLocations?.features[0]?.geometry?.coordinates
+          ? programmeLocations?.features[0]?.geometry?.coordinates
+          : [7.4924165, 5.5324032]
+      );
 
-          // objects for caching and keeping track of HTML marker objects (for performance)
-          const markers: any = {};
-          let markersOnScreen: any = {};
+      const mapSource: MapSourceData = {
+        key: 'programmeLocations',
+        data: {
+          type: 'geojson',
+          data: programmeLocations,
+          cluster: true,
+          clusterRadius: 40,
+          clusterProperties: {
+            // keep separate counts for each programmeStage category in a cluster
+            count: ['+', ['case', countS, ['get', 'count'], 0]],
+            pending: ['+', ['case', pending, ['get', 'count'], 0]],
+            authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
+            rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
+          },
+        },
+      };
 
-          function updateMarkers() {
-            const newMarkers: any = {};
-            const features: any = map.querySourceFeatures('programmeLocations');
+      setProgrammeLocationsMapSource(mapSource);
 
-            // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
-            // and add it to the map if it's not there already
-            for (const feature of features) {
-              // console.log(feature.properties);
-              const coords = feature.geometry.coordinates;
-              const properties = feature.properties;
-              // if (!properties.cluster) continue;
-              const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
-
-              let marker: any = markers[id];
-              if (!marker) {
-                const el: any = createDonutChart(properties);
-                marker = markers[id] = new mapboxgl.Marker({
-                  element: el,
-                }).setLngLat(coords);
-              }
-              newMarkers[id] = marker;
-
-              if (!markersOnScreen[id]) marker.addTo(map);
-            }
-            // for every marker we've added previously, remove those that are no longer visible
-            for (const id in markersOnScreen) {
-              if (!newMarkers[id]) markersOnScreen[id].remove();
-            }
-            markersOnScreen = newMarkers;
-          }
-
-          // after the GeoJSON data is loaded, update markers on the screen on every frame
-          map.on('render', () => {
-            if (!map.isSourceLoaded('programmeLocations')) return;
-            updateMarkers();
-          });
-        });
-      }
+      setProgrammeLocationsMapLayer({
+        id: 'programmes_circle',
+        type: 'circle',
+        source: 'programmeLocations',
+        filter: ['!=', 'cluster', true],
+        paint: {
+          'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
+          'circle-opacity': 1,
+          'circle-radius': 10,
+        },
+      });
     }, 1000);
   }, [programmeLocations]);
 
   const onChangeCategory = (event: any) => {
     setCategoryType(event?.target?.value);
+  };
+
+  const transferLocationsMapOnClick = function (map: any, e: any) {
+    if (!map) return;
+    const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+    if (!features.length) {
+      return;
+    }
+
+    const feature = features[0];
+    if (!txLocationMapData[feature.properties?.iso_3166_1]) {
+      return;
+    }
+
+    return `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`;
+  };
+
+  // Use the same approach as above to indicate that the symbols are clickable
+  // by changing the cursor style to 'pointer'.
+  const transferLocationsMapOnMouseMove = function (map: any, e: any) {
+    if (!map) return;
+    const features = map.queryRenderedFeatures(e.point, { layers: ['countries-join'] });
+    map.getCanvas().style.cursor =
+      features.length > 0 && txLocationMapData[features[0].properties?.iso_3166_1] ? 'pointer' : '';
+  };
+
+  const programmeLocationsMapOnRender = function (map: any) {
+    if (!map.isSourceLoaded('programmeLocations')) return;
+
+    const currentMarkers: MarkerData[] = [];
+    const features: any = map.querySourceFeatures('programmeLocations');
+
+    // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+    // and add it to the map if it's not there already
+    for (const feature of features) {
+      const coords = feature.geometry.coordinates;
+      const properties = feature.properties;
+      const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
+
+      const el: any = createDonutChart(properties);
+      const marker = {
+        id: id,
+        element: el,
+        location: coords,
+      };
+
+      currentMarkers.push(marker);
+    }
+
+    return currentMarkers;
   };
 
   return (
@@ -1970,13 +1949,78 @@ ${total}
           </Col>
         </Row>
       </div>
-      <div className="stastics-and-charts-container center">
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-top">
-                <div className="pie-charts-title">{t('programmeLocations')}</div>
-                <div className="info-container">
+      {mapType !== MapTypes.None ? (
+        <div className="stastics-and-charts-container center">
+          <Row gutter={[40, 40]} className="stastic-card-row">
+            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+              <div className="stastics-and-pie-card height-map-rem">
+                <div className="pie-charts-top">
+                  <div className="pie-charts-title">{t('programmeLocations')}</div>
+                  <div className="info-container">
+                    <div className="info-container">
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="bottomRight"
+                        trigger="hover"
+                        title={t(
+                          userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                            ? 'tTProgrammeLocationsGovernment'
+                            : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                            ? 'tTProgrammeLocationsProgrammeDev'
+                            : categoryType === 'mine'
+                            ? 'tTProgrammeLocationsCertifierMine'
+                            : 'tTProgrammeLocationsCertifierOverall'
+                        )}
+                      >
+                        <InfoCircle color="#000000" size={17} />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+                {loadingCharts ? (
+                  <div className="margin-top-2">
+                    <Skeleton active />
+                    <Skeleton active />
+                  </div>
+                ) : (
+                  <>
+                    <div className="map-content">
+                      <MapComponent
+                        mapType={mapType}
+                        center={programmeLocationsMapCenter}
+                        zoom={4}
+                        mapSource={programmeLocationsMapSource}
+                        layer={programmeLocationsMapLayer}
+                        height={360}
+                        style="mapbox://styles/mapbox/light-v11"
+                        onRender={programmeLocationsMapOnRender}
+                      ></MapComponent>
+                    </div>
+                    <div className="stage-legends">
+                      <LegendItem text="Authorised" color="#6ACDFF" />
+                      {!(
+                        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+                        categoryType === 'mine'
+                      ) && (
+                        <>
+                          <LegendItem text="Rejected" color="#FF8183" />
+                          <LegendItem text="Pending" color="#CDCDCD" />
+                        </>
+                      )}
+                    </div>
+                    <div className="updated-on margin-top-1">
+                      <div className="updated-moment-container">
+                        {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+              <div className="stastics-and-pie-card height-map-rem">
+                <div className="pie-charts-top">
+                  <div className="pie-charts-title">{t('trasnferLocations')}</div>
                   <div className="info-container">
                     <Tooltip
                       arrowPointAtCenter
@@ -1984,85 +2028,53 @@ ${total}
                       trigger="hover"
                       title={t(
                         userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          ? 'tTProgrammeLocationsGovernment'
+                          ? 'tTTransferLocationsGovernment'
                           : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? 'tTProgrammeLocationsProgrammeDev'
+                          ? 'tTTrasnferLocationsProgrammeDev'
                           : categoryType === 'mine'
-                          ? 'tTProgrammeLocationsCertifierMine'
-                          : 'tTProgrammeLocationsCertifierOverall'
+                          ? 'tTTrasnferLocationsCertifierMine'
+                          : 'tTTrasnferLocationsCertifierOverall'
                       )}
                     >
                       <InfoCircle color="#000000" size={17} />
                     </Tooltip>
                   </div>
                 </div>
-              </div>
-              {loadingCharts ? (
-                <div className="margin-top-2">
-                  <Skeleton active />
-                  <Skeleton active />
-                </div>
-              ) : (
-                <>
-                  <div className="map-content">
-                    <div className="map-container" ref={mapContainerRef} />
+                {loadingCharts ? (
+                  <div className="margin-top-2">
+                    <Skeleton active />
+                    <Skeleton active />
                   </div>
-                  <div className="stage-legends">
-                    <LegendItem text="Authorised" color="#6ACDFF" />
-                    <LegendItem text="Rejected" color="#FF8183" />
-                    <LegendItem text="Pending" color="#CDCDCD" />
-                  </div>
-                  <div className="updated-on margin-top-1">
-                    <div className="updated-moment-container">{lastUpdateProgrammesStatsC}</div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <div className="stastics-and-pie-card height-map-rem">
-              <div className="pie-charts-top">
-                <div className="pie-charts-title">{t('trasnferLocations')}</div>
-                <div className="info-container">
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="bottomRight"
-                    trigger="hover"
-                    title={t(
-                      userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                        ? 'tTTransferLocationsGovernment'
-                        : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                        ? 'tTTrasnferLocationsProgrammeDev'
-                        : categoryType === 'mine'
-                        ? 'tTTrasnferLocationsCertifierMine'
-                        : 'tTTrasnferLocationsCertifierOverall'
-                    )}
-                  >
-                    <InfoCircle color="#000000" size={17} />
-                  </Tooltip>
-                </div>
-              </div>
-              {loadingCharts ? (
-                <div className="margin-top-2">
-                  <Skeleton active />
-                  <Skeleton active />
-                </div>
-              ) : (
-                <>
-                  <div className="map-content">
-                    <div className="map-container" ref={mapContainerInternationalRef} />
-                  </div>
-                  <div className="updated-on margin-top-2">
-                    <div className="updated-moment-container">
-                      {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
+                ) : (
+                  <>
+                    <div className="map-content">
+                      <MapComponent
+                        mapType={mapType}
+                        center={[12, 50]}
+                        zoom={0.5}
+                        mapSource={transferLocationsMapSource}
+                        onClick={transferLocationsMapOnClick}
+                        showPopupOnClick={true}
+                        onMouseMove={transferLocationsMapOnMouseMove}
+                        layer={transferLocationsMapLayer}
+                        height={360}
+                        style="mapbox://styles/mapbox/streets-v11"
+                      ></MapComponent>
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </Col>
-        </Row>
-      </div>
+                    <div className="updated-on margin-top-2">
+                      <div className="updated-moment-container">
+                        {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+          </Row>
+        </div>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

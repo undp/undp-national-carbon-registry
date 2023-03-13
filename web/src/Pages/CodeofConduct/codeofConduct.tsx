@@ -166,7 +166,7 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">1. Correction</div>
             <div className="code-body">
               <p>
-                Community Impact : Use of inappropriate language or other behavior deemed
+                Community Impact: Use of inappropriate language or other behavior deemed
                 unprofessional or unwelcome in the community.
               </p>
               <p>
@@ -181,7 +181,7 @@ const CodeOfConduct = () => {
           <Col>
             <div className="code-subtitle">2. Warning</div>
             <div className="code-body">
-              <p> Community Impact : A violation through a single incident or series of actions.</p>
+              <p> Community Impact: A violation through a single incident or series of actions.</p>
               <p>
                 {' '}
                 Consequence: A warning with consequences for continued behavior. No interaction with
@@ -198,7 +198,7 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">3. Temporary Ban</div>
             <div className="code-body">
               <p>
-                Community Impact : A serious violation of community standards, including sustained
+                Community Impact: A serious violation of community standards, including sustained
                 inappropriate behavior.
               </p>
               <p>
@@ -216,12 +216,12 @@ const CodeOfConduct = () => {
             <div className="code-subtitle">4. Permanent Ban</div>
             <div className="code-body">
               <p>
-                Community Impact : Demonstrating a pattern of violation of community standards,
+                Community Impact: Demonstrating a pattern of violation of community standards,
                 including sustained inappropriate behavior, harassment of an individual, or
                 aggression toward or disparagement of classes of individuals.
               </p>
               <p>
-                Consequence : A permanent ban from any sort of public interaction within the
+                Consequence: A permanent ban from any sort of public interaction within the
                 community.
               </p>
             </div>
@@ -244,7 +244,7 @@ const CodeOfConduct = () => {
                 Community Impact Guidelines were inspired by
                 <a href="https://github.com/mozilla/diversity">
                   {' '}
-                  Mozilla &rsquo;s code of conduct enforcement ladder
+                  Mozilla's code of conduct enforcement ladder
                 </a>
                 .
               </p>

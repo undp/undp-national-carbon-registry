@@ -534,7 +534,7 @@ const UserManagement = () => {
       title: 'Search by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Search by</div>
+          <div className="filter-title">{t('user:searchBy')}</div>
           <Radio.Group onChange={searchByTermHandler} value={searchByTermUser}>
             <Space direction="vertical">
               <Radio value="name">Name</Radio>
@@ -549,7 +549,7 @@ const UserManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by Role</div>
+          <div className="filter-title">{t('user:filterByRole')}</div>
           <Radio.Group onChange={onFilterRole} value={filterByRole}>
             <Space direction="vertical">
               <Radio value="All">All</Radio>
@@ -566,7 +566,7 @@ const UserManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">Filter by Organisation Type</div>
+          <div className="filter-title">{t('user:filterByCompanyRole')}</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">All</Radio>
@@ -709,6 +709,7 @@ const UserManagement = () => {
         onActionCanceled={handleCancel}
         openModal={openDeleteConfirmationModal}
         errorMsg={errorMsg}
+        loading={loading}
       />
     </div>
   );

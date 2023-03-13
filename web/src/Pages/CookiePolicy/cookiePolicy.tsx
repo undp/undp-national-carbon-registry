@@ -6,6 +6,7 @@ import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import './cookiePolicy.scss';
 import { CcCircle } from 'react-bootstrap-icons';
+import LayoutFooter from '../../Components/Footer/layout.footer';
 const CookiePolicy = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
   const navigate = useNavigate();
@@ -352,7 +353,7 @@ const CookiePolicy = () => {
                   <td>
                     Used to distinguish individual users by means of designation of a randomly
                     generated number as client identifier,
-                    <br /> which allows calculation of visits and sessions
+                    <br /> which allows calculation of visits and sessions.
                   </td>
                 </tr>
                 <tr>
@@ -614,10 +615,18 @@ const CookiePolicy = () => {
               us at digital@undp.org or by post to:
               <br />
               <br />
-              <br /> United Nations Development Programme 1 United Nations Plaza,
-              <br /> New York United States
-              <br /> Phone: +260-211-263258
-              <br /> This cookie policy was created using Termly's{' '}
+              <br />
+              United Nations Development Programme
+              <br />1 United Nations Plaza
+              <br />
+              New York, New York
+              <br />
+              United States
+              <br />
+              Phone: +260-211-263258
+              <br />
+              <br />
+              This cookie policy was created using Termly's{' '}
               <a href="https://termly.io/products/cookie-consent-manager/">
                 Cookie Consent Manager
               </a>
@@ -626,54 +635,7 @@ const CookiePolicy = () => {
           </Col>
         </Row>
       </div>
-      <div className="homepage-footer-container">
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="logocontainer">
-              <div className="logo">
-                <img src={sliderLogo} alt="slider-logo" />
-              </div>
-              <div>
-                <div style={{ display: 'flex' }}>
-                  <div className="title">{'CARBON'}</div>
-                  <div className="title-sub">{'REGISTRY'}</div>
-                </div>
-                <div className="footer-country-name">
-                  {process.env.COUNTRY_NAME || 'Antarctic Region'}
-                </div>
-              </div>
-            </div>
-          </Col>
-        </Row>
-        <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
-        <Row>
-          <Col md={24} lg={24}>
-            <div className="footertext">{t('homepage:footertext1')}</div>
-          </Col>
-        </Row>
-        <Row className="footer-raw">
-          <Col md={4.8} lg={12}>
-            <div className="footertext-bottom">
-              {process.env.COUNTRY_NAME || 'Antarctic Region'}
-              <CcCircle className="cc" color="#FFFF" size="10px" />
-            </div>
-          </Col>
-          <Col className="footertext-link-container" md={4.8} lg={12}>
-            <a href="/cookie" className="footertext-links">
-              {t('homepage:Cookie')}
-            </a>
-            <a href="codeconduct" className="footertext-links">
-              {t('homepage:codeconduct')}
-            </a>
-            <a href="/terms#termuse" className="footertext-links">
-              {t('homepage:terms')}
-            </a>
-            <a href="/privacy" className="footertext-links">
-              {t('homepage:privacy')}
-            </a>
-          </Col>
-        </Row>
-      </div>
+      <LayoutFooter />
     </div>
   );
 };

@@ -755,7 +755,7 @@ const TermsOfUse = () => {
                 inaccuracies, or omissions, including descriptions, pricing, availability, and
                 various other information. We reserve the right to correct any errors, inaccuracies,
                 or omissions and to change or update the information on the Site at any time,
-                without prior notice
+                without prior notice.
               </p>
             </div>
           </Col>

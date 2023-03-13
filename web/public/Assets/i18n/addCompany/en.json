@@ -10,7 +10,7 @@
     "companyLogo": "Organisation Logo",
     "companyLogoWithType": "Organisation Logo (File Type : JPEG , PNG , SVG )",
     "unsupportedFormat": "Unsupported file format!",
-    "maxUploadSize": "Maximum upload file size is 5MB!",
+    "maxUploadSize": "Maximum upload file size is 3MB!",
     "role": "Role",
     "certifier": "Certifier",
     "programmeDeveleper": "Programme Develeoper",
@@ -27,5 +27,9 @@
     "submit": "SUBMIT",
     "companyDetailsTitle": "Organisation Details",
     "companyAdminDetailsTitle": "Organisation Admin Details",
-    "cancel": "CANCEL"
+    "cancel": "CANCEL",
+    "companyAddedSuccess": "Organisation added Successfully!",
+    "companyUpdatedSuccess": "Organisation updated Successfully!",
+    "errorInAddUser": "Error in adding user!",
+    "errorInUpdatingCompany": "Error in updating company!"
 }

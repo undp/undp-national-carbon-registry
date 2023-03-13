@@ -36,7 +36,15 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
   const setUserInfo = (value: UserProps) => {
-    const { id, userRole, companyId, companyRole, companyLogo, companyName, companyState } = value;
+    const {
+      id,
+      userRole,
+      companyId,
+      companyRole,
+      companyLogo,
+      companyName,
+      companyState = 0,
+    } = value;
     if (id) {
       setUserInfoState((prev) => ({ ...prev, id }));
       localStorage.setItem('userId', id);
@@ -70,10 +78,8 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       localStorage.setItem('companyRole', companyRole);
     }
 
-    if (companyState) {
-      setUserInfoState((prev) => ({ ...prev, companyState }));
-      localStorage.setItem('companyState', companyState + '');
-    }
+    setUserInfoState((prev) => ({ ...prev, companyState }));
+    localStorage.setItem('companyState', companyState + '');
   };
 
   const IsAuthenticated = useCallback((): boolean => {

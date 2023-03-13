@@ -23,6 +23,7 @@ import PrivacyPolicy from './Pages/PrivacyPolicy/privacyPolicy';
 import CodeOfConduct from './Pages/CodeofConduct/codeofConduct';
 import CookiePolicy from './Pages/CookiePolicy/cookiePolicy';
 import TermsOfUse from './Pages/TermsofUse/termsofUse';
+import CarbonHelp from './Pages/Help/help';
 import UserProfile from './Pages/UserProfile/UserProfile';
 import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
@@ -37,6 +38,7 @@ const App = () => {
   const ability = defineAbility();
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
+    console.log(process.env.REACT_APP_STAT_URL);
     if (
       localStorage.getItem('companyId') &&
       localStorage.getItem('userRole') &&
@@ -58,7 +60,7 @@ const App = () => {
         serverURL={
           process.env.REACT_APP_BACKEND
             ? process.env.REACT_APP_BACKEND
-            : 'https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev'
+            : 'http://localhost:3000/local'
         }
       >
         <UserInformationContextProvider>
@@ -67,6 +69,7 @@ const App = () => {
               <Route path="login" element={<Login />} />
               <Route path="signUp" element={<SignUp />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="help" element={<CarbonHelp />} />
               <Route path="codeconduct" element={<CodeOfConduct />} />
               <Route path="cookie" element={<CookiePolicy />} />
               <Route path="terms" element={<TermsOfUse />} />
