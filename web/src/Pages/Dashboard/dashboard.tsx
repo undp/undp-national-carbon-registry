@@ -1998,8 +1998,15 @@ ${total}
                     </div>
                     <div className="stage-legends">
                       <LegendItem text="Authorised" color="#6ACDFF" />
+                      {!(
+                        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+                        categoryType === 'mine'
+                      ) && (
+                        <>
                       <LegendItem text="Rejected" color="#FF8183" />
                       <LegendItem text="Pending" color="#CDCDCD" />
+                        </>
+                      )}
                     </div>
                     <div className="updated-on margin-top-1">
                       <div className="updated-moment-container">
