@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ASYNC_QUEUE_SERVICE } from './async-operations.interface';
+import { AsyncOperationsInterface } from './async-operations.interface';
 import { SqsAsyncOperationsService } from './sqs-async-queue.service';
 
 @Module({
     providers: [{
-        useClass: SqsAsyncOperationsService,
-        provide: ASYNC_QUEUE_SERVICE
+        provide: AsyncOperationsInterface,
+        useClass: SqsAsyncOperationsService
     }],
-    exports: [],
+    exports: [AsyncOperationsInterface],
     imports: []
 })
 export class AsyncQueueModule {}

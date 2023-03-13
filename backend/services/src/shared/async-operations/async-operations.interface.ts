@@ -1,10 +1,11 @@
-export const ASYNC_QUEUE_SERVICE = "ASYNC QUEUE SERVICE";
+import { Injectable } from "@nestjs/common";
 
 export interface AsyncAction {
     actionType: number,
     emailAddress: string
 }
 
-export interface IAsyncOperationsService {
-    RegisterAction(action:AsyncAction): Promise<string>;
+@Injectable()
+export abstract class AsyncOperationsInterface {
+    public abstract RegisterAction(action:AsyncAction): Promise<string>;
 }

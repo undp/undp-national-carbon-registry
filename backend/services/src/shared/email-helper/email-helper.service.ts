@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AsyncAction, IAsyncOperationsService } from "../async-operations/async-operations.interface";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
 import { CompanyService } from "../company/company.service";
 import { EmailService } from "../email/email.service";
 import { Company } from "../entities/company.entity";
@@ -21,7 +21,7 @@ export class EmailHelperService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService,
-    private asyncOperationsService: IAsyncOperationsService
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {
     this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
   }
@@ -337,6 +337,6 @@ export class EmailHelperService {
       actionType: asyncActionType.Email,
       emailAddress: sender
     }
-    this.asyncOperationsService.RegisterAction(action);
+    this.asyncOperationsInterface.RegisterAction(action);
   }
 }
