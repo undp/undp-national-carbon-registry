@@ -2003,8 +2003,8 @@ ${total}
                         categoryType === 'mine'
                       ) && (
                         <>
-                      <LegendItem text="Rejected" color="#FF8183" />
-                      <LegendItem text="Pending" color="#CDCDCD" />
+                          <LegendItem text="Rejected" color="#FF8183" />
+                          <LegendItem text="Pending" color="#CDCDCD" />
                         </>
                       )}
                     </div>
