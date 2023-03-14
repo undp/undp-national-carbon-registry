@@ -141,6 +141,15 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     ]);
   }
 
+  private getUniqueIndex(tableName: string) {
+    if (tableName === this.tableName) {
+      return "data->>'programmeId'"
+    }
+    else {
+      return "data->>'txId'"
+    }
+  }
+
   public async fetchRecords(
     where: Record<string, any>,
     tableName?: string
@@ -148,15 +157,16 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
-    const fieldList = Object.keys(where)
-      .map((k) => `data->>'${k}'`)
-      .join(", ");
+    // const fieldList = Object.keys(where)
+    //   .map((k) => `data->>'${k}'`)
+    //   .join(", ");
+    const t = tableName ? tableName : this.tableName
     return (
       await this.execute([
         {
-          sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${
-            tableName ? tableName : this.tableName
-          } WHERE ${whereClause} order by ${fieldList}, hash desc`,
+          sql: `SELECT DISTINCT ON (${this.getUniqueIndex(t)}) data FROM ${
+            t
+          } WHERE ${whereClause} order by ${this.getUniqueIndex(t)}, hash desc`,
           params: Object.values(where),
         },
       ])
@@ -225,7 +235,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     for (const k in filterObj) {
       const v = filterObj[k];
       if (v instanceof ArrayIn) {
-        list.push(v.value);
+        // list.push(v.value);
       } else if (v instanceof ArrayLike) {
         list.push(v.value);
       } else if (v instanceof Array) {
@@ -269,8 +279,8 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                   return "$" + j;
                 }).join(', ')})`;
               } else if (getQueries[t][k] instanceof ArrayIn) {
-                j += 1;
-                return `$${j} IN (data->>'${k}')`;
+                // j += 1;
+                return `data @> '{"${k}": [${getQueries[t][k].value}]}'`;
               } else if (getQueries[t][k] instanceof ArrayLike) {
                 j += 1;
                 return `data->>'${k}' LIKE $${j}`;
@@ -279,18 +289,18 @@ export class PgSqlLedgerService implements LedgerDBInterface {
               return `data->>'${k}' = $${j}`;
             })
             .join(" and ");
-          const fieldList = Object.keys(getQueries[t])
-            .map((k) => {
-              if (isHistoryQuery) {
-                k = k.replace("data.", "");
-              }
-              return `data->>'${k}'`;
-            })
-            .join(", ");
+          // const fieldList = Object.keys(getQueries[t])
+          //   .map((k) => {
+          //     if (isHistoryQuery) {
+          //       k = k.replace("data.", "");
+          //     }
+          //     return `data->>'${k}'`;
+          //   })
+          //   .join(", ");
           getTxElements[t] = {
             sql: `SELECT ${
-              isHistoryQuery ? "" : `DISTINCT ON (${fieldList})`
-            } data FROM ${table} WHERE ${wc} order by ${fieldList}, hash desc`,
+              isHistoryQuery ? "" : `DISTINCT ON (${this.getUniqueIndex(table)})`
+            } data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(table)}, hash desc`,
             params: this.getValuesList(getQueries[t]),
           };
         }
@@ -320,8 +330,8 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                     return "$" + j;
                   }).join(', ')})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
-                  j += 1;
-                  return `$${j} IN (data->>'${k}')`;
+                  // j += 1;
+                  return `data @> '{"${k}": [${updateWhere[t][k].value}]}'`;
                 } else if (updateWhere[t][k] instanceof ArrayLike) {
                   j += 1;
                   return `data->>'${k}' LIKE $${j}`;
@@ -330,11 +340,11 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                 return `data->>'${k}' = $${j}`;
               })
               .join(" and ");
-            const fieldList = Object.keys(updateWhere[t])
-              .map((k) => `data->>'${k}'`)
-              .join(", ");
+            // const fieldList = Object.keys(updateWhere[t])
+            //   .map((k) => `data->>'${k}'`)
+            //   .join(", ");
             updateGetElements[t] = {
-              sql: `SELECT DISTINCT ON (${fieldList}) data FROM ${tableName} WHERE ${wc} order by ${fieldList}, hash desc`,
+              sql: `SELECT DISTINCT ON (${this.getUniqueIndex(tableName)}) data FROM ${tableName} WHERE ${wc} order by ${this.getUniqueIndex(tableName)}, hash desc`,
               params: this.getValuesList(updateWhere[t]),
             };
           }
