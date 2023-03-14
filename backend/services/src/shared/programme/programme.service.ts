@@ -116,7 +116,10 @@ export class ProgrammeService {
         return sr;
     }
     throw Error(
-      "Not implemented for mitigation type " + programmeDto.typeOfMitigation
+      this.helperService.formatReqMessagesString(
+        "programme.notImplementedForMitigationType",
+        [programmeDto.typeOfMitigation]
+      )
     );
   }
 
@@ -131,14 +134,20 @@ export class ProgrammeService {
 
     if (!pTransfer) {
       throw new HttpException(
-        "Transfer request does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (pTransfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
-        "Transfer request already cancelled",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqAlreadyCancelled",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -148,13 +157,19 @@ export class ProgrammeService {
       pTransfer.fromCompanyId != approver.companyId
     ) {
       throw new HttpException(
-        "Invalid approver for the transfer request",
+        this.helperService.formatReqMessagesString(
+          "programme.invalidApproverForTransferReq",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
     if (pTransfer.isRetirement && pTransfer.toCompanyId != approver.companyId) {
       throw new HttpException(
-        "Invalid approver for the retirement request",
+        this.helperService.formatReqMessagesString(
+          "programme.invalidApproverForRetirementReq",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
@@ -212,11 +227,20 @@ export class ProgrammeService {
           pTransfer.programmeId
         );
       }
-      return new BasicResponseDto(HttpStatus.OK, "Successfully rejected");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqRejectSuccess",
+          []
+        )
+      );
     }
 
     throw new HttpException(
-      "No pending transfer request found",
+      this.helperService.formatReqMessagesString(
+        "programme.noPendReqFound",
+        []
+      ),
       HttpStatus.BAD_REQUEST
     );
   }
@@ -357,14 +381,20 @@ export class ProgrammeService {
 
     if (!transfer) {
       throw new HttpException(
-        "Transfer request does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (transfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
-        "Transfer request already cancelled",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqAlreadyCancelled",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -374,7 +404,10 @@ export class ProgrammeService {
       transfer.status == TransferStatus.RECOGNISED
     ) {
       throw new HttpException(
-        "Transfer already approved",
+        this.helperService.formatReqMessagesString(
+          "programme.transferAlreadyApproved",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -384,13 +417,19 @@ export class ProgrammeService {
       transfer.fromCompanyId != approver.companyId
     ) {
       throw new HttpException(
-        "Invalid approver for the transfer request",
+        this.helperService.formatReqMessagesString(
+          "programme.invalidApproverForTransferReq",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
     if (transfer.isRetirement && transfer.toCompanyId != approver.companyId) {
       throw new HttpException(
-        "Invalid approver for the retirement request",
+        this.helperService.formatReqMessagesString(
+          "programme.invalidApproverForRetirementReq",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
@@ -408,7 +447,10 @@ export class ProgrammeService {
         `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`
       );
       throw new HttpException(
-        "Receive company suspended",
+        this.helperService.formatReqMessagesString(
+          "programme.receiveCompanySuspended",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -419,7 +461,10 @@ export class ProgrammeService {
         `${transfer.comment}#${approver.companyId}#${approver.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${receiver.name}`
       );
       throw new HttpException(
-        "Credit sending company suspended",
+        this.helperService.formatReqMessagesString(
+          "programme.cerditSendingCompSuspended",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -443,7 +488,10 @@ export class ProgrammeService {
 
       if (trq.affected <= 0) {
         throw new HttpException(
-          "No pending transfer request found",
+          this.helperService.formatReqMessagesString(
+            "programme.noPendingTransferReq",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -543,7 +591,10 @@ export class ProgrammeService {
     }
 
     throw new HttpException(
-      "Internal error on status updating",
+      this.helperService.formatReqMessagesString(
+        "programme.internalErrorStatusUpdating",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -561,14 +612,20 @@ export class ProgrammeService {
 
     if (!transfer) {
       throw new HttpException(
-        "Transfer request does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (transfer.status != TransferStatus.PENDING) {
       throw new HttpException(
-        "Transfer already processed",
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqAlreadyProcessed",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -626,11 +683,20 @@ export class ProgrammeService {
           transfer.programmeId
         );
       }
-      return new BasicResponseDto(HttpStatus.OK, "Successfully cancelled");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.transferReqCancelSuccess",
+          []
+        )
+      );
     }
     return new BasicResponseDto(
       HttpStatus.BAD_REQUEST,
-      "Transfer request does not exist in the giv"
+      this.helperService.formatReqMessagesString(
+        "programme.transferReqNotExistinGiv",
+        []
+      )
     );
   }
 
@@ -655,7 +721,10 @@ export class ProgrammeService {
       req.companyCredit.reduce((a, b) => a + b, 0) <= 0
     ) {
       throw new HttpException(
-        "Total Amount should be greater than 0",
+        this.helperService.formatReqMessagesString(
+          "programme.companytotalAmount>0",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -663,12 +732,18 @@ export class ProgrammeService {
     if (req.fromCompanyIds.length > 1) {
       if (!req.companyCredit) {
         throw new HttpException(
-          "Company credit needs to define for multiple companies",
+          this.helperService.formatReqMessagesString(
+            "programme.companyCreditNeedsToDefineForMultipleComp",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       } else if (req.fromCompanyIds.length != req.companyCredit.length) {
         throw new HttpException(
-          "Invalid company credit for given companies",
+          this.helperService.formatReqMessagesString(
+            "programme.invalidCompCreditForGivenComp",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -680,7 +755,10 @@ export class ProgrammeService {
       req.fromCompanyIds.length != req.companyCredit.length
     ) {
       throw new HttpException(
-        "Invalid company credit for given from companies",
+        this.helperService.formatReqMessagesString(
+          "programme.invalidCompCreditFromGivenComp",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -688,7 +766,10 @@ export class ProgrammeService {
     const indexTo = req.fromCompanyIds.indexOf(req.toCompanyId);
     if (indexTo >= 0 && req.companyCredit[indexTo] > 0) {
       throw new HttpException(
-        "Cannot transfer credit within the same company",
+        this.helperService.formatReqMessagesString(
+          "programme.cantTransferCreditWithinSameComp",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -699,7 +780,10 @@ export class ProgrammeService {
 
     if (!programme) {
       throw new HttpException(
-        "Programme does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -707,7 +791,10 @@ export class ProgrammeService {
 
     if (programme.currentStage != ProgrammeStage.AUTHORISED) {
       throw new HttpException(
-        "Programme is not in credit issued state",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotInCreditIssuedState",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -719,7 +806,10 @@ export class ProgrammeService {
       ![...req.fromCompanyIds, req.toCompanyId].includes(requester.companyId)
     ) {
       throw new HttpException(
-        "Cannot initiate transfers for other companies",
+        this.helperService.formatReqMessagesString(
+          "programme.cantInitiateTransferForOtherComp",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -769,7 +859,10 @@ export class ProgrammeService {
 
       if (!programme.companyId.includes(fromCompanyId)) {
         throw new HttpException(
-          "From company mentioned in the request does own the programme",
+          this.helperService.formatReqMessagesString(
+            "programme.fromCompInReqIsNotOwnerOfProgramme",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -792,7 +885,10 @@ export class ProgrammeService {
 
       if (companyAvailableCredit < transferCompanyCredit) {
         throw new HttpException(
-          `Company ${fromCompany.name} does not have enough balance for the transfer. Available: ${companyAvailableCredit}`,
+          this.helperService.formatReqMessagesString(
+            "programme.companyHaveNoEnoughBalanceForTransfer",
+            [fromCompany.name, companyAvailableCredit]
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -907,7 +1003,10 @@ export class ProgrammeService {
           programmeDto.proponentTaxVatId.length)
     ) {
       throw new HttpException(
-        "Proponent percentage must defined for each proponent tax id",
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercMustDefinedForEvryProponentTaxId",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -918,7 +1017,10 @@ export class ProgrammeService {
         programmeDto.proponentPercentage.length
     ) {
       throw new HttpException(
-        "Proponent percentage and number of tax ids does not match",
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercAndTaxIdsNotMatched",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -928,7 +1030,10 @@ export class ProgrammeService {
       programmeDto.proponentPercentage.reduce((a, b) => a + b, 0) != 100
     ) {
       throw new HttpException(
-        "Proponent percentage sum must be equals to 100",
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercSum=100",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -938,7 +1043,10 @@ export class ProgrammeService {
       new Set(programmeDto.proponentTaxVatId).size
     ) {
       throw new HttpException(
-        "Proponent tax id cannot be duplicated",
+        this.helperService.formatReqMessagesString(
+          "programme.duplicatedProponentTaxIds",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -949,14 +1057,20 @@ export class ProgrammeService {
       const projectCompany = await this.companyService.findByTaxId(taxId);
       if (!projectCompany) {
         throw new HttpException(
-          "Proponent tax id does not exist in the system",
+          this.helperService.formatReqMessagesString(
+            "programme.proponentTaxIdNotInSystem",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (projectCompany.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
         throw new HttpException(
-          "Proponent is not a programme developer",
+          this.helperService.formatReqMessagesString(
+            "programme.proponentIsNotAProgrammeDev",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -984,7 +1098,10 @@ export class ProgrammeService {
 
     if (programme.creditEst <= 0) {
       throw new HttpException(
-        "Not enough credits to create the programme",
+        this.helperService.formatReqMessagesString(
+          "programme.noEnoughCreditsToCreateProgramme",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1128,7 +1245,10 @@ export class ProgrammeService {
     const existing = await this.getLatestConstant(customConstantType);
     if (existing && JSON.stringify(existing.data) == JSON.stringify(config)) {
       throw new HttpException(
-        "Not difference in the config from the previous version",
+        this.helperService.formatReqMessagesString(
+          "programme.noDiffInConfigFromThePrevVersion",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1153,7 +1273,10 @@ export class ProgrammeService {
 
     if (add && user.companyRole != CompanyRole.CERTIFIER) {
       throw new HttpException(
-        "Programme certification can perform only by certifier",
+        this.helperService.formatReqMessagesString(
+          "programme.certifierCanOnlyCertifiy",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
@@ -1165,7 +1288,10 @@ export class ProgrammeService {
       )
     ) {
       throw new HttpException(
-        "Programme certification revoke can perform only by certifier or government",
+        this.helperService.formatReqMessagesString(
+          "programme.certifierOrGovCanOnlyPerformCertificationRevoke",
+          []
+        ),
         HttpStatus.FORBIDDEN
       );
     }
@@ -1174,7 +1300,10 @@ export class ProgrammeService {
     if (user.companyRole === CompanyRole.GOVERNMENT) {
       if (!req.certifierId) {
         throw new HttpException(
-          "certifierId required for government user",
+          this.helperService.formatReqMessagesString(
+            "programme.certifierIdRequiredForGov",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -1244,7 +1373,10 @@ export class ProgrammeService {
       req.companyCredit.reduce((a, b) => a + b, 0) <= 0
     ) {
       throw new HttpException(
-        "Total Amount should be greater than 0",
+        this.helperService.formatReqMessagesString(
+          "programme.totalAmount>0",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1255,7 +1387,10 @@ export class ProgrammeService {
         req.fromCompanyIds.length != req.companyCredit.length
       ) {
         throw new HttpException(
-          "Invalid company credit for given companies",
+          this.helperService.formatReqMessagesString(
+            "programme.invalidCompCreditForGivenComp",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1271,7 +1406,10 @@ export class ProgrammeService {
 
     if (!programme) {
       throw new HttpException(
-        "Programme does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1279,7 +1417,10 @@ export class ProgrammeService {
 
     if (programme.currentStage != ProgrammeStage.AUTHORISED) {
       throw new HttpException(
-        "Programme is not in credit issued state",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotInCreditIssuedState",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1301,28 +1442,40 @@ export class ProgrammeService {
 
       if (!programme.companyId.includes(requester.companyId)) {
         throw new HttpException(
-          "Credit retirement can initiate only the government or programme owner",
+          this.helperService.formatReqMessagesString(
+            "programme.govOrProgrammeOwnerOnlyCreditRetirement",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (!req.fromCompanyIds.includes(requester.companyId)) {
         throw new HttpException(
-          "Requester does not included in the from company id",
+          this.helperService.formatReqMessagesString(
+            "programme.reqNotIncludedInFromCompanyId",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (req.fromCompanyIds.length > 1) {
         throw new HttpException(
-          "Does not allow to retire other company credits",
+          this.helperService.formatReqMessagesString(
+            "programme.notAllowedToRetireOtherCompCredits",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (req.type !== RetireType.CROSS_BORDER) {
         throw new HttpException(
-          "Programme developer allowed to initiate only cross border transfers",
+          this.helperService.formatReqMessagesString(
+            "programme.programmeDevAllowedInitiateOnlyCrossBorderTransfer",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1373,7 +1526,10 @@ export class ProgrammeService {
       fromCompanyMap[fromCompanyId] = fromCompany;
       if (!programme.companyId.includes(fromCompanyId)) {
         throw new HttpException(
-          "Retire request from company does own the programme",
+          this.helperService.formatReqMessagesString(
+            "programme.retireReqFromCOmpOwnTheProgramme",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1393,14 +1549,20 @@ export class ProgrammeService {
         transferCompanyCredit < companyAvailableCredit
       ) {
         throw new HttpException(
-          `Required to retire the full credit amount for the given retirement type`,
+          this.helperService.formatReqMessagesString(
+            "programme.requiredToRetireFullCreditAmountForGivenRetirementType",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (companyAvailableCredit < transferCompanyCredit) {
         throw new HttpException(
-          `Company ${fromCompany.name} does not have enough balance for the transfer. Available: ${companyAvailableCredit}`,
+          this.helperService.formatReqMessagesString(
+            "programme.companyHaveNoEnoughBalanceForTransfer",
+            [fromCompany.name, companyAvailableCredit]
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1494,20 +1656,29 @@ export class ProgrammeService {
     );
     if (!program) {
       throw new HttpException(
-        "Programme does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (program.currentStage != ProgrammeStage.AUTHORISED) {
       throw new HttpException(
-        "Programme is not in authorised state",
+        this.helperService.formatReqMessagesString(
+          "programme.notInAUthorizedState",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
     if (program.creditEst - program.creditIssued < req.issueAmount) {
       throw new HttpException(
-        "Programme issue credit amount can not exceed pending credit amount",
+        this.helperService.formatReqMessagesString(
+          "programme.issuedCreditAmountcantExceedPendingCredit",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1521,7 +1692,10 @@ export class ProgrammeService {
     if (!updated) {
       return new BasicResponseDto(
         HttpStatus.BAD_REQUEST,
-        `Does not found a pending programme for the given programme id ${req.programmeId}`
+        this.helperService.formatReqMessagesString(
+          "programme.notFOundAPendingProgrammeForTheId",
+          [req.programmeId]
+        )
       );
     }
 
@@ -1561,20 +1735,29 @@ export class ProgrammeService {
     );
     if (!program) {
       throw new HttpException(
-        "Programme does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (program.currentStage != ProgrammeStage.AWAITING_AUTHORIZATION) {
       throw new HttpException(
-        "Programme is not in pending state",
+        this.helperService.formatReqMessagesString(
+          "programme.notInPendingState",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
     if (program.creditEst < req.issueAmount) {
       throw new HttpException(
-        "Programme issue credit amount can not exceed estimated credit amount",
+        this.helperService.formatReqMessagesString(
+          "programme.issuedCreditCannotExceedEstCredit",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1588,7 +1771,10 @@ export class ProgrammeService {
     if (!updated) {
       return new BasicResponseDto(
         HttpStatus.BAD_REQUEST,
-        `Does not found a pending programme for the given programme id ${req.programmeId}`
+        this.helperService.formatReqMessagesString(
+          "programme.inotFOundAPendingProgrammeForTheId",
+          [req.programmeId]
+        )`Does not found a pending programme for the given programme id ${req.programmeId}`
       );
     }
 
@@ -1638,7 +1824,10 @@ export class ProgrammeService {
     );
     if (!updated) {
       throw new HttpException(
-        "Programme does not exist",
+        this.helperService.formatReqMessagesString(
+          "programme.programmeNotExist",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }

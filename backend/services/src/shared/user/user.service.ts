@@ -107,11 +107,13 @@ export class UserService {
 
   async getUserProfileDetails(id: number) {
     const userProfileDetails = await this.findById(id);
-    const organisationDetails = await this.companyService.findByCompanyId(userProfileDetails.companyId);
-    return{
+    const organisationDetails = await this.companyService.findByCompanyId(
+      userProfileDetails.companyId
+    );
+    return {
       user: userProfileDetails,
-      Organisation: organisationDetails
-    }
+      Organisation: organisationDetails,
+    };
   }
 
   async findById(id: number): Promise<User | undefined> {
@@ -167,7 +169,10 @@ export class UserService {
     if (result.affected) {
       return new DataResponseDto(HttpStatus.OK, await this.findById(id));
     }
-    throw new HttpException("No visible user found", HttpStatus.NOT_FOUND);
+    throw new HttpException(
+      this.helperService.formatReqMessagesString("user.noUserFound", []),
+      HttpStatus.NOT_FOUND
+    );
   }
 
   async resetPassword(
@@ -190,7 +195,13 @@ export class UserService {
       .addSelect(["User.password"])
       .getOne();
     if (!user || user.password != passwordResetDto.oldPassword) {
-      throw new HttpException("Old Password is incorrect", HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "user.oldPasswordIncorrect",
+          []
+        ),
+        HttpStatus.UNAUTHORIZED
+      );
     }
     const result = await this.userRepo
       .update(
@@ -214,10 +225,16 @@ export class UserService {
           countryName: this.configService.get("systemCountryName"),
         }
       );
-      return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.resetSuccess", [])
+      );
     }
     throw new HttpException(
-      "Password update failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "user.passwordUpdateFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -236,7 +253,10 @@ export class UserService {
       )
       .getOne();
     if (!user) {
-      throw new HttpException("No visible user found", HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.UNAUTHORIZED
+      );
     }
     const apiKey = await this.generateApiKey(email);
     const result = await this.userRepo
@@ -263,10 +283,16 @@ export class UserService {
         }
       );
 
-      return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.resetSuccess", [])
+      );
     }
     throw new HttpException(
-      "Password update failed. Please try again",
+      this.helperService.formatReqMessagesString(
+        "user.passwordUpdateFailed",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -280,16 +306,25 @@ export class UserService {
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
-        "User already exist in the system",
+        this.helperService.formatReqMessagesString(
+          "user.createExistingUser",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
     let { company, ...userFields } = userDto;
     if (company) {
-      if (userFields.role && ![Role.Admin, Role.Root].includes(userFields.role)) {
+      if (
+        userFields.role &&
+        ![Role.Admin, Role.Root].includes(userFields.role)
+      ) {
         throw new HttpException(
-          "Company create user should be an Admin user",
+          this.helperService.formatReqMessagesString(
+            "user.companyCreateUserShouldbeAdmin",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       } else if (!userFields.role) {
@@ -299,8 +334,12 @@ export class UserService {
       if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
         company.country = this.configService.get("systemCountry");
       }
-      
-      console.log('Company Log', company, this.configService.get("systemCountry"))
+
+      console.log(
+        "Company Log",
+        company,
+        this.configService.get("systemCountry")
+      );
 
       if (company.companyRole == CompanyRole.GOVERNMENT) {
         const companyGov = await this.companyService.findGovByCountry(
@@ -308,7 +347,10 @@ export class UserService {
         );
         if (companyGov) {
           throw new HttpException(
-            `Government already exist for the country code ${company.country}`,
+            this.helperService.formatReqMessagesString(
+              "user.governmentUserAlreadyExist",
+              [company.country]
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -316,7 +358,10 @@ export class UserService {
 
       if (companyRole != CompanyRole.GOVERNMENT) {
         throw new HttpException(
-          "Company create does not permitted for your company role",
+          this.helperService.formatReqMessagesString(
+            "user.companyCreateNotPermittedForTheCompanyRole",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -330,7 +375,7 @@ export class UserService {
       userDto.companyId != companyId
     ) {
       throw new HttpException(
-        "Not authorized to add users to other companies",
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
         HttpStatus.FORBIDDEN
       );
     }
@@ -341,7 +386,13 @@ export class UserService {
     } else if (u.companyId) {
       const company = await this.companyService.findByCompanyId(u.companyId);
       if (!company) {
-        throw new HttpException("Invalid programme id", HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "user.addUserToUnRegisteredCompany",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
       }
       u.companyRole = company.companyRole;
     } else {
@@ -372,22 +423,32 @@ export class UserService {
         company.logo = response;
       } else {
         throw new HttpException(
-          "Company update failed. Please try again",
+          this.helperService.formatReqMessagesString(
+            "user.companyUpdateFailed",
+            []
+          ),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
 
-      if(!company.hasOwnProperty('website')){
-        company['website'] = '';
+      if (!company.hasOwnProperty("website")) {
+        company["website"] = "";
       }
 
-      if(company.email){
-        await this.emailService.sendEmail(company.email, EmailTemplates.ORGANISATION_CREATE, {
-          organisationName: company.name,
-          countryName: this.configService.get("systemCountryName"),
-          organisationRole: company.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? "Programme Developer":company.companyRole,
-          home: hostAddress,
-        });
+      if (company.email) {
+        await this.emailService.sendEmail(
+          company.email,
+          EmailTemplates.ORGANISATION_CREATE,
+          {
+            organisationName: company.name,
+            countryName: this.configService.get("systemCountryName"),
+            organisationRole:
+              company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                ? "Programme Developer"
+                : company.companyRole,
+            home: hostAddress,
+          }
+        );
       }
     }
 
@@ -398,7 +459,7 @@ export class UserService {
       home: hostAddress,
       email: u.email,
       liveChat: this.configService.get("liveChat"),
-      helpDoc: hostAddress+ '/help',
+      helpDoc: hostAddress + "/help",
     });
 
     u.createdTime = new Date().getTime();
@@ -432,7 +493,10 @@ export class UserService {
                 );
               } else if (err.driverError.detail.includes("taxId")) {
                 throw new HttpException(
-                  "Company tax id already exist",
+                  this.helperService.formatReqMessagesString(
+                    "user.taxIdExistAlready",
+                    []
+                  ),
                   HttpStatus.BAD_REQUEST
                 );
               }
@@ -469,7 +533,7 @@ export class UserService {
         "company.companyId = user.companyId"
       )
       .orderBy(
-        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"` ,
+        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"`,
         query?.sort?.order ? query?.sort?.order : "DESC"
       )
       .offset(query.size * query.page - query.size)
@@ -483,7 +547,10 @@ export class UserService {
   }
 
   async delete(username: string, ability: string): Promise<BasicResponseDto> {
-    this.logger.verbose("User delete received", username);
+    this.logger.verbose(
+      this.helperService.formatReqMessagesString("user.noUserFound", []),
+      username
+    );
 
     const result = await this.userRepo
       .createQueryBuilder()
@@ -496,12 +563,15 @@ export class UserService {
       )
       .getMany();
     if (result.length <= 0) {
-      throw new HttpException("No visible user found", HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.NOT_FOUND
+      );
     }
 
     if (result[0].role == Role.Root) {
       throw new HttpException(
-        "Root user cannot be deleted",
+        this.helperService.formatReqMessagesString("user.rootUserDelete", []),
         HttpStatus.FORBIDDEN
       );
     } else if (result[0].role == Role.Admin) {
@@ -513,7 +583,10 @@ export class UserService {
         .getMany();
       if (admins.length <= 1) {
         throw new HttpException(
-          "Company must have at-least one admin user",
+          this.helperService.formatReqMessagesString(
+            "user.deleteOneAdminWhenOnlyOneAdmin",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -521,10 +594,13 @@ export class UserService {
 
     const result2 = await this.userRepo.delete({ email: username });
     if (result2.affected > 0) {
-      return new BasicResponseDto(HttpStatus.OK, "Successfully deleted");
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.deleteUserSuccess", [])
+      );
     }
     throw new HttpException(
-      "Delete failed. Please try again",
+      this.helperService.formatReqMessagesString("user.userDeletionFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -532,9 +608,14 @@ export class UserService {
   async getGovAdminAndManagerUsers() {
     const result = await this.userRepo
       .createQueryBuilder("user")
-      .where("user.role in (:admin, :manager)",{admin:Role.Admin, manager:Role.Manager})
-      .andWhere("user.companyRole= :companyRole",{companyRole:CompanyRole.GOVERNMENT})
-      .select(['user.name','user.email'])
+      .where("user.role in (:admin, :manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyRole= :companyRole", {
+        companyRole: CompanyRole.GOVERNMENT,
+      })
+      .select(["user.name", "user.email"])
       .getRawMany();
 
     return result;
@@ -545,9 +626,12 @@ export class UserService {
   async getOrganisationAdminAndManagerUsers(organisationId) {
     const result = await this.userRepo
       .createQueryBuilder("user")
-      .where("user.role in (:admin,:manager)",{admin:Role.Admin, manager:Role.Manager})
-      .andWhere("user.companyId= :companyId",{companyId:organisationId})
-      .select(['user.name','user.email'])
+      .where("user.role in (:admin,:manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyId= :companyId", { companyId: organisationId })
+      .select(["user.name", "user.email"])
       .getRawMany();
 
     return result;
