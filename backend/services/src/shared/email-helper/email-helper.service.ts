@@ -8,6 +8,7 @@ import { Programme } from "../entities/programme.entity";
 import { asyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
+import {HelperService} from '../util/helpers.service'
 
 @Injectable()
 export class EmailHelperService {
@@ -21,7 +22,8 @@ export class EmailHelperService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService,
-    private asyncOperationsInterface: AsyncOperationsInterface
+    private asyncOperationsInterface: AsyncOperationsInterface,
+    private helperService: HelperService
   ) {
     this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
   }
@@ -335,8 +337,11 @@ export class EmailHelperService {
     await this.emailService.sendEmail(sender, template, templateData);
     const action:AsyncAction = {
       actionType: asyncActionType.Email,
-      emailAddress: sender
+      emailType: template.id,
+      emailAddress: sender,
+      subject : this.helperService.getEmailTemplateMessage(template["subject"],templateData,true),
+      emailBody: this.helperService.getEmailTemplateMessage(template["html"],templateData,false),
     }
-    this.asyncOperationsInterface.RegisterAction(action);
+    this.asyncOperationsInterface.AddAction(action);
   }
 }

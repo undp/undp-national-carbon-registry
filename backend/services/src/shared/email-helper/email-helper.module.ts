@@ -1,14 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { AsyncQueueModule } from '../async-operations/async-queue.module';
+import { AsyncOperationsModule } from '../async-operations/async-operations.module';
 import { CompanyModule } from '../company/company.module';
 import { EmailModule } from '../email/email.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 import { UserModule } from '../user/user.module';
+import { UtilModule } from '../util/util.module';
 import { EmailHelperService } from './email-helper.service';
 
 @Module({
     providers: [EmailHelperService],
     exports: [EmailHelperService],
-    imports: [forwardRef(() => UserModule), EmailModule, ProgrammeLedgerModule, forwardRef(() => CompanyModule),AsyncQueueModule]
+    imports: [forwardRef(() => UserModule), EmailModule, ProgrammeLedgerModule, forwardRef(() => CompanyModule), AsyncOperationsModule, UtilModule]
 })
 export class EmailHelperModule {}

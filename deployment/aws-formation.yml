@@ -359,6 +359,14 @@ Resources:
             Principal: '*'
             Resource: !Sub '${S3BucketWeb.Arn}/*'
 
+  AsyncQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      ContentBasedDeduplication: true
+      DelaySeconds: 0
+      FifoQueue: true
+      QueueName: AsyncQueue.fifo
+
 Outputs:
   VPC:
     Description: A reference to the created VPC

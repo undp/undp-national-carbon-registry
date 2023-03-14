@@ -2,10 +2,13 @@ import { Injectable } from "@nestjs/common";
 
 export interface AsyncAction {
     actionType: number,
-    emailAddress: string
+    emailType?: string,
+    emailAddress?: string,
+    subject?: string,
+    emailBody?: string
 }
 
 @Injectable()
 export abstract class AsyncOperationsInterface {
-    public abstract RegisterAction(action:AsyncAction): Promise<string>;
+    public abstract AddAction(action:AsyncAction): Promise<boolean>;
 }
