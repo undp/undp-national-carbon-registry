@@ -1,9 +1,11 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/undp/carbon-registry)
 ![Uptime](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/undp/carbon-registry-status/master/api/carbon-registry/uptime.json)
 [![](https://img.shields.io/badge/chat-SparkBlue-blue)](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement)
+[![](https://img.shields.io/badge/Digital%20Public%20Good-Certified-blueviolet)](https://app.digitalpublicgoods.net/a/10403)
+
 <a name="about"></a>
 
-# National Carbon Registry
+# National Carbon Credit Registry
 The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
 
 As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
