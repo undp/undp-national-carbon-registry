@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
+      POSTGRES_PASSWORD: "1234"
       POSTGRES_USER: root
       PSQL_USERNAME: root
       # POSTGRES_HOST_AUTH_METHOD: trust
@@ -31,7 +31,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "1234"
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
       systemCountryCode: "NG"
@@ -53,7 +53,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "1234"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
   replicator:
@@ -66,7 +66,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "1234"
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
   web:
@@ -80,6 +80,7 @@ services:
         COUNTRY_NAME: "Antarctic Region"
         COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         COUNTRY_CODE: "NG"
+        REACT_APP_MAPBOXGL_ACCESS_TOKEN: ""
     ports:
       - "3030:3030"
     depends_on:

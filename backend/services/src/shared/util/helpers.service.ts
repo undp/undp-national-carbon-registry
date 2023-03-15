@@ -22,6 +22,9 @@ export class HelperService {
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
     } else if (typeof value === "string") {
+      if (value === "NULL") {
+        return value;
+      }
       if (toLower != true) {
         return "'" + value + "'";
       } else {

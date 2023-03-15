@@ -162,13 +162,8 @@ const CreditTransfer = () => {
       sort = {
         key: sortField,
         order: sortOrder,
+        nullFirst: false,
       };
-
-      if (sortField === 'programmeCertifierId') {
-        sort.nullFirst = sortOrder === 'ASC';
-      } else {
-        sort.nullFirst = false;
-      }
     } else {
       sort = {
         key: 'requestId',
