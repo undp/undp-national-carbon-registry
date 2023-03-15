@@ -8,5 +8,12 @@
   "addCompany": "Add organisation",
   "numberOfProgrammes": "NUMBER OF PROGRAMMES",
   "creditBalance": "CREDIT BALANCE",
-  "date": "Date"
+  "date": "Date",
+  "getCompanyError": "Error in getting company",
+  "filterByCompany": "Filter by Organisation Type",
+  "gov": "Government",
+  "certifier": "Certifier",
+  "all": "All",
+  "searchMail": "Search by email",
+  "searchName": "Search by name"
 }

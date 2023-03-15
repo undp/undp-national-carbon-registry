@@ -1,0 +1,11 @@
+{
+    "transferReqSentSuccess": "The transfer request has been sent successfully",
+    "transferReqCancelledSuccess": "The transfer request has been cancelled successfully",
+    "transferReqRejectSuccess": "The transfer request has been rejected successfully",
+    "transferReqAcceptSuccess": "The transfer request has been accepted successfully",
+    "rejectAlreadyRejectedTransferReq": "This transfer request has already been rejected",
+    "acceptAlreadyAcceptedTransferReq": "This transfer request has already been accepted",
+    "cancelAlreadyCancelledTransferReq": "This transfer request has already been cancelled",
+    "acceptAlreadyCancelledTransferReq": "This transfer request has been cancelled",
+    "rejectAlreadyCancelledTransferReq": "This transfer request has been cancelled"
+}

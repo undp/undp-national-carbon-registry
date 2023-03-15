@@ -23,6 +23,7 @@ package:
     - .env.${self:provider.stage}
     - "countries.json"
     - "regions.csv"
+    - "src/i18n/**"
 
 plugins:
   - "serverless-plugin-typescript"

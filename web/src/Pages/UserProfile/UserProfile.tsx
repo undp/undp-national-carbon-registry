@@ -30,6 +30,7 @@ const UserProfile = () => {
   const { userInfoState } = useUserContext();
 
   const signOut = (): void => {
+    navigate('/login');
     updateToken();
     removeUserInfo();
   };

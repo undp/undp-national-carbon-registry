@@ -64,7 +64,7 @@ const AddUser = () => {
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
-          content: 'User added Successfully!',
+          content: t('addUserSuccess'),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -75,7 +75,7 @@ const AddUser = () => {
       console.log('Error in user creation', error);
       message.open({
         type: 'error',
-        content: `Error in adding user! ${error.message}`,
+        content: `${t('addUserError')} ${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -108,7 +108,7 @@ const AddUser = () => {
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
-          content: 'User Updated Successfully!',
+          content: t('updateUserSuccess'),
           duration: 3,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -120,7 +120,7 @@ const AddUser = () => {
       console.log('Error in user update', error);
       message.open({
         type: 'error',
-        content: `Error in updating user! ${error.message}`,
+        content: `${t('updateUserError')} ${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -141,11 +141,9 @@ const AddUser = () => {
   return (
     <div className="add-user-main-container">
       <div className="title-container">
-        <div className="main">{isUpdate ? 'Edit User' : 'Add New User'}</div>
+        <div className="main">{isUpdate ? t('addUser:editUser') : t('addUser:addNewUser')}</div>
         <div className="sub">
-          {state?.record?.name
-            ? 'Edit the user information'
-            : 'Add new users to the Carbon Registry for your organisation'}
+          {state?.record?.name ? t('addUser:editUserSub') : t('addUser:addUserSub')}
         </div>
       </div>
       <div className="content-card user-content-card">
@@ -249,7 +247,7 @@ const AddUser = () => {
                     }
                   >
                     <div className="admin-radio-container">
-                      <Tooltip placement="top" title="Full access to all permitted functions">
+                      <Tooltip placement="top" title={t('addUser:adminToolTip')}>
                         <Radio.Button className="admin" value="Admin">
                           <StarOutlined className="role-icons" />
                           {t('addUser:admin')}
@@ -257,10 +255,7 @@ const AddUser = () => {
                       </Tooltip>
                     </div>
                     <div className="manager-radio-container">
-                      <Tooltip
-                        placement="top"
-                        title="Access to all permitted functions except user management"
-                      >
+                      <Tooltip placement="top" title={t('addUser:managerToolTip')}>
                         <Radio.Button className="manager" value="Manager">
                           <ToolOutlined className="role-icons" />
                           {t('addUser:manager')}
@@ -268,10 +263,7 @@ const AddUser = () => {
                       </Tooltip>
                     </div>
                     <div className="view-only-radio-container">
-                      <Tooltip
-                        placement="top"
-                        title="Read-only access to all permitted functionalities"
-                      >
+                      <Tooltip placement="top" title={t('addUser:viewerToolTip')}>
                         <Radio.Button className="view-only" value="ViewOnly">
                           <EyeOutlined className="role-icons" />
                           {t('addUser:viewer')}
