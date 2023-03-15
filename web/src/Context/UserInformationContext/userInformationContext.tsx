@@ -86,8 +86,10 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     let tokenVal: string | null;
     if (token) {
       tokenVal = token;
+      console.log('token from userContext ---- ', token);
     } else {
       tokenVal = localStorage.getItem('token');
+      console.log('token from userContext local storage ---- ', tokenVal);
     }
     try {
       if (tokenVal) {

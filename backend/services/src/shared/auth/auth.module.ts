@@ -18,16 +18,17 @@ import { UserModule } from "../user/user.module";
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
         signOptions: {
-          expiresIn: 3600*2,
+          // expiresIn: 3600*2,
+          expiresIn: 60 * 15,
         },
       }),
       inject: [ConfigService],
-      imports: undefined
+      imports: undefined,
     }),
     CaslModule,
     CompanyModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

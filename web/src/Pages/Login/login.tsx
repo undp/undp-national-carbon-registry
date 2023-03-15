@@ -48,6 +48,7 @@ const Login = () => {
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
+        console.log('access_token after success ---- > ', response?.data?.access_token);
         setUserInfo({
           id: response.data.id,
           userRole: response.data.role,
@@ -58,6 +59,7 @@ const Login = () => {
           companyState: response.data.companyState,
         });
         removeToken();
+        console.log('redirect location ---- ', redirectLocation, IsAuthenticated());
         return IsAuthenticated()
           ? navigate(redirectLocation ? redirectLocation : '/dashboard', { replace: true })
           : navigate('/login');
