@@ -70,10 +70,10 @@ Planning| 	< 48 hours|	< 5 days|
 
 
 ## 3. Deliverables
-- Deliverable 1: Governance: Strategy and Metrics, Policy and Compliance, Education and Guidance
-- Deliverable 2: Design: User Interface, Graphics, Threat Assessment, Language Files, Security Requirements
-- Deliverable 3: Implementation: Secure Build, Secure Deployment, Defect Management
-- Deliverable 4: Verification: Architecture Assessment, Requirements-driven Testing, Security Testing
+- Deliverable 1: Governance [Workplan & Timeline, Policy & Compliance, Education & Guidance]
+- Deliverable 2: Design [User Interface, Graphics, Threat Assessment, Language Files, Security Requirements]
+- Deliverable 3: Implementation [Secure Build, Secure Deployment, Defect Management]
+- Deliverable 4: Verification [Architecture Assessment, Requirements-driven Testing, Security Testing]
 - Deliverable 5: Maintenance Operations [Incident Management, Environment Management, Operational Management]
 - Deliverable 6: Distribution [Analytics, Advertising, Training]
 
@@ -142,7 +142,7 @@ Other items to consider:
  	- Direct experience in developing or overseeing digital systems related to climate or carbon reporting, accounting, measurement, verification is strongly desired
  	- Experience in business development and entrepreneurship is an asset
  	
-	## Deliverables in less digital jargon:
+	## Deliverables (Alternative):
 	- Deliverable: Fully localized Carbon Registry running on staging (test) environment & productive (live) environment
 	- Deliverable: End to End Test Report
 	- Deliverable: Government Acceptance. Source code submission (ideally on Git) approved.
