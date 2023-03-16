@@ -24,5 +24,6 @@
     "samePasswordReset": "New password cannot be the same as your old password",
     "incorrectCurrentPassword": "Entered old password is incorrect",
     "updatedSuccess": "Successfully updated",
-    "oldPasswordIncorrect": "Entered old password is incorrect"
+    "oldPasswordIncorrect": "Entered old password is incorrect",
+    "forgotPwdUserNotFound": "User not found"
 }

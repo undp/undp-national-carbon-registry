@@ -11,6 +11,7 @@ import { CounterService } from "./counter.service";
 import { CountryService } from "./country.service";
 import { HelperService } from "./helpers.service";
 import { IsValidCountryConstraint } from "./validcountry.decorator";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 
 @Module({
   imports: [
@@ -34,8 +35,7 @@ import { IsValidCountryConstraint } from "./validcountry.decorator";
         AcceptLanguageResolver,
       ],
     }),
-    TypeOrmModule.forFeature([Counter]),
-    TypeOrmModule.forFeature([Country]),
+    TypeOrmModule.forFeature([Counter, Country, PasswordReset]),
   ],
   providers: [
     CounterService,
