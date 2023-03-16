@@ -9,11 +9,15 @@ import { CaslModule } from "../casl/casl.module";
 import { ApiKeyStrategy } from "./strategies/apikey.strategy";
 import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
+import { UtilModule } from "../util/util.module";
+import { EmailModule } from "../email/email.module";
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    UtilModule,
+    EmailModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
