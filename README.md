@@ -1,3 +1,9 @@
+(https://img.shields.io/github/last-commit/undp/carbon-registry)
+(https://img.shields.io/endpoint?url=https://github.com/undp/carbon-registry-status/blob/master/api/carbon-registry/uptime.json)
+(https://img.shields.io/github/actions/workflow/status/undp/carbon-registry/server-deployments.yml?branch=main&label=server%20build)
+(https://img.shields.io/github/actions/workflow/status/undp/carbon-registry/frontend-deployment.yml?branch=main&label=frontend%20build)
+[!](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement)
+
 ## Index
 * [About](#about)
 * [Standards](#standards)
