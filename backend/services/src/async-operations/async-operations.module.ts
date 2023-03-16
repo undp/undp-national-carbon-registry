@@ -1,7 +1,9 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import configuration from "src/shared/configuration";
-import { AsyncOperationType } from "src/shared/enum/async.operation.type.enum";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import configuration from "../shared/configuration";
+import { AsyncOperationType } from "../shared/enum/async.operation.type.enum";
+import { TypeOrmConfigService } from "../shared/typeorm.config.service";
 import { AsyncOperationsDatabaseService } from "./async-operations-database.service";
 import { AsyncOperationsInterface } from "./async-operations-interface.service";
 import { AsyncOperationsQueueService } from "./async-operations-queue.service";
@@ -12,10 +14,14 @@ import { AsyncOperationsQueueService } from "./async-operations-queue.service";
         isGlobal: true,
         load: [configuration],
         envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
-    })],
+    }),
+    TypeOrmModule.forRootAsync({
+        useClass: TypeOrmConfigService,
+        imports: undefined
+      })],
     providers:[{
         provide: AsyncOperationsInterface,
         useClass: process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue ? AsyncOperationsQueueService : AsyncOperationsDatabaseService
-    }]
+    }, Logger]
 })
 export class AsyncOperationsModule {}

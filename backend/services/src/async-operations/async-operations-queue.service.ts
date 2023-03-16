@@ -24,7 +24,27 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
     }
 
     sendEmail(event): Promise<any> {
-        console.log('d1 AsyncOperationsQueueService', event);
+        const sender = event?.MessageAttributes?.Sender?.StringValue;
+        const subject = event?.MessageAttributes?.Subject?.StringValue;
+        if (sender) {
+            return new Promise((resolve, reject) => {
+                this.transporter.sendMail({
+                    from: this.sourceEmail,
+                    to: sender,
+                    subject: subject,
+                    text: event?.body,
+                    html: event?.body,
+                }, function(error, info) {
+                    if (error) {
+                        console.log('d1 error',error);
+                        reject(error)
+                    } else {
+                        console.log('d1 Email sent: ' + info);
+                        resolve(info)
+                    }
+                });
+            })
+        }
         return ;
     }
 }
