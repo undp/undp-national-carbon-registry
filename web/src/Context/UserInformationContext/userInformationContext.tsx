@@ -9,7 +9,7 @@ import jwt_decode from 'jwt-decode';
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
   removeUserInfo: () => {},
-  IsAuthenticated: () => false,
+  IsAuthenticated: (tkn?: any) => false,
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
@@ -82,25 +82,31 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.setItem('companyState', companyState + '');
   };
 
-  const IsAuthenticated = useCallback((): boolean => {
-    let tokenVal: string | null;
-    if (token) {
-      tokenVal = token;
-      console.log('token from userContext ---- ', token);
-    } else {
-      tokenVal = localStorage.getItem('token');
-      console.log('token from userContext local storage ---- ', tokenVal);
-    }
-    try {
-      if (tokenVal) {
-        const { exp } = jwt_decode(tokenVal) as any;
-        return Date.now() < exp * 1000;
+  const IsAuthenticated = useCallback(
+    (tokenNew?: any): boolean => {
+      let tokenVal: string | null;
+      if (tokenNew) {
+        console.log('token from response -- 89 ---- ', tokenNew);
+        tokenVal = tokenNew;
+      } else if (token) {
+        tokenVal = token;
+        console.log('token from userContext ---- ', token);
+      } else {
+        tokenVal = localStorage.getItem('token');
+        console.log('token from userContext local storage ---- ', tokenVal);
       }
-      return false;
-    } catch (err) {
-      return false;
-    }
-  }, [token]);
+      try {
+        if (tokenVal) {
+          const { exp } = jwt_decode(tokenVal) as any;
+          return Date.now() < exp * 1000;
+        }
+        return false;
+      } catch (err) {
+        return false;
+      }
+    },
+    [token]
+  );
 
   const removeUserInfo = () => {
     localStorage.removeItem('userId');
