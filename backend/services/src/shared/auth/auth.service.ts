@@ -10,7 +10,7 @@ import { HelperService } from "../util/helpers.service";
 import { EmailService } from "../email/email.service";
 import { EmailTemplates } from "../email/email.template";
 import { ConfigService } from "@nestjs/config";
-import { DataResponseDto } from "../dto/data.response.dto";
+import { BasicResponseDto } from "../dto/basic.response.dto";
 
 @Injectable()
 export class AuthService {
@@ -84,9 +84,9 @@ export class AuthService {
         name: userDetails.name,
         countryName: this.configService.get("systemCountryName"),
       });
-      return new DataResponseDto(
+      return new BasicResponseDto(
         HttpStatus.OK,
-        "User found, forgot password request success"
+        "User found, An email was sent"
       );
     } else {
       throw new HttpException(
