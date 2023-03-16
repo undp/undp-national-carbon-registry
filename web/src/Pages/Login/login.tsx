@@ -59,8 +59,13 @@ const Login = () => {
           companyState: response.data.companyState,
         });
         removeToken();
-        console.log('redirect location ---- ', redirectLocation, IsAuthenticated());
-        return IsAuthenticated()
+        console.log(
+          'redirect location ---- ',
+          redirectLocation,
+          IsAuthenticated(),
+          IsAuthenticated(response.data.access_token)
+        );
+        return IsAuthenticated(response.data.access_token)
           ? navigate(redirectLocation ? redirectLocation : '/dashboard', { replace: true })
           : navigate('/login');
       }
