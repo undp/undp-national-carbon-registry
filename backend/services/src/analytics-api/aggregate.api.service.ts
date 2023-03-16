@@ -386,6 +386,7 @@ export class AggregateAPIService {
     let lastTime: any;
     if (timeCol) {
       const cacheKey = whereC + " from " + tableName;
+      console.log('Cache key', cacheKey)
       if (lastTimeForWhere[cacheKey]) {
         console.log("Last time hit from the cache");
         lastTime = lastTimeForWhere[cacheKey];

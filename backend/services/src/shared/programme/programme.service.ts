@@ -1173,7 +1173,8 @@ export class ProgrammeService {
         )
       )
       .orderBy(
-        query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+        query?.sort?.key &&
+          `"programme".${this.helperService.generateSortCol(query?.sort?.key)}`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
