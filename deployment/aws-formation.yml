@@ -272,6 +272,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
         - arn:aws:iam::aws:policy/AmazonKinesisFullAccess
         - arn:aws:iam::aws:policy/AmazonSESFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
       Path: /
 
   QLDBEndpoint:
@@ -362,10 +363,8 @@ Resources:
   AsyncQueue:
     Type: AWS::SQS::Queue
     Properties: 
-      ContentBasedDeduplication: true
-      DelaySeconds: 0
-      FifoQueue: true
-      QueueName: AsyncQueue.fifo
+      QueueName: AsyncQueue
+      VisibilityTimeout: 60
 
 Outputs:
   VPC:

@@ -26,9 +26,7 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
         },
         MessageBody: action.emailBody,
         QueueUrl:
-          "https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue.fifo",
-        MessageGroupId: action.actionType + "",
-        MessageDeduplicationId: action.emailAddress + action.emailType,
+          "https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue"
       };
     }
 
