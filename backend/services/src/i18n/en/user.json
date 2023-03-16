@@ -1,5 +1,5 @@
 {
-    "rootCreatesRoot": "The user has been created successfullyhere can be only one root user",
+    "rootCreatesRoot": "There can be only one root user",
     "createUserSuccess": "The user has been created successfully",
     "createOrganisationSuccess": "The organisation has been created successfully",
     "createExistingUser": "This user already exists",
