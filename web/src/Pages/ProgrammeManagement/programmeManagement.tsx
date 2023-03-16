@@ -266,7 +266,7 @@ const ProgrammeManagement = () => {
     let sort: any;
     if (sortOrder && sortField) {
       sort = {
-        key: sortField,
+        key: sortField === 'certifierId' ? 'certifierId[1]' : sortField,
         order: sortOrder,
         nullFirst: false,
       };

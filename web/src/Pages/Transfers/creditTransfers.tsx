@@ -160,7 +160,7 @@ const CreditTransfer = () => {
     let sort: any;
     if (sortOrder && sortField) {
       sort = {
-        key: sortField,
+        key: sortField === 'programmeCertifierId' ? 'programmeCertifierId[1]' : sortField,
         order: sortOrder,
         nullFirst: false,
       };

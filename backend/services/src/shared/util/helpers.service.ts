@@ -66,6 +66,9 @@ export class HelperService {
     if (col.includes("->>")) {
       const parts = col.split("->>");
       return `"${parts[0]}"->>'${parts[1]}'`;
+    } else if (col.includes("[")) {
+      const parts = col.split("[");
+      return `"${parts[0]}"[${parts[1]}`;
     } else {
       return `"${col}"`;
     }
