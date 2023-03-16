@@ -1,5 +1,5 @@
 {
-    "rootCreatesRoot": "There can be only one root user",
+    "rootCreatesRoot": "The user has been created successfullyhere can be only one root user",
     "createUserSuccess": "The user has been created successfully",
     "createOrganisationSuccess": "The organisation has been created successfully",
     "createExistingUser": "This user already exists",
@@ -24,5 +24,6 @@
     "samePasswordReset": "New password cannot be the same as your old password",
     "incorrectCurrentPassword": "Entered old password is incorrect",
     "updatedSuccess": "Successfully updated",
-    "oldPasswordIncorrect": "Entered old password is incorrect"
+    "oldPasswordIncorrect": "Entered old password is incorrect",
+    "forgotPwdUserNotFound": "User not found"
 }
