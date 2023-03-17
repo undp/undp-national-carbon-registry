@@ -231,7 +231,15 @@ export class CompanyService {
           this.helperService.parseMongoQueryToSQL(abilityCondition)
         )
       )
-      .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
+      .orderBy(
+        query?.sort?.key && `"${query?.sort?.key}"`,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
       .offset(query.size * query.page - query.size)
       .limit(query.size)
       .getManyAndCount();

@@ -268,6 +268,7 @@ const CompanyManagement = () => {
       return {
         key: sortField,
         order: sortOrder,
+        nullFirst: false,
       };
     } else
       return {
