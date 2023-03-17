@@ -261,9 +261,12 @@ export class HelperService {
     return sql;
   }
 
-  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string) {
+  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string, ignoreCol?: string[]) {
     let sql = "";
     if (query.filterAnd) {
+      if (ignoreCol) {
+        query.filterAnd = query.filterAnd.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       sql += query.filterAnd
         .map((e) => {
           if (this.isQueryDto(e.value)) {
@@ -290,6 +293,9 @@ export class HelperService {
         .join(" and ");
     }
     if (query.filterOr) {
+      if (ignoreCol) {
+        query.filterOr = query.filterOr.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       const orSQl = query.filterOr
         .map((e) => {
           if (this.isQueryDto(e.value)) {

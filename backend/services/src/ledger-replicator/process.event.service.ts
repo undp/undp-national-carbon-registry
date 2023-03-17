@@ -168,7 +168,7 @@ export class ProcessEventService {
                     Number(company.programmeCount) +
                     (overall.txType == TxType.AUTH ? 1 : 0),
                   lastUpdateVersion: version,
-                  creditTxTime: txTime,
+                  creditTxTime: [ TxType.ISSUE, TxType.TRANSFER, TxType.RETIRE, TxType.FREEZE, TxType.UNFREEZE ].includes(overall.txType) ? txTime : undefined,
                 };
               }
 
