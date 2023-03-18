@@ -5,7 +5,6 @@ import { AsyncOperationsInterface } from './async-operations-interface.service';
 import { AsyncOperationsModule } from './async-operations.module';
 
 export const handler:Handler =async (event: any, context: Context) => {
-    console.log('d1 async handler');
     const app = await NestFactory.createApplicationContext(AsyncOperationsModule, {
         logger: getLogger(AsyncOperationsModule)
     });

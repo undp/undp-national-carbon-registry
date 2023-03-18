@@ -334,13 +334,14 @@ export class EmailHelperService {
       countryName: systemCountryName,
       government: companyDetails.name,
     };
-    await this.emailService.sendEmail(sender, template, templateData);
     const action:AsyncAction = {
       actionType: asyncActionType.Email,
-      emailType: template.id,
-      emailAddress: sender,
-      subject : this.helperService.getEmailTemplateMessage(template["subject"],templateData,true),
-      emailBody: this.helperService.getEmailTemplateMessage(template["html"],templateData,false),
+      actionProps:{
+        emailType: template.id,
+        sender: sender,
+        subject : this.helperService.getEmailTemplateMessage(template["subject"],templateData,false),
+        emailBody: this.helperService.getEmailTemplateMessage(template["html"],templateData,false)
+      }
     }
     this.asyncOperationsInterface.AddAction(action);
   }

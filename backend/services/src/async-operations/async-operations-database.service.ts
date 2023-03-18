@@ -7,7 +7,6 @@ export class AsyncOperationsDatabaseService implements AsyncOperationsInterface 
     }
 
     sendEmail(event): Promise<any> {
-        console.log('d1 AsyncOperationsDatabaseService');
         return ;
     }
 }

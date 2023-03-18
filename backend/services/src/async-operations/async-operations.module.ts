@@ -14,11 +14,7 @@ import { AsyncOperationsQueueService } from "./async-operations-queue.service";
         isGlobal: true,
         load: [configuration],
         envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
-    }),
-    TypeOrmModule.forRootAsync({
-        useClass: TypeOrmConfigService,
-        imports: undefined
-      })],
+    })],
     providers:[{
         provide: AsyncOperationsInterface,
         useClass: process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue ? AsyncOperationsQueueService : AsyncOperationsDatabaseService

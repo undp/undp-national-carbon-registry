@@ -2,10 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 export interface AsyncAction {
     actionType: number,
-    emailType?: string,
-    emailAddress?: string,
-    subject?: string,
-    emailBody?: string
+    actionProps: Object,
 }
 
 @Injectable()
