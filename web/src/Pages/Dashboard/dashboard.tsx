@@ -936,10 +936,10 @@ const Dashboard = () => {
         String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
       ) {
         setLastUpdateProgrammesCertifiableEpoch(
-          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
+          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)
         );
         setLastUpdateProgrammesCertifiable(
-          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
+          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)).fromNow()
         );
       }
       if (
