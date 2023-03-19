@@ -10,7 +10,6 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
   private sourceEmail: string;
 
   constructor(private logger: Logger, private configService: ConfigService) {
-    console.log("d1 AsyncOperationsQueueService constructor");
     this.sourceEmail = this.configService.get<string>("email.source");
     this.transporter = nodemailer.createTransport({
       host: this.configService.get<string>("email.endpoint"),
@@ -23,31 +22,29 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
     });
   }
 
-  sendEmail(event): Promise<any> {
-    console.log("d1 AsyncOperationsQueueService sendEmail", event.Records);
+  async sendEmail(event): Promise<any> {
     if (event.Records) {
-      event.Records.forEach((eventObj) => {
-        const dataObj = JSON.parse(eventObj.body);
-        return new Promise((resolve, reject) => {
-          this.transporter.sendMail(
-            {
-              from: this.sourceEmail,
-              to: dataObj?.body?.sender,
-              subject: dataObj?.body?.subject,
-              text: dataObj?.body?.emailBody,
-              html: dataObj?.body?.emailBody,
-            },
-            function (error, info) {
-              if (error) {
-                console.log("d1 error", error);
-                reject(error);
-              } else {
-                console.log("d1 Email sent: " + info);
-                resolve(info);
-              }
+      let eventObj = event.Records[0];
+      const dataObj = JSON.parse(eventObj.body);
+      return new Promise((resolve, reject) => {
+        this.transporter.sendMail(
+          {
+            from: this.sourceEmail,
+            to: dataObj?.sender,
+            subject: dataObj?.subject,
+            text: dataObj?.emailBody,
+            html: dataObj?.emailBody,
+          },
+          function (error, info) {
+            if (error) {
+              console.log("error", error);
+              reject(error);
+            } else {
+              console.log("Email sent: " + info);
+              resolve(info);
             }
-          );
-        });
+          }
+        );
       });
     }
     return;

@@ -15,16 +15,17 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
     if (action.actionType === asyncActionType.Email) {
       params = {
         MessageBody: JSON.stringify(action.actionProps),
+        MessageGroupId: action.actionProps.emailType + action.actionProps.sender,
         QueueUrl:
-          "https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue"
+          "https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue.fifo"
       };
     }
 
     sqs.sendMessage(params, function (err, data) {
       if (err) {
-        console.log("d1 Error", err);
+        console.log("Error", err);
       } else {
-        console.log("d1 Success", data);
+        console.log("Success", data);
       }
     });
     return true;

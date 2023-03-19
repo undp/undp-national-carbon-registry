@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 export interface AsyncAction {
     actionType: number,
-    actionProps: Object,
+    actionProps: any,
 }
 
 @Injectable()

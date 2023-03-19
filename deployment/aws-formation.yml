@@ -363,7 +363,9 @@ Resources:
   AsyncQueue:
     Type: AWS::SQS::Queue
     Properties: 
-      QueueName: AsyncQueue
+      QueueName: AsyncQueue.fifo
+      FifoQueue: true
+      ContentBasedDeduplication: true
       VisibilityTimeout: 60
 
 Outputs:

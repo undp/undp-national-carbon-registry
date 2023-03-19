@@ -104,9 +104,10 @@ functions:
     handler: src/async-operations/handler.handler
     events:
       - sqs:
-          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue
+          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue.fifo
           batchSize: 10
-          maximumBatchingWindow: 60
+    ssmToEnvironment:
+      - SES_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
