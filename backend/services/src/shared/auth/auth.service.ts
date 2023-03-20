@@ -11,6 +11,9 @@ import { EmailService } from "../email/email.service";
 import { EmailTemplates } from "../email/email.template";
 import { ConfigService } from "@nestjs/config";
 import { BasicResponseDto } from "../dto/basic.response.dto";
+import { Repository } from "typeorm";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
+import { PasswordResetService } from "../util/passwordReset.service";
 
 @Injectable()
 export class AuthService {
@@ -21,6 +24,7 @@ export class AuthService {
     private emailService: EmailService,
     private configService: ConfigService,
     private helperService: HelperService,
+    private passwordReset: PasswordResetService,
     public caslAbilityFactory: CaslAbilityFactory
   ) {}
 
@@ -80,8 +84,18 @@ export class AuthService {
     const userDetails = await this.userService.findOne(email);
     if (userDetails) {
       console.table(userDetails);
+      const requestId = this.helperService.generateRandomPassword();
+      const date = Date.now();
+      const expireDate = date + 3600 * 1000; // 1 hout expire time
+      const passwordResetD = {
+        email: email,
+        token: requestId,
+        expireTime: expireDate,
+      };
+      this.passwordReset.insertPasswordResetD(passwordResetD);
       await this.emailService.sendEmail(email, EmailTemplates.FORGOT_PASSOWRD, {
         name: userDetails.name,
+        requestId: requestId,
         countryName: this.configService.get("systemCountryName"),
       });
       return new BasicResponseDto(
