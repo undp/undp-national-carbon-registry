@@ -250,7 +250,7 @@ export class EmailHelperService {
           subject: this.helperService.getEmailTemplateMessage(
             template["subject"],
             templateData,
-            false
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
             template["html"],
@@ -329,7 +329,7 @@ export class EmailHelperService {
           subject: this.helperService.getEmailTemplateMessage(
             template["subject"],
             templateData,
-            false
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
             template["html"],
@@ -364,7 +364,7 @@ export class EmailHelperService {
         subject: this.helperService.getEmailTemplateMessage(
           template["subject"],
           templateData,
-          false
+          true
         ),
         emailBody: this.helperService.getEmailTemplateMessage(
           template["html"],

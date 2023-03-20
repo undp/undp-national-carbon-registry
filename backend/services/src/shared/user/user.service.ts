@@ -233,7 +233,7 @@ export class UserService {
           subject: this.helperService.getEmailTemplateMessage(
             EmailTemplates.CHANGE_PASSOWRD["subject"],
             templateData,
-            false
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
             EmailTemplates.CHANGE_PASSOWRD["html"],
@@ -305,7 +305,7 @@ export class UserService {
           subject: this.helperService.getEmailTemplateMessage(
             EmailTemplates.API_KEY_EMAIL["subject"],
             templateData,
-            false
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
             EmailTemplates.API_KEY_EMAIL["html"],
@@ -487,7 +487,7 @@ export class UserService {
             subject: this.helperService.getEmailTemplateMessage(
               EmailTemplates.ORGANISATION_CREATE["subject"],
               templateData,
-              false
+              true
             ),
             emailBody: this.helperService.getEmailTemplateMessage(
               EmailTemplates.ORGANISATION_CREATE["html"],
@@ -518,7 +518,7 @@ export class UserService {
         subject: this.helperService.getEmailTemplateMessage(
           EmailTemplates.USER_CREATE["subject"],
           templateData,
-          false
+          true
         ),
         emailBody: this.helperService.getEmailTemplateMessage(
           EmailTemplates.USER_CREATE["html"],
