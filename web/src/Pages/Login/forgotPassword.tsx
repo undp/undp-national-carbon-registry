@@ -4,10 +4,10 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { userForgotPasswordProps } from '../../Definitions/InterfacesAndType/userForgotPassword.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import i18next from 'i18next';
 
 const ForgotPassword = () => {
-  const { post, updateToken, removeToken } = useConnection();
-  const { i18n, t } = useTranslation(['common', 'forgotPassword']);
+  const { post } = useConnection();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (values: userForgotPasswordProps) => {
@@ -22,7 +22,7 @@ const ForgotPassword = () => {
         console.log('response forgot password --- > ', response);
       }
     } catch (error: any) {
-      console.log('Error in Login', error);
+      console.log('Error in sending resetting password', error);
     } finally {
       setLoading(false);
     }
@@ -34,8 +34,10 @@ const ForgotPassword = () => {
         <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
           <div className="login-text-contents">
             <span className="login-text-signin">
-              {t('forgotPassword:forgot-pwd-title')} <br />
-              <span className="login-text-welcome">{t('forgotPassword:forgot-pwd-sub')}</span>
+              Forgot Your Password? <br />
+              <span className="login-text-welcome">
+                Please enter the email used to sign into the Carbon Registry
+              </span>
             </span>
           </div>
         </Col>
@@ -46,7 +48,7 @@ const ForgotPassword = () => {
             <Form layout="vertical" onFinish={onSubmit} name="login-details" requiredMark={false}>
               <Form.Item
                 name="email"
-                label={`${t('common:email')}`}
+                label="Email"
                 validateTrigger={'onSubmit'}
                 rules={[
                   ({ getFieldValue }) => ({
@@ -77,7 +79,7 @@ const ForgotPassword = () => {
               <Form.Item>
                 <div className="login-submit-btn-container">
                   <Button type="primary" size="large" htmlType="submit" block loading={loading}>
-                    {t('forgotPassword:submit')}
+                    SUBMIT
                   </Button>
                 </div>
               </Form.Item>
@@ -88,10 +90,16 @@ const ForgotPassword = () => {
       <Row>
         <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
           <div className="note-container">
-            <div className="label">{t('forgotPassword:note')}:</div>
+            <div className="label">Note:</div>
             <div className="note">
-              <p>{t('forgotPassword:note-1')}</p>
-              <p>{t('forgotPassword:note-2')}</p>
+              <p>
+                We will email you instructions for setting your password if an account exists with
+                the email you entered.
+              </p>
+              <p>
+                If you don’t receive an email, please make sure you have entered the address
+                connected to the Carbon Registry account and check your spam folder.
+              </p>
             </div>
           </div>
         </Col>
