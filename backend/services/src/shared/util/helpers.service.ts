@@ -22,6 +22,9 @@ export class HelperService {
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
     } else if (typeof value === "string") {
+      if (value === "NULL") {
+        return value;
+      }
       if (toLower != true) {
         return "'" + value + "'";
       } else {
@@ -63,6 +66,9 @@ export class HelperService {
     if (col.includes("->>")) {
       const parts = col.split("->>");
       return `"${parts[0]}"->>'${parts[1]}'`;
+    } else if (col.includes("[")) {
+      const parts = col.split("[");
+      return `"${parts[0]}"[${parts[1]}`;
     } else {
       return `"${col}"`;
     }
@@ -269,9 +275,12 @@ export class HelperService {
     return sql;
   }
 
-  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string) {
+  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string, ignoreCol?: string[]) {
     let sql = "";
     if (query.filterAnd) {
+      if (ignoreCol) {
+        query.filterAnd = query.filterAnd.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       sql += query.filterAnd
         .map((e) => {
           if (this.isQueryDto(e.value)) {
@@ -298,6 +307,9 @@ export class HelperService {
         .join(" and ");
     }
     if (query.filterOr) {
+      if (ignoreCol) {
+        query.filterOr = query.filterOr.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       const orSQl = query.filterOr
         .map((e) => {
           if (this.isQueryDto(e.value)) {

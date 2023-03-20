@@ -428,6 +428,10 @@ export class ProgrammeLedgerService {
           }
           programme.certifierId.splice(index, 1);
 
+          // if (programme.certifierId.length === 0) {
+          //   programme.certifierId = undefined;
+          // }
+
           if (!programme.revokedCertifierId) {
             programme.revokedCertifierId = [certifierId];
           } else {
