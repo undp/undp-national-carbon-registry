@@ -10,14 +10,13 @@ import { ApiKeyStrategy } from "./strategies/apikey.strategy";
 import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { UtilModule } from "../util/util.module";
-import { EmailModule } from "../email/email.module";
+import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     UtilModule,
-    EmailModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
@@ -30,6 +29,7 @@ import { EmailModule } from "../email/email.module";
     }),
     CaslModule,
     CompanyModule,
+    AsyncOperationsModule
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger],
   exports: [AuthService],

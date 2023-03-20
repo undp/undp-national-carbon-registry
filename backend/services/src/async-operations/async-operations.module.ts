@@ -8,16 +8,23 @@ import { AsyncOperationsDatabaseService } from "./async-operations-database.serv
 import { AsyncOperationsInterface } from "./async-operations-interface.service";
 import { AsyncOperationsQueueService } from "./async-operations-queue.service";
 
-
 @Module({
-    imports:[ConfigModule.forRoot({
-        isGlobal: true,
-        load: [configuration],
-        envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
-    })],
-    providers:[{
-        provide: AsyncOperationsInterface,
-        useClass: process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue ? AsyncOperationsQueueService : AsyncOperationsDatabaseService
-    }, Logger]
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
+    }),
+  ],
+  providers: [
+    {
+      provide: AsyncOperationsInterface,
+      useClass:
+        process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue
+          ? AsyncOperationsQueueService
+          : AsyncOperationsDatabaseService,
+    },
+    Logger,
+  ],
 })
 export class AsyncOperationsModule {}

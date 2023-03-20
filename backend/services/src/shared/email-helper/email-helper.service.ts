@@ -1,14 +1,16 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import {
+  AsyncAction,
+  AsyncOperationsInterface,
+} from "../async-operations/async-operations.interface";
 import { CompanyService } from "../company/company.service";
-import { EmailService } from "../email/email.service";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
 import { asyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
-import {HelperService} from '../util/helpers.service'
+import { HelperService } from "../util/helpers.service";
 
 @Injectable()
 export class EmailHelperService {
@@ -18,7 +20,6 @@ export class EmailHelperService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private configService: ConfigService,
-    private emailService: EmailService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService,
@@ -35,9 +36,7 @@ export class EmailHelperService {
     companyId?: number,
     governmentId?: number
   ) {
-
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
     let companyDetails: Company;
@@ -108,8 +107,7 @@ export class EmailHelperService {
     receiverCompanyId?: number,
     programmeId?: string
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const users = await this.userService.getOrganisationAdminAndManagerUsers(
       companyId
@@ -244,11 +242,24 @@ export class EmailHelperService {
         name: user.user_name,
         countryName: systemCountryName,
       };
-      await this.emailService.sendEmail(
-        user.user_email,
-        template,
-        templateData
-      );
+      const action: AsyncAction = {
+        actionType: asyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            false
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -258,8 +269,7 @@ export class EmailHelperService {
     programmeId?: string,
     companyId?: number
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getGovAdminAndManagerUsers();
@@ -311,11 +321,24 @@ export class EmailHelperService {
         name: user.user_name,
         countryName: systemCountryName,
       };
-      await this.emailService.sendEmail(
-        user.user_email,
-        template,
-        templateData
-      );
+      const action: AsyncAction = {
+        actionType: asyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            false
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -325,8 +348,7 @@ export class EmailHelperService {
     templateData: any,
     companyId: number
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const companyDetails = await this.companyService.findByCompanyId(companyId);
     const systemCountryName = this.configService.get("systemCountryName");
     templateData = {
@@ -334,15 +356,23 @@ export class EmailHelperService {
       countryName: systemCountryName,
       government: companyDetails.name,
     };
-    const action:AsyncAction = {
+    const action: AsyncAction = {
       actionType: asyncActionType.Email,
-      actionProps:{
+      actionProps: {
         emailType: template.id,
         sender: sender,
-        subject : this.helperService.getEmailTemplateMessage(template["subject"],templateData,false),
-        emailBody: this.helperService.getEmailTemplateMessage(template["html"],templateData,false)
-      }
-    }
+        subject: this.helperService.getEmailTemplateMessage(
+          template["subject"],
+          templateData,
+          false
+        ),
+        emailBody: this.helperService.getEmailTemplateMessage(
+          template["html"],
+          templateData,
+          false
+        ),
+      },
+    };
     this.asyncOperationsInterface.AddAction(action);
   }
 }

@@ -7,10 +7,11 @@ import { API_KEY_SEPARATOR } from "../constants";
 import { JWTPayload } from "../dto/jwt.payload";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { ConfigService } from "@nestjs/config";
 import { DataResponseDto } from "../dto/data.response.dto";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { asyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class AuthService {
@@ -18,10 +19,10 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
-    private emailService: EmailService,
     private configService: ConfigService,
     private helperService: HelperService,
-    public caslAbilityFactory: CaslAbilityFactory
+    public caslAbilityFactory: CaslAbilityFactory,
+    private asyncOperationsInterface: AsyncOperationsInterface,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -80,10 +81,32 @@ export class AuthService {
     const userDetails = await this.userService.findOne(email);
     if (userDetails) {
       console.table(userDetails);
-      await this.emailService.sendEmail(email, EmailTemplates.FORGOT_PASSOWRD, {
+
+      const templateData = {
         name: userDetails.name,
         countryName: this.configService.get("systemCountryName"),
-      });
+      };
+
+      const action: AsyncAction = {
+        actionType: asyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.FORGOT_PASSOWRD.id,
+          sender: email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.FORGOT_PASSOWRD["subject"],
+            templateData,
+            false
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.FORGOT_PASSOWRD["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+
+      this.asyncOperationsInterface.AddAction(action);
+
       return new DataResponseDto(
         HttpStatus.OK,
         "User found, forgot password request success"

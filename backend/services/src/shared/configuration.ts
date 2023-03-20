@@ -44,5 +44,6 @@ export default () => ({
     },
     openstreet: {
         retrieve: process.env.OPENSTREET_QUERY === 'true' || false
-    }
+    },
+    asyncQueueName: process.env.ASYNC_QUEUE_NAME || 'https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue.fifo',
 });

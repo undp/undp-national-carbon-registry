@@ -1,3 +1,3 @@
-export enum asyncActionType{
-    Email
+export enum asyncActionType {
+  Email,
 }

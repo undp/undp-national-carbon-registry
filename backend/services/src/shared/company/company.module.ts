@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from '../entities/company.entity';
 import { CaslModule } from '../casl/casl.module';
 import configuration from '../configuration';
-import { EmailModule } from '../email/email.module';
 import { TypeOrmConfigService } from '../typeorm.config.service';
 import { CompanyService } from './company.service';
 import { UtilModule } from '../util/util.module';
@@ -26,7 +25,6 @@ import { FileHandlerModule } from '../file-handler/filehandler.module';
     }),
     TypeOrmModule.forFeature([Company, ProgrammeTransfer]),
     CaslModule,
-    EmailModule,
     UtilModule,
     ProgrammeLedgerModule,
     FileHandlerModule,

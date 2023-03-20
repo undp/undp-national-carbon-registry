@@ -22,31 +22,28 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
     });
   }
 
-  async sendEmail(event): Promise<any> {
-    if (event.Records) {
-      let eventObj = event.Records[0];
-      const dataObj = JSON.parse(eventObj.body);
-      return new Promise((resolve, reject) => {
-        this.transporter.sendMail(
-          {
-            from: this.sourceEmail,
-            to: dataObj?.sender,
-            subject: dataObj?.subject,
-            text: dataObj?.emailBody,
-            html: dataObj?.emailBody,
-          },
-          function (error, info) {
-            if (error) {
-              console.log("error", error);
-              reject(error);
-            } else {
-              console.log("Email sent: " + info);
-              resolve(info);
-            }
+  async sendEmail(emailDataObj: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.transporter.sendMail(
+        {
+          from: this.sourceEmail,
+          to: emailDataObj?.sender,
+          subject: emailDataObj?.subject,
+          text: emailDataObj?.emailBody,
+          html: emailDataObj?.emailBody,
+        },
+        function (error, info) {
+          if (error) {
+            console.log("error", error);
+            reject(error);
+          } else {
+            console.log("Email sent: " + info);
+            resolve(info);
           }
-        );
-      });
-    }
+        }
+      );
+    });
+
     return;
   }
 }
