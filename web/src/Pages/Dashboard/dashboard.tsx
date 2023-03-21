@@ -1230,11 +1230,7 @@ const Dashboard = () => {
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
       pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
-      pieSeriesCreditsData.push(
-        addRoundNumber(
-          totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits
-        )
-      );
+      pieSeriesCreditsData.push(addRoundNumber(totalBalancecredit));
       pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
       pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
 

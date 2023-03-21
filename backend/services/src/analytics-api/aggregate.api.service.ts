@@ -139,11 +139,7 @@ export class AggregateAPIService {
           authorisedCreditsSum = authorisedCreditsSum + 0;
         }
         issuedCreditsSum =
-          issuedCreditsSum +
-          (parseFloat(timeGroupItem?.totalissuedcredit) -
-            parseFloat(timeGroupItem?.totaltxcredit) -
-            parseFloat(timeGroupItem?.totalretiredcredit) -
-            parseFloat(timeGroupItem?.totalfreezecredit));
+          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
         transferredCreditsSum =
           transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
@@ -287,7 +283,17 @@ export class AggregateAPIService {
     query.filterOr = filterOr;
     query.sort = sort;
 
-    const timeFields = [...timeCol, 'certifierId', "companyId", "revokedCertifierId", "toCompanyId", "fromCompanyId", "programmeCertifierId", "initiatorCompanyId", "isRetirement"]
+    const timeFields = [
+      ...timeCol,
+      "certifierId",
+      "companyId",
+      "revokedCertifierId",
+      "toCompanyId",
+      "fromCompanyId",
+      "programmeCertifierId",
+      "initiatorCompanyId",
+      "isRetirement",
+    ];
 
     const whereC = this.helperService.generateWhereSQL(
       query,
@@ -419,7 +425,6 @@ export class AggregateAPIService {
           max: maxTime,
           all: allTimes,
         };
-        
       }
     }
     for (const row of d) {
@@ -1006,7 +1011,11 @@ export class AggregateAPIService {
 
     if (!stat.statFilter || stat.statFilter.timeGroup != true) {
       return {
-        last: Math.max(allAuth.all["creditUpdateTime"], certified.last, revoked.last),
+        last: Math.max(
+          allAuth.all["creditUpdateTime"],
+          certified.last,
+          revoked.last
+        ),
         data: {
           certifiedSum: Number(
             certified && certified.data.length > 0 && certified?.data[0]
@@ -1134,7 +1143,11 @@ export class AggregateAPIService {
       }
 
       return {
-        last: Math.max(allAuth.all["creditUpdateTime"], certified.last, revoked.last),
+        last: Math.max(
+          allAuth.all["creditUpdateTime"],
+          certified.last,
+          revoked.last
+        ),
         data: chartData,
       };
     }
@@ -1369,8 +1382,16 @@ export class AggregateAPIService {
         }
 
         return {
-          last: Math.max(allAuth.all["creditUpdateTime"], certified.last, revoked.last),
-          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
+          last: Math.max(
+            allAuth.all["creditUpdateTime"],
+            certified.last,
+            revoked.last
+          ),
+          countLast: Math.max(
+            allAuth.all["statusUpdateTime"],
+            certified.last,
+            revoked.last
+          ),
           data: chartData,
         };
       }

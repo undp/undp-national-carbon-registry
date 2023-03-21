@@ -301,7 +301,7 @@ const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (props: ProgrammeRetir
                               parseFloat(getFieldValue(['companyCredit', index])) > pert.available
                             ) {
                               // eslint-disable-next-line prefer-promise-reject-errors
-                              return Promise.reject('Amount > Available');
+                              return Promise.reject('Retire Amount > Credit Balance');
                             }
                             return Promise.resolve();
                           },
