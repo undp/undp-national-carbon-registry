@@ -75,7 +75,7 @@ const AddUser = () => {
       console.log('Error in user creation', error);
       message.open({
         type: 'error',
-        content: `${t('addUserError')} ${error.message}`,
+        content: `${error.message}`,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });

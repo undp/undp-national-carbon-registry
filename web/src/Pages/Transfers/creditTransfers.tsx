@@ -299,7 +299,12 @@ const CreditTransfer = () => {
                   icon: <Icon.ClipboardCheck />,
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferApprove',
+                      `${t('creditTransfer:transferReqApproved')}`
+                    ),
                   type: 'primary',
                   remarkRequired: false,
                 });
@@ -348,7 +353,7 @@ const CreditTransfer = () => {
                       requestId,
                       comment,
                       'transferApprove',
-                      'Successfully recongnised'
+                      `${t('creditTransfer:internationalTransferReqRejected')}`
                     ),
                   type: 'primary',
                   remarkRequired: false,
@@ -369,7 +374,7 @@ const CreditTransfer = () => {
                       requestId,
                       comment,
                       'transferReject',
-                      'Successfully not recongnised'
+                      `${t('creditTransfer:internationalTranferReqAccepted')}`
                     ),
                   type: 'danger',
                   remarkRequired: true,
