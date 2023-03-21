@@ -92,8 +92,6 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   }, []);
 
   const onClickForgotPassword = () => {
-    const redirectLocation = state?.from?.pathname + state?.from?.search;
-    console.log({ redirectLocation });
     navigate('/forgotPassword', { replace: true });
   };
 

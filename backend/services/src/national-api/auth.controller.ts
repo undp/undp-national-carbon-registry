@@ -48,7 +48,6 @@ export class AuthController {
     @Request() req
   ) {
     const email = forgotPassword.email;
-    console.log("req ----------- ", req);
     if (email !== null) {
       return this.authService.forgotPassword(email);
     }
