@@ -85,7 +85,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
       </Row>
       <Row>
         <Col lg={{ span: 18, offset: 3 }} md={{ span: 18 }} flex="fill">
-          <div className="login-input-fields">
+          <div className="login-input-fields-container login-input-fields">
             <Form
               form={resetPasswordForm}
               layout="vertical"
@@ -154,12 +154,11 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
               <Form.Item>
                 <div className="login-submit-btn-container">
                   <Button
-                    disabled={disable}
                     type="primary"
                     size="large"
                     htmlType="submit"
                     block
-                    loading={loading}
+                    loading={loading || disable}
                   >
                     SUMBIT
                   </Button>
