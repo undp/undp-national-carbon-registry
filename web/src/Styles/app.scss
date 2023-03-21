@@ -704,3 +704,10 @@ body {
 .nextline-overflow {
   overflow-wrap: break-word;
 }
+
+.ant-message{
+  width: 50%;
+  right: 0px;
+  left: auto;
+  min-width: 400px;
+}
