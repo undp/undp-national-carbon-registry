@@ -1313,6 +1313,19 @@ export class ProgrammeService {
       certifierId = user.companyId;
     }
 
+    const userCompany = await this.companyRepo.findOne({
+      where: { companyId: user.companyId }
+    });
+    if(userCompany && userCompany.state === CompanyState.SUSPENDED){
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.organisationDeactivated",
+          []
+        ),
+        HttpStatus.FORBIDDEN
+      );
+    }
+
     const updated = await this.programmeLedger.updateCertifier(
       req.programmeId,
       certifierId,
