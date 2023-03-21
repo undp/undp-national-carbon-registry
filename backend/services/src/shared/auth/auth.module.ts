@@ -11,6 +11,7 @@ import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { UtilModule } from "../util/util.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 
 @Module({
   imports: [
@@ -31,7 +32,14 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
     CompanyModule,
     AsyncOperationsModule
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ApiKeyStrategy,
+    Logger,
+    PasswordReset,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

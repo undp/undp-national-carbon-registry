@@ -657,7 +657,7 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlFrozenDesc', [
-                  addCommSep(activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)),
+                  addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
                   getTxRefValues(activity.data.txRef, 1),
@@ -929,7 +929,10 @@ const ProgrammeView = () => {
       getProgrammeHistory(data.programmeId);
       drawMap();
       for (const company of data.company) {
-        if (parseInt(company.state) === CompanyState.ACTIVE.valueOf()) {
+        if (
+          parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
+          company.companyId !== userInfoState?.companyId
+        ) {
           setIsAllOwnersDeactivated(false);
           break;
         }

@@ -7,11 +7,13 @@ import { API_KEY_SEPARATOR } from "../constants";
 import { JWTPayload } from "../dto/jwt.payload";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
-import { EmailTemplates } from "../email-helper/email.template";
+import { EmailService } from "../email/email.service";
+import { EmailTemplates } from "../email/email.template";
 import { ConfigService } from "@nestjs/config";
-import { DataResponseDto } from "../dto/data.response.dto";
-import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { BasicResponseDto } from "../dto/basic.response.dto";
+import { Repository } from "typeorm";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
+import { PasswordResetService } from "../util/passwordReset.service";
 
 @Injectable()
 export class AuthService {
@@ -19,10 +21,11 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
+    private emailService: EmailService,
     private configService: ConfigService,
     private helperService: HelperService,
-    public caslAbilityFactory: CaslAbilityFactory,
-    private asyncOperationsInterface: AsyncOperationsInterface,
+    private passwordReset: PasswordResetService,
+    public caslAbilityFactory: CaslAbilityFactory
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -81,35 +84,24 @@ export class AuthService {
     const userDetails = await this.userService.findOne(email);
     if (userDetails) {
       console.table(userDetails);
-
-      const templateData = {
+      const requestId = this.helperService.generateRandomPassword();
+      const date = Date.now();
+      const expireDate = date + 3600 * 1000; // 1 hout expire time
+      const passwordResetD = {
+        email: email,
+        token: requestId,
+        expireTime: expireDate,
+      };
+      await this.passwordReset.deletePasswordResetD(email);
+      await this.passwordReset.insertPasswordResetD(passwordResetD);
+      await this.emailService.sendEmail(email, EmailTemplates.FORGOT_PASSOWRD, {
         name: userDetails.name,
+        requestId: requestId,
         countryName: this.configService.get("systemCountryName"),
-      };
-
-      const action: AsyncAction = {
-        actionType: asyncActionType.Email,
-        actionProps: {
-          emailType: EmailTemplates.FORGOT_PASSOWRD.id,
-          sender: email,
-          subject: this.helperService.getEmailTemplateMessage(
-            EmailTemplates.FORGOT_PASSOWRD["subject"],
-            templateData,
-            true
-          ),
-          emailBody: this.helperService.getEmailTemplateMessage(
-            EmailTemplates.FORGOT_PASSOWRD["html"],
-            templateData,
-            false
-          ),
-        },
-      };
-
-      this.asyncOperationsInterface.AddAction(action);
-
-      return new DataResponseDto(
+      });
+      return new BasicResponseDto(
         HttpStatus.OK,
-        "User found, forgot password request success"
+        this.helperService.formatReqMessagesString("user.resetEmailSent", [])
       );
     } else {
       throw new HttpException(

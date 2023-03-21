@@ -107,7 +107,11 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
         We received a request to reset your Carbon Registry password. <br><br>
         Use the link below to set a new password for your account. This password reset is only valid for the next 24 hours.
-        
+        <br><br>
+
+        <a href="http://www-test-carbon.s3-website-us-east-1.amazonaws.com/resetPassword/{{requestId}}">Click here to reset the password</a>
+        <br><br>
+
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
         <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions.
