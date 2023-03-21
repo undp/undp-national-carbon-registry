@@ -1,6 +1,6 @@
 {
     "transferReqSentSuccess": "The transfer request has been sent successfully",
-    "transferReqCancelledSuccess": "The transfer request has been cancelled successfully",
+    "transferReqCancelledSuccess": "The international transfer retire request has been cancelled successfully",
     "transferReqRejectSuccess": "The transfer request has been rejected successfully",
     "transferReqAcceptSuccess": "The transfer request has been accepted successfully",
     "rejectAlreadyRejectedTransferReq": "This transfer request has already been rejected",

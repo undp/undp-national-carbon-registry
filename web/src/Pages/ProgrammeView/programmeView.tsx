@@ -851,16 +851,16 @@ const ProgrammeView = () => {
             content:
               'Successfully ' +
               (action === 'Reject'
-                ? 'rejected'
+                ? t('view:successReject')
                 : action === 'Authorise'
-                ? 'authorised'
+                ? t('view:successAuth')
                 : action === 'Issue'
                 ? 'issued'
                 : action === 'Certify'
                 ? 'certified'
                 : action === 'Revoke'
-                ? 'revoked'
-                : 'retired'),
+                ? t('view:successRevoke')
+                : t('view:successRetire')),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
