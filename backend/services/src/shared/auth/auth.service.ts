@@ -92,7 +92,8 @@ export class AuthService {
         token: requestId,
         expireTime: expireDate,
       };
-      this.passwordReset.insertPasswordResetD(passwordResetD);
+      await this.passwordReset.deletePasswordResetD(email);
+      await this.passwordReset.insertPasswordResetD(passwordResetD);
       await this.emailService.sendEmail(email, EmailTemplates.FORGOT_PASSOWRD, {
         name: userDetails.name,
         requestId: requestId,
@@ -100,7 +101,7 @@ export class AuthService {
       });
       return new BasicResponseDto(
         HttpStatus.OK,
-        "User found, An email was sent"
+        this.helperService.formatReqMessagesString("user.resetEmailSent", [])
       );
     } else {
       throw new HttpException(

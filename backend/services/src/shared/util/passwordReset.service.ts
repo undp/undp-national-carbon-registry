@@ -29,6 +29,10 @@ export class PasswordResetService {
     await this.passwordResetRepo.save(passwordResetD);
   }
 
+  async deletePasswordResetD(email) {
+    await this.passwordResetRepo.delete({ email: email });
+  }
+
   async resetPassword(
     reqId: string,
     passwordResetDto: PasswordResetDto,

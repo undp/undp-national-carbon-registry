@@ -28,5 +28,6 @@
     "forgotPwdUserNotFound": "User not found",
     "resetPasswordReqNotFound": "Invalid request id",
     "resetPasswordReqExpired": "Your password resetting request has been expired",
-    "reqIdFound": "Reset request id found"
+    "reqIdFound": "Reset request id found",
+    "resetEmailSent": "User found, An email was sent"
 }
