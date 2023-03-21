@@ -169,10 +169,20 @@
     }
   }
 
-  .login-input-fields {
+  .forgot-submit-btn-container {
+    margin-top: 1rem;
+  }
+
+  .forgot-input-fields-container {
+    margin-top: 0.8vh;
+    height: 24vh;
+  }
+
+  .login-input-fields-container {
     margin-top: 3vh;
     height: 15vh;
-
+  }
+  .login-input-fields {
     @media (max-width: $lg-size) {
       margin: auto;
       padding: 30px;
@@ -323,7 +333,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    margin-top: 5.5rem;
+    margin-top: 2rem;
     font-size: 0.875rem;
     color: $note-light-text;
     text-align: justify;

@@ -44,7 +44,7 @@ const ForgotPassword = () => {
       </Row>
       <Row>
         <Col lg={{ span: 18, offset: 3 }} md={{ span: 18 }} flex="fill">
-          <div className="login-input-fields">
+          <div className="forgot-input-fields-container login-input-fields">
             <Form layout="vertical" onFinish={onSubmit} name="login-details" requiredMark={false}>
               <Form.Item
                 name="email"
@@ -77,7 +77,7 @@ const ForgotPassword = () => {
                 </div>
               </Form.Item>
               <Form.Item>
-                <div className="login-submit-btn-container">
+                <div className="forgot-submit-btn-container">
                   <Button type="primary" size="large" htmlType="submit" block loading={loading}>
                     SUBMIT
                   </Button>

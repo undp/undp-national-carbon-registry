@@ -156,7 +156,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
               </Row>
               <Row>
                 <Col lg={{ span: 18, offset: 3 }} md={{ span: 18 }} flex="fill">
-                  <div className="login-input-fields">
+                  <div className="login-input-fields-container login-input-fields">
                     <Form
                       layout="vertical"
                       onFinish={onSubmit}
