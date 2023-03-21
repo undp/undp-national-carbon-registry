@@ -606,6 +606,7 @@ export class ProgrammeLedgerService {
             if(freezeCredit === 0)
               continue;
             programme.creditFrozen[index] = freezeCredit;
+            programme.creditChange = freezeCredit;
           }else{
             if(programme.creditFrozen === undefined || programme.creditFrozen[index] === null)
               continue;
