@@ -515,7 +515,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      ["statusUpdateTime", "creditUpdateTime"],
+      ["statusUpdateTime", "authTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -1011,11 +1011,7 @@ export class AggregateAPIService {
 
     if (!stat.statFilter || stat.statFilter.timeGroup != true) {
       return {
-        last: Math.max(
-          allAuth.all["creditUpdateTime"],
-          certified.last,
-          revoked.last
-        ),
+        last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
         data: {
           certifiedSum: Number(
             certified && certified.data.length > 0 && certified?.data[0]
@@ -1143,11 +1139,7 @@ export class AggregateAPIService {
       }
 
       return {
-        last: Math.max(
-          allAuth.all["creditUpdateTime"],
-          certified.last,
-          revoked.last
-        ),
+        last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
         data: chartData,
       };
     }
@@ -1236,7 +1228,8 @@ export class AggregateAPIService {
       console.log("Credit minus revoked", revoked);
       if (!stat.statFilter || stat.statFilter.timeGroup != true) {
         return {
-          last: Math.max(revoked.last, certified.last, allAuth.last),
+          last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
+          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
           data: {
             certifiedCount: Number(
               certified && certified.data.length > 0
@@ -1382,22 +1375,14 @@ export class AggregateAPIService {
         }
 
         return {
-          last: Math.max(
-            allAuth.all["creditUpdateTime"],
-            certified.last,
-            revoked.last
-          ),
-          countLast: Math.max(
-            allAuth.all["statusUpdateTime"],
-            certified.last,
-            revoked.last
-          ),
+          last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
+          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
           data: chartData,
         };
       }
     } else {
       return {
-        last: Math.max(certified.last, allAuth.all["creditUpdateTime"]),
+        last: Math.max(certified.last, allAuth.all["authTime"]),
         countLast: Math.max(certified.last, allAuth.all["statusUpdateTime"]),
         data: {
           uncertifiedSum:
