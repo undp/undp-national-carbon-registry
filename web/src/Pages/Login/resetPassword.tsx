@@ -59,10 +59,10 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
     setDisable(true);
     try {
       const response: any = await put(`national/auth/checkResetRequestId?requestId=${requestid}`);
-      if (response.status !== 200 || response.status !== 201) {
-        navigate('/login');
-      } else if (response.status === 200 || response.status === 201) {
+      if (response.message === 'Reset request id found') {
         setDisable(false);
+      } else {
+        navigate('/login');
       }
     } catch (exception: any) {
       navigate('/login');
