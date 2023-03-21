@@ -67,6 +67,8 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="login" element={<Login />} />
+              <Route path="forgotPassword" element={<Login forgotPassword={true} />} />
+              <Route path="resetPassword/:requestid" element={<Login resetPassword={true} />} />
               <Route path="signUp" element={<SignUp />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
               <Route path="help" element={<CarbonHelp />} />

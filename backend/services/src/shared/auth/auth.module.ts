@@ -11,6 +11,7 @@ import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { UtilModule } from "../util/util.module";
 import { EmailModule } from "../email/email.module";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 
 @Module({
   imports: [
@@ -31,7 +32,14 @@ import { EmailModule } from "../email/email.module";
     CaslModule,
     CompanyModule,
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ApiKeyStrategy,
+    Logger,
+    PasswordReset,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

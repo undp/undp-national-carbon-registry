@@ -7,5 +7,7 @@
   "signUp": "Sign Up",
   "language": "Language",
   "company": "Organisations",
-  "edit": "EDIT"
+  "edit": "EDIT",
+  "isRequired": "is required!",
+  "isInvalid": "is invalid!"
 }
