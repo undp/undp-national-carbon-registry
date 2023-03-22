@@ -108,7 +108,7 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Delete, User))
   @Delete("delete")
-  deleteUser(@Query("email") email: string, @Request() req) {
-    return this.userService.delete(email, req.abilityCondition);
+  deleteUser(@Query("userId") userId: number, @Request() req) {
+    return this.userService.delete(userId, req.abilityCondition);
   }
 }
