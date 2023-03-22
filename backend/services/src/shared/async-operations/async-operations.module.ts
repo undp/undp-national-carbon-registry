@@ -3,12 +3,17 @@ import { AsyncOperationsInterface } from "./async-operations.interface";
 import { AsyncOperationsQueueService } from "./async-operations-queue.service";
 import configuration from "../configuration";
 import { ConfigModule } from "@nestjs/config";
+import { AsyncOperationType } from "../enum/async.operation.type.enum";
+import { AsyncOperationsDatabseService } from "./async-operations-database.service";
 
 @Module({
   providers: [
     {
       provide: AsyncOperationsInterface,
-      useClass: AsyncOperationsQueueService,
+      useClass:
+        process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue
+          ? AsyncOperationsQueueService
+          : AsyncOperationsDatabseService,
     },
     Logger,
   ],

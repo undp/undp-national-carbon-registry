@@ -1,3 +1,4 @@
 export enum AsyncOperationType {
-    Queue = "Queue"
+    Queue = "Queue",
+    Database = "Database"
 }
