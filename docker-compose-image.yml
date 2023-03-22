@@ -21,9 +21,10 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - data:/data/postgres
   national:
-    build:
-      context: .
-      dockerfile: ./backend/services/Dockerfile
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:latest
+    # build:
+      # context: .
+      # dockerfile: ./backend/services/Dockerfile
     ports:
       - "3000:3000"
     depends_on:
@@ -42,9 +43,10 @@ services:
     volumes:
       - filestore:/app/backend/services/public
   stats:
-    build:
-      context: .
-      dockerfile: ./backend/services/Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: ./backend/services/Dockerfile
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:latest
     ports:
       - "3100:3100"
     depends_on:
@@ -57,9 +59,10 @@ services:
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
   replicator:
-    build:
-      context: .
-      dockerfile: ./backend/services/Dockerfile
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:latest
+    # build:
+    #   context: .
+    #   dockerfile: ./backend/services/Dockerfile
     depends_on:
       - db
       - national
@@ -70,17 +73,17 @@ services:
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
   web:
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile
-      args:
-        PORT: 3030
-        REACT_APP_BACKEND: http://localhost:3000
-        REACT_APP_STAT_URL: http://localhost:3100
-        COUNTRY_NAME: "Antarctic Region"
-        COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
-        COUNTRY_CODE: "NG"
-        REACT_APP_MAPBOXGL_ACCESS_TOKEN: ""
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
+    # build:
+    #   context: .
+    #   dockerfile: ./web/Dockerfile
+    #   args:
+    #     PORT: 3030
+    #     REACT_APP_BACKEND: http://localhost:3000
+    #     REACT_APP_STAT_URL: http://localhost:3100
+    #     COUNTRY_NAME: "Antarctic Region"
+    #     COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+    #     COUNTRY_CODE: "NG"
     ports:
       - "3030:3030"
     depends_on:

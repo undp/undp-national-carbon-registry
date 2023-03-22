@@ -1,8 +1,21 @@
-(https://img.shields.io/github/last-commit/undp/carbon-registry)
-(https://img.shields.io/endpoint?url=https://github.com/undp/carbon-registry-status/blob/master/api/carbon-registry/uptime.json)
-(https://img.shields.io/github/actions/workflow/status/undp/carbon-registry/server-deployments.yml?branch=main&label=server%20build)
-(https://img.shields.io/github/actions/workflow/status/undp/carbon-registry/frontend-deployment.yml?branch=main&label=frontend%20build)
-[!](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement)
+![GitHub last commit](https://img.shields.io/github/last-commit/undp/carbon-registry)
+![Uptime](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/undp/carbon-registry-status/master/api/carbon-registry/uptime.json)
+[![](https://img.shields.io/badge/chat-SparkBlue-blue)](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement)
+[![](https://img.shields.io/badge/Digital%20Public%20Good-Certified-blueviolet)](https://app.digitalpublicgoods.net/a/10403)
+
+<a name="about"></a>
+
+# National Carbon Credit Registry
+The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
+
+As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
+
+The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more. 
+
+The system has 3 key features:
+* **Analytics Dashboard:** Enabling governments, companies, and certification bodies to operate transparently and function on an immutable blockchain.
+* **Carbon Credit Calculator:** Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. 
+* **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
 
 ## Index
 * [About](#about)
@@ -18,19 +31,6 @@
 * [API](#api)
 * [Status Page](#status)
 * [Governance & Support](#support)
-
-<a name="about"></a>
-# Carbon Registry
-The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
-
-As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
-
-The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more. 
-
-The system has 3 key features:
-* **Analytics Dashboard:** Enabling governments, companies, and certification bodies to operate transparently and function on an immutable blockchain.
-* **Carbon Credit Calculator:** Standardized system According to the UNFCCC - CDM (Clean Development Mechanism) methodologies, across defined sectors. 
-* **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
 
 <a name="standards"></a>
 ## Standards

@@ -17,27 +17,32 @@ The following work steps are suggested for the national implementation of the DP
 	- purchase domain, hosting, & security certificate
 	- register & connect supporting services (analytics, forms, etc.)
 	- adjust sectors to match the sectors specified in the nationally determined contribution 
+	- adjust maps to match local regions
+	- adjust to local regulatory & legal requirements
 	- integration with existing NDC management tools (if applicable) [API]
 	- adjustment of user types to national requirements
 	- creation of government accounts
 	- status page for monitoring uptime, utlizing https://github.com/undp/carbon-registry-status 
 	- *(Deliverable: Fully localized Carbon Registry running on staging (test) environment & productive (live) environment)*
  
-- Successful end-to-end test of the registry. This test needs to cover the full lifecycle of one dummy project including at least project creation, authorization, implementation, MRV, issuance and transfer. 
+- Build carbon credit calculators for locally-determined sectors & according to local regulations. Referencing https://github.com/undp/carbon-registry/tree/main/libs/carbon-credit-calculator . Push new calculators to main codebase.
+- [Optional] Creation of new features / modules. Reporting update on https://github.com/undp/carbon-registry/tree/main/modules.
+- - Successful end-to-end test of the registry. This test needs to cover the full lifecycle of one dummy project including at least project creation, authorization, implementation, MRV, issuance and transfer. 
 *(Deliverable: Test Report)*
 - Creation of a nationally appropriate signup proceedure for non-government accounts
 - Hand over to official government use
 *(Deliverable: Government Acceptance. Source code submission (ideally on `GitHub`) approved.)*
-- Testing: Security, Privacy, Accessability. *(Deliverable: 3rd party and/or automated tests.)*
+- Testing: Security, Privacy, Accessibility, Performance, Load. *(Deliverable: 3rd party and/or automated tests.)*
 - Ticketing system: For submitting, tracking, & responding to platform requests & bugs.
 - Warranty: Supporting long term web hosting and operation (DevOps) of the registry
-- Training: manual. video/screen recording walkthrough. guidebook. workshops. 
+- Training: interactive tutorial. manual. video/screen recording walkthrough. guidebook. workshops. help page. chatbot.
 - Awareness: advertising. community outreach.
 
 ## 2. Scope of Work
 -	Design
 	-	User Interface (UI) Design
 	-	Real-Time Reviewing & Commenting Mechanism
+	-	Carbon Policy Guide
 -	Quality Assurance (QA) & User Testing
 	-	Internal Test with SME for the MVP version
 -	Software Development
@@ -65,10 +70,14 @@ Planning| 	< 48 hours|	< 5 days|
 
 
 ## 3. Deliverables
-- Deliverable 1: 
-- Deliverable 2:
-- Deliverable 3:
-- Deliverable 4: Maintenance of the registry (This is optional, however highly recommended to ensure upgrade and security checks)
+- Deliverable 1: Governance [Workplan & Timeline, Policy & Compliance, Education & Guidance]
+- Deliverable 2: Design [User Interface, Graphics, Threat Assessment, Language Files, Security Requirements]
+- Deliverable 3: Implementation [Secure Build, Secure Deployment, Defect Management]
+- Deliverable 4: Verification [Architecture Assessment, Requirements-driven Testing, Security Testing]
+- Deliverable 5: Maintenance Operations [Incident Management, Environment Management, Operational Management]
+- Deliverable 6: Distribution [Analytics, Advertising, Training]
+
+(List developed with inspiration from [OWASP Software Assurance Maturity Model](https://owaspsamm.org/))
 
 ### Deliverable Requirements
 
@@ -88,6 +97,7 @@ Planning| 	< 48 hours|	< 5 days|
   - Domain & security certificate management
   - Containerized
 - Accessibility Compliance (W3C)
+- SEO Configuration: Schema.org standards
 - Audit: Internal
 - Multi-Language Support
 - Ticketing system
@@ -95,9 +105,13 @@ Planning| 	< 48 hours|	< 5 days|
 - Platform(s): Desktop Web
 - Integrations
   - UNDP ITMO Platform
-- Privacy & Security
+- Testing
   - Security audit: External
   - Privacy audit: Internal documentation of adherence to UNDP Data Principles
+  - Functional tests: Automated scripts
+  - Performance test: Internal
+  - Interface test: User-based. (Including browser compatibility testing on Firefox, Chrome, Edge, and Safari for desktop, mobile and tablet including Windows 10+, MacOS, Android 9+ and iOS alongside responsive web design/screen size checking for 480px, >768px, >992px and >1200px, which covers Phones, Tablets, Desktops and Wide Screens)
+- Code Package: Access rights to online git (Github, Gitlab, etc) code repository OR bundled in following file types: .git or .zip containing the full repository of files (such as .yml, .md, .sql, .json, .ts, .html, .svg, .js, etc. ). The latter can be shared via online file sharing services ([Send](https://send.vis.ee), Dropbox, Sharepoint, WeTransfer, etc) as the files will be too large to attach directly in email.
 
 Other items to consider:
 - Hosting / clound server:
@@ -127,3 +141,17 @@ Other items to consider:
  	- Direct experience related to mitigation outcome agreements at the national or international level is strongly desired
  	- Direct experience in developing or overseeing digital systems related to climate or carbon reporting, accounting, measurement, verification is strongly desired
  	- Experience in business development and entrepreneurship is an asset
+ 	
+	## Deliverables (Alternative):
+	- Deliverable: Fully localized Carbon Registry running on staging (test) environment & productive (live) environment
+	- Deliverable: End to End Test Report
+	- Deliverable: Government Acceptance. Source code submission (ideally on Git) approved.
+	- Deliverable: 3rd party and/or automated tests.
+	- Deliverable: Training: interactive tutorial. manual. video/screen recording walkthrough. guidebook. workshops. help page. chatbot.
+
+	## Long Term Maintenance Tasks
+	- Training of new Staff
+	- Ticketing system: For submitting, tracking, & responding to platform requests & bugs.
+	- Warranty: Supporting long term web hosting and operation (DevOps) of the registry
+	- Awareness: advertising. community outreach.
+
