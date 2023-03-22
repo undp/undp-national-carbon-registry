@@ -577,6 +577,7 @@ export class ProgrammeService {
             ? TransferStatus.RECOGNISED
             : TransferStatus.APPROVED,
           txTime: new Date().getTime(),
+          authTime: new Date().getTime(),
         }
       )
       .catch((err) => {

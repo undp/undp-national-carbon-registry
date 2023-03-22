@@ -957,7 +957,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          ["createdTime"]
+          ["authTime"]
         );
         break;
     }
@@ -1582,7 +1582,14 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      ["statusUpdateTime", "creditUpdateTime"],
+      [([
+        StatType.AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+        ? "statusUpdateTime"
+        : "createdTime"), "creditUpdateTime"],
       stat.statFilter?.timeGroup ? "createdAt" : undefined,
       stat.statFilter?.timeGroup ? "day" : undefined
     );
