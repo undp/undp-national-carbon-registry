@@ -532,16 +532,16 @@ export class UserService {
     );
   }
 
-  async delete(username: string, ability: string): Promise<BasicResponseDto> {
+  async delete(userId: number, ability: string): Promise<BasicResponseDto> {
     this.logger.verbose(
       this.helperService.formatReqMessagesString("user.noUserFound", []),
-      username
+      userId
     );
 
     const result = await this.userRepo
       .createQueryBuilder()
       .where(
-        `email = '${username}' ${
+        `id = '${userId}' ${
           ability
             ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})`
             : ""
@@ -578,7 +578,7 @@ export class UserService {
       }
     }
 
-    const result2 = await this.userRepo.delete({ email: username });
+    const result2 = await this.userRepo.delete({ id: userId });
     if (result2.affected > 0) {
       return new BasicResponseDto(
         HttpStatus.OK,
