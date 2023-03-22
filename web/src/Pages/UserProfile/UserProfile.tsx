@@ -66,11 +66,11 @@ const UserProfile = () => {
   const onDeleteProfileUserConfirmed = async () => {
     try {
       setIsLoading(true);
-      const response = await del(`national/user/delete?email=${userDetails.email}`);
+      const response = await del(`national/user/delete?userId=${userDetails.id}`);
       setOpenDeleteConfirmationModal(false);
       message.open({
         type: 'success',
-        content: t('userProfile:passwordResetSuccess'),
+        content: t('userProfile:userDeletionSuccess'),
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
