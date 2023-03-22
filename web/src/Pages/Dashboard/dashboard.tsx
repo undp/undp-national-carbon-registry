@@ -542,15 +542,15 @@ const Dashboard = () => {
         }
         programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
             ).fromNow()
           );
         }
@@ -596,15 +596,15 @@ const Dashboard = () => {
         }
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime) !== '0'
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
             ).fromNow()
           );
         }
@@ -653,15 +653,15 @@ const Dashboard = () => {
         }
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
             ).fromNow()
           );
         }
@@ -707,15 +707,15 @@ const Dashboard = () => {
         }
         programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
             ).fromNow()
           );
         }
