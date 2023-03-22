@@ -13,9 +13,9 @@ import { HelperService } from "./helpers.service";
 import { IsValidCountryConstraint } from "./validcountry.decorator";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "./passwordReset.service";
-import { EmailModule } from "../email/email.module";
 import { User } from "../entities/user.entity";
 import { UserModule } from "../user/user.module";
+import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 
 @Module({
   imports: [
@@ -39,8 +39,8 @@ import { UserModule } from "../user/user.module";
         AcceptLanguageResolver,
       ],
     }),
-    EmailModule,
     TypeOrmModule.forFeature([Counter, Country, PasswordReset, User]),
+    AsyncOperationsModule
   ],
   providers: [
     CounterService,

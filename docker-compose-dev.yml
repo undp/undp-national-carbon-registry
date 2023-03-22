@@ -69,6 +69,13 @@ services:
       DB_PASSWORD: "<ANY PASSWORD>"
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
+  async-operations:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    depends_on:
+      - db
+      - national
   web:
     build:
       context: .

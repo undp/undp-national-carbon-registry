@@ -99,9 +99,9 @@ functions:
       - ${param:depLayerArn1}
       - ${param:depLayerArn2}
 
-  async-operations:
+  -async-operations-handler:
     timeout: 60
-    handler: src/async-operations/handler.handler
+    handler: src/async-operations-handler/handler.handler
     events:
       - sqs:
           arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue.fifo

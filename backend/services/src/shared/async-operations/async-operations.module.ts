@@ -4,7 +4,9 @@ import { AsyncOperationsQueueService } from "./async-operations-queue.service";
 import configuration from "../configuration";
 import { ConfigModule } from "@nestjs/config";
 import { AsyncOperationType } from "../enum/async.operation.type.enum";
-import { AsyncOperationsDatabseService } from "./async-operations-database.service";
+import { AsyncOperationsDatabaseService } from "./async-operations-database.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AsyncActionEntity } from "../entities/async.action.entity";
 
 @Module({
   providers: [
@@ -13,7 +15,7 @@ import { AsyncOperationsDatabseService } from "./async-operations-database.servi
       useClass:
         process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue
           ? AsyncOperationsQueueService
-          : AsyncOperationsDatabseService,
+          : AsyncOperationsDatabaseService,
     },
     Logger,
   ],
@@ -24,6 +26,7 @@ import { AsyncOperationsDatabseService } from "./async-operations-database.servi
       load: [configuration],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
+    TypeOrmModule.forFeature([AsyncActionEntity])
   ],
 })
 export class AsyncOperationsModule {}

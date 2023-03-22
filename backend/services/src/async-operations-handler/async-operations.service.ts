@@ -1,10 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { AsyncOperationsInterface } from "./async-operations-interface.service";
 import nodemailer = require("nodemailer");
 
 @Injectable()
-export class AsyncOperationsQueueService implements AsyncOperationsInterface {
+export class AsyncOperationsService {
   private transporter;
   private CHAR_SET: "UTF-8";
   private sourceEmail: string;
