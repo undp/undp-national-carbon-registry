@@ -72,13 +72,6 @@ services:
       DB_PASSWORD: "<ANY PASSWORD>"
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
-  async-operations:
-    build:
-      context: .
-      dockerfile: ./backend/services/Dockerfile
-    depends_on:
-      - db
-      - national
   web:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
     # build:

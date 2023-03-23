@@ -69,6 +69,20 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
+  async-operations-handler:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    depends_on:
+      - db
+      - national
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: "admin"
+      RUN_MODULE: async-operations-handler
+      EMAIL_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SES_PASSWORD: BPaB9hRKUkUuZ8hbX1YMSOne6V7H9T7qD8A7Y6TLkrvW
   web:
     build:
       context: .

@@ -7,6 +7,7 @@ import { AsyncOperationType } from "../enum/async.operation.type.enum";
 import { AsyncOperationsDatabaseService } from "./async-operations-database.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AsyncActionEntity } from "../entities/async.action.entity";
+import { TypeOrmConfigService } from "../typeorm.config.service";
 
 @Module({
   providers: [
@@ -25,6 +26,9 @@ import { AsyncActionEntity } from "../entities/async.action.entity";
       isGlobal: true,
       load: [configuration],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([AsyncActionEntity])
   ],

@@ -38,11 +38,7 @@ export class AsyncOperationsDatabaseHandlerService
         .where("asyncAction.actionId > :lastExecuted", {
           lastExecuted: lastSeq,
         })
-        .select([
-          "asyncAction.actionId",
-          "asyncAction.actionType",
-          "asyncAction.actionProps",
-        ])
+        .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();
 
       notExecutedActions.forEach((action:any) => {
@@ -52,9 +48,12 @@ export class AsyncOperationsDatabaseHandlerService
             this.asyncOperationsService.sendEmail(emailBody)
           );
         }
+        lastSeq = action.actionId;
       })
 
+      await this.counterRepo.save({ id: CounterType.ASYNC_OPERATIONS, counter:  lastSeq})
+
       await Promise.all(asyncPromises);
-    }, 1000);
+    }, 5000);
   }
 }
