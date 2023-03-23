@@ -25,13 +25,11 @@ export class AsyncOperationsDatabaseService
       let asyncActionEntity: AsyncActionEntity = {} as AsyncActionEntity;
       asyncActionEntity.actionType = action.actionType;
       asyncActionEntity.actionProps = JSON.stringify(action.actionProps);
-    
-      await this.asyncActionRepo
-        .save(asyncActionEntity)
-        .catch((err: any) => {
-          console.log("error", err);
-          return false;
-        });
+
+      await this.asyncActionRepo.save(asyncActionEntity).catch((err: any) => {
+        console.log("error", err);
+        return false;
+      });
     }
     return true;
   }

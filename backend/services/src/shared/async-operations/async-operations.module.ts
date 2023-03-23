@@ -30,7 +30,7 @@ import { TypeOrmConfigService } from "../typeorm.config.service";
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    TypeOrmModule.forFeature([AsyncActionEntity])
+    TypeOrmModule.forFeature([AsyncActionEntity]),
   ],
 })
 export class AsyncOperationsModule {}

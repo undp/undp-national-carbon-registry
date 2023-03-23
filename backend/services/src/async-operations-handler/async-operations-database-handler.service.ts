@@ -41,17 +41,18 @@ export class AsyncOperationsDatabaseHandlerService
         .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();
 
-      notExecutedActions.forEach((action:any) => {
+      notExecutedActions.forEach((action: any) => {
         if (action.actionType === asyncActionType.Email.toString()) {
           const emailBody = JSON.parse(action.actionProps);
-          asyncPromises.push(
-            this.asyncOperationsService.sendEmail(emailBody)
-          );
+          asyncPromises.push(this.asyncOperationsService.sendEmail(emailBody));
         }
         lastSeq = action.actionId;
-      })
+      });
 
-      await this.counterRepo.save({ id: CounterType.ASYNC_OPERATIONS, counter:  lastSeq})
+      await this.counterRepo.save({
+        id: CounterType.ASYNC_OPERATIONS,
+        counter: lastSeq,
+      });
 
       await Promise.all(asyncPromises);
     }, 5000);

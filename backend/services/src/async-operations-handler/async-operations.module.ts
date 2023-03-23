@@ -32,7 +32,7 @@ import { AsyncOperationsService } from "./async-operations.service";
           : AsyncOperationsDatabaseHandlerService,
     },
     Logger,
-    AsyncOperationsService
+    AsyncOperationsService,
   ],
 })
 export class AsyncOperationsModule {}
