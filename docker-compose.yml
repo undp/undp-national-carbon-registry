@@ -82,7 +82,7 @@ services:
       DB_PASSWORD: "admin"
       RUN_MODULE: async-operations-handler
       EMAIL_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SES_PASSWORD: BPaB9hRKUkUuZ8hbX1YMSOne6V7H9T7qD8A7Y6TLkrvW
+      SES_PASSWORD: <ANY PASSOWORD>
   web:
     build:
       context: .
