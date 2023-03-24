@@ -178,7 +178,7 @@ const Dashboard = () => {
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
-  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
+  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
