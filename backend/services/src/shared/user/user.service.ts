@@ -44,7 +44,7 @@ import {
   AsyncAction,
   AsyncOperationsInterface,
 } from "../async-operations/async-operations.interface";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class UserService {
@@ -212,7 +212,7 @@ export class UserService {
         countryName: this.configService.get("systemCountryName"),
       };
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: EmailTemplates.CHANGE_PASSOWRD.id,
           sender: user.email,
@@ -228,7 +228,7 @@ export class UserService {
           ),
         },
       };
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString("user.resetSuccess", [])
@@ -284,7 +284,7 @@ export class UserService {
       };
 
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: EmailTemplates.API_KEY_EMAIL.id,
           sender: user.email,
@@ -300,7 +300,7 @@ export class UserService {
           ),
         },
       };
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
 
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -466,7 +466,7 @@ export class UserService {
         };
 
         const action: AsyncAction = {
-          actionType: asyncActionType.Email,
+          actionType: AsyncActionType.Email,
           actionProps: {
             emailType: EmailTemplates.ORGANISATION_CREATE.id,
             sender: company.email,
@@ -482,7 +482,7 @@ export class UserService {
             ),
           },
         };
-        this.asyncOperationsInterface.AddAction(action);
+        await this.asyncOperationsInterface.AddAction(action);
       }
     }
 
@@ -497,7 +497,7 @@ export class UserService {
     };
 
     const action: AsyncAction = {
-      actionType: asyncActionType.Email,
+      actionType: AsyncActionType.Email,
       actionProps: {
         emailType: EmailTemplates.USER_CREATE.id,
         sender: u.email,
@@ -513,7 +513,7 @@ export class UserService {
         ),
       },
     };
-    this.asyncOperationsInterface.AddAction(action);
+    await this.asyncOperationsInterface.AddAction(action);
 
     u.createdTime = new Date().getTime();
 

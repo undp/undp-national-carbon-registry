@@ -1,4 +1,4 @@
-import { Logger, Module } from "@nestjs/common";
+import { forwardRef, Logger, Module } from "@nestjs/common";
 import { AsyncOperationsInterface } from "./async-operations.interface";
 import { AsyncOperationsQueueService } from "./async-operations-queue.service";
 import configuration from "../configuration";
@@ -8,18 +8,9 @@ import { AsyncOperationsDatabaseService } from "./async-operations-database.serv
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AsyncActionEntity } from "../entities/async.action.entity";
 import { TypeOrmConfigService } from "../typeorm.config.service";
+import { UtilModule } from "../util/util.module";
 
 @Module({
-  providers: [
-    {
-      provide: AsyncOperationsInterface,
-      useClass:
-        process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue
-          ? AsyncOperationsQueueService
-          : AsyncOperationsDatabaseService,
-    },
-    Logger,
-  ],
   exports: [AsyncOperationsInterface],
   imports: [
     ConfigModule.forRoot({
@@ -31,6 +22,17 @@ import { TypeOrmConfigService } from "../typeorm.config.service";
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([AsyncActionEntity]),
+    forwardRef(() => UtilModule)
   ],
+  providers: [
+    Logger,
+    {
+      provide: AsyncOperationsInterface,
+      useClass:
+        process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue
+          ? AsyncOperationsQueueService
+          : AsyncOperationsDatabaseService,
+    }
+  ]
 })
 export class AsyncOperationsModule {}

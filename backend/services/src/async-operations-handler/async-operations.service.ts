@@ -5,7 +5,6 @@ import nodemailer = require("nodemailer");
 @Injectable()
 export class AsyncOperationsService {
   private transporter;
-  private CHAR_SET: "UTF-8";
   private sourceEmail: string;
 
   constructor(private logger: Logger, private configService: ConfigService) {
@@ -34,10 +33,10 @@ export class AsyncOperationsService {
           },
           function (error, info) {
             if (error) {
-              console.log("error", error);
+              this.logger.error("Error", error)
               reject(error);
             } else {
-              console.log("Email sent: " + info);
+              this.logger.log("Email sent:", info)
               resolve(info);
             }
           }

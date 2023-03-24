@@ -11,7 +11,7 @@ import { User } from "../entities/user.entity";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { ConfigService } from "@nestjs/config";
 import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 import { EmailTemplates } from "../email-helper/email.template";
 
 @Injectable()
@@ -96,7 +96,7 @@ export class PasswordResetService {
       }
 
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: EmailTemplates.CHANGE_PASSOWRD.id,
           sender: email,
@@ -112,7 +112,7 @@ export class PasswordResetService {
           ),
         },
       };
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
 
       this.passwordResetRepo.delete({ email: email });
       return new BasicResponseDto(

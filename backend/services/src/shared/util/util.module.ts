@@ -1,4 +1,4 @@
-import { Logger, Module } from "@nestjs/common";
+import { forwardRef, Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import * as path from "path";
@@ -40,7 +40,7 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
       ],
     }),
     TypeOrmModule.forFeature([Counter, Country, PasswordReset, User]),
-    AsyncOperationsModule
+    forwardRef(() => AsyncOperationsModule)
   ],
   providers: [
     CounterService,

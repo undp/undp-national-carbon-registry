@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { asyncActionType } from "../enum/async.action.type.enum";
-import { EntitySubject } from "./entity.subject";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Entity()
 export class AsyncActionEntity {
@@ -9,10 +8,10 @@ export class AsyncActionEntity {
 
     @Column({
         type: "enum",
-        enum: asyncActionType,
+        enum: AsyncActionType,
         array: false
     })
-    actionType: asyncActionType;
+    actionType: AsyncActionType;
 
     @Column()
     actionProps: string;

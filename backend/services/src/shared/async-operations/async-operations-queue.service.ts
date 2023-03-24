@@ -1,6 +1,7 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { AsyncActionType } from "../enum/async.action.type.enum";
+import { HelperService } from "../util/helpers.service";
 import {
   AsyncAction,
   AsyncOperationsInterface,
@@ -11,12 +12,16 @@ var sqs = new AWS.SQS();
 
 @Injectable()
 export class AsyncOperationsQueueService implements AsyncOperationsInterface {
-  constructor(private configService: ConfigService, private logger: Logger) {}
+  constructor(
+    private configService: ConfigService,
+    private logger: Logger,
+    private helperService: HelperService
+  ) {}
 
   public async AddAction(action: AsyncAction): Promise<boolean> {
     var params = {};
 
-    if (action.actionType === asyncActionType.Email) {
+    if (action.actionType === AsyncActionType.Email) {
       params = {
         MessageAttributes: {
           actionType: {
@@ -30,13 +35,20 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
       };
     }
 
-    sqs.sendMessage(params, function (err, data) {
-      if (err) {
-        console.log("Error", err);
-      } else {
-        console.log("Succefully added to the async queue", action);
-      }
-    });
+    try {
+      await sqs.sendMessage(params).promise();
+      this.logger.log("Succefully added to the queue", action);
+    } catch (error) {
+      this.logger.error("Failed when adding to queue");
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "common.addAsyncActionQueueFailed",
+          ["Email"]
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+
     return true;
   }
 }

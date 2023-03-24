@@ -14,7 +14,7 @@ import { Repository } from "typeorm";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "../util/passwordReset.service";
 import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class AuthService {
@@ -103,7 +103,7 @@ export class AuthService {
       };
 
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: EmailTemplates.FORGOT_PASSOWRD.id,
           sender: email,
@@ -120,7 +120,7 @@ export class AuthService {
         },
       };
 
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
 
       return new BasicResponseDto(
         HttpStatus.OK,

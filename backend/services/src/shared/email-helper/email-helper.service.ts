@@ -7,7 +7,7 @@ import {
 import { CompanyService } from "../company/company.service";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
-import { asyncActionType } from "../enum/async.action.type.enum";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
@@ -243,7 +243,7 @@ export class EmailHelperService {
         countryName: systemCountryName,
       };
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: template.id,
           sender: user.user_email,
@@ -259,7 +259,7 @@ export class EmailHelperService {
           ),
         },
       };
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -322,7 +322,7 @@ export class EmailHelperService {
         countryName: systemCountryName,
       };
       const action: AsyncAction = {
-        actionType: asyncActionType.Email,
+        actionType: AsyncActionType.Email,
         actionProps: {
           emailType: template.id,
           sender: user.user_email,
@@ -338,7 +338,7 @@ export class EmailHelperService {
           ),
         },
       };
-      this.asyncOperationsInterface.AddAction(action);
+      await this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -357,7 +357,7 @@ export class EmailHelperService {
       government: companyDetails.name,
     };
     const action: AsyncAction = {
-      actionType: asyncActionType.Email,
+      actionType: AsyncActionType.Email,
       actionProps: {
         emailType: template.id,
         sender: sender,
@@ -373,6 +373,6 @@ export class EmailHelperService {
         ),
       },
     };
-    this.asyncOperationsInterface.AddAction(action);
+    await this.asyncOperationsInterface.AddAction(action);
   }
 }
