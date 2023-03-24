@@ -22,7 +22,7 @@ import { OrganisationSuspendDto } from "../shared/dto/organisation.suspend.dto";
 import { FindOrganisationQueryDto } from "../shared/dto/find.organisation.dto";
 import { OrganisationUpdateDto } from "../shared/dto/organisation.update.dto";
 import { CountryService } from "../shared/util/country.service";
-import { HelperService } from "src/shared/util/helpers.service";
+import { HelperService } from "../shared/util/helpers.service";
 
 @ApiTags("Organisation")
 @ApiBearerAuth()

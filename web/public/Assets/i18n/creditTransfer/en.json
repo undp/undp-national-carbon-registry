@@ -25,5 +25,8 @@
   "recogniseTitle": "Retire Credits",
   "notRecogniseTitle": "Are you sure you do not want to recognise this international transfer retire request?",
   "laccount": "Government Local Account",
-  "iaccount": "Government International Account"
+  "iaccount": "Government International Account",
+  "transferReqApproved": "The transfer request has been accepted successfully",
+  "internationalTranferReqAccepted": "The international transfer retire request has been accepted successfully",
+  "internationalTransferReqRejected": "The international transfer retire request has been rejected successfully"
 }

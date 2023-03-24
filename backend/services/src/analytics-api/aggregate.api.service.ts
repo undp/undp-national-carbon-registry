@@ -139,11 +139,7 @@ export class AggregateAPIService {
           authorisedCreditsSum = authorisedCreditsSum + 0;
         }
         issuedCreditsSum =
-          issuedCreditsSum +
-          (parseFloat(timeGroupItem?.totalissuedcredit) -
-            parseFloat(timeGroupItem?.totaltxcredit) -
-            parseFloat(timeGroupItem?.totalretiredcredit) -
-            parseFloat(timeGroupItem?.totalfreezecredit));
+          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
         transferredCreditsSum =
           transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
@@ -287,6 +283,18 @@ export class AggregateAPIService {
     query.filterOr = filterOr;
     query.sort = sort;
 
+    const timeFields = [
+      ...timeCol,
+      "certifierId",
+      "companyId",
+      "revokedCertifierId",
+      "toCompanyId",
+      "fromCompanyId",
+      "programmeCertifierId",
+      "initiatorCompanyId",
+      "isRetirement",
+    ];
+
     const whereC = this.helperService.generateWhereSQL(
       query,
       this.helperService.parseMongoQueryToSQLWithTable(
@@ -294,6 +302,17 @@ export class AggregateAPIService {
         abilityCondition
       )
     );
+
+    const timeWhere = this.helperService.generateWhereSQL(
+      query,
+      this.helperService.parseMongoQueryToSQLWithTable(
+        tableName,
+        abilityCondition
+      ),
+      undefined,
+      timeFields
+    );
+
     let queryBuild = repo.createQueryBuilder(tableName).where(whereC);
 
     if (aggregates) {
@@ -385,25 +404,27 @@ export class AggregateAPIService {
 
     let lastTime: any;
     if (timeCol) {
-      const cacheKey = whereC + " from " + tableName;
-      if (lastTimeForWhere[cacheKey]) {
-        console.log("Last time hit from the cache");
-        lastTime = lastTimeForWhere[cacheKey];
-      } else {
-        const allTimes = {};
-        let maxTime = 0;
-        for (const tc of timeCol) {
-          const colTime = await this.getLastTime(repo, tableName, whereC, tc);
-          allTimes[tc] = colTime;
-          if (colTime > maxTime) {
-            maxTime = colTime;
-          }
+      const allTimes = {};
+      let maxTime = 0;
+      let colTime;
+      for (const tc of timeCol) {
+        const cacheKey = timeWhere + " " + tc + " from " + tableName;
+        console.log("Cache key", cacheKey);
+        if (lastTimeForWhere[cacheKey]) {
+          console.log("Last time hit from the cache");
+          colTime = lastTimeForWhere[cacheKey];
+        } else {
+          colTime = await this.getLastTime(repo, tableName, timeWhere, tc);
+          lastTimeForWhere[cacheKey] = colTime;
+        }
+        allTimes[tc] = colTime;
+        if (colTime > maxTime) {
+          maxTime = colTime;
         }
         lastTime = {
           max: maxTime,
           all: allTimes,
         };
-        lastTimeForWhere[cacheKey] = lastTime;
       }
     }
     for (const row of d) {
@@ -494,7 +515,7 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      ["statusUpdateTime"],
+      ["statusUpdateTime", "authTime"],
       timeGroup ? "createdAt" : undefined,
       timeGroup ? "day" : undefined
     );
@@ -936,7 +957,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          ["createdTime"]
+          ["authTime"]
         );
         break;
     }
@@ -990,7 +1011,7 @@ export class AggregateAPIService {
 
     if (!stat.statFilter || stat.statFilter.timeGroup != true) {
       return {
-        last: Math.max(allAuth.last, certified.last, revoked.last),
+        last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
         data: {
           certifiedSum: Number(
             certified && certified.data.length > 0 && certified?.data[0]
@@ -1118,7 +1139,7 @@ export class AggregateAPIService {
       }
 
       return {
-        last: Math.max(allAuth.last, certified.last, revoked.last),
+        last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
         data: chartData,
       };
     }
@@ -1207,7 +1228,8 @@ export class AggregateAPIService {
       console.log("Credit minus revoked", revoked);
       if (!stat.statFilter || stat.statFilter.timeGroup != true) {
         return {
-          last: Math.max(revoked.last, certified.last, allAuth.last),
+          last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
+          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
           data: {
             certifiedCount: Number(
               certified && certified.data.length > 0
@@ -1353,13 +1375,15 @@ export class AggregateAPIService {
         }
 
         return {
-          last: Math.max(allAuth.last, certified.last, revoked.last),
+          last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
+          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
           data: chartData,
         };
       }
     } else {
       return {
-        last: Math.max(certified.last, allAuth.last),
+        last: Math.max(certified.last, allAuth.all["authTime"]),
+        countLast: Math.max(certified.last, allAuth.all["statusUpdateTime"]),
         data: {
           uncertifiedSum:
             Number(
@@ -1558,7 +1582,14 @@ export class AggregateAPIService {
       abilityCondition,
       lastTimeForWhere,
       statCache,
-      ["statusUpdateTime", "creditUpdateTime"],
+      [([
+        StatType.AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
+        ? "statusUpdateTime"
+        : "createdTime"), "creditUpdateTime"],
       stat.statFilter?.timeGroup ? "createdAt" : undefined,
       stat.statFilter?.timeGroup ? "day" : undefined
     );

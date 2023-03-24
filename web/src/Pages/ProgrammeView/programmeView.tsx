@@ -110,7 +110,7 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
-  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
+  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
 
   const showModal = () => {
@@ -657,7 +657,7 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlFrozenDesc', [
-                  addCommSep(activity.data.creditFrozen.reduce((a: any, b: any) => a + b, 0)),
+                  addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
                   getTxRefValues(activity.data.txRef, 1),
@@ -851,16 +851,16 @@ const ProgrammeView = () => {
             content:
               'Successfully ' +
               (action === 'Reject'
-                ? 'rejected'
+                ? t('view:successReject')
                 : action === 'Authorise'
-                ? 'authorised'
+                ? t('view:successAuth')
                 : action === 'Issue'
                 ? 'issued'
                 : action === 'Certify'
                 ? 'certified'
                 : action === 'Revoke'
-                ? 'revoked'
-                : 'retired'),
+                ? t('view:successRevoke')
+                : t('view:successRetire')),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
@@ -929,7 +929,10 @@ const ProgrammeView = () => {
       getProgrammeHistory(data.programmeId);
       drawMap();
       for (const company of data.company) {
-        if (parseInt(company.state) === CompanyState.ACTIVE.valueOf()) {
+        if (
+          parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
+          company.companyId !== userInfoState?.companyId
+        ) {
           setIsAllOwnersDeactivated(false);
           break;
         }

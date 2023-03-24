@@ -1,28 +1,28 @@
-import { forwardRef, Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Company } from '../entities/company.entity';
-import { CaslModule } from '../casl/casl.module';
-import configuration from '../configuration';
-import { EmailModule } from '../email/email.module';
-import { TypeOrmConfigService } from '../typeorm.config.service';
-import { CompanyService } from './company.service';
-import { UtilModule } from '../util/util.module';
-import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
-import { ProgrammeTransfer } from '../entities/programme.transfer';
-import { EmailHelperModule } from '../email-helper/email-helper.module';
-import { FileHandlerModule } from '../file-handler/filehandler.module';
+import { forwardRef, Logger, Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Company } from "../entities/company.entity";
+import { CaslModule } from "../casl/casl.module";
+import configuration from "../configuration";
+import { EmailModule } from "../email/email.module";
+import { TypeOrmConfigService } from "../typeorm.config.service";
+import { CompanyService } from "./company.service";
+import { UtilModule } from "../util/util.module";
+import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
+import { EmailHelperModule } from "../email-helper/email-helper.module";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
+      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
-      imports: undefined
+      imports: undefined,
     }),
     TypeOrmModule.forFeature([Company, ProgrammeTransfer]),
     CaslModule,
@@ -30,9 +30,9 @@ import { FileHandlerModule } from '../file-handler/filehandler.module';
     UtilModule,
     ProgrammeLedgerModule,
     FileHandlerModule,
-    forwardRef(() => EmailHelperModule)  
+    forwardRef(() => EmailHelperModule),
   ],
   providers: [CompanyService, Logger],
-  exports: [CompanyService]
+  exports: [CompanyService],
 })
 export class CompanyModule {}

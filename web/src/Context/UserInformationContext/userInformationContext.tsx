@@ -1,19 +1,23 @@
-import React, { useContext, useState, createContext, useCallback } from 'react';
+import React, { useContext, useState, createContext, useCallback, useEffect } from 'react';
 import {
   UserContextProps,
   UserProps,
 } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
 import jwt_decode from 'jwt-decode';
+import { message } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
   removeUserInfo: () => {},
-  IsAuthenticated: () => false,
+  IsAuthenticated: (tkn?: any) => false,
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
   const { token } = useConnection();
+  const { i18n, t } = useTranslation(['common']);
+  const [isTokenExpired, setIsTokenExpired] = useState<boolean>(false);
   const initialUserProps: UserProps = {
     id: localStorage.getItem('userId') ? (localStorage.getItem('userId') as string) : '',
     userRole: localStorage.getItem('userRole') ? (localStorage.getItem('userRole') as string) : '',
@@ -82,23 +86,45 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.setItem('companyState', companyState + '');
   };
 
-  const IsAuthenticated = useCallback((): boolean => {
-    let tokenVal: string | null;
-    if (token) {
-      tokenVal = token;
-    } else {
-      tokenVal = localStorage.getItem('token');
+  useEffect(() => {
+    if (isTokenExpired) {
+      message.open({
+        type: 'error',
+        content: t('common:sessionExpiredErrorMsg'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
     }
-    try {
-      if (tokenVal) {
-        const { exp } = jwt_decode(tokenVal) as any;
-        return Date.now() < exp * 1000;
+  }, [isTokenExpired]);
+
+  const IsAuthenticated = useCallback(
+    (tokenNew?: any): boolean => {
+      let tokenVal: string | null;
+      if (tokenNew) {
+        console.log('token from response -- 89 ---- ', tokenNew);
+        tokenVal = tokenNew;
+      } else if (token) {
+        tokenVal = token;
+        console.log('token from userContext ---- ', token);
+      } else {
+        tokenVal = localStorage.getItem('token');
+        if (!tokenVal) {
+          setIsTokenExpired(true);
+        }
+        console.log('token from userContext local storage ---- ', tokenVal);
       }
-      return false;
-    } catch (err) {
-      return false;
-    }
-  }, [token]);
+      try {
+        if (tokenVal) {
+          const { exp } = jwt_decode(tokenVal) as any;
+          return Date.now() < exp * 1000;
+        }
+        return false;
+      } catch (err) {
+        return false;
+      }
+    },
+    [token]
+  );
 
   const removeUserInfo = () => {
     localStorage.removeItem('userId');

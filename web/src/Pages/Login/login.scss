@@ -157,8 +157,8 @@
     }
 
     .login-text-signin {
-      font-size: 2.4rem;
-      line-height: 2rem;
+      font-size: 2.2rem;
+      line-height: 2.5rem;
       color: $title-text-color;
       font-weight: 600;
 
@@ -169,10 +169,27 @@
     }
   }
 
-  .login-input-fields {
+  .forgot-submit-btn-container {
+    margin-top: 1rem;
+  }
+
+  .forgot-input-fields-container {
+    margin-top: 5vh;
+    height: 24vh;
+  }
+
+  .login-input-fields-container {
     margin-top: 3vh;
     height: 15vh;
+  }
 
+  .email-success-msg {
+    font-size: 14px;
+    margin-top: 0.5rem;
+    color: $primary-color;
+  }
+
+  .login-input-fields {
     @media (max-width: $lg-size) {
       margin: auto;
       padding: 30px;
@@ -314,5 +331,22 @@
   .ant-select-selector {
     border: none;
     color: $background-color;
+  }
+}
+
+.forgot-password-container {
+  .note-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: $note-light-text;
+    text-align: justify;
+
+    .label {
+      margin-right: 0.5rem;
+    }
   }
 }

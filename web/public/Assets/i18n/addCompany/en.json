@@ -28,8 +28,8 @@
     "companyDetailsTitle": "Organisation Details",
     "companyAdminDetailsTitle": "Organisation Admin Details",
     "cancel": "CANCEL",
-    "companyAddedSuccess": "Organisation added Successfully!",
-    "companyUpdatedSuccess": "Organisation updated Successfully!",
+    "companyAddedSuccess": "The organisation has been created successfully",
+    "companyUpdatedSuccess": "The organisation has been updated successfully ",
     "errorInAddUser": "Error in adding user!",
     "errorInUpdatingCompany": "Error in updating company!"
 }
