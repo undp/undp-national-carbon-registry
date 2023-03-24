@@ -53,14 +53,12 @@ export class AuthController {
     }
   }
 
-  // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
   @Put("resetPassword")
   async resetPassword(
     @Query("requestId") reqId: string,
     @Body() reset: PasswordResetDto,
     @Request() req
   ) {
-    console.log("req ---- > ", reqId);
     return this.passwordResetService.resetPassword(
       reqId,
       reset,
