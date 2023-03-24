@@ -26,5 +26,6 @@
     "programmeCount": "Number of Programmes",
     "logOut": "LOG OUT",
     "changePassword": "CHANGE PASSWORD",
-    "passwordResetSuccess": "The password has been reset successfully"
+    "passwordResetSuccess": "The password has been reset successfully",
+    "userDeletionSuccess": "The user has been deleted successfully"
 }

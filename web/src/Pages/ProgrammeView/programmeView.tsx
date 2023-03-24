@@ -110,7 +110,7 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
-  const mapType: MapTypes = MapTypes.Mapbox as MapTypes;
+  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
 
   const showModal = () => {
