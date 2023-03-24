@@ -166,13 +166,13 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
 <a name="container"></a>
 ## Run Services As Containers
 - Update [docker compose file](./docker-compose.yml) env variables as required.
-    - Currently all the emails are disabled using wnv variable `IS_EMAIL_DISABLED`. When the emails are disabled email payload will be printed on the console. User account passwords needs to extract from this console log (Including root user account, search for a log line starting with ```Password (temporary)``` on national container [`docker logs -f undp-carbon-registry-national-1`]). 
-    - Add/update following environment variables to enable email functionality.
-        - IS_EMAIL_DISABLED=false
-        - SOURCE_EMAIL (Sender email address)
-        - SMTP_ENDPOINT
-        - SMTP_USERNAME
-        - SMTP_PASSWORD
+    - Currently all the emails are disabled using env variable `IS_EMAIL_DISABLED`. When the emails are disabled email payload will be printed on the console. User account passwords needs to extract from this console log. Including root user account, search for a log line starting with ```Password (temporary)``` on national container (`docker logs -f undp-carbon-registry-national-1`). 
+    - Add / update following environment variables to enable email functionality.
+        - `IS_EMAIL_DISABLED`=false
+        - `SOURCE_EMAIL` (Sender email address)
+        - `SMTP_ENDPOINT`
+        - `SMTP_USERNAME`
+        - `SMTP_PASSWORD`
     - Use `DB_PASSWORD` env variable to change PostgresSQL database password
     - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
 - Run `docker-compose up -d`. This will build and start containers for following services,
