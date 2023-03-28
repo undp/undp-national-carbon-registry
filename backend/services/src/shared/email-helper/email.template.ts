@@ -106,7 +106,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
         We received a request to reset your Carbon Registry password. <br><br>
-        Use the link below to set a new password for your account. This password reset is only valid for the next 24 hours.
+        Use the link below to set a new password for your account. This password reset is only valid for the next hour.
         <br><br>
 
         <a href="http://www-test-carbon.s3-website-us-east-1.amazonaws.com/resetPassword/{{requestId}}">Click here to reset the password</a>

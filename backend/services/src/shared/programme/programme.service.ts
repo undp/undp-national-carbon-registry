@@ -143,7 +143,7 @@ export class ProgrammeService {
     if (pTransfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -390,7 +390,7 @@ export class ProgrammeService {
     if (transfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -1273,10 +1273,7 @@ export class ProgrammeService {
 
     if (add && user.companyRole != CompanyRole.CERTIFIER) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programme.certifierCanOnlyCertifiy",
-          []
-        ),
+        this.helperService.formatReqMessagesString("programme.unAuth", []),
         HttpStatus.FORBIDDEN
       );
     }
@@ -1313,9 +1310,9 @@ export class ProgrammeService {
     }
 
     const userCompany = await this.companyRepo.findOne({
-      where: { companyId: user.companyId }
+      where: { companyId: user.companyId },
     });
-    if(userCompany && userCompany.state === CompanyState.SUSPENDED){
+    if (userCompany && userCompany.state === CompanyState.SUSPENDED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programme.organisationDeactivated",

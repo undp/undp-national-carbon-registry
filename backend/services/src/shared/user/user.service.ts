@@ -40,6 +40,7 @@ import { HelperService } from "../util/helpers.service";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { CountryService } from "../util/country.service";
 import {
   AsyncAction,
   AsyncOperationsInterface,
@@ -57,8 +58,9 @@ export class UserService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private counterService: CounterService,
+    private countryService: CountryService,
     private fileHandler: FileHandlerInterface,
-    private asyncOperationsInterface: AsyncOperationsInterface,
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {}
 
   private async generateApiKey(email) {
@@ -160,7 +162,7 @@ export class UserService {
       return new DataResponseDto(HttpStatus.OK, await this.findById(id));
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString("user.noUserFound", []),
+      this.helperService.formatReqMessagesString("user.userUnAUth", []),
       HttpStatus.NOT_FOUND
     );
   }
@@ -207,7 +209,7 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
-      const templateData={
+      const templateData = {
         name: user.name,
         countryName: this.configService.get("systemCountryName"),
       };
@@ -397,6 +399,16 @@ export class UserService {
         this.helperService.formatReqMessagesString("user.userUnAUth", []),
         HttpStatus.FORBIDDEN
       );
+    }
+
+    if (company.country) {
+      const isValid = await this.countryService.isValidCountry(company.country);
+      if (!isValid) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.invalidCountry", []),
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
 
     const u: User = plainToClass(User, userFields);
@@ -617,7 +629,7 @@ export class UserService {
       .getMany();
     if (result.length <= 0) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
         HttpStatus.NOT_FOUND
       );
     }

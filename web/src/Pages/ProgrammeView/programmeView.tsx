@@ -849,18 +849,17 @@ const ProgrammeView = () => {
           message.open({
             type: 'success',
             content:
-              'Successfully ' +
-              (action === 'Reject'
+              action === 'Reject'
                 ? t('view:successReject')
                 : action === 'Authorise'
                 ? t('view:successAuth')
                 : action === 'Issue'
-                ? 'issued'
+                ? 'Successfully issued'
                 : action === 'Certify'
-                ? 'certified'
+                ? 'Successfully certified'
                 : action === 'Revoke'
                 ? t('view:successRevoke')
-                : t('view:successRetire')),
+                : t('view:successRetire'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });

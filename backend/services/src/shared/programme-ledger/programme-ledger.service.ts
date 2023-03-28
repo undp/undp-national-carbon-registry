@@ -12,14 +12,20 @@ import { Programme } from "../entities/programme.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TxType } from "../enum/txtype.enum";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
-import { ArrayIn, ArrayLike, LedgerDBInterface } from "../ledger-db/ledger.db.interface";
+import {
+  ArrayIn,
+  ArrayLike,
+  LedgerDBInterface,
+} from "../ledger-db/ledger.db.interface";
+import { HelperService } from "../util/helpers.service";
 
 @Injectable()
 export class ProgrammeLedgerService {
   constructor(
     private readonly logger: Logger,
     @InjectEntityManager() private entityManger: EntityManager,
-    private ledger: LedgerDBInterface
+    private ledger: LedgerDBInterface,
+    private helperService: HelperService
   ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
@@ -44,7 +50,10 @@ export class ProgrammeLedgerService {
         );
         if (programmes.length > 0) {
           throw new HttpException(
-            "Programme already exist with the given externalId",
+            this.helperService.formatReqMessagesString(
+              "programme.programmeExistsWithSameExetrnalId",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -120,7 +129,10 @@ export class ProgrammeLedgerService {
         const alreadyProcessed = results[`history(${this.ledger.tableName})`];
         if (alreadyProcessed.length > 0) {
           throw new HttpException(
-            "Programme transfer request already processed",
+            this.helperService.formatReqMessagesString(
+              "programme.transferRequestALreadyProcessed",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -134,14 +146,20 @@ export class ProgrammeLedgerService {
         );
         if (programmes.length <= 0) {
           throw new HttpException(
-            "Programme does not exist",
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
 
         if (programmes.length <= 0) {
           throw new HttpException(
-            `Project does not exist ${transfer.programmeId}`,
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExistWIthId",
+              [transfer.programmeId]
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -179,7 +197,10 @@ export class ProgrammeLedgerService {
           }
           if (!currentCredit[transfer.fromCompanyId]) {
             throw new HttpException(
-              `Company ${transfer.fromCompanyId} is not an owner company of the programme`,
+              this.helperService.formatReqMessagesString(
+                "programme.companyIsNotTheOwnerOfProg",
+                [transfer.fromCompanyId]
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -190,7 +211,10 @@ export class ProgrammeLedgerService {
             transfer.creditAmount
           ) {
             throw new HttpException(
-              `Company ${transfer.fromCompanyId} does not have enough credits`,
+              this.helperService.formatReqMessagesString(
+                "programme.companyHaveNoEnoughCredits",
+                [transfer.fromCompanyId]
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -236,7 +260,10 @@ export class ProgrammeLedgerService {
         const compIndex = programme.companyId.indexOf(transfer.fromCompanyId);
         if (compIndex < 0) {
           throw new HttpException(
-            `Company ${transfer.fromCompanyId} does not own the programme`,
+            this.helperService.formatReqMessagesString(
+              "programme.companyIsNotTheOwnerOfProg",
+              [transfer.fromCompanyId]
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -246,12 +273,11 @@ export class ProgrammeLedgerService {
           // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
-            programme.creditRetired =  new Array(
+            programme.creditRetired = new Array(
               programme.creditOwnerPercentage.length
             ).fill(0);
           }
           programme.creditRetired[compIndex] += transfer.creditAmount;
-
         } else {
           programme.txType = TxType.TRANSFER;
           if (!programme.creditTransferred) {
@@ -383,7 +409,10 @@ export class ProgrammeLedgerService {
         );
         if (programmes.length <= 0) {
           throw new HttpException(
-            "Programme does not exist",
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -395,14 +424,20 @@ export class ProgrammeLedgerService {
         if (add) {
           if (index >= 0) {
             throw new HttpException(
-              "Certifier already certified the programme",
+              this.helperService.formatReqMessagesString(
+                "programme.alreadyCertified",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
 
           if (programme.currentStage != ProgrammeStage.AUTHORISED) {
             throw new HttpException(
-              "Can certify only issued programmes",
+              this.helperService.formatReqMessagesString(
+                "programme.unAuth",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -422,7 +457,10 @@ export class ProgrammeLedgerService {
         } else {
           if (index < 0) {
             throw new HttpException(
-              "Certifier does not certified the programme",
+              this.helperService.formatReqMessagesString(
+                "programme.notCertifiedByCertifier",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -474,7 +512,10 @@ export class ProgrammeLedgerService {
       return updatedProgramme;
     }
     throw new HttpException(
-      "Programme failed to update",
+      this.helperService.formatReqMessagesString(
+        "programme.failedToUpdate",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -578,16 +619,22 @@ export class ProgrammeLedgerService {
           const index = programme.companyId.indexOf(companyId);
           if (index < 0) {
             throw new HttpException(
-              "Programme does not own by the company",
+              this.helperService.formatReqMessagesString(
+                "programme.doesNotOwnByCompany",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
 
-          if(isFreeze){
+          if (isFreeze) {
             if (programme.companyId.length > 1) {
               if (!programme.creditOwnerPercentage) {
                 throw new HttpException(
-                  "Not ownership percentage for the company",
+                  this.helperService.formatReqMessagesString(
+                    "programme.noOwnershipPercForCompany",
+                    []
+                  ),
                   HttpStatus.BAD_REQUEST
                 );
               }
@@ -595,24 +642,29 @@ export class ProgrammeLedgerService {
               programme.creditOwnerPercentage = [100];
             }
 
-            const freezeCredit =this.round2Precision(
-              (programme.creditBalance * programme.creditOwnerPercentage[index]) /
-              100);
+            const freezeCredit = this.round2Precision(
+              (programme.creditBalance *
+                programme.creditOwnerPercentage[index]) /
+                100
+            );
             if (!programme.creditFrozen) {
               programme.creditFrozen = new Array(
                 programme.creditOwnerPercentage.length
               ).fill(0);
             }
-            if(freezeCredit === 0)
-              continue;
+            if (freezeCredit === 0) continue;
             programme.creditFrozen[index] = freezeCredit;
             programme.creditChange = freezeCredit;
-          }else{
-            if(programme.creditFrozen === undefined || programme.creditFrozen[index] === null)
+          } else {
+            if (
+              programme.creditFrozen === undefined ||
+              programme.creditFrozen[index] === null
+            )
               continue;
-            const unFrozenCredit = this.round2Precision(programme.creditFrozen[index]);
-            if(unFrozenCredit === 0)
-              continue;
+            const unFrozenCredit = this.round2Precision(
+              programme.creditFrozen[index]
+            );
+            if (unFrozenCredit === 0) continue;
             programme.creditChange = unFrozenCredit;
             programme.creditFrozen[index] = 0;
           }
@@ -628,7 +680,7 @@ export class ProgrammeLedgerService {
             txTime: programme.txTime,
             txRef: programme.txRef,
             creditFrozen: programme.creditFrozen,
-            creditChange: programme.creditChange
+            creditChange: programme.creditChange,
           };
           updateWhere[this.ledger.tableName + "#" + programme.programmeId] = {
             programmeId: programme.programmeId,
@@ -679,7 +731,10 @@ export class ProgrammeLedgerService {
           const index = programme.companyId.indexOf(companyId);
           if (index < 0) {
             throw new HttpException(
-              "Programme does not own by the company",
+              this.helperService.formatReqMessagesString(
+                "programme.doesNotOwnByCompany",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -687,7 +742,10 @@ export class ProgrammeLedgerService {
           if (programme.companyId.length > 1) {
             if (!programme.creditOwnerPercentage) {
               throw new HttpException(
-                "Not ownership percentage for the company",
+                this.helperService.formatReqMessagesString(
+                  "programme.noOwnershipPercForCompany",
+                  []
+                ),
                 HttpStatus.BAD_REQUEST
               );
             }
@@ -732,7 +790,10 @@ export class ProgrammeLedgerService {
       return updatedProgramme;
     }
     throw new HttpException(
-      "Programme failed to update",
+      this.helperService.formatReqMessagesString(
+        "programme.failedToUpdate",
+        []
+      ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -762,7 +823,7 @@ export class ProgrammeLedgerService {
   //       );
   //       if (programmes.length <= 0) {
   //         throw new HttpException(
-  //           "Programme does not exist",
+  //           this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
   //           HttpStatus.BAD_REQUEST
   //         );
   //       }
@@ -803,7 +864,7 @@ export class ProgrammeLedgerService {
   //     return updatedProgramme;
   //   }
   //   throw new HttpException(
-  //     "Programme failed to update",
+  //     this.helperService.formatReqMessagesString("programme.failedToUpdate", []),
   //     HttpStatus.INTERNAL_SERVER_ERROR
   //   );
   // }
@@ -834,10 +895,8 @@ export class ProgrammeLedgerService {
   }
 
   private round2Precision(val) {
-    if(val)
-      return parseFloat(val.toFixed(PRECISION));
-    else
-      return 0;
+    if (val) return parseFloat(val.toFixed(PRECISION));
+    else return 0;
   }
 
   public async authProgrammeStatus(
@@ -875,7 +934,10 @@ export class ProgrammeLedgerService {
         );
         if (programmes.length <= 0) {
           throw new HttpException(
-            "Programme does not exist",
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -890,7 +952,10 @@ export class ProgrammeLedgerService {
         );
         if (creditOveralls.length <= 0) {
           throw new HttpException(
-            `Overall credit does not found for the country code ${countryCodeA2}`,
+            this.helperService.formatReqMessagesString(
+              "programme.overallCreditNotFoundforCountryCode",
+              [countryCodeA2]
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -952,7 +1017,10 @@ export class ProgrammeLedgerService {
             programme.creditIssued;
         } else {
           throw new HttpException(
-            "Unexpected programme owner percentages",
+            this.helperService.formatReqMessagesString(
+              "programme.unExpectedProgOwnerPerc",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -1051,7 +1119,10 @@ export class ProgrammeLedgerService {
         );
         if (programmes.length <= 0) {
           throw new HttpException(
-            "Programme does not exist",
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
