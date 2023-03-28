@@ -107,7 +107,7 @@ functions:
           arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue.fifo
           batchSize: 10
     ssmToEnvironment:
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
