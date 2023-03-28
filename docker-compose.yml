@@ -82,8 +82,8 @@ services:
       DB_USER: root
       DB_PASSWORD: "admin"
       RUN_MODULE: async-operations-handler
-      EMAIL_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SES_PASSWORD: <ANY PASSOWORD>
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: <ANY PASSOWORD>
       ASYNC_OPERATIONS_TYPE: Database
   web:
     build:

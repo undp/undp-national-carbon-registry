@@ -37,11 +37,10 @@ export class EmailService {
             html: emailDataObj?.emailBody,
           },
           function (error, info) {
+            console.log('SendEmail Response', error, info);
             if (error) {
-              this.logger.error("Error", error);
               reject(error);
             } else {
-              this.logger.log("Email sent:", info);
               resolve(info);
             }
           }
