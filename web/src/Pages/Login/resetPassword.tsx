@@ -160,7 +160,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                     block
                     loading={loading || disable}
                   >
-                    SUMBIT
+                    {t('resetPassword:submit')}
                   </Button>
                 </div>
               </Form.Item>

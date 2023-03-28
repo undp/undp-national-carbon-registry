@@ -27,8 +27,7 @@ import { ConfigService } from "@nestjs/config";
 import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 import { CompanyService } from "../company/company.service";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { User } from "../entities/user.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
@@ -66,7 +65,6 @@ export class ProgrammeService {
     private configService: ConfigService,
     private companyService: CompanyService,
     private userService: UserService,
-    private emailService: EmailService,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
     private readonly countryService: CountryService,
@@ -145,7 +143,7 @@ export class ProgrammeService {
     if (pTransfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -392,7 +390,7 @@ export class ProgrammeService {
     if (transfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -1275,10 +1273,7 @@ export class ProgrammeService {
 
     if (add && user.companyRole != CompanyRole.CERTIFIER) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programme.certifierCanOnlyCertifiy",
-          []
-        ),
+        this.helperService.formatReqMessagesString("programme.unAuth", []),
         HttpStatus.FORBIDDEN
       );
     }
@@ -1315,9 +1310,9 @@ export class ProgrammeService {
     }
 
     const userCompany = await this.companyRepo.findOne({
-      where: { companyId: user.companyId }
+      where: { companyId: user.companyId },
     });
-    if(userCompany && userCompany.state === CompanyState.SUSPENDED){
+    if (userCompany && userCompany.state === CompanyState.SUSPENDED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programme.organisationDeactivated",

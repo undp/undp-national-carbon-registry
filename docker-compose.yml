@@ -39,6 +39,7 @@ services:
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
       LOCATION_SERVICE: OPENSTREET
+      ASYNC_OPERATIONS_TYPE: Database
     volumes:
       - filestore:/app/backend/services/public
   stats:
@@ -69,6 +70,21 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: replicator
       LOCATION_SERVICE: OPENSTREET
+  async-operations-handler:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    depends_on:
+      - db
+      - national
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: "admin"
+      RUN_MODULE: async-operations-handler
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: <ANY PASSOWORD>
+      ASYNC_OPERATIONS_TYPE: Database
   web:
     build:
       context: .

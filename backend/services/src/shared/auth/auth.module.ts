@@ -10,7 +10,7 @@ import { ApiKeyStrategy } from "./strategies/apikey.strategy";
 import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { UtilModule } from "../util/util.module";
-import { EmailModule } from "../email/email.module";
+import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 
 @Module({
@@ -18,7 +18,6 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
     UserModule,
     PassportModule,
     UtilModule,
-    EmailModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
@@ -31,6 +30,7 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
     }),
     CaslModule,
     CompanyModule,
+    AsyncOperationsModule
   ],
   providers: [
     AuthService,
