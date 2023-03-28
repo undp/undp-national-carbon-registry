@@ -94,6 +94,7 @@ services:
         COUNTRY_NAME: "Antarctic Region"
         COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         COUNTRY_CODE: "NG"
+        MAP_TYPE : "None"
     ports:
       - "3030:3030"
     depends_on:

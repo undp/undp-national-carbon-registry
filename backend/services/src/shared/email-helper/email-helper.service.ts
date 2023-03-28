@@ -26,7 +26,7 @@ export class EmailHelperService {
     private asyncOperationsInterface: AsyncOperationsInterface,
     private helperService: HelperService
   ) {
-    this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
+    this.isEmailDisabled = this.configService.get<boolean>("email.disableLowPriorityEmails");
   }
 
   public async sendEmailToProgrammeOwnerAdmins(

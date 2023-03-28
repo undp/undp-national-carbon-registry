@@ -1,6 +1,6 @@
 export enum MapTypes {
-  Mapbox,
-  None,
+  Mapbox = 'Mapbox',
+  None = 'None',
 }
 
 export interface MarkerData {
@@ -20,7 +20,7 @@ export interface MapPopupData {
 }
 
 export interface MapComponentProps {
-  mapType: number;
+  mapType: string;
   center: number[];
   markers?: MarkerData[];
   zoom: number;

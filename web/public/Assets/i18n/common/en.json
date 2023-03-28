@@ -9,5 +9,6 @@
   "company": "Organisations",
   "edit": "EDIT",
   "isRequired": "is required!",
-  "isInvalid": "is invalid!"
+  "isInvalid": "is invalid!",
+  "sessionExpiredErrorMsg": "Your session has expired, Please log in again to continue working."
 }

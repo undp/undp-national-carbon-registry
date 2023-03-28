@@ -166,12 +166,26 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
 <a name="container"></a>
 ## Run Services As Containers
 - Update [docker compose file](./docker-compose.yml) env variables as required.
-- Run `docker-compose up -d`. This will build and start containers for following services,
+    - Currently all the emails are disabled using env variable `IS_EMAIL_DISABLED`. When the emails are disabled email payload will be printed on the console. User account passwords needs to extract from this console log. Including root user account, search for a log line starting with ```Password (temporary)``` on national container (`docker logs -f undp-carbon-registry-national-1`). 
+    - Add / update following environment variables to enable email functionality.
+        - `IS_EMAIL_DISABLED`=false
+        - `SOURCE_EMAIL` (Sender email address)
+        - `SMTP_ENDPOINT`
+        - `SMTP_USERNAME`
+        - `SMTP_PASSWORD`
+    - Use `DB_PASSWORD` env variable to change PostgresSQL database password
+    - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
+    - By default frontend does not show map images on dashboard and programme view. To enable them please update `MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
+- Run `docker-compose up -d --build`. This will build and start containers for following services,
     - PostgresDB container
     - National service
     - Analytics service
     - Replicator service
     - React web server with Nginx. 
+- Web frontend on http://localhost:3030/
+- API Endpoints,
+  - http://localhost:3000/national#/
+  - http://localhost:3100/stats#/ 
 
 <a name="local"></a>
 ## Run Services Locally

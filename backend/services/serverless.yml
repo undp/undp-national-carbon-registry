@@ -52,7 +52,7 @@ functions:
       - DB_PASSWORD
       - USER_JWT_SECRET
       - ADMIN_JWT_SECRET
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -73,7 +73,7 @@ functions:
       - DB_PASSWORD
       - USER_JWT_SECRET
       - ADMIN_JWT_SECRET
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -119,7 +119,7 @@ functions:
     handler: src/setup/handler.handler
     ssmToEnvironment:
       - DB_PASSWORD
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -144,7 +144,7 @@ custom:
     DB_PASSWORD: /${self:provider.stage}/DB_PASSWORD~true
     USER_JWT_SECRET: /${self:provider.stage}/USER_JWT_SECRET~true
     ADMIN_JWT_SECRET: /${self:provider.stage}/ADMIN_JWT_SECRET~true
-    SES_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
+    SMTP_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
     MAPBOX_PK: /${self:provider.stage}/MAPBOX_PK~true
   # sesTemplates:
   #   addStage: true                             # Specifies whether to add stage to template name (default false)
