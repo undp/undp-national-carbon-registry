@@ -17,9 +17,7 @@ export class AsyncOperationsQueueHandlerService
         if (actionType) {
           if (actionType === AsyncActionType.Email.toString()) {
             const emailBody = JSON.parse(record.body);
-            asyncPromises.push(
-              this.emailService.sendEmail(emailBody)
-            );
+            asyncPromises.push(this.emailService.sendEmail(emailBody));
           }
         }
       });
