@@ -5,13 +5,13 @@ import {
 } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
 import jwt_decode from 'jwt-decode';
-import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
   removeUserInfo: () => {},
   IsAuthenticated: (tkn?: any) => false,
+  isTokenExpired: false,
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
@@ -86,17 +86,6 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.setItem('companyState', companyState + '');
   };
 
-  useEffect(() => {
-    if (isTokenExpired) {
-      message.open({
-        type: 'error',
-        content: t('common:sessionExpiredErrorMsg'),
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    }
-  }, [isTokenExpired]);
-
   const IsAuthenticated = useCallback(
     (tokenNew?: any): boolean => {
       let tokenVal: string | null;
@@ -144,6 +133,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         setUserInfo,
         removeUserInfo,
         IsAuthenticated,
+        isTokenExpired,
       }}
     >
       {children}

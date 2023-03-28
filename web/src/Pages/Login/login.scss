@@ -181,6 +181,26 @@
   .login-input-fields-container {
     margin-top: 3vh;
     height: 15vh;
+
+    .logged-out-section {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-top: 1.2rem;
+      align-items: center;
+      justify-content: space-between;
+
+      .info-icon {
+        display: flex;
+        width: 5%;
+      }
+      .msg {
+        display: flex;
+        width: 95%;
+        color: $error-color;
+        font-size: 0.8rem;
+      }
+    }
   }
 
   .email-success-msg {
