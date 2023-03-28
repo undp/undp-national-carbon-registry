@@ -108,6 +108,7 @@ functions:
           batchSize: 10
     ssmToEnvironment:
       - SMTP_PASSWORD
+      - DB_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
