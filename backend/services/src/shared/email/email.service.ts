@@ -25,70 +25,27 @@ export class EmailService {
     });
   }
 
-  private getTemplateMessage(template: string, data): string {
-    if (template == undefined) {
-      return template;
-    }
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        var find = `{{${key}}}`;
-        var re = new RegExp(find, "g");
-        template = template.replace(re, data[key]);
-      }
-    }
-
-    return template;
-  }
-
-  private getSubjectMessage(template: string, data): string {
-    if (template == undefined) {
-      return template;
-    }
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        var find = `{{${key}}}`;
-        var re = new RegExp(find, "g");
-        template = template.replace(re, data[key]);
-      }
-    }
-
-    return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
-  }
-
-  public async sendEmail(
-    sendToEmail: string,
-    template,
-    templateData: any
-  ): Promise<any> {
-    this.logger.log("Sending email", JSON.stringify(sendToEmail));
-    if (!this.emailDisabled) {
-      if (sendToEmail) {
-        return new Promise((resolve, reject) => {
-          this.transporter.sendMail(
-            {
-              from: this.sourceEmail,
-              to: sendToEmail,
-              subject: this.getSubjectMessage(
-                template["subject"],
-                templateData
-              ),
-              text: this.getTemplateMessage(template["text"], templateData), // plain text body
-              html: this.getTemplateMessage(template["html"], templateData), // html body
-            },
-            function (error, info) {
-              if (error) {
-                console.log(error);
-                reject(error);
-              } else {
-                console.log("Email sent: " + info);
-                resolve(info);
-              }
+  async sendEmail(emailDataObj: any): Promise<any> {
+    if (emailDataObj?.sender && !this.emailDisabled) {
+      return new Promise((resolve, reject) => {
+        this.transporter.sendMail(
+          {
+            from: this.sourceEmail,
+            to: emailDataObj?.sender,
+            subject: emailDataObj?.subject,
+            text: emailDataObj?.emailBody,
+            html: emailDataObj?.emailBody,
+          },
+          function (error, info) {
+            console.log('SendEmail Response', error, info);
+            if (error) {
+              reject(error);
+            } else {
+              resolve(info);
             }
-          );
-        });
-      }
-    } else {
-      this.logger.log(`Email disabled body:${templateData} ${this.getTemplateMessage(template["html"], templateData)} to: ${sendToEmail}`);
+          }
+        );
+      });
     }
   }
 }

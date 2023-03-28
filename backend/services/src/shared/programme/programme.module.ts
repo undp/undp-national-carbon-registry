@@ -7,7 +7,6 @@ import { Programme } from '../entities/programme.entity';
 import { UtilModule } from '../util/util.module';
 import { ConstantEntity } from '../entities/constants.entity';
 import { CompanyModule } from '../company/company.module';
-import { EmailModule } from '../email/email.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';
 import { Company } from '../entities/company.entity';
 import { ProgrammeQueryEntity } from '../entities/programme.view.entity';
@@ -22,7 +21,6 @@ import { EmailHelperModule } from '../email-helper/email-helper.module';
     TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity, ProgrammeTransferViewEntityQuery]), 
     UtilModule, 
     CompanyModule, 
-    EmailModule,
     UserModule,
     EmailHelperModule
   ],

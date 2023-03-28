@@ -4,5 +4,6 @@ export enum CounterType {
     ITMO = 2,
     COMPANY = 3,
     REPLICATE_SEQ = 4,
-    REPLICATE_SEQ_COMP = 5
+    REPLICATE_SEQ_COMP = 5,
+    ASYNC_OPERATIONS = 6
 }

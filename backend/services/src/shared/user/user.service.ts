@@ -20,9 +20,8 @@ import {
   Repository,
 } from "typeorm";
 import { User } from "../../shared/entities/user.entity";
-import { EmailService } from "../../shared/email/email.service";
 import { QueryDto } from "../../shared/dto/query.dto";
-import { EmailTemplates } from "../../shared/email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
 import { UserUpdateDto } from "../../shared/dto/user.update.dto";
 import { PasswordUpdateDto } from "../../shared/dto/password.update.dto";
@@ -42,12 +41,16 @@ import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { CountryService } from "../util/country.service";
+import {
+  AsyncAction,
+  AsyncOperationsInterface,
+} from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
-    private emailService: EmailService,
     private logger: Logger,
     private configService: ConfigService,
     private helperService: HelperService,
@@ -56,7 +59,8 @@ export class UserService {
     private companyService: CompanyService,
     private counterService: CounterService,
     private countryService: CountryService,
-    private fileHandler: FileHandlerInterface
+    private fileHandler: FileHandlerInterface,
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {}
 
   private async generateApiKey(email) {
@@ -205,14 +209,28 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
-      await this.emailService.sendEmail(
-        user.email,
-        EmailTemplates.CHANGE_PASSOWRD,
-        {
-          name: user.name,
-          countryName: this.configService.get("systemCountryName"),
-        }
-      );
+      const templateData = {
+        name: user.name,
+        countryName: this.configService.get("systemCountryName"),
+      };
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.CHANGE_PASSOWRD.id,
+          sender: user.email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString("user.resetSuccess", [])
@@ -262,14 +280,29 @@ export class UserService {
       });
 
     if (result.affected > 0) {
-      await this.emailService.sendEmail(
-        user.email,
-        EmailTemplates.API_KEY_EMAIL,
-        {
-          name: user.name,
-          apiKey: apiKey,
-        }
-      );
+      const templateData = {
+        name: user.name,
+        apiKey: apiKey,
+      };
+
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.API_KEY_EMAIL.id,
+          sender: user.email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.API_KEY_EMAIL["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.API_KEY_EMAIL["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
 
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -434,23 +467,38 @@ export class UserService {
       }
 
       if (company.email) {
-        await this.emailService.sendEmail(
-          company.email,
-          EmailTemplates.ORGANISATION_CREATE,
-          {
-            organisationName: company.name,
-            countryName: this.configService.get("systemCountryName"),
-            organisationRole:
-              company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                ? "Programme Developer"
-                : company.companyRole,
-            home: hostAddress,
-          }
-        );
+        const templateData = {
+          organisationName: company.name,
+          countryName: this.configService.get("systemCountryName"),
+          organisationRole:
+            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+              ? "Programme Developer"
+              : company.companyRole,
+          home: hostAddress,
+        };
+
+        const action: AsyncAction = {
+          actionType: AsyncActionType.Email,
+          actionProps: {
+            emailType: EmailTemplates.ORGANISATION_CREATE.id,
+            sender: company.email,
+            subject: this.helperService.getEmailTemplateMessage(
+              EmailTemplates.ORGANISATION_CREATE["subject"],
+              templateData,
+              true
+            ),
+            emailBody: this.helperService.getEmailTemplateMessage(
+              EmailTemplates.ORGANISATION_CREATE["html"],
+              templateData,
+              false
+            ),
+          },
+        };
+        await this.asyncOperationsInterface.AddAction(action);
       }
     }
 
-    await this.emailService.sendEmail(u.email, EmailTemplates.USER_CREATE, {
+    const templateData = {
       name: u.name,
       countryName: this.configService.get("systemCountryName"),
       tempPassword: u.password,
@@ -458,7 +506,26 @@ export class UserService {
       email: u.email,
       liveChat: this.configService.get("liveChat"),
       helpDoc: hostAddress + "/help",
-    });
+    };
+
+    const action: AsyncAction = {
+      actionType: AsyncActionType.Email,
+      actionProps: {
+        emailType: EmailTemplates.USER_CREATE.id,
+        sender: u.email,
+        subject: this.helperService.getEmailTemplateMessage(
+          EmailTemplates.USER_CREATE["subject"],
+          templateData,
+          true
+        ),
+        emailBody: this.helperService.getEmailTemplateMessage(
+          EmailTemplates.USER_CREATE["html"],
+          templateData,
+          false
+        ),
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(action);
 
     u.createdTime = new Date().getTime();
 

@@ -22,7 +22,7 @@ export interface LoginPageProps {
 const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { forgotPassword, resetPassword } = props;
   const { post, updateToken, removeToken } = useConnection();
-  const { IsAuthenticated, setUserInfo } = useUserContext();
+  const { IsAuthenticated, setUserInfo, isTokenExpired } = useUserContext();
   const { i18n, t } = useTranslation(['common', 'login']);
   const [loading, setLoading] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
@@ -242,6 +242,20 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                             </Button>
                           </div>
                         </Form.Item>
+                        {isTokenExpired && !forgotPassword && !resetPassword && !showError && (
+                          <div className="logged-out-section">
+                            <div className="info-icon">
+                              <ExclamationCircleOutlined
+                                style={{
+                                  color: 'rgba(255, 77, 79, 0.8)',
+                                  marginRight: '0.5rem',
+                                  fontSize: '1.1rem',
+                                }}
+                              />
+                            </div>
+                            <div className="msg">{t('common:sessionExpiredErrorMsg')}</div>
+                          </div>
+                        )}
                       </Form>
                       {/* <div className="login-register-new-container">
                   <span className="login-register-new-txt">

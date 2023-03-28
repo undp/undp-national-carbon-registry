@@ -27,7 +27,7 @@ import { TransferStatus } from "../enum/transform.status.enum";
 import { User } from "../entities/user.entity";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { Programme } from "../entities/programme.entity";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { SystemActionType } from "../enum/system.action.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 
