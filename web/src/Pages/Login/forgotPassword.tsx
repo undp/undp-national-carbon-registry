@@ -76,7 +76,7 @@ const ForgotPassword = () => {
               <Form.Item>
                 <div className="forgot-submit-btn-container">
                   <Button type="primary" size="large" htmlType="submit" block loading={loading}>
-                    SUBMIT
+                    {t('forgotPassword:submit')}
                   </Button>
                 </div>
                 {emailSent && (

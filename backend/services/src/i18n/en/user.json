@@ -3,11 +3,11 @@
     "createUserSuccess": "The user has been created successfully",
     "createOrganisationSuccess": "The organisation has been created successfully",
     "createExistingUser": "This user already exists",
-    "addUserToUnRegisteredCompany": "The programme ID is invalid",
+    "addUserToUnRegisteredCompany": "The Organisation has not been registered with the Carbon Registry",
     "createManagerOrViewerAsInitialUserOfACompany": "The initial user must be an admin",
     "createUserUnAuthorized": "This action is unauthorised",
     "createUserToOtherCompaniesUnAuth": "This action is unauthorised",
-    "companyCreateUserShouldbeAdmin": "Company create user should be an Admin user",
+    "companyCreateUserShouldbeAdmin": "The initial user must be an admin",
     "governmentUserAlreadyExist": "Government already exist for the country code {}",
     "companyCreateNotPermittedForTheCompanyRole": "Company create does not permitted for your company role",
     "companyUpdateFailed": "Company update failed. Please try again",
@@ -29,5 +29,6 @@
     "resetPasswordReqNotFound": "Invalid request id",
     "resetPasswordReqExpired": "Your password resetting request has been expired",
     "reqIdFound": "Reset request id found",
-    "resetEmailSent": "User found, An email was sent"
+    "resetEmailSent": "User found, An email was sent",
+    "invalidCountry": "Country is invalid"
 }
