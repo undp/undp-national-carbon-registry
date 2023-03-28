@@ -27,8 +27,7 @@ import { ConfigService } from "@nestjs/config";
 import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 import { CompanyService } from "../company/company.service";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { User } from "../entities/user.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
@@ -66,7 +65,6 @@ export class ProgrammeService {
     private configService: ConfigService,
     private companyService: CompanyService,
     private userService: UserService,
-    private emailService: EmailService,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
     private readonly countryService: CountryService,

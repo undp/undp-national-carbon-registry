@@ -1,5 +1,6 @@
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
 import { handler } from "./ledger-replicator/handler";
+import { handler as asyncHandler } from "./async-operations-handler/handler";
 import * as setupHandler from "./setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { buildNestApp } from "./shared/server";
@@ -19,6 +20,9 @@ async function bootstrap() {
       break;
     case "replicator":
       await handler();
+      return;
+    case "async-operations-handler":
+      await asyncHandler();
       return;
     default:
       module = NationalAPIModule;

@@ -46,6 +46,7 @@ export const EmailTemplates = {
     text: "",
   },
   API_KEY_EMAIL: {
+    id: "API_KEY_EMAIL",
     subject: "Carbon Credit Registry API Key Generation",
     html: `
         Hi {{name}},<br><br>

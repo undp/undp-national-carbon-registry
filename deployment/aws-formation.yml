@@ -272,6 +272,7 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
         - arn:aws:iam::aws:policy/AmazonKinesisFullAccess
         - arn:aws:iam::aws:policy/AmazonSESFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
       Path: /
 
   QLDBEndpoint:
@@ -358,6 +359,14 @@ Resources:
             Action: 's3:GetObject'
             Principal: '*'
             Resource: !Sub '${S3BucketWeb.Arn}/*'
+
+  AsyncQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: AsyncQueue.fifo
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
 
 Outputs:
   VPC:

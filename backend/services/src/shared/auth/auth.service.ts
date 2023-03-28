@@ -7,13 +7,14 @@ import { API_KEY_SEPARATOR } from "../constants";
 import { JWTPayload } from "../dto/jwt.payload";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { ConfigService } from "@nestjs/config";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { Repository } from "typeorm";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "../util/passwordReset.service";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class AuthService {
@@ -21,11 +22,11 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly companyService: CompanyService,
     private readonly jwtService: JwtService,
-    private emailService: EmailService,
     private configService: ConfigService,
     private helperService: HelperService,
     private passwordReset: PasswordResetService,
-    public caslAbilityFactory: CaslAbilityFactory
+    public caslAbilityFactory: CaslAbilityFactory,
+    private asyncOperationsInterface: AsyncOperationsInterface,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -94,11 +95,33 @@ export class AuthService {
       };
       await this.passwordReset.deletePasswordResetD(email);
       await this.passwordReset.insertPasswordResetD(passwordResetD);
-      await this.emailService.sendEmail(email, EmailTemplates.FORGOT_PASSOWRD, {
+
+      const templateData = {
         name: userDetails.name,
         requestId: requestId,
         countryName: this.configService.get("systemCountryName"),
-      });
+      };
+
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.FORGOT_PASSOWRD.id,
+          sender: email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.FORGOT_PASSOWRD["subject"],
+            templateData,
+            false
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.FORGOT_PASSOWRD["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+
+      await this.asyncOperationsInterface.AddAction(action);
+
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString("user.resetEmailSent", [])
