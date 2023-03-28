@@ -12,16 +12,22 @@ var sqs = new AWS.SQS();
 
 @Injectable()
 export class AsyncOperationsQueueService implements AsyncOperationsInterface {
+  private emailDisabled: boolean;
+
   constructor(
     private configService: ConfigService,
     private logger: Logger,
     private helperService: HelperService
-  ) {}
+  ) {
+    this.emailDisabled = this.configService.get<boolean>("email.disabled");
+  }
 
   public async AddAction(action: AsyncAction): Promise<boolean> {
     var params = {};
 
     if (action.actionType === AsyncActionType.Email) {
+      if (this.emailDisabled)
+        return false;
       params = {
         MessageAttributes: {
           actionType: {
