@@ -12,5 +12,5 @@ export const handler: Handler = async (event: any, context: Context) => {
     }
   );
 
-  app.get(AsyncOperationsHandlerInterface).asyncHandler(event);
+  await app.get(AsyncOperationsHandlerInterface).asyncHandler(event);
 };

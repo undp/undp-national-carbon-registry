@@ -1,6 +1,7 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { EmailModule } from "src/shared/email/email.module";
 import { AsyncActionEntity } from "src/shared/entities/async.action.entity";
 import { Counter } from "src/shared/entities/counter.entity";
 import configuration from "../shared/configuration";
@@ -22,6 +23,7 @@ import { AsyncOperationsService } from "./async-operations.service";
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([AsyncActionEntity, Counter]),
+    EmailModule
   ],
   providers: [
     {

@@ -1,13 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncActionType } from "src/shared/enum/async.action.type.enum";
-import { AsyncOperationsService } from "./async-operations.service";
+import { EmailService } from "src/shared/email/email.service";
 
 @Injectable()
 export class AsyncOperationsQueueHandlerService
   implements AsyncOperationsHandlerInterface
 {
-  constructor(private asyncOperationsService: AsyncOperationsService) {}
+  constructor(private emailService: EmailService) {}
 
   async asyncHandler(event: any): Promise<any> {
     const asyncPromises = [];
@@ -18,7 +18,7 @@ export class AsyncOperationsQueueHandlerService
           if (actionType === AsyncActionType.Email.toString()) {
             const emailBody = JSON.parse(record.body);
             asyncPromises.push(
-              this.asyncOperationsService.sendEmail(emailBody)
+              this.emailService.sendEmail(emailBody)
             );
           }
         }

@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { EmailService } from "src/shared/email/email.service";
 import { AsyncActionEntity } from "src/shared/entities/async.action.entity";
 import { Counter } from "src/shared/entities/counter.entity";
 import { AsyncActionType } from "src/shared/enum/async.action.type.enum";
 import { CounterType } from "src/shared/util/counter.type.enum";
 import { Repository } from "typeorm";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
-import { AsyncOperationsService } from "./async-operations.service";
 
 @Injectable()
 export class AsyncOperationsDatabaseHandlerService
@@ -17,7 +17,7 @@ export class AsyncOperationsDatabaseHandlerService
     @InjectRepository(Counter) private counterRepo: Repository<Counter>,
     @InjectRepository(AsyncActionEntity)
     private asyncActionRepo: Repository<AsyncActionEntity>,
-    private asyncOperationsService: AsyncOperationsService
+    private emailService: EmailService
   ) {}
 
   async asyncHandler(event: any): Promise<any> {
@@ -45,7 +45,7 @@ export class AsyncOperationsDatabaseHandlerService
       notExecutedActions.forEach((action: any) => {
         if (action.actionType === AsyncActionType.Email.toString()) {
           const emailBody = JSON.parse(action.actionProps);
-          asyncPromises.push(this.asyncOperationsService.sendEmail(emailBody));
+          asyncPromises.push(this.emailService.sendEmail(emailBody));
         }
         lastSeq = action.actionId;
       });
