@@ -72,8 +72,10 @@ const Dashboard = () => {
   const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
   const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
-  const [startTime, setStartTime] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(
+    Date.parse(String(moment().subtract('6', 'days').startOf('day')))
+  );
+  const [endTime, setEndTime] = useState<number>(Date.parse(String(moment().endOf('day'))));
   const [categoryType, setCategoryType] = useState<string>('overall');
 
   // states for totalProgrammes chart
@@ -1778,9 +1780,10 @@ ${total}
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 7 days': [moment().subtract('7', 'days'), moment()],
-              'Last 14 days': [moment().subtract('14', 'days'), moment()],
+              'Last 7 days': [moment().subtract('6', 'days'), moment()],
+              'Last 14 days': [moment().subtract('13', 'days'), moment()],
             }}
+            defaultValue={[moment().subtract('6', 'days'), moment()]}
             showTime
             allowClear={true}
             format="DD:MM:YYYY"
