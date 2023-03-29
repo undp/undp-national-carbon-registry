@@ -80,10 +80,10 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "admin"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: async-operations-handler
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SMTP_PASSWORD: <ANY PASSOWORD>
+      SMTP_PASSWORD: "<ANY PASSOWORD>"
       ASYNC_OPERATIONS_TYPE: Database
   web:
     build:
