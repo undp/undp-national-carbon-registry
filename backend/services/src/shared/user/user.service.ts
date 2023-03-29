@@ -401,16 +401,6 @@ export class UserService {
       );
     }
 
-    if (company.country) {
-      const isValid = await this.countryService.isValidCountry(company.country);
-      if (!isValid) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.invalidCountry", []),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
-
     const u: User = plainToClass(User, userFields);
     if (userDto.company) {
       u.companyRole = userDto.company.companyRole;
