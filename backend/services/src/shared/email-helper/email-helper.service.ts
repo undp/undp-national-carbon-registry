@@ -43,10 +43,16 @@ export class EmailHelperService {
 
     switch (template.id) {
       case "PROGRAMME_REJECTION":
+        let rejectedDate = new Date(programme.txTime);
+        let date = rejectedDate.getDate().toString().padStart(2, "0");
+        let month = rejectedDate.toLocaleString("default", { month: "long" });
+        let year = rejectedDate.getFullYear();
+        let formattedDate = `${date} ${month} ${year}`;
+
         templateData = {
           ...templateData,
           programmeName: programme.title,
-          date: new Date(programme.txTime),
+          date: formattedDate,
           pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
