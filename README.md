@@ -175,7 +175,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
         - `SMTP_PASSWORD`
     - Use `DB_PASSWORD` env variable to change PostgresSQL database password
     - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
-    - By default frontend does not show map images on dashboard and programme view. To enable them please update `MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
+    - By default frontend does not show map images on dashboard and programme view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
 - Run `docker-compose up -d --build`. This will build and start containers for following services,
     - PostgresDB container
     - National service

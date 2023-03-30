@@ -180,7 +180,8 @@ const Dashboard = () => {
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
-  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
+  console.log('REACT_APP_MAP_TYPE', process.env.REACT_APP_MAP_TYPE);
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
