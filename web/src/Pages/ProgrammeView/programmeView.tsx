@@ -1134,6 +1134,7 @@ const ProgrammeView = () => {
 
     if (
       userInfoState &&
+      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       userInfoState?.companyRole === CompanyRole.CERTIFIER &&
       !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
@@ -1159,6 +1160,7 @@ const ProgrammeView = () => {
     }
     if (
       userInfoState &&
+      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       data.certifier.length > 0 &&
       ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
