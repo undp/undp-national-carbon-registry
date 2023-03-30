@@ -50,6 +50,7 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
+import { DateTime } from 'luxon';
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -1827,11 +1828,7 @@ export class ProgrammeService {
     }
 
     const hostAddress = this.configService.get("host");
-    let authDate = new Date(updated.txTime);
-    let date = authDate.getDate().toString().padStart(2, "0");
-    let month = authDate.toLocaleString("default", { month: "long" });
-    let year = authDate.getFullYear();
-    let formattedDate = `${date} ${month} ${year}`;
+    let formattedDate = DateTime.fromMillis(updated.txTime).toFormat('dd LLLL yyyy');
 
     updated.company.forEach(async (company) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
