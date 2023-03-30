@@ -4,6 +4,7 @@ import { Button, Col, Form, Input, Row, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface ResetPasswordPageProps {
   forgotPassword?: boolean;
@@ -18,6 +19,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
   const queryParameters = new URLSearchParams(window.location.search);
   const [loading, setLoading] = useState<boolean>(false);
   const [disable, setDisable] = useState<boolean>(false);
+  const [resetError, setResetError] = useState<boolean>(false);
   //   const requestid = queryParameters.get('requestid');
 
   const onSubmit = async (values: any) => {
@@ -35,44 +37,15 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
         });
         navigate('/login');
       } else {
-        message.open({
-          type: 'error',
-          content: response.message,
-          duration: 3,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
+        setResetError(true);
       }
     } catch (exception: any) {
+      setResetError(true);
       console.log('error while resetting password -- ', exception);
-      message.open({
-        type: 'error',
-        content: exception?.message || 'Something went wrong',
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
     } finally {
       setLoading(false);
     }
   };
-
-  const checkResetPasswordReqId = async () => {
-    setDisable(true);
-    try {
-      const response: any = await put(`national/auth/checkResetRequestId?requestId=${requestid}`);
-      if (response.message === 'Reset request id found') {
-        setDisable(false);
-      } else {
-        navigate('/login');
-      }
-    } catch (exception: any) {
-      navigate('/login');
-    } finally {
-    }
-  };
-
-  useEffect(() => {
-    checkResetPasswordReqId();
-  }, []);
 
   return (
     <div className="reset-password-container">
@@ -121,6 +94,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
               </Form.Item>
               <Form.Item
                 name="confirmPassword"
+                className="confirm-password"
                 label={`${t('resetPassword:confirmNewPwd')}`}
                 rules={[
                   {
@@ -135,8 +109,10 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                       } else {
                         const val = value.trim();
                         const password = resetPasswordForm.getFieldValue('password');
-                        if (password.trim() !== val) {
-                          throw new Error(`${t('resetPassword:passwordNotMatch')}`);
+                        if (password) {
+                          if (password.trim() !== val) {
+                            throw new Error(`${t('resetPassword:passwordNotMatch')}`);
+                          }
                         }
                       }
                     },
@@ -164,6 +140,20 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                   </Button>
                 </div>
               </Form.Item>
+              {resetError && (
+                <div className="logged-out-section">
+                  <div className="info-icon">
+                    <ExclamationCircleOutlined
+                      style={{
+                        color: 'rgba(255, 77, 79, 0.8)',
+                        marginRight: '0.5rem',
+                        fontSize: '1.1rem',
+                      }}
+                    />
+                  </div>
+                  <div className="msg">{t('resetPassword:passwordResetNotWorked')}</div>
+                </div>
+              )}
             </Form>
           </div>
         </Col>

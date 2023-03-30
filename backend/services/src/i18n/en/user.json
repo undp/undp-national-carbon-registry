@@ -25,7 +25,7 @@
     "incorrectCurrentPassword": "Entered old password is incorrect",
     "updatedSuccess": "Successfully updated",
     "oldPasswordIncorrect": "Entered old password is incorrect",
-    "forgotPwdUserNotFound": "User not found",
+    "forgotPwdUserNotFound": "Email is invalid!",
     "resetPasswordReqNotFound": "Invalid request id",
     "resetPasswordReqExpired": "Your password resetting request has been expired",
     "reqIdFound": "Reset request id found",
