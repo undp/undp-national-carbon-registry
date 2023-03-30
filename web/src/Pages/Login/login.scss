@@ -157,7 +157,7 @@
     }
 
     .login-text-signin {
-      font-size: 2.2rem;
+      font-size: 2.25rem;
       line-height: 2.5rem;
       color: $title-text-color;
       font-weight: 600;
@@ -174,13 +174,66 @@
   }
 
   .forgot-input-fields-container {
-    margin-top: 5vh;
-    height: 24vh;
+    margin-top: 4vh;
+    height: 28vh;
+
+    .ant-btn-primary[disabled],
+    .ant-btn-primary[disabled]:hover,
+    .ant-btn-primary[disabled]:focus,
+    .ant-btn-primary[disabled]:active {
+      color: $dark-text-color;
+      border-color: none;
+      background: $line-colors;
+      text-shadow: none;
+      box-shadow: none;
+    }
+
+    .logged-out-section {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-top: 1.2rem;
+      align-items: center;
+      justify-content: space-between;
+
+      .info-icon {
+        display: flex;
+        width: 5%;
+      }
+      .msg {
+        display: flex;
+        width: 95%;
+        color: $error-color;
+        font-size: 0.8rem;
+      }
+    }
+
+    .bottom-forgot-password-section {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-top: 1.5rem;
+      justify-content: center;
+      color: $note-light-text;
+      font-weight: 400;
+
+      .backto-signin-txt {
+        color: $primary-color;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    }
   }
 
   .login-input-fields-container {
     margin-top: 3vh;
     height: 15vh;
+
+    .confirm-password {
+      .ant-form-item-explain-error {
+        margin-top: 0.3rem !important;
+      }
+    }
 
     .logged-out-section {
       display: flex;
@@ -360,7 +413,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     font-size: 0.875rem;
     color: $note-light-text;
     text-align: justify;
