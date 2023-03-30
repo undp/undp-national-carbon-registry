@@ -14,4 +14,5 @@ export interface UserContextProps {
   removeUserInfo: () => void;
   IsAuthenticated: (tkn?: any) => boolean;
   isTokenExpired: boolean;
+  setIsTokenExpired: (val: boolean) => void;
 }

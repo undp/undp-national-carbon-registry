@@ -207,22 +207,6 @@
         font-size: 0.8rem;
       }
     }
-
-    .bottom-forgot-password-section {
-      display: flex;
-      flex-direction: row;
-      width: 100%;
-      margin-top: 1.5rem;
-      justify-content: center;
-      color: $note-light-text;
-      font-weight: 400;
-
-      .backto-signin-txt {
-        color: $primary-color;
-        font-weight: 600;
-        cursor: pointer;
-      }
-    }
   }
 
   .login-input-fields-container {
@@ -305,6 +289,22 @@
       .login-forget-pwd-txt {
         font-size: 0.8rem;
         color: $title-text-color;
+        cursor: pointer;
+      }
+    }
+
+    .bottom-forgot-password-section {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      margin-top: 1.5rem;
+      justify-content: center;
+      color: $note-light-text;
+      font-weight: 400;
+
+      .backto-signin-txt {
+        color: $primary-color;
+        font-weight: 600;
         cursor: pointer;
       }
     }

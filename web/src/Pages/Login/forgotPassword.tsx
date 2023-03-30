@@ -128,9 +128,9 @@ const ForgotPassword = () => {
                 </div>
               )}
               <div className="bottom-forgot-password-section">
-                {t('forgotPassword:backto')}&nbsp;
+                {t('common:backto')}&nbsp;
                 <span onClick={() => onClickBacktoSignIn()} className="backto-signin-txt">
-                  {t('forgotPassword:signIn')}
+                  {t('common:signIn')}
                 </span>
               </div>
             </Form>
