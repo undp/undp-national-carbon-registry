@@ -50,6 +50,7 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
+import { DateTime } from 'luxon';
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -197,12 +198,15 @@ export class ProgrammeService {
 
     if (result.affected > 0) {
       if (pTransfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          pTransfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           pTransfer.fromCompanyId,
           EmailTemplates.CREDIT_RETIREMENT_NOT_RECOGNITION,
           {
             credits: pTransfer.creditAmount,
-            country: pTransfer.toCompanyMeta.country,
+            country: countryName,
           },
           0,
           pTransfer.programmeId
@@ -510,12 +514,15 @@ export class ProgrammeService {
 
     if (transferResult.statusCode === 200) {
       if (transfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          transfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
           EmailTemplates.CREDIT_RETIREMENT_RECOGNITION,
           {
             credits: transfer.creditAmount,
-            country: transfer.toCompanyMeta.country,
+            country: countryName,
           },
           0,
           transfer.programmeId
@@ -651,12 +658,15 @@ export class ProgrammeService {
         transfer.initiatorCompanyId
       );
       if (transfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          transfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_RETIREMENT_CANCEL,
           {
             credits: transfer.creditAmount,
             organisationName: initiatorCompanyDetails.name,
-            country: transfer.toCompanyMeta.country,
+            country: countryName,
           },
           transfer.programmeId
         );
@@ -960,18 +970,32 @@ export class ProgrammeService {
 
     allTransferList.forEach(async (transfer) => {
       if (requester.companyRole === CompanyRole.GOVERNMENT) {
-        await this.emailHelperService.sendEmailToOrganisationAdmins(
-          transfer.fromCompanyId,
-          EmailTemplates.CREDIT_TRANSFER_GOV,
-          {
-            credits: transfer.creditAmount,
-            programmeName: programme.title,
-            serialNumber: programme.serialNo,
-            pageLink: hostAddress + "/creditTransfers/viewAll",
-            government: requestedCompany.name,
-          },
-          transfer.toCompanyId
-        );
+        if (transfer.toCompanyId === requester.companyId) {
+          await this.emailHelperService.sendEmailToOrganisationAdmins(
+            transfer.fromCompanyId,
+            EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,
+            {
+              organisationName: requestedCompany.name,
+              credits: transfer.creditAmount,
+              programmeName: programme.title,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + "/creditTransfers/viewAll",
+            }
+          );
+        } else {
+          await this.emailHelperService.sendEmailToOrganisationAdmins(
+            transfer.fromCompanyId,
+            EmailTemplates.CREDIT_TRANSFER_GOV,
+            {
+              credits: transfer.creditAmount,
+              programmeName: programme.title,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + "/creditTransfers/viewAll",
+              government: requestedCompany.name,
+            },
+            transfer.toCompanyId
+          );
+        }
       } else if (requester.companyId != transfer.fromCompanyId) {
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -1614,6 +1638,12 @@ export class ProgrammeService {
       } else {
         transfer.status = TransferStatus.PROCESSING;
         autoApproveTransferList.push(transfer);
+        const reason =
+          req.type === RetireType.CROSS_BORDER
+            ? "cross border transfer"
+            : transfer.retirementType === RetireType.LEGAL_ACTION
+            ? "legal action"
+            : "other";
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           fromCompany.companyId,
           EmailTemplates.CREDIT_RETIREMENT_BY_GOV,
@@ -1622,7 +1652,7 @@ export class ProgrammeService {
             programmeName: programme.title,
             serialNumber: programme.serialNo,
             government: toCompany.name,
-            reason: req.comment,
+            reason: reason,
             pageLink: hostAddress + "/creditTransfers/viewAll",
           }
         );
@@ -1798,11 +1828,7 @@ export class ProgrammeService {
     }
 
     const hostAddress = this.configService.get("host");
-    let authDate = new Date(updated.txTime);
-    let date = authDate.getDate().toString().padStart(2, "0");
-    let month = authDate.toLocaleString("default", { month: "long" });
-    let year = authDate.getFullYear();
-    let formattedDate = `${date} ${month} ${year}`;
+    let formattedDate = DateTime.fromMillis(updated.txTime).toFormat('dd LLLL yyyy');
 
     updated.company.forEach(async (company) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(

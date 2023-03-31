@@ -58,19 +58,6 @@ export const EmailTemplates = {
     `,
     text: "",
   },
-  TRANSFER_REQUEST: {
-    subject: "Transfer Request Received",
-    html: `
-        Hi {{name}},<br><br>
-
-        {{requestedCompany}} has requested to transfer {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
-
-        <br><br>
-        Sincerely,<br>
-        The Carbon Credit Registry Team 
-        `,
-    text: "",
-  },
   RETIRE_REQUEST: {
     subject: "Retire Request Received",
     html: `
@@ -91,7 +78,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
         <br><br>
@@ -113,7 +100,7 @@ export const EmailTemplates = {
         <br><br>
 
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions.
         
         <br><br>
