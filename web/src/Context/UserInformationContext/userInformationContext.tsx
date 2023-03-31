@@ -12,6 +12,7 @@ export const UserContext = createContext<UserContextProps>({
   removeUserInfo: () => {},
   IsAuthenticated: (tkn?: any) => false,
   isTokenExpired: false,
+  setIsTokenExpired: (val: boolean) => {},
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
@@ -131,6 +132,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         removeUserInfo,
         IsAuthenticated,
         isTokenExpired,
+        setIsTokenExpired,
       }}
     >
       {children}

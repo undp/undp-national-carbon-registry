@@ -47,6 +47,10 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
     }
   };
 
+  const onClickBacktoSignIn = () => {
+    navigate('/login', { replace: true });
+  };
+
   return (
     <div className="reset-password-container">
       <Row>
@@ -154,6 +158,12 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                   <div className="msg">{t('resetPassword:passwordResetNotWorked')}</div>
                 </div>
               )}
+              <div className="bottom-forgot-password-section">
+                {t('common:backto')}&nbsp;
+                <span onClick={() => onClickBacktoSignIn()} className="backto-signin-txt">
+                  {t('common:signIn')}
+                </span>
+              </div>
             </Form>
           </div>
         </Col>
