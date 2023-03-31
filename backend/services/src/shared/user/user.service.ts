@@ -69,6 +69,17 @@ export class UserService {
     ).toString("base64");
   }
 
+  async getAdminUserDetails(companyId) {
+    const result = await this.userRepo.find({
+      where: {
+        role: Role.Admin,
+        companyId: parseInt(companyId),
+      },
+    });
+
+    return result;
+  }
+
   async getUserCredentials(username: string): Promise<User | undefined> {
     const users = await this.userRepo.find({
       select: [
@@ -336,6 +347,17 @@ export class UserService {
     }
 
     let { company, ...userFields } = userDto;
+    if (!company) {
+      const adminUserdetails = await this.getAdminUserDetails(
+        userDto.companyId
+      );
+      if (adminUserdetails?.length > 0) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
     if (company) {
       if (
         userFields.role &&
