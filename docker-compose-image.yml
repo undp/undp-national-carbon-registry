@@ -69,9 +69,12 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSWORD>"
-      RUN_MODULE: replicator
+      DB_PASSWORD: "<ANY PASSOWORD>"
+      RUN_MODULE: replicator,async-operations-handler,data-importer
       LOCATION_SERVICE: OPENSTREET
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: ""
+      ASYNC_OPERATIONS_TYPE: Database
   web:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
     # build:
