@@ -48,7 +48,6 @@
     "fs": "^0.0.1-security",
     "ion-js": "^4.3.0",
     "jsbi": "^4.3.0",
-    "luxon": "^3.3.0",
     "nanoid": "3.3.4",
     "nest-winston": "^1.8.0",
     "nestjs-i18n": "^10.2.6",
