@@ -82,7 +82,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`New password ${t('common:isRequired')}`);
+                        throw new Error(`New Password ${t('common:isRequired')}`);
                       }
                     },
                   },
