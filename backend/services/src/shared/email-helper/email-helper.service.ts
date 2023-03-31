@@ -11,7 +11,6 @@ import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
-import { DateTime } from 'luxon';
 
 @Injectable()
 export class EmailHelperService {
@@ -44,11 +43,10 @@ export class EmailHelperService {
 
     switch (template.id) {
       case "PROGRAMME_REJECTION":
-        let formattedDate = DateTime.fromMillis(programme.txTime).toFormat('dd LLLL yyyy');
         templateData = {
           ...templateData,
           programmeName: programme.title,
-          date: formattedDate,
+          date: new Date(programme.txTime),
           pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
