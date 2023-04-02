@@ -26,7 +26,9 @@ export class EmailHelperService {
     private asyncOperationsInterface: AsyncOperationsInterface,
     private helperService: HelperService
   ) {
-    this.isEmailDisabled = this.configService.get<boolean>("email.disableLowPriorityEmails");
+    this.isEmailDisabled = this.configService.get<boolean>(
+      "email.disableLowPriorityEmails"
+    );
   }
 
   public async sendEmailToProgrammeOwnerAdmins(
@@ -43,10 +45,16 @@ export class EmailHelperService {
 
     switch (template.id) {
       case "PROGRAMME_REJECTION":
+        let authDate = new Date(programme.txTime);
+        let date = authDate.getDate().toString().padStart(2, "0");
+        let month = authDate.toLocaleString("default", { month: "long" });
+        let year = authDate.getFullYear();
+        let formattedDate = `${date} ${month} ${year}`;
+
         templateData = {
           ...templateData,
           programmeName: programme.title,
-          date: new Date(programme.txTime),
+          date: formattedDate,
           pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
