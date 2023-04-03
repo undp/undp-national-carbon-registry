@@ -140,8 +140,8 @@ export class UserService {
         `id = ${id} ${
           abilityCondition
             ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ")"
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
         }`
       )
       .execute()
