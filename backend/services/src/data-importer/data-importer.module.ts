@@ -7,6 +7,7 @@ import { TypeOrmConfigService } from '../shared/typeorm.config.service';
 import { LedgerType } from '../shared/enum/ledger.type';
 import { ProgrammeModule } from '../shared/programme/programme.module';
 import { DataImporterService } from './data-importer.service';
+import { CompanyModule } from '../shared/company/company.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { DataImporterService } from './data-importer.service';
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([Programme]),
-    ProgrammeModule
+    ProgrammeModule,
+    CompanyModule
   ],
   providers: [Logger, DataImporterService]
 })

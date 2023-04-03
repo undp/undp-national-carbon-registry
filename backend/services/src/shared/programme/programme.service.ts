@@ -1083,16 +1083,20 @@ export class ProgrammeService {
       3
     );
     programme.countryCodeA2 = this.configService.get("systemCountry");
-    const constants = await this.getLatestConstant(
-      programmeDto.typeOfMitigation
-    );
 
-    const req = await this.getCreditRequest(programmeDto, constants);
-    try {
-      programme.creditEst = Math.round(await calculateCredit(req));
-    } catch (err) {
-      this.logger.log(`Credit calculate failed ${err.message}`);
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    let constants = undefined;
+    if (!programmeDto.creditEst) {
+      constants = await this.getLatestConstant(
+        programmeDto.typeOfMitigation
+      );
+  
+      const req = await this.getCreditRequest(programmeDto, constants);
+      try {
+        programme.creditEst = Math.round(await calculateCredit(req));
+      } catch (err) {
+        this.logger.log(`Credit calculate failed ${err.message}`);
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      }
     }
 
     if (programme.creditEst <= 0) {
@@ -1894,6 +1898,15 @@ export class ProgrammeService {
     }
     return null;
   };
+
+  async findByExternalId(externalId: string): Promise<Programme | undefined> {
+    return await this.programmeRepo.findOne({
+      where: {
+        externalId: externalId,
+      },
+    });
+  }
+  
 
   private getUserRef = (user: any) => {
     return `${user.companyId}#${user.companyName}#${user.id}`;
