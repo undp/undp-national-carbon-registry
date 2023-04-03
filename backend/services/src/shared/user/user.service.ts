@@ -132,26 +132,6 @@ export class UserService {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
 
-    const sql = await this.userRepo
-      .createQueryBuilder()
-      .update(User)
-      .set(update)
-      .where(
-        `id = ${id} ${
-          abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ""
-        }`
-      )
-      .getSql();
-
-    console.log("sql user update --- ", sql);
-    // .catch((err: any) => {
-    //   this.logger.error(err);
-    //   return err;
-    // });
-
     const result = await this.userRepo
       .createQueryBuilder()
       .update(User)
@@ -159,9 +139,9 @@ export class UserService {
       .where(
         `id = ${id} ${
           abilityCondition
-            ? " AND " +
+            ? " AND (" +
               this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ""
+            : ")"
         }`
       )
       .execute()
