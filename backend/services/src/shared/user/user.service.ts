@@ -347,7 +347,11 @@ export class UserService {
     }
 
     let { company, ...userFields } = userDto;
-    if (!company && userDto.companyId) {
+    if (
+      !company &&
+      userDto.companyId &&
+      companyRole === CompanyRole.GOVERNMENT
+    ) {
       const adminUserdetails = await this.getAdminUserDetails(
         userDto.companyId
       );
