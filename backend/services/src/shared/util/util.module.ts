@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
 import * as path from "path";
@@ -11,6 +11,11 @@ import { CounterService } from "./counter.service";
 import { CountryService } from "./country.service";
 import { HelperService } from "./helpers.service";
 import { IsValidCountryConstraint } from "./validcountry.decorator";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
+import { PasswordResetService } from "./passwordReset.service";
+import { EmailModule } from "../email/email.module";
+import { User } from "../entities/user.entity";
+import { UserModule } from "../user/user.module";
 
 @Module({
   imports: [
@@ -34,15 +39,22 @@ import { IsValidCountryConstraint } from "./validcountry.decorator";
         AcceptLanguageResolver,
       ],
     }),
-    TypeOrmModule.forFeature([Counter]),
-    TypeOrmModule.forFeature([Country]),
+    EmailModule,
+    TypeOrmModule.forFeature([Counter, Country, PasswordReset, User]),
   ],
   providers: [
     CounterService,
     CountryService,
     IsValidCountryConstraint,
     HelperService,
+    PasswordResetService,
+    Logger,
   ],
-  exports: [CounterService, CountryService, HelperService],
+  exports: [
+    CounterService,
+    CountryService,
+    HelperService,
+    PasswordResetService,
+  ],
 })
 export class UtilModule {}

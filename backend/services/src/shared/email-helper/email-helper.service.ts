@@ -20,7 +20,7 @@ export class EmailHelperService {
     private companyService: CompanyService,
     private programmeLedger: ProgrammeLedgerService
   ) {
-    this.isEmailDisabled = this.configService.get<boolean>("email.disabled");
+    this.isEmailDisabled = this.configService.get<boolean>("email.disableLowPriorityEmails");
   }
 
   public async sendEmailToProgrammeOwnerAdmins(

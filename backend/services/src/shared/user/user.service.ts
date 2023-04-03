@@ -57,20 +57,6 @@ export class UserService {
     private fileHandler: FileHandlerInterface
   ) {}
 
-  private generateRandomPassword() {
-    var pass = "";
-    var str =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789@#$";
-
-    for (let i = 1; i <= 8; i++) {
-      var char = Math.floor(Math.random() * str.length + 1);
-
-      pass += str.charAt(char);
-    }
-
-    return pass;
-  }
-
   private async generateApiKey(email) {
     return Buffer.from(
       `${email}${API_KEY_SEPARATOR}${await nanoid()}`
@@ -404,7 +390,7 @@ export class UserService {
       u.country = this.configService.get("systemCountry");
     }
 
-    u.password = this.generateRandomPassword();
+    u.password = this.helperService.generateRandomPassword();
     if (userDto.role == Role.Admin && u.companyRole == CompanyRole.MRV) {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
@@ -546,16 +532,16 @@ export class UserService {
     );
   }
 
-  async delete(username: string, ability: string): Promise<BasicResponseDto> {
+  async delete(userId: number, ability: string): Promise<BasicResponseDto> {
     this.logger.verbose(
       this.helperService.formatReqMessagesString("user.noUserFound", []),
-      username
+      userId
     );
 
     const result = await this.userRepo
       .createQueryBuilder()
       .where(
-        `email = '${username}' ${
+        `id = '${userId}' ${
           ability
             ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})`
             : ""
@@ -592,7 +578,7 @@ export class UserService {
       }
     }
 
-    const result2 = await this.userRepo.delete({ email: username });
+    const result2 = await this.userRepo.delete({ id: userId });
     if (result2.affected > 0) {
       return new BasicResponseDto(
         HttpStatus.OK,

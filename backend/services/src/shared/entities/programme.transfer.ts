@@ -70,6 +70,9 @@ export class ProgrammeTransfer implements EntitySubject {
     @Column({type: "bigint", nullable: true})
     createdTime: number;
 
+    @Column({type: "bigint", nullable: true})
+    authTime: number;
+
     @Column({
         type: "enum",
         enum: TransferStatus,

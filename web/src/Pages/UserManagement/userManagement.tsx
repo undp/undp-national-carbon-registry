@@ -158,7 +158,7 @@ const UserManagement = () => {
   const deleteUser = async (record: TableDataType) => {
     setLoading(true);
     try {
-      const response = await del(`national/user/delete?email=${record?.email}`);
+      const response = await del(`national/user/delete?userId=${record?.id}`);
       if (response.status === 200) {
         message.open({
           type: 'success',
@@ -167,7 +167,7 @@ const UserManagement = () => {
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
         const temp = [...tableData];
-        const index = temp.findIndex((value) => value.email === record?.email);
+        const index = temp.findIndex((value) => value.id === record?.id);
         if (index > -1) {
           temp.splice(index, 1);
           setTableData(temp);

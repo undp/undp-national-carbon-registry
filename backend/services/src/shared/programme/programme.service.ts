@@ -579,6 +579,7 @@ export class ProgrammeService {
             ? TransferStatus.RECOGNISED
             : TransferStatus.APPROVED,
           txTime: new Date().getTime(),
+          authTime: new Date().getTime(),
         }
       )
       .catch((err) => {
@@ -1173,7 +1174,8 @@ export class ProgrammeService {
         )
       )
       .orderBy(
-        query?.sort?.key && `"programme"."${query?.sort?.key}"`,
+        query?.sort?.key &&
+          `"programme".${this.helperService.generateSortCol(query?.sort?.key)}`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
@@ -1310,6 +1312,19 @@ export class ProgrammeService {
       certifierId = req.certifierId;
     } else {
       certifierId = user.companyId;
+    }
+
+    const userCompany = await this.companyRepo.findOne({
+      where: { companyId: user.companyId }
+    });
+    if(userCompany && userCompany.state === CompanyState.SUSPENDED){
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.organisationDeactivated",
+          []
+        ),
+        HttpStatus.FORBIDDEN
+      );
     }
 
     const updated = await this.programmeLedger.updateCertifier(

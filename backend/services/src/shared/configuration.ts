@@ -28,11 +28,11 @@ export default () => ({
     },
     email: {
         source: process.env.SOURCE_EMAIL || 'info@xeptagon.com',
-        endpoint: process.env.EMAIL_ENDPOINT || 'vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com',
-        username: process.env.EMAIL_USERNAME || 'AKIAUMXKTXDJIOFY2QXL',
-        password: process.env.SES_PASSWORD,
-        skipSuffix: '@xeptagon.com',
-        disabled: process.env.IS_EMAIL_DISABLED === 'true' ? true : false
+        endpoint: process.env.SMTP_ENDPOINT || 'vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com',
+        username: process.env.SMTP_USERNAME || 'AKIAUMXKTXDJIOFY2QXL',
+        password: process.env.SMTP_PASSWORD,
+        disabled: process.env.IS_EMAIL_DISABLED === 'true' ? true : false,
+        disableLowPriorityEmails: process.env.DISABLE_LOW_PRIORITY_EMAIL === 'true' ? true : false
     },
     s3CommonBucket: {
         name: 'carbon-common-'+ (process.env.NODE_ENV || 'dev'),
