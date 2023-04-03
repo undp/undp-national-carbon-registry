@@ -180,7 +180,6 @@ const Dashboard = () => {
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
-  console.log('REACT_APP_MAP_TYPE', process.env.REACT_APP_MAP_TYPE);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
@@ -585,15 +584,15 @@ const Dashboard = () => {
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
           );
           setLastUpdateTotalCredits(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
         }
@@ -939,10 +938,10 @@ const Dashboard = () => {
         String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
       ) {
         setLastUpdateProgrammesCertifiableEpoch(
-          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)
+          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
         );
         setLastUpdateProgrammesCertifiable(
-          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)).fromNow()
+          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
         );
       }
       if (
@@ -1043,31 +1042,30 @@ const Dashboard = () => {
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
         }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !==
-            '0'
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
+          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
           );
           setLastUpdateProgrammesCreditsStats(
             moment(
-              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
         }

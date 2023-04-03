@@ -69,6 +69,17 @@ export class UserService {
     ).toString("base64");
   }
 
+  async getAdminUserDetails(companyId) {
+    const result = await this.userRepo.find({
+      where: {
+        role: Role.Admin,
+        companyId: parseInt(companyId),
+      },
+    });
+
+    return result;
+  }
+
   async getUserCredentials(username: string): Promise<User | undefined> {
     const users = await this.userRepo.find({
       select: [
@@ -121,26 +132,6 @@ export class UserService {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
 
-    const sql = await this.userRepo
-      .createQueryBuilder()
-      .update(User)
-      .set(update)
-      .where(
-        `id = ${id} ${
-          abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ""
-        }`
-      )
-      .getSql();
-
-    console.log("sql user update --- ", sql);
-    // .catch((err: any) => {
-    //   this.logger.error(err);
-    //   return err;
-    // });
-
     const result = await this.userRepo
       .createQueryBuilder()
       .update(User)
@@ -148,8 +139,8 @@ export class UserService {
       .where(
         `id = ${id} ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -336,6 +327,21 @@ export class UserService {
     }
 
     let { company, ...userFields } = userDto;
+    if (
+      !company &&
+      userDto.companyId &&
+      companyRole === CompanyRole.GOVERNMENT
+    ) {
+      const adminUserdetails = await this.getAdminUserDetails(
+        userDto.companyId
+      );
+      if (adminUserdetails?.length > 0) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
     if (company) {
       if (
         userFields.role &&

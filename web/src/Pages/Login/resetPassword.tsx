@@ -86,7 +86,7 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`New password ${t('common:isRequired')}`);
+                        throw new Error(`New Password ${t('common:isRequired')}`);
                       }
                     },
                   },
@@ -111,10 +111,10 @@ const ResetPassword: FC<ResetPasswordPageProps> = (props: ResetPasswordPageProps
                       ) {
                         throw new Error(`Confirm New Password ${t('common:isRequired')}`);
                       } else {
-                        const val = value.trim();
+                        const val = value;
                         const password = resetPasswordForm.getFieldValue('password');
                         if (password) {
-                          if (password.trim() !== val) {
+                          if (password !== val) {
                             throw new Error(`${t('resetPassword:passwordNotMatch')}`);
                           }
                         }
