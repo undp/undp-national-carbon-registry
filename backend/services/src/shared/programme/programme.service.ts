@@ -586,6 +586,49 @@ export class ProgrammeService {
       });
 
     if (result.affected > 0) {
+      const transfers = await this.programmeTransferRepo.find({
+        where: {
+          programmeId: programme.programmeId,
+          status: TransferStatus.PENDING,
+        },
+      });
+
+      for (let transfer of transfers) {
+        const companyIndex = programme.companyId.indexOf(
+          transfer.fromCompanyId
+        );
+        const companyProponent = programme.proponentPercentage[companyIndex];
+        const creditBalance =
+          (programme.creditBalance * companyProponent) / 100;
+        if (transfer.creditAmount < creditBalance) {
+          const result = await this.programmeTransferRepo
+            .update(
+              {
+                requestId: transfer.requestId,
+              },
+              {
+                status: TransferStatus.CANCELLED,
+                txTime: new Date().getTime(),
+                authTime: new Date().getTime(),
+              }
+            )
+            .catch((err) => {
+              this.logger.error(err);
+              return err;
+            });
+
+          if (result.affected === 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "programme.internalErrorStatusUpdating",
+                []
+              ),
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          }
+        }
+      }
+
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 
