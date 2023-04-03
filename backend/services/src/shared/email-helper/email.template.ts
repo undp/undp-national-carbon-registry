@@ -78,7 +78,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
         <br><br>
@@ -100,7 +100,7 @@ export const EmailTemplates = {
         <br><br>
 
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions.
         
         <br><br>
