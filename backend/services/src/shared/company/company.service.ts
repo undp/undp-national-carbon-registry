@@ -58,8 +58,9 @@ export class CompanyService {
       .where(
         `"companyId" = '${companyId}' and state = '1' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -164,8 +165,9 @@ export class CompanyService {
       .where(
         `"companyId" = '${companyId}' and state = '0' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -339,9 +341,13 @@ export class CompanyService {
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
-        `"companyId" = '${
-          companyUpdateDto.companyId
-        }' AND ${this.helperService.parseMongoQueryToSQL(abilityCondition)}`
+        `"companyId" = '${companyUpdateDto.companyId}' ${
+          abilityCondition
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {

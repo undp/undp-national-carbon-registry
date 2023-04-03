@@ -170,8 +170,8 @@ export class UserService {
       .where(
         `id = '${id}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -243,8 +243,8 @@ export class UserService {
       .where(
         `email = '${email}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
