@@ -899,7 +899,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          ["certifiedTime"],
+          ["certifiedTime", "creditUpdateTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
           stat.statFilter?.timeGroup ? "day" : undefined
         );

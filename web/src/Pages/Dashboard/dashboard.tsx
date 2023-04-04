@@ -584,16 +584,14 @@ const Dashboard = () => {
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateTotalCredits(
-            moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
-            ).fromNow()
+            moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
           );
         } else {
           setLastUpdateTotalCredits('0');
@@ -1072,16 +1070,14 @@ const Dashboard = () => {
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
-          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last &&
+          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateProgrammesCreditsStats(
-            moment(
-              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
-            ).fromNow()
+            moment(parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
           );
         } else {
           setLastUpdateProgrammesCreditsStatsEpoch(0);
