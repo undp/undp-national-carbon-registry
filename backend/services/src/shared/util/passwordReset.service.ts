@@ -42,7 +42,6 @@ export class PasswordResetService {
     const passwordResetD = await this.passwordResetRepo.findBy({
       token: reqId,
     });
-    console.log("passwordResetD --- > ", passwordResetD);
     if (!(passwordResetD.length > 0)) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(

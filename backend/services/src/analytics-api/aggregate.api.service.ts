@@ -27,6 +27,18 @@ import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
 
 @Injectable()
 export class AggregateAPIService {
+  private timeDropFields = [
+    "certifierId",
+    "companyId",
+    "revokedCertifierId",
+    "toCompanyId",
+    "fromCompanyId",
+    "programmeCertifierId",
+    "initiatorCompanyId",
+    "isRetirement",
+    "createdTime"
+  ]
+
   constructor(
     private configService: ConfigService,
     private helperService: HelperService,
@@ -276,7 +288,8 @@ export class AggregateAPIService {
     statCache: any,
     timeCol: string[],
     timeGroupingCol?: string,
-    timeGroupingAccuracy?: string
+    timeGroupingAccuracy?: string,
+    keepTimeFields?: string[]
   ) {
     const query = new QueryDto();
     query.filterAnd = filterAnd;
@@ -284,16 +297,17 @@ export class AggregateAPIService {
     query.sort = sort;
 
     const timeFields = [
-      ...timeCol,
-      "certifierId",
-      "companyId",
-      "revokedCertifierId",
-      "toCompanyId",
-      "fromCompanyId",
-      "programmeCertifierId",
-      "initiatorCompanyId",
-      "isRetirement",
+      ...timeCol
     ];
+
+    for (const t of this.timeDropFields) {
+      if (keepTimeFields && keepTimeFields.indexOf(t) >= 0) {
+        continue;
+      }
+      timeFields.push(t)
+    }
+
+    console.log('Time fields', timeFields)
 
     const whereC = this.helperService.generateWhereSQL(
       query,
@@ -395,7 +409,8 @@ export class AggregateAPIService {
     }
 
     const key =
-      (grpByAll ? grpByAll : "") + " " + whereC + " from " + tableName;
+      (grpByAll ? grpByAll : "") + " " + whereC + " from " + tableName + ' ' + timeWhere;
+    console.log('Stat cache key', key)
     if (statCache[key]) {
       return statCache[key];
     }
@@ -699,6 +714,7 @@ export class AggregateAPIService {
     companyRole
   ) {
     const key = stat.key ? stat.key : stat.type;
+    console.log(stat.type)
     switch (stat.type) {
       case StatType.AGG_PROGRAMME_BY_STATUS:
       case StatType.AGG_PROGRAMME_BY_SECTOR:
@@ -734,7 +750,7 @@ export class AggregateAPIService {
         stat.statFilter
           ? (stat.statFilter.onlyMine = true)
           : (stat.statFilter = { onlyMine: true });
-        results[key] = await this.getCertifiedByMePrgrammes(
+        const d1 = await this.getCertifiedByMePrgrammes(
           stat.statFilter,
           companyId,
           stat.type === StatType.CERTIFIED_BY_ME
@@ -745,6 +761,19 @@ export class AggregateAPIService {
           statCache,
           undefined
         );
+        const d2 = await this.getCertifiedByMePrgrammes(
+          stat.statFilter,
+          companyId,
+          stat.type === StatType.CERTIFIED_BY_ME
+            ? "revokedCertifierId"
+            : "certifierId",
+          abilityCondition,
+          lastTimeForWhere,
+          statCache,
+          undefined
+        );
+        d1.last = Math.max(d1.last, d2.last)
+        results[key] = d1;
         break;
       case StatType.CERTIFIED_REVOKED_BY_ME:
       case StatType.UNCERTIFIED_BY_ME:
@@ -870,7 +899,7 @@ export class AggregateAPIService {
           abilityCondition,
           lastTimeForWhere,
           statCache,
-          ["certifiedTime"],
+          ["certifiedTime", "creditUpdateTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
           stat.statFilter?.timeGroup ? "day" : undefined
         );
@@ -961,6 +990,7 @@ export class AggregateAPIService {
         );
         break;
     }
+    console.log('Calc stat done', stat.type)
     return results;
   }
 
@@ -1212,18 +1242,19 @@ export class AggregateAPIService {
       stat.statFilter?.timeGroup ? true : false
     );
 
+    const revoked = await this.getCertifiedByMePrgrammes(
+      stat.statFilter,
+      companyId,
+      "revokedCertifierId",
+      abilityCondition,
+      lastTimeForWhere,
+      statCache,
+      companyRole,
+      stat.statFilter?.timeGroup ? true : false
+    );
+
     console.log("Credit minus certified", certified);
     if (!onlyUncertified) {
-      const revoked = await this.getCertifiedByMePrgrammes(
-        stat.statFilter,
-        companyId,
-        "revokedCertifierId",
-        abilityCondition,
-        lastTimeForWhere,
-        statCache,
-        companyRole,
-        stat.statFilter?.timeGroup ? true : false
-      );
 
       console.log("Credit minus revoked", revoked);
       if (!stat.statFilter || stat.statFilter.timeGroup != true) {
@@ -1382,8 +1413,8 @@ export class AggregateAPIService {
       }
     } else {
       return {
-        last: Math.max(certified.last, allAuth.all["authTime"]),
-        countLast: Math.max(certified.last, allAuth.all["statusUpdateTime"]),
+        last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
+        countLast: Math.max(certified.last, allAuth.all["statusUpdateTime"], revoked.last),
         data: {
           uncertifiedSum:
             Number(
