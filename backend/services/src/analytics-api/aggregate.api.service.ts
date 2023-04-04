@@ -901,7 +901,8 @@ export class AggregateAPIService {
           statCache,
           ["certifiedTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
-          stat.statFilter?.timeGroup ? "day" : undefined
+          stat.statFilter?.timeGroup ? "day" : undefined,
+          ["certifierId"]
         );
         break;
       case StatType.ALL_PROGRAMME_LOCATION:
