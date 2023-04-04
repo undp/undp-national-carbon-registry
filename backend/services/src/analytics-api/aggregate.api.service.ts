@@ -35,7 +35,8 @@ export class AggregateAPIService {
     "fromCompanyId",
     "programmeCertifierId",
     "initiatorCompanyId",
-    "isRetirement"
+    "isRetirement",
+    "createdTime"
   ]
 
   constructor(
@@ -900,8 +901,7 @@ export class AggregateAPIService {
           statCache,
           ["certifiedTime"],
           stat.statFilter?.timeGroup ? "createdAt" : undefined,
-          stat.statFilter?.timeGroup ? "day" : undefined,
-          ['certifierId']
+          stat.statFilter?.timeGroup ? "day" : undefined
         );
         break;
       case StatType.ALL_PROGRAMME_LOCATION:

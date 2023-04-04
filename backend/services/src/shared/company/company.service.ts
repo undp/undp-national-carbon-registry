@@ -293,6 +293,10 @@ export class CompanyService {
     req: FindOrganisationQueryDto
   ): Promise<Company[] | undefined> {
     const data: Company[] = [];
+
+    if (!(req.companyIds instanceof Array)) { 
+      throw new HttpException("Invalid companyId list", HttpStatus.BAD_REQUEST);
+    }
     for (let i = 0; i < req.companyIds.length; i++) {
       const companies = await this.companyRepo.find({
         where: {

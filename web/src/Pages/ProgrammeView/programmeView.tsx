@@ -1551,6 +1551,7 @@ const ProgrammeView = () => {
                     <a
                       target="_blank"
                       href={data.programmeProperties.programmeMaterials}
+                      rel="noopener noreferrer"
                       className="pull-right link"
                     >
                       {<Icon.Link45deg />}
@@ -1568,6 +1569,7 @@ const ProgrammeView = () => {
                     <a
                       target="_blank"
                       href={data.programmeProperties.projectMaterial}
+                      rel="noopener noreferrer"
                       className="pull-right link"
                     >
                       {<Icon.Link45deg />}
