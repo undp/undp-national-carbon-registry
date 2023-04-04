@@ -595,6 +595,9 @@ const Dashboard = () => {
               parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateTotalCredits('0');
+          setLastUpdateTotalCreditsEpoch(0);
         }
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
@@ -609,6 +612,9 @@ const Dashboard = () => {
               parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesSectorStatsCEpoch(0);
+          setLastUpdateProgrammesSectorStatsC('0');
         }
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         if (
@@ -621,6 +627,9 @@ const Dashboard = () => {
           setLastUpdateTotalCreditsCertified(
             moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
           );
+        } else {
+          setLastUpdateTotalCreditsCertifiedEpoch(0);
+          setLastUpdateTotalCreditsCertified('0');
         }
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
         if (
@@ -633,6 +642,9 @@ const Dashboard = () => {
           setLastUpdateTransferLocations(
             moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
           );
+        } else {
+          setLastUpdateTransferLocationsEpoch(0);
+          setLastUpdateTransferLocations('0');
         }
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
@@ -1053,6 +1065,9 @@ const Dashboard = () => {
               parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesStatsCEpoch(0);
+          setLastUpdateProgrammesStatsC('0');
         }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
@@ -1068,6 +1083,9 @@ const Dashboard = () => {
               parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesCreditsStatsEpoch(0);
+          setLastUpdateProgrammesCreditsStats('0');
         }
         programmeByStatusAuthAggregationResponse =
           response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
@@ -1081,6 +1099,9 @@ const Dashboard = () => {
           setLastUpdateCertifiedCreditsStats(
             moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
           );
+        } else {
+          setLastUpdateCertifiedCreditsStatsEpoch(0);
+          setLastUpdateCertifiedCreditsStats('0');
         }
         certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       } else if (
