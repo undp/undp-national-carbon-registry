@@ -565,6 +565,7 @@ export class ProgrammeService {
     reason: string,
     isRetirement: boolean
   ) {
+    const hostAddress = this.configService.get("host");
     const programme = await this.programmeLedger.transferProgramme(
       transfer,
       user,
@@ -592,6 +593,73 @@ export class ProgrammeService {
       });
 
     if (result.affected > 0) {
+      const transfers = await this.programmeTransferRepo.find({
+        where: {
+          programmeId: programme.programmeId,
+          status: TransferStatus.PENDING,
+        },
+      });
+
+      for (let transfer of transfers) {
+        const companyIndex = programme.companyId.indexOf(
+          transfer.fromCompanyId
+        );
+        const companyProponent = programme.creditOwnerPercentage[companyIndex];
+        const creditBalance =
+          (programme.creditBalance * companyProponent) / 100;
+        if (transfer.creditAmount > creditBalance) {
+          const result = await this.programmeTransferRepo
+            .update(
+              {
+                requestId: transfer.requestId,
+              },
+              {
+                status: TransferStatus.CANCELLED,
+                txTime: new Date().getTime(),
+                authTime: new Date().getTime(),
+                txRef: `#${SystemActionType.LOW_CREDIT_AUTO_CANCEL}#`,
+              }
+            )
+            .catch((err) => {
+              this.logger.error(err);
+              return err;
+            });
+
+          if (result.affected === 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "programme.internalErrorStatusUpdating",
+                []
+              ),
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          }else {
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.toCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              }
+            );
+
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.fromCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              },
+              transfer.toCompanyId
+            );
+          }
+        }
+      }
+
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 

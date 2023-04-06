@@ -412,6 +412,9 @@ const ProgrammeView = () => {
         addElement(dx, Number(transfer.txTime!), hist);
       } else if (transfer.status === CreditTransferStage.Cancelled) {
         const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
+        const lowCreditSystemCancel =
+          transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
+
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
@@ -419,7 +422,11 @@ const ProgrammeView = () => {
           description: (
             <TimelineBody
               text={formatString(
-                systemCancel ? 'view:tlTxCancelSystemDesc' : 'view:tlTxCancelDesc',
+                systemCancel
+                  ? 'view:tlTxCancelSystemDesc'
+                  : lowCreditSystemCancel
+                  ? 'view:tlTxLowCreditCancelSystemDesc'
+                  : 'view:tlTxCancelDesc',
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -427,7 +434,11 @@ const ProgrammeView = () => {
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta.countryName
                     : transfer.receiver[0]?.name,
-                  systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
+                  systemCancel
+                    ? transfer.txRef?.split('#')[4]
+                    : lowCreditSystemCancel
+                    ? ''
+                    : transfer.requester[0]?.name,
                   transfer.txRef?.split('#')[5],
                 ]
               )}

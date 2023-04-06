@@ -195,6 +195,32 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
+  },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
+  },
   CREDIT_TRANSFER_ACCEPTED: {
     id: "CREDIT_TRANSFER_ACCEPTED",
     subject: "Transfer Request Accepted",
@@ -375,7 +401,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br>
 
-        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but not other will be able to take place. Following were the effects of deactivation:<br><br>
+        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but no further action will be able to take place. Following were the effects of deactivation:<br><br>
          · All the users of the Organisation were deactivated. <br>
          · All the credits owned by your Organisation were frozen.<br>
          · All credit transfer requests sent and received by your Organisation were cancelled.<br>
