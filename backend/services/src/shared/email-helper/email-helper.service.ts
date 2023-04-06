@@ -240,6 +240,16 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+        };
+        break;
+
       default:
         break;
     }

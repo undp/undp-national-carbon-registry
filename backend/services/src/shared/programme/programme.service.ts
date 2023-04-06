@@ -565,6 +565,7 @@ export class ProgrammeService {
     reason: string,
     isRetirement: boolean
   ) {
+    const hostAddress = this.configService.get("host");
     const programme = await this.programmeLedger.transferProgramme(
       transfer,
       user,
@@ -603,10 +604,10 @@ export class ProgrammeService {
         const companyIndex = programme.companyId.indexOf(
           transfer.fromCompanyId
         );
-        const companyProponent = programme.proponentPercentage[companyIndex];
+        const companyProponent = programme.creditOwnerPercentage[companyIndex];
         const creditBalance =
           (programme.creditBalance * companyProponent) / 100;
-        if (transfer.creditAmount < creditBalance) {
+        if (transfer.creditAmount > creditBalance) {
           const result = await this.programmeTransferRepo
             .update(
               {
@@ -616,6 +617,7 @@ export class ProgrammeService {
                 status: TransferStatus.CANCELLED,
                 txTime: new Date().getTime(),
                 authTime: new Date().getTime(),
+                txRef: `#${SystemActionType.LOW_CREDIT_AUTO_CANCEL}#`,
               }
             )
             .catch((err) => {
@@ -630,6 +632,29 @@ export class ProgrammeService {
                 []
               ),
               HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          }else {
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.toCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              }
+            );
+
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.fromCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              },
+              transfer.toCompanyId
             );
           }
         }

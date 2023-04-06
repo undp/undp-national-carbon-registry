@@ -110,5 +110,6 @@
     "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}",
     "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by {}",
     "tlUnFrozen": "Credits Unfrozen",
-    "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}"
+    "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}",
+    "tlTxLowCreditCancelSystemDesc" : "The request to transfer {} {} credits from {} to {} was cancelled by the system due to insufficient credit balance"
 }
