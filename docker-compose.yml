@@ -68,15 +68,15 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
-      RUN_MODULE: replicator,async-operations-handler,data-importer
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
       ASYNC_OPERATIONS_TYPE: Database
-      ITMO_API_KEY: "djZzajRtNXVxZ2xlbQ=="
-      ITMO_EMAIL: "tommaso.desica+testserviceaccount@develhope.co"
-      ITMO_PASSWORD: 111222aaaAAA!
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
   # async-operations-handler:
   #   build:
   #     context: .
