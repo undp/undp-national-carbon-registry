@@ -68,23 +68,30 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
-      RUN_MODULE: replicator
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
-  async-operations-handler:
-    build:
-      context: .
-      dockerfile: ./backend/services/Dockerfile
-    depends_on:
-      - db
-      - national
-    environment:
-      DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
-      RUN_MODULE: async-operations-handler
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SMTP_PASSWORD: "<ANY PASSOWORD>"
+      SMTP_PASSWORD: ""
+      IS_EMAIL_DISABLED: "true"
       ASYNC_OPERATIONS_TYPE: Database
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
+  # async-operations-handler:
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/services/Dockerfile
+  #   depends_on:
+  #     - db
+  #     - national
+  #   environment:
+  #     DB_HOST: db
+  #     DB_USER: root
+  #     DB_PASSWORD: "<ANY PASSOWORD>"
+  #     RUN_MODULE: async-operations-handler
+  #     SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+  #     SMTP_PASSWORD: "<ANY PASSOWORD>"
+  #     ASYNC_OPERATIONS_TYPE: Database
   web:
     build:
       context: .

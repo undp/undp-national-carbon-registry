@@ -108,6 +108,15 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
+  async getRoot(): Promise<User | undefined> {
+    const users = await this.userRepo.find({
+      where: {
+        role: Role.Root,
+      },
+    });
+    return users && users.length > 0 ? users[0] : undefined;
+  }
+
   async getUserProfileDetails(id: number) {
     const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(
@@ -442,20 +451,22 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
-        company.logo
-      );
-      if (response) {
-        company.logo = response;
-      } else {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyUpdateFailed",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
+      if (company.logo) {
+        const response: any = await this.fileHandler.uploadFile(
+          `profile_images/${company.companyId}_${new Date().getTime()}.png`,
+          company.logo
         );
+        if (response) {
+          company.logo = response;
+        } else {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "user.companyUpdateFailed",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
       }
 
       if (!company.hasOwnProperty("website")) {

@@ -1238,7 +1238,7 @@ const ProgrammeView = () => {
     }
   });
 
-  let calculations;
+  let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {

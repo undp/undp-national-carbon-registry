@@ -46,4 +46,10 @@ export default () => ({
         retrieve: process.env.OPENSTREET_QUERY === 'true' || false
     },
     asyncQueueName: process.env.ASYNC_QUEUE_NAME || 'https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueue.fifo',
+    ITMOSystem: {
+        endpoint: process.env.ITMO_ENDPOINT || 'https://dev-digital-carbon-finance-webapp-api-rxloyxnj3dbso.azurewebsites.net/api/v1/',
+        apiKey: process.env.ITMO_API_KEY,
+        email: process.env.ITMO_EMAIL,
+        password: process.env.ITMO_PASSWORD
+    }
 });
