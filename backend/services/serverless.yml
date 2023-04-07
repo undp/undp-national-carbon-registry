@@ -99,6 +99,19 @@ functions:
       - ${param:depLayerArn1}
       - ${param:depLayerArn2}
 
+  data-importer:
+    timeout: 60
+    handler: src/data-importer/handler.handler
+    events:
+      - schedule: cron(0 12 * * ? *)
+    ssmToEnvironment:
+      - DB_PASSWORD
+    environment:
+      NODE_PATH: "./:/opt/node_modules"
+    layers:
+      - ${param:depLayerArn1}
+      - ${param:depLayerArn2}
+
   -async-operations-handler:
     timeout: 60
     handler: src/async-operations-handler/handler.handler

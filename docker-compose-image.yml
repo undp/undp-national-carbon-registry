@@ -70,6 +70,7 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
+      IS_EMAIL_DISABLED: "true"
       RUN_MODULE: replicator,async-operations-handler,data-importer
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com

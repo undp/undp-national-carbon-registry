@@ -11,9 +11,9 @@ async function bootstrap() {
   let module;
   let httpPath;
 
-  const modules = process.env.RUN_MODULE.split(',')
+  const modules = process.env.RUN_MODULE.split(",");
   for (const moduleName of modules) {
-    console.log('Starting module', moduleName)
+    console.log("Starting module", moduleName);
     switch (moduleName) {
       case "national-api":
         module = NationalAPIModule;
@@ -25,30 +25,30 @@ async function bootstrap() {
         break;
       case "replicator":
         await handler();
-        console.log('Module initiated', moduleName)
+        console.log("Module initiated", moduleName);
         continue;
       case "async-operations-handler":
         await asyncHandler();
-        console.log('Module initiated', moduleName)
+        console.log("Module initiated", moduleName);
         continue;
       case "data-importer":
-        await importHandler();
-        console.log('Module initiated', moduleName)
+        await importHandler({ importTypes: "ITMO_SYSTEM" });
+        console.log("Module initiated", moduleName);
         continue;
       default:
         module = NationalAPIModule;
         httpPath = "national";
     }
-  
+
     const app = await buildNestApp(module, "/" + httpPath);
     if (moduleName == "national-api") {
-      const staticPath = join(__dirname, '..', 'public')
-      console.log('Static file path:', staticPath)
+      const staticPath = join(__dirname, "..", "public");
+      console.log("Static file path:", staticPath);
       app.useStaticAssets(staticPath);
       await setupHandler.handler();
     }
     await app.listen(process.env.RUN_PORT || 3000);
-    console.log('Module initiated', moduleName)
+    console.log("Module initiated", moduleName);
   }
   // global.baseUrl = await app.getUrl();
 }
