@@ -103,7 +103,7 @@ functions:
     timeout: 60
     handler: src/data-importer/handler.handler
     events:
-      - schedule: cron(0 12 * * ? *)
+      - schedule: cron(0 5 * * ? *)
     ssmToEnvironment:
       - DB_PASSWORD
     environment:
