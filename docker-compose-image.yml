@@ -71,11 +71,15 @@ services:
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
       IS_EMAIL_DISABLED: "true"
-      RUN_MODULE: replicator,async-operations-handler,data-importer
+      # ,data-importer
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
       SMTP_PASSWORD: ""
       ASYNC_OPERATIONS_TYPE: Database
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
   web:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
     # build:
