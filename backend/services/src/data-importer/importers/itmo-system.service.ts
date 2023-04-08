@@ -151,7 +151,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                 projectDetails.sector
               );
 
-              const pr: Programme = {
+              const pr = {
                 title: projectDetails.name,
                 externalId: projectDetails.id,
                 sectoralScope: scope,
@@ -179,8 +179,8 @@ export class ITMOSystemImporter implements ImporterInterface {
               };
 
               if ( step.files && step.files.length > 0) {
-                pr.programmeProperties.programmeMaterials = step.files[0]
-                pr.programmeProperties.projectMaterial = step.files[0]
+                pr.programmeProperties['programmeMaterials'] = step.files[0]
+                pr.programmeProperties['projectMaterial'] = step.files[0]
               }
 
               await this.programmeService.create(pr);
