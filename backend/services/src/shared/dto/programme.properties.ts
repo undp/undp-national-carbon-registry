@@ -20,20 +20,20 @@ export class ProgrammeProperties {
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  maxInternationalTransferAmount: string;
+  maxInternationalTransferAmount?: string;
 
   @ApiPropertyOptional()
   @IsPositive()
   @IsInt()
   @IsOptional()
   @IsNotEmpty()
-  creditingPeriodInYears: number;
+  creditingPeriodInYears?: number;
 
   @ApiProperty()
   @IsPositive()
   @IsNumber()
   @IsNotEmpty()
-  programmeCostUSD: number;
+  programmeCostUSD?: number;
 
   @ApiPropertyOptional({ enum: SourceOfFunding })
   @IsEnum(SourceOfFunding, {
@@ -43,25 +43,25 @@ export class ProgrammeProperties {
   })
   @IsNotEmpty()
   @IsOptional()
-  sourceOfFunding: SourceOfFunding;
+  sourceOfFunding?: SourceOfFunding;
 
   @ApiPropertyOptional()
   @IsPositive()
   @IsNumber()
   @IsOptional()
-  grantEquivalentAmount: number;
+  grantEquivalentAmount?: number;
 
   @ApiPropertyOptional()
   @IsPositive()
   @IsNumber()
   @IsOptional()
-  carbonPriceUSDPerTon: number;
+  carbonPriceUSDPerTon?: number;
 
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   @IsNotEmpty()
-  buyerCountryEligibility: string;
+  buyerCountryEligibility?: string;
 
   @ApiProperty()
   @IsArray()
@@ -80,17 +80,17 @@ export class ProgrammeProperties {
   @IsNotEmpty()
   greenHouseGasses: GHGs[];
 
-  creditYear: number;
+  creditYear?: number;
 
   @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  programmeMaterials: string;
+  programmeMaterials?: string;
 
   @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  projectMaterial: string;
+  projectMaterial?: string;
 }
