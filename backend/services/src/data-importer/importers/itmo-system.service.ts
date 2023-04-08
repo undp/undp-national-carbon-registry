@@ -12,6 +12,7 @@ import { TypeOfMitigation } from "../../shared/enum/typeofmitigation.enum";
 import { UserService } from "../../shared/user/user.service";
 import { Role } from "../../shared/casl/role.enum";
 import { GHGs } from "../../shared/enum/ghgs.enum";
+import { Programme } from "../../shared/entities/programme.entity";
 
 function flatten(ary) {
   if (!ary) {
@@ -149,7 +150,8 @@ export class ITMOSystemImporter implements ImporterInterface {
               const [sector, scope, mitigation] = this.getSector(
                 projectDetails.sector
               );
-              await this.programmeService.create({
+
+              const pr: Programme = {
                 title: projectDetails.name,
                 externalId: projectDetails.id,
                 sectoralScope: scope,
@@ -170,29 +172,18 @@ export class ITMOSystemImporter implements ImporterInterface {
                 proponentPercentage: [100],
                 creditUnit: this.configService.get("defaultCreditUnit"),
                 programmeProperties: {
-                  programmeCostUSD: undefined,
                   geographicalLocation: projectDetails.country.name,
                   greenHouseGasses: [GHGs.CO2],
-                  maxInternationalTransferAmount: undefined,
-                  creditingPeriodInYears: undefined,
-                  sourceOfFunding: undefined,
-                  grantEquivalentAmount: undefined,
-                  carbonPriceUSDPerTon: undefined,
-                  buyerCountryEligibility: undefined,
-                  programmeMaterials:
-                    step.files && step.files.length > 0
-                      ? step.files[0]
-                      : undefined,
-                  projectMaterial:
-                    step.files && step.files.length > 0
-                      ? step.files[0]
-                      : undefined,
-                  creditYear: undefined,
                 },
-                agricultureProperties: undefined,
-                solarProperties: undefined,
                 creditEst: 100,
-              });
+              };
+
+              if ( step.files && step.files.length > 0) {
+                pr.programmeProperties.programmeMaterials = step.files[0]
+                pr.programmeProperties.projectMaterial = step.files[0]
+              }
+
+              await this.programmeService.create(pr);
             } else if (
               programme &&
               programme.currentStage === ProgrammeStage.AUTHORISED

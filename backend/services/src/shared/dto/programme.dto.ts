@@ -84,14 +84,14 @@ export class ProgrammeDto {
     @IsNotEmptyObject()
     @ValidateNested()
     @Type(() => AgricultureProperties)
-    agricultureProperties: AgricultureProperties;
+    agricultureProperties?: AgricultureProperties;
 
     @ApiProperty()
     @ValidateIf(o => o.typeOfMitigation === TypeOfMitigation.SOLAR)
     @IsNotEmptyObject()
     @ValidateNested()
     @Type(() => SolarProperties)
-    solarProperties: SolarProperties;
+    solarProperties?: SolarProperties;
 
     @ApiPropertyOptional()
     @IsNotEmpty()
