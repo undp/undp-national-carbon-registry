@@ -120,7 +120,7 @@ functions:
     handler: src/async-operations-handler/handler.handler
     events:
       - sqs:
-          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue.fifo
+          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueuedev.fifo
           batchSize: 10
     ssmToEnvironment:
       - SMTP_PASSWORD
