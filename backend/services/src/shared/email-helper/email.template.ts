@@ -201,7 +201,7 @@ export const EmailTemplates = {
     html: `
       Hi {{name}}, <br><br>
 
-      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been cancelled due to insufficient credits available. <br><br>
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{organisationName}} made by your Organisation has been cancelled due to insufficient credits available. <br><br>
       Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
       
       Sincerely, <br>
@@ -463,6 +463,30 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `,
+  },
+  CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR: {
+    id: "CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR",
+    subject: "International Transfer Retire Request Cancelled by the System",
+    html: `
+      Hi {{name}},<br><br>  
+      Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your Organisation has been cancelled by the system due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the international transfer retire request. <br><br>
+    
+      Sincerely,  <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `
+  },
+  CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV: {
+    id: "CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV",
+    subject: "International Transfer Retire Request Cancelled by the System",
+    html: `
+      Hi {{name}},<br><br>  
+      Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by {{organisationName}} has been cancelled by the system due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the international transfer retire request. <br><br>
+    
+      Sincerely,  <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `
   },
   CREDIT_RETIREMENT_RECOGNITION: {
     id: "CREDIT_RETIREMENT_RECOGNITION",

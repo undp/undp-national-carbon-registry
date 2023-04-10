@@ -633,29 +633,60 @@ export class ProgrammeService {
               ),
               HttpStatus.INTERNAL_SERVER_ERROR
             );
-          }else {
-            await this.emailHelperService.sendEmailToOrganisationAdmins(
-              transfer.toCompanyId,
-              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
-              {
-                credits: transfer.creditAmount,
-                serialNumber: programme.serialNo,
-                programmeName: programme.title,
-                pageLink: hostAddress + "/creditTransfers/viewAll",
-              }
-            );
+          } else {
+            if (transfer.isRetirement) {
+              const countryName = await this.countryService.getCountryName(
+                transfer.toCompanyMeta.country
+              );
 
-            await this.emailHelperService.sendEmailToOrganisationAdmins(
-              transfer.fromCompanyId,
-              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
-              {
-                credits: transfer.creditAmount,
-                serialNumber: programme.serialNo,
-                programmeName: programme.title,
-                pageLink: hostAddress + "/creditTransfers/viewAll",
-              },
-              transfer.toCompanyId
-            );
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.fromCompanyId,
+                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  country: countryName,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                }
+              );
+
+              await this.emailHelperService.sendEmailToGovernmentAdmins(
+                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                  country: countryName,
+                },
+                "",
+                transfer.fromCompanyId
+              );
+            } else {
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.toCompanyId,
+                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                }
+              );
+
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.fromCompanyId,
+                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                },
+                transfer.toCompanyId
+              );
+            }
           }
         }
       }
@@ -1177,10 +1208,8 @@ export class ProgrammeService {
 
     let constants = undefined;
     if (!programmeDto.creditEst) {
-      constants = await this.getLatestConstant(
-        programmeDto.typeOfMitigation
-      );
-  
+      constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
+
       const req = await this.getCreditRequest(programmeDto, constants);
       try {
         programme.creditEst = Math.round(await calculateCredit(req));
@@ -2003,7 +2032,6 @@ export class ProgrammeService {
       },
     });
   }
-  
 
   private getUserRef = (user: any) => {
     return `${user.companyId}#${user.companyName}#${user.id}`;
