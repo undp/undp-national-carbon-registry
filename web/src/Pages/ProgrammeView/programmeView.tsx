@@ -189,7 +189,7 @@ const ProgrammeView = () => {
           accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
         }
 
-        if (!accessToken) return;
+        if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
 
         for (const address of data!.programmeProperties.geographicalLocation) {
           const response = await Geocoding({ accessToken: accessToken })
