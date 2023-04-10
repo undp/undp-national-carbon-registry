@@ -85,7 +85,7 @@ functions:
     handler: src/ledger-replicator/handler.handler
     events:
       - stream:
-          arn: arn:aws:kinesis:us-east-1:302213478610:stream/carbon-stream-dev
+          arn: arn:aws:kinesis:us-east-1:302213478610:stream/carbon-stream-${self:provider.stage}
           batchSize: 2
           startingPosition: LATEST
           maximumRetryAttempts: 10
@@ -120,7 +120,7 @@ functions:
     handler: src/async-operations-handler/handler.handler
     events:
       - sqs:
-          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueuedev.fifo
+          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue${self:provider.stage}.fifo
           batchSize: 10
     ssmToEnvironment:
       - SMTP_PASSWORD
