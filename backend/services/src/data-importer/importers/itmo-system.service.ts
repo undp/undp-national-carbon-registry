@@ -172,7 +172,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                 proponentPercentage: [100],
                 creditUnit: this.configService.get("defaultCreditUnit"),
                 programmeProperties: {
-                  geographicalLocation: projectDetails.country.name,
+                  geographicalLocation: [projectDetails.country.name],
                   greenHouseGasses: [GHGs.CO2],
                 },
                 creditEst: 100,

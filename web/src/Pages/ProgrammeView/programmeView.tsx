@@ -1626,7 +1626,7 @@ const ProgrammeView = () => {
                       style="mapbox://styles/mapbox/streets-v11"
                     ></MapComponent>
                     <Row className="region-list">
-                      {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                      {data.programmeProperties.geographicalLocation && data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
                         <Col className="loc-tag">
                           {data.geographicalLocationCordintes &&
                             data.geographicalLocationCordintes[idx] !== null &&
