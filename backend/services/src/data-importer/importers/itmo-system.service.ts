@@ -186,7 +186,8 @@ export class ITMOSystemImporter implements ImporterInterface {
               await this.programmeService.create(pr);
             } else if (
               programme &&
-              programme.currentStage === ProgrammeStage.AUTHORISED
+              programme.currentStage === ProgrammeStage.AUTHORISED &&
+              programme.creditIssued != 10
             ) {
               const flat = flatten(step.iterations)
 
