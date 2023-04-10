@@ -28,18 +28,15 @@ const MapboxComponent = (props: MapComponentProps) => {
   } = props;
 
   useEffect(() => {
-    if (
-      !mapContainerRef ||
-      !mapContainerRef.current ||
-      center.length !== 2
-    ) {
+    if (!mapContainerRef || !mapContainerRef.current || center.length !== 2) {
       return;
     }
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current || '',
       style: style,
-      center: (!Number.isNaN(center[0]) && !Number.isNaN(center[1])) ? [center[0], center[1]]: undefined,
+      center:
+        !Number.isNaN(center[0]) && !Number.isNaN(center[1]) ? [center[0], center[1]] : undefined,
       zoom: zoom,
     });
 
