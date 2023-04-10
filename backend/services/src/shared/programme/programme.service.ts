@@ -1325,6 +1325,11 @@ export class ProgrammeService {
     );
   }
 
+  async getProgrammeEventsByExternalId(externalId: string): Promise<any> {
+    return await this.programmeLedger.getProgrammeHistoryByExternalId(externalId);
+  }
+
+
   async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
     const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
     if (resp == null) {

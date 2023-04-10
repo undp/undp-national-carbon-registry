@@ -97,6 +97,11 @@ export class ITMOSystemImporter implements ImporterInterface {
   async start(type: string): Promise<any> {
     this.authToken = await this.login();
     const projects = await this.sendGetReq("me/projects");
+
+    const rootUser = await this.userService.getRoot();
+    if (!rootUser) {
+      throw new Error(`Root user does not exist in the system`);
+    }
     if (!projects || !projects.data || !projects.data.data) {
       this.logger.log(`No projects received ${projects}`);
       throw new Error(`No projects received ${projects}`);
@@ -104,16 +109,17 @@ export class ITMOSystemImporter implements ImporterInterface {
       for (const project of projects.data.data) {
         const projectId = project.id;
 
-        let programme = await this.programmeService.findByExternalId(projectId);
-        if (programme && programme.currentStage == ProgrammeStage.REJECTED) {
+        let programmeEvents = await this.programmeService.getProgrammeEventsByExternalId(projectId);
+        if (programmeEvents && programmeEvents.length > 0 && programmeEvents.slice(-1).data.currentStage == ProgrammeStage.REJECTED) {
           continue;
         }
+
         const projectData = await this.sendGetReq("me/projects/" + projectId);
         const projectDetails = projectData?.data;
         if (projectDetails?.steps) {
           for (const step of projectDetails?.steps) {
             if (
-              !programme &&
+              (!programmeEvents || programmeEvents.length <= 0) &&
               step.name ===
                 "ITMO-Design Document (DD) & Validation Report / Upload on National Public Registry"
             ) {
@@ -185,9 +191,9 @@ export class ITMOSystemImporter implements ImporterInterface {
 
               await this.programmeService.create(pr);
             } else if (
-              programme &&
-              programme.currentStage === ProgrammeStage.AUTHORISED &&
-              programme.creditIssued != 10
+              programmeEvents && programmeEvents.length > 0 &&
+              programmeEvents.slice(-1).data.currentStage === ProgrammeStage.AUTHORISED &&
+              !programmeEvents.map(e => e.data.txRef).join(' ').includes('ITMO system issue')
             ) {
               const flat = flatten(step.iterations)
 
@@ -197,19 +203,16 @@ export class ITMOSystemImporter implements ImporterInterface {
               
               this.logger.log(`Issue list values: ${list}`)
               if (list && list.includes("Upload Final Monitoring Report")) {
-                const rootUser = await this.userService.getRoot();
-                if (rootUser) {
-                  const resp = await this.programmeService.issueProgrammeCredit(
-                    {
-                      programmeId: programme.programmeId,
-                      issueAmount: 10,
-                      comment: "ITMO system issue",
-                    },
-                    rootUser
-                  );
+                const resp = await this.programmeService.issueProgrammeCredit(
+                  {
+                    programmeId: programmeEvents.slice(-1).data.programmeId,
+                    issueAmount: 10,
+                    comment: "ITMO system issue",
+                  },
+                  rootUser
+                );
 
-                  this.logger.log(`Issue credit response ${resp}`)
-                }
+                this.logger.log(`Issue credit response ${resp}`)
               }
             }
           }

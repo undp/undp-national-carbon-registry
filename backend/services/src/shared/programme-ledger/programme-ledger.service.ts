@@ -384,6 +384,21 @@ export class ProgrammeLedgerService {
     });
   }
 
+  public async getProgrammeHistoryByExternalId(
+    externalId: string
+  ): Promise<ProgrammeHistoryDto[]> {
+    return (
+      await this.ledger.fetchHistory({
+        externalId: externalId,
+      })
+    )?.map((domValue) => {
+      return plainToClass(
+        ProgrammeHistoryDto,
+        JSON.parse(JSON.stringify(domValue))
+      );
+    });
+  }
+
   public async updateCertifier(
     programmeId: string,
     certifierId: number,
