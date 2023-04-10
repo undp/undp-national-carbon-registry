@@ -31,9 +31,7 @@ const MapboxComponent = (props: MapComponentProps) => {
     if (
       !mapContainerRef ||
       !mapContainerRef.current ||
-      center.length !== 2 ||
-      Number.isNaN(center[0]) ||
-      Number.isNaN(center[1])
+      center.length !== 2
     ) {
       return;
     }
@@ -41,7 +39,7 @@ const MapboxComponent = (props: MapComponentProps) => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current || '',
       style: style,
-      center: [center[0], center[1]],
+      center: (!Number.isNaN(center[0]) && !Number.isNaN(center[1])) ? [center[0], center[1]]: undefined,
       zoom: zoom,
     });
 
