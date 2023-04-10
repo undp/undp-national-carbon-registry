@@ -45,7 +45,7 @@ function setupSwagger(
     .setVersion("0.5")
     .addBearerAuth()
     .addApiKey()
-    .addServer(`${process.env.DOMAIN_MAP ? "/" : "/" + process.env.NODE_ENV}`)
+    .addServer(`${process.env.DOMAIN_MAP == 'true' ? "/" : ("/" + process.env.NODE_ENV)}`)
     .build();
   // ${process.env.NODE_ENV}
   const document = SwaggerModule.createDocument(nestApp, config);
