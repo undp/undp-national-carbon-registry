@@ -250,6 +250,16 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+        };
+        break;
+
       default:
         break;
     }
@@ -326,6 +336,14 @@ export class EmailHelperService {
           serialNumber: programme.serialNo,
           programmeName: programme.title,
           pageLink: hostAddress + "/creditTransfers/viewAll",
+        };
+        break;
+
+      case "CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
         };
         break;
 
