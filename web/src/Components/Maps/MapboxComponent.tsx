@@ -36,7 +36,9 @@ const MapboxComponent = (props: MapComponentProps) => {
       container: mapContainerRef.current || '',
       style: style,
       center:
-        !Number.isNaN(center[0]) && !Number.isNaN(center[1]) ? [center[0], center[1]] : [9.0820, 8.6753],
+        !Number.isNaN(center[0]) && !Number.isNaN(center[1])
+          ? [center[0], center[1]]
+          : [9.082, 8.6753],
       zoom: zoom,
     });
 
