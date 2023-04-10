@@ -31,14 +31,13 @@ jobs:
         else
           echo "deps_changed=False" >> $GITHUB_OUTPUT
         fi
-    - id: branch_check_dev
-      if: github.ref == 'refs/heads/develop'
+    - id: branch_check
       run: |
-        echo "stage=dev" >> $GITHUB_OUTPUT
-    - id: branch_check_prod
-      if: github.ref == 'refs/heads/main'
-      run: |
-        echo "stage=prod" >> $GITHUB_OUTPUT
+        if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
+          echo "stage=prod" >> $GITHUB_OUTPUT
+        else
+          echo "stage=dev" >> $GITHUB_OUTPUT
+        fi
   layer:
     name: layer
     runs-on: ubuntu-latest
