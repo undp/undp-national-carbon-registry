@@ -28,7 +28,13 @@ const MapboxComponent = (props: MapComponentProps) => {
   } = props;
 
   useEffect(() => {
-    if (!mapContainerRef || !mapContainerRef.current || center.length !== 2) {
+    if (
+      !mapContainerRef ||
+      !mapContainerRef.current ||
+      center.length !== 2 ||
+      Number.isNaN(center[0]) ||
+      Number.isNaN(center[1])
+    ) {
       return;
     }
 
