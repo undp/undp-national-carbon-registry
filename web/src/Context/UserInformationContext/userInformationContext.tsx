@@ -1,19 +1,24 @@
-import React, { useContext, useState, createContext, useCallback } from 'react';
+import React, { useContext, useState, createContext, useCallback, useEffect } from 'react';
 import {
   UserContextProps,
   UserProps,
 } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
 import jwt_decode from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
   removeUserInfo: () => {},
-  IsAuthenticated: () => false,
+  IsAuthenticated: (tkn?: any) => false,
+  isTokenExpired: false,
+  setIsTokenExpired: (val: boolean) => {},
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
   const { token } = useConnection();
+  const { i18n, t } = useTranslation(['common']);
+  const [isTokenExpired, setIsTokenExpired] = useState<boolean>(false);
   const initialUserProps: UserProps = {
     id: localStorage.getItem('userId') ? (localStorage.getItem('userId') as string) : '',
     userRole: localStorage.getItem('userRole') ? (localStorage.getItem('userRole') as string) : '',
@@ -82,23 +87,31 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.setItem('companyState', companyState + '');
   };
 
-  const IsAuthenticated = useCallback((): boolean => {
-    let tokenVal: string | null;
-    if (token) {
-      tokenVal = token;
-    } else {
-      tokenVal = localStorage.getItem('token');
-    }
-    try {
-      if (tokenVal) {
-        const { exp } = jwt_decode(tokenVal) as any;
-        return Date.now() < exp * 1000;
+  const IsAuthenticated = useCallback(
+    (tokenNew?: any): boolean => {
+      let tokenVal: string | null;
+      if (tokenNew) {
+        tokenVal = tokenNew;
+      } else if (token) {
+        tokenVal = token;
+      } else {
+        tokenVal = localStorage.getItem('token');
+        if (!tokenVal) {
+          setIsTokenExpired(true);
+        }
       }
-      return false;
-    } catch (err) {
-      return false;
-    }
-  }, [token]);
+      try {
+        if (tokenVal) {
+          const { exp } = jwt_decode(tokenVal) as any;
+          return Date.now() < exp * 1000;
+        }
+        return false;
+      } catch (err) {
+        return false;
+      }
+    },
+    [token]
+  );
 
   const removeUserInfo = () => {
     localStorage.removeItem('userId');
@@ -118,6 +131,8 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         setUserInfo,
         removeUserInfo,
         IsAuthenticated,
+        isTokenExpired,
+        setIsTokenExpired,
       }}
     >
       {children}

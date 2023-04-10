@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
+      POSTGRES_PASSWORD: "<ANY PASSWORD>"
       POSTGRES_USER: root
       PSQL_USERNAME: root
       # POSTGRES_HOST_AUTH_METHOD: trust
@@ -32,7 +32,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "<ANY PASSWORD>"
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
       systemCountryCode: "NG"
@@ -55,7 +55,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "<ANY PASSWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
   replicator:
@@ -70,8 +70,16 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
-      RUN_MODULE: replicator
+      IS_EMAIL_DISABLED: "true"
+      # ,data-importer
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: ""
+      ASYNC_OPERATIONS_TYPE: Database
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
   web:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
     # build:

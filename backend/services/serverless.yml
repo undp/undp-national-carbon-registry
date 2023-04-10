@@ -52,7 +52,7 @@ functions:
       - DB_PASSWORD
       - USER_JWT_SECRET
       - ADMIN_JWT_SECRET
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -73,7 +73,7 @@ functions:
       - DB_PASSWORD
       - USER_JWT_SECRET
       - ADMIN_JWT_SECRET
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -99,12 +99,44 @@ functions:
       - ${param:depLayerArn1}
       - ${param:depLayerArn2}
 
+  data-importer:
+    timeout: 60
+    handler: src/data-importer/handler.handler
+    events:
+      - schedule: cron(0 5 * * ? *)
+    ssmToEnvironment:
+      - DB_PASSWORD
+      - ITMO_API_KEY
+      - ITMO_EMAIL
+      - ITMO_PASSWORD
+    environment:
+      NODE_PATH: "./:/opt/node_modules"
+    layers:
+      - ${param:depLayerArn1}
+      - ${param:depLayerArn2}
+
+  -async-operations-handler:
+    timeout: 60
+    handler: src/async-operations-handler/handler.handler
+    events:
+      - sqs:
+          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueuedev.fifo
+          batchSize: 10
+    ssmToEnvironment:
+      - SMTP_PASSWORD
+      - DB_PASSWORD
+    environment:
+      NODE_PATH: "./:/opt/node_modules"
+    layers:
+      - ${param:depLayerArn1}
+      - ${param:depLayerArn2}
+
   setup:
     timeout: 60
     handler: src/setup/handler.handler
     ssmToEnvironment:
       - DB_PASSWORD
-      - SES_PASSWORD
+      - SMTP_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -129,8 +161,11 @@ custom:
     DB_PASSWORD: /${self:provider.stage}/DB_PASSWORD~true
     USER_JWT_SECRET: /${self:provider.stage}/USER_JWT_SECRET~true
     ADMIN_JWT_SECRET: /${self:provider.stage}/ADMIN_JWT_SECRET~true
-    SES_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
+    SMTP_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
     MAPBOX_PK: /${self:provider.stage}/MAPBOX_PK~true
+    ITMO_API_KEY: /${self:provider.stage}/ITMO_API_KEY~true
+    ITMO_EMAIL: /${self:provider.stage}/ITMO_EMAIL~true
+    ITMO_PASSWORD: /${self:provider.stage}/ITMO_PASSWORD~true
   # sesTemplates:
   #   addStage: true                             # Specifies whether to add stage to template name (default false)
   #   configFile: './src/shared/email/email.template.ts' # Config file path (default './ses-email-templates/index.js')

@@ -160,15 +160,10 @@ const CreditTransfer = () => {
     let sort: any;
     if (sortOrder && sortField) {
       sort = {
-        key: sortField,
+        key: sortField === 'programmeCertifierId' ? 'programmeCertifierId[1]' : sortField,
         order: sortOrder,
+        nullFirst: false,
       };
-
-      if (sortField === 'programmeCertifierId') {
-        sort.nullFirst = sortOrder === 'ASC';
-      } else {
-        sort.nullFirst = false;
-      }
     } else {
       sort = {
         key: 'requestId',
@@ -304,7 +299,12 @@ const CreditTransfer = () => {
                   icon: <Icon.ClipboardCheck />,
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferApprove', 'Successfully approved'),
+                    handleRequestOk(
+                      requestId,
+                      comment,
+                      'transferApprove',
+                      `${t('creditTransfer:transferReqApproved')}`
+                    ),
                   type: 'primary',
                   remarkRequired: false,
                 });
@@ -353,7 +353,7 @@ const CreditTransfer = () => {
                       requestId,
                       comment,
                       'transferApprove',
-                      'Successfully recongnised'
+                      `${t('creditTransfer:internationalTranferReqAccepted')}`
                     ),
                   type: 'primary',
                   remarkRequired: false,
@@ -374,7 +374,7 @@ const CreditTransfer = () => {
                       requestId,
                       comment,
                       'transferReject',
-                      'Successfully not recongnised'
+                      `${t('creditTransfer:internationalTranferReqAccepted')}`
                     ),
                   type: 'danger',
                   remarkRequired: true,

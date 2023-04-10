@@ -22,6 +22,9 @@ export class HelperService {
     } else if (this.isQueryDto(value)) {
       return this.generateWhereSQL(value, undefined, table);
     } else if (typeof value === "string") {
+      if (value === "NULL") {
+        return value;
+      }
       if (toLower != true) {
         return "'" + value + "'";
       } else {
@@ -63,9 +66,26 @@ export class HelperService {
     if (col.includes("->>")) {
       const parts = col.split("->>");
       return `"${parts[0]}"->>'${parts[1]}'`;
+    } else if (col.includes("[")) {
+      const parts = col.split("[");
+      return `"${parts[0]}"[${parts[1]}`;
     } else {
       return `"${col}"`;
     }
+  }
+
+  public generateRandomPassword() {
+    var pass = "";
+    var str =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "abcdefghijklmnopqrstuvwxyz0123456789@$";
+
+    for (let i = 1; i <= 8; i++) {
+      var char = Math.floor(Math.random() * str.length + 1);
+
+      pass += str.charAt(char);
+    }
+
+    return pass;
   }
 
   public formatReqMessagesString(langTag: string, vargs: any[]) {
@@ -255,9 +275,12 @@ export class HelperService {
     return sql;
   }
 
-  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string) {
+  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string, ignoreCol?: string[]) {
     let sql = "";
     if (query.filterAnd) {
+      if (ignoreCol) {
+        query.filterAnd = query.filterAnd.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       sql += query.filterAnd
         .map((e) => {
           if (this.isQueryDto(e.value)) {
@@ -284,6 +307,9 @@ export class HelperService {
         .join(" and ");
     }
     if (query.filterOr) {
+      if (ignoreCol) {
+        query.filterOr = query.filterOr.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+      }
       const orSQl = query.filterOr
         .map((e) => {
           if (this.isQueryDto(e.value)) {
@@ -393,6 +419,24 @@ export class HelperService {
     }
     return final;
   }
+
+  public getEmailTemplateMessage(template: string, data, isSubject: boolean) :string{
+    if (template == undefined) {
+        return template;
+    }
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            var find = `{{${key}}}`;
+            var re = new RegExp(find, 'g');
+            template = template.replace(re, data[key]);
+        }
+    }
+
+    if(isSubject)
+      return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
+    else 
+      return template;
+}
 
   // public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
   // var AWS = require("aws-sdk");

@@ -1,20 +1,20 @@
 $primary-font-family: 'Inter';
 $secondary-font-family: 'Sohne-Breit';
 $common-form-input-border: #d9d9d9;
+$note-light-text: rgba(58, 53, 65, 0.5);
 
 $primary-color: #16b1ff;
-
 
 $nav-color: #282828;
 $text-color: #3a3541;
 $dark-text-color: #ffffff;
 $common-filter-color: rgba(58, 53, 65, 0.8);
 
-$line-colors: #D9D9D9;
-$error-color: rgba(#FF4D4F, 0.8);
-$background-color: #F4F5FA;
-$background-color-dark:#232E3D;
-$outside-background-color: #FFFFFF;
+$line-colors: #d9d9d9;
+$error-color: rgba(#ff4d4f, 0.8);
+$background-color: #f4f5fa;
+$background-color-dark: #232e3d;
+$outside-background-color: #ffffff;
 
 $gradient-background-start: #6acdff;
 $gradient-background-end: rgba(#16b1ff, 0.94);
@@ -34,8 +34,7 @@ $lg-size: 992px;
 $logo-text-color: #262626;
 
 $dev-bg-color: rgba(254, 241, 173, 0.5);
-$dev-color: #FFA070;
-
+$dev-color: #ffa070;
 
 // @screen-xs: 480px;
 // @screen-xs-min: @screen-xs;

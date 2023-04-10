@@ -1,0 +1,4 @@
+{
+    "addAsyncActionDatabaseFailed": "{} functionality failed when adding to database",
+    "addAsyncActionQueueFailed": "{} functionality failed when adding to queue"
+}

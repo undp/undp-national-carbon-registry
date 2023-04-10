@@ -9,25 +9,37 @@ import { CaslModule } from "../casl/casl.module";
 import { ApiKeyStrategy } from "./strategies/apikey.strategy";
 import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
+import { UtilModule } from "../util/util.module";
+import { AsyncOperationsModule } from "../async-operations/async-operations.module";
+import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
+    UtilModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
         signOptions: {
-          expiresIn: 3600*2,
+          expiresIn: 3600 * 2,
         },
       }),
       inject: [ConfigService],
-      imports: undefined
+      imports: undefined,
     }),
     CaslModule,
     CompanyModule,
+    AsyncOperationsModule
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger],
-  exports: [AuthService]
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ApiKeyStrategy,
+    Logger,
+    PasswordReset,
+  ],
+  exports: [AuthService],
 })
 export class AuthModule {}
