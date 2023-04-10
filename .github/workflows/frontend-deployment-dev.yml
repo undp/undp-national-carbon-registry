@@ -43,8 +43,8 @@ jobs:
         run: CI=false yarn build
       - name: Deploy
         run: aws s3 sync ./web/build s3://carbon-www-dev
-      # - name: Deploy Test
-      #   run: aws s3 sync ./web/build s3://www-test-carbon
+      - name: Deploy Test
+        run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1

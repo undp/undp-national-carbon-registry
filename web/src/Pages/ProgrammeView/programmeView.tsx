@@ -189,7 +189,7 @@ const ProgrammeView = () => {
           accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
         }
 
-        if (!accessToken) return;
+        if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
 
         for (const address of data!.programmeProperties.geographicalLocation) {
           const response = await Geocoding({ accessToken: accessToken })
@@ -1626,21 +1626,24 @@ const ProgrammeView = () => {
                       style="mapbox://styles/mapbox/streets-v11"
                     ></MapComponent>
                     <Row className="region-list">
-                      {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
-                        <Col className="loc-tag">
-                          {data.geographicalLocationCordintes &&
-                            data.geographicalLocationCordintes[idx] !== null &&
-                            data.geographicalLocationCordintes[idx] !== undefined && (
-                              <span
-                                style={{ color: locationColors[(idx + 1) % locationColors.length] }}
-                                className="loc-icon"
-                              >
-                                {<Icon.GeoAltFill />}
-                              </span>
-                            )}
-                          <span className="loc-text">{e}</span>
-                        </Col>
-                      ))}
+                      {data.programmeProperties.geographicalLocation &&
+                        data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                          <Col className="loc-tag">
+                            {data.geographicalLocationCordintes &&
+                              data.geographicalLocationCordintes[idx] !== null &&
+                              data.geographicalLocationCordintes[idx] !== undefined && (
+                                <span
+                                  style={{
+                                    color: locationColors[(idx + 1) % locationColors.length],
+                                  }}
+                                  className="loc-icon"
+                                >
+                                  {<Icon.GeoAltFill />}
+                                </span>
+                              )}
+                            <span className="loc-text">{e}</span>
+                          </Col>
+                        ))}
                     </Row>
                   </div>
                 </div>
