@@ -110,7 +110,7 @@ export class AuthService {
           subject: this.helperService.getEmailTemplateMessage(
             EmailTemplates.FORGOT_PASSOWRD["subject"],
             templateData,
-            false
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
             EmailTemplates.FORGOT_PASSOWRD["html"],

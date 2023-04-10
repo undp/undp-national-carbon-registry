@@ -22,7 +22,7 @@ export interface LoginPageProps {
 const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { forgotPassword, resetPassword } = props;
   const { post, updateToken, removeToken } = useConnection();
-  const { IsAuthenticated, setUserInfo, isTokenExpired } = useUserContext();
+  const { IsAuthenticated, setUserInfo, isTokenExpired, setIsTokenExpired } = useUserContext();
   const { i18n, t } = useTranslation(['common', 'login']);
   const [loading, setLoading] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
@@ -56,7 +56,6 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
-        console.log('access_token after success ---- > ', response?.data?.access_token);
         setUserInfo({
           id: response.data.id,
           userRole: response.data.role,
@@ -67,12 +66,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
           companyState: response.data.companyState,
         });
         removeToken();
-        console.log(
-          'redirect location ---- ',
-          redirectLocation,
-          IsAuthenticated(),
-          IsAuthenticated(response.data.access_token)
-        );
+        setIsTokenExpired(false);
         return IsAuthenticated(response.data.access_token)
           ? navigate(redirectLocation ? redirectLocation : '/dashboard', { replace: true })
           : navigate('/login');

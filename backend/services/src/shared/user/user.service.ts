@@ -69,6 +69,17 @@ export class UserService {
     ).toString("base64");
   }
 
+  async getAdminUserDetails(companyId) {
+    const result = await this.userRepo.find({
+      where: {
+        role: Role.Admin,
+        companyId: parseInt(companyId),
+      },
+    });
+
+    return result;
+  }
+
   async getUserCredentials(username: string): Promise<User | undefined> {
     const users = await this.userRepo.find({
       select: [
@@ -92,6 +103,15 @@ export class UserService {
     const users = await this.userRepo.find({
       where: {
         email: username,
+      },
+    });
+    return users && users.length > 0 ? users[0] : undefined;
+  }
+
+  async getRoot(): Promise<User | undefined> {
+    const users = await this.userRepo.find({
+      where: {
+        role: Role.Root,
       },
     });
     return users && users.length > 0 ? users[0] : undefined;
@@ -121,26 +141,6 @@ export class UserService {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
 
-    const sql = await this.userRepo
-      .createQueryBuilder()
-      .update(User)
-      .set(update)
-      .where(
-        `id = ${id} ${
-          abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ""
-        }`
-      )
-      .getSql();
-
-    console.log("sql user update --- ", sql);
-    // .catch((err: any) => {
-    //   this.logger.error(err);
-    //   return err;
-    // });
-
     const result = await this.userRepo
       .createQueryBuilder()
       .update(User)
@@ -148,8 +148,8 @@ export class UserService {
       .where(
         `id = ${id} ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -179,8 +179,8 @@ export class UserService {
       .where(
         `id = '${id}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -252,8 +252,8 @@ export class UserService {
       .where(
         `email = '${email}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -336,6 +336,21 @@ export class UserService {
     }
 
     let { company, ...userFields } = userDto;
+    if (
+      !company &&
+      userDto.companyId &&
+      companyRole === CompanyRole.GOVERNMENT
+    ) {
+      const adminUserdetails = await this.getAdminUserDetails(
+        userDto.companyId
+      );
+      if (adminUserdetails?.length > 0) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
     if (company) {
       if (
         userFields.role &&
@@ -436,20 +451,22 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
-        company.logo
-      );
-      if (response) {
-        company.logo = response;
-      } else {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyUpdateFailed",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
+      if (company.logo) {
+        const response: any = await this.fileHandler.uploadFile(
+          `profile_images/${company.companyId}_${new Date().getTime()}.png`,
+          company.logo
         );
+        if (response) {
+          company.logo = response;
+        } else {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "user.companyUpdateFailed",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
       }
 
       if (!company.hasOwnProperty("website")) {

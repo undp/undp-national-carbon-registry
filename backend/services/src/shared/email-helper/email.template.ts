@@ -58,19 +58,6 @@ export const EmailTemplates = {
     `,
     text: "",
   },
-  TRANSFER_REQUEST: {
-    subject: "Transfer Request Received",
-    html: `
-        Hi {{name}},<br><br>
-
-        {{requestedCompany}} has requested to transfer {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
-
-        <br><br>
-        Sincerely,<br>
-        The Carbon Credit Registry Team 
-        `,
-    text: "",
-  },
   RETIRE_REQUEST: {
     subject: "Retire Request Received",
     html: `
@@ -91,7 +78,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
         <br><br>
@@ -113,7 +100,7 @@ export const EmailTemplates = {
         <br><br>
 
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions.
         
         <br><br>
@@ -207,6 +194,32 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `,
+  },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
+  },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
   },
   CREDIT_TRANSFER_ACCEPTED: {
     id: "CREDIT_TRANSFER_ACCEPTED",
@@ -388,7 +401,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br>
 
-        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but not other will be able to take place. Following were the effects of deactivation:<br><br>
+        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but no further action will be able to take place. Following were the effects of deactivation:<br><br>
          · All the users of the Organisation were deactivated. <br>
          · All the credits owned by your Organisation were frozen.<br>
          · All credit transfer requests sent and received by your Organisation were cancelled.<br>

@@ -12,6 +12,7 @@ export const UserContext = createContext<UserContextProps>({
   removeUserInfo: () => {},
   IsAuthenticated: (tkn?: any) => false,
   isTokenExpired: false,
+  setIsTokenExpired: (val: boolean) => {},
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
@@ -90,17 +91,14 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     (tokenNew?: any): boolean => {
       let tokenVal: string | null;
       if (tokenNew) {
-        console.log('token from response -- 89 ---- ', tokenNew);
         tokenVal = tokenNew;
       } else if (token) {
         tokenVal = token;
-        console.log('token from userContext ---- ', token);
       } else {
         tokenVal = localStorage.getItem('token');
         if (!tokenVal) {
           setIsTokenExpired(true);
         }
-        console.log('token from userContext local storage ---- ', tokenVal);
       }
       try {
         if (tokenVal) {
@@ -134,6 +132,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         removeUserInfo,
         IsAuthenticated,
         isTokenExpired,
+        setIsTokenExpired,
       }}
     >
       {children}
