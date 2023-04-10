@@ -110,7 +110,7 @@ export class ITMOSystemImporter implements ImporterInterface {
         const projectId = project.id;
 
         let programmeEvents = await this.programmeService.getProgrammeEventsByExternalId(projectId);
-        if (programmeEvents && programmeEvents.length > 0 && programmeEvents.slice(-1).data.currentStage == ProgrammeStage.REJECTED) {
+        if (programmeEvents && programmeEvents.length > 0 && programmeEvents[programmeEvents.length - 1].data.currentStage == ProgrammeStage.REJECTED) {
           continue;
         }
 
@@ -192,7 +192,7 @@ export class ITMOSystemImporter implements ImporterInterface {
               await this.programmeService.create(pr);
             } else if (
               programmeEvents && programmeEvents.length > 0 &&
-              programmeEvents.slice(-1).data.currentStage === ProgrammeStage.AUTHORISED &&
+              programmeEvents[programmeEvents.length - 1].data.currentStage === ProgrammeStage.AUTHORISED &&
               !programmeEvents.map(e => e.data.txRef).join(' ').includes('ITMO system issue')
             ) {
               const flat = flatten(step.iterations)
@@ -205,7 +205,7 @@ export class ITMOSystemImporter implements ImporterInterface {
               if (list && list.includes("Upload Final Monitoring Report")) {
                 const resp = await this.programmeService.issueProgrammeCredit(
                   {
-                    programmeId: programmeEvents.slice(-1).data.programmeId,
+                    programmeId: programmeEvents[programmeEvents.length - 1].data.programmeId,
                     issueAmount: 10,
                     comment: "ITMO system issue",
                   },
