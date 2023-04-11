@@ -50,6 +50,7 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
+import { DataResponseMessageDto } from "../dto/data.response.message";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
