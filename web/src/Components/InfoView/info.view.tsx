@@ -31,7 +31,7 @@ const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
                 <Col span={12} className="field-value">
                   {data[k] instanceof DateTime
                     ? data[k].toFormat(dateFormat)
-                    : data[k] === '' || !data[k]
+                    : data[k] === '' || !data[k] || data[k] === "NaN"
                     ? '-'
                     : data[k]}
                 </Col>
