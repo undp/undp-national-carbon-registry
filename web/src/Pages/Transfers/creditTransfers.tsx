@@ -353,7 +353,7 @@ const CreditTransfer = () => {
                       requestId,
                       comment,
                       'transferApprove',
-                      `${t('creditTransfer:internationalTransferReqRejected')}`
+                      `${t('creditTransfer:internationalTranferReqAccepted')}`
                     ),
                   type: 'primary',
                   remarkRequired: false,

@@ -27,7 +27,7 @@ import { TransferStatus } from "../enum/transform.status.enum";
 import { User } from "../entities/user.entity";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { Programme } from "../entities/programme.entity";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { SystemActionType } from "../enum/system.action.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 
@@ -58,8 +58,9 @@ export class CompanyService {
       .where(
         `"companyId" = '${companyId}' and state = '1' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -164,8 +165,9 @@ export class CompanyService {
       .where(
         `"companyId" = '${companyId}' and state = '0' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -291,6 +293,10 @@ export class CompanyService {
     req: FindOrganisationQueryDto
   ): Promise<Company[] | undefined> {
     const data: Company[] = [];
+
+    if (!(req.companyIds instanceof Array)) { 
+      throw new HttpException("Invalid companyId list", HttpStatus.BAD_REQUEST);
+    }
     for (let i = 0; i < req.companyIds.length; i++) {
       const companies = await this.companyRepo.find({
         where: {
@@ -339,9 +345,13 @@ export class CompanyService {
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
-        `"companyId" = '${
-          companyUpdateDto.companyId
-        }' AND ${this.helperService.parseMongoQueryToSQL(abilityCondition)}`
+        `"companyId" = '${companyUpdateDto.companyId}' ${
+          abilityCondition
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {

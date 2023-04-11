@@ -5,13 +5,14 @@ import {
 } from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
 import jwt_decode from 'jwt-decode';
-import { message } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
   removeUserInfo: () => {},
   IsAuthenticated: (tkn?: any) => false,
+  isTokenExpired: false,
+  setIsTokenExpired: (val: boolean) => {},
 });
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
@@ -86,32 +87,18 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
     localStorage.setItem('companyState', companyState + '');
   };
 
-  useEffect(() => {
-    if (isTokenExpired) {
-      message.open({
-        type: 'error',
-        content: t('common:sessionExpiredErrorMsg'),
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    }
-  }, [isTokenExpired]);
-
   const IsAuthenticated = useCallback(
     (tokenNew?: any): boolean => {
       let tokenVal: string | null;
       if (tokenNew) {
-        console.log('token from response -- 89 ---- ', tokenNew);
         tokenVal = tokenNew;
       } else if (token) {
         tokenVal = token;
-        console.log('token from userContext ---- ', token);
       } else {
         tokenVal = localStorage.getItem('token');
         if (!tokenVal) {
           setIsTokenExpired(true);
         }
-        console.log('token from userContext local storage ---- ', tokenVal);
       }
       try {
         if (tokenVal) {
@@ -144,6 +131,8 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         setUserInfo,
         removeUserInfo,
         IsAuthenticated,
+        isTokenExpired,
+        setIsTokenExpired,
       }}
     >
       {children}

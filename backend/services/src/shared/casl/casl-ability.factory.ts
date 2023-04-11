@@ -205,6 +205,7 @@ export class CaslAbilityFactory {
         cannot(Action.Update, "all");
       }
       can(Action.Delete, User, { id: { $eq: user.id } });
+      can(Action.Update, User, { id: { $eq: user.id } });
       cannot([Action.Delete], Company, {
         companyRole: { $eq: CompanyRole.GOVERNMENT },
       });

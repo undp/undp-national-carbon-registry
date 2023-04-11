@@ -85,7 +85,7 @@ functions:
     handler: src/ledger-replicator/handler.handler
     events:
       - stream:
-          arn: arn:aws:kinesis:us-east-1:302213478610:stream/carbon-stream-dev
+          arn: arn:aws:kinesis:us-east-1:302213478610:stream/carbon-stream-${self:provider.stage}
           batchSize: 2
           startingPosition: LATEST
           maximumRetryAttempts: 10
@@ -93,6 +93,38 @@ functions:
     ssmToEnvironment:
       - DB_PASSWORD
       - MAPBOX_PK
+    environment:
+      NODE_PATH: "./:/opt/node_modules"
+    layers:
+      - ${param:depLayerArn1}
+      - ${param:depLayerArn2}
+
+  data-importer:
+    timeout: 60
+    handler: src/data-importer/handler.handler
+    events:
+      - schedule: cron(0 5 * * ? *)
+    ssmToEnvironment:
+      - DB_PASSWORD
+      - ITMO_API_KEY
+      - ITMO_EMAIL
+      - ITMO_PASSWORD
+    environment:
+      NODE_PATH: "./:/opt/node_modules"
+    layers:
+      - ${param:depLayerArn1}
+      - ${param:depLayerArn2}
+
+  -async-operations-handler:
+    timeout: 60
+    handler: src/async-operations-handler/handler.handler
+    events:
+      - sqs:
+          arn: arn:aws:sqs:us-east-1:302213478610:AsyncQueue${self:provider.stage}.fifo
+          batchSize: 10
+    ssmToEnvironment:
+      - SMTP_PASSWORD
+      - DB_PASSWORD
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -131,6 +163,9 @@ custom:
     ADMIN_JWT_SECRET: /${self:provider.stage}/ADMIN_JWT_SECRET~true
     SMTP_PASSWORD: /${self:provider.stage}/SES_PASSWORD~true
     MAPBOX_PK: /${self:provider.stage}/MAPBOX_PK~true
+    ITMO_API_KEY: /${self:provider.stage}/ITMO_API_KEY~true
+    ITMO_EMAIL: /${self:provider.stage}/ITMO_EMAIL~true
+    ITMO_PASSWORD: /${self:provider.stage}/ITMO_PASSWORD~true
   # sesTemplates:
   #   addStage: true                             # Specifies whether to add stage to template name (default false)
   #   configFile: './src/shared/email/email.template.ts' # Config file path (default './ses-email-templates/index.js')

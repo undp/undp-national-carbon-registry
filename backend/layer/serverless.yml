@@ -17,6 +17,7 @@ provider:
 layers:
   service-dependencies-1:
     path: dependency_layer
+    name: service-dependencies-${self:provider.stage}-1
     description: "Node Modules Dependencies 1"
     package:
       exclude:
@@ -27,6 +28,7 @@ layers:
         - '!node_modules/c*/**'
   service-dependencies-2:
     path: dependency_layer
+    name: service-dependencies-${self:provider.stage}-2
     description: "Node Modules Dependencies 2"
     package:
       exclude:

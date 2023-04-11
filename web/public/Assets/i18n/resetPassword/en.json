@@ -1,7 +1,8 @@
 {
     "reset-pwd-title": "Reset Password",
-    "submit": "SUBMIT",
+    "submit": "Submit",
     "newPwd": "New Password",
     "confirmNewPwd": "Confirm New Password",
-    "passwordNotMatch": "The two passwords that you entered do not match!"
+    "passwordNotMatch": "Passwords do not match!",
+    "passwordResetNotWorked": "Your password reset link has expired or has already been used"
 }

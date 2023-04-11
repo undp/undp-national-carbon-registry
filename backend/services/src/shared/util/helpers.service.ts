@@ -420,6 +420,24 @@ export class HelperService {
     return final;
   }
 
+  public getEmailTemplateMessage(template: string, data, isSubject: boolean) :string{
+    if (template == undefined) {
+        return template;
+    }
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+            var find = `{{${key}}}`;
+            var re = new RegExp(find, 'g');
+            template = template.replace(re, data[key]);
+        }
+    }
+
+    if(isSubject)
+      return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
+    else 
+      return template;
+}
+
   // public async uploadCompanyLogoS3(companyId: number, companyLogo: string) {
   // var AWS = require("aws-sdk");
   // const s3 = new AWS.S3();

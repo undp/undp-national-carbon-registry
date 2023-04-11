@@ -9,9 +9,10 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetDto } from "../dto/passwordReset.dto";
 import { User } from "../entities/user.entity";
 import { BasicResponseDto } from "../dto/basic.response.dto";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
 import { ConfigService } from "@nestjs/config";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
+import { EmailTemplates } from "../email-helper/email.template";
 
 @Injectable()
 export class PasswordResetService {
@@ -20,9 +21,9 @@ export class PasswordResetService {
     private passwordResetRepo: Repository<PasswordReset>,
     @InjectRepository(User) private userRepo: Repository<User>,
     private helperService: HelperService,
-    private emailService: EmailService,
     private configService: ConfigService,
-    private logger: Logger
+    private logger: Logger,
+    private asyncOperationsInterface: AsyncOperationsInterface,
   ) {}
 
   async insertPasswordResetD(passwordResetD) {
@@ -41,7 +42,6 @@ export class PasswordResetService {
     const passwordResetD = await this.passwordResetRepo.findBy({
       token: reqId,
     });
-    console.log("passwordResetD --- > ", passwordResetD);
     if (!(passwordResetD.length > 0)) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -89,10 +89,30 @@ export class PasswordResetService {
         return err;
       });
     if (result.affected > 0) {
-      await this.emailService.sendEmail(email, EmailTemplates.CHANGE_PASSOWRD, {
+      const templateData = {
         name: userName,
         countryName: this.configService.get("systemCountryName"),
-      });
+      }
+
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.CHANGE_PASSOWRD.id,
+          sender: email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
+
       this.passwordResetRepo.delete({ email: email });
       return new BasicResponseDto(
         HttpStatus.OK,
