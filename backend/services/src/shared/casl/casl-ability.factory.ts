@@ -6,7 +6,7 @@ import {
   InferSubjects,
   MongoAbility,
 } from "@casl/ability";
-import { Injectable } from "@nestjs/common";
+import { Injectable, ForbiddenException } from "@nestjs/common";
 import { User } from "../entities/user.entity";
 import { Action } from "./action.enum";
 import { Role } from "./role.enum";
@@ -26,6 +26,8 @@ type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>;
+
+const unAuthErrorMessage = "This action is unauthorised";
 
 @Injectable()
 export class CaslAbilityFactory {
@@ -193,10 +195,18 @@ export class CaslAbilityFactory {
       if (user.role === Role.Admin || user.role === Role.Root) {
         can(Action.Create, User);
       } else {
-        cannot(Action.Create, User);
-        cannot(Action.Update, User, { id: { $ne: user.id } });
-        cannot(Action.Delete, User, { id: { $ne: user.id } });
-        cannot([Action.Create], Company);
+        if (cannot(Action.Create, User)) {
+          throw new ForbiddenException(unAuthErrorMessage);
+        }
+        if (cannot(Action.Update, User, { id: { $ne: user.id } })) {
+          throw new ForbiddenException(unAuthErrorMessage);
+        }
+        if (cannot(Action.Delete, User, { id: { $ne: user.id } })) {
+          throw new ForbiddenException(unAuthErrorMessage);
+        }
+        if (cannot([Action.Create], Company)) {
+          throw new ForbiddenException(unAuthErrorMessage);
+        }
       }
 
       if (user.companyState === 0) {
