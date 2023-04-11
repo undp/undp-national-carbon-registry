@@ -10,7 +10,7 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://api.carbreg.org
+      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
       COUNTRY_NAME: 'Antarctic Region Dev'
       COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
       COUNTRY_CODE: 'NG'
@@ -43,8 +43,8 @@ jobs:
         run: CI=false yarn build
       - name: Deploy
         run: aws s3 sync ./web/build s3://carbon-www-dev
-      - name: Deploy Test
-        run: aws s3 sync ./web/build s3://www-test-carbon
+      # - name: Deploy Test
+      #   run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
