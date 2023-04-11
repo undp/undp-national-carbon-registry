@@ -10,8 +10,9 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
-      COUNTRY_NAME: 'Antarctic Region Dev'
+      REACT_APP_BACKEND: https://api.carbreg.org 
+      # https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
+      COUNTRY_NAME: 'Antarctic Region'
       COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
       COUNTRY_CODE: 'NG'
       REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
