@@ -102,6 +102,7 @@ export class ITMOSystemImporter implements ImporterInterface {
     if (!rootUser) {
       throw new Error(`Root user does not exist in the system`);
     }
+    rootUser['companyName'] = (await this.companyService.findGovByCountry(this.configService.get("systemCountry")))?.name;
     if (!projects || !projects.data || !projects.data.data) {
       this.logger.log(`No projects received ${projects}`);
       throw new Error(`No projects received ${projects}`);
