@@ -10,7 +10,7 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://7b6epdsi56.execute-api.us-east-1.amazonaws.com/prod
+      REACT_APP_BACKEND: https://api.carbreg.org
       COUNTRY_NAME: 'Antarctic Region'
       COUNTRY_FLAG_URL: 'https://carbon-common-prod.s3.amazonaws.com/flag.png'
       COUNTRY_CODE: 'NG'
