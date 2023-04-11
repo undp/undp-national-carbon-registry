@@ -1799,7 +1799,7 @@ ${total}
               'Last 7 days': [moment().subtract('6', 'days'), moment()],
               'Last 14 days': [moment().subtract('13', 'days'), moment()],
             }}
-            defaultValue={[moment().subtract('6', 'days'), moment()]}
+            defaultValue={[moment().subtract('13', 'days'), moment()]}
             showTime
             allowClear={true}
             format="DD:MM:YYYY"
