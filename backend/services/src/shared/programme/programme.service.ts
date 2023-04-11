@@ -1465,7 +1465,25 @@ export class ProgrammeService {
       }
     }
 
-    return new DataResponseDto(HttpStatus.OK, updated);
+    if (add) {
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.certifyPendingProgramme",
+          []
+        ),
+        updated
+      );
+    } else {
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.certificationRevocation",
+          []
+        ),
+        updated
+      );
+    }
   }
 
   async retireProgramme(req: ProgrammeRetire, requester: User) {
