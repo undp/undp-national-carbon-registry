@@ -73,7 +73,7 @@ const Dashboard = () => {
   const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
   const [startTime, setStartTime] = useState<number>(
-    Date.parse(String(moment().subtract('6', 'days').startOf('day')))
+    Date.parse(String(moment().subtract('13', 'days').startOf('day')))
   );
   const [endTime, setEndTime] = useState<number>(Date.parse(String(moment().endOf('day'))));
   const [categoryType, setCategoryType] = useState<string>('overall');
