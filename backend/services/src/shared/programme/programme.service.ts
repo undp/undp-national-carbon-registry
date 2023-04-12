@@ -51,6 +51,7 @@ import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
 import { DataResponseMessageDto } from "../dto/data.response.message";
+import { LocationInterface } from "../location/location.interface";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -66,6 +67,7 @@ export class ProgrammeService {
     private configService: ConfigService,
     private companyService: CompanyService,
     private userService: UserService,
+    private locationService: LocationInterface,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
     private readonly countryService: CountryService,
@@ -2057,6 +2059,47 @@ export class ProgrammeService {
     });
   }
 
+  async regenerateRegionCoordinates() {
+    this.logger.log(`Regenrate coordinates:`)
+    const allProgrammes = await this.programmeRepo.find();
+    for (const programme of allProgrammes) {
+      const programmeProperties = programme.programmeProperties;
+      let address: any[] = [];
+      if (programmeProperties.geographicalLocation) {
+        for (
+          let index = 0;
+          index < programmeProperties.geographicalLocation.length;
+          index++
+        ) {
+          address.push(programmeProperties.geographicalLocation[index]);
+        }
+      }
+      await this.locationService.getCoordinatesForRegion([...address]).then(
+        (response: any) => {
+          console.log(
+            "response from forwardGeoCoding function -> ",
+            response
+          );
+          programme.geographicalLocationCordintes = [...response];
+        }
+      );
+
+      const result = await this.programmeRepo
+      .update(
+        {
+          programmeId: programme.programmeId,
+        },
+        {
+          geographicalLocationCordintes: programme.geographicalLocationCordintes
+        }
+      )
+      .catch((err) => {
+        this.logger.error(err);
+        return err;
+      });
+      this.logger.log(`Updated programme: ${programme.programmeId} ${programme.geographicalLocationCordintes}`)
+    }
+  }
   private getUserRef = (user: any) => {
     return `${user.companyId}#${user.companyName}#${user.id}`;
   };
@@ -2064,4 +2107,5 @@ export class ProgrammeService {
   private getUserRefWithRemarks = (user: any, remarks: string) => {
     return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
   };
+
 }
