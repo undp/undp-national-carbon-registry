@@ -103,7 +103,11 @@ functions:
     timeout: 60
     handler: src/data-importer/handler.handler
     events:
-      - schedule: cron(0 5 * * ? *)
+      - schedule:
+          rate: cron(0 8 * * ? *)
+          enabled: true
+          input: 
+            importTypes: ITMO_SYSTEM
     ssmToEnvironment:
       - DB_PASSWORD
       - ITMO_API_KEY

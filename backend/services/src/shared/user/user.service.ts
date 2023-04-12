@@ -355,7 +355,7 @@ export class UserService {
             .createQueryBuilder()
             .insert()
             .values(user)
-            .orUpdate(["password", "companyId", "companyRole", "name"], ["email"])
+            .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
             .execute();
   }
 
