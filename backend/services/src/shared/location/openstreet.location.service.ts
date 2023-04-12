@@ -38,7 +38,7 @@ export class OpenStreetLocationService implements LocationInterface {
       if (response && response.data?.elements) {
 
         for (const element of response.data?.elements) {
-          const location = [element.lat, element.lon];
+          const location = [element.lon, element.lat];
 
           if (element.tags) {
             for (const tag in element.tags) {
