@@ -318,7 +318,7 @@ export class UserService {
     );
   }
 
-  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string, phoneNo: string) {
+  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: Role, phoneNo: string) {
 
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT) {
@@ -348,6 +348,7 @@ export class UserService {
     user.createdTime = new Date().getTime();
     user.country = this.configService.get("systemCountry");
     user.phoneNo = phoneNo
+    user.role = userRole;
 
     console.log('Inserting user', user.email);
     return await this.userRepo
