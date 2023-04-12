@@ -104,7 +104,7 @@ functions:
     handler: src/data-importer/handler.handler
     events:
       - schedule:
-          rate: cron(0 8 * * ? *)
+          rate: cron(0 1 * * ? *)
           enabled: true
           input: 
             importTypes: ITMO_SYSTEM
