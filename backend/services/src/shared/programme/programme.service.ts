@@ -670,18 +670,19 @@ export class ProgrammeService {
                   country: countryName,
                 },
                 "",
-                transfer.fromCompanyId
+                transfer.initiatorCompanyId
               );
             } else {
               await this.emailHelperService.sendEmailToOrganisationAdmins(
-                transfer.toCompanyId,
+                transfer.initiatorCompanyId,
                 EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
                 {
                   credits: transfer.creditAmount,
                   serialNumber: programme.serialNo,
                   programmeName: programme.title,
                   pageLink: hostAddress + "/creditTransfers/viewAll",
-                }
+                },
+                transfer.toCompanyId
               );
 
               await this.emailHelperService.sendEmailToOrganisationAdmins(
@@ -693,7 +694,7 @@ export class ProgrammeService {
                   programmeName: programme.title,
                   pageLink: hostAddress + "/creditTransfers/viewAll",
                 },
-                transfer.toCompanyId
+                transfer.initiatorCompanyId
               );
             }
           }
