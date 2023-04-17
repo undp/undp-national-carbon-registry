@@ -1997,6 +1997,7 @@ export class ProgrammeService {
         ),
         HttpStatus.BAD_REQUEST
       );
+    }
     const updated = await this.programmeLedger.updateProgrammeStatus(
       req.programmeId,
       ProgrammeStage.REJECTED,
