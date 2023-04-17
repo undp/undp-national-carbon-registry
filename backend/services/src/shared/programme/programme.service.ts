@@ -124,6 +124,12 @@ export class ProgrammeService {
     );
   }
 
+  async findById(id: any): Promise<Programme | undefined> {
+    return await this.programmeRepo.findOneBy({
+      programmeId: id,
+    });
+  }
+
   async transferReject(req: ProgrammeTransferReject, approver: User) {
     this.logger.log(
       `Programme reject ${JSON.stringify(req)} ${approver.companyId}`
@@ -1981,7 +1987,16 @@ export class ProgrammeService {
     this.logger.log(
       `Programme ${req.programmeId} reject. Comment: ${req.comment}`
     );
-
+    const programme = await this.findById(req.programmeId);
+    const currentStage = programme.currentStage;
+    if (currentStage === ProgrammeStage.REJECTED) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.rejectAlreadyRejectedProg",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     const updated = await this.programmeLedger.updateProgrammeStatus(
       req.programmeId,
       ProgrammeStage.REJECTED,
