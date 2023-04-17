@@ -318,6 +318,47 @@ export class UserService {
     );
   }
 
+  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: Role, phoneNo: string) {
+
+    let company: Company;
+    if (companyRole != CompanyRole.GOVERNMENT) {
+      if (!taxId) {
+        throw new HttpException(
+          "Tax id cannot be empty:" + email,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      company = await this.companyService.findByTaxId(taxId);
+    } else {
+      company = await this.companyService.findGovByCountry(this.configService.get("systemCountry"))
+    }
+
+    if (!company) {
+      throw new HttpException(
+        "Company does not exist"+ email,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const user = new User();
+    user.email = email;
+    user.password = password;
+    user.companyId = company.companyId;
+    user.companyRole = company.companyRole;
+    user.name = name;
+    user.createdTime = new Date().getTime();
+    user.country = this.configService.get("systemCountry");
+    user.phoneNo = phoneNo
+    user.role = userRole;
+
+    console.log('Inserting user', user.email);
+    return await this.userRepo
+            .createQueryBuilder()
+            .insert()
+            .values(user)
+            .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
+            .execute();
+  }
+
   async create(
     userDto: UserDto,
     companyId: number,
