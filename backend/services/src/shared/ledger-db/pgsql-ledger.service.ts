@@ -164,9 +164,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     return (
       await this.execute([
         {
-          sql: `SELECT DISTINCT ON (${this.getUniqueIndex(t)}) data FROM ${
+          sql: `SELECT * from (SELECT DISTINCT ON (${this.getUniqueIndex(t)}) data FROM ${
             t
-          } WHERE ${whereClause} order by ${this.getUniqueIndex(t)}, hash desc`,
+          }  order by ${this.getUniqueIndex(t)}, hash desc) x where ${whereClause}`,
           params: Object.values(where),
         },
       ])
@@ -297,10 +297,16 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           //     return `data->>'${k}'`;
           //   })
           //   .join(", ");
+
+          let sql = ''
+          if (isHistoryQuery) {
+            sql = `SELECT data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(table)}, hash desc`
+          } else {
+            sql = `select * from (SELECT ${`DISTINCT ON (${this.getUniqueIndex(table)})`
+            } data FROM ${table} order by ${this.getUniqueIndex(table)}, hash desc) x where ${wc}`
+          }
           getTxElements[t] = {
-            sql: `SELECT ${
-              isHistoryQuery ? "" : `DISTINCT ON (${this.getUniqueIndex(table)})`
-            } data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(table)}, hash desc`,
+            sql: sql,
             params: this.getValuesList(getQueries[t]),
           };
         }
@@ -344,7 +350,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             //   .map((k) => `data->>'${k}'`)
             //   .join(", ");
             updateGetElements[t] = {
-              sql: `SELECT DISTINCT ON (${this.getUniqueIndex(tableName)}) data FROM ${tableName} WHERE ${wc} order by ${this.getUniqueIndex(tableName)}, hash desc`,
+              sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(tableName)}) data FROM ${tableName} order by ${this.getUniqueIndex(tableName)}, hash desc) x where ${wc}`,
               params: this.getValuesList(updateWhere[t]),
             };
           }
