@@ -734,7 +734,7 @@ export class ProgrammeService {
     if (transfer.status != TransferStatus.PENDING) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyProcessed",
+          "programme.acceptOrRejCancelledReq",
           []
         ),
         HttpStatus.BAD_REQUEST
