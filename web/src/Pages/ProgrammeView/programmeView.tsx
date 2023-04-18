@@ -869,7 +869,7 @@ const ProgrammeView = () => {
                 : action === 'Certify'
                 ? 'Successfully certified'
                 : action === 'Revoke'
-                ? t('view:successRevoke')
+                ? t('view:successRevokeCertifcate')
                 : t('view:successRetire'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
@@ -1199,7 +1199,13 @@ const ProgrammeView = () => {
                   }}
                   actionBtnText={t('view:revoke')}
                   onFinish={(body: any) =>
-                    onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
+                    onPopupAction(
+                      body,
+                      'revoke',
+                      t('view:successRevokeCertifcate'),
+                      put,
+                      updateProgrammeData
+                    )
                   }
                   showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
                 />

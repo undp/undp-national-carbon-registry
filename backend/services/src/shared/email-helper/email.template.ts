@@ -214,7 +214,7 @@ export const EmailTemplates = {
     html: `
       Hi {{name}}, <br><br>
 
-      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by {{organisationName}} has been cancelled due to insufficient credits available. <br><br>
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{organisationName}} made by {{initiatorOrganisationName}} has been cancelled due to insufficient credits available. <br><br>
       Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
       
       Sincerely, <br>
@@ -474,7 +474,7 @@ export const EmailTemplates = {
     
       Sincerely,  <br>
       The {{countryName}} Carbon Credit Registry Team 
-    `
+    `,
   },
   CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV: {
     id: "CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV",
@@ -486,7 +486,7 @@ export const EmailTemplates = {
     
       Sincerely,  <br>
       The {{countryName}} Carbon Credit Registry Team 
-    `
+    `,
   },
   CREDIT_RETIREMENT_RECOGNITION: {
     id: "CREDIT_RETIREMENT_RECOGNITION",

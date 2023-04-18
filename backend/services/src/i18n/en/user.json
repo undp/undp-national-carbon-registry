@@ -12,7 +12,7 @@
     "companyCreateNotPermittedForTheCompanyRole": "Company create does not permitted for your company role",
     "companyUpdateFailed": "Company update failed. Please try again",
     "propValueAlreadyExist": "{} already exist",
-    "taxIdExistAlready": "Company tax id already exist",
+    "taxIdExistAlready": "This Company Tax ID already exists",
     "deleteUserSuccess": "The user has been deleted successfully",
     "deleteOneAdminWhenOnlyOneAdmin": "The user cannot be deleted as the user is the only admin",
     "userUnAUth": "This action is unauthorised",

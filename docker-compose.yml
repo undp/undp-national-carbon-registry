@@ -40,6 +40,8 @@ services:
       IS_EMAIL_DISABLED: "true"
       LOCATION_SERVICE: OPENSTREET
       ASYNC_OPERATIONS_TYPE: Database
+      HOST: "http://localhost:3030"
+      DOMAIN_MAP: "true"
     volumes:
       - filestore:/app/backend/services/public
   stats:
@@ -57,6 +59,7 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
+      DOMAIN_MAP: "true"
   replicator:
     build:
       context: .
