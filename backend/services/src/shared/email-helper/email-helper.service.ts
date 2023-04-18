@@ -1,11 +1,16 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import {
+  AsyncAction,
+  AsyncOperationsInterface,
+} from "../async-operations/async-operations.interface";
 import { CompanyService } from "../company/company.service";
-import { EmailService } from "../email/email.service";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
+import { HelperService } from "../util/helpers.service";
 
 @Injectable()
 export class EmailHelperService {
@@ -15,12 +20,15 @@ export class EmailHelperService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private configService: ConfigService,
-    private emailService: EmailService,
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
-    private programmeLedger: ProgrammeLedgerService
+    private programmeLedger: ProgrammeLedgerService,
+    private asyncOperationsInterface: AsyncOperationsInterface,
+    private helperService: HelperService
   ) {
-    this.isEmailDisabled = this.configService.get<boolean>("email.disableLowPriorityEmails");
+    this.isEmailDisabled = this.configService.get<boolean>(
+      "email.disableLowPriorityEmails"
+    );
   }
 
   public async sendEmailToProgrammeOwnerAdmins(
@@ -30,19 +38,23 @@ export class EmailHelperService {
     companyId?: number,
     governmentId?: number
   ) {
-
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const programme = await this.programmeLedger.getProgrammeById(programmeId);
     const hostAddress = this.configService.get("host");
     let companyDetails: Company;
 
     switch (template.id) {
       case "PROGRAMME_REJECTION":
+        let authDate = new Date(programme.txTime);
+        let date = authDate.getDate().toString().padStart(2, "0");
+        let month = authDate.toLocaleString("default", { month: "long" });
+        let year = authDate.getFullYear();
+        let formattedDate = `${date} ${month} ${year}`;
+
         templateData = {
           ...templateData,
           programmeName: programme.title,
-          date: new Date(programme.txTime),
+          date: formattedDate,
           pageLink: hostAddress + `/programmeManagement/view?id=${programmeId}`,
         };
         break;
@@ -101,15 +113,16 @@ export class EmailHelperService {
     template,
     templateData: any,
     receiverCompanyId?: number,
-    programmeId?: string
+    programmeId?: string,
+    initiatorCompanyId?: number
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const users = await this.userService.getOrganisationAdminAndManagerUsers(
       companyId
     );
     let companyDetails: Company;
+    let inititatorCompanyDetails: Company;
     let programme: Programme;
     const hostAddress = this.configService.get("host");
 
@@ -229,6 +242,30 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        inititatorCompanyDetails = await this.companyService.findByCompanyId(
+          initiatorCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+          initiatorOrganisationName: inititatorCompanyDetails.name,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR":
+        companyDetails = await this.companyService.findByCompanyId(
+          receiverCompanyId
+        );
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+        };
+        break;
+
       default:
         break;
     }
@@ -239,11 +276,24 @@ export class EmailHelperService {
         name: user.user_name,
         countryName: systemCountryName,
       };
-      await this.emailService.sendEmail(
-        user.user_email,
-        template,
-        templateData
-      );
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -253,8 +303,7 @@ export class EmailHelperService {
     programmeId?: string,
     companyId?: number
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getGovAdminAndManagerUsers();
@@ -296,6 +345,14 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV":
+        companyDetails = await this.companyService.findByCompanyId(companyId);
+        templateData = {
+          ...templateData,
+          organisationName: companyDetails.name,
+        };
+        break;
+
       default:
         break;
     }
@@ -306,11 +363,24 @@ export class EmailHelperService {
         name: user.user_name,
         countryName: systemCountryName,
       };
-      await this.emailService.sendEmail(
-        user.user_email,
-        template,
-        templateData
-      );
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
     });
   }
 
@@ -320,8 +390,7 @@ export class EmailHelperService {
     templateData: any,
     companyId: number
   ) {
-    if(this.isEmailDisabled)
-      return;
+    if (this.isEmailDisabled) return;
     const companyDetails = await this.companyService.findByCompanyId(companyId);
     const systemCountryName = this.configService.get("systemCountryName");
     templateData = {
@@ -329,6 +398,23 @@ export class EmailHelperService {
       countryName: systemCountryName,
       government: companyDetails.name,
     };
-    await this.emailService.sendEmail(sender, template, templateData);
+    const action: AsyncAction = {
+      actionType: AsyncActionType.Email,
+      actionProps: {
+        emailType: template.id,
+        sender: sender,
+        subject: this.helperService.getEmailTemplateMessage(
+          template["subject"],
+          templateData,
+          true
+        ),
+        emailBody: this.helperService.getEmailTemplateMessage(
+          template["html"],
+          templateData,
+          false
+        ),
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(action);
   }
 }

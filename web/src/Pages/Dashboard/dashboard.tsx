@@ -72,8 +72,10 @@ const Dashboard = () => {
   const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
   const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
-  const [startTime, setStartTime] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(
+    Date.parse(String(moment().subtract('13', 'days').startOf('day')))
+  );
+  const [endTime, setEndTime] = useState<number>(Date.parse(String(moment().endOf('day'))));
   const [categoryType, setCategoryType] = useState<string>('overall');
 
   // states for totalProgrammes chart
@@ -178,7 +180,7 @@ const Dashboard = () => {
   const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
-  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -582,17 +584,18 @@ const Dashboard = () => {
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateTotalCredits(
-            moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
-            ).fromNow()
+            moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
           );
+        } else {
+          setLastUpdateTotalCredits('0');
+          setLastUpdateTotalCreditsEpoch(0);
         }
         programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
@@ -607,6 +610,9 @@ const Dashboard = () => {
               parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesSectorStatsCEpoch(0);
+          setLastUpdateProgrammesSectorStatsC('0');
         }
         programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         if (
@@ -619,6 +625,9 @@ const Dashboard = () => {
           setLastUpdateTotalCreditsCertified(
             moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
           );
+        } else {
+          setLastUpdateTotalCreditsCertifiedEpoch(0);
+          setLastUpdateTotalCreditsCertified('0');
         }
         totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
         if (
@@ -631,6 +640,9 @@ const Dashboard = () => {
           setLastUpdateTransferLocations(
             moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
           );
+        } else {
+          setLastUpdateTransferLocationsEpoch(0);
+          setLastUpdateTransferLocations('0');
         }
         transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
@@ -936,10 +948,10 @@ const Dashboard = () => {
         String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
       ) {
         setLastUpdateProgrammesCertifiableEpoch(
-          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)
+          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
         );
         setLastUpdateProgrammesCertifiable(
-          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.countLast)).fromNow()
+          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
         );
       }
       if (
@@ -1040,33 +1052,36 @@ const Dashboard = () => {
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.statusUpdateTime)
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
             ).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesStatsCEpoch(0);
+          setLastUpdateProgrammesStatsC('0');
         }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime) !==
-            '0'
+          response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last &&
+          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
+            parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateProgrammesCreditsStats(
-            moment(
-              parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.all?.creditUpdateTime)
-            ).fromNow()
+            moment(parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
           );
+        } else {
+          setLastUpdateProgrammesCreditsStatsEpoch(0);
+          setLastUpdateProgrammesCreditsStats('0');
         }
         programmeByStatusAuthAggregationResponse =
           response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
@@ -1080,6 +1095,9 @@ const Dashboard = () => {
           setLastUpdateCertifiedCreditsStats(
             moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
           );
+        } else {
+          setLastUpdateCertifiedCreditsStatsEpoch(0);
+          setLastUpdateCertifiedCreditsStats('0');
         }
         certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       } else if (
@@ -1778,9 +1796,10 @@ ${total}
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 7 days': [moment().subtract('7', 'days'), moment()],
-              'Last 14 days': [moment().subtract('14', 'days'), moment()],
+              'Last 7 days': [moment().subtract('6', 'days'), moment()],
+              'Last 14 days': [moment().subtract('13', 'days'), moment()],
             }}
+            defaultValue={[moment().subtract('13', 'days'), moment()]}
             showTime
             allowClear={true}
             format="DD:MM:YYYY"

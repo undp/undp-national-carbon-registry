@@ -20,9 +20,8 @@ import {
   Repository,
 } from "typeorm";
 import { User } from "../../shared/entities/user.entity";
-import { EmailService } from "../../shared/email/email.service";
 import { QueryDto } from "../../shared/dto/query.dto";
-import { EmailTemplates } from "../../shared/email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
 import { UserUpdateDto } from "../../shared/dto/user.update.dto";
 import { PasswordUpdateDto } from "../../shared/dto/password.update.dto";
@@ -41,12 +40,17 @@ import { HelperService } from "../util/helpers.service";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { CountryService } from "../util/country.service";
+import {
+  AsyncAction,
+  AsyncOperationsInterface,
+} from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
-    private emailService: EmailService,
     private logger: Logger,
     private configService: ConfigService,
     private helperService: HelperService,
@@ -54,13 +58,26 @@ export class UserService {
     @Inject(forwardRef(() => CompanyService))
     private companyService: CompanyService,
     private counterService: CounterService,
-    private fileHandler: FileHandlerInterface
+    private countryService: CountryService,
+    private fileHandler: FileHandlerInterface,
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {}
 
   private async generateApiKey(email) {
     return Buffer.from(
       `${email}${API_KEY_SEPARATOR}${await nanoid()}`
     ).toString("base64");
+  }
+
+  async getAdminUserDetails(companyId) {
+    const result = await this.userRepo.find({
+      where: {
+        role: Role.Admin,
+        companyId: parseInt(companyId),
+      },
+    });
+
+    return result;
   }
 
   async getUserCredentials(username: string): Promise<User | undefined> {
@@ -91,6 +108,15 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
+  async getRoot(): Promise<User | undefined> {
+    const users = await this.userRepo.find({
+      where: {
+        role: Role.Root,
+      },
+    });
+    return users && users.length > 0 ? users[0] : undefined;
+  }
+
   async getUserProfileDetails(id: number) {
     const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(
@@ -115,26 +141,6 @@ export class UserService {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
 
-    const sql = await this.userRepo
-      .createQueryBuilder()
-      .update(User)
-      .set(update)
-      .where(
-        `id = ${id} ${
-          abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
-            : ""
-        }`
-      )
-      .getSql();
-
-    console.log("sql user update --- ", sql);
-    // .catch((err: any) => {
-    //   this.logger.error(err);
-    //   return err;
-    // });
-
     const result = await this.userRepo
       .createQueryBuilder()
       .update(User)
@@ -142,8 +148,8 @@ export class UserService {
       .where(
         `id = ${id} ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -156,7 +162,7 @@ export class UserService {
       return new DataResponseDto(HttpStatus.OK, await this.findById(id));
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString("user.noUserFound", []),
+      this.helperService.formatReqMessagesString("user.userUnAUth", []),
       HttpStatus.NOT_FOUND
     );
   }
@@ -173,8 +179,8 @@ export class UserService {
       .where(
         `id = '${id}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -203,14 +209,28 @@ export class UserService {
         return err;
       });
     if (result.affected > 0) {
-      await this.emailService.sendEmail(
-        user.email,
-        EmailTemplates.CHANGE_PASSOWRD,
-        {
-          name: user.name,
-          countryName: this.configService.get("systemCountryName"),
-        }
-      );
+      const templateData = {
+        name: user.name,
+        countryName: this.configService.get("systemCountryName"),
+      };
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.CHANGE_PASSOWRD.id,
+          sender: user.email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.CHANGE_PASSOWRD["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString("user.resetSuccess", [])
@@ -232,8 +252,8 @@ export class UserService {
       .where(
         `email = '${email}' ${
           abilityCondition
-            ? " AND " +
-              this.helperService.parseMongoQueryToSQL(abilityCondition)
+            ? " AND (" +
+              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -260,14 +280,29 @@ export class UserService {
       });
 
     if (result.affected > 0) {
-      await this.emailService.sendEmail(
-        user.email,
-        EmailTemplates.API_KEY_EMAIL,
-        {
-          name: user.name,
-          apiKey: apiKey,
-        }
-      );
+      const templateData = {
+        name: user.name,
+        apiKey: apiKey,
+      };
+
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: EmailTemplates.API_KEY_EMAIL.id,
+          sender: user.email,
+          subject: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.API_KEY_EMAIL["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            EmailTemplates.API_KEY_EMAIL["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+      await this.asyncOperationsInterface.AddAction(action);
 
       return new BasicResponseDto(
         HttpStatus.OK,
@@ -281,6 +316,47 @@ export class UserService {
       ),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
+  }
+
+  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: Role, phoneNo: string) {
+
+    let company: Company;
+    if (companyRole != CompanyRole.GOVERNMENT) {
+      if (!taxId) {
+        throw new HttpException(
+          "Tax id cannot be empty:" + email,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      company = await this.companyService.findByTaxId(taxId);
+    } else {
+      company = await this.companyService.findGovByCountry(this.configService.get("systemCountry"))
+    }
+
+    if (!company) {
+      throw new HttpException(
+        "Company does not exist"+ email,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const user = new User();
+    user.email = email;
+    user.password = password;
+    user.companyId = company.companyId;
+    user.companyRole = company.companyRole;
+    user.name = name;
+    user.createdTime = new Date().getTime();
+    user.country = this.configService.get("systemCountry");
+    user.phoneNo = phoneNo
+    user.role = userRole;
+
+    console.log('Inserting user', user.email);
+    return await this.userRepo
+            .createQueryBuilder()
+            .insert()
+            .values(user)
+            .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
+            .execute();
   }
 
   async create(
@@ -301,6 +377,21 @@ export class UserService {
     }
 
     let { company, ...userFields } = userDto;
+    if (
+      !company &&
+      userDto.companyId &&
+      companyRole === CompanyRole.GOVERNMENT
+    ) {
+      const adminUserdetails = await this.getAdminUserDetails(
+        userDto.companyId
+      );
+      if (adminUserdetails?.length > 0) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
+    }
     if (company) {
       if (
         userFields.role &&
@@ -401,20 +492,22 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
-        company.logo
-      );
-      if (response) {
-        company.logo = response;
-      } else {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyUpdateFailed",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
+      if (company.logo) {
+        const response: any = await this.fileHandler.uploadFile(
+          `profile_images/${company.companyId}_${new Date().getTime()}.png`,
+          company.logo
         );
+        if (response) {
+          company.logo = response;
+        } else {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "user.companyUpdateFailed",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
       }
 
       if (!company.hasOwnProperty("website")) {
@@ -422,23 +515,38 @@ export class UserService {
       }
 
       if (company.email) {
-        await this.emailService.sendEmail(
-          company.email,
-          EmailTemplates.ORGANISATION_CREATE,
-          {
-            organisationName: company.name,
-            countryName: this.configService.get("systemCountryName"),
-            organisationRole:
-              company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                ? "Programme Developer"
-                : company.companyRole,
-            home: hostAddress,
-          }
-        );
+        const templateData = {
+          organisationName: company.name,
+          countryName: this.configService.get("systemCountryName"),
+          organisationRole:
+            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+              ? "Programme Developer"
+              : company.companyRole,
+          home: hostAddress,
+        };
+
+        const action: AsyncAction = {
+          actionType: AsyncActionType.Email,
+          actionProps: {
+            emailType: EmailTemplates.ORGANISATION_CREATE.id,
+            sender: company.email,
+            subject: this.helperService.getEmailTemplateMessage(
+              EmailTemplates.ORGANISATION_CREATE["subject"],
+              templateData,
+              true
+            ),
+            emailBody: this.helperService.getEmailTemplateMessage(
+              EmailTemplates.ORGANISATION_CREATE["html"],
+              templateData,
+              false
+            ),
+          },
+        };
+        await this.asyncOperationsInterface.AddAction(action);
       }
     }
 
-    await this.emailService.sendEmail(u.email, EmailTemplates.USER_CREATE, {
+    const templateData = {
       name: u.name,
       countryName: this.configService.get("systemCountryName"),
       tempPassword: u.password,
@@ -446,7 +554,26 @@ export class UserService {
       email: u.email,
       liveChat: this.configService.get("liveChat"),
       helpDoc: hostAddress + "/help",
-    });
+    };
+
+    const action: AsyncAction = {
+      actionType: AsyncActionType.Email,
+      actionProps: {
+        emailType: EmailTemplates.USER_CREATE.id,
+        sender: u.email,
+        subject: this.helperService.getEmailTemplateMessage(
+          EmailTemplates.USER_CREATE["subject"],
+          templateData,
+          true
+        ),
+        emailBody: this.helperService.getEmailTemplateMessage(
+          EmailTemplates.USER_CREATE["html"],
+          templateData,
+          false
+        ),
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(action);
 
     u.createdTime = new Date().getTime();
 
@@ -550,7 +677,7 @@ export class UserService {
       .getMany();
     if (result.length <= 0) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
         HttpStatus.NOT_FOUND
       );
     }

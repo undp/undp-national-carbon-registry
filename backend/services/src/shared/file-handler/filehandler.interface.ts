@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { CompanyService } from "../company/company.service";
-import { EmailService } from "../email/email.service";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";

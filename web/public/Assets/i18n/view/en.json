@@ -56,6 +56,7 @@
     "successCertify": "The programme has been certified successfully",
     "successRetire": "The credits have been retired successfully",
     "successRevoke": "The programme has been revoked successfully",
+    "successRevokeCertifcate": "The certificate has been revoked successfully",
     "successRetireInit": "The international transfer retire request has been sent successfully",
     "successIssue": "The programme has been issued successfully",
     "successRequest": "The transfer request has been sent successfully ",
@@ -109,5 +110,6 @@
     "tlTxCancelDesc": "The request to transfer {} {} credits from {} to {} was cancelled by {}",
     "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by {}",
     "tlUnFrozen": "Credits Unfrozen",
-    "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}"
+    "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}",
+    "tlTxLowCreditCancelSystemDesc" : "The request to transfer {} {} credits from {} to {} was cancelled by the system due to insufficient credit balance"
 }

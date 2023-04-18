@@ -19,6 +19,8 @@ import { LedgerDBInterface } from "../shared/ledger-db/ledger.db.interface";
 import { Handler } from 'aws-lambda';
 import { LocationModule } from "../shared/location/location.module";
 import { LocationInterface } from "../shared/location/location.interface";
+import { ProgrammeModule } from "../shared/programme/programme.module";
+import { ProgrammeService } from "../shared/programme/programme.service";
 const fs = require('fs')
 
 export const handler: Handler = async (event) => {
@@ -27,10 +29,36 @@ export const handler: Handler = async (event) => {
     if (!event) {
       event = process.env;
     }
+
     const userApp = await NestFactory.createApplicationContext(UserModule, {
       logger: getLogger(UserModule),
     });
     const userService = userApp.get(UserService);
+
+    if (event.type === 'IMPORT_USERS' && event.body) {
+      const users = event.body.split('\n');
+      for (const user of users) {
+        const fields = user.split(',');
+        if (fields.length < 7) {
+          continue;
+        }
+        // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
+        const cr = (fields[4] == 'Government' ? CompanyRole.GOVERNMENT : fields[4] == 'Certifier' ? CompanyRole.CERTIFIER : CompanyRole.PROGRAMME_DEVELOPER)
+        const ur = (fields[5] == 'admin' ? Role.Admin : fields[5] == 'Manager' ? Role.Manager : Role.ViewOnly)
+        await userService.createUserWithPassword(fields[0], cr, fields[3], fields[6], fields[1], ur, fields[2]);
+      }
+      return;
+    }
+
+    if (event.type === 'UPDATE_COORDINATES') {
+      const prApp = await NestFactory.createApplicationContext(ProgrammeModule, {
+        logger: getLogger(ProgrammeModule),
+      });
+      const programmeService = prApp.get(ProgrammeService);
+      await programmeService.regenerateRegionCoordinates()
+      return;
+    }
+
     const u = await userService.findOne(event['rootEmail']);
     if (u != undefined) {
       console.log('Root user already created and setup is completed')

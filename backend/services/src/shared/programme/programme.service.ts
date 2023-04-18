@@ -27,8 +27,7 @@ import { ConfigService } from "@nestjs/config";
 import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 import { CompanyService } from "../company/company.service";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
-import { EmailService } from "../email/email.service";
-import { EmailTemplates } from "../email/email.template";
+import { EmailTemplates } from "../email-helper/email.template";
 import { User } from "../entities/user.entity";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { TransferStatus } from "../enum/transform.status.enum";
@@ -51,6 +50,8 @@ import { UserService } from "../user/user.service";
 import { use } from "passport";
 import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
+import { DataResponseMessageDto } from "../dto/data.response.message";
+import { LocationInterface } from "../location/location.interface";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -66,7 +67,7 @@ export class ProgrammeService {
     private configService: ConfigService,
     private companyService: CompanyService,
     private userService: UserService,
-    private emailService: EmailService,
+    private locationService: LocationInterface,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
     private readonly countryService: CountryService,
@@ -123,6 +124,12 @@ export class ProgrammeService {
     );
   }
 
+  async findById(id: any): Promise<Programme | undefined> {
+    return await this.programmeRepo.findOneBy({
+      programmeId: id,
+    });
+  }
+
   async transferReject(req: ProgrammeTransferReject, approver: User) {
     this.logger.log(
       `Programme reject ${JSON.stringify(req)} ${approver.companyId}`
@@ -145,7 +152,7 @@ export class ProgrammeService {
     if (pTransfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -199,12 +206,15 @@ export class ProgrammeService {
 
     if (result.affected > 0) {
       if (pTransfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          pTransfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           pTransfer.fromCompanyId,
           EmailTemplates.CREDIT_RETIREMENT_NOT_RECOGNITION,
           {
             credits: pTransfer.creditAmount,
-            country: pTransfer.toCompanyMeta.country,
+            country: countryName,
           },
           0,
           pTransfer.programmeId
@@ -392,7 +402,7 @@ export class ProgrammeService {
     if (transfer.status == TransferStatus.CANCELLED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyCancelled",
+          "programme.acceptOrRejAlreadyCancelled",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -512,12 +522,15 @@ export class ProgrammeService {
 
     if (transferResult.statusCode === 200) {
       if (transfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          transfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
           EmailTemplates.CREDIT_RETIREMENT_RECOGNITION,
           {
             credits: transfer.creditAmount,
-            country: transfer.toCompanyMeta.country,
+            country: countryName,
           },
           0,
           transfer.programmeId
@@ -561,6 +574,7 @@ export class ProgrammeService {
     reason: string,
     isRetirement: boolean
   ) {
+    const hostAddress = this.configService.get("host");
     const programme = await this.programmeLedger.transferProgramme(
       transfer,
       user,
@@ -588,6 +602,107 @@ export class ProgrammeService {
       });
 
     if (result.affected > 0) {
+      const transfers = await this.programmeTransferRepo.find({
+        where: {
+          programmeId: programme.programmeId,
+          status: TransferStatus.PENDING,
+        },
+      });
+
+      for (let transfer of transfers) {
+        const companyIndex = programme.companyId.indexOf(
+          transfer.fromCompanyId
+        );
+        const companyProponent = programme.creditOwnerPercentage[companyIndex];
+        const creditBalance =
+          (programme.creditBalance * companyProponent) / 100;
+        if (transfer.creditAmount > creditBalance) {
+          const result = await this.programmeTransferRepo
+            .update(
+              {
+                requestId: transfer.requestId,
+              },
+              {
+                status: TransferStatus.CANCELLED,
+                txTime: new Date().getTime(),
+                authTime: new Date().getTime(),
+                txRef: `#${SystemActionType.LOW_CREDIT_AUTO_CANCEL}#`,
+              }
+            )
+            .catch((err) => {
+              this.logger.error(err);
+              return err;
+            });
+
+          if (result.affected === 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "programme.internalErrorStatusUpdating",
+                []
+              ),
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          } else {
+            if (transfer.isRetirement) {
+              const countryName = await this.countryService.getCountryName(
+                transfer.toCompanyMeta.country
+              );
+
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.fromCompanyId,
+                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  country: countryName,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                }
+              );
+
+              await this.emailHelperService.sendEmailToGovernmentAdmins(
+                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                  country: countryName,
+                },
+                "",
+                transfer.initiatorCompanyId
+              );
+            } else {
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.initiatorCompanyId,
+                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                },
+                transfer.toCompanyId
+              );
+
+              await this.emailHelperService.sendEmailToOrganisationAdmins(
+                transfer.fromCompanyId,
+                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
+                {
+                  credits: transfer.creditAmount,
+                  serialNumber: programme.serialNo,
+                  programmeName: programme.title,
+                  pageLink: hostAddress + "/creditTransfers/viewAll",
+                },
+                transfer.toCompanyId,
+                "",
+                transfer.initiatorCompanyId
+              );
+            }
+          }
+        }
+      }
+
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 
@@ -624,7 +739,7 @@ export class ProgrammeService {
     if (transfer.status != TransferStatus.PENDING) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.transferReqAlreadyProcessed",
+          "programme.acceptOrRejCancelledReq",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -653,12 +768,15 @@ export class ProgrammeService {
         transfer.initiatorCompanyId
       );
       if (transfer.isRetirement) {
+        const countryName = await this.countryService.getCountryName(
+          transfer.toCompanyMeta.country
+        );
         await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_RETIREMENT_CANCEL,
           {
             credits: transfer.creditAmount,
             organisationName: initiatorCompanyDetails.name,
-            country: transfer.toCompanyMeta.country,
+            country: countryName,
           },
           transfer.programmeId
         );
@@ -962,18 +1080,32 @@ export class ProgrammeService {
 
     allTransferList.forEach(async (transfer) => {
       if (requester.companyRole === CompanyRole.GOVERNMENT) {
-        await this.emailHelperService.sendEmailToOrganisationAdmins(
-          transfer.fromCompanyId,
-          EmailTemplates.CREDIT_TRANSFER_GOV,
-          {
-            credits: transfer.creditAmount,
-            programmeName: programme.title,
-            serialNumber: programme.serialNo,
-            pageLink: hostAddress + "/creditTransfers/viewAll",
-            government: requestedCompany.name,
-          },
-          transfer.toCompanyId
-        );
+        if (transfer.toCompanyId === requester.companyId) {
+          await this.emailHelperService.sendEmailToOrganisationAdmins(
+            transfer.fromCompanyId,
+            EmailTemplates.CREDIT_TRANSFER_REQUISITIONS,
+            {
+              organisationName: requestedCompany.name,
+              credits: transfer.creditAmount,
+              programmeName: programme.title,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + "/creditTransfers/viewAll",
+            }
+          );
+        } else {
+          await this.emailHelperService.sendEmailToOrganisationAdmins(
+            transfer.fromCompanyId,
+            EmailTemplates.CREDIT_TRANSFER_GOV,
+            {
+              credits: transfer.creditAmount,
+              programmeName: programme.title,
+              serialNumber: programme.serialNo,
+              pageLink: hostAddress + "/creditTransfers/viewAll",
+              government: requestedCompany.name,
+            },
+            transfer.toCompanyId
+          );
+        }
       } else if (requester.companyId != transfer.fromCompanyId) {
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -1085,16 +1217,18 @@ export class ProgrammeService {
       3
     );
     programme.countryCodeA2 = this.configService.get("systemCountry");
-    const constants = await this.getLatestConstant(
-      programmeDto.typeOfMitigation
-    );
 
-    const req = await this.getCreditRequest(programmeDto, constants);
-    try {
-      programme.creditEst = Math.round(await calculateCredit(req));
-    } catch (err) {
-      this.logger.log(`Credit calculate failed ${err.message}`);
-      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    let constants = undefined;
+    if (!programmeDto.creditEst) {
+      constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
+
+      const req = await this.getCreditRequest(programmeDto, constants);
+      try {
+        programme.creditEst = Math.round(await calculateCredit(req));
+      } catch (err) {
+        this.logger.log(`Credit calculate failed ${err.message}`);
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      }
     }
 
     if (programme.creditEst <= 0) {
@@ -1203,6 +1337,11 @@ export class ProgrammeService {
     );
   }
 
+  async getProgrammeEventsByExternalId(externalId: string): Promise<any> {
+    return await this.programmeLedger.getProgrammeHistoryByExternalId(externalId);
+  }
+
+
   async getProgrammeEvents(programmeId: string, user: User): Promise<any> {
     const resp = await this.programmeLedger.getProgrammeHistory(programmeId);
     if (resp == null) {
@@ -1275,10 +1414,7 @@ export class ProgrammeService {
 
     if (add && user.companyRole != CompanyRole.CERTIFIER) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programme.certifierCanOnlyCertifiy",
-          []
-        ),
+        this.helperService.formatReqMessagesString("programme.unAuth", []),
         HttpStatus.FORBIDDEN
       );
     }
@@ -1315,9 +1451,9 @@ export class ProgrammeService {
     }
 
     const userCompany = await this.companyRepo.findOne({
-      where: { companyId: user.companyId }
+      where: { companyId: user.companyId },
     });
-    if(userCompany && userCompany.state === CompanyState.SUSPENDED){
+    if (userCompany && userCompany.state === CompanyState.SUSPENDED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programme.organisationDeactivated",
@@ -1375,7 +1511,25 @@ export class ProgrammeService {
       }
     }
 
-    return new DataResponseDto(HttpStatus.OK, updated);
+    if (add) {
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.certifyPendingProgramme",
+          []
+        ),
+        updated
+      );
+    } else {
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "programme.certificationRevocation",
+          []
+        ),
+        updated
+      );
+    }
   }
 
   async retireProgramme(req: ProgrammeRetire, requester: User) {
@@ -1619,6 +1773,12 @@ export class ProgrammeService {
       } else {
         transfer.status = TransferStatus.PROCESSING;
         autoApproveTransferList.push(transfer);
+        const reason =
+          req.type === RetireType.CROSS_BORDER
+            ? "cross border transfer"
+            : transfer.retirementType === RetireType.LEGAL_ACTION
+            ? "legal action"
+            : "other";
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           fromCompany.companyId,
           EmailTemplates.CREDIT_RETIREMENT_BY_GOV,
@@ -1627,7 +1787,7 @@ export class ProgrammeService {
             programmeName: programme.title,
             serialNumber: programme.serialNo,
             government: toCompany.name,
-            reason: req.comment,
+            reason: reason,
             pageLink: hostAddress + "/creditTransfers/viewAll",
           }
         );
@@ -1830,7 +1990,17 @@ export class ProgrammeService {
     this.logger.log(
       `Programme ${req.programmeId} reject. Comment: ${req.comment}`
     );
-
+    const programme = await this.findById(req.programmeId);
+    const currentStage = programme.currentStage;
+    if (currentStage === ProgrammeStage.REJECTED) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.rejectAlreadyRejectedProg",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
     const updated = await this.programmeLedger.updateProgrammeStatus(
       req.programmeId,
       ProgrammeStage.REJECTED,
@@ -1900,6 +2070,55 @@ export class ProgrammeService {
     return null;
   };
 
+  async findByExternalId(externalId: string): Promise<Programme | undefined> {
+    return await this.programmeRepo.findOne({
+      where: {
+        externalId: externalId,
+      },
+    });
+  }
+
+  async regenerateRegionCoordinates() {
+    this.logger.log(`Regenrate coordinates:`)
+    const allProgrammes = await this.programmeRepo.find();
+    for (const programme of allProgrammes) {
+      const programmeProperties = programme.programmeProperties;
+      let address: any[] = [];
+      if (programmeProperties.geographicalLocation) {
+        for (
+          let index = 0;
+          index < programmeProperties.geographicalLocation.length;
+          index++
+        ) {
+          address.push(programmeProperties.geographicalLocation[index]);
+        }
+      }
+      await this.locationService.getCoordinatesForRegion([...address]).then(
+        (response: any) => {
+          console.log(
+            "response from forwardGeoCoding function -> ",
+            response
+          );
+          programme.geographicalLocationCordintes = [...response];
+        }
+      );
+
+      const result = await this.programmeRepo
+      .update(
+        {
+          programmeId: programme.programmeId,
+        },
+        {
+          geographicalLocationCordintes: programme.geographicalLocationCordintes
+        }
+      )
+      .catch((err) => {
+        this.logger.error(err);
+        return err;
+      });
+      this.logger.log(`Updated programme: ${programme.programmeId} ${programme.geographicalLocationCordintes}`)
+    }
+  }
   private getUserRef = (user: any) => {
     return `${user.companyId}#${user.companyName}#${user.id}`;
   };
@@ -1907,4 +2126,5 @@ export class ProgrammeService {
   private getUserRefWithRemarks = (user: any, remarks: string) => {
     return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
   };
+
 }

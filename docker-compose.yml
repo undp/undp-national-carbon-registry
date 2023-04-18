@@ -39,6 +39,9 @@ services:
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
       LOCATION_SERVICE: OPENSTREET
+      ASYNC_OPERATIONS_TYPE: Database
+      HOST: "http://localhost:3030"
+      DOMAIN_MAP: "true"
     volumes:
       - filestore:/app/backend/services/public
   stats:
@@ -56,6 +59,7 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
+      DOMAIN_MAP: "true"
   replicator:
     build:
       context: .
@@ -67,8 +71,30 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
-      RUN_MODULE: replicator
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: ""
+      IS_EMAIL_DISABLED: "true"
+      ASYNC_OPERATIONS_TYPE: Database
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
+  # async-operations-handler:
+  #   build:
+  #     context: .
+  #     dockerfile: ./backend/services/Dockerfile
+  #   depends_on:
+  #     - db
+  #     - national
+  #   environment:
+  #     DB_HOST: db
+  #     DB_USER: root
+  #     DB_PASSWORD: "<ANY PASSOWORD>"
+  #     RUN_MODULE: async-operations-handler
+  #     SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+  #     SMTP_PASSWORD: "<ANY PASSOWORD>"
+  #     ASYNC_OPERATIONS_TYPE: Database
   web:
     build:
       context: .
@@ -80,7 +106,7 @@ services:
         COUNTRY_NAME: "Antarctic Region"
         COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         COUNTRY_CODE: "NG"
-        MAP_TYPE : "None"
+        REACT_APP_MAP_TYPE : "None"
     ports:
       - "3030:3030"
     depends_on:

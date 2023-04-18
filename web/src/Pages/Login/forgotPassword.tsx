@@ -5,12 +5,16 @@ import { useTranslation } from 'react-i18next';
 import { userForgotPasswordProps } from '../../Definitions/InterfacesAndType/userForgotPassword.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import i18next from 'i18next';
+import { useNavigate } from 'react-router-dom';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const ForgotPassword = () => {
   const { post } = useConnection();
+  const navigate = useNavigate();
   const { i18n, t } = useTranslation(['common', 'forgotPassword']);
   const [loading, setLoading] = useState<boolean>(false);
   const [emailSent, setEmailSent] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<boolean>(false);
 
   const onSubmit = async (values: userForgotPasswordProps) => {
     setLoading(true);
@@ -22,12 +26,22 @@ const ForgotPassword = () => {
 
       if (response.status === 200 || response.status === 201) {
         setEmailSent(true);
+        setEmailError(false);
       }
     } catch (error: any) {
       console.log('Error in sending resetting password', error);
+      setEmailError(true);
     } finally {
       setLoading(false);
     }
+  };
+
+  const onClickBacktoSignIn = () => {
+    navigate('/login', { replace: true });
+  };
+
+  const onChangeEmail = () => {
+    setEmailSent(false);
   };
 
   return (
@@ -36,6 +50,15 @@ const ForgotPassword = () => {
         <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
           <div className="login-text-contents">
             <span className="login-text-signin">{t('forgotPassword:forgot-pwd-title')}</span>
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
+          <div className="note-container">
+            <div className="note">
+              <p>{t('forgotPassword:note-1')}</p>
+            </div>
           </div>
         </Col>
       </Row>
@@ -70,30 +93,47 @@ const ForgotPassword = () => {
                 ]}
               >
                 <div className="login-input-email">
-                  <Input type="username" />
+                  <Input onChange={() => onChangeEmail()} type="username" />
                 </div>
               </Form.Item>
               <Form.Item>
                 <div className="forgot-submit-btn-container">
-                  <Button type="primary" size="large" htmlType="submit" block loading={loading}>
-                    SUBMIT
+                  <Button
+                    type="primary"
+                    size="large"
+                    htmlType="submit"
+                    block
+                    disabled={emailSent}
+                    loading={loading}
+                  >
+                    {t('forgotPassword:submit')}
                   </Button>
                 </div>
                 {emailSent && (
                   <div className="email-success-msg">{t('forgotPassword:emailSent')}</div>
                 )}
               </Form.Item>
+              {emailError && (
+                <div className="logged-out-section">
+                  <div className="info-icon">
+                    <ExclamationCircleOutlined
+                      style={{
+                        color: 'rgba(255, 77, 79, 0.8)',
+                        marginRight: '0.5rem',
+                        fontSize: '1.1rem',
+                      }}
+                    />
+                  </div>
+                  <div className="msg">{`${t('common:email')} ${t('common:isInvalid')}`}</div>
+                </div>
+              )}
+              <div className="bottom-forgot-password-section">
+                {t('common:backto')}&nbsp;
+                <span onClick={() => onClickBacktoSignIn()} className="backto-signin-txt">
+                  {t('common:signIn')}
+                </span>
+              </div>
             </Form>
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
-          <div className="note-container">
-            <div className="note">
-              <p>{t('forgotPassword:note-1')}</p>
-              <p>{t('forgotPassword:note-2')}</p>
-            </div>
           </div>
         </Col>
       </Row>

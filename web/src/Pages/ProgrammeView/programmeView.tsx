@@ -110,7 +110,7 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
-  const mapType = process.env.MAP_TYPE ? process.env.MAP_TYPE : 'None';
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
 
   const showModal = () => {
@@ -189,7 +189,7 @@ const ProgrammeView = () => {
           accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
         }
 
-        if (!accessToken) return;
+        if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
 
         for (const address of data!.programmeProperties.geographicalLocation) {
           const response = await Geocoding({ accessToken: accessToken })
@@ -412,6 +412,9 @@ const ProgrammeView = () => {
         addElement(dx, Number(transfer.txTime!), hist);
       } else if (transfer.status === CreditTransferStage.Cancelled) {
         const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
+        const lowCreditSystemCancel =
+          transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
+
         const dx: any = {
           status: 'process',
           title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
@@ -419,7 +422,11 @@ const ProgrammeView = () => {
           description: (
             <TimelineBody
               text={formatString(
-                systemCancel ? 'view:tlTxCancelSystemDesc' : 'view:tlTxCancelDesc',
+                systemCancel
+                  ? 'view:tlTxCancelSystemDesc'
+                  : lowCreditSystemCancel
+                  ? 'view:tlTxLowCreditCancelSystemDesc'
+                  : 'view:tlTxCancelDesc',
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -427,7 +434,11 @@ const ProgrammeView = () => {
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta.countryName
                     : transfer.receiver[0]?.name,
-                  systemCancel ? transfer.txRef?.split('#')[4] : transfer.requester[0]?.name,
+                  systemCancel
+                    ? transfer.txRef?.split('#')[4]
+                    : lowCreditSystemCancel
+                    ? ''
+                    : transfer.requester[0]?.name,
                   transfer.txRef?.split('#')[5],
                 ]
               )}
@@ -849,18 +860,17 @@ const ProgrammeView = () => {
           message.open({
             type: 'success',
             content:
-              'Successfully ' +
-              (action === 'Reject'
+              action === 'Reject'
                 ? t('view:successReject')
                 : action === 'Authorise'
                 ? t('view:successAuth')
                 : action === 'Issue'
-                ? 'issued'
+                ? 'Successfully issued'
                 : action === 'Certify'
-                ? 'certified'
+                ? 'Successfully certified'
                 : action === 'Revoke'
-                ? t('view:successRevoke')
-                : t('view:successRetire')),
+                ? t('view:successRevokeCertifcate')
+                : t('view:successRetire'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
@@ -1135,6 +1145,7 @@ const ProgrammeView = () => {
 
     if (
       userInfoState &&
+      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       userInfoState?.companyRole === CompanyRole.CERTIFIER &&
       !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
@@ -1160,6 +1171,7 @@ const ProgrammeView = () => {
     }
     if (
       userInfoState &&
+      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       data.certifier.length > 0 &&
       ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
@@ -1187,7 +1199,13 @@ const ProgrammeView = () => {
                   }}
                   actionBtnText={t('view:revoke')}
                   onFinish={(body: any) =>
-                    onPopupAction(body, 'revoke', t('view:successRevoke'), put, updateProgrammeData)
+                    onPopupAction(
+                      body,
+                      'revoke',
+                      t('view:successRevokeCertifcate'),
+                      put,
+                      updateProgrammeData
+                    )
                   }
                   showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
                 />
@@ -1226,7 +1244,7 @@ const ProgrammeView = () => {
     }
   });
 
-  let calculations;
+  let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
     calculations = data.agricultureProperties;
     if (calculations.landAreaUnit) {
@@ -1550,6 +1568,7 @@ const ProgrammeView = () => {
                     <a
                       target="_blank"
                       href={data.programmeProperties.programmeMaterials}
+                      rel="noopener noreferrer"
                       className="pull-right link"
                     >
                       {<Icon.Link45deg />}
@@ -1567,6 +1586,7 @@ const ProgrammeView = () => {
                     <a
                       target="_blank"
                       href={data.programmeProperties.projectMaterial}
+                      rel="noopener noreferrer"
                       className="pull-right link"
                     >
                       {<Icon.Link45deg />}
@@ -1612,21 +1632,24 @@ const ProgrammeView = () => {
                       style="mapbox://styles/mapbox/streets-v11"
                     ></MapComponent>
                     <Row className="region-list">
-                      {data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
-                        <Col className="loc-tag">
-                          {data.geographicalLocationCordintes &&
-                            data.geographicalLocationCordintes[idx] !== null &&
-                            data.geographicalLocationCordintes[idx] !== undefined && (
-                              <span
-                                style={{ color: locationColors[(idx + 1) % locationColors.length] }}
-                                className="loc-icon"
-                              >
-                                {<Icon.GeoAltFill />}
-                              </span>
-                            )}
-                          <span className="loc-text">{e}</span>
-                        </Col>
-                      ))}
+                      {data.programmeProperties.geographicalLocation &&
+                        data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
+                          <Col className="loc-tag">
+                            {data.geographicalLocationCordintes &&
+                              data.geographicalLocationCordintes[idx] !== null &&
+                              data.geographicalLocationCordintes[idx] !== undefined && (
+                                <span
+                                  style={{
+                                    color: locationColors[(idx + 1) % locationColors.length],
+                                  }}
+                                  className="loc-icon"
+                                >
+                                  {<Icon.GeoAltFill />}
+                                </span>
+                              )}
+                            <span className="loc-text">{e}</span>
+                          </Col>
+                        ))}
                     </Row>
                   </div>
                 </div>

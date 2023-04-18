@@ -21,7 +21,7 @@ export class OpenStreetLocationService implements LocationInterface {
 
   public async retrieveData() {
     if (
-      this.configService.get("openstreet:retrieve") ||
+      this.configService.get("openstreet.retrieve") ||
       (await this.regionRepo.count()) <= 0
     ) {
       const data: Region[] = [];
@@ -38,7 +38,7 @@ export class OpenStreetLocationService implements LocationInterface {
       if (response && response.data?.elements) {
 
         for (const element of response.data?.elements) {
-          const location = [element.lat, element.lon];
+          const location = [element.lon,  element.lat];
 
           if (element.tags) {
             for (const tag in element.tags) {
@@ -59,7 +59,7 @@ export class OpenStreetLocationService implements LocationInterface {
       await this.regionRepo.save(data);
       this.logger.log(`Regions loaded: ${data.length}`);
     } else {
-      this.logger.log(`Skipped adding regions ${this.configService.get("openstreet:retrieve")}`)
+      this.logger.log(`Skipped adding regions ${this.configService.get("openstreet.retrieve")}`)
     }
   }
 

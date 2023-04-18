@@ -40,6 +40,7 @@ services:
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
       LOCATION_SERVICE: OPENSTREET
+      HOST: "http://localhost:3030"
     volumes:
       - filestore:/app/backend/services/public
   stats:
@@ -69,9 +70,17 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSWORD>"
-      RUN_MODULE: replicator
+      DB_PASSWORD: "<ANY PASSOWORD>"
+      IS_EMAIL_DISABLED: "true"
+      # ,data-importer
+      RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
+      SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_PASSWORD: ""
+      ASYNC_OPERATIONS_TYPE: Database
+      ITMO_API_KEY: ""
+      ITMO_EMAIL: ""
+      ITMO_PASSWORD: ""
   web:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:latest
     # build:

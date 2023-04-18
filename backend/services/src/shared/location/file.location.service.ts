@@ -26,7 +26,7 @@ export class FileLocationService implements LocationInterface {
         if (columns.length != headers.length) {
           continue
         }
-        this.regionMap[columns[nameIndex].trim()] = [ Number(columns[latitudeIndex].trim()), Number(columns[longitudeIndex].trim()) ]
+        this.regionMap[columns[nameIndex].trim()] = [ Number(columns[longitudeIndex].trim()), Number(columns[latitudeIndex].trim()) ]
       }
     }
 

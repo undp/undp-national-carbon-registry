@@ -10,7 +10,7 @@
     "companyLogo": "Organisation Logo",
     "companyLogoWithType": "Organisation Logo (File Type : JPEG , PNG , SVG )",
     "unsupportedFormat": "Unsupported file format!",
-    "maxUploadSize": "Maximum upload file size is 3MB!",
+    "maxUploadSize": "Maximum upload file size is 5MB!",
     "role": "Role",
     "certifier": "Certifier",
     "programmeDeveleper": "Programme Develeoper",

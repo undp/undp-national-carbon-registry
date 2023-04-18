@@ -46,6 +46,7 @@ export const EmailTemplates = {
     text: "",
   },
   API_KEY_EMAIL: {
+    id: "API_KEY_EMAIL",
     subject: "Carbon Credit Registry API Key Generation",
     html: `
         Hi {{name}},<br><br>
@@ -55,19 +56,6 @@ export const EmailTemplates = {
         Sincerely,<br>
         The Carbon Credit Registry Team 
     `,
-    text: "",
-  },
-  TRANSFER_REQUEST: {
-    subject: "Transfer Request Received",
-    html: `
-        Hi {{name}},<br><br>
-
-        {{requestedCompany}} has requested to transfer {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
-
-        <br><br>
-        Sincerely,<br>
-        The Carbon Credit Registry Team 
-        `,
     text: "",
   },
   RETIRE_REQUEST: {
@@ -90,7 +78,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
         The password of your Carbon Registry account was changed successfully. <br><br>
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions. 
         
         <br><br>
@@ -105,14 +93,14 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
         We received a request to reset your Carbon Registry password. <br><br>
-        Use the link below to set a new password for your account. This password reset is only valid for the next 24 hours.
+        Use the link below to set a new password for your account. This password reset is only valid for the next hour.
         <br><br>
 
         <a href="http://www-test-carbon.s3-website-us-east-1.amazonaws.com/resetPassword/{{requestId}}">Click here to reset the password</a>
         <br><br>
 
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 
-        <a href="mailto: help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
+        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
         if you have questions.
         
         <br><br>
@@ -206,6 +194,32 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `,
+  },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{organisationName}} made by your Organisation has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
+  },
+  CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER: {
+    id: "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER",
+    subject: "Transfer Request Cancelled by the System",
+    html: `
+      Hi {{name}}, <br><br>
+
+      Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{organisationName}} made by {{initiatorOrganisationName}} has been cancelled due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the transfer request. <br><br>
+      
+      Sincerely, <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
   },
   CREDIT_TRANSFER_ACCEPTED: {
     id: "CREDIT_TRANSFER_ACCEPTED",
@@ -387,7 +401,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br>
 
-        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but not other will be able to take place. Following were the effects of deactivation:<br><br>
+        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but no further action will be able to take place. Following were the effects of deactivation:<br><br>
          · All the users of the Organisation were deactivated. <br>
          · All the credits owned by your Organisation were frozen.<br>
          · All credit transfer requests sent and received by your Organisation were cancelled.<br>
@@ -449,6 +463,30 @@ export const EmailTemplates = {
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
         `,
+  },
+  CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR: {
+    id: "CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR",
+    subject: "International Transfer Retire Request Cancelled by the System",
+    html: `
+      Hi {{name}},<br><br>  
+      Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by your Organisation has been cancelled by the system due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the international transfer retire request. <br><br>
+    
+      Sincerely,  <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
+  },
+  CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV: {
+    id: "CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV",
+    subject: "International Transfer Retire Request Cancelled by the System",
+    html: `
+      Hi {{name}},<br><br>  
+      Request to internationally transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} to {{country}} made by {{organisationName}} has been cancelled by the system due to insufficient credits available. <br><br>
+      Click <a href="{{pageLink}}">here</a> for more details of the international transfer retire request. <br><br>
+    
+      Sincerely,  <br>
+      The {{countryName}} Carbon Credit Registry Team 
+    `,
   },
   CREDIT_RETIREMENT_RECOGNITION: {
     id: "CREDIT_RETIREMENT_RECOGNITION",

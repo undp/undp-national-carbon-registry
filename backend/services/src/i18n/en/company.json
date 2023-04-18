@@ -5,7 +5,7 @@
     "noSuspendedCompany": "No suspended company found",
     "companyActivationSuccess": "Successfully activated company",
     "companyActivationFailed": "Company activate failed. Please try again",
-    "companyTaxIdExist": "Company tax id already exist",
+    "companyTaxIdExist": "This Company Tax ID already exists",
     "companyUpdateFailed": "Company update failed. Please try again",
     "cantSuspendUrOwn": "Can not suspend your own company",
     "cantActivateUrOwn": "Can not activate your own company"
