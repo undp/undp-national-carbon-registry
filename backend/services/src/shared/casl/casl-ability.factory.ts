@@ -40,6 +40,9 @@ export class CaslAbilityFactory {
         cannot([Action.Update], Company, {
           companyId: { $ne: user.companyId },
         });
+        cannot([Action.Update, Action.Delete], User, {
+          companyId: { $ne: user.companyId },
+        });
       } else if (
         user.role == Role.Admin &&
         user.companyRole == CompanyRole.GOVERNMENT
