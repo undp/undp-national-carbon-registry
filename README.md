@@ -235,8 +235,6 @@ Serial Number generation implemented in a separate node module. [Please refer th
 ## External Connectivity
 
 ### ITMO Platform
-With the integration of the ITMO Platform with the Carbon Registry, the following tasks take place: 
-
 1. Carbon Registry make a daily to the retrieve ITMO platform programmes.
 2. Programmes create in the Carbon Registry when programmes are authorized in the ITMO Platform 
 3. The Carbon Registry update when the programmes are Issued with credits in the ITMO Platform 
@@ -245,7 +243,7 @@ With the integration of the ITMO Platform with the Carbon Registry, the followin
 ![alt text](./documention/imgs/ITMOxCARBON_LifeCycle.svg)
 
 #### <b>Programme Creation and Authorisation</b>
-- Authorisation of programmes in the ITMO Platform identified by the event name: "ITMO-Design Document (DD) & Validation Report / Upload on National Public Registry" in the ITMO Platform (in Project Details). 
+- Authorisation of programmes in the ITMO Platform identified by the event name: "ITMO-Design Document (DD) & Validation Report / Upload on National Public Registry". 
 - If the Company Tax Id doesn’t exist in the Carbon Registry, that company created in the Carbon Registry.
 - When creating the programme: 
     - The programme created with the state “Pending”  
@@ -265,7 +263,7 @@ With the integration of the ITMO Platform with the Carbon Registry, the followin
 
 #### <b>Field Mapping</b>
 
-<br><b>Company</b>
+<b>Company</b>
 | **Name in the Carbon Registry**   | **Mandatory in the Carbon Registry**   | **Name in the ITMO Platform**   |
 | --- | --- | --- |
 | Tax ID (_taxId_)  | Yes  | company  |
@@ -279,7 +277,7 @@ With the integration of the ITMO Platform with the Carbon Registry, the followin
 | Role (_companyRole_)  | Yes  | Set default : ProgrammeDeveloper  |
 
 <br><b>User</b>
-| Name in the Carbon Registry | Mandatory in the Carbon Registry ** | **Name in the ITMO Platform |
+| Name in the Carbon Registry | Mandatory in the Carbon Registry | Name in the ITMO Platform |
 | --- | --- | --- |
 | Email (_email_)  | Yes  | Set default : nce.digital+[_organisation_]@undp.org  |
 | Role (_role_)  | Yes  | Set default : Admin  |
@@ -306,7 +304,7 @@ With the integration of the ITMO Platform with the Carbon Registry, the followin
 | Company   |   | company  |
 | Company Tax ID (_proponentTaxVatId_)  | Yes  | company  |
 | Company Percentage (_proponentPercentage_)  | Yes  | Set default : 100%  |
-| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  | _ **Change the field to optional in the Back End** _  |
+| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  |  |
 | GHGs Covered (_greenHouseGasses_)  | Yes  | Set default :  CO2  |
 | Credits Authorised  |   | Set default : 100  |
 | Credits Issued   |   | Set default : 10   |
