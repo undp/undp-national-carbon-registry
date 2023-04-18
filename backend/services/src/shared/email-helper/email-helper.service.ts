@@ -113,7 +113,8 @@ export class EmailHelperService {
     template,
     templateData: any,
     receiverCompanyId?: number,
-    programmeId?: string
+    programmeId?: string,
+    initiatorCompanyId?: number
   ) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
@@ -121,6 +122,7 @@ export class EmailHelperService {
       companyId
     );
     let companyDetails: Company;
+    let inititatorCompanyDetails: Company;
     let programme: Programme;
     const hostAddress = this.configService.get("host");
 
@@ -244,9 +246,13 @@ export class EmailHelperService {
         companyDetails = await this.companyService.findByCompanyId(
           receiverCompanyId
         );
+        inititatorCompanyDetails = await this.companyService.findByCompanyId(
+          initiatorCompanyId
+        );
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
+          initiatorOrganisationName: inititatorCompanyDetails.name,
         };
         break;
 

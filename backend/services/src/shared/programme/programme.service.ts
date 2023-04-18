@@ -694,6 +694,8 @@ export class ProgrammeService {
                   programmeName: programme.title,
                   pageLink: hostAddress + "/creditTransfers/viewAll",
                 },
+                transfer.toCompanyId,
+                "",
                 transfer.initiatorCompanyId
               );
             }
