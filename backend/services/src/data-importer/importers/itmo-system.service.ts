@@ -91,6 +91,12 @@ export class ITMOSystemImporter implements ImporterInterface {
           SectoralScope.Agriculture,
           TypeOfMitigation.AGRICULTURE
         ]
+      case "energy-industries":
+        return [
+          Sector.Energy,
+          SectoralScope.EnergyIndustry,
+          TypeOfMitigation.EE_INDUSTRY
+        ]
       default:
         return [
           Sector.Other,

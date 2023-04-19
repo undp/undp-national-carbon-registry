@@ -1247,32 +1247,36 @@ const ProgrammeView = () => {
   let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
     calculations = data.agricultureProperties;
-    if (calculations.landAreaUnit) {
-      calculations.landArea = new UnitField(
-        data.agricultureProperties.landAreaUnit,
-        addCommSep(data.agricultureProperties.landArea)
-      );
-      // addCommSep(data.agricultureProperties.landArea) +
-      // ' ' +
-      // data.agricultureProperties.landAreaUnit;
+    if (calculations) {
+      if (calculations.landAreaUnit) {
+        calculations.landArea = new UnitField(
+          data.agricultureProperties.landAreaUnit,
+          addCommSep(data.agricultureProperties.landArea)
+        );
+        // addCommSep(data.agricultureProperties.landArea) +
+        // ' ' +
+        // data.agricultureProperties.landAreaUnit;
+      }
+      delete calculations.landAreaUnit;
     }
-    delete calculations.landAreaUnit;
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
     calculations = data.solarProperties;
-    if (calculations.energyGenerationUnit) {
-      calculations.energyGeneration = new UnitField(
-        data.solarProperties.energyGenerationUnit,
-        addCommSep(data.solarProperties.energyGeneration)
-      );
-      // addCommSep(data.solarProperties.energyGeneration) +
-      // ' ' +
-      // data.solarProperties.energyGenerationUnit;
-    } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-      calculations.consumerGroup = (
-        <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-      );
+    if (calculations) {
+      if (calculations.energyGenerationUnit) {
+        calculations.energyGeneration = new UnitField(
+          data.solarProperties.energyGenerationUnit,
+          addCommSep(data.solarProperties.energyGeneration)
+        );
+        // addCommSep(data.solarProperties.energyGeneration) +
+        // ' ' +
+        // data.solarProperties.energyGenerationUnit;
+      } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
+        calculations.consumerGroup = (
+          <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
+        );
+      }
+      delete calculations.energyGenerationUnit;
     }
-    delete calculations.energyGenerationUnit;
   }
 
   calculations.constantVersion = data.constantVersion;
