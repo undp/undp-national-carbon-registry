@@ -14,6 +14,7 @@ import { Action } from "./action.enum";
 import { CaslAbilityFactory, AppAbility } from "./casl-ability.factory";
 import { CHECK_POLICIES_KEY } from "./policy.decorator";
 import { PolicyHandler } from "./policy.handler";
+import { HelperService } from "../util/helpers.service";
 const { rulesToQuery } = require("@casl/ability/extra");
 
 const unAuthErrorMessage = "This action is unauthorised";
@@ -23,7 +24,7 @@ export class PoliciesGuard implements CanActivate {
   constructor(
     public reflector: Reflector,
     public caslAbilityFactory: CaslAbilityFactory,
-  ) { }
+    public helperService: HelperService
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const policyHandlers =
@@ -41,7 +42,9 @@ export class PoliciesGuard implements CanActivate {
     if (pHandlers) {
       return pHandlers;
     } else {
-      throw new ForbiddenException(unAuthErrorMessage);
+      throw new ForbiddenException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", [])
+      );
     }
   }
 
@@ -60,7 +63,7 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
     constructor(
       public reflector: Reflector,
       public caslAbilityFactory: CaslAbilityFactory,
-    ) { }
+      public helperService: HelperService
 
     parseMongoQueryToSQL(mongoQuery, isNot = false, key = undefined) {
       let final = undefined;
@@ -112,6 +115,7 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
 
       if (dropArrayFields) {
         const obj = Object.assign(new subject(), body);
+        let abilityCan: boolean = true;
         for (const key in obj) {
           const possible = [];
           if (obj[key] instanceof Array) {
@@ -124,15 +128,24 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
                 }
               }
             }
-            obj[key] = possible
-            context.switchToHttp().getRequest()['body'] = obj;
-            return possible.length > 0;
+            abilityCan = possible.length > 0;
+            if (abilityCan) {
+              return abilityCan;
+            } else {
+              throw new ForbiddenException(
+                this.helperService.formatReqMessagesString(
+                  "user.userUnAUth",
+                  []
+                )
+              );
+            }
           }
         }
       }
 
       if (policyHandlers.length == 0 && action && subject && !onlyInject) {
         const obj = Object.assign(new subject(), body);
+        let abilityCan: boolean = true;
 
         console.log(obj)
         if (action == Action.Update) {
@@ -147,10 +160,15 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
             }
           }
         } else if (action == Action.Delete) {
-          return ability.can(action, subject)
+          abilityCan = ability.can(action, subject);
+          abilityCan = ability.can(action, obj);
         }
-        else {
-          return ability.can(action, obj)
+        if (abilityCan) {
+          return abilityCan;
+        } else {
+          throw new ForbiddenException(
+            this.helperService.formatReqMessagesString("user.userUnAUth", [])
+          );
         }
       }
 
@@ -160,7 +178,9 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       if (pHandler) {
         return pHandler;
       } else {
-        throw new ForbiddenException(unAuthErrorMessage);
+        throw new ForbiddenException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", [])
+        );
       }
     }
 
