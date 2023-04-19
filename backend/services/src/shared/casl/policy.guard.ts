@@ -161,6 +161,7 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
           }
         } else if (action == Action.Delete) {
           abilityCan = ability.can(action, subject);
+        } else {
           abilityCan = ability.can(action, obj);
         }
         if (abilityCan) {
