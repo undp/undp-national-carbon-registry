@@ -46,6 +46,7 @@ import {
   AsyncOperationsInterface,
 } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
+import { DataResponseMessageDto } from "../dto/data.response.message";
 
 @Injectable()
 export class UserService {
@@ -623,7 +624,13 @@ export class UserService {
 
     const { apiKey, password, ...resp } = usr;
 
-    return resp;
+    const response = new DataResponseMessageDto(
+      HttpStatus.CREATED,
+      this.helperService.formatReqMessagesString("user.createUserSuccess", []),
+      resp
+    );
+
+    return response;
   }
 
   async query(query: QueryDto, abilityCondition: string): Promise<any> {
