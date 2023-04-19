@@ -17,20 +17,19 @@ import { PolicyHandler } from "./policy.handler";
 import { HelperService } from "../util/helpers.service";
 const { rulesToQuery } = require("@casl/ability/extra");
 
-const unAuthErrorMessage = "This action is unauthorised";
-
 @Injectable()
 export class PoliciesGuard implements CanActivate {
   constructor(
     public reflector: Reflector,
     public caslAbilityFactory: CaslAbilityFactory,
     public helperService: HelperService
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
-        context.getHandler(),
+        context.getHandler()
       ) || [];
 
     const { user, body } = context.switchToHttp().getRequest();
@@ -48,22 +47,32 @@ export class PoliciesGuard implements CanActivate {
     }
   }
 
-  public execPolicyHandler(handler: PolicyHandler, ability: AppAbility, body: any) {
-    if (typeof handler === 'function') {
+  public execPolicyHandler(
+    handler: PolicyHandler,
+    ability: AppAbility,
+    body: any
+  ) {
+    if (typeof handler === "function") {
       return handler(ability, body);
     }
     return handler.handle(ability, body);
   }
 }
 
-export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?: typeof EntitySubject, onlyInject?: boolean, dropArrayFields?: boolean) => {
-
+export const PoliciesGuardEx = (
+  injectQuery: boolean,
+  action?: Action,
+  subject?: typeof EntitySubject,
+  onlyInject?: boolean,
+  dropArrayFields?: boolean
+) => {
   @Injectable()
   class PoliciesGuardMixin implements CanActivate {
     constructor(
       public reflector: Reflector,
       public caslAbilityFactory: CaslAbilityFactory,
       public helperService: HelperService
+    ) {}
 
     parseMongoQueryToSQL(mongoQuery, isNot = false, key = undefined) {
       let final = undefined;
@@ -92,7 +101,7 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       const policyHandlers =
         this.reflector.get<PolicyHandler[]>(
           CHECK_POLICIES_KEY,
-          context.getHandler(),
+          context.getHandler()
         ) || [];
 
       const { user, body } = context.switchToHttp().getRequest();
@@ -119,15 +128,17 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
         for (const key in obj) {
           const possible = [];
           if (obj[key] instanceof Array) {
-            console.log(obj[key])
+            console.log(obj[key]);
             for (const en of obj[key]) {
               for (const key2 in en) {
-                console.log(action, en, key2)
+                console.log(action, en, key2);
                 if (ability.can(action, plainToClass(Stat, en), key2)) {
-                  possible.push(en)
+                  possible.push(en);
                 }
               }
             }
+            obj[key] = possible;
+            context.switchToHttp().getRequest()["body"] = obj;
             abilityCan = possible.length > 0;
             if (abilityCan) {
               return abilityCan;
@@ -146,17 +157,21 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       if (policyHandlers.length == 0 && action && subject && !onlyInject) {
         const obj = Object.assign(new subject(), body);
         let abilityCan: boolean = true;
-
-        console.log(obj)
+        console.log(obj);
         if (action == Action.Update) {
-
           if (obj instanceof User && obj.companyId == undefined) {
             obj.companyId = user.companyId;
           }
           for (const key in obj) {
             if (!ability.can(action, obj, key)) {
-              console.log('Failed due to', JSON.stringify(ability), action, obj, key)
-              return false
+              console.log(
+                "Failed due to",
+                JSON.stringify(ability),
+                action,
+                obj,
+                key
+              );
+              abilityCan = false;
             }
           }
         } else if (action == Action.Delete) {
@@ -185,8 +200,12 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
       }
     }
 
-    public execPolicyHandler(handler: PolicyHandler, ability: AppAbility, body: any) {
-      if (typeof handler === 'function') {
+    public execPolicyHandler(
+      handler: PolicyHandler,
+      ability: AppAbility,
+      body: any
+    ) {
+      if (typeof handler === "function") {
         return handler(ability, body);
       }
       return handler.handle(ability, body);
@@ -195,7 +214,4 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
 
   const guard = mixin(PoliciesGuardMixin);
   return guard;
-}
-
-
-
+};
