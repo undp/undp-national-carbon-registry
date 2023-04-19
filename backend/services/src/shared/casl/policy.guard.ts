@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable, mixin } from "@nestjs/common";
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  mixin,
+} from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { plainToClass } from "class-transformer";
 import { Stat } from "../dto/stat.dto";
@@ -8,7 +14,9 @@ import { Action } from "./action.enum";
 import { CaslAbilityFactory, AppAbility } from "./casl-ability.factory";
 import { CHECK_POLICIES_KEY } from "./policy.decorator";
 import { PolicyHandler } from "./policy.handler";
-const { rulesToQuery } = require('@casl/ability/extra');
+const { rulesToQuery } = require("@casl/ability/extra");
+
+const unAuthErrorMessage = "This action is unauthorised";
 
 @Injectable()
 export class PoliciesGuard implements CanActivate {
@@ -27,9 +35,14 @@ export class PoliciesGuard implements CanActivate {
     const { user, body } = context.switchToHttp().getRequest();
     const ability = this.caslAbilityFactory.createForUser(user);
 
-    return policyHandlers.every((handler) =>
-      this.execPolicyHandler(handler, ability, body),
+    const pHandlers = policyHandlers.every((handler) =>
+      this.execPolicyHandler(handler, ability, body)
     );
+    if (pHandlers) {
+      return pHandlers;
+    } else {
+      throw new ForbiddenException(unAuthErrorMessage);
+    }
   }
 
   public execPolicyHandler(handler: PolicyHandler, ability: AppAbility, body: any) {
@@ -141,9 +154,14 @@ export const PoliciesGuardEx = (injectQuery: boolean, action?: Action, subject?:
         }
       }
 
-      return policyHandlers.every((handler) =>
-        this.execPolicyHandler(handler, ability, body),
+      const pHandler = policyHandlers.every((handler) =>
+        this.execPolicyHandler(handler, ability, body)
       );
+      if (pHandler) {
+        return pHandler;
+      } else {
+        throw new ForbiddenException(unAuthErrorMessage);
+      }
     }
 
     public execPolicyHandler(handler: PolicyHandler, ability: AppAbility, body: any) {
