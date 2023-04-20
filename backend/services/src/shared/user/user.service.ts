@@ -160,7 +160,11 @@ export class UserService {
         return err;
       });
     if (result.affected) {
-      return new DataResponseDto(HttpStatus.OK, await this.findById(id));
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.editUserSuccess", []),
+        await this.findById(id)
+      );
     }
     throw new HttpException(
       this.helperService.formatReqMessagesString("user.userUnAUth", []),
@@ -319,8 +323,15 @@ export class UserService {
     );
   }
 
-  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: Role, phoneNo: string) {
-
+  async createUserWithPassword(
+    name: string,
+    companyRole: CompanyRole,
+    taxId: string,
+    password: string,
+    email: string,
+    userRole: Role,
+    phoneNo: string
+  ) {
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT) {
       if (!taxId) {
@@ -336,7 +347,7 @@ export class UserService {
 
     if (!company) {
       throw new HttpException(
-        "Company does not exist"+ email,
+        "Company does not exist" + email,
         HttpStatus.BAD_REQUEST
       );
     }
@@ -348,23 +359,26 @@ export class UserService {
     user.name = name;
     user.createdTime = new Date().getTime();
     user.country = this.configService.get("systemCountry");
-    user.phoneNo = phoneNo
+    user.phoneNo = phoneNo;
     user.role = userRole;
 
-    console.log('Inserting user', user.email);
+    console.log("Inserting user", user.email);
     return await this.userRepo
-            .createQueryBuilder()
-            .insert()
-            .values(user)
-            .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
-            .execute();
+      .createQueryBuilder()
+      .insert()
+      .values(user)
+      .orUpdate(
+        ["password", "companyId", "companyRole", "name", "role", "phoneNo"],
+        ["email"]
+      )
+      .execute();
   }
 
   async create(
     userDto: UserDto,
     companyId: number,
     companyRole: CompanyRole
-  ): Promise<User | undefined> {
+  ): Promise<User | DataResponseMessageDto | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
     const user = await this.findOne(userDto.email);
     if (user) {
