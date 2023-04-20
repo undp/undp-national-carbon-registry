@@ -44,6 +44,7 @@ services:
       DOMAIN_MAP: "true"
     volumes:
       - filestore:/app/backend/services/public
+      - ./users.csv:/app/backend/services/users.csv
   stats:
     build:
       context: .
