@@ -85,7 +85,7 @@ export const handler: Handler = async (event) => {
       await ledgerModule.createIndex('programmeId');
       console.log('QLDB Table created')
     } catch(e) {
-      console.log('QLDB table does not create', e) 
+      console.log('QLDB table does not create', e)
     }
 
     try {

@@ -6,6 +6,7 @@ import * as setupHandler from "./setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { buildNestApp } from "./shared/server";
 import { join } from "path";
+const fs = require("fs");
 
 async function bootstrap() {
   let module;
@@ -42,6 +43,10 @@ async function bootstrap() {
 
     const app = await buildNestApp(module, "/" + httpPath);
     if (moduleName == "national-api") {
+      const users = fs.readFileSync("users.csv", "utf8");
+      console.log("Inserting users", users);
+      await setupHandler.handler({ type: "IMPORT_USERS", body: users });
+
       const staticPath = join(__dirname, "..", "public");
       console.log("Static file path:", staticPath);
       app.useStaticAssets(staticPath);
