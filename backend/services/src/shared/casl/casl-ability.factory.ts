@@ -40,7 +40,7 @@ export class CaslAbilityFactory {
         cannot([Action.Update], Company, {
           companyId: { $ne: user.companyId },
         });
-        cannot([Action.Update, Action.Delete], User, {
+        cannot([Action.Update], User, {
           companyId: { $ne: user.companyId },
         });
       } else if (
