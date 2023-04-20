@@ -408,6 +408,12 @@ export class UserService {
       }
     }
     if (company) {
+      if (companyRole != CompanyRole.GOVERNMENT) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
       if (
         userFields.role &&
         ![Role.Admin, Role.Root].includes(userFields.role)
@@ -446,16 +452,6 @@ export class UserService {
             HttpStatus.BAD_REQUEST
           );
         }
-      }
-
-      if (companyRole != CompanyRole.GOVERNMENT) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyCreateNotPermittedForTheCompanyRole",
-            []
-          ),
-          HttpStatus.FORBIDDEN
-        );
       }
 
       company.createdTime = new Date().getTime();
