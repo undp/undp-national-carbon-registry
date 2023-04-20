@@ -141,6 +141,13 @@ export class UserService {
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
+    const user = await this.findById(id);
+    if (!user) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.NOT_FOUND
+      );
+    }
 
     const result = await this.userRepo
       .createQueryBuilder()
@@ -150,7 +157,8 @@ export class UserService {
         `id = ${id} ${
           abilityCondition
             ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -168,7 +176,7 @@ export class UserService {
     }
     throw new HttpException(
       this.helperService.formatReqMessagesString("user.userUnAUth", []),
-      HttpStatus.NOT_FOUND
+      HttpStatus.FORBIDDEN
     );
   }
 
