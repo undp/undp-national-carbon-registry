@@ -96,7 +96,7 @@ export const EmailTemplates = {
         Use the link below to set a new password for your account. This password reset is only valid for the next hour.
         <br><br>
 
-        <a href="http://www-test-carbon.s3-website-us-east-1.amazonaws.com/resetPassword/{{requestId}}">Click here to reset the password</a>
+        <a href="{{home}}/resetPassword/{{requestId}}">Click here to reset the password</a>
         <br><br>
 
         If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or 

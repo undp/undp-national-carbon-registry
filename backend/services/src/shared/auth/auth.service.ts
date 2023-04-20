@@ -82,6 +82,7 @@ export class AuthService {
   }
 
   async forgotPassword(email: any) {
+    const hostAddress = this.configService.get("host");
     const userDetails = await this.userService.findOne(email);
     if (userDetails) {
       console.table(userDetails);
@@ -99,6 +100,7 @@ export class AuthService {
       const templateData = {
         name: userDetails.name,
         requestId: requestId,
+        home: hostAddress,
         countryName: this.configService.get("systemCountryName"),
       };
 
