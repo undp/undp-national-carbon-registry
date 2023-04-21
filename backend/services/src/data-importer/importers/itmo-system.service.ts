@@ -139,9 +139,11 @@ export class ITMOSystemImporter implements ImporterInterface {
               const taxId = project.company;
               const company = await this.companyService.findByTaxId(taxId);
               if (!company) {
+
+                const email = `nce.digital+${project.company}@undp.org`.replace(' ', '');
                 await this.userService.create(
                   {
-                    email: `nce.digital+${project.company}@undp.org`,
+                    email: email,
                     role: Role.Admin,
                     name: project.company,
                     phoneNo: "00",
@@ -149,7 +151,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       taxId: taxId,
                       companyId: undefined,
                       name: project.company,
-                      email: `nce.digital+${project.company}@undp.org`,
+                      email: email,
                       phoneNo: "00",
                       website: undefined,
                       address: this.configService.get("systemCountryName"),
