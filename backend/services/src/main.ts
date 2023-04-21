@@ -43,7 +43,12 @@ async function bootstrap() {
 
     const app = await buildNestApp(module, "/" + httpPath);
     if (moduleName == "national-api") {
-      const users = fs.readFileSync("users.csv", "utf8");
+
+      const orgs = await fs.readFileSync("organisations.csv", "utf8");
+      console.log("Inserting orgs", orgs);
+      await setupHandler.handler({ type: "IMPORT_ORG", body: orgs });
+      
+      const users = await fs.readFileSync("users.csv", "utf8");
       console.log("Inserting users", users);
       await setupHandler.handler({ type: "IMPORT_USERS", body: users });
 
