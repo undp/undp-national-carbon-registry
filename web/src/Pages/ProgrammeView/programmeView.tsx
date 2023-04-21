@@ -903,6 +903,10 @@ const ProgrammeView = () => {
   };
 
   const mapArrayToi18n = (map: any) => {
+    if (!map) {
+      return {};
+    }
+
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
@@ -1278,8 +1282,9 @@ const ProgrammeView = () => {
       delete calculations.energyGenerationUnit;
     }
   }
-
-  calculations.constantVersion = data.constantVersion;
+  if (calculations) {
+    calculations.constantVersion = data.constantVersion;
+  }
 
   return loadingAll ? (
     <Loading />

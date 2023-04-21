@@ -37,7 +37,13 @@ export const handler: Handler = async (event) => {
 
     if (event.type === 'IMPORT_USERS' && event.body) {
       const users = event.body.split('\n');
+      
+      let c = 0;
       for (const user of users) {
+        c++;
+        if (c === 1) {
+          continue;
+        }
         const fields = user.split(',');
         if (fields.length < 7) {
           continue;
@@ -85,7 +91,7 @@ export const handler: Handler = async (event) => {
       await ledgerModule.createIndex('programmeId');
       console.log('QLDB Table created')
     } catch(e) {
-      console.log('QLDB table does not create', e) 
+      console.log('QLDB table does not create', e)
     }
 
     try {

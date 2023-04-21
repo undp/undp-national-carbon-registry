@@ -1,0 +1,3 @@
+NAME,EMAIL,PHONE,ORGANISATION TAX ID,ORGANISATION TYPE(Government|Developer|Certifier),ROLE(admin|Manager|View),Password
+Test User,palinda+add@xeptagon.com,,Government of Antarctica,Government,admin,123
+Test User 2,palinda+add2@xeptagon.com,,Government of Antarctica,Government,Manager,123
