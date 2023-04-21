@@ -1563,38 +1563,49 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
-            {data.programmeProperties.programmeMaterials && (
+            {data.programmeProperties.programmeMaterials.length && (
               <Card className="card-container">
                 <div className="info-view only-head">
                   <div className="title">
                     <span className="title-icon">{<Icon.Grid />}</span>
                     <span className="title-text">{t('view:programmeMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.programmeMaterials}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+                    {data.programmeProperties.programmeMaterials.map((material: any) => {
+                      return (
+                        <a
+                          target="_blank"
+                          href={material}
+                          rel="noopener noreferrer"
+                          className="pull-right link"
+                        >
+                          {' '}
+                          {<Icon.Link45deg /> +
+                            `${material.substring(material.lastIndexOf('/') + 1)}`}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </Card>
             )}
-            {data.programmeProperties.projectMaterial && (
+            {data.programmeProperties.projectMaterial.length && (
               <Card className="card-container">
                 <div className="info-view only-head">
                   <div className="title">
                     <span className="title-icon">{<Icon.FileEarmarkText />}</span>
                     <span className="title-text">{t('view:projectMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.projectMaterial}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+                    {data.programmeProperties.projectMaterial.map((material: any) => {
+                      return (
+                        <a
+                          target="_blank"
+                          href={material}
+                          rel="noopener noreferrer"
+                          className="pull-right link"
+                        >
+                          {<Icon.Link45deg /> +
+                            `${material.substring(material.lastIndexOf('/') + 1)}`}
+                        </a>
+                      );
+                    })}
                   </div>
                 </div>
               </Card>
