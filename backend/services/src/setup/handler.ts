@@ -69,15 +69,20 @@ export const handler: Handler = async (event) => {
       fields[1],
       ur,
       fields[2])
-      await userService.createUserWithPassword(
-        fields[0],
-        cr,
-        fields[3],
-        fields[6],
-        fields[1],
-        ur,
-        fields[2]
-      );
+      try {
+        await userService.createUserWithPassword(
+          fields[0],
+          cr,
+          fields[3],
+          fields[6],
+          fields[1],
+          ur,
+          fields[2]
+        );
+      } catch (e) {
+        console.log('Fail to create user', fields[1])
+      }
+     
     }
     return;
   }
@@ -108,20 +113,25 @@ export const handler: Handler = async (event) => {
       const cr = fields[4] == "Certifier"
           ? CompanyRole.CERTIFIER
           : CompanyRole.PROGRAMME_DEVELOPER;
-      const org = await companyService.create({
-            taxId: fields[3],
-            companyId: undefined,
-            name: fields[0],
-            email: fields[1],
-            phoneNo: fields[2],
-            website: undefined,
-            address: configService.get("systemCountryName"),
-            logo: undefined,
-            country: configService.get("systemCountry"),
-            companyRole: cr,
-            createdTime: undefined,
-          });
-      console.log('Company created', org)
+
+      try {
+        const org = await companyService.create({
+              taxId: fields[3],
+              companyId: undefined,
+              name: fields[0],
+              email: fields[1],
+              phoneNo: fields[2],
+              website: undefined,
+              address: configService.get("systemCountryName"),
+              logo: undefined,
+              country: configService.get("systemCountry"),
+              companyRole: cr,
+              createdTime: undefined,
+            });
+        console.log('Company created', org)
+      } catch (e) {
+        console.log('Fail to create company', fields[1])
+      }
     }
     return;
   }
