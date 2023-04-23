@@ -197,9 +197,9 @@ export class ITMOSystemImporter implements ImporterInterface {
                 creditEst: 100,
               };
 
-              if ( step.files && step.files.length > 0) {
-                pr.programmeProperties['programmeMaterials'] = step.files[0]
-                pr.programmeProperties['projectMaterial'] = step.files[0]
+              if (step.files && step.files.length > 0) {
+                pr.programmeProperties["programmeMaterials"] = step.files;
+                pr.programmeProperties["projectMaterial"] = step.files;
               }
 
               await this.programmeService.create(pr);
