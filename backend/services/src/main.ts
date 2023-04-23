@@ -43,9 +43,18 @@ async function bootstrap() {
 
     const app = await buildNestApp(module, "/" + httpPath);
     if (moduleName == "national-api") {
-      const users = fs.readFileSync("users.csv", "utf8");
-      console.log("Inserting users", users);
-      await setupHandler.handler({ type: "IMPORT_USERS", body: users });
+
+      if (fs.existsSync('organisations.csv')) {
+        const orgs = await fs.readFileSync("organisations.csv", "utf8");
+        console.log("Inserting orgs", orgs);
+        await setupHandler.handler({ type: "IMPORT_ORG", body: orgs });
+      }
+      
+      if (fs.existsSync('users.csv')) {
+        const users = await fs.readFileSync("users.csv", "utf8");
+        console.log("Inserting users", users);
+        await setupHandler.handler({ type: "IMPORT_USERS", body: users });
+      }
 
       const staticPath = join(__dirname, "..", "public");
       console.log("Static file path:", staticPath);
