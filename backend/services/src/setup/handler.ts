@@ -38,6 +38,7 @@ export const handler: Handler = async (event) => {
 
   if (event.type === "IMPORT_USERS" && event.body) {
 
+    event.body = event.body.replace('\r', '');
     const users = event.body.split("\n");
 
     let c = 0;
@@ -97,6 +98,7 @@ export const handler: Handler = async (event) => {
     const companyService = companyApp.get(CompanyService);
     const configService = companyApp.get(ConfigService);
 
+    event.body = event.body.replace('\r', '');
     const companies = event.body.split("\n");
 
     let c = 0;
