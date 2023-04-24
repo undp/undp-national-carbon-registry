@@ -1287,8 +1287,15 @@ const ProgrammeView = () => {
   }
 
   const getFileName = (filepath: string) => {
-    const fileName = filepath.substring(0, filepath.lastIndexOf('/'));
-    return fileName.substring(fileName.lastIndexOf('/') + 1);
+    const index = filepath.indexOf('?');
+    if (index > 0) {
+      filepath = filepath.substring(0, filepath.indexOf('?'));
+    }
+    const lastCharcter = filepath.charAt(filepath.length - 1);
+    if (lastCharcter === '/') {
+      filepath = filepath.slice(0, -1);
+    }
+    return filepath.substring(filepath.lastIndexOf('/') + 1);
   };
 
   return loadingAll ? (
