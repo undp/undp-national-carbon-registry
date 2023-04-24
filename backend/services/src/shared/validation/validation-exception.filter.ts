@@ -16,12 +16,20 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     let message = "Bad request";
 
-    const errorsHandler = (error: any) => {
+    const errorsHandler = (error) => {
       const eMsgs = Object.values(error.constraints);
       let isEmpty = false;
+      let isInvalidRole = false;
+      let isCompanyIdNotNumber = false;
       eMsgs?.map((error: any) => {
         if (error.includes("empty")) {
           isEmpty = true;
+        }
+        if (error.includes("Invalid role")) {
+          isInvalidRole = true;
+        }
+        if (error.includes("companyId must be a number")) {
+          isCompanyIdNotNumber = true;
         }
       });
       const propertyNameCap =
@@ -32,7 +40,11 @@ export class ValidationExceptionFilter implements ExceptionFilter {
         if (String(error.property) === "email") {
           return ["Email is invalid"];
         } else {
-          Object.values(error.constraints);
+          return isInvalidRole
+            ? [`${propertyNameCap} is invalid`]
+            : isCompanyIdNotNumber
+            ? [`${propertyNameCap} is required`]
+            : eMsgs;
         }
       }
     };
@@ -51,16 +63,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     } else if (exception.errors.length > 0 && exception.errors[0].constraints) {
       const erList = Object.values(exception.errors[0].constraints);
       if (erList.length > 0) {
-        message = erList[0];
-        // if (String(exception.errors[0].property) === "email") {
-        //   // message = erList[0];
-        //   console.log("erList - > 35 ");
-        //   console.log(erList);
-        //   message = "Email is invalid";
-        // } else {
-        //   console.log("erList - > 39 ");
-        //   console.log(erList);
-        // }
+        message = "Bad request";
       }
     }
 
