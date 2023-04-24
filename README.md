@@ -298,8 +298,8 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Credit Issuance Serial Number   |   |   |
 | Current Status   |   | Set default : Pending  |
 | Applicant Type   |   | Set default : Programme Developer  |
-| Sector (_sector_)  | Yes  | Sector  |
-| Sectoral Scope (_sectoralScope_)  | Yes  | Sector|
+| Sector (_sector_)  | Yes  | [Sector](#itmo-sector-mapping)  |
+| Sectoral Scope (_sectoralScope_)  | Yes  | [Sector](#itmo-sector-mapping)|
 | Programme Start Date (_startTime_)  | Yes  | createdAt  |
 | Programme End Date  (_endTime_)  | Yes  | createdAt + 10 years  |
 | Geographical Location (Regional) (_geographicalLocation_)  | Yes  | country _(Name not mentioned as ISO3 or actual name)_  |
@@ -311,7 +311,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Company   |   | company  |
 | Company Tax ID (_proponentTaxVatId_)  | Yes  | company  |
 | Company Percentage (_proponentPercentage_)  | Yes  | Set default : 100%  |
-| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  | Sector |
+| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  | [Sector](#itmo-sector-mapping) |
 | GHGs Covered (_greenHouseGasses_)  | Yes  | Set default :  CO2  |
 | Credits Authorised  |   | Set default : 100  |
 | Credits Issued   |   | Set default : 10   |
@@ -331,8 +331,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | energy generation unit  |   |   |
 | consumer group  |   |   |
 
-<a name="sector_mapping"></a>
-<b>ITMO Sector Mapping</b>
+#### <b>ITMO Sector Mapping</b>
 |ITMO Sector Field Value|Sector|Sectoral Scope|Type Of Mitigation|
 | -- | -- | -- | -- |
 |energy-distribution|Energy|Energy Distribution|Energy Distribution
