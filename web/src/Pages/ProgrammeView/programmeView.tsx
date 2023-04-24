@@ -1250,8 +1250,8 @@ const ProgrammeView = () => {
 
   let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-    calculations = data.agricultureProperties;
-    if (calculations) {
+    if (data.agricultureProperties) {
+      calculations = data.agricultureProperties;
       if (calculations.landAreaUnit) {
         calculations.landArea = new UnitField(
           data.agricultureProperties.landAreaUnit,
@@ -1264,8 +1264,8 @@ const ProgrammeView = () => {
       delete calculations.landAreaUnit;
     }
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
-    calculations = data.solarProperties;
-    if (calculations) {
+    if (data.solarProperties) {
+      calculations = data.solarProperties;
       if (calculations.energyGenerationUnit) {
         calculations.energyGeneration = new UnitField(
           data.solarProperties.energyGenerationUnit,
@@ -1588,32 +1588,57 @@ const ProgrammeView = () => {
                       <span className="title-icon">{<Icon.Grid />}</span>
                       <span className="title-text">{t('view:programmeMaterial')}</span>
                       <div>
-                        {data.programmeProperties.programmeMaterials.map((material: any) => {
-                          return (
-                            <Row className="field" key={material}>
-                              <Col span={12} className="field-key">
-                                <a
-                                  target="_blank"
-                                  href={material}
-                                  rel="noopener noreferrer"
-                                  className="file-name"
-                                >
-                                  {getFileName(material)}
-                                </a>
-                              </Col>
-                              <Col span={12} className="field-value">
-                                <a
-                                  target="_blank"
-                                  href={material}
-                                  rel="noopener noreferrer"
-                                  className="file-name"
-                                >
-                                  <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
-                                </a>
-                              </Col>
-                            </Row>
-                          );
-                        })}
+                        {Array.isArray(data.programmeProperties.programmeMaterials) &&
+                          data.programmeProperties.programmeMaterials.map((material: any) => {
+                            return (
+                              <Row className="field" key={material}>
+                                <Col span={12} className="field-key">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    {getFileName(material)}
+                                  </a>
+                                </Col>
+                                <Col span={12} className="field-value">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                                  </a>
+                                </Col>
+                              </Row>
+                            );
+                          })}
+                        {!Array.isArray(data.programmeProperties.programmeMaterials) && (
+                          <Row className="field">
+                            <Col span={12} className="field-key">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.programmeMaterials}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                {getFileName(data.programmeProperties.programmeMaterials)}
+                              </a>
+                            </Col>
+                            <Col span={12} className="field-value">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.programmeMaterials}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                              </a>
+                            </Col>
+                          </Row>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1627,32 +1652,57 @@ const ProgrammeView = () => {
                       <span className="title-icon">{<Icon.FileEarmarkText />}</span>
                       <span className="title-text">{t('view:projectMaterial')}</span>
                       <div>
-                        {data.programmeProperties.projectMaterial.map((material: any) => {
-                          return (
-                            <Row className="field" key={material}>
-                              <Col span={12} className="field-key">
-                                <a
-                                  target="_blank"
-                                  href={material}
-                                  rel="noopener noreferrer"
-                                  className="file-name"
-                                >
-                                  {getFileName(material)}
-                                </a>
-                              </Col>
-                              <Col span={12} className="field-value">
-                                <a
-                                  target="_blank"
-                                  href={material}
-                                  rel="noopener noreferrer"
-                                  className="file-name"
-                                >
-                                  <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
-                                </a>
-                              </Col>
-                            </Row>
-                          );
-                        })}
+                        {Array.isArray(data.programmeProperties.projectMaterial) &&
+                          data.programmeProperties.projectMaterial.map((material: any) => {
+                            return (
+                              <Row className="field" key={material}>
+                                <Col span={12} className="field-key">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    {getFileName(material)}
+                                  </a>
+                                </Col>
+                                <Col span={12} className="field-value">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                                  </a>
+                                </Col>
+                              </Row>
+                            );
+                          })}
+                        {!Array.isArray(data.programmeProperties.projectMaterial) && (
+                          <Row className="field">
+                            <Col span={12} className="field-key">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.projectMaterial}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                {getFileName(data.programmeProperties.projectMaterial)}
+                              </a>
+                            </Col>
+                            <Col span={12} className="field-value">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.projectMaterial}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                              </a>
+                            </Col>
+                          </Row>
+                        )}
                       </div>
                     </div>
                   </div>
