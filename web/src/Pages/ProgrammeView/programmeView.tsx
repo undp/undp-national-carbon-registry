@@ -1250,7 +1250,7 @@ const ProgrammeView = () => {
 
   let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-    if (calculations) {
+    if (data.agricultureProperties) {
       calculations = data.agricultureProperties;
       if (calculations.landAreaUnit) {
         calculations.landArea = new UnitField(
@@ -1264,7 +1264,7 @@ const ProgrammeView = () => {
       delete calculations.landAreaUnit;
     }
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
-    if (calculations) {
+    if (data.solarProperties) {
       calculations = data.solarProperties;
       if (calculations.energyGenerationUnit) {
         calculations.energyGeneration = new UnitField(
