@@ -38,7 +38,6 @@ export const handler: Handler = async (event) => {
 
   if (event.type === "IMPORT_USERS" && event.body) {
 
-    event.body = event.body.replace('\r', '');
     const users = event.body.split("\n");
 
     let c = 0;
@@ -47,10 +46,11 @@ export const handler: Handler = async (event) => {
       if (c === 1) {
         continue;
       }
-      const fields = user.split(",");
+      let fields = user.split(",");
       if (fields.length < 7) {
         continue;
       }
+      fields = fields.map(f => f.trim())
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
       const cr =
         fields[4] == "Government"
@@ -98,7 +98,6 @@ export const handler: Handler = async (event) => {
     const companyService = companyApp.get(CompanyService);
     const configService = companyApp.get(ConfigService);
 
-    event.body = event.body.replace('\r', '');
     const companies = event.body.split("\n");
 
     let c = 0;
@@ -107,10 +106,11 @@ export const handler: Handler = async (event) => {
       if (c === 1) {
         continue;
       }
-      const fields = company.split(",");
+      let fields = company.split(",");
       if (fields.length < 5) {
         continue;
       }
+      fields = fields.map(f => f.trim())
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
       const cr = fields[4] == "Certifier"
           ? CompanyRole.CERTIFIER
