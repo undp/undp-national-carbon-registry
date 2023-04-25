@@ -40,11 +40,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
         if (String(error.property) === "email") {
           return ["Email is invalid"];
         } else {
-          return isInvalidRole
-            ? [`${propertyNameCap} is invalid`]
-            : isCompanyIdNotNumber
-            ? [`${propertyNameCap} is required`]
-            : eMsgs;
+          return isInvalidRole ? [`${propertyNameCap} is invalid`] : eMsgs;
         }
       }
     };

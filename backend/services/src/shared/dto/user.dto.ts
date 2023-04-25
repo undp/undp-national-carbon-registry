@@ -50,6 +50,7 @@ export class UserDto {
 
   @IsNumber()
   @ApiPropertyOptional()
+  @IsNotEmpty()
   @IsOptional()
   @MutuallyExclusive("company")
   companyId: number;

@@ -49,6 +49,7 @@ export class OrganisationDto {
   @ValidateIf(
     (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
   )
+  @IsNotEmpty()
   @IsUrl()
   @IsOptional()
   @ApiPropertyOptional()
