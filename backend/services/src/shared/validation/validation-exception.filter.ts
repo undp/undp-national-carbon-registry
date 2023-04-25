@@ -16,6 +16,39 @@ export class ValidationExceptionFilter implements ExceptionFilter {
 
     let message = "Bad request";
 
+    const errorsHandler = (error) => {
+      const eMsgs = Object.values(error.constraints);
+      let isEmpty = false;
+      let isInvalidRole = false;
+      let isCompanyIdNotNumber = false;
+      eMsgs?.map((error: any) => {
+        if (error.includes("empty")) {
+          isEmpty = true;
+        }
+        if (error.includes("Invalid role")) {
+          isInvalidRole = true;
+        }
+        if (error.includes("companyId must be a number")) {
+          isCompanyIdNotNumber = true;
+        }
+      });
+      const propertyNameCap =
+        error.property.charAt(0).toUpperCase() + error.property.slice(1);
+      if (isEmpty) {
+        return [`${propertyNameCap} is required`];
+      } else {
+        if (String(error.property) === "email") {
+          return ["Email is invalid"];
+        } else {
+          return isInvalidRole
+            ? [`${propertyNameCap} is invalid`]
+            : isCompanyIdNotNumber
+            ? [`${propertyNameCap} is required`]
+            : eMsgs;
+        }
+      }
+    };
+
     console.log(JSON.stringify(exception));
     // Custom exception handling, to provide rich error message
     if (
@@ -30,11 +63,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     } else if (exception.errors.length > 0 && exception.errors[0].constraints) {
       const erList = Object.values(exception.errors[0].constraints);
       if (erList.length > 0) {
-        if (String(exception.errors[0].property) === "email") {
-          message = "Email is invalid";
-        } else {
-          message = erList[0];
-        }
+        message = "Bad request";
       }
     }
 
@@ -44,28 +73,15 @@ export class ValidationExceptionFilter implements ExceptionFilter {
       errors: exception.errors.map((error) => {
         let resp = {};
         if (error.constraints) {
-          if (String(error.property) === "email") {
-            resp = {
-              [error.property]: ["Email is invalid"],
-            };
-          } else {
-            resp = {
-              [error.property]: Object.values(error.constraints),
-            };
-          }
+          resp = {
+            [error.property]: errorsHandler(error),
+          };
         }
         if (error.children) {
           error.children.forEach((er_child) => {
             if (er_child.constraints) {
-              if (String(er_child.property) === "email") {
-                resp[error.property + "." + er_child.property] = [
-                  "Email is invalid",
-                ];
-              } else {
-                resp[error.property + "." + er_child.property] = Object.values(
-                  er_child.constraints
-                );
-              }
+              resp[error.property + "." + er_child.property] =
+                errorsHandler(er_child);
             }
           });
         }
