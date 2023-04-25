@@ -903,6 +903,10 @@ const ProgrammeView = () => {
   };
 
   const mapArrayToi18n = (map: any) => {
+    if (!map) {
+      return {};
+    }
+
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
@@ -1246,8 +1250,8 @@ const ProgrammeView = () => {
 
   let calculations: any = {};
   if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-    calculations = data.agricultureProperties;
-    if (calculations) {
+    if (data.agricultureProperties) {
+      calculations = data.agricultureProperties;
       if (calculations.landAreaUnit) {
         calculations.landArea = new UnitField(
           data.agricultureProperties.landAreaUnit,
@@ -1260,8 +1264,8 @@ const ProgrammeView = () => {
       delete calculations.landAreaUnit;
     }
   } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
-    calculations = data.solarProperties;
-    if (calculations) {
+    if (data.solarProperties) {
+      calculations = data.solarProperties;
       if (calculations.energyGenerationUnit) {
         calculations.energyGeneration = new UnitField(
           data.solarProperties.energyGenerationUnit,
@@ -1278,8 +1282,21 @@ const ProgrammeView = () => {
       delete calculations.energyGenerationUnit;
     }
   }
+  if (calculations) {
+    calculations.constantVersion = data.constantVersion;
+  }
 
-  calculations.constantVersion = data.constantVersion;
+  const getFileName = (filepath: string) => {
+    const index = filepath.indexOf('?');
+    if (index > 0) {
+      filepath = filepath.substring(0, index);
+    }
+    const lastCharcter = filepath.charAt(filepath.length - 1);
+    if (lastCharcter === '/') {
+      filepath = filepath.slice(0, -1);
+    }
+    return filepath.substring(filepath.lastIndexOf('/') + 1);
+  };
 
   return loadingAll ? (
     <Loading />
@@ -1563,42 +1580,134 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
-            {data.programmeProperties.programmeMaterials && (
-              <Card className="card-container">
-                <div className="info-view only-head">
-                  <div className="title">
-                    <span className="title-icon">{<Icon.Grid />}</span>
-                    <span className="title-text">{t('view:programmeMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.programmeMaterials}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+            {data.programmeProperties.programmeMaterials &&
+              data.programmeProperties.programmeMaterials.length > 0 && (
+                <Card className="card-container">
+                  <div className="info-view only-head">
+                    <div className="title">
+                      <span className="title-icon">{<Icon.Grid />}</span>
+                      <span className="title-text">{t('view:programmeMaterial')}</span>
+                      <div>
+                        {Array.isArray(data.programmeProperties.programmeMaterials) &&
+                          data.programmeProperties.programmeMaterials.map((material: any) => {
+                            return (
+                              <Row className="field" key={material}>
+                                <Col span={12} className="field-key">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    {getFileName(material)}
+                                  </a>
+                                </Col>
+                                <Col span={12} className="field-value">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                                  </a>
+                                </Col>
+                              </Row>
+                            );
+                          })}
+                        {!Array.isArray(data.programmeProperties.programmeMaterials) && (
+                          <Row className="field">
+                            <Col span={12} className="field-key">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.programmeMaterials}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                {getFileName(data.programmeProperties.programmeMaterials)}
+                              </a>
+                            </Col>
+                            <Col span={12} className="field-value">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.programmeMaterials}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                              </a>
+                            </Col>
+                          </Row>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )}
-            {data.programmeProperties.projectMaterial && (
-              <Card className="card-container">
-                <div className="info-view only-head">
-                  <div className="title">
-                    <span className="title-icon">{<Icon.FileEarmarkText />}</span>
-                    <span className="title-text">{t('view:projectMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.projectMaterial}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+                </Card>
+              )}
+            {data.programmeProperties.projectMaterial &&
+              data.programmeProperties.projectMaterial.length > 0 && (
+                <Card className="card-container">
+                  <div className="info-view">
+                    <div className="title">
+                      <span className="title-icon">{<Icon.FileEarmarkText />}</span>
+                      <span className="title-text">{t('view:projectMaterial')}</span>
+                      <div>
+                        {Array.isArray(data.programmeProperties.projectMaterial) &&
+                          data.programmeProperties.projectMaterial.map((material: any) => {
+                            return (
+                              <Row className="field" key={material}>
+                                <Col span={12} className="field-key">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    {getFileName(material)}
+                                  </a>
+                                </Col>
+                                <Col span={12} className="field-value">
+                                  <a
+                                    target="_blank"
+                                    href={material}
+                                    rel="noopener noreferrer"
+                                    className="file-name"
+                                  >
+                                    <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                                  </a>
+                                </Col>
+                              </Row>
+                            );
+                          })}
+                        {!Array.isArray(data.programmeProperties.projectMaterial) && (
+                          <Row className="field">
+                            <Col span={12} className="field-key">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.projectMaterial}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                {getFileName(data.programmeProperties.projectMaterial)}
+                              </a>
+                            </Col>
+                            <Col span={12} className="field-value">
+                              <a
+                                target="_blank"
+                                href={data.programmeProperties.projectMaterial}
+                                rel="noopener noreferrer"
+                                className="file-name"
+                              >
+                                <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+                              </a>
+                            </Col>
+                          </Row>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )}
+                </Card>
+              )}
             <Card className="card-container">
               <div>
                 <InfoView
@@ -1661,15 +1770,17 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            <Card className="card-container">
-              <div>
-                <InfoView
-                  data={mapArrayToi18n(calculations)}
-                  title={t('view:calculation')}
-                  icon={<BulbOutlined />}
-                />
-              </div>
-            </Card>
+            {calculations && (
+              <Card className="card-container">
+                <div>
+                  <InfoView
+                    data={mapArrayToi18n(calculations)}
+                    title={t('view:calculation')}
+                    icon={<BulbOutlined />}
+                  />
+                </div>
+              </Card>
+            )}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">

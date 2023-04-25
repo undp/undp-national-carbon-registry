@@ -178,6 +178,11 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     - Use `DB_PASSWORD` env variable to change PostgresSQL database password
     - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
     - By default frontend does not show map images on dashboard and programme view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
+- Add user data
+  - Update [organisations.csv](./organisations.csv) file to add organisations.
+  - Update [users.csv](./users.csv) file to add users.
+  - When updating files keep the header and replace existing dummy data with your data.
+  - These users and companys add to the system each docker restart.
 - Run `docker-compose up -d --build`. This will build and start containers for following services,
     - PostgresDB container
     - National service
@@ -187,7 +192,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
 - Web frontend on http://localhost:3030/
 - API Endpoints,
   - http://localhost:3000/national#/
-  - http://localhost:3100/stats#/ 
+  - http://localhost:3100/stats#/
 
 <a name="local"></a>
 ## Run Services Locally
@@ -293,8 +298,8 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Credit Issuance Serial Number   |   |   |
 | Current Status   |   | Set default : Pending  |
 | Applicant Type   |   | Set default : Programme Developer  |
-| Sector (_sector_)  | Yes  | Sector  |
-| Sectoral Scope (_sectoralScope_)  | Yes  | Set default : 1 if ITMO term does not exist  |
+| Sector (_sector_)  | Yes  | [Sector](#itmo-sector-mapping)  |
+| Sectoral Scope (_sectoralScope_)  | Yes  | [Sector](#itmo-sector-mapping)|
 | Programme Start Date (_startTime_)  | Yes  | createdAt  |
 | Programme End Date  (_endTime_)  | Yes  | createdAt + 10 years  |
 | Geographical Location (Regional) (_geographicalLocation_)  | Yes  | country _(Name not mentioned as ISO3 or actual name)_  |
@@ -306,7 +311,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Company   |   | company  |
 | Company Tax ID (_proponentTaxVatId_)  | Yes  | company  |
 | Company Percentage (_proponentPercentage_)  | Yes  | Set default : 100%  |
-| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  |  |
+| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  | [Sector](#itmo-sector-mapping) |
 | GHGs Covered (_greenHouseGasses_)  | Yes  | Set default :  CO2  |
 | Credits Authorised  |   | Set default : 100  |
 | Credits Issued   |   | Set default : 10   |
@@ -325,6 +330,15 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | energy generation  |   |   |
 | energy generation unit  |   |   |
 | consumer group  |   |   |
+
+#### <b>ITMO Sector Mapping</b>
+|ITMO Sector Field Value|Sector|Sectoral Scope|Type Of Mitigation|
+| -- | -- | -- | -- |
+|energy-distribution|Energy|Energy Distribution|Energy Distribution
+|agriculture|Agriculture|Agriculture|Agriculture|
+|energy-industries|Energy|Energy Industry|EE Industry
+|Default|Other|Energy Industry|EE Industry
+
 
 #### <b>Assumptions</b>
 - Programme estimated credit amount is 100.

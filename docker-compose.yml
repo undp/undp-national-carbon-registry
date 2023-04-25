@@ -44,6 +44,8 @@ services:
       DOMAIN_MAP: "true"
     volumes:
       - filestore:/app/backend/services/public
+      - ./users.csv:/app/backend/services/users.csv
+      - ./organisations.csv:/app/backend/services/organisations.csv
   stats:
     build:
       context: .
@@ -71,6 +73,7 @@ services:
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
+      # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
