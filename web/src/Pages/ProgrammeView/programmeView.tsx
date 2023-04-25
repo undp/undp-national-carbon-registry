@@ -1315,6 +1315,16 @@ const ProgrammeView = () => {
     );
   };
 
+  const getFileContent = (files: any) => {
+    if (Array.isArray(files)) {
+      return files.map((material: any) => {
+        return fileItemContent(material);
+      });
+    } else {
+      return fileItemContent(files);
+    }
+  };
+
   return loadingAll ? (
     <Loading />
   ) : (
@@ -1604,14 +1614,7 @@ const ProgrammeView = () => {
                     <div className="title">
                       <span className="title-icon">{<Icon.Grid />}</span>
                       <span className="title-text">{t('view:programmeMaterial')}</span>
-                      <div>
-                        {Array.isArray(data.programmeProperties.programmeMaterials) &&
-                          data.programmeProperties.programmeMaterials.map((material: any) => {
-                            return fileItemContent(material);
-                          })}
-                        {!Array.isArray(data.programmeProperties.programmeMaterials) &&
-                          fileItemContent(data.programmeProperties.programmeMaterials)}
-                      </div>
+                      <div>{getFileContent(data.programmeProperties.programmeMaterials)}</div>
                     </div>
                   </div>
                 </Card>
@@ -1623,14 +1626,7 @@ const ProgrammeView = () => {
                     <div className="title">
                       <span className="title-icon">{<Icon.FileEarmarkText />}</span>
                       <span className="title-text">{t('view:projectMaterial')}</span>
-                      <div>
-                        {Array.isArray(data.programmeProperties.projectMaterial) &&
-                          data.programmeProperties.projectMaterial.map((material: any) => {
-                            return fileItemContent(material);
-                          })}
-                        {!Array.isArray(data.programmeProperties.projectMaterial) &&
-                          fileItemContent(data.programmeProperties.projectMaterial)}
-                      </div>
+                      <div>{getFileContent(data.programmeProperties.projectMaterial)}</div>
                     </div>
                   </div>
                 </Card>
