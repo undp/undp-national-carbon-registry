@@ -40,6 +40,7 @@ const MapboxComponent = (props: MapComponentProps) => {
           ? [center[0], center[1]]
           : [9.082, 8.6753],
       zoom: zoom,
+      maxZoom: 17,
     });
 
     map.on('load', () => {
