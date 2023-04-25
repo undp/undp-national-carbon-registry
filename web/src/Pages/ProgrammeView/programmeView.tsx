@@ -1317,8 +1317,8 @@ const ProgrammeView = () => {
 
   const getFileContent = (files: any) => {
     if (Array.isArray(files)) {
-      return files.map((material: any) => {
-        return fileItemContent(material);
+      return files.map((filePath: any) => {
+        return fileItemContent(filePath);
       });
     } else {
       return fileItemContent(files);
