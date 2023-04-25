@@ -1440,9 +1440,9 @@ const Dashboard = () => {
   ]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
-  const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
-  const authorised = ['==', ['get', 'stage'], 'Authorised'];
-  const rejected = ['==', ['get', 'stage'], 'Rejected'];
+  const pending = ['all', ['==', ['get', 'stage'], 'AwaitingAuthorization']];
+  const authorised = ['all', ['==', ['get', 'stage'], 'Authorised']];
+  const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
 
   const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 
