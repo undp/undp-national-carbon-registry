@@ -370,7 +370,7 @@ export const totalCreditsOptions: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
+    colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183', '#B7A4FE'],
   },
   title: {
     text: '',
@@ -406,7 +406,7 @@ export const totalCreditsOptions: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
+      colors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183', '#B7A4FE'],
       useSeriesColors: false,
     },
     markers: {
@@ -414,7 +414,7 @@ export const totalCreditsOptions: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183'],
+      fillColors: ['#4FB8E7', '#7FEABF', '#D8D8D8', '#FF8183', '#B7A4FE'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
