@@ -42,6 +42,10 @@ export class AsyncOperationsDatabaseHandlerService
         .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();
 
+      if(notExecutedActions.length === 0)
+        return;
+        
+      const startedSeq = lastSeq;
       notExecutedActions.forEach((action: any) => {
         if (action.actionType === AsyncActionType.Email.toString()) {
           const emailBody = JSON.parse(action.actionProps);
@@ -50,12 +54,16 @@ export class AsyncOperationsDatabaseHandlerService
         lastSeq = action.actionId;
       });
 
-      await Promise.all(asyncPromises);
-
-      await this.counterRepo.save({
-        id: CounterType.ASYNC_OPERATIONS,
-        counter: lastSeq,
-      });
+      try {
+        await Promise.all(asyncPromises);
+        await this.counterRepo.save({
+          id: CounterType.ASYNC_OPERATIONS,
+          counter: lastSeq,
+        });
+      } catch (exception) {
+        this.logger.log("database asyncHandler failed", exception);
+        lastSeq = startedSeq;
+      }
     }, 5000);
   }
 }
