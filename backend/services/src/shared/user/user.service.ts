@@ -703,7 +703,7 @@ export class UserService {
     if (result.length <= 0) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("user.userUnAUth", []),
-        HttpStatus.NOT_FOUND
+        HttpStatus.FORBIDDEN
       );
     }
 

@@ -58,7 +58,7 @@ import {
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
-import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { CompanyRole, addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CompanyTableDataType } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { AbilityContext } from '../../Casl/Can';
 import { Action } from '../../Casl/enums/action.enum';
@@ -126,6 +126,17 @@ const CompanyManagement = () => {
     );
   };
 
+  const getNumberOfProgrammes = (item: string, record: any) => {
+    let numberOfProgrammes = item;
+    if (
+      record.companyRole === CompanyRole.GOVERNMENT ||
+      record.companyRole === CompanyRole.CERTIFIER
+    ) {
+      numberOfProgrammes = '-';
+    }
+    return numberOfProgrammes;
+  };
+
   const handleFilterVisibleChange = () => {
     setFilterVisible(true);
   };
@@ -180,6 +191,9 @@ const CompanyManagement = () => {
       key: 'taxId',
       sorter: true,
       align: 'left' as const,
+      render: (item: any) => {
+        return item ? item : '-';
+      },
     },
     {
       title: t('company:companyRole'),
@@ -197,8 +211,8 @@ const CompanyManagement = () => {
       key: 'programmeCount',
       sorter: true,
       align: 'left' as const,
-      render: (item: any) => {
-        return item ? item : '-';
+      render: (item: any, record: any) => {
+        return getNumberOfProgrammes(item, record);
       },
     },
     {
