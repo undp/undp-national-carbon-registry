@@ -128,7 +128,9 @@ const CompanyManagement = () => {
 
   const getNumberOfProgrammes = (item: string, record: any) => {
     let numberOfProgrammes = item;
-    if (
+    if (!item) {
+      numberOfProgrammes = '-';
+    } else if (
       record.companyRole === CompanyRole.GOVERNMENT ||
       record.companyRole === CompanyRole.CERTIFIER
     ) {
