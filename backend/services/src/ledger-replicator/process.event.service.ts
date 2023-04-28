@@ -69,7 +69,7 @@ export class ProcessEventService {
               programme.statusUpdateTime = programme.txTime;
             }
             if (
-              [TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER, TxType.AUTH].includes(
+              [TxType.ISSUE, TxType.RETIRE, TxType.TRANSFER, TxType.AUTH, TxType.FREEZE, TxType.UNFREEZE].includes(
                 programme.txType
               )
             ) {
