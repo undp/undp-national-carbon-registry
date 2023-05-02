@@ -1,18 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { Row, Col, Card, Button, Modal, Select, Alert, Skeleton, message } from 'antd';
-import { UserOutlined, BankOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Button, Skeleton } from 'antd';
+import { UserOutlined, BankOutlined } from '@ant-design/icons';
 import './UserProfile.scss';
 import { useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
-import ChangePasswordModel from '../../Components/Models/ChangePasswordModel';
 import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
-import * as Icon from 'react-bootstrap-icons';
-import { Role } from '../../Casl/enums/role.enum';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);

@@ -1,18 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-  Row,
-  Col,
-  Button,
-  Form,
-  Input,
-  Select,
-  message,
-  Spin,
-  Upload,
-  Modal,
-  Radio,
-  Tooltip,
-} from 'antd';
+import { Row, Col, Button, Form, Input, Select, message, Radio, Tooltip } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -22,7 +9,7 @@ import '../../Styles/app.scss';
 import '../Common/common.form.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { EyeOutlined, StarOutlined, ToolOutlined } from '@ant-design/icons';
-import type { RcFile, UploadProps } from 'antd/lib/upload';
+import type { RcFile } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
 import { AbilityContext } from '../../Casl/Can';
 import { User } from '../../Casl/entities/User';
@@ -44,9 +31,6 @@ const AddUser = () => {
   const { updateToken } = useConnection();
   const { removeUserInfo } = useUserContext();
   const [loading, setLoading] = useState<boolean>(false);
-  const [contactNoInput, setContactNoInput] = useState<any>();
-  const [previewTitle, setPreviewTitle] = useState('');
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const { i18n, t } = useTranslation(['addUser', 'userProfile']);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [isUpdate, setIsUpdate] = useState(false);
@@ -67,7 +51,6 @@ const AddUser = () => {
 
   const onAddUser = async (values: any) => {
     setLoading(true);
-    console.log({ ...values });
     try {
       values.phoneNo = formatPhoneNumberIntl(values.phoneNo);
       const response = await post('national/user/add', values);
@@ -91,13 +74,11 @@ const AddUser = () => {
       });
     } finally {
       setLoading(false);
-      // navigate('/userManagement/viewAll', { replace: true });
     }
   };
 
   const onUpdateUser = async () => {
     setLoading(true);
-    // values.id = state.record.id;
     const formOneValues = formOne.getFieldsValue();
     formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
     try {

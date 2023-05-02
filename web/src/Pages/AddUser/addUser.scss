@@ -38,6 +38,11 @@
       align-items: end;
       justify-content: end;
       width: 50%;
+
+      .btn-danger {
+        color: #ff4d4f !important;
+        border-color: #ff8183 !important;
+      }
     }
   }
 }
