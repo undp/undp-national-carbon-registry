@@ -26,26 +26,36 @@ import type { RcFile, UploadProps } from 'antd/lib/upload';
 import { useTranslation } from 'react-i18next';
 import { AbilityContext } from '../../Casl/Can';
 import { User } from '../../Casl/entities/User';
+import * as Icon from 'react-bootstrap-icons';
 import { plainToClass } from 'class-transformer';
 import { Action } from '../../Casl/enums/action.enum';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { Role } from '../../Casl/enums/role.enum';
+import ChangePasswordModel from '../../Components/Models/ChangePasswordModel';
+import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
 
 const { Option } = Select;
 
 const AddUser = () => {
-  const { post, put } = useConnection();
+  const { post, put, delete: del } = useConnection();
   const [formOne] = Form.useForm();
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { updateToken } = useConnection();
+  const { removeUserInfo } = useUserContext();
   const [loading, setLoading] = useState<boolean>(false);
-  const [userRole, setUserRole] = useState<string>('');
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
   const [contactNoInput, setContactNoInput] = useState<any>();
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const { i18n, t } = useTranslation(['addUser']);
+  const { i18n, t } = useTranslation(['addUser', 'userProfile']);
+  const [actionInfo, setActionInfo] = useState<any>({});
   const [isUpdate, setIsUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
+  const [openPasswordChangeModal, setopenPasswordChangeModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<any>('');
   const ability = useContext(AbilityContext);
+  const { userInfoState } = useUserContext();
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -133,6 +143,87 @@ const AddUser = () => {
     else onAddUser(values);
   };
 
+  const signOut = (): void => {
+    navigate('/login');
+    updateToken();
+    removeUserInfo();
+  };
+
+  const onDeleteProfileUser = () => {
+    setActionInfo({
+      action: 'Delete',
+      headerText: `${t('userProfile:deleteConfirmHeaderText')}`,
+      text: `${t('userProfile:deleteConfirmText')}`,
+      type: 'danger',
+      icon: <Icon.PersonDash />,
+    });
+    setErrorMsg('');
+    setOpenDeleteConfirmationModal(true);
+  };
+
+  const onDeleteProfileUserCanceled = () => {
+    setOpenDeleteConfirmationModal(false);
+    setErrorMsg('');
+  };
+
+  const onDeleteProfileUserConfirmed = async () => {
+    try {
+      setIsLoading(true);
+      const userId = userInfoState?.id;
+      const response = await del(`national/user/delete?userId=${userId}`);
+      setOpenDeleteConfirmationModal(false);
+      message.open({
+        type: 'success',
+        content: t('userProfile:userDeletionSuccess'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setErrorMsg('');
+      signOut();
+    } catch (exception: any) {
+      setErrorMsg(exception.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onPasswordChangeCompleted = async (props: any) => {
+    setIsLoading(true);
+    try {
+      const response = await put('national/user/resetPassword', {
+        newPassword: props.newPassword,
+        oldPassword: props.oldPassword,
+      });
+      const responseMsg = response.message;
+      setopenPasswordChangeModal(false);
+      message.open({
+        type: 'success',
+        content: responseMsg,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setErrorMsg('');
+      signOut();
+    } catch (exception: any) {
+      setErrorMsg(exception.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onChangedPassword = () => {
+    setErrorMsg('');
+    setopenPasswordChangeModal(true);
+  };
+
+  const onPasswordChangeCanceled = () => {
+    setopenPasswordChangeModal(false);
+  };
+
+  const onFormsValueChanged = async () => {
+    setErrorMsg('');
+  };
+
   useEffect(() => {
     console.log('state -- val --- ', { ...state });
     setIsUpdate(state?.record ? true : false);
@@ -141,10 +232,24 @@ const AddUser = () => {
   return (
     <div className="add-user-main-container">
       <div className="title-container">
-        <div className="main">{isUpdate ? t('addUser:editUser') : t('addUser:addNewUser')}</div>
-        <div className="sub">
-          {state?.record?.name ? t('addUser:editUserSub') : t('addUser:addUserSub')}
+        <div className="titles">
+          <div className="main">{isUpdate ? t('addUser:editUser') : t('addUser:addNewUser')}</div>
+          <div className="sub">
+            {state?.record?.name ? t('addUser:editUserSub') : t('addUser:addUserSub')}
+          </div>
         </div>
+        {isUpdate && !ability.can(Action.Update, plainToClass(User, state?.record), 'email') && (
+          <div className="actions">
+            {userInfoState?.userRole !== Role.Root && (
+              <Button className="mg-left-1 btn-danger" onClick={() => onDeleteProfileUser()}>
+                {t('userProfile:delete')}
+              </Button>
+            )}
+            <Button className="mg-left-1" type="primary" onClick={onChangedPassword}>
+              {t('userProfile:changePassword')}
+            </Button>
+          </div>
+        )}
       </div>
       <div className="content-card user-content-card">
         <Form
@@ -305,6 +410,22 @@ const AddUser = () => {
           </div>
         </Form>
       </div>
+      <UserActionConfirmationModel
+        actionInfo={actionInfo}
+        onActionConfirmed={onDeleteProfileUserConfirmed}
+        onActionCanceled={onDeleteProfileUserCanceled}
+        openModal={openDeleteConfirmationModal}
+        errorMsg={errorMsg}
+        loading={isLoading}
+      />
+      <ChangePasswordModel
+        onPasswordChanged={onPasswordChangeCompleted}
+        onFieldsChanged={onFormsValueChanged}
+        onCanceled={onPasswordChangeCanceled}
+        openModal={openPasswordChangeModal}
+        errorMsg={errorMsg}
+        loadingBtn={isLoading}
+      ></ChangePasswordModel>
     </div>
   );
 };
