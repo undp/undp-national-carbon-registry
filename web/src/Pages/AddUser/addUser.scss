@@ -11,18 +11,38 @@
 
   .title-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
     border-radius: 5px;
 
-    .main {
-      font-size: 1.25rem;
-      font-weight: 500;
-      color: $title-main;
+    .titles {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      .main {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: $title-main;
+      }
+
+      .sub {
+        font-size: 0.8rem;
+        color: $title-sub;
+      }
     }
 
-    .sub {
-      font-size: 0.8rem;
-      color: $title-sub;
+    .actions {
+      display: flex;
+      flex-direction: row;
+      align-items: end;
+      justify-content: end;
+      width: 50%;
+
+      .btn-danger {
+        color: #ff4d4f !important;
+        border-color: #ff8183 !important;
+      }
     }
   }
 }
@@ -61,7 +81,6 @@
                 color: $admin-color;
               }
             }
-
           }
           .manager-radio-container {
             width: 30%;

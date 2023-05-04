@@ -1,33 +1,24 @@
 import { useTranslation } from 'react-i18next';
-import { Row, Col, Card, Button, Modal, Select, Alert, Skeleton, message } from 'antd';
-import { UserOutlined, BankOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Row, Col, Card, Button, Skeleton } from 'antd';
+import { UserOutlined, BankOutlined } from '@ant-design/icons';
 import './UserProfile.scss';
 import { useEffect, useState } from 'react';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import UserActionConfirmationModel from '../../Components/Models/UserActionConfirmationModel';
-import ChangePasswordModel from '../../Components/Models/ChangePasswordModel';
 import UserRoleIcon from '../../Components/UserRoleIcon/UserRoleIcon';
 import CompanyRoleIcon from '../../Components/CompanyRoleIcon/CompanyRoleIcon';
 import LanguageSelection from '../../Components/LanguageSelection/languageSelection';
-import * as Icon from 'react-bootstrap-icons';
-import { Role } from '../../Casl/enums/role.enum';
 
 const UserProfile = () => {
   const { i18n, t } = useTranslation(['userProfile']);
-  const { get, delete: del, put } = useConnection();
+  const { get } = useConnection();
   const [organisationDetails, setOrganisationDetails] = useState<any>([]);
   const [userDetails, setUserDetails] = useState<any>([]);
   const navigate = useNavigate();
   const { updateToken } = useConnection();
   const { removeUserInfo } = useUserContext();
-  const [actionInfo, setActionInfo] = useState<any>({});
-  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
-  const [openPasswordChangeModal, setopenPasswordChangeModal] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<any>('');
   const [isLoading, setIsLoading] = useState(false);
-  const { userInfoState } = useUserContext();
 
   const signOut = (): void => {
     navigate('/login');
@@ -51,71 +42,6 @@ const UserProfile = () => {
     getUserProfileDetails();
   }, []);
 
-  const onDeleteProfileUser = () => {
-    setActionInfo({
-      action: 'Delete',
-      headerText: `${t('userProfile:deleteConfirmHeaderText')}`,
-      text: `${t('userProfile:deleteConfirmText')}`,
-      type: 'danger',
-      icon: <Icon.PersonDash />,
-    });
-    setErrorMsg('');
-    setOpenDeleteConfirmationModal(true);
-  };
-
-  const onDeleteProfileUserConfirmed = async () => {
-    try {
-      setIsLoading(true);
-      const response = await del(`national/user/delete?userId=${userDetails.id}`);
-      setOpenDeleteConfirmationModal(false);
-      message.open({
-        type: 'success',
-        content: t('userProfile:userDeletionSuccess'),
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setErrorMsg('');
-      signOut();
-    } catch (exception: any) {
-      setErrorMsg(exception.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const onDeleteProfileUserCanceled = () => {
-    setOpenDeleteConfirmationModal(false);
-    setErrorMsg('');
-  };
-
-  const onChangedPassword = () => {
-    setErrorMsg('');
-    setopenPasswordChangeModal(true);
-  };
-
-  const onPasswordChangeCompleted = async (props: any) => {
-    try {
-      const response = await put('national/user/resetPassword', {
-        newPassword: props.newPassword,
-        oldPassword: props.oldPassword,
-      });
-      setErrorMsg('');
-      setopenPasswordChangeModal(false);
-
-      signOut();
-    } catch (exception: any) {
-      setErrorMsg(exception.message);
-    }
-  };
-
-  const onFormsValueChanged = async () => {
-    setErrorMsg('');
-  };
-
-  const onPasswordChangeCanceled = () => {
-    setopenPasswordChangeModal(false);
-  };
-
   return (
     <div className="content-container user-profile">
       <Row>
@@ -129,14 +55,9 @@ const UserProfile = () => {
         </Col>
         <Col md={24} lg={16}>
           <Row justify="end">
-            {userInfoState?.userRole !== Role.Root && (
-              <Button
-                className="mg-left-1 btn-danger mg-bottom-1"
-                onClick={() => onDeleteProfileUser()}
-              >
-                {t('userProfile:delete')}
-              </Button>
-            )}
+            <Button className="mg-left-1 btn-danger mg-bottom-1" onClick={() => signOut()}>
+              {t('userProfile:logOut')}
+            </Button>
             <Button
               className="mg-left-1 mg-bottom-1"
               type="primary"
@@ -171,14 +92,6 @@ const UserProfile = () => {
                 <div className=" company-name mg-top-1">{organisationDetails.name}</div>
               </Row>
             </Card>
-            <Row justify="center">
-              <Button className="mg-left-1 btn-danger mg-bottom-1" onClick={() => signOut()}>
-                {t('userProfile:logOut')}
-              </Button>
-              <Button className="mg-left-1 mg-bottom-1" type="primary" onClick={onChangedPassword}>
-                {t('userProfile:changePassword')}
-              </Button>
-            </Row>
           </Col>
           <Col md={24} lg={16}>
             <Card className="card-container">
@@ -320,23 +233,6 @@ const UserProfile = () => {
           </Col>
         </Row>
       </div>
-
-      <UserActionConfirmationModel
-        actionInfo={actionInfo}
-        onActionConfirmed={onDeleteProfileUserConfirmed}
-        onActionCanceled={onDeleteProfileUserCanceled}
-        openModal={openDeleteConfirmationModal}
-        errorMsg={errorMsg}
-        loading={isLoading}
-      />
-
-      <ChangePasswordModel
-        onPasswordChanged={onPasswordChangeCompleted}
-        onFieldsChanged={onFormsValueChanged}
-        onCanceled={onPasswordChangeCanceled}
-        openModal={openPasswordChangeModal}
-        errorMsg={errorMsg}
-      ></ChangePasswordModel>
     </div>
   );
 };

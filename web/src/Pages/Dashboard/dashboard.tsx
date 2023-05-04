@@ -799,6 +799,10 @@ const Dashboard = () => {
             name: 'Retired',
             data: programmesAggByStatus?.retiredCredits,
           },
+          {
+            name: 'Frozen',
+            data: programmesAggByStatus?.frozenCredits,
+          },
         ];
         setTotalCreditsSeries(totalCreditsValues);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
