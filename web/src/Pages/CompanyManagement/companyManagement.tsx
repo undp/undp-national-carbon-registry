@@ -126,19 +126,6 @@ const CompanyManagement = () => {
     );
   };
 
-  const getNumberOfProgrammes = (item: string, record: any) => {
-    let numberOfProgrammes = item;
-    if (!item) {
-      numberOfProgrammes = '-';
-    } else if (
-      record.companyRole === CompanyRole.GOVERNMENT ||
-      record.companyRole === CompanyRole.CERTIFIER
-    ) {
-      numberOfProgrammes = '-';
-    }
-    return numberOfProgrammes;
-  };
-
   const handleFilterVisibleChange = () => {
     setFilterVisible(true);
   };
@@ -213,8 +200,8 @@ const CompanyManagement = () => {
       key: 'programmeCount',
       sorter: true,
       align: 'left' as const,
-      render: (item: any, record: any) => {
-        return getNumberOfProgrammes(item, record);
+      render: (item: any) => {
+        return item ? item : '-';
       },
     },
     {
