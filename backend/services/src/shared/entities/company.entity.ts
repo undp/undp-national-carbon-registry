@@ -82,5 +82,13 @@ export class Company implements EntitySubject {
     } else if (this.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       this.programmeCount = 0;
     }
+    if (
+      this.companyRole === CompanyRole.GOVERNMENT ||
+      this.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    ) {
+      this.creditBalance = 0;
+    } else if (this.companyRole === CompanyRole.CERTIFIER) {
+      this.programmeCount = null;
+    }
   }
 }
