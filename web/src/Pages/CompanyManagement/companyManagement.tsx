@@ -1,60 +1,38 @@
 import {
   BankOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
   ExperimentOutlined,
-  EyeOutlined,
   FilterOutlined,
   PlusOutlined,
   SafetyOutlined,
-  SearchOutlined,
-  StarOutlined,
-  ToolOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Checkbox,
   Col,
   Dropdown,
   Empty,
   Input,
-  List,
   MenuProps,
   message,
   PaginationProps,
-  Popconfirm,
-  Popover,
   Radio,
   Row,
   Select,
   Space,
   Table,
-  Typography,
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './companyManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
-import type { ColumnsType } from 'antd/es/table';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
-  AdminBGColor,
-  AdminColor,
   CertBGColor,
   CertColor,
   DevBGColor,
   DevColor,
   GovBGColor,
   GovColor,
-  ManagerBGColor,
-  ManagerColor,
-  RootBGColor,
-  RootColor,
-  ViewBGColor,
-  ViewColor,
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +41,6 @@ import { CompanyTableDataType } from '../../Definitions/InterfacesAndType/compan
 import { AbilityContext } from '../../Casl/Can';
 import { Action } from '../../Casl/enums/action.enum';
 import { Company } from '../../Casl/entities/Company';
-import { plainToClass } from 'class-transformer';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -124,19 +101,6 @@ const CompanyManagement = () => {
         {item === 'ProgrammeDeveloper' ? <div>{t('company:developer')}</div> : <div>{item}</div>}
       </div>
     );
-  };
-
-  const getNumberOfProgrammes = (item: string, record: any) => {
-    let numberOfProgrammes = item;
-    if (!item) {
-      numberOfProgrammes = '-';
-    } else if (
-      record.companyRole === CompanyRole.GOVERNMENT ||
-      record.companyRole === CompanyRole.CERTIFIER
-    ) {
-      numberOfProgrammes = '-';
-    }
-    return numberOfProgrammes;
   };
 
   const handleFilterVisibleChange = () => {
@@ -213,8 +177,8 @@ const CompanyManagement = () => {
       key: 'programmeCount',
       sorter: true,
       align: 'left' as const,
-      render: (item: any, record: any) => {
-        return getNumberOfProgrammes(item, record);
+      render: (item: any) => {
+        return item ? item : '-';
       },
     },
     {
@@ -224,7 +188,7 @@ const CompanyManagement = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return item ? addCommSep(item) : '-';
+        return item !== null ? addCommSep(item) : '-';
       },
     },
   ];
