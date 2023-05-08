@@ -27,6 +27,6 @@ export class ConfigurationSettingsService {
       id: type,
       settingValue: settingValue,
     });
-    return settingValue;
+    return true;
   }
 }
