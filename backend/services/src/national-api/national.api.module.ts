@@ -16,7 +16,7 @@ import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
 import { UtilModule } from '../shared/util/util.module';
-import { settingsController } from './settings.controller';
+import { SettingsController } from './settings.controller';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { settingsController } from './settings.controller';
     CompanyModule,
     UtilModule
   ],
-  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, settingsController ],
+  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, SettingsController ],
   providers: [
     NationalAPIService, 
     Logger

@@ -22,8 +22,6 @@ import { LocationInterface } from "../shared/location/location.interface";
 import { ProgrammeModule } from "../shared/programme/programme.module";
 import { ProgrammeService } from "../shared/programme/programme.service";
 import { ConfigService } from "@nestjs/config";
-import {ConfigurationSettingsService } from '../shared/util/configurationSettings.service'
-import { ConfigurationSettingsType } from "src/shared/enum/configuration.settings.type.enum";
 const fs = require("fs");
 
 export const handler: Handler = async (event) => {
@@ -204,7 +202,6 @@ export const handler: Handler = async (event) => {
   const jsonCountryData = JSON.parse(countryData);
   const utils = await NestFactory.createApplicationContext(UtilModule);
   const countryService = utils.get(CountryService);
-  const configurationSettingsService = utils.get(ConfigurationSettingsService);
 
   jsonCountryData.forEach(async (countryItem) => {
     if (countryItem["UN Member States"] === "x") {
@@ -215,8 +212,6 @@ export const handler: Handler = async (event) => {
       await countryService.insertCountry(country);
     }
   });
-
-  configurationSettingsService.saveSetting(ConfigurationSettingsType.isTransferFrozen, false);
 
   const locationApp = await NestFactory.createApplicationContext(
     LocationModule,

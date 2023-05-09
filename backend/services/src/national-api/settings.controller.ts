@@ -18,7 +18,7 @@ import { ConfigurationSettingsService } from "src/shared/util/configurationSetti
 @ApiTags("Settings")
 @Controller("Settings")
 @ApiBearerAuth()
-export class settingsController {
+export class SettingsController {
   constructor(
     private readonly configurationSettingsService: ConfigurationSettingsService
   ) {}

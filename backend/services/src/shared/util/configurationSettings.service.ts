@@ -20,18 +20,22 @@ export class ConfigurationSettingsService {
       .findOneBy({
         id: type,
       })
-      .then((value) => {
+      .then(async (value) => {
         if (value) return value.settingValue;
-        else return null;
+        else {
+          let defaultSettingValue;
+          switch (type) {
+            case ConfigurationSettingsType.isTransferFrozen:
+              defaultSettingValue = false;
+              break;
+          }
+          await this.configSettingsRepo.save({
+            id: type,
+            settingValue: defaultSettingValue,
+          });
+          return defaultSettingValue;
+        }
       });
-  }
-
-  async saveSetting(type: ConfigurationSettingsType, settingValue: any) {
-    await this.configSettingsRepo.save({
-      id: type,
-      settingValue: settingValue,
-    });
-    return true;
   }
 
   async updateSetting(type: ConfigurationSettingsType, settingValue: any) {
