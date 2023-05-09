@@ -9,11 +9,11 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Action } from "../shared/casl/action.enum";
-import { JwtAuthGuard } from "src/shared/auth/guards/jwt-auth.guard";
-import { PoliciesGuardEx } from "src/shared/casl/policy.guard";
-import { SettingsDto } from "src/shared/dto/settings.dto";
-import { ConfigurationSettings } from "src/shared/entities/configuration.settings";
-import { ConfigurationSettingsService } from "src/shared/util/configurationSettings.service";
+import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
+import { PoliciesGuardEx } from "../shared/casl/policy.guard";
+import { SettingsDto } from "../shared/dto/settings.dto";
+import { ConfigurationSettings } from "../shared/entities/configuration.settings";
+import { ConfigurationSettingsService } from "../shared/util/configurationSettings.service";
 
 @ApiTags("Settings")
 @Controller("Settings")
