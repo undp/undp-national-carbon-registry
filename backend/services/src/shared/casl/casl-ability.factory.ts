@@ -21,6 +21,7 @@ import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
+import { ConfigurationSettings } from "../entities/configuration.settings";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -48,6 +49,7 @@ export class CaslAbilityFactory {
         user.companyRole == CompanyRole.GOVERNMENT
       ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
+        can([Action.Manage], ConfigurationSettings);
         can([Action.Manage], Company);
         cannot([Action.Update, Action.Delete], User, {
           companyId: { $ne: user.companyId },
