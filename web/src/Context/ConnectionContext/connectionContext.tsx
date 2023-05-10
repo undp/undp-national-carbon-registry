@@ -147,7 +147,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
       localStorage.setItem('token', newToken);
       setToken(newToken);
     } else {
-      localStorage.removeItem('token');
+      localStorage.setItem('token', '');
       setToken(undefined);
     }
   }, []);
@@ -156,7 +156,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     if (tkn) {
       const { exp } = jwt_decode(tkn) as any;
       if (Date.now() > exp * 1000) {
-        localStorage.removeItem('token');
+        localStorage.setItem('token', '');
         localStorage.removeItem('userRole');
         localStorage.removeItem('userId');
         localStorage.removeItem('companyId');
@@ -165,7 +165,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
         const diff = exp * 1000 - Date.now();
         setTimeout(() => {
           setToken(undefined);
-          localStorage.removeItem('token');
+          localStorage.setItem('token', '');
           localStorage.removeItem('userRole');
           localStorage.removeItem('userId');
           localStorage.removeItem('companyId');
