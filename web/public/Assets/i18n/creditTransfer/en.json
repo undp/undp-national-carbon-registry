@@ -28,5 +28,6 @@
   "iaccount": "Government International Account",
   "transferReqApproved": "The transfer request has been accepted successfully",
   "internationalTranferReqAccepted": "The international transfer retire request has been accepted successfully",
-  "internationalTransferReqRejected": "The international transfer retire request has been rejected successfully"
+  "internationalTransferReqRejected": "The international transfer retire request has been rejected successfully",
+  "allTransfersPausedLabelTxt": "All transfers are currently paused"
 }

@@ -89,6 +89,7 @@ import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -112,6 +113,7 @@ const ProgrammeView = () => {
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
+  const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
 
   const showModal = () => {
     setOpenModal(true);
@@ -1448,7 +1450,8 @@ const ProgrammeView = () => {
                                     0
                                   )
                                 : 0) >
-                              0 && (
+                              0 &&
+                            !isTransferFrozen && (
                               <div>
                                 {((userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
                                   !isAllOwnersDeactivated) ||
@@ -1551,7 +1554,8 @@ const ProgrammeView = () => {
                                 )}
                                 {!isAllOwnersDeactivated &&
                                   userInfoState!.companyState !==
-                                    CompanyState.SUSPENDED.valueOf() && (
+                                    CompanyState.SUSPENDED.valueOf() &&
+                                  !isTransferFrozen && (
                                     <Button
                                       type="primary"
                                       onClick={() => {

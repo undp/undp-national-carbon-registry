@@ -23,6 +23,7 @@ import { ProgrammeCertify } from '../shared/dto/programme.certify';
 import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
 import { ProgrammeIssue } from '../shared/dto/programme.issue';
 import { ProgrammeRevoke } from '../shared/dto/programme.revoke';
+import { TransferFreezeGuard } from 'src/shared/auth/guards/transfer-freeze.guard';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -89,7 +90,7 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransferRequest))
+    @UseGuards(TransferFreezeGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, ProgrammeTransferRequest))
     @Put('retire')
     async programmeRetire(@Body() body: ProgrammeRetire, @Request() req) {
         return this.programmeService.retireProgramme(body, req.user)
@@ -110,28 +111,28 @@ export class ProgrammeController {
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest))
+    @UseGuards(TransferFreezeGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest))
     @Post('transferRequest')
     async transferRequest(@Body() body: ProgrammeTransferRequest, @Request() req) {
         return this.programmeService.transferRequest(body, req.user)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest))
+    @UseGuards(TransferFreezeGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, ProgrammeTransferRequest))
     @Post('transferApprove')
     async transferApprove(@Body() body: ProgrammeTransferApprove, @Request() req) {
         return this.programmeService.transferApprove(body, req.user)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
+    @UseGuards(TransferFreezeGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferReject')
     async transferReject(@Body() body: ProgrammeTransferReject, @Request() req) {
         return this.programmeService.transferReject(body, req.user)
     }
 
     @ApiBearerAuth()
-    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
+    @UseGuards(TransferFreezeGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, ProgrammeTransfer))
     @Post('transferCancel')
     async transferCancel(@Body() body: ProgrammeTransferCancel, @Request() req) {
         return this.programmeService.transferCancel(body, req.user)
