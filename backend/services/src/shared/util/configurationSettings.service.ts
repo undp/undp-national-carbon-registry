@@ -15,7 +15,7 @@ export class ConfigurationSettingsService {
     private helperService: HelperService
   ) {}
 
-  async getSetting(type: number) {
+  async getSetting(type: number, defaultValue?: string) {
     return await this.configSettingsRepo
       .findOneBy({
         id: type,
@@ -23,37 +23,20 @@ export class ConfigurationSettingsService {
       .then(async (value) => {
         if (value) return value.settingValue;
         else {
-          let defaultSettingValue;
-          switch (type) {
-            case ConfigurationSettingsType.isTransferFrozen:
-              defaultSettingValue = false;
-              break;
-          }
-          await this.configSettingsRepo.save({
-            id: type,
-            settingValue: defaultSettingValue,
-          });
-          return defaultSettingValue;
+          return defaultValue;
         }
       });
   }
 
   async updateSetting(type: ConfigurationSettingsType, settingValue: any) {
     const result = await this.configSettingsRepo
-      .update(
-        {
-          id: type,
-        },
-        {
-          settingValue: settingValue,
-        }
-      )
+      .upsert([{ id: type, settingValue: settingValue }], ["id"])
       .catch((err: any) => {
         this.logger.error(err);
         return err;
       });
 
-    if (result.affected > 0) {
+    if (result.identifiers) {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(

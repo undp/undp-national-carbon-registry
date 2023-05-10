@@ -23,8 +23,10 @@ const CustomLayout = (props: any) => {
     const response = await get(
       `national/Settings/query?id=${ConfigurationSettingsType.isTransferFrozen}`
     );
-    if (response) {
+    if (response && response.data) {
       setTransferFrozen(response.data);
+    } else {
+      setTransferFrozen(false);
     }
   };
 
