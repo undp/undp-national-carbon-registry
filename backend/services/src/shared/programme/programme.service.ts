@@ -1898,7 +1898,47 @@ export class ProgrammeService {
       );
     });
 
+    const companyData = await this.companyService.findByCompanyIds({
+      companyIds: program.companyId,
+    });
+
+    const suspendedCompanies = companyData.filter(
+      (company) => company.state == CompanyState.SUSPENDED
+    );
+
+    if (suspendedCompanies.length > 0) {
+      await this.freezeIssuedProgrammeCredit(
+        req.programmeId,
+        req.issueAmount,
+        this.getUserRef(user),
+        suspendedCompanies
+      );
+    }
+
     return new DataResponseDto(HttpStatus.OK, updated);
+  }
+
+  async freezeIssuedProgrammeCredit(
+    programmeId: string,
+    issueAmount: number,
+    remarks: string,
+    suspendedCompanies?: Company[]
+  ) {
+    const updated: any = await this.programmeLedger.freezeIssuedCredit(
+      programmeId,
+      issueAmount,
+      remarks,
+      suspendedCompanies
+    );
+    if (!updated) {
+      return new BasicResponseDto(
+        HttpStatus.BAD_REQUEST,
+        this.helperService.formatReqMessagesString(
+          "programme.internalErrorCreditFreezing",
+          [programmeId]
+        )
+      );
+    }
   }
 
   async approveProgramme(req: ProgrammeApprove, user: User) {
