@@ -97,7 +97,9 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       } else {
         tokenVal = localStorage.getItem('token');
         if (tokenVal === '') {
-          setIsTokenExpired(true);
+          if (history.length !== 1) {
+            setIsTokenExpired(true);
+          }
         }
       }
       try {
