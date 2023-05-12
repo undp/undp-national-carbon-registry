@@ -67,6 +67,7 @@
     "issuedCreditCantExceedEstCredit": "Programme issued credit amount can not exceed estimated credit amount",
     "transferReqRejectSuccess": "The transfer request has been rejected successfully",
     "transferReqCancelSuccess": "The international transfer retire request has been cancelled successfully",
+    "transferCancelSuccess": "The transfer request has been cancelled successfully",
     "certifierCanOnlyCertifiy": "Programme certification can perform only by certifier",
     "govOrProgrammeOwnerOnlyCreditRetirement": "Credit retirement can initiate only the government or programme owner",
     "issuedCreditCannotExceedEstCredit": "Programme issue credit amount can not exceed estimated credit amount",

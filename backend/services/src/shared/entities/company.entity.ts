@@ -88,7 +88,7 @@ export class Company implements EntitySubject {
     ) {
       this.creditBalance = 0;
     } else if (this.companyRole === CompanyRole.CERTIFIER) {
-      this.programmeCount = null;
+      this.creditBalance = null;
     }
   }
 }
