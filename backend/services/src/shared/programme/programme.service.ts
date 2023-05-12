@@ -1907,38 +1907,25 @@ export class ProgrammeService {
     );
 
     if (suspendedCompanies.length > 0) {
-      await this.freezeIssuedProgrammeCredit(
+      const updated: any = await this.programmeLedger.freezeIssuedCredit(
         req.programmeId,
         req.issueAmount,
         this.getUserRef(user),
         suspendedCompanies
       );
+      if (!updated) {
+        return new BasicResponseDto(
+          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString(
+            "programme.internalErrorCreditFreezing",
+            [req.programmeId]
+          )
+        );
+      }
+
     }
 
     return new DataResponseDto(HttpStatus.OK, updated);
-  }
-
-  async freezeIssuedProgrammeCredit(
-    programmeId: string,
-    issueAmount: number,
-    remarks: string,
-    suspendedCompanies?: Company[]
-  ) {
-    const updated: any = await this.programmeLedger.freezeIssuedCredit(
-      programmeId,
-      issueAmount,
-      remarks,
-      suspendedCompanies
-    );
-    if (!updated) {
-      return new BasicResponseDto(
-        HttpStatus.BAD_REQUEST,
-        this.helperService.formatReqMessagesString(
-          "programme.internalErrorCreditFreezing",
-          [programmeId]
-        )
-      );
-    }
   }
 
   async approveProgramme(req: ProgrammeApprove, user: User) {
