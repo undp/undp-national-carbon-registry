@@ -1262,29 +1262,29 @@ export class ProgrammeLedgerService {
       programmeId: programmeId,
     };
 
-    suspendedCompanies.forEach(async (company) => {
-      await this.ledger.getAndUpdateTx(
-        getQueries,
-        (results: Record<string, dom.Value[]>) => {
-          const programmes: Programme[] = results[this.ledger.tableName].map(
-            (domValue) => {
-              return plainToClass(
-                Programme,
-                JSON.parse(JSON.stringify(domValue))
-              );
-            }
-          );
-          let programme: Programme = programmes[0];
-
-          if (!programme.creditFrozen) {
-            programme.creditFrozen = new Array(
-              programme.creditOwnerPercentage.length
-            ).fill(0);
+    await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
           }
+        );
+        let programme: Programme = programmes[0];
 
-          let updateMap = {};
-          let updateWhereMap = {};
+        if (!programme.creditFrozen) {
+          programme.creditFrozen = new Array(
+            programme.creditOwnerPercentage.length
+          ).fill(0);
+        }
 
+        let updateMap = {};
+        let updateWhereMap = {};
+
+        suspendedCompanies.forEach(async (company) => {
           const index = programme.companyId.indexOf(company.companyId);
           const freezeCredit =
             (issueAmount * programme.creditOwnerPercentage[index]) / 100;
@@ -1295,21 +1295,21 @@ export class ProgrammeLedgerService {
             (programme.txRef = `${txRef}##${company.name}`),
             (programme.txType = TxType.FREEZE);
 
-          updateMap[this.ledger.tableName] = {
+          updateMap[this.ledger.tableName + "#" + company.companyId] = {
             creditFrozen: programme.creditFrozen,
             creditChange: programme.creditChange,
             txRef: programme.txRef,
             txTime: programme.txTime,
             txType: programme.txType,
           };
-          updateWhereMap[this.ledger.tableName] = {
+          updateWhereMap[this.ledger.tableName + "#" + company.companyId] = {
             programmeId: programmeId,
           };
+        });
 
-          return [updateMap, updateWhereMap, {}];
-        }
-      );
-    });
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
 
     return true;
   }
