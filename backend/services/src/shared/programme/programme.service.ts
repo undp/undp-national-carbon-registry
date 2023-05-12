@@ -805,7 +805,7 @@ export class ProgrammeService {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(
-          "programme.transferReqCancelSuccess",
+          "programme.transferCancelSuccess",
           []
         )
       );

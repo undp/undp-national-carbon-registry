@@ -6,6 +6,7 @@ import { Company } from "../shared/entities/company.entity";
 import { Programme } from "../shared/entities/programme.entity";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
 import { LocationInterface } from "../shared/location/location.interface";
+import { CompanyRole } from "src/shared/enum/company.role.enum";
 
 @Injectable()
 export class ProcessEventService {
@@ -143,35 +144,44 @@ export class ProcessEventService {
               //   }
               // }
 
-              let updateObj;
-              if (account) {
-                if (
-                  company.secondaryAccountBalance &&
-                  company.secondaryAccountBalance[account]
-                ) {
-                  company.secondaryAccountBalance[account]["total"] =
-                    overall.credit;
-                  company.secondaryAccountBalance[account]["count"] += 1;
-                } else {
-                  company.secondaryAccountBalance = {
-                    account: { total: overall.credit, count: 1 },
-                  };
-                }
+        let updateObj;
+        if (account) {
+          if (
+            company.secondaryAccountBalance &&
+            company.secondaryAccountBalance[account]
+          ) {
+            company.secondaryAccountBalance[account]["total"] = overall.credit;
+            company.secondaryAccountBalance[account]["count"] += 1;
+          } else {
+            company.secondaryAccountBalance = {
+              account: { total: overall.credit, count: 1 },
+            };
+          }
 
-                updateObj = {
-                  secondaryAccountBalance: company.secondaryAccountBalance,
-                  lastUpdateVersion: version,
-                };
-              } else {
-                updateObj = {
-                  creditBalance: overall.credit,
-                  programmeCount:
-                    Number(company.programmeCount) +
-                    (overall.txType == TxType.AUTH ? 1 : 0),
-                  lastUpdateVersion: version,
-                  creditTxTime: [ TxType.ISSUE, TxType.TRANSFER, TxType.RETIRE, TxType.FREEZE, TxType.UNFREEZE ].includes(overall.txType) ? txTime : undefined,
-                };
-              }
+          updateObj = {
+            secondaryAccountBalance: company.secondaryAccountBalance,
+            lastUpdateVersion: version,
+          };
+        } else {
+          updateObj = {
+            creditBalance: overall.credit,
+            programmeCount:
+              company.companyRole === CompanyRole.GOVERNMENT
+                ? null
+                : Number(company.programmeCount) +
+                  (overall.txType == TxType.AUTH ? 1 : 0),
+            lastUpdateVersion: version,
+            creditTxTime: [
+              TxType.ISSUE,
+              TxType.TRANSFER,
+              TxType.RETIRE,
+              TxType.FREEZE,
+              TxType.UNFREEZE,
+            ].includes(overall.txType)
+              ? txTime
+              : undefined,
+          };
+        }
 
               const response = await this.companyRepo
                 .update(
