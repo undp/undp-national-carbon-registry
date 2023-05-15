@@ -689,7 +689,7 @@ const CreditTransfer = () => {
                 {isTransferFrozen ? (
                   <PlayCircle className="play-circle" size={35}></PlayCircle>
                 ) : (
-                  <PauseCircle className="pause-circle" color="red" size={35}></PauseCircle>
+                  <PauseCircle className="pause-circle" size={35}></PauseCircle>
                 )}
               </div>
             )}
