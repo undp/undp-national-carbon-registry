@@ -41,6 +41,7 @@ services:
       IS_EMAIL_DISABLED: "true"
       LOCATION_SERVICE: OPENSTREET
       HOST: "http://localhost:3030"
+      EXPIRES_IN: "7200"
     volumes:
       - filestore:/app/backend/services/public
   stats:
