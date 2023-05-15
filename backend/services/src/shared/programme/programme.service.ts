@@ -1898,6 +1898,33 @@ export class ProgrammeService {
       );
     });
 
+    const companyData = await this.companyService.findByCompanyIds({
+      companyIds: program.companyId,
+    });
+
+    const suspendedCompanies = companyData.filter(
+      (company) => company.state == CompanyState.SUSPENDED
+    );
+
+    if (suspendedCompanies.length > 0) {
+      const updated: any = await this.programmeLedger.freezeIssuedCredit(
+        req.programmeId,
+        req.issueAmount,
+        this.getUserRef(user),
+        suspendedCompanies
+      );
+      if (!updated) {
+        return new BasicResponseDto(
+          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString(
+            "programme.internalErrorCreditFreezing",
+            [req.programmeId]
+          )
+        );
+      }
+
+    }
+
     return new DataResponseDto(HttpStatus.OK, updated);
   }
 
