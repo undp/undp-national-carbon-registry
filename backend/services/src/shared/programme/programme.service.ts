@@ -1857,7 +1857,7 @@ export class ProgrammeService {
         HttpStatus.BAD_REQUEST
       );
     }
-    const updated: any = await this.programmeLedger.issueProgrammeStatus(
+    let updated: any = await this.programmeLedger.issueProgrammeStatus(
       req.programmeId,
       this.configService.get("systemCountry"),
       program.companyId,
@@ -1874,19 +1874,10 @@ export class ProgrammeService {
       );
     }
 
-    updated.company = await this.companyRepo.find({
-      where: { companyId: In(updated.companyId) },
-    });
-    if (updated.certifierId && updated.certifierId.length > 0) {
-      updated.certifier = await this.companyRepo.find({
-        where: { companyId: In(updated.certifierId) },
-      });
-    }
-
     const hostAddress = this.configService.get("host");
-    updated.company.forEach(async (company) => {
+    updated.companyId.forEach(async (companyId) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
-        company.companyId,
+        companyId,
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
@@ -1907,7 +1898,7 @@ export class ProgrammeService {
     );
 
     if (suspendedCompanies.length > 0) {
-      const updated: any = await this.programmeLedger.freezeIssuedCredit(
+      updated = await this.programmeLedger.freezeIssuedCredit(
         req.programmeId,
         req.issueAmount,
         this.getUserRef(user),
@@ -1922,7 +1913,15 @@ export class ProgrammeService {
           )
         );
       }
+    }
 
+    updated.company = await this.companyRepo.find({
+      where: { companyId: In(updated.companyId) },
+    });
+    if (updated.certifierId && updated.certifierId.length > 0) {
+      updated.certifier = await this.companyRepo.find({
+        where: { companyId: In(updated.certifierId) },
+      });
     }
 
     return new DataResponseDto(HttpStatus.OK, updated);

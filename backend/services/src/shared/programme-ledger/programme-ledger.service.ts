@@ -1262,7 +1262,8 @@ export class ProgrammeLedgerService {
       programmeId: programmeId,
     };
 
-    await this.ledger.getAndUpdateTx(
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
       getQueries,
       (results: Record<string, dom.Value[]>) => {
         const programmes: Programme[] = results[this.ledger.tableName].map(
@@ -1295,6 +1296,8 @@ export class ProgrammeLedgerService {
             (programme.txRef = `${txRef}##${company.name}`),
             (programme.txType = TxType.FREEZE);
 
+          updatedProgramme = programme;
+
           updateMap[this.ledger.tableName + "#" + company.companyId] = {
             creditFrozen: programme.creditFrozen,
             creditChange: programme.creditChange,
@@ -1311,6 +1314,6 @@ export class ProgrammeLedgerService {
       }
     );
 
-    return true;
+    return updatedProgramme;
   }
 }
