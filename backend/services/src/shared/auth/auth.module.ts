@@ -30,7 +30,7 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
     }),
     CaslModule,
     CompanyModule,
-    AsyncOperationsModule
+    AsyncOperationsModule,
   ],
   providers: [
     AuthService,

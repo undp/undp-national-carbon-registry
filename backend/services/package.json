@@ -82,7 +82,7 @@
     "jest": "28.1.3",
     "prettier": "^2.3.2",
     "serverless": "^3.25.1",
-    "serverless-offline": "^11.2.3",
+    "serverless-offline": "^12.0.4",
     "serverless-plugin-optimize": "^4.2.1-rc.1",
     "serverless-plugin-typescript": "^2.1.4",
     "serverless-ssm-fetch": "^2.0.0",

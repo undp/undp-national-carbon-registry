@@ -23,8 +23,8 @@ services:
   national:
     image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:latest
     # build:
-      # context: .
-      # dockerfile: ./backend/services/Dockerfile
+    # context: .
+    # dockerfile: ./backend/services/Dockerfile
     ports:
       - "3000:3000"
     depends_on:
