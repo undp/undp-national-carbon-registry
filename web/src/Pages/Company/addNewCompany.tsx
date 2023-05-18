@@ -96,7 +96,11 @@ const AddNewCompany = () => {
     const requestData = { ...values, role: 'Admin', company: { ...stepOneData } };
     setLoading(true);
     try {
-      requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
+      if (requestData.phoneNo) {
+        requestData.phoneNo = formatPhoneNumberIntl(requestData.phoneNo);
+      } else {
+        requestData.phoneNo = undefined;
+      }
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
       if (requestData.company.website) {
         requestData.company.website = 'https://' + requestData.company.website;
