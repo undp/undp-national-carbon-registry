@@ -17,7 +17,7 @@ export default () => ({
     logging: ["error"],
   },
   jwt: {
-    expiresIn: process.env.EXPIRES_IN || "120",
+    expiresIn: process.env.EXPIRES_IN || "7200",
     userSecret: process.env.USER_JWT_SECRET || "1324",
     adminSecret: process.env.ADMIN_JWT_SECRET || "8654",
   },

@@ -314,7 +314,7 @@ const CompanyManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">{t('company:creditBalance')}</div>
+          <div className="filter-title">{t('company:filterByCompany')}</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">{t('company:all')}</Radio>

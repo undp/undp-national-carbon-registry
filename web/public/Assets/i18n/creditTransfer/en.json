@@ -29,5 +29,6 @@
   "transferReqApproved": "The transfer request has been accepted successfully",
   "internationalTranferReqAccepted": "The international transfer retire request has been accepted successfully",
   "internationalTransferReqRejected": "The international transfer retire request has been rejected successfully",
+  "internationalTransferReqCancelled": "The international transfer retire request has been cancelled successfully",
   "allTransfersPausedLabelTxt": "All transfers are currently paused"
 }
