@@ -52,7 +52,11 @@ const AddUser = () => {
   const onAddUser = async (values: any) => {
     setLoading(true);
     try {
-      values.phoneNo = formatPhoneNumberIntl(values.phoneNo);
+      if (values.phoneNo) {
+        values.phoneNo = formatPhoneNumberIntl(values.phoneNo);
+      } else {
+        values.phoneNo = undefined;
+      }
       const response = await post('national/user/add', values);
       if (response.status === 200 || response.status === 201) {
         message.open({
