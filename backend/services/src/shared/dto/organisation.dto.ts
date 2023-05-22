@@ -64,6 +64,7 @@ export class OrganisationDto {
   address: string;
 
   @IsString()
+  @IsNotEmpty()
   @ApiPropertyOptional()
   @MaxLength(1048576, { message: "Logo cannot exceed 1MB" })
   logo: string;
