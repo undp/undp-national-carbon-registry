@@ -72,9 +72,14 @@
         rgba(196, 196, 196, 0) 0%,
         rgba(4, 104, 177, 0.6) 0.01%
       ),
+      url('../../Assets/Images/factory.webp');
+    background-image: linear-gradient(
+        to bottom,
+        rgba(196, 196, 196, 0) 0% rgba(4, 104, 177, 0.6) 0.01%
+      ),
       image-set(
-        url('../../Assets/Images/factory.png') type('image/png'),
-        url('../../Assets/Images/factory.webp') type('image/webp')
+        '../../Assets/Images/factory.png' type('image/png'),
+        '../../Assets/Images/factory.webp' type('image/webp')
       );
     background-size: cover;
   }
