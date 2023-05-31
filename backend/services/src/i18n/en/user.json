@@ -30,5 +30,6 @@
     "resetPasswordReqExpired": "Your password resetting request has been expired",
     "reqIdFound": "Reset request id found",
     "resetEmailSent": "User found, An email was sent",
-    "invalidCountry": "Country is invalid"
+    "invalidCountry": "Country is invalid",
+    "editUserSuccess": "The user account has been updated successfully"
 }

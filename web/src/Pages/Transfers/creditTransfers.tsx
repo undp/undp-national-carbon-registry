@@ -48,6 +48,9 @@ import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
 import { CircleFlag } from 'react-circle-flags';
 import { Role } from '../../Casl/enums/role.enum';
+import { ConfigurationSettingsType } from '../../Definitions/InterfacesAndType/settings.definitions';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { PauseCircle, PlayCircle } from 'react-bootstrap-icons';
 
 type CompanyInfo = {
   name: string;
@@ -77,7 +80,7 @@ const CreditTransfer = () => {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(true);
 
-  const { post } = useConnection();
+  const { post, get } = useConnection();
   const [totalProgramme, setTotalProgramme] = useState<number>();
   const [dataFilter, setDataFilter] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -96,6 +99,7 @@ const CreditTransfer = () => {
   const [totalComCredits, setTotalComCredits] = useState<number>(0);
   const [companyIdsVal, setCompanyIdsVal] = useState<number[]>();
   const [creditAmount, setCreditAmount] = useState<number>(0);
+  const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
     console.log(checkedValues);
@@ -212,7 +216,8 @@ const CreditTransfer = () => {
     reqId: number,
     remarks: string,
     endpoint: string,
-    successText?: string
+    successText?: string,
+    isRetire?: boolean
   ) => {
     setLoading(true);
     try {
@@ -220,10 +225,14 @@ const CreditTransfer = () => {
         requestId: reqId,
         comment: remarks,
       });
+      let successMsg = response.message;
+      if (isRetire) {
+        successMsg = t('creditTransfer:internationalTransferReqCancelled');
+      }
       console.log(response);
       message.open({
         type: 'success',
-        content: successText ? successText : response.message,
+        content: successText ? successText : successMsg,
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
@@ -255,6 +264,10 @@ const CreditTransfer = () => {
   };
 
   const actionMenu = (record: any) => {
+    let isRetire = false;
+    if (record.isRetirement === true) {
+      isRetire = true;
+    }
     if (record.status === 'Pending' && userInfoState?.userRole !== Role.ViewOnly) {
       return userInfoState?.companyId === record.initiatorCompanyId ? (
         <List
@@ -270,7 +283,7 @@ const CreditTransfer = () => {
                   icon: <Icon.ExclamationOctagon />,
                   actionBtnText: t('creditTransfer:proceed'),
                   okAction: (requestId: any, comment: any) =>
-                    handleRequestOk(requestId, comment, 'transferCancel'),
+                    handleRequestOk(requestId, comment, 'transferCancel', undefined, isRetire),
                   type: 'danger',
                   remarkRequired: true,
                 });
@@ -620,7 +633,7 @@ const CreditTransfer = () => {
       align: 'right' as const,
       render: (_: any, record: any) => {
         const menu = actionMenu(record);
-        return menu ? (
+        return menu && !isTransferFrozen ? (
           <Popover placement="bottomRight" content={menu} trigger="click">
             <EllipsisOutlined
               rotate={90}
@@ -659,67 +672,38 @@ const CreditTransfer = () => {
     // setCurrentPage(1);
   };
 
-  // const handleOk = (val: any) => {
-  //   console.log(val);
-  //   selectedReqId !== undefined && rejectTransfer(selectedReqId, val.remarks);
-  //   formModal.resetFields();
-  //   setSelectedReqId(undefined);
-  // };
-
-  // const handleCancel = () => {
-  //   setRejectModalVisible(false);
-  //   formModal.resetFields();
-  //   setSelectedReqId(undefined);
-  // };
-
-  // const handleCancelOk = (val: any) => {
-  //   console.log(val);
-  //   selectedReqId !== undefined && cancelRequest(selectedReqId, val.remarks);
-  //   formModal.resetFields();
-  //   setCancelModalVisible(false);
-  // };
-
-  // const handleCancelCancel = () => {
-  //   setSelectedReqId(undefined);
-  //   formModal.resetFields();
-  //   setCancelModalVisible(false);
-  // };
-
-  // const handleAcceptOk = (val: any) => {
-  //   const arr = [];
-  //   for (const key in val) {
-  //     if (key.startsWith('credits') && val[key] !== undefined) {
-  //       arr.push(parseInt(val[key]));
-  //     } else if (key.startsWith('credits') && val[key] === undefined) {
-  //       arr.push(0);
-  //     }
-  //   }
-  //   const sum = arr.reduce((a, b) => a + b, 0);
-  //   if (sum === creditAmount) {
-  //     acceptRequestApi(arr, val.remarksApprove);
-  //     formModal.resetFields();
-  //     setAcceptModalVisible(false);
-  //   } else {
-  //     message.open({
-  //       type: 'error',
-  //       content: 'Sum of credits should be equal to total requested credits',
-  //       duration: 3,
-  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-  //     });
-  //   }
-  // };
-
-  // const handleAcceptCancel = () => {
-  //   setSelectedReqId(undefined);
-  //   formModal.resetFields();
-  //   setAcceptModalVisible(false);
-  // };
+  const onFreezeTransfer = async () => {
+    const response = await post('national/Settings/update', {
+      id: ConfigurationSettingsType.isTransferFrozen,
+      settingValue: `${!isTransferFrozen}`,
+    });
+    if (response) {
+      setTransferFrozen(!isTransferFrozen);
+    }
+  };
 
   return (
     <div className="credit-transfer-management content-container">
       <div className="title-bar">
-        <div className="body-title">{t('creditTransfer:viewCreditsTransfers')}</div>
-        <div className="body-sub-title">{t('creditTransfer:desc')}</div>
+        <Row justify="space-between" align="middle">
+          <Col span={20}>
+            <div className="body-title">{t('creditTransfer:viewCreditsTransfers')}</div>
+            <div className="body-sub-title">{t('creditTransfer:desc')}</div>
+          </Col>
+          <Col span={4}>
+            {((userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+              userInfoState?.userRole === Role.Admin) ||
+              userInfoState?.userRole === Role.Root) && (
+              <div className="transfer-freeze-icon" onClick={onFreezeTransfer}>
+                {isTransferFrozen ? (
+                  <PlayCircle className="play-circle" size={35}></PlayCircle>
+                ) : (
+                  <PauseCircle className="pause-circle" size={35}></PauseCircle>
+                )}
+              </div>
+            )}
+          </Col>
+        </Row>
       </div>
       <div className="content-card">
         <Row>

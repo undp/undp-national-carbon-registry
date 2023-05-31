@@ -16,6 +16,8 @@ import { PasswordResetService } from "./passwordReset.service";
 import { User } from "../entities/user.entity";
 import { UserModule } from "../user/user.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
+import { ConfigurationSettingsService } from "./configurationSettings.service";
+import { ConfigurationSettings } from "../entities/configuration.settings";
 
 @Module({
   imports: [
@@ -39,8 +41,14 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
         AcceptLanguageResolver,
       ],
     }),
-    TypeOrmModule.forFeature([Counter, Country, PasswordReset, User]),
-    forwardRef(() => AsyncOperationsModule)
+    TypeOrmModule.forFeature([
+      Counter,
+      Country,
+      PasswordReset,
+      User,
+      ConfigurationSettings,
+    ]),
+    forwardRef(() => AsyncOperationsModule),
   ],
   providers: [
     CounterService,
@@ -49,12 +57,14 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
     HelperService,
     PasswordResetService,
     Logger,
+    ConfigurationSettingsService,
   ],
   exports: [
     CounterService,
     CountryService,
     HelperService,
     PasswordResetService,
+    ConfigurationSettingsService,
   ],
 })
 export class UtilModule {}

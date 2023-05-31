@@ -1,5 +1,5 @@
 export enum SourceOfFunding {
-    BoardSourceFunding = 'BoardSourceFunding',
-    Government = 'Government',
-    GrantOrLoan = 'GrantOrLoan'
+  BoardSourceFunding = "BoardSourceFunding",
+  GovernmentGrantOrLoan = "GovernmentGrantOrLoan",
+  Other = "Other",
 }

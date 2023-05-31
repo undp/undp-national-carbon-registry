@@ -799,6 +799,10 @@ const Dashboard = () => {
             name: 'Retired',
             data: programmesAggByStatus?.retiredCredits,
           },
+          {
+            name: 'Frozen',
+            data: programmesAggByStatus?.frozenCredits,
+          },
         ];
         setTotalCreditsSeries(totalCreditsValues);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
@@ -1247,10 +1251,13 @@ const Dashboard = () => {
       }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
+      const creditIssued =
+        totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits;
       pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
-      pieSeriesCreditsData.push(addRoundNumber(totalBalancecredit));
+      pieSeriesCreditsData.push(addRoundNumber(creditIssued));
       pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
       pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
+      pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
 
       pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
       pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
@@ -1440,9 +1447,9 @@ const Dashboard = () => {
   ]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
-  const pending = ['==', ['get', 'stage'], 'AwaitingAuthorization'];
-  const authorised = ['==', ['get', 'stage'], 'Authorised'];
-  const rejected = ['==', ['get', 'stage'], 'Rejected'];
+  const pending = ['all', ['==', ['get', 'stage'], 'AwaitingAuthorization']];
+  const authorised = ['all', ['==', ['get', 'stage'], 'Authorised']];
+  const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
 
   const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
 

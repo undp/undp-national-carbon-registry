@@ -347,7 +347,7 @@ const UserManagement = () => {
         {
           key: searchByTermUser,
           operation: 'like',
-          value: networksearchUsers + '%',
+          value: '%' + networksearchUsers + '%',
         },
       ];
     } else return undefined;
@@ -366,7 +366,7 @@ const UserManagement = () => {
         {
           key: searchByTermUser,
           operation: 'like',
-          value: networksearchUsers + '%',
+          value: '%' + networksearchUsers + '%',
         },
         {
           key: 'role',
@@ -390,7 +390,7 @@ const UserManagement = () => {
         {
           key: searchByTermUser,
           operation: 'like',
-          value: networksearchUsers + '%',
+          value: '%' + networksearchUsers + '%',
         },
         {
           key: 'role',
@@ -409,7 +409,7 @@ const UserManagement = () => {
         {
           key: searchByTermUser,
           operation: 'like',
-          value: networksearchUsers + '%',
+          value: '%' + networksearchUsers + '%',
         },
         {
           key: 'companyRole',

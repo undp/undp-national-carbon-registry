@@ -1,69 +1,46 @@
 import {
   BankOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
   ExperimentOutlined,
-  EyeOutlined,
   FilterOutlined,
   PlusOutlined,
   SafetyOutlined,
-  SearchOutlined,
-  StarOutlined,
-  ToolOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Checkbox,
   Col,
   Dropdown,
   Empty,
   Input,
-  List,
   MenuProps,
   message,
   PaginationProps,
-  Popconfirm,
-  Popover,
   Radio,
   Row,
   Select,
   Space,
   Table,
-  Typography,
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
 import './companyManagement.scss';
 import '../Common/common.table.scss';
 import { useNavigate } from 'react-router-dom';
-import type { ColumnsType } from 'antd/es/table';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
-  AdminBGColor,
-  AdminColor,
   CertBGColor,
   CertColor,
   DevBGColor,
   DevColor,
   GovBGColor,
   GovColor,
-  ManagerBGColor,
-  ManagerColor,
-  RootBGColor,
-  RootColor,
-  ViewBGColor,
-  ViewColor,
 } from '../Common/role.color.constants';
 import ProfileIcon from '../../Components/ProfileIcon/profile.icon';
 import { useTranslation } from 'react-i18next';
-import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
+import { CompanyRole, addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { CompanyTableDataType } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import { AbilityContext } from '../../Casl/Can';
 import { Action } from '../../Casl/enums/action.enum';
 import { Company } from '../../Casl/entities/Company';
-import { plainToClass } from 'class-transformer';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -180,6 +157,9 @@ const CompanyManagement = () => {
       key: 'taxId',
       sorter: true,
       align: 'left' as const,
+      render: (item: any) => {
+        return item ? item : '-';
+      },
     },
     {
       title: t('company:companyRole'),
@@ -208,7 +188,7 @@ const CompanyManagement = () => {
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
-        return item ? addCommSep(item) : '-';
+        return item !== null ? addCommSep(item) : '-';
       },
     },
   ];
@@ -334,7 +314,7 @@ const CompanyManagement = () => {
       title: 'Filter by',
       label: (
         <div className="filter-menu-item">
-          <div className="filter-title">{t('company:creditBalance')}</div>
+          <div className="filter-title">{t('company:filterByCompany')}</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">{t('company:all')}</Radio>

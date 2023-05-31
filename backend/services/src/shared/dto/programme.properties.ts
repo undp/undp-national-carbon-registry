@@ -83,14 +83,12 @@ export class ProgrammeProperties {
   creditYear?: number;
 
   @ApiPropertyOptional()
-  @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  programmeMaterials?: string;
+  programmeMaterials?: [];
 
   @ApiPropertyOptional()
-  @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  projectMaterial?: string;
+  projectMaterial?: [];
 }

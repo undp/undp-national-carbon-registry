@@ -805,7 +805,7 @@ export class ProgrammeService {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(
-          "programme.transferReqCancelSuccess",
+          "programme.transferCancelSuccess",
           []
         )
       );
@@ -1857,7 +1857,7 @@ export class ProgrammeService {
         HttpStatus.BAD_REQUEST
       );
     }
-    const updated: any = await this.programmeLedger.issueProgrammeStatus(
+    let updated: any = await this.programmeLedger.issueProgrammeStatus(
       req.programmeId,
       this.configService.get("systemCountry"),
       program.companyId,
@@ -1874,19 +1874,10 @@ export class ProgrammeService {
       );
     }
 
-    updated.company = await this.companyRepo.find({
-      where: { companyId: In(updated.companyId) },
-    });
-    if (updated.certifierId && updated.certifierId.length > 0) {
-      updated.certifier = await this.companyRepo.find({
-        where: { companyId: In(updated.certifierId) },
-      });
-    }
-
     const hostAddress = this.configService.get("host");
-    updated.company.forEach(async (company) => {
+    updated.companyId.forEach(async (companyId) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
-        company.companyId,
+        companyId,
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
@@ -1897,6 +1888,41 @@ export class ProgrammeService {
         }
       );
     });
+
+    const companyData = await this.companyService.findByCompanyIds({
+      companyIds: program.companyId,
+    });
+
+    const suspendedCompanies = companyData.filter(
+      (company) => company.state == CompanyState.SUSPENDED
+    );
+
+    if (suspendedCompanies.length > 0) {
+      updated = await this.programmeLedger.freezeIssuedCredit(
+        req.programmeId,
+        req.issueAmount,
+        this.getUserRef(user),
+        suspendedCompanies
+      );
+      if (!updated) {
+        return new BasicResponseDto(
+          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString(
+            "programme.internalErrorCreditFreezing",
+            [req.programmeId]
+          )
+        );
+      }
+    }
+
+    updated.company = await this.companyRepo.find({
+      where: { companyId: In(updated.companyId) },
+    });
+    if (updated.certifierId && updated.certifierId.length > 0) {
+      updated.certifier = await this.companyRepo.find({
+        where: { companyId: In(updated.certifierId) },
+      });
+    }
 
     return new DataResponseDto(HttpStatus.OK, updated);
   }
