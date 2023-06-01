@@ -6,7 +6,7 @@
 
 There are two primary ways to help:
  - [Using the issue tracker](#tracker)
- - [Changing the code-base](code)
+ - [Changing the code-base](#code)
 
  <a name="tracker"></a>
 ## Using the issue tracker
