@@ -8,7 +8,6 @@ import { useUserContext } from '../../Context/UserInformationContext/userInforma
 const UserManagement = () => {
   const navigate = useNavigate();
   const { userInfoState } = useUserContext();
-  const { post, delete: del } = useConnection();
   const { t } = useTranslation(['company']);
 
   const visibleColumns = [

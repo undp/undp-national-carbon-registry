@@ -7,11 +7,7 @@ import { AbilityContext } from '../../Casl/Can';
 
 const AddUser = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['addCompany']);
-
-  const maximumImageSize = process.env.MAXIMUM_IMAGE_SIZE
-    ? parseInt(process.env.MAXIMUM_IMAGE_SIZE)
-    : 3145728;
+  const { t } = useTranslation(['addUser', 'passwordReset', 'userProfile']);
 
   const onNavigateToUserManagement = () => {
     navigate('/userManagement/viewAll', { replace: true });

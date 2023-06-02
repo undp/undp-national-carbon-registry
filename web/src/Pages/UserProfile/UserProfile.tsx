@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { UserProfileComponent } from 'carbon-library';
-import { AbilityContext } from '../../Casl/Can';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['companyProfile']);
-  const { get } = useConnection();
+  const { t, i18n } = useTranslation(['userProfile']);
 
   const onNavigateUpdateUser = (organisationDetails: any, userDetails: any) => {
     navigate('/userManagement/updateUser', {
