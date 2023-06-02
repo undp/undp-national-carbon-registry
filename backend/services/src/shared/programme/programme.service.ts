@@ -10,7 +10,7 @@ import {
   calculateCredit,
   SolarConstants,
   SolarCreationRequest,
-} from "carbon-credit-calculator";
+} from "@undp/carbon-credit-calculator";
 import { QueryDto } from "../dto/query.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";

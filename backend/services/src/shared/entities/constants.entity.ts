@@ -1,4 +1,4 @@
-import { SubSectorConstants } from "carbon-credit-calculator";
+import { SubSectorConstants } from "@undp/carbon-credit-calculator";
 import { Column, Entity, Generated, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 

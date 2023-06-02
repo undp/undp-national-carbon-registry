@@ -1,12 +1,5 @@
-import { PRECISION } from 'carbon-credit-calculator/dist/esm/calculator';
-import { SectoralScope } from 'serial-number-gen';
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn, ValueTransformer } from 'typeorm';
-import { AgricultureProperties } from '../dto/agriculture.properties';
-import { ProgrammeProperties } from '../dto/programme.properties';
-import { SolarProperties } from '../dto/solar.properties';
-import { Sector } from '../enum/sector.enum';
+import { Entity, Column, PrimaryGeneratedColumn, ValueTransformer } from 'typeorm';
 import { TransferStatus } from '../enum/transform.status.enum';
-import { ProgrammeStage } from '../enum/programme-status.enum';
 import { EntitySubject } from './entity.subject';
 import { BasicOrgInfo } from '../dto/basic.organisation.dto';
 import { RetireType } from '../enum/retire.type.enum';

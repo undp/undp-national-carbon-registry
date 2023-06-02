@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectEntityManager } from "@nestjs/typeorm";
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 import { plainToClass } from "class-transformer";
 import { dom } from "ion-js";
 import axios from "axios";
-import { generateSerialNumber } from "serial-number-gen";
+import { generateSerialNumber } from "@undp/serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
 import { CreditOverall } from "../entities/credit.overall.entity";
