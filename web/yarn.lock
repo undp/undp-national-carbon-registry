@@ -2611,6 +2611,23 @@
   dependencies:
     "@ucast/core" "^1.4.1"
 
+"@undp/carbon-library@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.1.tgz#121d4a70af5525d1229f36b180cdffb912ba5acc"
+  integrity sha512-HY+XQyM3QZjtteaFtHhOq3H2gg5TluftwwZjY73isVYQMhXz0hGpVbg8T0bY/HRJBjJp4bURqdbeWDZk9Ii7Dw==
+  dependencies:
+    "@rollup/plugin-commonjs" "^25.0.0"
+    "@rollup/plugin-node-resolve" "^15.0.2"
+    "@rollup/plugin-typescript" "^11.1.1"
+    node-sass "^7.0.3"
+    postcss "^8.4.23"
+    rollup "^3.22.0"
+    rollup-plugin-dts "^5.3.0"
+    rollup-plugin-peer-deps-external "^2.2.4"
+    rollup-plugin-postcss "^4.0.2"
+    tslib "^2.5.2"
+    typescript "^5.0.4"
+
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.11.1.tgz#2bfd767eae1a6996f432ff7e8d7fc75679c0b6a7"
@@ -3650,22 +3667,6 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001449, caniuse-lite@^1.0.30001464:
   version "1.0.30001474"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001474.tgz#13b6fe301a831fe666cce8ca4ef89352334133d5"
   integrity sha512-iaIZ8gVrWfemh5DG3T9/YqarVZoYf0r188IjaGwx68j4Pf0SGY6CQkmJUIE+NZHkkecQGohzXmBGEwWDr9aM3Q==
-
-"carbon-library@https://github.com/xeptagondev/carbon-library.git":
-  version "1.0.0"
-  resolved "https://github.com/xeptagondev/carbon-library.git#953bf06b8022c39bde5fc720e611146187a986db"
-  dependencies:
-    "@rollup/plugin-commonjs" "^25.0.0"
-    "@rollup/plugin-node-resolve" "^15.0.2"
-    "@rollup/plugin-typescript" "^11.1.1"
-    node-sass "^7.0.3"
-    postcss "^8.4.23"
-    rollup "^3.22.0"
-    rollup-plugin-dts "^5.3.0"
-    rollup-plugin-peer-deps-external "^2.2.4"
-    rollup-plugin-postcss "^4.0.2"
-    tslib "^2.5.2"
-    typescript "^5.0.4"
 
 case-sensitive-paths-webpack-plugin@^2.4.0:
   version "2.4.0"
@@ -10417,9 +10418,9 @@ rollup@^2.43.1:
     fsevents "~2.3.2"
 
 rollup@^3.22.0:
-  version "3.23.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.23.0.tgz#b8d6146dac4bf058ee817f92820988e9b358b564"
-  integrity sha512-h31UlwEi7FHihLe1zbk+3Q7z1k/84rb9BSwmBSr/XjOCEaBJ2YyedQDuM0t/kfOS0IxM+vk1/zI9XxYj9V+NJQ==
+  version "3.23.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-3.23.1.tgz#a6e50cb86a17fc2e3248d8ec12ff8666992b0780"
+  integrity sha512-ybRdFVHOoljGEFILHLd2g/qateqUdjE6YS41WXq4p3C/WwD3xtWxV4FYWETA1u9TeXQc5K8L8zHE5d/scOvrOQ==
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -11593,9 +11594,9 @@ tslib@^2.0.3, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0, tslib@^2.5.0:
   integrity sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==
 
 tslib@^2.5.2:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.2.tgz#1b6f07185c881557b0ffa84b111a0106989e8338"
-  integrity sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.3.tgz#24944ba2d990940e6e982c4bea147aba80209913"
+  integrity sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==
 
 tslint-config-prettier@^1.18.0:
   version "1.18.0"
