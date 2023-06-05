@@ -58,7 +58,6 @@ import {
   TypeOfMitigation,
   UnitField,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
-import i18next from 'i18next';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
   CertBGColor,

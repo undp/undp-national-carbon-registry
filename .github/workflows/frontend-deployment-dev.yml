@@ -39,6 +39,9 @@ jobs:
       - name: clear cache
         working-directory: ./web
         run: yarn cache clean
+      - name: skip intergrity
+        working-directory: ./web
+        run: yarn --skip-integrity-check
       - name: Install dependencies
         working-directory: ./web
         run: CI=false yarn
