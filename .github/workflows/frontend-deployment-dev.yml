@@ -36,6 +36,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: clear cache
+        working-directory: ./web
+        run: yarn cache clean
       - name: Install dependencies
         working-directory: ./web
         run: CI=false yarn
