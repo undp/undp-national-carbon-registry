@@ -36,15 +36,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: clear cache
-        working-directory: ./web
-        run: yarn cache clean
-      - name: skip intergrity
-        working-directory: ./web
-        run: yarn --skip-integrity-check
       - name: Install dependencies
         working-directory: ./web
-        run: CI=false yarn
+        run: CI=false yarn --frozen-lockfile
       - name: Build
         working-directory: ./web
         run: CI=false yarn build
