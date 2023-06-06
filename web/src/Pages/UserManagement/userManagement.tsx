@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { AbilityContext } from '../../Casl/Can';
-import { UserManagementComponent, UserManagementColumns } from 'carbon-library';
+import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 

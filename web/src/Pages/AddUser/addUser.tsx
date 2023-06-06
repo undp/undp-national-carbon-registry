@@ -2,7 +2,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { AddNewUserComponent } from 'carbon-library';
+import { AddNewUserComponent } from '@undp/carbon-library';
 import { AbilityContext } from '../../Casl/Can';
 
 const AddUser = () => {
