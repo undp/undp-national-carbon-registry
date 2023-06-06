@@ -23,7 +23,7 @@ import {
 } from "../shared/dto/programmeStatus.timeGrouped.result";
 import { TransferStatus } from "../shared/enum/transform.status.enum";
 import { CompanyRole } from "../shared/enum/company.role.enum";
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 
 @Injectable()
 export class AggregateAPIService {

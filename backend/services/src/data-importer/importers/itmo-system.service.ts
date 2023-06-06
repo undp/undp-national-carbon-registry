@@ -6,7 +6,7 @@ import { CompanyService } from "../../shared/company/company.service";
 import { ImporterInterface } from "../importer.interface";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 import { CompanyRole } from "../../shared/enum/company.role.enum";
-import { SectoralScope } from "serial-number-gen";
+import { SectoralScope } from "@undp/serial-number-gen";
 import { Sector } from "../../shared/enum/sector.enum";
 import { TypeOfMitigation } from "../../shared/enum/typeofmitigation.enum";
 import { UserService } from "../../shared/user/user.service";

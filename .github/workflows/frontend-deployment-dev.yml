@@ -5,6 +5,7 @@ on:
       - develop
     paths:
       - web/**
+      - .github/workflows/frontend*
 
 jobs:
   deploy_front_end:
@@ -38,7 +39,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         working-directory: ./web
-        run: CI=false yarn
+        run: CI=false yarn install --frozen-lockfile
       - name: Build
         working-directory: ./web
         run: CI=false yarn build

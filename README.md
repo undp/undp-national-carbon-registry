@@ -408,12 +408,6 @@ Open source code available at https://github.com/undp/carbon-registry-status
 
 <a name="support"></a>
 ### Governance and Support
-![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)
+[Digital For Climate (D4C)](https://www.theclimatewarehouse.org/work/digital-4-climate) is responsible for managing the application. D4C is a collaboration between the [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org) that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development. 
 
-UNDP is responsible for managing the application. 
-
-Availability problems, failures of platform components, capacity requirements, performances degradation, database indexing, backup and monitoring are all in the responsibility of UNDP.
-
-UNDP is also responsible for performing the user support.
-
-By performing such support UNDP may require assistance from [Xeptagon](https://www.xeptagon.com). 
+This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian. For any questions, contact us at digital@undp.org .

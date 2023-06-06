@@ -272,7 +272,7 @@ const ProgrammeManagement = () => {
       };
     } else {
       sort = {
-        key: 'programmeId',
+        key: 'createdTime',
         order: 'DESC',
       };
     }

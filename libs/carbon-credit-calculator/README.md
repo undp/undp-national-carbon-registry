@@ -122,12 +122,12 @@ Example Calculation:
 ## Usage
 <!-- ### Install
 ```
-npm i --save carbon-credit-calculator <TODO: Publish the module>
+npm i --save @undp/carbon-credit-calculator
 ``` -->
 
 ### Generate Credit based on the Sector
 ```
-import { AgricultureConstants, AgricultureCreationRequest, calculateCredit, SolarConstants, SolarCreationRequest } from 'carbon-credit-calculator';
+import { AgricultureConstants, AgricultureCreationRequest, calculateCredit, SolarConstants, SolarCreationRequest } from '@undp/carbon-credit-calculator';
 
 // Create creditCreationRequest based on the sector
 // AgricultureCreationRequest if it is Agriculture sector

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
 import StasticCard from '../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
