@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { AddNewUserComponent } from '@undp/carbon-library';
-import { AbilityContext } from '../../Casl/Can';
+import { useAbilityContext } from '../../Casl/Can';
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const AddUser = () => {
       useConnection={useConnection}
       useUserContext={useUserContext}
       useLocation={useLocation}
-      AbilityContext={AbilityContext}
+      useAbilityContext={useAbilityContext}
     ></AddNewUserComponent>
   );
 };

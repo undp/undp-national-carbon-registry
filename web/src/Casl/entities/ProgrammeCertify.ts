@@ -1,4 +1,4 @@
-import { BaseEntity } from './BaseEntity';
+import { BaseEntity } from '@undp/carbon-library';
 
 export class ProgrammeCertify implements BaseEntity {
   programmeId?: string;
