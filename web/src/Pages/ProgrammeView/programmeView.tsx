@@ -75,7 +75,7 @@ import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
+import { ShieldCheck } from 'react-bootstrap-icons';
 import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
