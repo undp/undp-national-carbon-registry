@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { AbilityContext } from '../../Casl/Can';
+import { useAbilityContext } from '../../Casl/Can';
 import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { useContext } from 'react';
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const UserManagement = () => {
   return (
     <UserManagementComponent
       t={t}
-      AbilityContext={AbilityContext}
+      useAbilityContext={useAbilityContext}
       useConnection={useConnection}
       visibleColumns={visibleColumns}
       onNavigateToUpdateUser={navigateToUpdateUser}

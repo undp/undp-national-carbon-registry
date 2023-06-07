@@ -84,7 +84,7 @@ import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import { ProgrammeTransfer } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';

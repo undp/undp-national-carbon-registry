@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { CompanyProfileComponent } from '@undp/carbon-library';
-import { AbilityContext } from '../../Casl/Can';
+import { useAbilityContext } from '../../Casl/Can';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const CompanyProfile = () => {
   return (
     <CompanyProfileComponent
       t={t}
-      AbilityContext={AbilityContext}
+      useAbilityContext={useAbilityContext}
       useConnection={useConnection}
       useLocation={useLocation}
       onNavigateToCompanyManagement={onNavigateToCompanyManagement}
