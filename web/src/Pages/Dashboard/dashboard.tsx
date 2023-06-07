@@ -54,7 +54,7 @@ const { RangePicker } = DatePicker;
 const Dashboard = () => {
   const { get, post, delete: del } = useConnection();
   const { userInfoState } = useUserContext();
-  const { i18n, t } = useTranslation(['dashboard']);
+  const { t } = useTranslation(['dashboard']);
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
