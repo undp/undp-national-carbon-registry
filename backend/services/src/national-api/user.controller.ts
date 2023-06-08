@@ -47,6 +47,7 @@ export class UserController {
     return await this.userService.getUserProfileDetails(req.user.id);
   }
 
+  @ApiBearerAuth('api_key')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability, body) =>
