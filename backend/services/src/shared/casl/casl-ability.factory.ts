@@ -108,7 +108,7 @@ export class CaslAbilityFactory {
         can(Action.Manage, ProgrammeCertify);
       }
 
-      if (user.role == Role.Admin && user.companyRole == CompanyRole.MRV) {
+      if (user.role == Role.Admin && user.companyRole == CompanyRole.API) {
         can([Action.Create, Action.Read], Programme);
         can([Action.Create, Action.Read], User);
         can([Action.Create, Action.Read], Company);

@@ -2,7 +2,7 @@ FROM node:16-alpine as build
 WORKDIR /app
 COPY ./web .
 RUN apk add python3 make g++ && rm -rf /var/cache/apk/*
-RUN CI=false yarn install --frozen-lockfile
+RUN CI=false yarn install
 
 ARG PORT
 ENV PORT $PORT

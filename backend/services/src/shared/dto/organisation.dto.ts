@@ -18,7 +18,7 @@ export class OrganisationDto {
   companyId: number;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -31,7 +31,7 @@ export class OrganisationDto {
   name: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsEmail()
@@ -39,7 +39,7 @@ export class OrganisationDto {
   email: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -47,7 +47,7 @@ export class OrganisationDto {
   phoneNo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsUrl()
@@ -56,7 +56,7 @@ export class OrganisationDto {
   website: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()

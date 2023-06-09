@@ -416,7 +416,7 @@ export class UserService {
       }
     }
     if (company) {
-      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.MRV) {
+      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.API) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
@@ -501,7 +501,7 @@ export class UserService {
     }
 
     u.password = this.helperService.generateRandomPassword();
-    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.MRV) {
+    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.API) {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
