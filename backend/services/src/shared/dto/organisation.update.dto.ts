@@ -22,7 +22,7 @@ export class OrganisationUpdateDto {
   name: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -30,7 +30,7 @@ export class OrganisationUpdateDto {
   taxId: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsEmail()
@@ -38,7 +38,7 @@ export class OrganisationUpdateDto {
   email: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsUrl()
   @IsOptional()
@@ -53,14 +53,14 @@ export class OrganisationUpdateDto {
   logo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsString()
   @ApiPropertyOptional()
   phoneNo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.MRV].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
   @IsString()
   @ApiPropertyOptional()

@@ -33,7 +33,7 @@ export class ProgrammeProperties {
   @IsPositive()
   @IsNumber()
   @IsNotEmpty()
-  programmeCostUSD?: number;
+  estimatedProgrammeCostUSD?: number;
 
   @ApiPropertyOptional({ enum: SourceOfFunding })
   @IsEnum(SourceOfFunding, {
@@ -83,14 +83,12 @@ export class ProgrammeProperties {
   creditYear?: number;
 
   @ApiPropertyOptional()
-  @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  programmeMaterials?: string;
+  programmeMaterials?: [];
 
   @ApiPropertyOptional()
-  @IsUrl()
   @IsOptional()
   @IsNotEmpty()
-  projectMaterial?: string;
+  projectMaterial?: [];
 }

@@ -1,4 +1,6 @@
 {
     "addAsyncActionDatabaseFailed": "{} functionality failed when adding to database",
-    "addAsyncActionQueueFailed": "{} functionality failed when adding to queue"
+    "addAsyncActionQueueFailed": "{} functionality failed when adding to queue",
+    "settingsSavedMsg": "Settings saved successfully",
+    "settingsSaveFailedMsg": "Settings saving failed"
 }

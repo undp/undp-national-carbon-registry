@@ -23,7 +23,7 @@ import {
 } from "../shared/dto/programmeStatus.timeGrouped.result";
 import { TransferStatus } from "../shared/enum/transform.status.enum";
 import { CompanyRole } from "../shared/enum/company.role.enum";
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 
 @Injectable()
 export class AggregateAPIService {
@@ -115,6 +115,7 @@ export class AggregateAPIService {
       issuedCredits: [],
       transferredCredits: [],
       retiredCredits: [],
+      frozenCredits: [],
     };
     const groupedDataFiltered = passedResult?.filter(
       (item) => String(item.time_group) !== "0"
@@ -134,6 +135,7 @@ export class AggregateAPIService {
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
       let retiredCreditsSum = 0;
+      let frozenCreditsSum = 0;
       let resultThere: StatusGroupedByTimedataThere = {
         awaitingAuthorization: false,
         authorised: false,
@@ -151,11 +153,17 @@ export class AggregateAPIService {
           authorisedCreditsSum = authorisedCreditsSum + 0;
         }
         issuedCreditsSum =
-          issuedCreditsSum + parseFloat(timeGroupItem?.totalbalancecredit);
+          issuedCreditsSum +
+          parseFloat(timeGroupItem?.totalissuedcredit) -
+          parseFloat(timeGroupItem?.totalretiredcredit) -
+          parseFloat(timeGroupItem?.totaltxcredit) -
+          parseFloat(timeGroupItem?.totalfreezecredit);
         transferredCreditsSum =
           transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum =
           retiredCreditsSum + parseFloat(timeGroupItem?.totalretiredcredit);
+        frozenCreditsSum =
+          frozenCreditsSum + parseFloat(timeGroupItem?.totalfreezecredit);
         statusArray?.map((status) => {
           if (timeGroupItem?.currentStage === status) {
             resultThere[this.firstLower(timeGroupItem?.currentStage)] = true;
@@ -174,6 +182,7 @@ export class AggregateAPIService {
       result["issuedCredits"]?.push(issuedCreditsSum);
       result["transferredCredits"]?.push(transferredCreditsSum);
       result["retiredCredits"]?.push(retiredCreditsSum);
+      result["frozenCredits"]?.push(frozenCreditsSum);
     });
 
     const resultS = {

@@ -30,6 +30,8 @@ import { Programme } from "../entities/programme.entity";
 import { EmailTemplates } from "../email-helper/email.template";
 import { SystemActionType } from "../enum/system.action.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { CounterType } from "../util/counter.type.enum";
+import { CounterService } from "../util/counter.service";
 
 @Injectable()
 export class CompanyService {
@@ -43,7 +45,8 @@ export class CompanyService {
     private emailHelperService: EmailHelperService,
     @InjectRepository(ProgrammeTransfer)
     private programmeTransferRepo: Repository<ProgrammeTransfer>,
-    private fileHandler: FileHandlerInterface
+    private fileHandler: FileHandlerInterface,
+    private counterService: CounterService
   ) {}
 
   async suspend(
@@ -320,6 +323,12 @@ export class CompanyService {
 
   async create(companyDto: OrganisationDto): Promise<Company | undefined> {
     this.logger.verbose("Company create received", companyDto.email);
+
+    if (!companyDto.companyId) {
+      companyDto.companyId = parseInt(
+        await this.counterService.incrementCount(CounterType.COMPANY, 3)
+      );
+    }
 
     return await this.companyRepo.save(companyDto).catch((err: any) => {
       if (err instanceof QueryFailedError) {

@@ -135,6 +135,14 @@
     margin-top: 14px;
     font-weight: 600;
   }
+
+  .file-name {
+    cursor: pointer;
+    color: $body-text-color;
+  }
+  .file-name:hover {
+    color: $primary-color;
+  }
 }
 
 .info-view {

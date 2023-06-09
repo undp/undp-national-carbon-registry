@@ -6,6 +6,7 @@ export class StatusGroupedByTimedata {
   issuedCredits: any[];
   transferredCredits: any[];
   retiredCredits: any[];
+  frozenCredits: any[];
 }
 
 export class StatusGroupedByTimedataThere {

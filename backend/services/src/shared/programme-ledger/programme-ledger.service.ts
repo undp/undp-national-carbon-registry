@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectEntityManager } from "@nestjs/typeorm";
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 import { plainToClass } from "class-transformer";
 import { dom } from "ion-js";
 import axios from "axios";
-import { generateSerialNumber } from "serial-number-gen";
+import { generateSerialNumber } from "@undp/serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
 import { CreditOverall } from "../entities/credit.overall.entity";
@@ -18,6 +18,7 @@ import {
   LedgerDBInterface,
 } from "../ledger-db/ledger.db.interface";
 import { HelperService } from "../util/helpers.service";
+import { Company } from "../entities/company.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -1247,6 +1248,72 @@ export class ProgrammeLedgerService {
     if (affected && affected.length > 0) {
       return updatedProgramme;
     }
+    return updatedProgramme;
+  }
+
+  public async freezeIssuedCredit(
+    programmeId: string,
+    issueAmount: number,
+    txRef: string,
+    suspendedCompanies?: Company[]
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        let programme: Programme = programmes[0];
+
+        if (!programme.creditFrozen) {
+          programme.creditFrozen = new Array(
+            programme.creditOwnerPercentage.length
+          ).fill(0);
+        }
+
+        let updateMap = {};
+        let updateWhereMap = {};
+
+        suspendedCompanies.forEach(async (company) => {
+          const index = programme.companyId.indexOf(company.companyId);
+          const freezeCredit =
+            (issueAmount * programme.creditOwnerPercentage[index]) / 100;
+          programme.creditFrozen[index] += freezeCredit;
+          programme.creditChange = freezeCredit;
+
+          (programme.txTime = new Date().getTime()),
+            (programme.txRef = `${txRef}##${company.name}`),
+            (programme.txType = TxType.FREEZE);
+
+          updatedProgramme = programme;
+
+          updateMap[this.ledger.tableName + "#" + company.companyId] = {
+            creditFrozen: programme.creditFrozen,
+            creditChange: programme.creditChange,
+            txRef: programme.txRef,
+            txTime: programme.txTime,
+            txType: programme.txType,
+          };
+          updateWhereMap[this.ledger.tableName + "#" + company.companyId] = {
+            programmeId: programmeId,
+          };
+        });
+
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
+
     return updatedProgramme;
   }
 }

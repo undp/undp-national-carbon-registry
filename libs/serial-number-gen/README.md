@@ -102,8 +102,12 @@ Eg:
 
 
 # 3. Usage
+<!-- ### Install
 ```
-import { generateSerialNumber } from 'serial-number-gen';
+npm i --save @undp/serial-number-gen
+``` -->
+```
+import { generateSerialNumber } from '@undp/serial-number-gen';
 
 const serialNo = generateSerialNumber(countryCodeA2, sectoralScope, programmeId, year, startBlock, endBlock, creditUnit);
 

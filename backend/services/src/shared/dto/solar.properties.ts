@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BuildingType } from "carbon-credit-calculator";
+import { BuildingType } from "@undp/carbon-credit-calculator";
 import { IsNotEmpty, IsPositive, IsNumber, IsEnum } from "class-validator";
 
 export class SolarProperties {

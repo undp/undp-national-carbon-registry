@@ -1,5 +1,5 @@
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
-import { SectoralScope } from "serial-number-gen";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
+import { SectoralScope } from "@undp/serial-number-gen";
 import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
 import { AgricultureProperties } from "../dto/agriculture.properties";
 import { ProgrammeProperties } from "../dto/programme.properties";

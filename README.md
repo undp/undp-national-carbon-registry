@@ -178,6 +178,11 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
     - Use `DB_PASSWORD` env variable to change PostgresSQL database password
     - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
     - By default frontend does not show map images on dashboard and programme view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
+- Add user data
+  - Update [organisations.csv](./organisations.csv) file to add organisations.
+  - Update [users.csv](./users.csv) file to add users.
+  - When updating files keep the header and replace existing dummy data with your data.
+  - These users and companys add to the system each docker restart.
 - Run `docker-compose up -d --build`. This will build and start containers for following services,
     - PostgresDB container
     - National service
@@ -187,7 +192,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
 - Web frontend on http://localhost:3030/
 - API Endpoints,
   - http://localhost:3000/national#/
-  - http://localhost:3100/stats#/ 
+  - http://localhost:3100/stats#/
 
 <a name="local"></a>
 ## Run Services Locally
@@ -293,8 +298,8 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Credit Issuance Serial Number   |   |   |
 | Current Status   |   | Set default : Pending  |
 | Applicant Type   |   | Set default : Programme Developer  |
-| Sector (_sector_)  | Yes  | Sector  |
-| Sectoral Scope (_sectoralScope_)  | Yes  | Set default : 1 if ITMO term does not exist  |
+| Sector (_sector_)  | Yes  | [Sector](#itmo-sector-mapping)  |
+| Sectoral Scope (_sectoralScope_)  | Yes  | [Sector](#itmo-sector-mapping)|
 | Programme Start Date (_startTime_)  | Yes  | createdAt  |
 | Programme End Date  (_endTime_)  | Yes  | createdAt + 10 years  |
 | Geographical Location (Regional) (_geographicalLocation_)  | Yes  | country _(Name not mentioned as ISO3 or actual name)_  |
@@ -306,7 +311,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Company   |   | company  |
 | Company Tax ID (_proponentTaxVatId_)  | Yes  | company  |
 | Company Percentage (_proponentPercentage_)  | Yes  | Set default : 100%  |
-| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  |  |
+| Type of Mitigation Action/Activity (_typeOfMitigation_)  | Yes  | [Sector](#itmo-sector-mapping) |
 | GHGs Covered (_greenHouseGasses_)  | Yes  | Set default :  CO2  |
 | Credits Authorised  |   | Set default : 100  |
 | Credits Issued   |   | Set default : 10   |
@@ -325,6 +330,15 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | energy generation  |   |   |
 | energy generation unit  |   |   |
 | consumer group  |   |   |
+
+#### <b>ITMO Sector Mapping</b>
+|ITMO Sector Field Value|Sector|Sectoral Scope|Type Of Mitigation|
+| -- | -- | -- | -- |
+|energy-distribution|Energy|Energy Distribution|Energy Distribution
+|agriculture|Agriculture|Agriculture|Agriculture|
+|energy-industries|Energy|Energy Industry|EE Industry
+|Default|Other|Energy Industry|EE Industry
+
 
 #### <b>Assumptions</b>
 - Programme estimated credit amount is 100.
@@ -394,12 +408,6 @@ Open source code available at https://github.com/undp/carbon-registry-status
 
 <a name="support"></a>
 ### Governance and Support
-![undp-logo-blue](https://user-images.githubusercontent.com/109564/160651473-6d8daf4d-77fa-41ff-855c-43a0512353b6.svg) With funding, coordination and support from [United Nations Development Programme](https://www.undp.org)
+[Digital For Climate (D4C)](https://www.theclimatewarehouse.org/work/digital-4-climate) is responsible for managing the application. D4C is a collaboration between the [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org) that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development. 
 
-UNDP is responsible for managing the application. 
-
-Availability problems, failures of platform components, capacity requirements, performances degradation, database indexing, backup and monitoring are all in the responsibility of UNDP.
-
-UNDP is also responsible for performing the user support.
-
-By performing such support UNDP may require assistance from [Xeptagon](https://www.xeptagon.com). 
+This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian. For any questions, contact us at digital@undp.org .

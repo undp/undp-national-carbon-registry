@@ -46,6 +46,7 @@ import {
   AsyncOperationsInterface,
 } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
+import { DataResponseMessageDto } from "../dto/data.response.message";
 
 @Injectable()
 export class UserService {
@@ -140,6 +141,13 @@ export class UserService {
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
     const { id, ...update } = userDto;
+    const user = await this.findById(id);
+    if (!user) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.noUserFound", []),
+        HttpStatus.NOT_FOUND
+      );
+    }
 
     const result = await this.userRepo
       .createQueryBuilder()
@@ -149,7 +157,8 @@ export class UserService {
         `id = ${id} ${
           abilityCondition
             ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+              this.helperService.parseMongoQueryToSQL(abilityCondition) +
+              ")"
             : ""
         }`
       )
@@ -159,11 +168,15 @@ export class UserService {
         return err;
       });
     if (result.affected) {
-      return new DataResponseDto(HttpStatus.OK, await this.findById(id));
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("user.editUserSuccess", []),
+        await this.findById(id)
+      );
     }
     throw new HttpException(
       this.helperService.formatReqMessagesString("user.userUnAUth", []),
-      HttpStatus.NOT_FOUND
+      HttpStatus.FORBIDDEN
     );
   }
 
@@ -318,8 +331,15 @@ export class UserService {
     );
   }
 
-  async createUserWithPassword(name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: Role, phoneNo: string) {
-
+  async createUserWithPassword(
+    name: string,
+    companyRole: CompanyRole,
+    taxId: string,
+    password: string,
+    email: string,
+    userRole: Role,
+    phoneNo: string
+  ) {
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT) {
       if (!taxId) {
@@ -335,7 +355,7 @@ export class UserService {
 
     if (!company) {
       throw new HttpException(
-        "Company does not exist"+ email,
+        "Company does not exist" + email,
         HttpStatus.BAD_REQUEST
       );
     }
@@ -347,23 +367,26 @@ export class UserService {
     user.name = name;
     user.createdTime = new Date().getTime();
     user.country = this.configService.get("systemCountry");
-    user.phoneNo = phoneNo
+    user.phoneNo = phoneNo;
     user.role = userRole;
 
-    console.log('Inserting user', user.email);
+    console.log("Inserting user", user.email);
     return await this.userRepo
-            .createQueryBuilder()
-            .insert()
-            .values(user)
-            .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
-            .execute();
+      .createQueryBuilder()
+      .insert()
+      .values(user)
+      .orUpdate(
+        ["password", "companyId", "companyRole", "name", "role", "phoneNo"],
+        ["email"]
+      )
+      .execute();
   }
 
   async create(
     userDto: UserDto,
     companyId: number,
     companyRole: CompanyRole
-  ): Promise<User | undefined> {
+  ): Promise<User | DataResponseMessageDto | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
     const user = await this.findOne(userDto.email);
     if (user) {
@@ -393,6 +416,12 @@ export class UserService {
       }
     }
     if (company) {
+      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.API) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          HttpStatus.FORBIDDEN
+        );
+      }
       if (
         userFields.role &&
         ![Role.Admin, Role.Root].includes(userFields.role)
@@ -431,16 +460,6 @@ export class UserService {
             HttpStatus.BAD_REQUEST
           );
         }
-      }
-
-      if (companyRole != CompanyRole.GOVERNMENT) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyCreateNotPermittedForTheCompanyRole",
-            []
-          ),
-          HttpStatus.FORBIDDEN
-        );
       }
 
       company.createdTime = new Date().getTime();
@@ -482,7 +501,7 @@ export class UserService {
     }
 
     u.password = this.helperService.generateRandomPassword();
-    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.MRV) {
+    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.API) {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
@@ -623,7 +642,13 @@ export class UserService {
 
     const { apiKey, password, ...resp } = usr;
 
-    return resp;
+    const response = new DataResponseMessageDto(
+      HttpStatus.CREATED,
+      this.helperService.formatReqMessagesString("user.createUserSuccess", []),
+      resp
+    );
+
+    return response;
   }
 
   async query(query: QueryDto, abilityCondition: string): Promise<any> {
@@ -678,7 +703,7 @@ export class UserService {
     if (result.length <= 0) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("user.userUnAUth", []),
-        HttpStatus.NOT_FOUND
+        HttpStatus.FORBIDDEN
       );
     }
 

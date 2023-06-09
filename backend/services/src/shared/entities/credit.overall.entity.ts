@@ -1,4 +1,4 @@
-import { PRECISION } from 'carbon-credit-calculator/dist/esm/calculator';
+import { PRECISION } from '@undp/carbon-credit-calculator/dist/esm/calculator';
 import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { TxType } from '../enum/txtype.enum';
 import { EntitySubject } from './entity.subject';

@@ -81,6 +81,12 @@
         '../../Assets/Images/factory.png' type('image/png'),
         '../../Assets/Images/factory.webp' type('image/webp')
       );
+    background-image: -webkit-gradient(
+      linear,left top,left bottom,from(hsla(0,0%,77%,0),rgba(4,104,177,.6))),
+      image-set(
+        '../../Assets/Images/factory.png' type('image/png'),
+        '../../Assets/Images/factory.webp' type('image/webp')
+      );
     background-size: cover;
   }
 
