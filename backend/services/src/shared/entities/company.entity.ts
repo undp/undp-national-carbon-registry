@@ -36,6 +36,7 @@ export class Company implements EntitySubject {
     type: "enum",
     enum: CompanyRole,
     array: false,
+    nullable: true
   })
   companyRole: CompanyRole;
 
