@@ -23,7 +23,7 @@ import { ProgrammeCertify } from '../shared/dto/programme.certify';
 import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
 import { ProgrammeIssue } from '../shared/dto/programme.issue';
 import { ProgrammeRevoke } from '../shared/dto/programme.revoke';
-import { TransferFreezeGuard } from 'src/shared/auth/guards/transfer-freeze.guard';
+import { TransferFreezeGuard } from '../shared/auth/guards/transfer-freeze.guard';
 
 @ApiTags('Programme')
 @ApiBearerAuth()

@@ -416,7 +416,7 @@ export class UserService {
       }
     }
     if (company) {
-      if (companyRole != CompanyRole.GOVERNMENT) {
+      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.MRV) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
