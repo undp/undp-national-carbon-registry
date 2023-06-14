@@ -129,7 +129,7 @@ functions:
     ssmToEnvironment:
       - SMTP_PASSWORD
       - DB_PASSWORD
-      - REGISTRY_API_TOKEN
+      - MRV_API_TOKEN
     environment:
       NODE_PATH: "./:/opt/node_modules"
     layers:
@@ -171,7 +171,7 @@ custom:
     ITMO_API_KEY: /${self:provider.stage}/ITMO_API_KEY~true
     ITMO_EMAIL: /${self:provider.stage}/ITMO_EMAIL~true
     ITMO_PASSWORD: /${self:provider.stage}/ITMO_PASSWORD~true
-    REGISTRY_API_TOKEN: /${self:provider.stage}/REGISTRY_API_TOKEN~true
+    MRV_API_TOKEN: /${self:provider.stage}/MRV_API_TOKEN~true
   # sesTemplates:
   #   addStage: true                             # Specifies whether to add stage to template name (default false)
   #   configFile: './src/shared/email/email.template.ts' # Config file path (default './ses-email-templates/index.js')
