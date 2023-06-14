@@ -1,8 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
-import { AsyncActionType } from "src/shared/enum/async.action.type.enum";
-import { EmailService } from "src/shared/email/email.service";
-import { SQSEvent, SQSRecord } from "aws-lambda";
+import { SQSEvent } from "aws-lambda";
+import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
 
 type Response = { batchItemFailures: { itemIdentifier: string }[] };
 
@@ -10,25 +9,32 @@ type Response = { batchItemFailures: { itemIdentifier: string }[] };
 export class AsyncOperationsQueueHandlerService
   implements AsyncOperationsHandlerInterface
 {
-  constructor(private emailService: EmailService) {}
+  constructor(
+    private asyncOperationsHandlerService: AsyncOperationsHandlerService,
+    private logger: Logger
+  ) {}
 
   async asyncHandler(event: SQSEvent): Promise<Response> {
+    this.logger.log("Queue asyncHandler started");
     const response: Response = { batchItemFailures: [] };
     const promises = event.Records.map(async (record) => {
       try {
         const actionType = record.messageAttributes?.actionType?.stringValue;
-        if (actionType) {
-          if (actionType === AsyncActionType.Email.toString()) {
-            const emailBody = JSON.parse(record.body);
-            await this.emailService.sendEmail(emailBody);
-          }
-        }
-      } catch (e) {
+        return this.asyncOperationsHandlerService.handler(
+          actionType,
+          JSON.parse(record.body)
+        );
+      } catch (exception) {
+        this.logger.log("queue asyncHandler failed", exception);
         response.batchItemFailures.push({ itemIdentifier: record.messageId });
       }
     });
 
-    await Promise.all(promises);
-    return response;
+    try {
+      await Promise.all(promises);
+      return response;
+    } catch (exception) {
+      this.logger.log("Queue asyncHandler failed", exception);
+    }
   }
 }
