@@ -1112,7 +1112,7 @@ const ProgrammeView = () => {
         );
       }
     } else if (
-      data.currentStage.toString() !== ProgrammeStage.Rejected &&
+      data.currentStage.toString() === ProgrammeStage.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -1296,13 +1296,13 @@ const ProgrammeView = () => {
     }
   });
 
-  const mitigationWidgets = data.mitigationActions.map((ele: any, index: number) => {
+  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
     return (
       <Card className="card-container">
         <div>
           <InfoView
             data={mapArrayToi18n(mitigationData(ele))}
-            title={t('view:calculation') + ' ' + ele?.actionId}
+            title={t('view:calculation') + ' - ' + ele?.actionId}
             icon={<BulbOutlined />}
           />
         </div>
