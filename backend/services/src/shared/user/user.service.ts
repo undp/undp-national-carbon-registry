@@ -600,7 +600,7 @@ export class UserService {
 
     u.createdTime = new Date().getTime();
 
-    if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root) {
+    if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
       const registryCompanyCreateAction: AsyncAction = {
         actionType: AsyncActionType.RegistryCompanyCreate,
         actionProps: createdUserDto,
