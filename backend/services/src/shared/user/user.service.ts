@@ -388,6 +388,10 @@ export class UserService {
     companyRole: CompanyRole
   ): Promise<User | DataResponseMessageDto | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
+    const createdUserDto = {...userDto};
+    if(userDto.company){
+      createdUserDto.company={...userDto.company}
+    }
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
@@ -596,6 +600,16 @@ export class UserService {
     await this.asyncOperationsInterface.AddAction(action);
 
     u.createdTime = new Date().getTime();
+
+    if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
+      const registryCompanyCreateAction: AsyncAction = {
+        actionType: AsyncActionType.RegistryCompanyCreate,
+        actionProps: createdUserDto,
+      };
+      await this.asyncOperationsInterface.AddAction(
+        registryCompanyCreateAction
+      );
+    }
 
     const usr = await this.entityManger
       .transaction(async (em) => {
