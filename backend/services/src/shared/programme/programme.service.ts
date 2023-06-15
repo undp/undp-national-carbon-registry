@@ -52,6 +52,10 @@ import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { LocationInterface } from "../location/location.interface";
+import { ProgrammeDocumentDto } from "../dto/programme.document.dto";
+import { MitigationProperties } from "../dto/mitigation.properties";
+import { OwnershipUpdateDto } from "../dto/ownership.update";
+import { MitigationAddDto } from "../dto/mitigation.add.dto";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -90,39 +94,39 @@ export class ProgrammeService {
     return plainToClass(Programme, data);
   }
 
-  private async getCreditRequest(
-    programmeDto: ProgrammeDto,
-    constants: ConstantEntity
-  ) {
-    switch (programmeDto.typeOfMitigation) {
-      case TypeOfMitigation.AGRICULTURE:
-        const ar = new AgricultureCreationRequest();
-        ar.duration = programmeDto.endTime - programmeDto.startTime;
-        ar.durationUnit = "s";
-        ar.landArea = programmeDto.agricultureProperties.landArea;
-        ar.landAreaUnit = programmeDto.agricultureProperties.landAreaUnit;
-        if (constants) {
-          ar.agricultureConstants = constants.data as AgricultureConstants;
-        }
-        return ar;
-      case TypeOfMitigation.SOLAR:
-        const sr = new SolarCreationRequest();
-        sr.buildingType = programmeDto.solarProperties.consumerGroup;
-        sr.energyGeneration = programmeDto.solarProperties.energyGeneration;
-        sr.energyGenerationUnit =
-          programmeDto.solarProperties.energyGenerationUnit;
-        if (constants) {
-          sr.solarConstants = constants.data as SolarConstants;
-        }
-        return sr;
-    }
-    throw Error(
-      this.helperService.formatReqMessagesString(
-        "programme.notImplementedForMitigationType",
-        [programmeDto.typeOfMitigation]
-      )
-    );
-  }
+  // private async getCreditRequest(
+  //   programmeDto: ProgrammeDto,
+  //   constants: ConstantEntity
+  // ) {
+  //   switch (programmeDto.typeOfMitigation) {
+  //     case TypeOfMitigation.AGRICULTURE:
+  //       const ar = new AgricultureCreationRequest();
+  //       ar.duration = programmeDto.endTime - programmeDto.startTime;
+  //       ar.durationUnit = "s";
+  //       ar.landArea = programmeDto.agricultureProperties.landArea;
+  //       ar.landAreaUnit = programmeDto.agricultureProperties.landAreaUnit;
+  //       if (constants) {
+  //         ar.agricultureConstants = constants.data as AgricultureConstants;
+  //       }
+  //       return ar;
+  //     case TypeOfMitigation.SOLAR:
+  //       const sr = new SolarCreationRequest();
+  //       sr.buildingType = programmeDto.solarProperties.consumerGroup;
+  //       sr.energyGeneration = programmeDto.solarProperties.energyGeneration;
+  //       sr.energyGenerationUnit =
+  //         programmeDto.solarProperties.energyGenerationUnit;
+  //       if (constants) {
+  //         sr.solarConstants = constants.data as SolarConstants;
+  //       }
+  //       return sr;
+  //   }
+  //   throw Error(
+  //     this.helperService.formatReqMessagesString(
+  //       "programme.notImplementedForMitigationType",
+  //       [programmeDto.typeOfMitigation]
+  //     )
+  //   );
+  // }
 
   async findById(id: any): Promise<Programme | undefined> {
     return await this.programmeRepo.findOneBy({
@@ -1124,6 +1128,23 @@ export class ProgrammeService {
     return new DataListResponseDto(allTransferList, allTransferList.length);
   }
 
+  async addDocument(document: ProgrammeDocumentDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add Document triggered')
+    const resp = await this.programmeLedger.addDocument(document.programmeId, document.actionId, document.data);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async addMitigation(mitigation: MitigationAddDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add mitigation triggered')
+    const resp = await this.programmeLedger.addMitigation(mitigation.externalId, mitigation.mitigation);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async updateOwnership(update: OwnershipUpdateDto): Promise<BasicResponseDto | undefined> {
+    this.logger.log('Ownership update triggered')
+    return null;
+  }
+
   async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
     this.logger.verbose("ProgrammeDTO received", programmeDto);
     const programme: Programme = this.toProgramme(programmeDto);
@@ -1218,18 +1239,18 @@ export class ProgrammeService {
     );
     programme.countryCodeA2 = this.configService.get("systemCountry");
 
-    let constants = undefined;
-    if (!programmeDto.creditEst) {
-      constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
+    // let constants = undefined;
+    // if (!programmeDto.creditEst) {
+    //   constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
 
-      const req = await this.getCreditRequest(programmeDto, constants);
-      try {
-        programme.creditEst = Math.round(await calculateCredit(req));
-      } catch (err) {
-        this.logger.log(`Credit calculate failed ${err.message}`);
-        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-      }
-    }
+    //   const req = await this.getCreditRequest(programmeDto, constants);
+    //   try {
+    //     programme.creditEst = Math.round(await calculateCredit(req));
+    //   } catch (err) {
+    //     this.logger.log(`Credit calculate failed ${err.message}`);
+    //     throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    //   }
+    // }
 
     if (programme.creditEst <= 0) {
       throw new HttpException(
@@ -1245,10 +1266,10 @@ export class ProgrammeService {
     programme.programmeProperties.creditYear = new Date(
       programme.startTime * 1000
     ).getFullYear();
-    programme.constantVersion = constants
-      ? String(constants.version)
-      : "default";
-    programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
+    // programme.constantVersion = constants
+    //   ? String(constants.version)
+    //   : "default";
+    programme.currentStage = ProgrammeStage.NEW;
     programme.companyId = companyIds;
     programme.txTime = new Date().getTime();
     if (programme.proponentPercentage) {
@@ -2081,6 +2102,10 @@ export class ProgrammeService {
     if (!ref) {
       return null;
     }
+    if (ref == CompanyRole.API.toString()) {
+      return null;
+    }
+
     const parts = ref.split("#");
     if (parts.length > 2) {
       return {

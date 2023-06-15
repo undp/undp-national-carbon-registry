@@ -518,6 +518,7 @@ export class UserService {
         );
         if (response) {
           company.logo = response;
+          userDto.company.logo = response;
         } else {
           throw new HttpException(
             this.helperService.formatReqMessagesString(

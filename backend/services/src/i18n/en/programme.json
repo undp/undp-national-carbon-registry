@@ -6,6 +6,7 @@
     "programmeExistsWithSameExetrnalId": "Programme already exist with the given externalId",
     "transferRequestALreadyProcessed": "Programme transfer request already processed",
     "programmeNotExist": "Programme does not exist",
+    "noMitigationActionFound": "Mitigation action does not exist",
     "programmeNotExistWIthId": "Programme does not exist {}",
     "companyIsNotOwnerOfProgramme": "Company {} does not own the programme",
     "companyHaveNoEnoughCredits": "Company {} does not have enough credits",

@@ -19,6 +19,9 @@ import {
 } from "../ledger-db/ledger.db.interface";
 import { HelperService } from "../util/helpers.service";
 import { Company } from "../entities/company.entity";
+import { url } from "inspector";
+import { CompanyRole } from "../enum/company.role.enum";
+import { MitigationProperties } from "../dto/mitigation.properties";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -1309,6 +1312,153 @@ export class ProgrammeLedgerService {
             programmeId: programmeId,
           };
         });
+
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
+
+    return updatedProgramme;
+  }
+
+
+  public async addDocument(
+    programmeId: string,
+    actionId: string,
+    documentUrl: string
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        let programme: Programme = programmes[0];
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        programme.txTime = new Date().getTime()
+        programme.txType = TxType.ADD_DOCUMENT
+        programme.txRef = CompanyRole.API
+        
+        updateMap[this.ledger.tableName] = {
+          txRef: programme.txRef,
+          txTime: programme.txTime,
+          txType: programme.txType,
+        };
+
+        if (actionId) {
+          const actionIndex = programme.mitigationActions?.findIndex(e => e.actionId == actionId);
+          if (!programme.mitigationActions || actionIndex <= 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "programme.noMitigationActionFound",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+    
+          if (!programme.mitigationActions[actionIndex].projectMaterial) {
+            programme.mitigationActions[actionIndex].projectMaterial = []
+          }
+          programme.mitigationActions[actionIndex].projectMaterial.push(documentUrl);
+          updateMap[this.ledger.tableName]["mitigationActions"] = programme.mitigationActions
+        } else {
+          if (!programme.programmeProperties.programmeMaterials) {
+            programme.programmeProperties.programmeMaterials = []
+          }
+          programme.programmeProperties.programmeMaterials.push(documentUrl);
+          updateMap[this.ledger.tableName]["programmeProperties"] = programme.programmeProperties
+        }
+
+        updatedProgramme = programme;
+        updateWhereMap[this.ledger.tableName] = {
+          programmeId: programmeId,
+        };
+
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
+
+    return updatedProgramme;
+  }
+
+  public async addMitigation(
+    externalId: string,
+    mitigation: MitigationProperties
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.tableName] = {
+      externalId: externalId,
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        let programme: Programme = programmes[0];
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        programme.txTime = new Date().getTime()
+        programme.txType = TxType.ADD_MITIGATION
+        programme.txRef = CompanyRole.API
+        
+        if (!programme.mitigationActions) {
+          programme.mitigationActions = []
+        }
+        
+        programme.mitigationActions.push(mitigation);
+        updateMap[this.ledger.tableName] = {
+          txRef: programme.txRef,
+          txTime: programme.txTime,
+          txType: programme.txType,
+          mitigationActions: programme.mitigationActions
+        };
+
+        updatedProgramme = programme;
+        updateWhereMap[this.ledger.tableName] = {
+          programmeId: programme.programmeId,
+        };
 
         return [updateMap, updateWhereMap, {}];
       }
