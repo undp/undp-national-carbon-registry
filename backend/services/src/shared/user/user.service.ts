@@ -516,7 +516,7 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      if (company.logo) {
+      if (company.logo && this.helperService.isBase64(company.logo)) {
         const response: any = await this.fileHandler.uploadFile(
           `profile_images/${company.companyId}_${new Date().getTime()}.png`,
           company.logo
