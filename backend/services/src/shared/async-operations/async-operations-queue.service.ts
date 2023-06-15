@@ -45,9 +45,9 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
 
     try {
       await sqs.sendMessage(params).promise();
-      this.logger.log("Succefully added to the queue", action);
+      this.logger.log("Succefully added to the queue", action.actionType);
     } catch (error) {
-      this.logger.error("Failed when adding to queue");
+      this.logger.error("Failed when adding to queue", action.actionType);
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "common.addAsyncActionQueueFailed",
