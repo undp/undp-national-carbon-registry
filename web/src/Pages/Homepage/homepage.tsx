@@ -83,8 +83,8 @@ const Homepage = () => {
             <Row>
               <div className="text-ctn">
                 <span>
-                  {t('homepage:carbon')} {t('homepage:credit')} <br />
-                  {t('homepage:registry')}
+                  {t('homepage:national')} {t('homepage:carbon')} <br />
+                  {t('homepage:registry')} {t('homepage:demo')}
                 </span>
                 <div className="subhome">{t('homepage:lorem')}</div>
               </div>
