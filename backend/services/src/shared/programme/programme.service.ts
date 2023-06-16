@@ -58,6 +58,7 @@ import { OwnershipUpdateDto } from "../dto/ownership.update";
 import { MitigationAddDto } from "../dto/mitigation.add.dto";
 import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
+import { ProgrammeAcceptedDto } from "../dto/programme.accepted.dto";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -1133,7 +1134,13 @@ export class ProgrammeService {
 
   async addDocument(document: ProgrammeDocumentDto): Promise<DataResponseDto | undefined> {
     this.logger.log('Add Document triggered')
-    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type);
+    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type, 0);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async programmeAccept(accept: ProgrammeAcceptedDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add accept triggered')
+    const resp = await this.programmeLedger.addDocument(accept.externalId, undefined, accept.data, accept.type, accept.creditEst);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
@@ -1255,15 +1262,15 @@ export class ProgrammeService {
     //   }
     // }
 
-    if (programme.creditEst <= 0) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programme.noEnoughCreditsToCreateProgramme",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // if (programme.creditEst <= 0) {
+    //   throw new HttpException(
+    //     this.helperService.formatReqMessagesString(
+    //       "programme.noEnoughCreditsToCreateProgramme",
+    //       []
+    //     ),
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
     // programme.creditBalance = programme.creditIssued;
     // programme.creditChange = programme.creditIssued;
     programme.programmeProperties.creditYear = new Date(

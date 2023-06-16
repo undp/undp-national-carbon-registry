@@ -1325,7 +1325,8 @@ export class ProgrammeLedgerService {
     externalId: string,
     actionId: string,
     documentUrl: string,
-    type: string
+    type: string,
+    creditEst: number,
   ) {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
@@ -1394,9 +1395,11 @@ export class ProgrammeLedgerService {
           updateMap[this.ledger.tableName]["programmeProperties"] = programme.programmeProperties
         }
 
-        if (type == 'METHODOLOGY_DOCUMENT') {
+        if (creditEst > 0) {
           programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION
+          programme.creditEst = creditEst;
           updateMap[this.ledger.tableName]["currentStage"] = programme.currentStage
+          updateMap[this.ledger.tableName]["creditEst"] = programme.creditEst
         }
 
         updatedProgramme = programme;

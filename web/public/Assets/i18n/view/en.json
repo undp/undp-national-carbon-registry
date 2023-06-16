@@ -84,7 +84,7 @@
     "via": "via",
     "tlDescInit": "credits of this programme were requested to be transferred from",
     "tlCreate": "Programme Created",
-    "tlCreateDesc": "The programme was created with a valuation of {} {} credits.",
+    "tlCreateDesc": "The programme was created.",
     "tlAuth": "Authorised",
     "tlAuthDesc": "The programme was authorised for {} {} credits until {} with the Serial Number {} by {}",
     "tlIssue": "Credits Issued",

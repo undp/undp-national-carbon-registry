@@ -483,14 +483,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: (
-              <TimelineBody
-                text={formatString('view:tlCreateDesc', [
-                  addCommSep(activity.data.creditEst),
-                  creditUnit,
-                ])}
-              />
-            ),
+            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} />,
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
