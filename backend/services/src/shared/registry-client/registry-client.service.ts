@@ -68,8 +68,17 @@ export class RegistryClientService {
   public async authProgramme(approve) {
     const resp = await this.sendHttpPut("/national/programme/authProgramme", approve);
     console.log(
-      "Successfully authoirised company on MRV",
+      "Successfully authoirised programme on MRV",
       approve
+    );
+    return resp;
+  }
+
+  public async rejectProgramme(reject) {
+    const resp = await this.sendHttpPut("/national/programme/rejectProgramme", reject);
+    console.log(
+      "Successfully rejected programme on MRV",
+      reject
     );
     return resp;
   }
@@ -78,7 +87,7 @@ export class RegistryClientService {
   public async issueCredit(issue) {
     const resp = await this.sendHttpPut("/national/programme/issueCredit", issue);
     console.log(
-      "Successfully issued company on MRV",
+      "Successfully issued programme on MRV",
       issue
     );
     return resp;

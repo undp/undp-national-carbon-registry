@@ -24,6 +24,8 @@ export class AsyncOperationsHandlerService {
           return await this.registryClient.authProgramme(dataObject);
         case AsyncActionType.IssueCredit.toString():
           return await this.registryClient.issueCredit(dataObject);
+        case AsyncActionType.RejectProgramme.toString():
+          return await this.registryClient.rejectProgramme(dataObject);
       }
     }
   }

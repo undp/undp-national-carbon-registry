@@ -2,5 +2,6 @@ export enum AsyncActionType {
   Email,
   RegistryCompanyCreate,
   IssueCredit,
-  AuthProgramme
+  AuthProgramme,
+  RejectProgramme
 }

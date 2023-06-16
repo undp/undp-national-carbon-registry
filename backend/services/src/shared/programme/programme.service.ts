@@ -2090,6 +2090,17 @@ export class ProgrammeService {
       );
     }
 
+    const authRe: AsyncAction = {
+      actionType: AsyncActionType.RejectProgramme,
+      actionProps: {
+        externalId: programme.externalId,
+        comment: req.comment
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      authRe
+    );
+
     await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
       req.programmeId,
       EmailTemplates.PROGRAMME_REJECTION,
