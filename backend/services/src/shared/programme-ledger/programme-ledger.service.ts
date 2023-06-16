@@ -1322,13 +1322,14 @@ export class ProgrammeLedgerService {
 
 
   public async addDocument(
-    programmeId: string,
+    externalId: string,
     actionId: string,
-    documentUrl: string
+    documentUrl: string,
+    type: string
   ) {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
-      programmeId: programmeId,
+      externalId: externalId,
     };
 
     let updatedProgramme = undefined;
@@ -1360,7 +1361,8 @@ export class ProgrammeLedgerService {
         programme.txTime = new Date().getTime()
         programme.txType = TxType.ADD_DOCUMENT
         programme.txRef = CompanyRole.API
-        
+       
+      
         updateMap[this.ledger.tableName] = {
           txRef: programme.txRef,
           txTime: programme.txTime,
@@ -1392,9 +1394,14 @@ export class ProgrammeLedgerService {
           updateMap[this.ledger.tableName]["programmeProperties"] = programme.programmeProperties
         }
 
+        if (type == 'METHODOLOGY_DOCUMENT') {
+          programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION
+          updateMap[this.ledger.tableName]["currentStage"] = programme.currentStage
+        }
+
         updatedProgramme = programme;
         updateWhereMap[this.ledger.tableName] = {
-          programmeId: programmeId,
+          programmeId: programme.programmeId,
         };
 
         return [updateMap, updateWhereMap, {}];

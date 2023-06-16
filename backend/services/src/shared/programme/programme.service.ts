@@ -56,6 +56,8 @@ import { ProgrammeDocumentDto } from "../dto/programme.document.dto";
 import { MitigationProperties } from "../dto/mitigation.properties";
 import { OwnershipUpdateDto } from "../dto/ownership.update";
 import { MitigationAddDto } from "../dto/mitigation.add.dto";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -85,7 +87,8 @@ export class ProgrammeService {
     private programmeTransferRepo: Repository<ProgrammeTransfer>,
     @InjectRepository(ConstantEntity)
     private constantRepo: Repository<ConstantEntity>,
-    private logger: Logger
+    private logger: Logger,
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {}
 
   private toProgramme(programmeDto: ProgrammeDto): Programme {
@@ -1130,7 +1133,7 @@ export class ProgrammeService {
 
   async addDocument(document: ProgrammeDocumentDto): Promise<DataResponseDto | undefined> {
     this.logger.log('Add Document triggered')
-    const resp = await this.programmeLedger.addDocument(document.programmeId, document.actionId, document.data);
+    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
@@ -1895,6 +1898,17 @@ export class ProgrammeService {
       );
     }
 
+    const issueCReq: AsyncAction = {
+      actionType: AsyncActionType.IssueCredit,
+      actionProps: {
+        externalId: program.externalId,
+        issueAmount: req.issueAmount,
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      issueCReq
+    );
+
     const hostAddress = this.configService.get("host");
     updated.companyId.forEach(async (companyId) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
@@ -1999,6 +2013,18 @@ export class ProgrammeService {
         )`Does not found a pending programme for the given programme id ${req.programmeId}`
       );
     }
+
+    const authRe: AsyncAction = {
+      actionType: AsyncActionType.AuthProgramme,
+      actionProps: {
+        externalId: program.externalId,
+        issueAmount: req.issueAmount,
+        serialNo: updated.serialNo
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      authRe
+    );
 
     updated.company = await this.companyRepo.find({
       where: { companyId: In(updated.companyId) },

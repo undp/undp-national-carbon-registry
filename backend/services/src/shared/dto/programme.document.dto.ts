@@ -11,7 +11,12 @@ export class ProgrammeDocumentDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
-    programmeId: string;
+    externalId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+    type: string;
 
     @IsOptional()
     @ApiPropertyOptional()
