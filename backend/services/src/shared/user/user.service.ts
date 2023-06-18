@@ -339,7 +339,8 @@ export class UserService {
     password: string,
     email: string,
     userRole: Role,
-    phoneNo: string
+    phoneNo: string,
+    APIkey: string
   ) {
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT) {
@@ -370,6 +371,7 @@ export class UserService {
     user.country = this.configService.get("systemCountry");
     user.phoneNo = phoneNo;
     user.role = userRole;
+    user.apiKey = APIkey;
 
     console.log("Inserting user", user.email);
     return await this.userRepo

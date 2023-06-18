@@ -1,3 +1,5 @@
-NAME,EMAIL,PHONE,ORGANISATION TAX ID,ORGANISATION TYPE(Developer|Certifier)
+NAME,EMAIL,PHONE,ORGANISATION TAX ID,ORGANISATION TYPE(Developer|Certifier|API)
 Org 2,palinda+org2@xeptagon.com,,33333,Develop
 Cert 2,palinda+cert2@xeptagon.com,,44444,Certifier
+Org 3,palinda+org3@xeptagon.com,,55555,Develop
+API,palinda+api@xeptagon.com,,66666,API
