@@ -75,7 +75,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
       }
     } catch (error: any) {
       console.log('Error in Login', error);
-      setErrorMsg(error);
+      setErrorMsg(error?.message);
       setShowError(true);
     } finally {
       setLoading(false);
