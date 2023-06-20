@@ -84,7 +84,7 @@ const Homepage = () => {
               <div className="text-ctn">
                 <span>
                   {t('homepage:national')} {t('homepage:carbon')} <br />
-                  {t('homepage:registry')} {t('homepage:demo')}
+                  {t('homepage:registry')}
                 </span>
                 <div className="subhome">{t('homepage:lorem')}</div>
               </div>
@@ -206,17 +206,7 @@ const Homepage = () => {
                 end-to-end digital ecosystem for the carbon market. The overarching goal is to
                 support a transparent, high integrity global carbon market that can channel capital
                 for impactful climate action and low-carbon development.
-              </div>
-              <Row gutter={[8, 8]} className="undplogocontainer">
-                <ImgWithFallback
-                  className="undplogo"
-                  src={undpLogo}
-                  fallbackSrc={undpLogofall}
-                  mediaType="image/webp"
-                  alt="undplogo"
-                />
-                {/* <img className="undplogocontainer" src={undpLogo} alt="undp logo" /> */}
-              </Row>
+              </div>            
             </div>
           </div>
         </Col>
