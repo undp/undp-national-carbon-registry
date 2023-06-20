@@ -184,8 +184,9 @@ export interface Programme {
   company: any[];
   creditUnit: string;
   programmeProperties: ProgrammeProperties;
-  agricultureProperties: any;
-  solarProperties: any;
+  // agricultureProperties: any;
+  // solarProperties: any;
+  mitigationActions: any;
   txTime: number;
   createdTime: number;
   txRef: string;

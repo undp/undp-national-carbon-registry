@@ -19,7 +19,7 @@ export class HelperService {
   public isBase64(text: string): boolean {
     return Buffer.from(text, 'base64').toString('base64') === text
   }
-  
+
   private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";

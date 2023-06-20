@@ -213,7 +213,9 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                                 fontSize: '1.1rem',
                               }}
                             />
-                            <span className="ant-form-item-explain-error">{errorMsg}</span>
+                            <span className="ant-form-item-explain-error">
+                              {errorMsg ? errorMsg : t('common:loginFailed')}
+                            </span>
                           </div>
                         )}
                         <div className="login-forget-pwd-container">

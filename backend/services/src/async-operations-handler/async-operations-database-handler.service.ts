@@ -46,6 +46,7 @@ export class AsyncOperationsDatabaseHandlerService
         
       const startedSeq = lastSeq;
       notExecutedActions.forEach((action: any) => {
+        console.log('Processing action', action.actionId)
         asyncPromises.push(
           this.asyncOperationsHandlerService.handler(
             action.actionType,

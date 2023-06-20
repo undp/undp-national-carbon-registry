@@ -483,14 +483,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: (
-              <TimelineBody
-                text={formatString('view:tlCreateDesc', [
-                  addCommSep(activity.data.creditEst),
-                  creditUnit,
-                ])}
-              />
-            ),
+            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} />,
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -767,6 +760,53 @@ const ProgrammeView = () => {
       genCerts(response.data, certTimes);
       genPieData(response.data);
     }
+  };
+
+  const mitigationData = (mitigation: any) => {
+    if (!mitigation) {
+      return {};
+    }
+    let calculations: any = {};
+    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
+      if (mitigation.properties) {
+        calculations = mitigation.properties;
+        if (calculations.landAreaUnit) {
+          calculations.landArea = new UnitField(
+            mitigation.properties.landAreaUnit,
+            addCommSep(mitigation.properties.landArea)
+          );
+        }
+        delete calculations.landAreaUnit;
+      }
+    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
+      if (mitigation.properties) {
+        calculations = mitigation.properties;
+        if (calculations.energyGenerationUnit) {
+          calculations.energyGeneration = new UnitField(
+            mitigation.properties.energyGenerationUnit,
+            addCommSep(mitigation.properties.energyGeneration)
+          );
+          // addCommSep(data.solarProperties.energyGeneration) +
+          // ' ' +
+          // data.solarProperties.energyGenerationUnit;
+        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
+          calculations.consumerGroup = (
+            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
+          );
+        }
+        delete calculations.energyGenerationUnit;
+      }
+    }
+    calculations.constantVersion = mitigation.properties.constantVersion;
+
+    for (const key in mitigation) {
+      if (mitigation.hasOwnProperty(key)) {
+        if (key !== 'properties') {
+          calculations[key] = mitigation[key];
+        }
+      }
+    }
+    return calculations;
   };
 
   const onPopupAction = async (
@@ -1065,7 +1105,7 @@ const ProgrammeView = () => {
         );
       }
     } else if (
-      data.currentStage.toString() !== ProgrammeStage.Rejected &&
+      data.currentStage.toString() === ProgrammeStage.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -1249,44 +1289,19 @@ const ProgrammeView = () => {
     }
   });
 
-  let calculations: any = {};
-  if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-    if (data.agricultureProperties) {
-      calculations = data.agricultureProperties;
-      if (calculations.landAreaUnit) {
-        calculations.landArea = new UnitField(
-          data.agricultureProperties.landAreaUnit,
-          addCommSep(data.agricultureProperties.landArea)
-        );
-        // addCommSep(data.agricultureProperties.landArea) +
-        // ' ' +
-        // data.agricultureProperties.landAreaUnit;
-      }
-      delete calculations.landAreaUnit;
-    }
-  } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
-    if (data.solarProperties) {
-      calculations = data.solarProperties;
-      if (calculations.energyGenerationUnit) {
-        calculations.energyGeneration = new UnitField(
-          data.solarProperties.energyGenerationUnit,
-          addCommSep(data.solarProperties.energyGeneration)
-        );
-        // addCommSep(data.solarProperties.energyGeneration) +
-        // ' ' +
-        // data.solarProperties.energyGenerationUnit;
-      } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-        calculations.consumerGroup = (
-          <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-        );
-      }
-      delete calculations.energyGenerationUnit;
-    }
-  }
-  if (calculations) {
-    calculations.constantVersion = data.constantVersion;
-  }
-
+  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
+    return (
+      <Card className="card-container">
+        <div>
+          <InfoView
+            data={mapArrayToi18n(mitigationData(ele))}
+            title={t('view:calculation') + ' - ' + ele?.actionId}
+            icon={<BulbOutlined />}
+          />
+        </div>
+      </Card>
+    );
+  });
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
     if (index > 0) {
@@ -1622,7 +1637,7 @@ const ProgrammeView = () => {
                   </div>
                 </Card>
               )}
-            {data.programmeProperties.projectMaterial &&
+            {/* {data.programmeProperties.projectMaterial &&
               data.programmeProperties.projectMaterial.length > 0 && (
                 <Card className="card-container">
                   <div className="info-view">
@@ -1633,7 +1648,7 @@ const ProgrammeView = () => {
                     </div>
                   </div>
                 </Card>
-              )}
+              )} */}
             <Card className="card-container">
               <div>
                 <InfoView
@@ -1696,17 +1711,7 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {calculations && (
-              <Card className="card-container">
-                <div>
-                  <InfoView
-                    data={mapArrayToi18n(calculations)}
-                    title={t('view:calculation')}
-                    icon={<BulbOutlined />}
-                  />
-                </div>
-              </Card>
-            )}
+            {mitigationWidgets && mitigationWidgets}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">

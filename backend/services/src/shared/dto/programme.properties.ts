@@ -85,10 +85,10 @@ export class ProgrammeProperties {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
-  programmeMaterials?: [];
+  programmeMaterials?: any[];
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsNotEmpty()
-  projectMaterial?: [];
+  // @ApiPropertyOptional()
+  // @IsOptional()
+  // @IsNotEmpty()
+  // projectMaterial?: any[];
 }

@@ -20,6 +20,12 @@ export class AsyncOperationsHandlerService {
           return await this.emailService.sendEmail(dataObject);
         case AsyncActionType.RegistryCompanyCreate.toString():
           return await this.registryClient.createCompany(dataObject);
+        case AsyncActionType.AuthProgramme.toString():
+          return await this.registryClient.authProgramme(dataObject);
+        case AsyncActionType.IssueCredit.toString():
+          return await this.registryClient.issueCredit(dataObject);
+        case AsyncActionType.RejectProgramme.toString():
+          return await this.registryClient.rejectProgramme(dataObject);
       }
     }
   }
