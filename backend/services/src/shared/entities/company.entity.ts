@@ -35,10 +35,10 @@ export class Company implements EntitySubject {
   @Column({
     type: "enum",
     enum: CompanyRole,
-    array: false,
-    nullable: true
+    array: false
   })
   companyRole: CompanyRole;
+
 
   @Column({
     type: "enum",

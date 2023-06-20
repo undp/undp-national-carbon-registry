@@ -26,26 +26,28 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
     var params = {};
 
     if (action.actionType === AsyncActionType.Email) {
-      if (this.emailDisabled)
+      if (this.emailDisabled) {
         return false;
-      params = {
-        MessageAttributes: {
-          actionType: {
-            DataType: "Number",
-            StringValue: action.actionType.toString(),
-          },
-        },
-        MessageBody: JSON.stringify(action.actionProps),
-        MessageGroupId: action.actionProps.emailType,
-        QueueUrl: this.configService.get("asyncQueueName"),
-      };
+      }
     }
+
+    params = {
+      MessageAttributes: {
+        actionType: {
+          DataType: "Number",
+          StringValue: action.actionType.toString(),
+        },
+      },
+      MessageBody: JSON.stringify(action.actionProps),
+      MessageGroupId: action.actionType.toString() + new Date().getTime(),
+      QueueUrl: this.configService.get("asyncQueueName"),
+    };
 
     try {
       await sqs.sendMessage(params).promise();
-      this.logger.log("Succefully added to the queue", action);
+      this.logger.log("Succefully added to the queue", action.actionType);
     } catch (error) {
-      this.logger.error("Failed when adding to queue");
+      this.logger.error("Failed when adding to queue", action.actionType);
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "common.addAsyncActionQueueFailed",

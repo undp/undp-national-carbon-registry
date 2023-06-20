@@ -14,6 +14,7 @@ import { ProgrammeTransferViewEntityQuery } from '../entities/programmeTransfer.
 import { UserModule } from '../user/user.module';
 import { EmailHelperModule } from '../email-helper/email-helper.module';
 import { LocationModule } from '../location/location.module';
+import { AsyncOperationsModule } from '../async-operations/async-operations.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { LocationModule } from '../location/location.module';
     CompanyModule, 
     UserModule,
     EmailHelperModule,
-    LocationModule
+    LocationModule,
+    AsyncOperationsModule
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService]

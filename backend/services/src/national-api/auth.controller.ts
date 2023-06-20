@@ -11,6 +11,8 @@ import {
   Req,
   Put,
   Query,
+  HttpException,
+  HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { LoginDto } from "../shared/dto/login.dto";
@@ -20,13 +22,15 @@ import { LocalAuthGuard } from "../shared/auth/guards/local-auth.guard";
 import { ForgotPasswordDto } from "../shared/dto/forgotPassword.dto";
 import { PasswordResetDto } from "../shared/dto/passwordReset.dto";
 import { PasswordResetService } from "../shared/util/passwordReset.service";
+import { HelperService } from "../shared/util/helpers.service";
 
 @ApiTags("Auth")
 @Controller("auth")
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly passwordResetService: PasswordResetService
+    private readonly passwordResetService: PasswordResetService,
+    private helperService: HelperService,
   ) {}
 
   @Post("login")
@@ -39,7 +43,10 @@ export class AuthController {
       global.baseUrl = `${req.protocol}://${req.get("Host")}`;
       return this.authService.login(user);
     }
-    throw new UnauthorizedException();
+    throw new HttpException(this.helperService.formatReqMessagesString(
+      "common.invalidLogin",
+      []
+    ), HttpStatus.UNAUTHORIZED);
   }
 
   @Post("forgotPassword")

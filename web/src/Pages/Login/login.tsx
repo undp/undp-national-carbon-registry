@@ -26,6 +26,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { i18n, t } = useTranslation(['common', 'login']);
   const [loading, setLoading] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>();
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
@@ -38,6 +39,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
     const redirectLocation = state?.from?.pathname + state?.from?.search;
     setLoading(true);
     setShowError(false);
+    setErrorMsg(undefined);
     try {
       const email = values.email.trim();
       const response = await post('national/auth/login', {
@@ -73,6 +75,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
       }
     } catch (error: any) {
       console.log('Error in Login', error);
+      setErrorMsg(error?.message);
       setShowError(true);
     } finally {
       setLoading(false);
@@ -211,7 +214,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                               }}
                             />
                             <span className="ant-form-item-explain-error">
-                              Invalid login credentials
+                              {errorMsg ? errorMsg : t('common:loginFailed')}
                             </span>
                           </div>
                         )}

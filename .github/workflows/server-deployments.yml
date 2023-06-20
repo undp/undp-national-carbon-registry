@@ -34,7 +34,7 @@ jobs:
     - id: branch_check
       run: |
         if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
-          echo "stage=dev" >> $GITHUB_OUTPUT
+          echo "stage=prod" >> $GITHUB_OUTPUT
         else
           echo "stage=dev" >> $GITHUB_OUTPUT
         fi
@@ -81,12 +81,12 @@ jobs:
         with:
           args: -c "cd ./backend/layer && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }}"
           entrypoint: /bin/sh
-      # - name: serverless deploy main
-      #   if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' && github.ref == 'refs/heads/main'}}
-      #   uses: serverless/github-action@v3.1
-      #   with:
-      #     args: -c "cd ./backend/layer && serverless deploy --stage prod"
-      #     entrypoint: /bin/sh
+      - name: serverless deploy main
+        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' && github.ref == 'refs/heads/main'}}
+        uses: serverless/github-action@v3.1
+        with:
+          args: -c "cd ./backend/layer && serverless deploy --stage prod"
+          entrypoint: /bin/sh
   deploy:
     name: deploy
     runs-on: ubuntu-latest
@@ -112,17 +112,17 @@ jobs:
         working-directory: ./libs/carbon-credit-calculator
         run: yarn run build
       - name: serverless deploy develop
-        # if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/develop'
         uses: serverless/github-action@v3.1
         with:
           args: -c "cd ./backend/services && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }} --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
           entrypoint: /bin/sh
-      # - name: serverless deploy main
-      #   if: github.ref == 'refs/heads/main'
-      #   uses: serverless/github-action@v3.1
-      #   with:
-      #     args: -c "cd ./backend/services && serverless deploy --stage prod"
-      #     entrypoint: /bin/sh
+      - name: serverless deploy main
+        if: github.ref == 'refs/heads/main'
+        uses: serverless/github-action@v3.1
+        with:
+          args: -c "cd ./backend/services && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }} --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
+          entrypoint: /bin/sh
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/develop'
         uses: aws-actions/configure-aws-credentials@v1

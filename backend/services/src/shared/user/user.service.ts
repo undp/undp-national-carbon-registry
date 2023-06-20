@@ -47,6 +47,7 @@ import {
 } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { DataResponseMessageDto } from "../dto/data.response.message";
+import { AsyncOperationType } from "../enum/async.operation.type.enum";
 
 @Injectable()
 export class UserService {
@@ -338,7 +339,8 @@ export class UserService {
     password: string,
     email: string,
     userRole: Role,
-    phoneNo: string
+    phoneNo: string,
+    APIkey: string
   ) {
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT) {
@@ -369,6 +371,7 @@ export class UserService {
     user.country = this.configService.get("systemCountry");
     user.phoneNo = phoneNo;
     user.role = userRole;
+    user.apiKey = APIkey;
 
     console.log("Inserting user", user.email);
     return await this.userRepo
@@ -388,6 +391,10 @@ export class UserService {
     companyRole: CompanyRole
   ): Promise<User | DataResponseMessageDto | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
+    const createdUserDto = {...userDto};
+    if(userDto.company){
+      createdUserDto.company={...userDto.company}
+    }
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
@@ -511,13 +518,16 @@ export class UserService {
       company.companyId = parseInt(
         await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
-      if (company.logo) {
+      if (company.logo && this.helperService.isBase64(company.logo)) {
         const response: any = await this.fileHandler.uploadFile(
           `profile_images/${company.companyId}_${new Date().getTime()}.png`,
           company.logo
         );
         if (response) {
           company.logo = response;
+          if (process.env.ASYNC_OPERATIONS_TYPE === AsyncOperationType.Queue) {
+            createdUserDto.company.logo = response;
+          }
         } else {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
@@ -595,6 +605,16 @@ export class UserService {
     await this.asyncOperationsInterface.AddAction(action);
 
     u.createdTime = new Date().getTime();
+
+    if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
+      const registryCompanyCreateAction: AsyncAction = {
+        actionType: AsyncActionType.RegistryCompanyCreate,
+        actionProps: createdUserDto,
+      };
+      await this.asyncOperationsInterface.AddAction(
+        registryCompanyCreateAction
+      );
+    }
 
     const usr = await this.entityManger
       .transaction(async (em) => {

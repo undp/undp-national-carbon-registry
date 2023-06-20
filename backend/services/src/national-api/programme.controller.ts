@@ -24,6 +24,11 @@ import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel
 import { ProgrammeIssue } from '../shared/dto/programme.issue';
 import { ProgrammeRevoke } from '../shared/dto/programme.revoke';
 import { TransferFreezeGuard } from '../shared/auth/guards/transfer-freeze.guard';
+import { ProgrammeDocumentDto } from '../shared/dto/programme.document.dto';
+import { MitigationProperties } from '../shared/dto/mitigation.properties';
+import { OwnershipUpdateDto } from '../shared/dto/ownership.update';
+import { MitigationAddDto } from '../shared/dto/mitigation.add.dto';
+import { ProgrammeAcceptedDto } from '../shared/dto/programme.accepted.dto';
 
 @ApiTags('Programme')
 @ApiBearerAuth()
@@ -41,6 +46,42 @@ export class ProgrammeController {
     @Post('create')
     async addProgramme(@Body()programme: ProgrammeDto) {
       return this.programmeService.create(programme)
+    }
+
+    @ApiBearerAuth('api_key')
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+    @Post('addDocument')
+    async addDocument(@Body()document: ProgrammeDocumentDto) {
+      return this.programmeService.addDocument(document)
+    }
+
+    @ApiBearerAuth('api_key')
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+    @Post('acceptProgramme')
+    async acceptProgramme(@Body()acc: ProgrammeAcceptedDto) {
+      return this.programmeService.programmeAccept(acc)
+    }
+
+    @ApiBearerAuth('api_key')
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+    @Post('addMitigation')
+    async addMitigation(@Body()mitigation: MitigationAddDto) {
+      return this.programmeService.addMitigation(mitigation)
+    }
+
+    @ApiBearerAuth('api_key')
+    @ApiBearerAuth()
+    @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+    @Post('updateOwnership')
+    async updateOwnership(@Body()update: OwnershipUpdateDto) {
+      return this.programmeService.updateOwnership(update)
     }
 
     @ApiBearerAuth()

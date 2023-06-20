@@ -84,7 +84,7 @@
     "via": "via",
     "tlDescInit": "credits of this programme were requested to be transferred from",
     "tlCreate": "Programme Created",
-    "tlCreateDesc": "The programme was created with a valuation of {} {} credits.",
+    "tlCreateDesc": "The programme was created.",
     "tlAuth": "Authorised",
     "tlAuthDesc": "The programme was authorised for {} {} credits until {} with the Serial Number {} by {}",
     "tlIssue": "Credits Issued",
@@ -111,5 +111,9 @@
     "tlTxCancelSystemDesc": "The request to transfer {} {} credits from {} to {} was cancelled by the system due to the deactivation of {} by {}",
     "tlUnFrozen": "Credits Unfrozen",
     "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}",
-    "tlTxLowCreditCancelSystemDesc" : "The request to transfer {} {} credits from {} to {} was cancelled by the system due to insufficient credit balance"
+    "tlTxLowCreditCancelSystemDesc" : "The request to transfer {} {} credits from {} to {} was cancelled by the system due to insufficient credit balance",
+    "typeOfMitigation": "Type Of Mitigation",
+    "userEstimatedCredits": "User Estimated Credits",
+    "systemEstimatedCredits": "System Estimated Credits",
+    "actionId": "NDC ID"
 }
