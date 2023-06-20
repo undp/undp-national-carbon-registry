@@ -36,7 +36,7 @@ jobs:
         if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
           echo "stage=dev" >> $GITHUB_OUTPUT
         else
-          echo "stage=dev" >> $GITHUB_OUTPUT
+          echo "stage=prod" >> $GITHUB_OUTPUT
         fi
   layer:
     name: layer
