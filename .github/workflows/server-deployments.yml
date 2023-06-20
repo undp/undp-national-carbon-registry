@@ -121,7 +121,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: serverless/github-action@v3.1
         with:
-          args: -c "cd ./backend/services && serverless deploy --stage prod"
+          args: -c "cd ./backend/services && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }} --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
           entrypoint: /bin/sh
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/develop'
