@@ -10,10 +10,11 @@ export interface ChangePasswordProps {
   onCanceled: any;
   openModal: any;
   errorMsg: any;
+  loadingBtn: boolean;
 }
 
 const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps) => {
-  const { onPasswordChanged, onFieldsChanged, onCanceled, openModal, errorMsg } = props;
+  const { onPasswordChanged, onFieldsChanged, onCanceled, openModal, errorMsg, loadingBtn } = props;
   const { i18n, t } = useTranslation(['passwordReset']);
 
   return (
@@ -98,7 +99,7 @@ const ChangePasswordModel: FC<ChangePasswordProps> = (props: ChangePasswordProps
           <Button htmlType="button" onClick={onCanceled}>
             {t('passwordReset:cancel')}
           </Button>
-          <Button className="mg-left-2" type="primary" htmlType="submit">
+          <Button className="mg-left-2" type="primary" htmlType="submit" loading={loadingBtn}>
             {t('passwordReset:setPassword')}
           </Button>
         </div>

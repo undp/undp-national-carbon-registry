@@ -41,6 +41,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);
 
   const setUserInfo = (value: UserProps) => {
+    const state = userInfoState?.companyState === 1 ? userInfoState?.companyState : 0;
     const {
       id,
       userRole,
@@ -48,7 +49,7 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
       companyRole,
       companyLogo,
       companyName,
-      companyState = 0,
+      companyState = state,
     } = value;
     if (id) {
       setUserInfoState((prev) => ({ ...prev, id }));
@@ -96,8 +97,10 @@ export const UserInformationContextProvider = ({ children }: React.PropsWithChil
         tokenVal = token;
       } else {
         tokenVal = localStorage.getItem('token');
-        if (!tokenVal) {
-          setIsTokenExpired(true);
+        if (tokenVal === '') {
+          if (history.length !== 1) {
+            setIsTokenExpired(true);
+          }
         }
       }
       try {

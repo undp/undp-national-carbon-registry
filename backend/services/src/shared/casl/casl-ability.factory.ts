@@ -21,6 +21,7 @@ import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
+import { ConfigurationSettings } from "../entities/configuration.settings";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -40,7 +41,7 @@ export class CaslAbilityFactory {
         cannot([Action.Update], Company, {
           companyId: { $ne: user.companyId },
         });
-        cannot([Action.Update, Action.Delete], User, {
+        cannot([Action.Update], User, {
           companyId: { $ne: user.companyId },
         });
       } else if (
@@ -48,6 +49,7 @@ export class CaslAbilityFactory {
         user.companyRole == CompanyRole.GOVERNMENT
       ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
+        can([Action.Manage], ConfigurationSettings);
         can([Action.Manage], Company);
         cannot([Action.Update, Action.Delete], User, {
           companyId: { $ne: user.companyId },
@@ -106,8 +108,10 @@ export class CaslAbilityFactory {
         can(Action.Manage, ProgrammeCertify);
       }
 
-      if (user.role == Role.Admin && user.companyRole == CompanyRole.MRV) {
+      if (user.role == Role.Admin && user.companyRole == CompanyRole.API) {
         can([Action.Create, Action.Read], Programme);
+        can([Action.Create, Action.Read], User);
+        can([Action.Create, Action.Read], Company);
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
         can(Action.Read, Programme, {
           currentStage: { $in: [ProgrammeStage.AUTHORISED] },

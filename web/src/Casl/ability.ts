@@ -6,12 +6,9 @@ import {
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import { BaseEntity } from './entities/BaseEntity';
-import { Company } from './entities/Company';
+import { Company, BaseEntity, ProgrammeTransfer, User } from '@undp/carbon-library';
 import { Programme } from './entities/Programme';
 import { ProgrammeCertify } from './entities/ProgrammeCertify';
-import { ProgrammeTransfer } from './entities/ProgrammeTransfer';
-import { User } from './entities/User';
 import { Action } from './enums/action.enum';
 import { CompanyRole } from './enums/company.role.enum';
 import { ProgrammeStage } from './enums/programme-status.enum';

@@ -1,12 +1,13 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
 import { ArrayMinSize, IsArray, IsEnum, IsInt, IsNotEmpty, IsNotEmptyObject, IsNumber, IsOptional, IsPositive, IsString, ValidateIf, ValidateNested } from "class-validator";
-import { SectoralScope } from 'serial-number-gen'
+import { SectoralScope } from '@undp/serial-number-gen'
 import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 import { AgricultureProperties } from "./agriculture.properties";
 import { SolarProperties } from "./solar.properties";
 import { ProgrammeProperties } from "./programme.properties";
 import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
+import { MitigationProperties } from "./mitigation.properties";
 
 export class ProgrammeDto {
 
@@ -34,12 +35,12 @@ export class ProgrammeDto {
     })
     sector: Sector;
 
-    @ApiProperty({ enum: TypeOfMitigation })
-    @IsEnum(TypeOfMitigation, {
-        message: 'Invalid mitigation type. Supported following values:' + Object.values(TypeOfMitigation)
-    })
-    @IsNotEmpty()
-    typeOfMitigation: TypeOfMitigation;
+    // @ApiProperty({ enum: TypeOfMitigation })
+    // @IsEnum(TypeOfMitigation, {
+    //     message: 'Invalid mitigation type. Supported following values:' + Object.values(TypeOfMitigation)
+    // })
+    // @IsNotEmpty()
+    // typeOfMitigation: TypeOfMitigation;
 
     @ApiProperty()
     @IsNotEmpty()
@@ -79,19 +80,30 @@ export class ProgrammeDto {
     @Type(() => ProgrammeProperties)
     programmeProperties: ProgrammeProperties;
 
-    @ApiProperty()
-    @ValidateIf(o => o.typeOfMitigation === TypeOfMitigation.AGRICULTURE)
-    @IsNotEmptyObject()
-    @ValidateNested()
-    @Type(() => AgricultureProperties)
-    agricultureProperties?: AgricultureProperties;
+    // @ApiProperty()
+    // @ValidateIf(o => o.typeOfMitigation === TypeOfMitigation.AGRICULTURE)
+    // @IsNotEmptyObject()
+    // @ValidateNested()
+    // @Type(() => AgricultureProperties)
+    // agricultureProperties?: AgricultureProperties;
 
-    @ApiProperty()
-    @ValidateIf(o => o.typeOfMitigation === TypeOfMitigation.SOLAR)
-    @IsNotEmptyObject()
-    @ValidateNested()
-    @Type(() => SolarProperties)
-    solarProperties?: SolarProperties;
+    // @ApiProperty()
+    // @ValidateIf(o => o.typeOfMitigation === TypeOfMitigation.SOLAR)
+    // @IsNotEmptyObject()
+    // @ValidateNested()
+    // @Type(() => SolarProperties)
+    // solarProperties?: SolarProperties;
+
+    @ApiPropertyOptional({
+        type: "array",
+        items: {
+            $ref: getSchemaPath(MitigationProperties),
+        }
+    })
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type(() => MitigationProperties)
+    mitigationActions?: MitigationProperties[] 
 
     @ApiPropertyOptional()
     @IsNotEmpty()

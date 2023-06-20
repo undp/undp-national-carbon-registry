@@ -369,93 +369,93 @@ Resources:
       ContentBasedDeduplication: true
       VisibilityTimeout: 60
 
-  # DBInstanceProd:
-  #   Type: AWS::RDS::DBInstance
-  #   Properties:
-  #     DBInstanceIdentifier: !Sub '${DBInstanceIdentifier}prod'
-  #     DBName: !Sub ${DBName}prod
-  #     AllocatedStorage:
-  #       Ref: DBAllocatedStorage
-  #     DBInstanceClass:
-  #       Ref: DBInstanceClass
-  #     StorageType:
-  #       Ref: DBStorageType
-  #     Engine:
-  #       Ref: DBEngine
-  #     EngineVersion:
-  #       Ref: DBEngineVersion
-  #     MasterUsername:
-  #       Ref: DBUser
-  #     MasterUserPassword:
-  #       Ref: DBPassword
-  #     PubliclyAccessible: True
-  #     Tags:
-  #       - Key: Programme
-  #         Value: "RDS PostgreSQL"
-  #     VPCSecurityGroups:
-  #       - !Ref NoIngressSecurityGroup
-  #     DBSubnetGroupName:
-  #       Ref: DBSubnetGroup
+  DBInstanceProd:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub '${DBInstanceIdentifier}prod'
+      DBName: !Sub ${DBName}prod
+      AllocatedStorage:
+        Ref: DBAllocatedStorage
+      DBInstanceClass:
+        Ref: DBInstanceClass
+      StorageType:
+        Ref: DBStorageType
+      Engine:
+        Ref: DBEngine
+      EngineVersion:
+        Ref: DBEngineVersion
+      MasterUsername:
+        Ref: DBUser
+      MasterUserPassword:
+        Ref: DBPassword
+      PubliclyAccessible: True
+      Tags:
+        - Key: Programme
+          Value: "RDS PostgreSQL"
+      VPCSecurityGroups:
+        - !Ref NoIngressSecurityGroup
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
 
-  # LedgerInstanceProd:
-  #   Type: AWS::QLDB::Ledger
-  #   Properties: 
-  #     DeletionProtection: false
-  #     Name: !Sub ${LedgerName}-prod
-  #     PermissionsMode: STANDARD
+  LedgerInstanceProd:
+    Type: AWS::QLDB::Ledger
+    Properties: 
+      DeletionProtection: false
+      Name: !Sub ${LedgerName}-prod
+      PermissionsMode: STANDARD
 
-  # KinesisStreamProd:
-  #   Type: AWS::Kinesis::Stream
-  #   Properties: 
-  #     Name: !Sub carbon-stream-prod
-  #     ShardCount: 1
+  KinesisStreamProd:
+    Type: AWS::Kinesis::Stream
+    Properties: 
+      Name: !Sub carbon-stream-prod
+      ShardCount: 1
 
-  # QLDBStreamProd:
-  #   Type: AWS::QLDB::Stream
-  #   Properties: 
-  #     InclusiveStartTime: '2020-05-29T00:00:00Z'
-  #     KinesisConfiguration: 
-  #       StreamArn: !GetAtt KinesisStreamProd.Arn
-  #     LedgerName: !Ref LedgerInstanceProd
-  #     RoleArn: !GetAtt LambdaRole.Arn
-  #     StreamName: !Sub qldb-prod
+  QLDBStreamProd:
+    Type: AWS::QLDB::Stream
+    Properties: 
+      InclusiveStartTime: '2020-05-29T00:00:00Z'
+      KinesisConfiguration: 
+        StreamArn: !GetAtt KinesisStreamProd.Arn
+      LedgerName: !Ref LedgerInstanceProd
+      RoleArn: !GetAtt LambdaRole.Arn
+      StreamName: !Sub qldb-prod
 
-  # S3BucketWebProd:
-  #   Type: AWS::S3::Bucket
-  #   DeletionPolicy: Delete
-  #   Properties:
-  #     AccessControl: PublicRead
-  #     BucketName: !Sub 'carbon-www-prod'
-  #     WebsiteConfiguration:
-  #       ErrorDocument: 'index.html'
-  #       IndexDocument: 'index.html'
+  S3BucketWebProd:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Sub 'carbon-www-prod'
+      WebsiteConfiguration:
+        ErrorDocument: 'index.html'
+        IndexDocument: 'index.html'
 
-  # S3BucketCommonWebProd:
-  #   Type: AWS::S3::Bucket
-  #   DeletionPolicy: Delete
-  #   Properties:
-  #     AccessControl: PublicRead
-  #     BucketName: !Sub 'carbon-common-prod'
+  S3BucketCommonWebProd:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Sub 'carbon-common-prod'
 
-  # S3BucketPolicyProd:
-  #   Type: AWS::S3::BucketPolicy
-  #   Properties:
-  #     Bucket: !Ref S3BucketWebProd
-  #     PolicyDocument:
-  #       Version: '2012-10-17'
-  #       Statement:
-  #         - Effect: 'Allow'
-  #           Action: 's3:GetObject'
-  #           Principal: '*'
-  #           Resource: !Sub '${S3BucketWebProd.Arn}/*'
+  S3BucketPolicyProd:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketWebProd
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Action: 's3:GetObject'
+            Principal: '*'
+            Resource: !Sub '${S3BucketWebProd.Arn}/*'
 
-  # AsyncQueueProd:
-  #   Type: AWS::SQS::Queue
-  #   Properties: 
-  #     QueueName: !Sub 'AsyncQueueprod.fifo'
-  #     FifoQueue: true
-  #     ContentBasedDeduplication: true
-  #     VisibilityTimeout: 60
+  AsyncQueueProd:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: !Sub 'AsyncQueueprod.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
 
 Outputs:
   VPC:

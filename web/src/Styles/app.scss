@@ -537,6 +537,10 @@ body {
   margin-top: 2rem;
 }
 
+.mg-bottom-1 {
+  margin-bottom: 1rem !important;
+}
+
 .transfer-form {
   .popup-credit-input {
     .ant-form-item-explain-error {
@@ -705,7 +709,7 @@ body {
   overflow-wrap: break-word;
 }
 
-.ant-message{
+.ant-message {
   width: 50%;
   right: 0px;
   left: auto;

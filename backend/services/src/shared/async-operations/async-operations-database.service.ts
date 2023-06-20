@@ -28,24 +28,24 @@ export class AsyncOperationsDatabaseService
 
   public async AddAction(action: AsyncAction): Promise<boolean> {
     if (action.actionType === AsyncActionType.Email) {
-      if (this.emailDisabled)
-        return false;
-      let asyncActionEntity: AsyncActionEntity = {} as AsyncActionEntity;
-      asyncActionEntity.actionType = action.actionType;
-      asyncActionEntity.actionProps = JSON.stringify(action.actionProps);
-      await this.asyncActionRepo.save(asyncActionEntity).catch((err: any) => {
-        this.logger.error("error", err);
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "common.addAsyncActionDatabaseFailed",
-            ["Email"]
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      });
-
-      this.logger.log("Succefully added to the AsyncAction table", action);
+      if (this.emailDisabled) return false;
     }
+    
+    let asyncActionEntity: AsyncActionEntity = {} as AsyncActionEntity;
+    asyncActionEntity.actionType = action.actionType;
+    asyncActionEntity.actionProps = JSON.stringify(action.actionProps);
+    await this.asyncActionRepo.save(asyncActionEntity).catch((err: any) => {
+      this.logger.error("error", err);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "common.addAsyncActionDatabaseFailed",
+          ["Email"]
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    });
+
+    this.logger.log("Succefully added to the AsyncAction table", action);
 
     return true;
   }

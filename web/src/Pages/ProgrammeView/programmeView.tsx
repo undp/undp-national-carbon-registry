@@ -58,7 +58,6 @@ import {
   TypeOfMitigation,
   UnitField,
 } from '../../Definitions/InterfacesAndType/programme.definitions';
-import i18next from 'i18next';
 import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
   CertBGColor,
@@ -76,7 +75,7 @@ import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { HandThumbsUp, ShieldCheck } from 'react-bootstrap-icons';
+import { ShieldCheck } from 'react-bootstrap-icons';
 import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
 import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
@@ -85,10 +84,11 @@ import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import { ProgrammeTransfer } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -112,6 +112,7 @@ const ProgrammeView = () => {
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
+  const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
 
   const showModal = () => {
     setOpenModal(true);
@@ -482,14 +483,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: (
-              <TimelineBody
-                text={formatString('view:tlCreateDesc', [
-                  addCommSep(activity.data.creditEst),
-                  creditUnit,
-                ])}
-              />
-            ),
+            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} />,
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -768,6 +762,53 @@ const ProgrammeView = () => {
     }
   };
 
+  const mitigationData = (mitigation: any) => {
+    if (!mitigation) {
+      return {};
+    }
+    let calculations: any = {};
+    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
+      if (mitigation.properties) {
+        calculations = mitigation.properties;
+        if (calculations.landAreaUnit) {
+          calculations.landArea = new UnitField(
+            mitigation.properties.landAreaUnit,
+            addCommSep(mitigation.properties.landArea)
+          );
+        }
+        delete calculations.landAreaUnit;
+      }
+    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
+      if (mitigation.properties) {
+        calculations = mitigation.properties;
+        if (calculations.energyGenerationUnit) {
+          calculations.energyGeneration = new UnitField(
+            mitigation.properties.energyGenerationUnit,
+            addCommSep(mitigation.properties.energyGeneration)
+          );
+          // addCommSep(data.solarProperties.energyGeneration) +
+          // ' ' +
+          // data.solarProperties.energyGenerationUnit;
+        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
+          calculations.consumerGroup = (
+            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
+          );
+        }
+        delete calculations.energyGenerationUnit;
+      }
+    }
+    calculations.constantVersion = mitigation.properties.constantVersion;
+
+    for (const key in mitigation) {
+      if (mitigation.hasOwnProperty(key)) {
+        if (key !== 'properties') {
+          calculations[key] = mitigation[key];
+        }
+      }
+    }
+    return calculations;
+  };
+
   const onPopupAction = async (
     body: any,
     endpoint: any,
@@ -903,6 +944,10 @@ const ProgrammeView = () => {
   };
 
   const mapArrayToi18n = (map: any) => {
+    if (!map) {
+      return {};
+    }
+
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
       const text = t('view:' + k);
@@ -1060,7 +1105,7 @@ const ProgrammeView = () => {
         );
       }
     } else if (
-      data.currentStage.toString() !== ProgrammeStage.Rejected &&
+      data.currentStage.toString() === ProgrammeStage.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -1244,42 +1289,57 @@ const ProgrammeView = () => {
     }
   });
 
-  let calculations: any = {};
-  if (data.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-    calculations = data.agricultureProperties;
-    if (calculations) {
-      if (calculations.landAreaUnit) {
-        calculations.landArea = new UnitField(
-          data.agricultureProperties.landAreaUnit,
-          addCommSep(data.agricultureProperties.landArea)
-        );
-        // addCommSep(data.agricultureProperties.landArea) +
-        // ' ' +
-        // data.agricultureProperties.landAreaUnit;
-      }
-      delete calculations.landAreaUnit;
+  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
+    return (
+      <Card className="card-container">
+        <div>
+          <InfoView
+            data={mapArrayToi18n(mitigationData(ele))}
+            title={t('view:calculation') + ' - ' + ele?.actionId}
+            icon={<BulbOutlined />}
+          />
+        </div>
+      </Card>
+    );
+  });
+  const getFileName = (filepath: string) => {
+    const index = filepath.indexOf('?');
+    if (index > 0) {
+      filepath = filepath.substring(0, index);
     }
-  } else if (data.typeOfMitigation === TypeOfMitigation.SOLAR) {
-    calculations = data.solarProperties;
-    if (calculations) {
-      if (calculations.energyGenerationUnit) {
-        calculations.energyGeneration = new UnitField(
-          data.solarProperties.energyGenerationUnit,
-          addCommSep(data.solarProperties.energyGeneration)
-        );
-        // addCommSep(data.solarProperties.energyGeneration) +
-        // ' ' +
-        // data.solarProperties.energyGenerationUnit;
-      } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-        calculations.consumerGroup = (
-          <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-        );
-      }
-      delete calculations.energyGenerationUnit;
+    const lastCharcter = filepath.charAt(filepath.length - 1);
+    if (lastCharcter === '/') {
+      filepath = filepath.slice(0, -1);
     }
-  }
+    return filepath.substring(filepath.lastIndexOf('/') + 1);
+  };
 
-  calculations.constantVersion = data.constantVersion;
+  const fileItemContent = (filePath: any) => {
+    return (
+      <Row className="field" key={filePath}>
+        <Col span={12} className="field-key">
+          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
+            {getFileName(filePath)}
+          </a>
+        </Col>
+        <Col span={12} className="field-value">
+          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
+            <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+          </a>
+        </Col>
+      </Row>
+    );
+  };
+
+  const getFileContent = (files: any) => {
+    if (Array.isArray(files)) {
+      return files.map((filePath: any) => {
+        return fileItemContent(filePath);
+      });
+    } else {
+      return fileItemContent(files);
+    }
+  };
 
   return loadingAll ? (
     <Loading />
@@ -1404,7 +1464,8 @@ const ProgrammeView = () => {
                                     0
                                   )
                                 : 0) >
-                              0 && (
+                              0 &&
+                            !isTransferFrozen && (
                               <div>
                                 {((userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
                                   !isAllOwnersDeactivated) ||
@@ -1507,7 +1568,8 @@ const ProgrammeView = () => {
                                 )}
                                 {!isAllOwnersDeactivated &&
                                   userInfoState!.companyState !==
-                                    CompanyState.SUSPENDED.valueOf() && (
+                                    CompanyState.SUSPENDED.valueOf() &&
+                                  !isTransferFrozen && (
                                     <Button
                                       type="primary"
                                       onClick={() => {
@@ -1563,42 +1625,30 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
-            {data.programmeProperties.programmeMaterials && (
-              <Card className="card-container">
-                <div className="info-view only-head">
-                  <div className="title">
-                    <span className="title-icon">{<Icon.Grid />}</span>
-                    <span className="title-text">{t('view:programmeMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.programmeMaterials}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+            {data.programmeProperties.programmeMaterials &&
+              data.programmeProperties.programmeMaterials.length > 0 && (
+                <Card className="card-container">
+                  <div className="info-view only-head">
+                    <div className="title">
+                      <span className="title-icon">{<Icon.Grid />}</span>
+                      <span className="title-text">{t('view:programmeMaterial')}</span>
+                      <div>{getFileContent(data.programmeProperties.programmeMaterials)}</div>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )}
-            {data.programmeProperties.projectMaterial && (
-              <Card className="card-container">
-                <div className="info-view only-head">
-                  <div className="title">
-                    <span className="title-icon">{<Icon.FileEarmarkText />}</span>
-                    <span className="title-text">{t('view:projectMaterial')}</span>
-                    <a
-                      target="_blank"
-                      href={data.programmeProperties.projectMaterial}
-                      rel="noopener noreferrer"
-                      className="pull-right link"
-                    >
-                      {<Icon.Link45deg />}
-                    </a>
+                </Card>
+              )}
+            {/* {data.programmeProperties.projectMaterial &&
+              data.programmeProperties.projectMaterial.length > 0 && (
+                <Card className="card-container">
+                  <div className="info-view">
+                    <div className="title">
+                      <span className="title-icon">{<Icon.FileEarmarkText />}</span>
+                      <span className="title-text">{t('view:projectMaterial')}</span>
+                      <div>{getFileContent(data.programmeProperties.projectMaterial)}</div>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            )}
+                </Card>
+              )} */}
             <Card className="card-container">
               <div>
                 <InfoView
@@ -1661,15 +1711,7 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            <Card className="card-container">
-              <div>
-                <InfoView
-                  data={mapArrayToi18n(calculations)}
-                  title={t('view:calculation')}
-                  icon={<BulbOutlined />}
-                />
-              </div>
-            </Card>
+            {mitigationWidgets && mitigationWidgets}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">

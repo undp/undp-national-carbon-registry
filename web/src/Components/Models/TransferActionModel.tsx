@@ -1,7 +1,7 @@
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import { ProgrammeTransfer } from '@undp/carbon-library';
 import { addCommSep } from '../../Definitions/InterfacesAndType/programme.definitions';
 import { creditUnit } from '../../Pages/Common/configs';
 

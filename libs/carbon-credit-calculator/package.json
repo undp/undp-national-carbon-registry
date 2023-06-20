@@ -1,5 +1,5 @@
 {
-  "name": "carbon-credit-calculator",
+  "name": "@undp/carbon-credit-calculator",
   "version": "1.0.0",
   "description": "Carbon Credit Calculator",
   "main": "./dist/esm/index.js",
@@ -23,5 +23,15 @@
   "dependencies": {
     "@types/node": "^18.11.9",
     "convert-units": "^2.3.4"
-  }
+  },
+  "types": "./dist/esm/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xeptagondev/carbon-registry.git#develop"
+  },
+  "author": "UNDP",
+  "bugs": {
+    "url": "https://github.com/xeptagondev/carbon-registry/issues"
+  },
+  "homepage": "https://github.com/xeptagondev/carbon-registry/tree/develop#readme"
 }

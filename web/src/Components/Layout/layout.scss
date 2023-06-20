@@ -11,3 +11,21 @@
   height: 100vh;
   overflow: auto;
 }
+
+.transfer-freeze-label {
+  background-color: $error-color;
+  color: white;
+  font-size: 14px;
+  padding: 5px 20px;
+  min-height: 30px;
+  vertical-align: middle;
+  .pause-circle {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+  .pause-circle-icon {
+    margin-right: 10px;
+  }
+}
+

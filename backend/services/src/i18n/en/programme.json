@@ -6,6 +6,8 @@
     "programmeExistsWithSameExetrnalId": "Programme already exist with the given externalId",
     "transferRequestALreadyProcessed": "Programme transfer request already processed",
     "programmeNotExist": "Programme does not exist",
+    "noMitigationActionFound": "Mitigation action does not exist",
+    "mitigationActionAlreadyExist": "Mitigation action already exist",
     "programmeNotExistWIthId": "Programme does not exist {}",
     "companyIsNotOwnerOfProgramme": "Company {} does not own the programme",
     "companyHaveNoEnoughCredits": "Company {} does not have enough credits",
@@ -43,7 +45,7 @@
     "proponentPercAndTaxIdsNotMatched": "Proponent percentage and number of tax ids does not match",
     "proponentPercSum=100": "Proponent percentage sum must be equals to 100",
     "duplicatedProponentTaxIds": "Proponent tax id cannot be duplicated",
-    "proponentTaxIdNotInSystem": "Proponent tax id does not exist in the system",
+    "proponentTaxIdNotInSystem": "Proponent tax id does not exist in the system {}",
     "proponentIsNotAProgrammeDev": "Proponent is not a programme developer",
     "noEnoughCreditsToCreateProgramme": "Not enough credits to create the programme",
     "noDiffInConfigFromThePrevVersion": "Not difference in the config from the previous version",
@@ -67,10 +69,12 @@
     "issuedCreditCantExceedEstCredit": "Programme issued credit amount can not exceed estimated credit amount",
     "transferReqRejectSuccess": "The transfer request has been rejected successfully",
     "transferReqCancelSuccess": "The international transfer retire request has been cancelled successfully",
+    "transferCancelSuccess": "The transfer request has been cancelled successfully",
     "certifierCanOnlyCertifiy": "Programme certification can perform only by certifier",
     "govOrProgrammeOwnerOnlyCreditRetirement": "Credit retirement can initiate only the government or programme owner",
     "issuedCreditCannotExceedEstCredit": "Programme issue credit amount can not exceed estimated credit amount",
     "organisationDeactivated": "This action is unauthorised due to the deactivation of your organisation. You will now be logged out of the system. Log in again to access the system with view-only permissions.",
     "unAuth": "This action is unauthorised",
-    "companyIsNotTheOwnerOfProg": "Company {} is not an owner company of the programme"
+    "companyIsNotTheOwnerOfProg": "Company {} is not an owner company of the programme",
+    "internalErrorCreditFreezing": "Internal error on credit freezing"
 }

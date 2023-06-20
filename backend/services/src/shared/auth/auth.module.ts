@@ -22,7 +22,7 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
       useFactory: async (configService: ConfigService) => ({
         secretOrPrivateKey: configService.get<string>("jwt.userSecret"),
         signOptions: {
-          expiresIn: 3600 * 2,
+          expiresIn: parseInt(configService.get<string>("jwt.expiresIn")),
         },
       }),
       inject: [ConfigService],
@@ -30,7 +30,7 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
     }),
     CaslModule,
     CompanyModule,
-    AsyncOperationsModule
+    AsyncOperationsModule,
   ],
   providers: [
     AuthService,

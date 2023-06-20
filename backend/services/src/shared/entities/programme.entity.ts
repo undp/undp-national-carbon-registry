@@ -1,14 +1,12 @@
-import { PRECISION } from "carbon-credit-calculator/dist/esm/calculator";
-import { SectoralScope } from "serial-number-gen";
-import { Entity, Column, PrimaryColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
-import { AgricultureProperties } from "../dto/agriculture.properties";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
+import { SectoralScope } from "@undp/serial-number-gen";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 import { ProgrammeProperties } from "../dto/programme.properties";
-import { SolarProperties } from "../dto/solar.properties";
 import { Sector } from "../enum/sector.enum";
 import { TxType } from "../enum/txtype.enum";
-import { TypeOfMitigation } from "../enum/typeofmitigation.enum";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { EntitySubject } from "./entity.subject";
+import { MitigationProperties } from "../dto/mitigation.properties";
 
 @Entity()
 export class Programme implements EntitySubject {
@@ -41,16 +39,9 @@ export class Programme implements EntitySubject {
     type: "enum",
     enum: ProgrammeStage,
     array: false,
-    default: ProgrammeStage.AWAITING_AUTHORIZATION,
+    default: ProgrammeStage.NEW,
   })
   currentStage: ProgrammeStage;
-
-  @Column({
-    type: "enum",
-    enum: TypeOfMitigation,
-    array: false,
-  })
-  typeOfMitigation: TypeOfMitigation;
 
   @Column({ type: "bigint" })
   startTime: number;
@@ -112,19 +103,8 @@ export class Programme implements EntitySubject {
   })
   programmeProperties: ProgrammeProperties;
 
-  @Column({
-    type: "jsonb",
-    array: false,
-    nullable: true,
-  })
-  agricultureProperties: AgricultureProperties;
-
-  @Column({
-    type: "jsonb",
-    array: false,
-    nullable: true,
-  })
-  solarProperties: SolarProperties;
+  @Column("jsonb", { array: false, nullable: true })
+  mitigationActions?: MitigationProperties[];
 
   @Column({ type: "bigint" })
   txTime: number;

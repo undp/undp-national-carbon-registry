@@ -1,11 +1,6 @@
 export enum ProgrammeStage {
-  // AWAITING_DESIGN = 'AwaitingDesign',
-  // AWAITING_VALIDATION = 'AwaitingValidation',
-  // AWAITING_VERIFICATION = 'AwaitingVerification', // Up to this not used
+  NEW = 'New',
   AWAITING_AUTHORIZATION = "AwaitingAuthorization",
   AUTHORISED = "Authorised",
   REJECTED = "Rejected",
-//   ISSUED = "Issued",
-//   RETIRED = "Retired",
-//   TRANSFERRED = "Transferred",
 }

@@ -1,12 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { EmailService } from "src/shared/email/email.service";
 import { AsyncActionEntity } from "src/shared/entities/async.action.entity";
 import { Counter } from "src/shared/entities/counter.entity";
-import { AsyncActionType } from "src/shared/enum/async.action.type.enum";
 import { CounterType } from "src/shared/util/counter.type.enum";
 import { Repository } from "typeorm";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
+import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
 
 @Injectable()
 export class AsyncOperationsDatabaseHandlerService
@@ -17,7 +16,7 @@ export class AsyncOperationsDatabaseHandlerService
     @InjectRepository(Counter) private counterRepo: Repository<Counter>,
     @InjectRepository(AsyncActionEntity)
     private asyncActionRepo: Repository<AsyncActionEntity>,
-    private emailService: EmailService
+    private asyncOperationsHandlerService: AsyncOperationsHandlerService
   ) {}
 
   async asyncHandler(event: any): Promise<any> {
@@ -42,20 +41,31 @@ export class AsyncOperationsDatabaseHandlerService
         .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();
 
+      if(notExecutedActions.length === 0)
+        return;
+        
+      const startedSeq = lastSeq;
       notExecutedActions.forEach((action: any) => {
-        if (action.actionType === AsyncActionType.Email.toString()) {
-          const emailBody = JSON.parse(action.actionProps);
-          asyncPromises.push(this.emailService.sendEmail(emailBody));
-        }
+        console.log('Processing action', action.actionId)
+        asyncPromises.push(
+          this.asyncOperationsHandlerService.handler(
+            action.actionType,
+            JSON.parse(action.actionProps)
+          )
+        );
         lastSeq = action.actionId;
       });
 
-      await Promise.all(asyncPromises);
-
-      await this.counterRepo.save({
-        id: CounterType.ASYNC_OPERATIONS,
-        counter: lastSeq,
-      });
+      try {
+        await Promise.all(asyncPromises);
+        await this.counterRepo.save({
+          id: CounterType.ASYNC_OPERATIONS,
+          counter: lastSeq,
+        });
+      } catch (exception) {
+        this.logger.log("database asyncHandler failed", exception);
+        lastSeq = startedSeq;
+      }
     }, 5000);
   }
 }

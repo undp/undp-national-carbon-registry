@@ -29,6 +29,7 @@ import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
 import { message } from 'antd';
+import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 
 // message.config({
 //   duration: 60,
@@ -64,76 +65,78 @@ const App = () => {
         }
       >
         <UserInformationContextProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="login" element={<Login />} />
-              <Route path="forgotPassword" element={<Login forgotPassword={true} />} />
-              <Route path="resetPassword/:requestid" element={<Login resetPassword={true} />} />
-              <Route path="signUp" element={<SignUp />} />
-              <Route path="privacy" element={<PrivacyPolicy />} />
-              <Route path="help" element={<CarbonHelp />} />
-              <Route path="codeconduct" element={<CodeOfConduct />} />
-              <Route path="cookie" element={<CookiePolicy />} />
-              <Route path="terms" element={<TermsOfUse />} />
-              <Route path="/" element={<Homepage />} />
-              <Route path="/" element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
-                  <Route index element={<Dashboard />} />
-                </Route>
-                <Route
-                  path="/programmeManagement"
-                  element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<ProgrammeManagement />} />
-                  <Route path="view" element={<ProgrammeView />} />
-                </Route>
-                <Route
-                  path="/companyManagement"
-                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<CompanyManagement />} />
-                  <Route path="addCompany" element={<AddNewCompany />} />
-                  <Route path="updateCompany" element={<AddNewCompany />} />
-                </Route>
-                <Route
-                  path="/userManagement"
-                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
-                >
-                  <Route path="viewAll" element={<UserManagement />} />
-                  <Route path="addUser" element={<AddUser />} />
-                  <Route path="updateUser" element={<AddUser />} />
-                </Route>
-                <Route
-                  path="/creditTransfers"
-                  element={<CustomLayout selectedKey="creditTransfers/viewAll" />}
-                >
-                  <Route path="viewAll" element={<CreditTransfers />} />
-                  {/* <Route path="view" element={<ProgrammeView />} /> */}
-                </Route>
-                <Route
-                  path="/userProfile"
-                  element={<CustomLayout selectedKey="userManagement/viewAll" />}
-                >
-                  <Route path="view" element={<UserProfile />} />
-                </Route>
-                <Route
-                  path="/companyProfile"
-                  element={<CustomLayout selectedKey="companyManagement/viewAll" />}
-                >
-                  <Route path="view" element={<CompanyProfile />} />
-                </Route>
-                {/* <Route
-                    path="/userManagement"
-                    element={<CustomLayout selectedKey="userManagement" />}
+          <SettingsContextProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="login" element={<Login />} />
+                <Route path="forgotPassword" element={<Login forgotPassword={true} />} />
+                <Route path="resetPassword/:requestid" element={<Login resetPassword={true} />} />
+                <Route path="signUp" element={<SignUp />} />
+                <Route path="privacy" element={<PrivacyPolicy />} />
+                <Route path="help" element={<CarbonHelp />} />
+                <Route path="codeconduct" element={<CodeOfConduct />} />
+                <Route path="cookie" element={<CookiePolicy />} />
+                <Route path="terms" element={<TermsOfUse />} />
+                <Route path="/" element={<Homepage />} />
+                <Route path="/" element={<PrivateRoute />}>
+                  <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
+                    <Route index element={<Dashboard />} />
+                  </Route>
+                  <Route
+                    path="/programmeManagement"
+                    element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                   >
-                    <Route index element={<UserManagement />} />
+                    <Route path="viewAll" element={<ProgrammeManagement />} />
+                    <Route path="view" element={<ProgrammeView />} />
+                  </Route>
+                  <Route
+                    path="/companyManagement"
+                    element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<CompanyManagement />} />
+                    <Route path="addCompany" element={<AddNewCompany />} />
+                    <Route path="updateCompany" element={<AddNewCompany />} />
+                  </Route>
+                  <Route
+                    path="/userManagement"
+                    element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<UserManagement />} />
                     <Route path="addUser" element={<AddUser />} />
-                    <Route path="updateUser" element={<UpdateUser />} />
-                  </Route> */}
-              </Route>
-              <Route path="/*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </BrowserRouter>
+                    <Route path="updateUser" element={<AddUser />} />
+                  </Route>
+                  <Route
+                    path="/creditTransfers"
+                    element={<CustomLayout selectedKey="creditTransfers/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<CreditTransfers />} />
+                    {/* <Route path="view" element={<ProgrammeView />} /> */}
+                  </Route>
+                  <Route
+                    path="/userProfile"
+                    element={<CustomLayout selectedKey="userManagement/viewAll" />}
+                  >
+                    <Route path="view" element={<UserProfile />} />
+                  </Route>
+                  <Route
+                    path="/companyProfile"
+                    element={<CustomLayout selectedKey="companyManagement/viewAll" />}
+                  >
+                    <Route path="view" element={<CompanyProfile />} />
+                  </Route>
+                  {/* <Route
+                      path="/userManagement"
+                      element={<CustomLayout selectedKey="userManagement" />}
+                    >
+                      <Route index element={<UserManagement />} />
+                      <Route path="addUser" element={<AddUser />} />
+                      <Route path="updateUser" element={<UpdateUser />} />
+                    </Route> */}
+                </Route>
+                <Route path="/*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </BrowserRouter>
+          </SettingsContextProvider>
         </UserInformationContextProvider>
       </ConnectionContextProvider>
     </AbilityContext.Provider>

@@ -29,6 +29,7 @@ import { PasswordUpdateDto } from "../shared/dto/password.update.dto";
 import { Role } from "../shared/casl/role.enum";
 import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
 import { HelperService } from "../shared/util/helpers.service";
+import { ApiKeyJwtAuthGuard } from "../shared/auth/guards/api-jwt-key.guard";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -47,8 +48,9 @@ export class UserController {
     return await this.userService.getUserProfileDetails(req.user.id);
   }
 
+  @ApiBearerAuth('api_key')
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability, body) =>
     ability.can(Action.Create, Object.assign(new User(), body))
   )

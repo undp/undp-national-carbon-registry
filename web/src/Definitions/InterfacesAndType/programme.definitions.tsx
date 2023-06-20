@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { ProgrammeTransfer } from '../../Casl/entities/ProgrammeTransfer';
+import { ProgrammeTransfer } from '@undp/carbon-library';
 import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.color.constants';
 
 export enum ProgrammeStage {
@@ -153,8 +153,8 @@ export interface ProgrammeProperties {
   geographicalLocation: string[];
   greenHouseGasses: any[];
   creditYear: number;
-  programmeMaterials: string;
-  projectMaterial: string;
+  programmeMaterials: [];
+  projectMaterial: [];
 }
 
 export interface Programme {
@@ -184,8 +184,9 @@ export interface Programme {
   company: any[];
   creditUnit: string;
   programmeProperties: ProgrammeProperties;
-  agricultureProperties: any;
-  solarProperties: any;
+  // agricultureProperties: any;
+  // solarProperties: any;
+  mitigationActions: any;
   txTime: number;
   createdTime: number;
   txRef: string;

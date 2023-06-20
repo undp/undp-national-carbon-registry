@@ -10,7 +10,7 @@ import {
   calculateCredit,
   SolarConstants,
   SolarCreationRequest,
-} from "carbon-credit-calculator";
+} from "@undp/carbon-credit-calculator";
 import { QueryDto } from "../dto/query.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
@@ -52,6 +52,13 @@ import { SystemActionType } from "../enum/system.action.type";
 import { CountryService } from "../util/country.service";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { LocationInterface } from "../location/location.interface";
+import { ProgrammeDocumentDto } from "../dto/programme.document.dto";
+import { MitigationProperties } from "../dto/mitigation.properties";
+import { OwnershipUpdateDto } from "../dto/ownership.update";
+import { MitigationAddDto } from "../dto/mitigation.add.dto";
+import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
+import { ProgrammeAcceptedDto } from "../dto/programme.accepted.dto";
 
 export declare function PrimaryGeneratedColumn(
   options: PrimaryGeneratedColumnType
@@ -81,7 +88,8 @@ export class ProgrammeService {
     private programmeTransferRepo: Repository<ProgrammeTransfer>,
     @InjectRepository(ConstantEntity)
     private constantRepo: Repository<ConstantEntity>,
-    private logger: Logger
+    private logger: Logger,
+    private asyncOperationsInterface: AsyncOperationsInterface
   ) {}
 
   private toProgramme(programmeDto: ProgrammeDto): Programme {
@@ -90,39 +98,39 @@ export class ProgrammeService {
     return plainToClass(Programme, data);
   }
 
-  private async getCreditRequest(
-    programmeDto: ProgrammeDto,
-    constants: ConstantEntity
-  ) {
-    switch (programmeDto.typeOfMitigation) {
-      case TypeOfMitigation.AGRICULTURE:
-        const ar = new AgricultureCreationRequest();
-        ar.duration = programmeDto.endTime - programmeDto.startTime;
-        ar.durationUnit = "s";
-        ar.landArea = programmeDto.agricultureProperties.landArea;
-        ar.landAreaUnit = programmeDto.agricultureProperties.landAreaUnit;
-        if (constants) {
-          ar.agricultureConstants = constants.data as AgricultureConstants;
-        }
-        return ar;
-      case TypeOfMitigation.SOLAR:
-        const sr = new SolarCreationRequest();
-        sr.buildingType = programmeDto.solarProperties.consumerGroup;
-        sr.energyGeneration = programmeDto.solarProperties.energyGeneration;
-        sr.energyGenerationUnit =
-          programmeDto.solarProperties.energyGenerationUnit;
-        if (constants) {
-          sr.solarConstants = constants.data as SolarConstants;
-        }
-        return sr;
-    }
-    throw Error(
-      this.helperService.formatReqMessagesString(
-        "programme.notImplementedForMitigationType",
-        [programmeDto.typeOfMitigation]
-      )
-    );
-  }
+  // private async getCreditRequest(
+  //   programmeDto: ProgrammeDto,
+  //   constants: ConstantEntity
+  // ) {
+  //   switch (programmeDto.typeOfMitigation) {
+  //     case TypeOfMitigation.AGRICULTURE:
+  //       const ar = new AgricultureCreationRequest();
+  //       ar.duration = programmeDto.endTime - programmeDto.startTime;
+  //       ar.durationUnit = "s";
+  //       ar.landArea = programmeDto.agricultureProperties.landArea;
+  //       ar.landAreaUnit = programmeDto.agricultureProperties.landAreaUnit;
+  //       if (constants) {
+  //         ar.agricultureConstants = constants.data as AgricultureConstants;
+  //       }
+  //       return ar;
+  //     case TypeOfMitigation.SOLAR:
+  //       const sr = new SolarCreationRequest();
+  //       sr.buildingType = programmeDto.solarProperties.consumerGroup;
+  //       sr.energyGeneration = programmeDto.solarProperties.energyGeneration;
+  //       sr.energyGenerationUnit =
+  //         programmeDto.solarProperties.energyGenerationUnit;
+  //       if (constants) {
+  //         sr.solarConstants = constants.data as SolarConstants;
+  //       }
+  //       return sr;
+  //   }
+  //   throw Error(
+  //     this.helperService.formatReqMessagesString(
+  //       "programme.notImplementedForMitigationType",
+  //       [programmeDto.typeOfMitigation]
+  //     )
+  //   );
+  // }
 
   async findById(id: any): Promise<Programme | undefined> {
     return await this.programmeRepo.findOneBy({
@@ -805,7 +813,7 @@ export class ProgrammeService {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(
-          "programme.transferReqCancelSuccess",
+          "programme.transferCancelSuccess",
           []
         )
       );
@@ -1124,6 +1132,71 @@ export class ProgrammeService {
     return new DataListResponseDto(allTransferList, allTransferList.length);
   }
 
+  async addDocument(document: ProgrammeDocumentDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add Document triggered')
+    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type, 0);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async programmeAccept(accept: ProgrammeAcceptedDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add accept triggered')
+    const resp = await this.programmeLedger.addDocument(accept.externalId, undefined, accept.data, accept.type, accept.creditEst);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async addMitigation(mitigation: MitigationAddDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Add mitigation triggered')
+    const resp = await this.programmeLedger.addMitigation(mitigation.externalId, mitigation.mitigation);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async updateOwnership(update: OwnershipUpdateDto): Promise<DataResponseDto | undefined> {
+    this.logger.log('Ownership update triggered')
+
+    if (
+      update.proponentTaxVatId.length !=
+      update.proponentPercentage.length
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercAndTaxIdsNotMatched",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (
+      update.proponentPercentage.reduce((a, b) => a + b, 0) != 100
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercSum=100",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const companyIds = [];
+    for (const taxId of update.proponentTaxVatId) {
+      const compo = await this.companyService.findByTaxId(taxId);
+      if (!compo) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.proponentTaxIdNotInSystem",
+            [taxId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      companyIds.push(compo.companyId)
+    }
+    
+    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage);
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
   async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
     this.logger.verbose("ProgrammeDTO received", programmeDto);
     const programme: Programme = this.toProgramme(programmeDto);
@@ -1192,7 +1265,7 @@ export class ProgrammeService {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "programme.proponentTaxIdNotInSystem",
-            []
+            [taxId]
           ),
           HttpStatus.BAD_REQUEST
         );
@@ -1218,37 +1291,37 @@ export class ProgrammeService {
     );
     programme.countryCodeA2 = this.configService.get("systemCountry");
 
-    let constants = undefined;
-    if (!programmeDto.creditEst) {
-      constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
+    // let constants = undefined;
+    // if (!programmeDto.creditEst) {
+    //   constants = await this.getLatestConstant(programmeDto.typeOfMitigation);
 
-      const req = await this.getCreditRequest(programmeDto, constants);
-      try {
-        programme.creditEst = Math.round(await calculateCredit(req));
-      } catch (err) {
-        this.logger.log(`Credit calculate failed ${err.message}`);
-        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
-      }
-    }
+    //   const req = await this.getCreditRequest(programmeDto, constants);
+    //   try {
+    //     programme.creditEst = Math.round(await calculateCredit(req));
+    //   } catch (err) {
+    //     this.logger.log(`Credit calculate failed ${err.message}`);
+    //     throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+    //   }
+    // }
 
-    if (programme.creditEst <= 0) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programme.noEnoughCreditsToCreateProgramme",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // if (programme.creditEst <= 0) {
+    //   throw new HttpException(
+    //     this.helperService.formatReqMessagesString(
+    //       "programme.noEnoughCreditsToCreateProgramme",
+    //       []
+    //     ),
+    //     HttpStatus.BAD_REQUEST
+    //   );
+    // }
     // programme.creditBalance = programme.creditIssued;
     // programme.creditChange = programme.creditIssued;
     programme.programmeProperties.creditYear = new Date(
       programme.startTime * 1000
     ).getFullYear();
-    programme.constantVersion = constants
-      ? String(constants.version)
-      : "default";
-    programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
+    // programme.constantVersion = constants
+    //   ? String(constants.version)
+    //   : "default";
+    programme.currentStage = ProgrammeStage.NEW;
     programme.companyId = companyIds;
     programme.txTime = new Date().getTime();
     if (programme.proponentPercentage) {
@@ -1857,7 +1930,7 @@ export class ProgrammeService {
         HttpStatus.BAD_REQUEST
       );
     }
-    const updated: any = await this.programmeLedger.issueProgrammeStatus(
+    let updated: any = await this.programmeLedger.issueProgrammeStatus(
       req.programmeId,
       this.configService.get("systemCountry"),
       program.companyId,
@@ -1874,19 +1947,21 @@ export class ProgrammeService {
       );
     }
 
-    updated.company = await this.companyRepo.find({
-      where: { companyId: In(updated.companyId) },
-    });
-    if (updated.certifierId && updated.certifierId.length > 0) {
-      updated.certifier = await this.companyRepo.find({
-        where: { companyId: In(updated.certifierId) },
-      });
-    }
+    const issueCReq: AsyncAction = {
+      actionType: AsyncActionType.IssueCredit,
+      actionProps: {
+        externalId: program.externalId,
+        issueAmount: req.issueAmount,
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      issueCReq
+    );
 
     const hostAddress = this.configService.get("host");
-    updated.company.forEach(async (company) => {
+    updated.companyId.forEach(async (companyId) => {
       await this.emailHelperService.sendEmailToOrganisationAdmins(
-        company.companyId,
+        companyId,
         EmailTemplates.CREDIT_ISSUANCE,
         {
           programmeName: updated.title,
@@ -1897,6 +1972,41 @@ export class ProgrammeService {
         }
       );
     });
+
+    const companyData = await this.companyService.findByCompanyIds({
+      companyIds: program.companyId,
+    });
+
+    const suspendedCompanies = companyData.filter(
+      (company) => company.state == CompanyState.SUSPENDED
+    );
+
+    if (suspendedCompanies.length > 0) {
+      updated = await this.programmeLedger.freezeIssuedCredit(
+        req.programmeId,
+        req.issueAmount,
+        this.getUserRef(user),
+        suspendedCompanies
+      );
+      if (!updated) {
+        return new BasicResponseDto(
+          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString(
+            "programme.internalErrorCreditFreezing",
+            [req.programmeId]
+          )
+        );
+      }
+    }
+
+    updated.company = await this.companyRepo.find({
+      where: { companyId: In(updated.companyId) },
+    });
+    if (updated.certifierId && updated.certifierId.length > 0) {
+      updated.certifier = await this.companyRepo.find({
+        where: { companyId: In(updated.certifierId) },
+      });
+    }
 
     return new DataResponseDto(HttpStatus.OK, updated);
   }
@@ -1952,6 +2062,18 @@ export class ProgrammeService {
         )`Does not found a pending programme for the given programme id ${req.programmeId}`
       );
     }
+
+    const authRe: AsyncAction = {
+      actionType: AsyncActionType.AuthProgramme,
+      actionProps: {
+        externalId: program.externalId,
+        issueAmount: req.issueAmount,
+        serialNo: updated.serialNo
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      authRe
+    );
 
     updated.company = await this.companyRepo.find({
       where: { companyId: In(updated.companyId) },
@@ -2017,6 +2139,17 @@ export class ProgrammeService {
       );
     }
 
+    const authRe: AsyncAction = {
+      actionType: AsyncActionType.RejectProgramme,
+      actionProps: {
+        externalId: programme.externalId,
+        comment: req.comment
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      authRe
+    );
+
     await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
       req.programmeId,
       EmailTemplates.PROGRAMME_REJECTION,
@@ -2055,6 +2188,10 @@ export class ProgrammeService {
     if (!ref) {
       return null;
     }
+    if (ref == CompanyRole.API.toString()) {
+      return null;
+    }
+
     const parts = ref.split("#");
     if (parts.length > 2) {
       return {
