@@ -206,7 +206,7 @@ const Homepage = () => {
                 end-to-end digital ecosystem for the carbon market. The overarching goal is to
                 support a transparent, high integrity global carbon market that can channel capital
                 for impactful climate action and low-carbon development.
-              </div>            
+              </div>
             </div>
           </div>
         </Col>
