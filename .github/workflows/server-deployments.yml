@@ -34,9 +34,9 @@ jobs:
     - id: branch_check
       run: |
         if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
-          echo "stage=dev" >> $GITHUB_OUTPUT
-        else
           echo "stage=prod" >> $GITHUB_OUTPUT
+        else
+          echo "stage=dev" >> $GITHUB_OUTPUT
         fi
   layer:
     name: layer
