@@ -10,5 +10,6 @@ export enum TxType {
     AUTH = '8',
     UNFREEZE = '9',
     ADD_DOCUMENT = '10',
-    ADD_MITIGATION = '11'
+    ADD_MITIGATION = '11',
+    OWNERSHIP_UPDATE = '12'
 }

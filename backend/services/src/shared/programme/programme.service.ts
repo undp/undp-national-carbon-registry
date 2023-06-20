@@ -1150,9 +1150,51 @@ export class ProgrammeService {
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
-  async updateOwnership(update: OwnershipUpdateDto): Promise<BasicResponseDto | undefined> {
+  async updateOwnership(update: OwnershipUpdateDto): Promise<DataResponseDto | undefined> {
     this.logger.log('Ownership update triggered')
-    return null;
+
+    if (
+      update.proponentTaxVatId.length !=
+      update.proponentPercentage.length
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercAndTaxIdsNotMatched",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (
+      update.proponentPercentage.reduce((a, b) => a + b, 0) != 100
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programme.proponentPercSum=100",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const companyIds = [];
+    for (const taxId of update.proponentTaxVatId) {
+      const compo = await this.companyService.findByTaxId(taxId);
+      if (!compo) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.proponentTaxIdNotInSystem",
+            [taxId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      companyIds.push(compo.companyId)
+    }
+    
+    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage);
+    return new DataResponseDto(HttpStatus.OK, resp);
   }
 
   async create(programmeDto: ProgrammeDto): Promise<Programme | undefined> {
@@ -1223,7 +1265,7 @@ export class ProgrammeService {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "programme.proponentTaxIdNotInSystem",
-            []
+            [taxId]
           ),
           HttpStatus.BAD_REQUEST
         );
