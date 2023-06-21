@@ -127,7 +127,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                       </div>
 
                       <span className="country-name">
-                        {process.env.COUNTRY_NAME || 'Antarctic Region'}
+                        {process.env.COUNTRY_NAME || 'CountryX'}
                       </span>
                     </div>
                   </Col>
