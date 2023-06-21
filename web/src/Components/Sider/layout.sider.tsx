@@ -79,7 +79,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 <div className="title">{collapsed ? '' : 'CARBON'}</div>
                 <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
               </div>
-              <div className="country-name">{process.env.COUNTRY_NAME || 'Antarctic Region'}</div>
+              <div className="country-name">{process.env.COUNTRY_NAME || 'CountryX'}</div>
             </div>
           )}
           {collapsed && (
