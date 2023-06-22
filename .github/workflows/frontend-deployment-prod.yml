@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_BACKEND: https://api.carbreg.org
-      COUNTRY_NAME: 'Antarctic Region'
+      COUNTRY_NAME: 'CountryX'
       COUNTRY_FLAG_URL: 'https://carbon-common-prod.s3.amazonaws.com/flag.png'
       COUNTRY_CODE: 'NG'
       REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}

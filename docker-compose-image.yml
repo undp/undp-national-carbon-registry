@@ -91,7 +91,7 @@ services:
     #     PORT: 3030
     #     REACT_APP_BACKEND: http://localhost:3000
     #     REACT_APP_STAT_URL: http://localhost:3100
-    #     COUNTRY_NAME: "Antarctic Region"
+    #     COUNTRY_NAME: "CountryX"
     #     COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
     #     COUNTRY_CODE: "NG"
     ports:

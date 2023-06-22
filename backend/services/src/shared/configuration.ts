@@ -1,7 +1,7 @@
 export default () => ({
   stage: process.env.STAGE || "local",
   systemCountry: process.env.systemCountryCode || "NG",
-  systemCountryName: process.env.systemCountryName || "Antarctic Region",
+  systemCountryName: process.env.systemCountryName || "CountryX",
   defaultCreditUnit: process.env.defaultCreditUnit || "ITMO",
   dateTimeFormat: "DD LLLL yyyy @ HH:mm",
   dateFormat: "DD LLLL yyyy",
