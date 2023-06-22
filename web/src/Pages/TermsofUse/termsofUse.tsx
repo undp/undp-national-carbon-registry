@@ -41,7 +41,7 @@ const TermsOfUse = () => {
       <div className="term-body-container">
         <Row>
           <Col md={24} lg={24}>
-            <div className="termtitle">TERMS OF USE</div>
+            <div className="termtitle">SAMPLE TERMS OF USE</div>
             <div className="term-sub">Last updated February 02, 2023</div>
           </Col>
         </Row>
@@ -934,12 +934,12 @@ const TermsOfUse = () => {
               regarding use of the Site, please contact us at:
               <br />
               <br />
-              <br /> United Nations Development Programme
-              <br /> 1 United Nations Plaza
-              <br /> New York, New York
-              <br /> United States of America
-              <br /> Phone: +1-2129065000
-              <br /> nce.digital@undp.org
+              <br /> Bureau
+              <br /> Address
+              <br /> City, Region
+              <br /> Country
+              <br /> Phone: +1-123-456-7890
+              <br /> address@CountryX.org
               <br /> These terms of use were created using Termly's{' '}
               <a target="_blank" href="https://termly.io/products/terms-and-conditions-generator/">
                 Terms and Conditions Generator.
