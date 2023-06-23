@@ -1452,7 +1452,7 @@ const Dashboard = () => {
   const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
   const news = ['all', ['==', ['get', 'stage'], 'New']];
 
-  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD', '#B7A4FE'];
 
   const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
@@ -2038,6 +2038,7 @@ ${total}
                         <>
                           <LegendItem text="Rejected" color="#FF8183" />
                           <LegendItem text="Pending" color="#CDCDCD" />
+                          <LegendItem text="New" color="#B7A4FE" />
                         </>
                       )}
                     </div>
