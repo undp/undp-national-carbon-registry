@@ -14,7 +14,7 @@
     "startDate": "Programme Start Date",
     "endDate": "Programme End Date",
     "buyerCountry": "Buyer Country Eligibility",
-    "programmeCost": "Programme Cost (USD)",
+    "estimatedProgrammeCostUSD": "Estimated Programme Cost (USD)",
     "financingType": "Financing Type",
     "grantEquivalent": "Grant Equivalent Amount",
     "carbonPrice": "Carbon Price (USD per ton)",

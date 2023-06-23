@@ -145,7 +145,7 @@ export enum CompanyRole {
 export interface ProgrammeProperties {
   maxInternationalTransferAmount: string;
   creditingPeriodInYears: number;
-  programmeCostUSD: number;
+  estimatedProgrammeCostUSD: number;
   sourceOfFunding: any;
   grantEquivalentAmount: number;
   carbonPriceUSDPerTon: number;
@@ -241,7 +241,7 @@ export const addSpaces = (text: string) => {
 
 export const getFinancialFields = (programme: Programme) => {
   return {
-    programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
+    estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
     financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: new UnitField(
       'USD',
