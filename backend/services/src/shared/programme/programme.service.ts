@@ -1134,7 +1134,9 @@ export class ProgrammeService {
 
   async addDocument(document: ProgrammeDocumentDto): Promise<DataResponseDto | undefined> {
     this.logger.log('Add Document triggered')
-    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type, 0, document.certifierId);
+
+    const certifierId = (await this.companyService.findByTaxId(document.certifierTaxId))?.companyId;
+    const resp = await this.programmeLedger.addDocument(document.externalId, document.actionId, document.data, document.type, 0, certifierId);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
