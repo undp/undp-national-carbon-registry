@@ -25,6 +25,6 @@ export class ProgrammeAcceptedDto {
 
     @IsOptional()
     @ApiPropertyOptional()
-    @IsNumber()
-    certifierId: number;
+    @IsString()
+    certifierTaxId: string;
 }

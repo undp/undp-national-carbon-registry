@@ -1142,7 +1142,8 @@ export class ProgrammeService {
 
   async programmeAccept(accept: ProgrammeAcceptedDto): Promise<DataResponseDto | undefined> {
     this.logger.log('Add accept triggered')
-    const resp = await this.programmeLedger.addDocument(accept.externalId, undefined, accept.data, accept.type, accept.creditEst, accept.certifierId);
+    const certifierId = (await this.companyService.findByTaxId(accept.certifierTaxId))?.companyId;
+    const resp = await this.programmeLedger.addDocument(accept.externalId, undefined, accept.data, accept.type, accept.creditEst, certifierId);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
