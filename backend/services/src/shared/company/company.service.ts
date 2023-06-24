@@ -275,6 +275,9 @@ export class CompanyService {
   }
 
   async findByTaxId(taxId: string): Promise<Company | undefined> {
+    if (!taxId) {
+      return null;
+    }
     const companies = await this.companyRepo.find({
       where: {
         taxId: taxId,
