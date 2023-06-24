@@ -21,7 +21,7 @@ export class RegistryClientService {
         },
       })
       .catch((ex) => {
-        console.log("Exception", ex.response?.data?.statusCode);
+        console.log("Exception", ex.response?.data?.message);
         if (
           ex.response?.data?.statusCode == 400 &&
           ex.response?.data?.message?.indexOf("already exist") >= 0
