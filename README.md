@@ -401,6 +401,15 @@ For integration, reference RESTful Web API Documentation documentation via Swagg
 - National API: api.APP_URL/national
 - Status API: api.APP_URL/stats
 
+<a name="resource"></a>
+### Resource Requirements
+| Resource | Minimum | Recommended |
+| :---         |           ---: |          ---: |
+| Memory   | 4 GB    | 8 GB    |
+| CPU     | 4 Cores       |   4 Cores   |
+| Storage     |  20 GB       |   50 GB   |
+| OS     | Linux: Docker Engine: 1.10.0+ Docker Compose: 1.6.0+ <br> Windows Server: Docker Engine - Enterprise is available on Windows Server 2016 and later versions.      |      |
+
 <a name="status"></a>
 ### Status Page
 For transparent uptime monitoring go to status.APP_URL
