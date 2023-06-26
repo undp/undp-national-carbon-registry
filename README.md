@@ -403,12 +403,15 @@ For integration, reference RESTful Web API Documentation documentation via Swagg
 
 <a name="resource"></a>
 ### Resource Requirements
+
 | Resource | Minimum | Recommended |
 | :---         |           ---: |          ---: |
 | Memory   | 4 GB    | 8 GB    |
 | CPU     | 4 Cores       |   4 Cores   |
 | Storage     |  20 GB       |   50 GB   |
 | OS     | Linux <br> Windows Server 2016 and later versions.      |      |
+
+Note: Above resource requirement mentioned for a single instance from each microservice.
 
 <a name="status"></a>
 ### Status Page
