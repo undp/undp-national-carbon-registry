@@ -1450,8 +1450,9 @@ const Dashboard = () => {
   const pending = ['all', ['==', ['get', 'stage'], 'AwaitingAuthorization']];
   const authorised = ['all', ['==', ['get', 'stage'], 'Authorised']];
   const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
+  const news = ['all', ['==', ['get', 'stage'], 'New']];
 
-  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD'];
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD', '#B7A4FE'];
 
   const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
@@ -1483,14 +1484,21 @@ const Dashboard = () => {
     }
 
     if (properties.cluster_id) {
-      programmeStageCounts = [properties.authorised, properties.rejected, properties.pending];
+      programmeStageCounts = [
+        properties.authorised,
+        properties.rejected,
+        properties.pending,
+        properties.new,
+      ];
     } else {
       if (properties?.stage === 'AwaitingAuthorization') {
-        programmeStageCounts = [0, 0, properties.count];
+        programmeStageCounts = [0, 0, properties.count, 0];
       } else if (properties?.stage === 'Authorised') {
-        programmeStageCounts = [properties.count, 0, 0];
+        programmeStageCounts = [properties.count, 0, 0, 0];
       } else if (properties?.stage === 'Rejected') {
-        programmeStageCounts = [0, properties.count, 0];
+        programmeStageCounts = [0, properties.count, 0, 0];
+      } else if (properties?.stage === 'New') {
+        programmeStageCounts = [0, 0, 0, 0, properties.count];
       }
     }
     let total = 0;
@@ -1612,6 +1620,7 @@ ${total}
             pending: ['+', ['case', pending, ['get', 'count'], 0]],
             authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
             rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
+            new: ['+', ['case', news, ['get', 'count'], 0]],
           },
         },
       };
@@ -2029,6 +2038,7 @@ ${total}
                         <>
                           <LegendItem text="Rejected" color="#FF8183" />
                           <LegendItem text="Pending" color="#CDCDCD" />
+                          <LegendItem text="New" color="#B7A4FE" />
                         </>
                       )}
                     </div>

@@ -47,9 +47,21 @@ export enum TxType {
 }
 
 export enum SectoralScope {
-  'Energy Industry' = '1',
-  'Energy Distribution' = '2',
-  'Agriculture' = '15',
+  EnergyIndustry = '1',
+  EnergyDistribution = '2',
+  EnergyDemand = '3',
+  ManufacturingIndustries = '4',
+  ChemicalIndustries = '5',
+  Construction = '6',
+  Transport = '7',
+  MiningAndMineral = '8',
+  MetalProduction = '9',
+  FugitiveEmissionsFromFuels = '10',
+  FugitiveEmissionsFromProductionConsumption = '11',
+  SolventUse = '12',
+  WasteHandlingDisposal = '13',
+  AfforestationAndReforestation = '14',
+  Agriculture = '15',
 }
 
 export enum TypeOfMitigation {
@@ -145,7 +157,7 @@ export enum CompanyRole {
 export interface ProgrammeProperties {
   maxInternationalTransferAmount: string;
   creditingPeriodInYears: number;
-  programmeCostUSD: number;
+  estimatedProgrammeCostUSD: number;
   sourceOfFunding: any;
   grantEquivalentAmount: number;
   carbonPriceUSDPerTon: number;
@@ -241,7 +253,7 @@ export const addSpaces = (text: string) => {
 
 export const getFinancialFields = (programme: Programme) => {
   return {
-    programmeCost: addCommSep(programme.programmeProperties.programmeCostUSD),
+    estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
     financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: new UnitField(
       'USD',

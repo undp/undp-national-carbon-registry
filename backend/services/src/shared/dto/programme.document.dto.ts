@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class ProgrammeDocumentDto {
 
@@ -22,4 +22,9 @@ export class ProgrammeDocumentDto {
     @ApiPropertyOptional()
     @IsString()
     actionId: string;
+
+    @IsOptional()
+    @ApiPropertyOptional()
+    @IsString()
+    certifierTaxId: string;
 }

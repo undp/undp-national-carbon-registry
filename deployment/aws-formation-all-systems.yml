@@ -1,0 +1,519 @@
+Description:  This template deploys a VPC, with a public and private subnets . It deploys an internet gateway, with a default
+  route on the public subnets,
+  and default routes for them in the private subnets.
+
+Parameters:
+  EnvironmentName:
+    Description: An environment name that is prefixed to resource names
+    Type: String
+
+  VpcCIDR:
+    Description: Please enter the IP range (CIDR notation) for this VPC
+    Type: String
+    Default: 10.0.0.0/16
+
+  PublicSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the public subnet in the first Availability Zone
+    Type: String
+    Default: 10.0.0.0/24
+
+  PrivateSubnet1CIDR:
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the first Availability Zone
+    Type: String
+    Default: 10.0.10.0/24
+
+  PrivateSubnet2CIDR:
+    Description: Please enter the IP range (CIDR notation) for the private subnet in the second Availability Zone
+    Type: String
+    Default: 10.0.20.0/24
+
+  DBInstanceIdentifier:
+    Type: String
+    Default: "carbondb"
+
+  MRVDBInstanceIdentifier:
+    Type: String
+    Default: "mrvdb"
+
+  DBEngine:
+    Type: String
+    Default: "postgres"
+
+  DBEngineVersion:
+    Type: String
+    Default: "14.4"
+
+  DBSourceRegion:
+    Type: String
+    Default: "us-east-1"
+
+  DBInstanceClass:
+    Type: String
+    Default: "db.t3.micro"
+
+  DBStorageType:
+    Type: String
+    Default: "gp2"
+
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+
+  DBName:
+    Type: String
+    Default: "carbondb"
+
+  DBUser:
+    Type: String
+    Default: "root"
+
+  DBPassword:
+    Type: String
+    NoEcho: True
+
+  LedgerName:
+    Type: String
+    Default: carbon-registry
+
+  MRVLedgerName:
+    Type: String
+    Default: carbon-mrv
+
+  RegistryPrefix:
+    Type: String
+    Default: carbon
+
+  MRVPrefix:
+    Type: String
+    Default: mrv
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: us-east-1c
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+          
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Public Routes
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
+  PrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes (AZ1)
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable1
+      SubnetId: !Ref PrivateSubnet1
+
+  PrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName} Private Routes (AZ2)
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable2
+      SubnetId: !Ref PrivateSubnet2
+
+  NoIngressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "no-ingress-sg"
+      GroupDescription: "Security group with no ingress rule"
+      VpcId: !Ref VPC
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DBSubnetGroup for RDS instances
+      SubnetIds:
+        - Ref: PrivateSubnet1
+        - Ref: PrivateSubnet2
+
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier:
+        Ref: DBInstanceIdentifier
+      DBName: !Sub ${DBName}${EnvironmentName}
+      AllocatedStorage:
+        Ref: DBAllocatedStorage
+      DBInstanceClass:
+        Ref: DBInstanceClass
+      StorageType:
+        Ref: DBStorageType
+      Engine:
+        Ref: DBEngine
+      EngineVersion:
+        Ref: DBEngineVersion
+      MasterUsername:
+        Ref: DBUser
+      MasterUserPassword:
+        Ref: DBPassword
+      PubliclyAccessible: True
+      Tags:
+        - Key: Programme
+          Value: "RDS PostgreSQL"
+      VPCSecurityGroups:
+        - !Ref NoIngressSecurityGroup
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
+
+  LedgerInstance:
+    Type: AWS::QLDB::Ledger
+    Properties: 
+      DeletionProtection: false
+      Name: !Sub ${LedgerName}-${EnvironmentName}
+      PermissionsMode: STANDARD
+
+  VpcEndpointSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: 
+          Ref: VPC
+      GroupDescription: 'Security group for VPC Endpoint'
+      Tags:
+          - Key: Name
+            Value: qldb-vpce-sg
+      SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 443
+            ToPort: 443
+            SourceSecurityGroupId: !GetAtt NoIngressSecurityGroup.GroupId
+          - IpProtocol: tcp
+            FromPort: 465
+            ToPort: 465
+            SourceSecurityGroupId: !GetAtt NoIngressSecurityGroup.GroupId
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Sub: carbon-lambda-role
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+                - qldb.amazonaws.com
+                - ses.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonQLDBFullAccess
+        - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/AmazonKinesisFullAccess
+        - arn:aws:iam::aws:policy/AmazonSESFullAccess
+        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+      Path: /
+
+  QLDBEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal: "*"
+              Action: "*"
+              Resource: "*"
+      PrivateDnsEnabled: True
+      SecurityGroupIds:
+          - !GetAtt VpcEndpointSecurityGroup.GroupId
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.qldb.session'
+      SubnetIds:
+          - Ref: PrivateSubnet1
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  KinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties: 
+      Name: !Sub ${LedgerName}-${EnvironmentName}
+      ShardCount: 1
+
+  QLDBStream:
+    Type: AWS::QLDB::Stream
+    Properties: 
+      InclusiveStartTime: '2020-05-29T00:00:00Z'
+      KinesisConfiguration: 
+        StreamArn: !GetAtt KinesisStream.Arn
+      LedgerName: !Ref LedgerInstance
+      RoleArn: !GetAtt LambdaRole.Arn
+      StreamName: !Sub ${LedgerName}-${EnvironmentName}
+
+  S3GatewayEndpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Properties:
+      RouteTableIds:
+        - !Ref PrivateRouteTable1
+        - !Ref PrivateRouteTable2
+      ServiceName: !Sub 'com.amazonaws.${AWS::Region}.s3'
+      VpcId: !Ref VPC
+
+  VPCEndpointForSES:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PrivateDnsEnabled: True
+      SecurityGroupIds:
+          - !GetAtt VpcEndpointSecurityGroup.GroupId
+      ServiceName: 'com.amazonaws.us-east-1.email-smtp'
+      SubnetIds:
+          - Ref: PrivateSubnet1
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+
+  S3BucketWeb:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      BucketName: !Sub '${RegistryPrefix}-www-${EnvironmentName}'
+      WebsiteConfiguration:
+        ErrorDocument: 'index.html'
+        IndexDocument: 'index.html'
+
+  S3BucketCommonWeb:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      BucketName: !Sub '${RegistryPrefix}-common-${EnvironmentName}'
+
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketWeb
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Action: 's3:GetObject'
+            Principal: '*'
+            Resource: !Sub '${S3BucketWeb.Arn}/*'
+
+  AsyncQueue:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: !Sub 'AsyncQueue${EnvironmentName}.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
+
+  DBInstanceMRV:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub '${DBInstanceIdentifier}${EnvironmentName}'
+      DBName: !Sub ${DBName}${EnvironmentName}
+      AllocatedStorage:
+        Ref: DBAllocatedStorage
+      DBInstanceClass:
+        Ref: DBInstanceClass
+      StorageType:
+        Ref: DBStorageType
+      Engine:
+        Ref: DBEngine
+      EngineVersion:
+        Ref: DBEngineVersion
+      MasterUsername:
+        Ref: DBUser
+      MasterUserPassword:
+        Ref: DBPassword
+      PubliclyAccessible: True
+      Tags:
+        - Key: Programme
+          Value: "RDS PostgreSQL"
+      VPCSecurityGroups:
+        - !Ref NoIngressSecurityGroup
+      DBSubnetGroupName:
+        Ref: DBSubnetGroup
+
+  LedgerInstanceMRV:
+    Type: AWS::QLDB::Ledger
+    Properties: 
+      DeletionProtection: false
+      Name: !Sub ${MRVLedgerName}-${EnvironmentName}
+      PermissionsMode: STANDARD
+
+  KinesisStreamMRV:
+    Type: AWS::Kinesis::Stream
+    Properties: 
+      Name: !Sub ${MRVLedgerName}-${EnvironmentName}
+      ShardCount: 1
+
+  QLDBStreamMRV:
+    Type: AWS::QLDB::Stream
+    Properties: 
+      InclusiveStartTime: '2020-05-29T00:00:00Z'
+      KinesisConfiguration: 
+        StreamArn: !GetAtt KinesisStreamMRV.Arn
+      LedgerName: !Ref LedgerInstanceMRV
+      RoleArn: !GetAtt LambdaRole.Arn
+      StreamName: !Sub ${MRVLedgerName}-${EnvironmentName}
+
+  S3BucketWebMRV:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      BucketName: !Sub '${MRVPrefix}-www-${EnvironmentName}'
+      WebsiteConfiguration:
+        ErrorDocument: 'index.html'
+        IndexDocument: 'index.html'
+
+  S3BucketCommonWebMRV:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      BucketName: !Sub '${MRVPrefix}-common-${EnvironmentName}'
+
+  S3BucketPolicyMRV:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketWebMRV
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Action: 's3:GetObject'
+            Principal: '*'
+            Resource: !Sub '${S3BucketWebMRV.Arn}/*'
+
+  AsyncQueueMRV:
+    Type: AWS::SQS::Queue
+    Properties: 
+      QueueName: !Sub '${MRVPrefix}AsyncQueue${EnvironmentName}.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      VisibilityTimeout: 60
+
+Outputs:
+  VPC:
+    Description: A reference to the created VPC
+    Value: !Ref VPC
+
+  PublicSubnets:
+    Description: A list of the public subnets
+    Value: !Join [ ",", [ !Ref PublicSubnet1 ]]
+
+  PrivateSubnets:
+    Description: A list of the private subnets
+    Value: !Join [ ",", [ !Ref PrivateSubnet1 ]]
+
+  PublicSubnet1:
+    Description: A reference to the public subnet in the 1st Availability Zone
+    Value: !Ref PublicSubnet1
+
+  PrivateSubnet1:
+    Description: A reference to the private subnet in the 1st Availability Zone
+    Value: !Ref PrivateSubnet1
+
+  NoIngressSecurityGroup:
+    Description: Security group with no ingress rule
+    Value: !Ref NoIngressSecurityGroup
+
+  BucketUrl:
+    Description: 'S3 Web Bucket Url'
+    Value: !GetAtt 'S3BucketWeb.WebsiteURL'

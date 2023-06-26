@@ -22,4 +22,9 @@ export class ProgrammeAcceptedDto {
     @ApiProperty()
     @IsNumber()
     creditEst: number;
+
+    @IsOptional()
+    @ApiPropertyOptional()
+    @IsString()
+    certifierTaxId: string;
 }

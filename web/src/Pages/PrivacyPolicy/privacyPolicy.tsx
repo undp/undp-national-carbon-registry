@@ -44,14 +44,14 @@ const PrivacyPolicy = () => {
             <div className="privacytitle">SAMPLE PRIVACY NOTICE</div>
             <div className="privacy-sub">Last updated February 02, 2023</div>
             <div className="privacy-body">
-              This privacy notice for CountryX (<b>"Company"</b>,{' '}
-              <b>"we"</b>, <b>"us"</b>, and <b>"our"</b>) describes how and why we might collect,
-              store, use, and/or share ("<b>process</b>")your information when you use our services
-              ("<b>Services</b>"), such as when you:
+              This privacy notice for CountryX (<b>"Company"</b>, <b>"we"</b>, <b>"us"</b>, and{' '}
+              <b>"our"</b>) describes how and why we might collect, store, use, and/or share ("
+              <b>process</b>")your information when you use our services ("<b>Services</b>"), such
+              as when you:
               <ul>
                 <li>
-                  Visit our website at https://carbreg.org, or any website of ours that links to this
-                  privacy notice
+                  Visit our website at https://carbreg.org, or any website of ours that links to
+                  this privacy notice
                 </li>
                 <li>
                   Engage with us in other related ways ― including any sales, marketing, or events
@@ -82,8 +82,8 @@ const PrivacyPolicy = () => {
               <p>
                 <b>What personal information do we process? </b>When you visit, use, or navigate our
                 Services, we may process personal information depending on how you interact with
-                CountryX and the Services, the choices you make, and the
-                products and features you use. Click<a href="#infocollect"> here</a> to learn more.
+                CountryX and the Services, the choices you make, and the products and features you
+                use. Click<a href="#infocollect"> here</a> to learn more.
               </p>
               <p>
                 <b>Do we process any sensitive personal information?</b> We do not process sensitive
@@ -132,8 +132,8 @@ const PrivacyPolicy = () => {
                 applicable data protection laws.
               </p>
               <p>
-                Want to learn more about what CountryX does with any
-                information we collect? Click <a href="#toc"> here</a> to review the notice in full.
+                Want to learn more about what CountryX does with any information we collect? Click{' '}
+                <a href="#toc"> here</a> to review the notice in full.
               </p>
             </div>
           </Col>
@@ -975,10 +975,10 @@ const PrivacyPolicy = () => {
                 is not considered to be "selling" of your personal information.
               </p>
               <p>
-                CountryX has not disclosed or sold any personal
-                information to third parties for a business or commercial purpose in the preceding
-                twelve (12) months. CountryX will not sell personal
-                information in the future belonging to website visitors, users, and other consumers.
+                CountryX has not disclosed or sold any personal information to third parties for a
+                business or commercial purpose in the preceding twelve (12) months. CountryX will
+                not sell personal information in the future belonging to website visitors, users,
+                and other consumers.
               </p>
               <p>
                 <b>Your rights with respect to your personal data</b>
@@ -1120,10 +1120,10 @@ const PrivacyPolicy = () => {
               <p>
                 <b>
                   If you are a resident in the European Economic Area, the "data controller" of your
-                  personal information is CountryX. United Nations
-                  Development Programme has appointed DPO to be its representative in the EEA. You
-                  can contact them directly regarding the processing of your information by United
-                  Nations Development Programme, or by post to:
+                  personal information is CountryX. United Nations Development Programme has
+                  appointed DPO to be its representative in the EEA. You can contact them directly
+                  regarding the processing of your information by United Nations Development
+                  Programme, or by post to:
                 </b>
               </p>
             </div>
