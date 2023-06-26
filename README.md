@@ -408,7 +408,7 @@ For integration, reference RESTful Web API Documentation documentation via Swagg
 | Memory   | 4 GB    | 8 GB    |
 | CPU     | 4 Cores       |   4 Cores   |
 | Storage     |  20 GB       |   50 GB   |
-| OS     | Linux: Docker Engine: 1.10.0+ Docker Compose: 1.6.0+ <br> Windows Server: Docker Engine - Enterprise is available on Windows Server 2016 and later versions.      |      |
+| OS     | Linux <br> Windows Server 2016 and later versions.      |      |
 
 <a name="status"></a>
 ### Status Page
