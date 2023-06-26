@@ -411,7 +411,7 @@ For integration, reference RESTful Web API Documentation documentation via Swagg
 | Storage     |  20 GB       |   50 GB   |
 | OS     | Linux <br> Windows Server 2016 and later versions.      |      |
 
-Note: Above resource requirement mentioned for a single instance for each microservice.
+Note: Above resource requirement mentioned for a single instance from each microservice.
 
 <a name="status"></a>
 ### Status Page
