@@ -33,7 +33,7 @@ const CodeOfConduct = () => {
                 <div className="title">{'CARBON'}</div>
                 <div className="title-sub">{'REGISTRY'}</div>
               </div>
-              <div className="country-name">{process.env.COUNTRY_NAME || 'CountryX'}</div>
+              <div className="country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
             </div>
           </div>
         </Col>
@@ -276,7 +276,7 @@ const CodeOfConduct = () => {
                   <div className="title-sub">{'REGISTRY'}</div>
                 </div>
                 <div className="footer-country-name">
-                  {process.env.COUNTRY_NAME || 'CountryX'}
+                  {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
                 </div>
               </div>
             </div>
@@ -291,7 +291,7 @@ const CodeOfConduct = () => {
         <Row className="footer-raw">
           <Col md={4.8} lg={12}>
             <div className="footertext-bottom">
-              {process.env.COUNTRY_NAME || 'CountryX'}
+              {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
               <CcCircle className="cc" color="#FFFF" size="10px" />
             </div>
           </Col>

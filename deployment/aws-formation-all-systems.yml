@@ -87,6 +87,10 @@ Parameters:
     Type: String
     Default: mrv
 
+  LambdaExecutionRoleArn:
+    Type: String
+    Default: arn:aws:iam::896800544353:user/lambdaexec
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -212,8 +216,7 @@ Resources:
   DBInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceIdentifier:
-        Ref: DBInstanceIdentifier
+      DBInstanceIdentifier: !Sub '${DBInstanceIdentifier}${EnvironmentName}'
       DBName: !Sub ${DBName}${EnvironmentName}
       AllocatedStorage:
         Ref: DBAllocatedStorage
@@ -229,7 +232,7 @@ Resources:
         Ref: DBUser
       MasterUserPassword:
         Ref: DBPassword
-      PubliclyAccessible: True
+      PubliclyAccessible: false
       Tags:
         - Key: Programme
           Value: "RDS PostgreSQL"
@@ -264,32 +267,32 @@ Resources:
             ToPort: 465
             SourceSecurityGroupId: !GetAtt NoIngressSecurityGroup.GroupId
 
-  LambdaRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName:
-        Fn::Sub: carbon-lambda-role
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action:
-            - sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-                - qldb.amazonaws.com
-                - ses.amazonaws.com
-        Version: 2012-10-17
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AWSLambdaExecute
-        - arn:aws:iam::aws:policy/AmazonS3FullAccess
-        - arn:aws:iam::aws:policy/AmazonQLDBFullAccess
-        - arn:aws:iam::aws:policy/AmazonRDSFullAccess
-        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
-        - arn:aws:iam::aws:policy/AmazonKinesisFullAccess
-        - arn:aws:iam::aws:policy/AmazonSESFullAccess
-        - arn:aws:iam::aws:policy/AmazonSQSFullAccess
-      Path: /
+  # LambdaRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     RoleName:
+  #       Fn::Sub: carbon-lambda-role
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Action:
+  #           - sts:AssumeRole
+  #           Effect: Allow
+  #           Principal:
+  #             Service:
+  #               - lambda.amazonaws.com
+  #               - qldb.amazonaws.com
+  #               - ses.amazonaws.com
+  #       Version: 2012-10-17
+  #     ManagedPolicyArns:
+  #       - arn:aws:iam::aws:policy/AWSLambdaExecute
+  #       - arn:aws:iam::aws:policy/AmazonS3FullAccess
+  #       - arn:aws:iam::aws:policy/AmazonQLDBFullAccess
+  #       - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+  #       - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+  #       - arn:aws:iam::aws:policy/AmazonKinesisFullAccess
+  #       - arn:aws:iam::aws:policy/AmazonSESFullAccess
+  #       - arn:aws:iam::aws:policy/AmazonSQSFullAccess
+  #     Path: /
 
   QLDBEndpoint:
     Type: 'AWS::EC2::VPCEndpoint'
@@ -323,7 +326,7 @@ Resources:
       KinesisConfiguration: 
         StreamArn: !GetAtt KinesisStream.Arn
       LedgerName: !Ref LedgerInstance
-      RoleArn: !GetAtt LambdaRole.Arn
+      RoleArn: !Ref LambdaExecutionRoleArn
       StreamName: !Sub ${LedgerName}-${EnvironmentName}
 
   S3GatewayEndpoint:
@@ -396,7 +399,7 @@ Resources:
   DBInstanceMRV:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceIdentifier: !Sub '${DBInstanceIdentifier}${EnvironmentName}'
+      DBInstanceIdentifier: !Sub '${MRVDBInstanceIdentifier}${EnvironmentName}'
       DBName: !Sub ${DBName}${EnvironmentName}
       AllocatedStorage:
         Ref: DBAllocatedStorage
@@ -412,7 +415,7 @@ Resources:
         Ref: DBUser
       MasterUserPassword:
         Ref: DBPassword
-      PubliclyAccessible: True
+      PubliclyAccessible: false
       Tags:
         - Key: Programme
           Value: "RDS PostgreSQL"
@@ -441,7 +444,7 @@ Resources:
       KinesisConfiguration: 
         StreamArn: !GetAtt KinesisStreamMRV.Arn
       LedgerName: !Ref LedgerInstanceMRV
-      RoleArn: !GetAtt LambdaRole.Arn
+      RoleArn: !Ref LambdaExecutionRoleArn
       StreamName: !Sub ${MRVLedgerName}-${EnvironmentName}
 
   S3BucketWebMRV:
