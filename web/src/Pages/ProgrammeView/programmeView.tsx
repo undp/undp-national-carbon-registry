@@ -199,7 +199,7 @@ const ProgrammeView = () => {
               autocomplete: false,
               limit: 1,
               types: ['region', 'district'],
-              countries: [process.env.COUNTRY_CODE || 'NG'],
+              countries: [process.env.REACT_APP_COUNTRY_CODE || 'NG'],
             })
             .send();
 
