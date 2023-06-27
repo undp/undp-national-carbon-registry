@@ -20,7 +20,9 @@ const LayoutFooter = () => {
                 <div className="title">{'CARBON'}</div>
                 <div className="title-sub">{'REGISTRY'}</div>
               </div>
-              <div className="footer-country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
+              <div className="footer-country-name">
+                {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+              </div>
             </div>
           </div>
         </Col>
