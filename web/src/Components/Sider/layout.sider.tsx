@@ -79,7 +79,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 <div className="title">{collapsed ? '' : 'CARBON'}</div>
                 <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
               </div>
-              <div className="country-name">{process.env.COUNTRY_NAME || 'CountryX'}</div>
+              <div className="country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
             </div>
           )}
           {collapsed && (
@@ -87,7 +87,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
               <img
                 alt="country flag"
                 src={
-                  process.env.COUNTRY_FLAG_URL ||
+                  process.env.REACT_APP_COUNTRY_FLAG_URL ||
                   'https://carbon-common-dev.s3.amazonaws.com/flag.png'
                 }
               />

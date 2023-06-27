@@ -38,7 +38,7 @@ export const EmailTemplates = {
         </div>
         <br>
         <div style="font-size:12px">
-            CountryX <br>
+            {{countryName}} <br>
             Address  <br>
             Region, Country Zipcode 
         </div>
