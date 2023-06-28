@@ -1498,7 +1498,7 @@ const Dashboard = () => {
       } else if (properties?.stage === 'Rejected') {
         programmeStageCounts = [0, properties.count, 0, 0];
       } else if (properties?.stage === 'New') {
-        programmeStageCounts = [0, 0, 0, 0, properties.count];
+        programmeStageCounts = [0, 0, 0, properties.count];
       }
     }
     let total = 0;

@@ -120,6 +120,45 @@ const ProgrammeView = () => {
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
 
+  const getFileName = (filepath: string) => {
+    const index = filepath.indexOf('?');
+    if (index > 0) {
+      filepath = filepath.substring(0, index);
+    }
+    const lastCharcter = filepath.charAt(filepath.length - 1);
+    if (lastCharcter === '/') {
+      filepath = filepath.slice(0, -1);
+    }
+    return filepath.substring(filepath.lastIndexOf('/') + 1);
+  };
+
+  const fileItemContent = (filePath: any) => {
+    return (
+      <Row className="field" key={filePath}>
+        <Col span={12} className="field-key">
+          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
+            {getFileName(filePath)}
+          </a>
+        </Col>
+        <Col span={12} className="field-value">
+          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
+            <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+          </a>
+        </Col>
+      </Row>
+    );
+  };
+
+  const getFileContent = (files: any) => {
+    if (Array.isArray(files)) {
+      return files.map((filePath: any) => {
+        return fileItemContent(filePath);
+      });
+    } else {
+      return fileItemContent(files);
+    }
+  };
+
   const getTxRefValues = (value: string, position: number, sep?: string) => {
     if (sep === undefined) {
       sep = '#';
@@ -801,7 +840,7 @@ const ProgrammeView = () => {
 
     for (const key in mitigation) {
       if (mitigation.hasOwnProperty(key)) {
-        if (key !== 'properties') {
+        if (key !== 'properties' && key !== 'projectMaterial') {
           calculations[key] = mitigation[key];
         }
       }
@@ -1298,48 +1337,21 @@ const ProgrammeView = () => {
             title={t('view:calculation') + ' - ' + ele?.actionId}
             icon={<BulbOutlined />}
           />
+          {ele.projectMaterial && ele.projectMaterial.length > 0 && (
+            <div className="info-view only-head">
+              <div className="title">
+                <span className="title-icon"></span>
+                <span className="title-text" style={{ marginLeft: '15px' }}>
+                  {t('view:projectMaterial')}
+                </span>
+                <div>{getFileContent(ele.projectMaterial)}</div>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
     );
   });
-  const getFileName = (filepath: string) => {
-    const index = filepath.indexOf('?');
-    if (index > 0) {
-      filepath = filepath.substring(0, index);
-    }
-    const lastCharcter = filepath.charAt(filepath.length - 1);
-    if (lastCharcter === '/') {
-      filepath = filepath.slice(0, -1);
-    }
-    return filepath.substring(filepath.lastIndexOf('/') + 1);
-  };
-
-  const fileItemContent = (filePath: any) => {
-    return (
-      <Row className="field" key={filePath}>
-        <Col span={12} className="field-key">
-          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
-            {getFileName(filePath)}
-          </a>
-        </Col>
-        <Col span={12} className="field-value">
-          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
-            <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
-          </a>
-        </Col>
-      </Row>
-    );
-  };
-
-  const getFileContent = (files: any) => {
-    if (Array.isArray(files)) {
-      return files.map((filePath: any) => {
-        return fileItemContent(filePath);
-      });
-    } else {
-      return fileItemContent(files);
-    }
-  };
 
   return loadingAll ? (
     <Loading />
