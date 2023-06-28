@@ -38,9 +38,10 @@ export const EmailTemplates = {
         </div>
         <br>
         <div style="font-size:12px">
-            {{countryName}} <br>
-            Address  <br>
-            Region, Country Zipcode 
+            Head Office Windhoek <br>
+            Phillip Troskie Bulding  <br>
+            Windhoek, {{countryName}} P/Bag 13306 <br>
+            https://meft.gov.na
         </div>
         `,
     text: "",
