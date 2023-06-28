@@ -5,7 +5,7 @@
     "addCompanySub": "Add a new organisation to the Carbon Registry",
     "name": "Name",
     "email": "Email",
-    "taxId": "Tax Id",
+    "taxId": "VAT Registration #",
     "website": "Website",
     "companyLogo": "Organisation Logo",
     "companyLogoWithType": "Organisation Logo (File Type : JPEG , PNG , SVG )",

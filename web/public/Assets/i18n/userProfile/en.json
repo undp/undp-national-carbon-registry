@@ -7,7 +7,7 @@
     "email": "Email",
     "role": "Role",
     "phoneNo": "Phone",
-    "taxId": "Tax ID",
+    "taxId": "VAT Registration #",
     "website": "Website",
     "address": "Address",
     "id": "id",
