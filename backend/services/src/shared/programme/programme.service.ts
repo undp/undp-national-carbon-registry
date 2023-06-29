@@ -1182,6 +1182,9 @@ export class ProgrammeService {
     }
 
     const companyIds = [];
+
+    let investorCompanyId;
+    let ownerCompanyId;
     for (const taxId of update.proponentTaxVatId) {
       const compo = await this.companyService.findByTaxId(taxId);
       if (!compo) {
@@ -1193,10 +1196,15 @@ export class ProgrammeService {
           HttpStatus.BAD_REQUEST
         );
       }
+      if (compo.taxId === update.investorTaxId) {
+        investorCompanyId = Number(compo.companyId);
+      } else if (compo.taxId === update.ownerTaxId) {
+        ownerCompanyId = Number(compo.companyId);
+      }
       companyIds.push(compo.companyId)
     }
     
-    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage);
+    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage, investorCompanyId, ownerCompanyId, update.shareFromOwner);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 

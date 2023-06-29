@@ -1539,78 +1539,107 @@ export class ProgrammeLedgerService {
     externalId: string,
     companyIds: number[],
     taxIds: string[],
-    percentages: number[]
+    percentages: number[],
+    investor: number,
+    owner: number,
+    shareFromOwner: number
   ) {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
       externalId: externalId,
     };
 
-    // let updatedProgramme = undefined;
-    // const resp = await this.ledger.getAndUpdateTx(
-    //   getQueries,
-    //   (results: Record<string, dom.Value[]>) => {
-    //     const programmes: Programme[] = results[this.ledger.tableName].map(
-    //       (domValue) => {
-    //         return plainToClass(
-    //           Programme,
-    //           JSON.parse(JSON.stringify(domValue))
-    //         );
-    //       }
-    //     );
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: Programme[] = results[this.ledger.tableName].map(
+          (domValue) => {
+            return plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
 
-    //     if (programmes.length <= 0) {
-    //       throw new HttpException(
-    //         this.helperService.formatReqMessagesString(
-    //           "programme.programmeNotExist",
-    //           []
-    //         ),
-    //         HttpStatus.BAD_REQUEST
-    //       );
-    //     }
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.programmeNotExist",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
-    //     let programme: Programme = programmes[0];
+        let programme: Programme = programmes[0];
 
-    //     let updateMap = {};
-    //     let updateWhereMap = {};
+        let updateMap = {};
+        let updateWhereMap = {};
 
-    //     const creditOwnership = {}
-    //     // const updatedCreditOwnership = {}
-    //     let ownershipPercentage = {}
+        const creditOwnership = {}
+        // const updatedCreditOwnership = {}
+        let ownershipPercentage = {}
+        let ownershipPercentageList = []
 
-    //     for (const j of companyIds) {
-    //       // updatedCreditOwnership[companyIds[j]]
-    //       const newCredit = originalOwnerBalance * percentages[j] / 100;
-    //       ownershipPercentage[companyIds[j]] = parseFloat(((newCredit * 100)/programme.creditBalance).toFixed(6))
-    //     }
+        const ownerIndex = programme.companyId.map(e => Number(e)).indexOf(owner);
+        if (ownerIndex < 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.noOwnershipPercForCompany",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
 
-    //     programme.txTime = new Date().getTime()
-    //     programme.txType = TxType.OWNERSHIP_UPDATE
-    //     programme.txRef = CompanyRole.API
-    //     programme.proponentTaxVatId = taxIds;
-    //     programme.proponentPercentage = percentages;
-    //     programme.companyId = companyIds;
-    //     programme.creditOwnerPercentage = ownershipPercentage;
+        if (programme.creditBalance && Number(programme.creditBalance) != 0) {
+          const ownerCreditAmount = programme.creditBalance * programme.creditOwnerPercentage[ownerIndex] / 100;
+          for (const j in programme.companyId) {
+            // updatedCreditOwnership[companyIds[j]]
+            if (Number(companyIds[j]) === owner) {
+              const investorCredit = (ownerCreditAmount * shareFromOwner / 100);
+              ownershipPercentage[investor] = parseFloat((investorCredit * 100 / programme.creditBalance).toFixed(6))
+              ownershipPercentage[owner] = parseFloat(((ownerCreditAmount - investorCredit) * 100 / programme.creditBalance).toFixed(6))
+            } else {
+              ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+            }
+          }
+          for (const comId of companyIds) {
+            ownershipPercentageList.push(ownershipPercentage[comId])
+          }
 
-    //     updateMap[this.ledger.tableName] = {
-    //       txRef: programme.txRef,
-    //       txTime: programme.txTime,
-    //       txType: programme.txType,
-    //       proponentTaxVatId: programme.proponentTaxVatId,
-    //       proponentPercentage: programme.proponentPercentage,
-    //       companyId: programme.companyId,
-    //       creditOwnerPercentage: programme.creditOwnerPercentage,
-    //     };
+        } else {
+          ownershipPercentageList = percentages
+        }
+      
+        programme.txTime = new Date().getTime()
+        programme.txType = TxType.OWNERSHIP_UPDATE
+        programme.txRef = CompanyRole.API
+        programme.proponentTaxVatId = taxIds;
+        programme.proponentPercentage = percentages;
+        programme.companyId = companyIds;
+        programme.creditOwnerPercentage = ownershipPercentageList;
 
-    //     updatedProgramme = programme;
-    //     updateWhereMap[this.ledger.tableName] = {
-    //       programmeId: programme.programmeId,
-    //     };
+        updateMap[this.ledger.tableName] = {
+          txRef: programme.txRef,
+          txTime: programme.txTime,
+          txType: programme.txType,
+          proponentTaxVatId: programme.proponentTaxVatId,
+          proponentPercentage: programme.proponentPercentage,
+          companyId: programme.companyId,
+          creditOwnerPercentage: programme.creditOwnerPercentage,
+        };
 
-    //     return [updateMap, updateWhereMap, {}];
-    //   }
-    // );
+        updatedProgramme = programme;
+        updateWhereMap[this.ledger.tableName] = {
+          programmeId: programme.programmeId,
+        };
 
-    // return updatedProgramme;
+        return [updateMap, updateWhereMap, {}];
+      }
+    );
+
+    return updatedProgramme;
   }
 }
