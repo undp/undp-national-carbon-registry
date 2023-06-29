@@ -11,12 +11,14 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
-      COUNTRY_NAME: 'Namibia'
-      COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
-      COUNTRY_CODE: 'NA'
-      REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
-      REACT_APP_MAP_TYPE : "Mapbox"
+      REACT_APP_BACKEND: http://3.232.219.197:3000
+      REACT_APP_STAT_URL: http://3.232.219.197:3100
+      REACT_APP_COUNTRY_NAME: "The Republic of Namibia"
+      REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-prod.s3.amazonaws.com/na-flag.png"
+      REACT_APP_COUNTRY_CODE: "NA"
+      REACT_APP_MAP_TYPE: "Mapbox"
+      REACT_APP_MAPBOXGL_ACCESS_TOKEN: ""
+      
     steps:
       - uses: actions/checkout@v3
       - name: Cache modules
@@ -42,10 +44,6 @@ jobs:
       - name: Build
         working-directory: ./web
         run: CI=false yarn build
-      - name: Deploy
-        run: aws s3 sync ./web/build s3://carbon-www-dev
-      # - name: Deploy Test
-      #   run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
