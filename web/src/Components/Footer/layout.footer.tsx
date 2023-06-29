@@ -42,7 +42,11 @@ const LayoutFooter = () => {
         </Col>
         <Col md={14} lg={14}>
           <div className="footertext-link-container">
-            <a href="/help" target={'blank'} className="footertext-links">
+            <a
+              href="https://nationalcarbonregistrydemo.tawk.help/"
+              target={'blank'}
+              className="footertext-links"
+            >
               {t('homepage:Help')}
             </a>
             <a href="https://status.carbreg.org/" target={'blank'} className="footertext-links">
