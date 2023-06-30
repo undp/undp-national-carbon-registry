@@ -30,7 +30,7 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userService.getUserCredentials(username);
+    const user = await this.userService.getUserCredentials(username?.toLowerCase());
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result;
@@ -45,7 +45,7 @@ export class AuthService {
     if (parts.length != 2) {
       return null;
     }
-    const user = await this.userService.getUserCredentials(parts[0]);
+    const user = await this.userService.getUserCredentials(parts[0]?.toLowerCase());
     if (user && user.apiKey === apiKey) {
       const { password, apiKey, ...result } = user;
       return result;
