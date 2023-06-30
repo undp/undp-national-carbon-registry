@@ -13,5 +13,7 @@
   "sessionExpiredErrorMsg": "Your session has expired, Please log in again to continue working.",
   "backto": "Back to",
   "signIn": "Sign In",
-  "loginFailed": "Login failed"
+  "loginFailed": "Login failed",
+  "networkError": "Network error. Please check your internet connection and try again.",
+  "systemError": "Something went wrong. Please try again."
 }
