@@ -1,4 +1,5 @@
 const CracoLessPlugin = require('craco-less');
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   babel: {
@@ -25,5 +26,13 @@ module.exports = {
         },
       },
     },
+    {
+      plugin: {
+        overrideWebpackConfig: ({ webpackConfig }) => {
+          webpackConfig.optimization.minimizer.push(new TerserPlugin({ parallel: true }));
+          return webpackConfig;
+        }
+      }
+    }
   ],
 };
