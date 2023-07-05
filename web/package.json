@@ -91,7 +91,6 @@
     "lint-staged": "^13.0.3",
     "prettier": "2.7.1",
     "react-scripts": "5.0.1",
-    "speed-measure-webpack-plugin": "^1.5.0",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.9",
     "tslint-config-prettier": "^1.18.0"
