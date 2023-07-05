@@ -1,6 +1,5 @@
 const CracoLessPlugin = require('craco-less');
 const TerserPlugin = require("terser-webpack-plugin");
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
 
 module.exports = {
   babel: {
@@ -31,7 +30,6 @@ module.exports = {
       plugin: {
         overrideWebpackConfig: ({ webpackConfig }) => {
           webpackConfig.optimization.minimizer.push(new TerserPlugin({ parallel: true }));
-          // webpackConfig.plugins.push(new SpeedMeasurePlugin())
           return webpackConfig;
         }
       }
