@@ -997,8 +997,8 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
         const overall = creditOveralls[0];
         const year = new Date(programme.startTime * 1000).getFullYear();
-        const startBlock = overall.credit + 1;
-        const endBlock = overall.credit + programme.creditEst;
+        const startBlock = Math.ceil(overall.credit + 1);
+        const endBlock = Math.ceil(overall.credit + programme.creditEst);
         const serialNo = generateSerialNumber(
           programme.countryCodeA2,
           programme.sectoralScope,
