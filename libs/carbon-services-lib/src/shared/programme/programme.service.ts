@@ -2451,7 +2451,7 @@ export class ProgrammeService {
     for (const el of resp) {
       const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
       if (
-        refs &&
+        refs && !isNaN(refs?.companyId) && !isNaN(Number(refs.id)) &&
         (user.companyRole === CompanyRole.GOVERNMENT ||
           Number(refs?.companyId) === Number(user.companyId))
       ) {
@@ -3190,7 +3190,7 @@ export class ProgrammeService {
     return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
   }
 
-  private getUserName = async (usrId: string) => {
+  private getUserName = async (usrId: any) => {
     this.logger.debug(`Getting user [${usrId}]`);
     if (usrId == "undefined" || usrId == "null") {
       return null;
