@@ -1185,6 +1185,8 @@ export class ProgrammeService {
 
     let investorCompanyId;
     let ownerCompanyId;
+    let investorCompanyName;
+    let ownerCompanyName;
     for (const taxId of update.proponentTaxVatId) {
       const compo = await this.companyService.findByTaxId(taxId);
       if (!compo) {
@@ -1198,13 +1200,15 @@ export class ProgrammeService {
       }
       if (compo.taxId === update.investorTaxId) {
         investorCompanyId = Number(compo.companyId);
+        investorCompanyName = compo.name;
       } else if (compo.taxId === update.ownerTaxId) {
         ownerCompanyId = Number(compo.companyId);
+        ownerCompanyName = compo.name;
       }
       companyIds.push(compo.companyId)
     }
     
-    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage, investorCompanyId, ownerCompanyId, update.shareFromOwner);
+    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage, investorCompanyId, ownerCompanyId, investorCompanyName, ownerCompanyName, update.shareFromOwner);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
@@ -1434,7 +1438,7 @@ export class ProgrammeService {
     for (const el of resp) {
       const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
       if (
-        refs &&
+        refs && !isNaN(refs?.companyId) && !isNaN(Number(refs.id)) &&
         (user.companyRole === CompanyRole.GOVERNMENT ||
           Number(refs?.companyId) === Number(user.companyId))
       ) {
@@ -2170,7 +2174,7 @@ export class ProgrammeService {
     return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
   }
 
-  private getUserName = async (usrId: string) => {
+  private getUserName = async (usrId: any) => {
     this.logger.debug(`Getting user [${usrId}]`);
     if (usrId == "undefined" || usrId == "null") {
       return null;

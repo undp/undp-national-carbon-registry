@@ -1542,6 +1542,8 @@ export class ProgrammeLedgerService {
     percentages: number[],
     investor: number,
     owner: number,
+    investorName: string,
+    ownerName: string,
     shareFromOwner: number
   ) {
     const getQueries = {};
@@ -1593,6 +1595,7 @@ export class ProgrammeLedgerService {
           );
         }
 
+        let investmentPerc = undefined
         if (programme.creditBalance && Number(programme.creditBalance) != 0) {
           const ownerCreditAmount = programme.creditBalance * programme.creditOwnerPercentage[ownerIndex] / 100;
           for (const j in programme.companyId) {
@@ -1605,17 +1608,24 @@ export class ProgrammeLedgerService {
               ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
             }
           }
-          for (const comId of companyIds) {
-            ownershipPercentageList.push(ownershipPercentage[comId])
+          for (const x in companyIds) {
+            ownershipPercentageList.push(ownershipPercentage[companyIds[x]])
+            if (Number(companyIds[x]) === investor) {
+              investmentPerc = percentages[x]
+            }
           }
 
         } else {
           ownershipPercentageList = percentages
+          for (const x in companyIds) {
+            if (Number(companyIds[x]) === investor) {
+              investmentPerc = percentages[x]
+            }
+          }
         }
-      
         programme.txTime = new Date().getTime()
         programme.txType = TxType.OWNERSHIP_UPDATE
-        programme.txRef = CompanyRole.API
+        programme.txRef = `${investor}#${investorName}#${owner}#${ownerName}#${investmentPerc}`
         programme.proponentTaxVatId = taxIds;
         programme.proponentPercentage = percentages;
         programme.companyId = companyIds;

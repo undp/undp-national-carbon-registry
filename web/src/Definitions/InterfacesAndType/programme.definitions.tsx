@@ -3,6 +3,7 @@ import { ProgrammeTransfer } from '@undp/carbon-library';
 import { GovBGColor, CertBGColor, DevBGColor } from '../../Pages/Common/role.color.constants';
 
 export enum ProgrammeStage {
+  New = 'New',
   AwaitingAuthorization = 'Pending',
   Authorised = 'Authorised',
   // Transferred = 'Transferred',
@@ -44,6 +45,7 @@ export enum TxType {
   FREEZE = '7',
   AUTH = '8',
   UNFREEZE = '9',
+  OWNERSHIP_UPDATE = '12',
 }
 
 export enum SectoralScope {
@@ -108,8 +110,8 @@ export const getStageTagType = (stage: ProgrammeStage) => {
       return 'error';
     case ProgrammeStage.Authorised:
       return 'processing';
-    // case ProgrammeStage.Transferred:
-    //   return 'success';
+    case ProgrammeStage.New:
+      return 'success';
     default:
       return 'default';
   }

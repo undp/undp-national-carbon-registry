@@ -739,6 +739,25 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+        } else if (activity.data.txType === TxType.OWNERSHIP_UPDATE) {
+          el = {
+            status: 'process',
+            title: t('view:tlOwnership'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: (
+              <TimelineBody
+                text={formatString('view:tlOwnershipDesc', [
+                  getTxRefValues(activity.data.txRef, 1),
+                  getTxRefValues(activity.data.txRef, 4) + '%',
+                ])}
+              />
+            ),
+            icon: (
+              <span className="step-icon issue-step">
+                <Icon.PersonAdd />
+              </span>
+            ),
+          };
         }
         if (el) {
           const toDelete = [];

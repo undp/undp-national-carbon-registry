@@ -112,6 +112,8 @@
     "tlUnFrozen": "Credits Unfrozen",
     "tlUnFrozenDesc": "{} frozen {} credits  of the programme have been unfrozen due to the reactivation of {} by {}",
     "tlTxLowCreditCancelSystemDesc" : "The request to transfer {} {} credits from {} to {} was cancelled by the system due to insufficient credit balance",
+    "tlOwnership": "New Ownership",
+    "tlOwnershipDesc": "{} invested in this programme obtaining {} ownership of the programme.",
     "typeOfMitigation": "Type Of Mitigation",
     "userEstimatedCredits": "User Estimated Credits",
     "systemEstimatedCredits": "System Estimated Credits",
