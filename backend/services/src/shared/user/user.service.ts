@@ -643,9 +643,12 @@ export class UserService {
                 throw new HttpException(
                   `${
                     err.driverError.table == "company"
-                      ? "Company email"
-                      : "Email"
-                  } already exist`,
+                      ? this.helperService.formatReqMessagesString(
+                          "user.orgEmailExist",
+                          []
+                        )
+                      : "Email already exist"
+                  }`,
                   HttpStatus.BAD_REQUEST
                 );
               } else if (err.driverError.detail.includes("taxId")) {
