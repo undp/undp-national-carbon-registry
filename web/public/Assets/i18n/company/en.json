@@ -2,6 +2,7 @@
   "developer": "Developer",
   "name": "ORGANISATION NAME",
   "taxId": "TAX ID",
+  "filterByOrgType": "Filter by Organisation Type",
   "companyRole": "ORGANISATION TYPE",
   "viewCompanies": "View Organisations",
   "viewDesc": "View all the visible organisations in the system based on your permissions",
