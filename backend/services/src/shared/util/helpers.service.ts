@@ -437,7 +437,7 @@ export class HelperService {
     }
 
     if(isSubject)
-      return `🏭📋 🇦🇶 Carbon Registry: ${template}`;
+      return `🏭 📋 🇳🇦 Carbon Registry: ${template}`;
     else 
       return template;
 }
