@@ -41,7 +41,10 @@
     </script>
 
     <meta name="description" content="Your Reliable Ledger For A Greener Tomorrow, Today" />
-    <meta name="keywords" content="Carbon Registry, Carbon Trading, Carbon Credits, UNDP, United Nations, Paris Agreement, climate, carbon emissions, sustainable development goals, digital public goods" />
+    <meta
+      name="keywords"
+      content="Carbon Registry, Carbon Trading, Carbon Credits, UNDP, United Nations, Paris Agreement, climate, carbon emissions, sustainable development goals, digital public goods"
+    />
     <meta name="author" content="CountryX" />
 
     <!-- Facebook SEO -->
@@ -64,10 +67,48 @@
       name="twitter:image"
       content="https://www.test.carbreg.org/static/media/thumbnail.5104bd8cc527df632977.png"
     />
+    <script>
+      var isJSsupported = 'querySelector' in document;
+      var isIE = window.navigator.userAgent.match(/(MSIE|Trident)/i);
+      if (!isJSsupported || isIE) {
+        window.location.href = 'fallback.html';
+      }
+    </script>
   </head>
 
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <div
+        style="
+          display: flex;
+          width: 100%;
+          height: 100vh;
+          font-family: 'Inter';
+          text-align: center;
+          justify-content: center;
+          align-items: center;
+          font-size: 16px;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            width: 40%;
+            max-width: 600px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #d9d9d9;
+            padding: 10px;
+            line-height: 1.5rem;
+          "
+        >
+          JavaScript Disabled: We're sorry, but it seems that your browser does not support
+          JavaScript. Please enable JavaScript or use a different browser to fully experience this
+          website.
+        </div>
+      </div>
+    </noscript>
     <div id="root"></div>
     <!--
       This HTML file is a template.
