@@ -1638,6 +1638,14 @@ export class ProgrammeLedgerService {
         programme.companyId = companyIds;
         programme.creditOwnerPercentage = ownershipPercentageList;
 
+        if(!programme.creditFrozen){
+          programme.creditFrozen = [];
+        }
+        const investorIndex = programme.companyId.indexOf(investor);
+        if(!programme.creditFrozen[investorIndex]){
+          programme.creditFrozen[investorIndex] = 0;
+        }
+
         updateMap[this.ledger.tableName] = {
           txRef: programme.txRef,
           txTime: programme.txTime,

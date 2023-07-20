@@ -127,7 +127,10 @@ const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
         CompanyState.ACTIVE.valueOf()
     ) {
       const companyAvailableTotal =
-        ((programme.creditBalance - (programme.creditFrozen ? programme.creditFrozen[index] : 0)) *
+        ((programme.creditBalance -
+          (programme.creditFrozen && programme.creditFrozen[index]
+            ? programme.creditFrozen[index]
+            : 0)) *
           programme.creditOwnerPercentage[index]) /
         100;
       validCompanies.push({
