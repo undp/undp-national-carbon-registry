@@ -1635,7 +1635,9 @@ export class ProgrammeLedgerService {
           programme.creditFrozen = [];
         }
         const investorIndex = programme.companyId.indexOf(investor);
-        programme.creditFrozen[investorIndex] = 0;
+        if(!programme.creditFrozen[investorIndex]){
+          programme.creditFrozen[investorIndex] = 0;
+        }
 
         updateMap[this.ledger.tableName] = {
           txRef: programme.txRef,
