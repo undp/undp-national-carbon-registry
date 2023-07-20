@@ -26,6 +26,7 @@ const AddUser = () => {
       useUserContext={useUserContext}
       useLocation={useLocation}
       useAbilityContext={useAbilityContext}
+      themeColor="#16b1ff"
     ></AddNewUserComponent>
   );
 };
