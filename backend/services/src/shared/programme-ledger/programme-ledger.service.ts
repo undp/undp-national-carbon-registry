@@ -1602,10 +1602,17 @@ export class ProgrammeLedgerService {
             // updatedCreditOwnership[companyIds[j]]
             if (Number(companyIds[j]) === owner) {
               const investorCredit = (ownerCreditAmount * shareFromOwner / 100);
-              ownershipPercentage[investor] = parseFloat((investorCredit * 100 / programme.creditBalance).toFixed(6))
+              if (!ownershipPercentage[investor]) {
+                ownershipPercentage[investor] = 0
+              }
+              ownershipPercentage[investor] += parseFloat((investorCredit * 100 / programme.creditBalance).toFixed(6))
               ownershipPercentage[owner] = parseFloat(((ownerCreditAmount - investorCredit) * 100 / programme.creditBalance).toFixed(6))
             } else {
-              ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+              if (ownershipPercentage[companyIds[j]]) {
+                ownershipPercentage[companyIds[j]] += programme.creditOwnerPercentage[j]  
+              } else {
+                ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+              }
             }
           }
           for (const x in companyIds) {
