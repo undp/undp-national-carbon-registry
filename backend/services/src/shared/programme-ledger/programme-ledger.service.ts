@@ -1647,6 +1647,7 @@ export class ProgrammeLedgerService {
           proponentPercentage: programme.proponentPercentage,
           companyId: programme.companyId,
           creditOwnerPercentage: programme.creditOwnerPercentage,
+          creditFrozen: programme.creditFrozen
         };
 
         updatedProgramme = programme;
