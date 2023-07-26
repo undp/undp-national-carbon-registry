@@ -230,11 +230,11 @@ const ProgrammeView = () => {
         }
 
         if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
-
-        for (const address of data!.programmeProperties.geographicalLocation) {
+        const locMarkers: MarkerData[] = [];
+        for (const address in data!.programmeProperties.geographicalLocation) {
           const response = await Geocoding({ accessToken: accessToken })
             .forwardGeocode({
-              query: address,
+              query: data!.programmeProperties.geographicalLocation[address],
               autocomplete: false,
               limit: 1,
               types: ['region', 'district'],
@@ -254,11 +254,14 @@ const ProgrammeView = () => {
           }
           const feature = response.body.features[0];
           setCenterPoint(feature.center);
+
           const marker: MarkerData = {
+            color: locationColors[(Number(address) + 1) % locationColors.length],
             location: feature.center,
           };
-          setMarkers([marker]);
+          locMarkers.push(marker);
         }
+        setMarkers(locMarkers);
       }
     }, 1000);
   };
