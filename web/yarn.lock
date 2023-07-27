@@ -2695,10 +2695,10 @@
   dependencies:
     "@ucast/core" "^1.4.1"
 
-"@undp/carbon-library@^1.0.43":
-  version "1.0.43"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.43.tgz#36d1d92bf64d489d368c56b9dac5fe17984aafa9"
-  integrity sha512-UN3CruTU3clh9N94fFDmsJvwYdxL6+WF2E/XwDO2Sv186ad+7ACMN/iZcH3ZgfEQyHIKFGKOiOIXZ69V6k8E/g==
+"@undp/carbon-library@^1.0.46":
+  version "1.0.46"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.46.tgz#52399f7a124020114584acc824c8368bce749fb9"
+  integrity sha512-r8M9cw9R/sIDRWwu9m/Fz21TX7dxn+Tjkt09HDCK9F04P3/wETrxI0voW2+6fvMNbvwEdq4ZB5YEg0SRwk3TXA==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-node-resolve" "^15.0.2"
