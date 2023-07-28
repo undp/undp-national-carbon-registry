@@ -4,8 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
-import undpLogo from '../../Assets/Images/undp.webp';
-import undpLogofall from '../../Assets/Images/undp.png';
+import undpLogo from '../../Assets/Images/undp1.webp';
+import EBRD from '../../Assets/Images/EBRD.webp';
+import EBRDff from '../../Assets/Images/EBRD.png';
+import UNFCCC from '../../Assets/Images/UNFCCC.webp';
+import IETA from '../../Assets/Images/IETA.webp';
+import ESA from '../../Assets/Images/ESA.webp';
+import ESAff from '../../Assets/Images/ESA.png';
+import WBANK from '../../Assets/Images/WBANK.webp';
+import WBANKff from '../../Assets/Images/WBANK.png';
+import undpLogofall from '../../Assets/Images/undp1.png';
 import forest from '../../Assets/Images/forest.webp';
 import forestfall from '../../Assets/Images/forest.png';
 import resources from '../../Assets/Images/resources.webp';
@@ -206,6 +214,62 @@ const Homepage = () => {
                 end-to-end digital ecosystem for the carbon market. The overarching goal is to
                 support a transparent, high integrity global carbon market that can channel capital
                 for impactful climate action and low-carbon development.
+              </div>
+              <div className="undplogocontainer">
+                <a href="https://www.ebrd.com/" target="_blank">
+                  <ImgWithFallback
+                    className="erbd"
+                    src={EBRD}
+                    fallbackSrc={EBRDff}
+                    mediaType="image/webp"
+                    alt="EBRD"
+                  />
+                </a>{' '}
+                <a href="https://www.undp.org/" target="_blank">
+                  <ImgWithFallback
+                    className="undp"
+                    src={undpLogo}
+                    fallbackSrc={undpLogofall}
+                    mediaType="image/webp"
+                    alt="UNDP"
+                  />
+                </a>{' '}
+                <a href="https://www.unfccc.int/" target="_blank">
+                  <ImgWithFallback
+                    className="unfccc"
+                    src={UNFCCC}
+                    fallbackSrc={UNFCCC}
+                    mediaType="image/webp"
+                    alt="UNFCCC"
+                  />
+                </a>{' '}
+                <a href="https://www.ieta.org/" target="_blank">
+                  <ImgWithFallback
+                    className="ieta"
+                    src={IETA}
+                    fallbackSrc={IETA}
+                    mediaType="image/webp"
+                    alt="IETA"
+                  />
+                </a>{' '}
+                <a href="https://www.esa.int/" target="_blank">
+                  <ImgWithFallback
+                    className="esa"
+                    src={ESA}
+                    fallbackSrc={ESAff}
+                    mediaType="image/webp"
+                    alt="ESAFF"
+                  />
+                </a>{' '}
+                <a href="https://www.worldbank.org/" target="_blank">
+                  <ImgWithFallback
+                    className="wbank"
+                    src={WBANK}
+                    fallbackSrc={WBANKff}
+                    mediaType="image/webp"
+                    alt="WBANK"
+                  />
+                </a>{' '}
               </div>
             </div>
           </div>
