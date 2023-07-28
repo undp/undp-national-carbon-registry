@@ -291,7 +291,11 @@
       }
       .homepagebody_aboutuslines {
         margin-top: 1rem;
-        margin-bottom: 3.5rem;
+        margin-bottom: 1rem;
+      }
+      .homepagebody_logoaboutuslines {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
       }
 
       .homepagebody_subtitle {
@@ -359,11 +363,31 @@
     }
     .undplogocontainer {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       padding-top: 40px;
 
-      .undplogo {
-        width: 21.875rem;
+      .erbd {
+        width: 14.5rem;
+        height: 7.5rem;
+      }
+      .undp {
+        width: 4rem;
+        height: 7.5rem;
+      }
+      .unfccc{
+        width: 7.5rem;
+        height: 7.5rem;
+      }
+      .ieta{
+        width: 14.5rem;
+        height: 7.5rem;
+      }
+      .esa{
+        width: 12.5rem;
+        height: 7.5rem;
+      }
+      .wbank{
+        width: 7.5rem;
         height: 7.5rem;
       }
     }
