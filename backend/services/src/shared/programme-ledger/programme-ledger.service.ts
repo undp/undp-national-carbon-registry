@@ -997,8 +997,8 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
         const overall = creditOveralls[0];
         const year = new Date(programme.startTime * 1000).getFullYear();
-        const startBlock = overall.credit + 1;
-        const endBlock = overall.credit + programme.creditEst;
+        const startBlock = Math.ceil(overall.credit + 1);
+        const endBlock = Math.ceil(overall.credit + programme.creditEst);
         const serialNo = generateSerialNumber(
           programme.countryCodeA2,
           programme.sectoralScope,
@@ -1542,6 +1542,8 @@ export class ProgrammeLedgerService {
     percentages: number[],
     investor: number,
     owner: number,
+    investorName: string,
+    ownerName: string,
     shareFromOwner: number
   ) {
     const getQueries = {};
@@ -1593,33 +1595,58 @@ export class ProgrammeLedgerService {
           );
         }
 
+        let investmentPerc = undefined
         if (programme.creditBalance && Number(programme.creditBalance) != 0) {
           const ownerCreditAmount = programme.creditBalance * programme.creditOwnerPercentage[ownerIndex] / 100;
           for (const j in programme.companyId) {
             // updatedCreditOwnership[companyIds[j]]
             if (Number(companyIds[j]) === owner) {
               const investorCredit = (ownerCreditAmount * shareFromOwner / 100);
-              ownershipPercentage[investor] = parseFloat((investorCredit * 100 / programme.creditBalance).toFixed(6))
+              if (!ownershipPercentage[investor]) {
+                ownershipPercentage[investor] = 0
+              }
+              ownershipPercentage[investor] += parseFloat((investorCredit * 100 / programme.creditBalance).toFixed(6))
               ownershipPercentage[owner] = parseFloat(((ownerCreditAmount - investorCredit) * 100 / programme.creditBalance).toFixed(6))
             } else {
-              ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+              if (ownershipPercentage[companyIds[j]]) {
+                ownershipPercentage[companyIds[j]] += programme.creditOwnerPercentage[j]  
+              } else {
+                ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+              }
             }
           }
-          for (const comId of companyIds) {
-            ownershipPercentageList.push(ownershipPercentage[comId])
+          for (const x in companyIds) {
+            ownershipPercentageList.push(ownershipPercentage[companyIds[x]])
+            if (Number(companyIds[x]) === investor) {
+              investmentPerc = percentages[x]
+            }
           }
 
         } else {
           ownershipPercentageList = percentages
+          for (const x in companyIds) {
+            if (Number(companyIds[x]) === investor) {
+              investmentPerc = percentages[x]
+            }
+          }
         }
-      
         programme.txTime = new Date().getTime()
         programme.txType = TxType.OWNERSHIP_UPDATE
-        programme.txRef = CompanyRole.API
+        programme.txRef = `${investor}#${investorName}#${owner}#${ownerName}#${investmentPerc}`
         programme.proponentTaxVatId = taxIds;
         programme.proponentPercentage = percentages;
         programme.companyId = companyIds;
         programme.creditOwnerPercentage = ownershipPercentageList;
+
+        if(!programme.creditFrozen){
+          programme.creditFrozen =new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
+        }
+        const investorIndex = programme.companyId.indexOf(investor);
+        if(!programme.creditFrozen[investorIndex]){
+          programme.creditFrozen[investorIndex] = 0;
+        }
 
         updateMap[this.ledger.tableName] = {
           txRef: programme.txRef,
@@ -1629,6 +1656,7 @@ export class ProgrammeLedgerService {
           proponentPercentage: programme.proponentPercentage,
           companyId: programme.companyId,
           creditOwnerPercentage: programme.creditOwnerPercentage,
+          creditFrozen: programme.creditFrozen
         };
 
         updatedProgramme = programme;

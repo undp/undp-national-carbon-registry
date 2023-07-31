@@ -610,107 +610,7 @@ export class ProgrammeService {
       });
 
     if (result.affected > 0) {
-      const transfers = await this.programmeTransferRepo.find({
-        where: {
-          programmeId: programme.programmeId,
-          status: TransferStatus.PENDING,
-        },
-      });
-
-      for (let transfer of transfers) {
-        const companyIndex = programme.companyId.indexOf(
-          transfer.fromCompanyId
-        );
-        const companyProponent = programme.creditOwnerPercentage[companyIndex];
-        const creditBalance =
-          (programme.creditBalance * companyProponent) / 100;
-        if (transfer.creditAmount > creditBalance) {
-          const result = await this.programmeTransferRepo
-            .update(
-              {
-                requestId: transfer.requestId,
-              },
-              {
-                status: TransferStatus.CANCELLED,
-                txTime: new Date().getTime(),
-                authTime: new Date().getTime(),
-                txRef: `#${SystemActionType.LOW_CREDIT_AUTO_CANCEL}#`,
-              }
-            )
-            .catch((err) => {
-              this.logger.error(err);
-              return err;
-            });
-
-          if (result.affected === 0) {
-            throw new HttpException(
-              this.helperService.formatReqMessagesString(
-                "programme.internalErrorStatusUpdating",
-                []
-              ),
-              HttpStatus.INTERNAL_SERVER_ERROR
-            );
-          } else {
-            if (transfer.isRetirement) {
-              const countryName = await this.countryService.getCountryName(
-                transfer.toCompanyMeta.country
-              );
-
-              await this.emailHelperService.sendEmailToOrganisationAdmins(
-                transfer.fromCompanyId,
-                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR,
-                {
-                  credits: transfer.creditAmount,
-                  serialNumber: programme.serialNo,
-                  programmeName: programme.title,
-                  country: countryName,
-                  pageLink: hostAddress + "/creditTransfers/viewAll",
-                }
-              );
-
-              await this.emailHelperService.sendEmailToGovernmentAdmins(
-                EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV,
-                {
-                  credits: transfer.creditAmount,
-                  serialNumber: programme.serialNo,
-                  programmeName: programme.title,
-                  pageLink: hostAddress + "/creditTransfers/viewAll",
-                  country: countryName,
-                },
-                "",
-                transfer.initiatorCompanyId
-              );
-            } else {
-              await this.emailHelperService.sendEmailToOrganisationAdmins(
-                transfer.initiatorCompanyId,
-                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
-                {
-                  credits: transfer.creditAmount,
-                  serialNumber: programme.serialNo,
-                  programmeName: programme.title,
-                  pageLink: hostAddress + "/creditTransfers/viewAll",
-                },
-                transfer.toCompanyId
-              );
-
-              await this.emailHelperService.sendEmailToOrganisationAdmins(
-                transfer.fromCompanyId,
-                EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
-                {
-                  credits: transfer.creditAmount,
-                  serialNumber: programme.serialNo,
-                  programmeName: programme.title,
-                  pageLink: hostAddress + "/creditTransfers/viewAll",
-                },
-                transfer.toCompanyId,
-                "",
-                transfer.initiatorCompanyId
-              );
-            }
-          }
-        }
-      }
-
+      this.checkPendingTransferValidity(programme);
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 
@@ -1185,6 +1085,8 @@ export class ProgrammeService {
 
     let investorCompanyId;
     let ownerCompanyId;
+    let investorCompanyName;
+    let ownerCompanyName;
     for (const taxId of update.proponentTaxVatId) {
       const compo = await this.companyService.findByTaxId(taxId);
       if (!compo) {
@@ -1198,13 +1100,17 @@ export class ProgrammeService {
       }
       if (compo.taxId === update.investorTaxId) {
         investorCompanyId = Number(compo.companyId);
+        investorCompanyName = compo.name;
       } else if (compo.taxId === update.ownerTaxId) {
         ownerCompanyId = Number(compo.companyId);
+        ownerCompanyName = compo.name;
       }
       companyIds.push(compo.companyId)
     }
     
-    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage, investorCompanyId, ownerCompanyId, update.shareFromOwner);
+    const resp = await this.programmeLedger.updateOwnership(update.externalId, companyIds, update.proponentTaxVatId, update.proponentPercentage, investorCompanyId, ownerCompanyId, investorCompanyName, ownerCompanyName, update.shareFromOwner);
+    if(resp)
+      this.checkPendingTransferValidity(resp);
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
@@ -1434,7 +1340,7 @@ export class ProgrammeService {
     for (const el of resp) {
       const refs = this.getCompanyIdAndUserIdFromRef(el.data.txRef);
       if (
-        refs &&
+        refs && !isNaN(refs?.companyId) && !isNaN(Number(refs.id)) &&
         (user.companyRole === CompanyRole.GOVERNMENT ||
           Number(refs?.companyId) === Number(user.companyId))
       ) {
@@ -2170,7 +2076,7 @@ export class ProgrammeService {
     return new BasicResponseDto(HttpStatus.OK, "Successfully updated");
   }
 
-  private getUserName = async (usrId: string) => {
+  private getUserName = async (usrId: any) => {
     this.logger.debug(`Getting user [${usrId}]`);
     if (usrId == "undefined" || usrId == "null") {
       return null;
@@ -2274,5 +2180,109 @@ export class ProgrammeService {
   private getUserRefWithRemarks = (user: any, remarks: string) => {
     return `${user.companyId}#${user.companyName}#${user.id}#${remarks}`;
   };
+
+  private checkPendingTransferValidity = async(programme:Programme) => {
+    const hostAddress = this.configService.get("host");
+    const transfers = await this.programmeTransferRepo.find({
+      where: {
+        programmeId: programme.programmeId,
+        status: TransferStatus.PENDING,
+      },
+    });
+
+    for (let transfer of transfers) {
+      const companyIndex = programme.companyId.indexOf(
+        transfer.fromCompanyId
+      );
+      const companyProponent = programme.creditOwnerPercentage[companyIndex];
+      const creditBalance =
+        (programme.creditBalance * companyProponent) / 100;
+      if (transfer.creditAmount > creditBalance) {
+        const result = await this.programmeTransferRepo
+          .update(
+            {
+              requestId: transfer.requestId,
+            },
+            {
+              status: TransferStatus.CANCELLED,
+              txTime: new Date().getTime(),
+              authTime: new Date().getTime(),
+              txRef: `#${SystemActionType.LOW_CREDIT_AUTO_CANCEL}#`,
+            }
+          )
+          .catch((err) => {
+            this.logger.error(err);
+            return err;
+          });
+
+        if (result.affected === 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.internalErrorStatusUpdating",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        } else {
+          if (transfer.isRetirement) {
+            const countryName = await this.countryService.getCountryName(
+              transfer.toCompanyMeta.country
+            );
+
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.fromCompanyId,
+              EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_INITIATOR,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                country: countryName,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              }
+            );
+
+            await this.emailHelperService.sendEmailToGovernmentAdmins(
+              EmailTemplates.CREDIT_RETIREMENT_CANCEL_SYS_TO_GOV,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+                country: countryName,
+              },
+              "",
+              transfer.initiatorCompanyId
+            );
+          } else {
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.initiatorCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              },
+              transfer.toCompanyId
+            );
+
+            await this.emailHelperService.sendEmailToOrganisationAdmins(
+              transfer.fromCompanyId,
+              EmailTemplates.CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER,
+              {
+                credits: transfer.creditAmount,
+                serialNumber: programme.serialNo,
+                programmeName: programme.title,
+                pageLink: hostAddress + "/creditTransfers/viewAll",
+              },
+              transfer.toCompanyId,
+              "",
+              transfer.initiatorCompanyId
+            );
+          }
+        }
+      }
+    }
+  }
 
 }
