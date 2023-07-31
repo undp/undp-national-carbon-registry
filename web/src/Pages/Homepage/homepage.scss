@@ -76,12 +76,12 @@
       text-transform: uppercase;
     }
     .ant-btn-primary {
-      background: linear-gradient(to right,#1890ff, $gradient-background-end);
+      background: linear-gradient(to right, #1890ff, $gradient-background-end);
       color: $dark-text-color;
       border: none;
     }
     .ant-btn-primary:hover {
-      background: linear-gradient(to right, $gradient-background-end,#1890ff);
+      background: linear-gradient(to right, $gradient-background-end, #1890ff);
     }
   }
   // .image-container {
@@ -292,6 +292,9 @@
       .homepagebody_aboutuslines {
         margin-top: 1rem;
         margin-bottom: 1rem;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.125rem;
       }
       .homepagebody_logoaboutuslines {
         margin-top: 2rem;
@@ -374,19 +377,19 @@
         width: 4rem;
         height: 7.5rem;
       }
-      .unfccc{
+      .unfccc {
         width: 7.5rem;
         height: 7.5rem;
       }
-      .ieta{
+      .ieta {
         width: 14.5rem;
         height: 7.5rem;
       }
-      .esa{
+      .esa {
         width: 12.5rem;
         height: 7.5rem;
       }
-      .wbank{
+      .wbank {
         width: 7.5rem;
         height: 7.5rem;
       }

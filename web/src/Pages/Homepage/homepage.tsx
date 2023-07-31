@@ -8,7 +8,9 @@ import undpLogo from '../../Assets/Images/undp1.webp';
 import EBRD from '../../Assets/Images/EBRD.webp';
 import EBRDff from '../../Assets/Images/EBRD.png';
 import UNFCCC from '../../Assets/Images/UNFCCC.webp';
+import UNFCCCff from '../../Assets/Images/UNFCCC.png';
 import IETA from '../../Assets/Images/IETA.webp';
+import IETAff from '../../Assets/Images/IETA.png';
 import ESA from '../../Assets/Images/ESA.webp';
 import ESAff from '../../Assets/Images/ESA.png';
 import WBANK from '../../Assets/Images/WBANK.webp';
@@ -176,7 +178,7 @@ const Homepage = () => {
                   </Col>
                 </Row>
               </div>
-              <Row>{t('homepage:aboutusline2')}</Row>
+              <Row className="homepagebody_aboutusline1">{t('homepage:aboutusline2')}</Row>
               <Row className="homepagebody_aboutuslines">{t('homepage:aboutusline3')}</Row>
               <div className="homepagebody_aboutusline1">
                 Developed in Partnership with{' '}
@@ -216,42 +218,34 @@ const Homepage = () => {
                 for impactful climate action and low-carbon development.
               </div>
               <div className="undplogocontainer">
-                <a href="https://www.ebrd.com/" target="_blank">
-                  <ImgWithFallback
-                    className="erbd"
-                    src={EBRD}
-                    fallbackSrc={EBRDff}
-                    mediaType="image/webp"
-                    alt="EBRD"
-                  />
-                </a>{' '}
-                <a href="https://www.undp.org/" target="_blank">
-                  <ImgWithFallback
-                    className="undp"
-                    src={undpLogo}
-                    fallbackSrc={undpLogofall}
-                    mediaType="image/webp"
-                    alt="UNDP"
-                  />
-                </a>{' '}
-                <a href="https://www.unfccc.int/" target="_blank">
-                  <ImgWithFallback
-                    className="unfccc"
-                    src={UNFCCC}
-                    fallbackSrc={UNFCCC}
-                    mediaType="image/webp"
-                    alt="UNFCCC"
-                  />
-                </a>{' '}
-                <a href="https://www.ieta.org/" target="_blank">
-                  <ImgWithFallback
-                    className="ieta"
-                    src={IETA}
-                    fallbackSrc={IETA}
-                    mediaType="image/webp"
-                    alt="IETA"
-                  />
-                </a>{' '}
+                <ImgWithFallback
+                  className="erbd"
+                  src={EBRD}
+                  fallbackSrc={EBRDff}
+                  mediaType="image/webp"
+                  alt="EBRD"
+                />
+                <ImgWithFallback
+                  className="undp"
+                  src={undpLogo}
+                  fallbackSrc={undpLogofall}
+                  mediaType="image/webp"
+                  alt="UNDP"
+                />
+                <ImgWithFallback
+                  className="unfccc"
+                  src={UNFCCC}
+                  fallbackSrc={UNFCCCff}
+                  mediaType="image/webp"
+                  alt="UNFCCC"
+                />
+                <ImgWithFallback
+                  className="ieta"
+                  src={IETA}
+                  fallbackSrc={IETAff}
+                  mediaType="image/webp"
+                  alt="IETA"
+                />
                 <a href="https://www.esa.int/" target="_blank">
                   <ImgWithFallback
                     className="esa"
