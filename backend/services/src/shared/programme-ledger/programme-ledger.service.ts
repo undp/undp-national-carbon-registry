@@ -1639,7 +1639,9 @@ export class ProgrammeLedgerService {
         programme.creditOwnerPercentage = ownershipPercentageList;
 
         if(!programme.creditFrozen){
-          programme.creditFrozen = [];
+          programme.creditFrozen =new Array(
+              programme.creditOwnerPercentage.length
+            ).fill(0);
         }
         const investorIndex = programme.companyId.indexOf(investor);
         if(!programme.creditFrozen[investorIndex]){
