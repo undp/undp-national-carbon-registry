@@ -587,7 +587,7 @@ export class UserService {
       home: hostAddress,
       email: u.email,
       liveChat: this.configService.get("liveChat"),
-      helpDoc: hostAddress + "/help",
+      helpDoc: "https://nationalcarbonregistrydemo.tawk.help",
     };
 
     const action: AsyncAction = {

@@ -11,12 +11,12 @@ jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
-      COUNTRY_NAME: 'CountryX'
-      COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
-      COUNTRY_CODE: 'NG'
-      REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
-      REACT_APP_MAP_TYPE : "Mapbox"
+      REACT_APP_BACKEND: http://3.232.219.197:3000
+      REACT_APP_STAT_URL: http://3.232.219.197:3100
+      REACT_APP_COUNTRY_NAME: "The Republic of Namibia"
+      REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-prod.s3.amazonaws.com/na-flag.png"
+      REACT_APP_COUNTRY_CODE: "NA"
+      REACT_APP_MAP_TYPE: "Mapbox"
     steps:
       - uses: actions/checkout@v3
       - name: Cache modules
@@ -36,16 +36,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        working-directory: ./web
-        run: CI=false yarn install 
-      - name: Build
-        working-directory: ./web
-        run: CI=false yarn build
-      - name: Deploy
-        run: aws s3 sync ./web/build s3://carbon-www-dev
-      # - name: Deploy Test
-      #   run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -54,10 +44,10 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-web
-          IMAGE_TAG: latest
+          IMAGE_TAG: namibia
         run: |
-          # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://localhost:3000 --build-arg REACT_APP_STAT_URL=http://localhost:3100 --build-arg COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} 
+          # Build a docker container and push it to ECR
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg REACT_APP_COUNTRY_NAME="The Republic of Namibia" --build-arg REACT_APP_COUNTRY_FLAG_URL="https://carbon-common-prod.s3.amazonaws.com/na-flag.png" --build-arg REACT_APP_COUNTRY_CODE="NA" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"

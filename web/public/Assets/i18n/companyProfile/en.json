@@ -5,7 +5,7 @@
     "reActivate": "REACTIVATE",
     "organisationDetailsHeading": "Organisation Details",
     "name" : "Name",
-    "taxId" : "Tax ID",
+    "taxId" : "VAT Registration #",
     "companyRole": "Role",
     "email" : "Email",
     "phoneNo" : "Phone",

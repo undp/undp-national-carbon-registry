@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - backend/**
-      - libs/**
+      - .github/workflows/server*
     
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -24,13 +24,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    - id: check_file_changed
-      run: |
-        if [[ $(git diff --name-only HEAD^ HEAD | grep backend/services/package.json) ]] || [[ $(git diff --name-only HEAD^ HEAD | grep libs/) ]]; then
-          echo "deps_changed=True" >> $GITHUB_OUTPUT
-        else
-          echo "deps_changed=False" >> $GITHUB_OUTPUT
-        fi
     - id: branch_check
       run: |
         if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
@@ -38,91 +31,16 @@ jobs:
         else
           echo "stage=dev" >> $GITHUB_OUTPUT
         fi
-  layer:
-    name: layer
-    runs-on: ubuntu-latest
-    needs: check_dependency_change
-    steps:
-      - name: check_file_changed
-        run: |
-          echo ${{needs.check_dependency_change.outputs.deps_changed}}
-          echo ${{needs.check_dependency_change.outputs}}
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Build Serial Generator Package
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./libs/serial-number-gen
-        run: yarn run build
-      - name: Build Carbon Credit Package
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./libs/carbon-credit-calculator
-        run: yarn run build
-      - name: Copy package.json
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./backend/layer/dependency_layer
-        run: cp ../../services/package.json ./ && cp ../../services/yarn.lock ./ && cp -r ../../../libs ../../
-      - name: Install Dependency
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-        working-directory: ./backend/layer/dependency_layer
-        run: yarn install --production --frozen-lockfile
-      # - name: Copy Dependency
-      #   if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' }}
-      #   working-directory: ./backend/layer
-      #   run: |
-      #     cp -r node_modules ./dependency_layer
-      #     ls
-      - name: serverless deploy develop
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True'}}
-        uses: serverless/github-action@v3.1
-        with:
-          args: -c "cd ./backend/layer && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }}"
-          entrypoint: /bin/sh
-      - name: serverless deploy main
-        if: ${{ needs.check_dependency_change.outputs.deps_changed == 'True' && github.ref == 'refs/heads/main'}}
-        uses: serverless/github-action@v3.1
-        with:
-          args: -c "cd ./backend/layer && serverless deploy --stage prod"
-          entrypoint: /bin/sh
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    needs: [layer, check_dependency_change]
+    needs: [check_dependency_change]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install Dependency
-        working-directory: ./backend/services
-        run: yarn install --frozen-lockfile
-      - name: version
-        run: |
-          echo "ARN1=$(aws lambda list-layer-versions --layer-name service-dependencies-${{ needs.check_dependency_change.outputs.stage }}-1 --region us-east-1 --query 'LayerVersions[0].LayerVersionArn')" >> $GITHUB_OUTPUT
-          echo "ARN2=$(aws lambda list-layer-versions --layer-name service-dependencies-${{ needs.check_dependency_change.outputs.stage }}-2 --region us-east-1 --query 'LayerVersions[0].LayerVersionArn')" >> $GITHUB_OUTPUT
-        id: layerArn
-      - name: Build Serial Generator Package
-        working-directory: ./libs/serial-number-gen
-        run: yarn run build
-      - name: Build Carbon Credit Package
-        working-directory: ./libs/carbon-credit-calculator
-        run: yarn run build
-      - name: serverless deploy develop
-        if: github.ref == 'refs/heads/develop'
-        uses: serverless/github-action@v3.1
-        with:
-          args: -c "cd ./backend/services && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }} --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
-          entrypoint: /bin/sh
-      - name: serverless deploy main
-        if: github.ref == 'refs/heads/main'
-        uses: serverless/github-action@v3.1
-        with:
-          args: -c "cd ./backend/services && serverless deploy --stage ${{ needs.check_dependency_change.outputs.stage }} --param='depLayerArn1=${{ steps.layerArn.outputs.ARN1 }}' --param='depLayerArn2=${{ steps.layerArn.outputs.ARN2 }}'"
-          entrypoint: /bin/sh
       - name: Configure AWS credentials
         if: github.ref == 'refs/heads/develop'
         uses: aws-actions/configure-aws-credentials@v1
@@ -140,50 +58,10 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-services
-          IMAGE_TAG: latest
+          IMAGE_TAG: namibia
         run: |
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-  # automated-api-tests:
-  #   runs-on: ubuntu-latest
-  #   needs: [deploy]
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install Postman CLI
-  #       run: |
-  #         curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-  #     - name: Login to Postman CLI
-  #       run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-  #     - name: Run User Create Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "20428472-45dd524a-c260-44f4-b9c9-5f164db2264d" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/user_onboarding_company4.csv
-  #     - name: Run User Password Reset Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "24647866-ba48ade2-732f-40c5-a304-509b44389ff6" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/reset_password_3.csv
-  #     - name: Run User View Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "20428472-a9ecb4af-70a2-4997-a478-e554138ec3ea" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/view_user_company4.csv
-  #     - name: Run Programme Create Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "24716950-471a5534-87f8-482d-93e2-6613e15d55e0" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/create_project_7.csv
-  #     - name: Run Programme Authorisation and Credit Transfer Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "20428472-140d1d13-d387-4952-b956-a1a5ff7b01af" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/credit_transfer_1.csv
-  #     - name: Run Programme Certification and Certification Revocation Tests
-  #       if: always()
-  #       run: |
-  #         postman collection run "20428472-d4e57d08-53ad-42a5-ba0e-3e85f449a1ed" -e "20428472-778eb1c8-aac1-4484-a217-bcfd9a8d0df0" -d ./testing/api/credit_transfer_certify_1.csv
-          
-          
-          
-          
-          
