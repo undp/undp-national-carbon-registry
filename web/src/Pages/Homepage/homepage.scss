@@ -76,12 +76,12 @@
       text-transform: uppercase;
     }
     .ant-btn-primary {
-      background: linear-gradient(to right,#1890ff, $gradient-background-end);
+      background: linear-gradient(to right, #1890ff, $gradient-background-end);
       color: $dark-text-color;
       border: none;
     }
     .ant-btn-primary:hover {
-      background: linear-gradient(to right, $gradient-background-end,#1890ff);
+      background: linear-gradient(to right, $gradient-background-end, #1890ff);
     }
   }
   // .image-container {
@@ -291,7 +291,14 @@
       }
       .homepagebody_aboutuslines {
         margin-top: 1rem;
-        margin-bottom: 3.5rem;
+        margin-bottom: 1rem;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.125rem;
+      }
+      .homepagebody_logoaboutuslines {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
       }
 
       .homepagebody_subtitle {
@@ -359,12 +366,32 @@
     }
     .undplogocontainer {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       padding-top: 40px;
 
-      .undplogo {
-        width: 21.875rem;
-        height: 7.5rem;
+      .erbd {
+        width: 14.5rem;
+        
+      }
+      .undp {
+        width: 4rem;
+        
+      }
+      .unfccc {
+        width: 7.5rem;
+        
+      }
+      .ieta {
+        width: 14.5rem;
+       
+      }
+      .esa {
+        width: 12.5rem;
+        
+      }
+      .wbank {
+        width: 7.5rem;
+       
       }
     }
   }
