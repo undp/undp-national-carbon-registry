@@ -3,7 +3,7 @@ import { AsyncOperationsModule } from '../async-operations/async-operations.modu
 import { CompanyModule } from '../company/company.module';
 import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.module';
 import { UserModule } from '../user/user.module';
-import { UtilModule } from '../util/util.module';
+import { UtilModule } from 'carbon-services-lib';
 import { EmailHelperService } from './email-helper.service';
 
 @Module({

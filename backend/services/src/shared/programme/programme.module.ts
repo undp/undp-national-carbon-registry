@@ -4,7 +4,7 @@ import { ProgrammeLedgerModule } from '../programme-ledger/programme-ledger.modu
 import { CaslModule } from '../casl/casl.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Programme } from '../entities/programme.entity';
-import { UtilModule } from '../util/util.module';
+import { UtilModule } from 'carbon-services-lib';
 import { ConstantEntity } from '../entities/constants.entity';
 import { CompanyModule } from '../company/company.module';
 import { ProgrammeTransfer } from '../entities/programme.transfer';

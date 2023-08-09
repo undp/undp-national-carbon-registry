@@ -13,8 +13,8 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Role } from "../casl/role.enum";
-import MutuallyExclusive from "../util/mutualexclusive.decorator";
 import { OrganisationDto } from "./organisation.dto";
+import MutuallyExclusive from "carbon-services-lib/shared/util/mutualexclusive.decorator";
 
 export class UserDto {
   @IsNotEmpty()

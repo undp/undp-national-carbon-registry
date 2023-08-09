@@ -6,7 +6,7 @@ import { CaslModule } from "../casl/casl.module";
 import configuration from "../configuration";
 import { TypeOrmConfigService } from "../typeorm.config.service";
 import { CompanyService } from "./company.service";
-import { UtilModule } from "../util/util.module";
+import { UtilModule } from "carbon-services-lib";
 import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { EmailHelperModule } from "../email-helper/email-helper.module";

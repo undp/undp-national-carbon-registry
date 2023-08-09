@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import { CounterType } from "../util/counter.type.enum";
+import { CounterType } from "carbon-services-lib";
 
 @Entity()
 export class Counter {

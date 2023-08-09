@@ -10,7 +10,7 @@ import { Programme } from "../entities/programme.entity";
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 
 @Injectable()
 export class EmailHelperService {

@@ -17,7 +17,7 @@ import {
   ArrayLike,
   LedgerDBInterface,
 } from "../ledger-db/ledger.db.interface";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import { Company } from "../entities/company.entity";
 import { url } from "inspector";
 import { CompanyRole } from "../enum/company.role.enum";

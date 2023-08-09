@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { Counter } from "../shared/entities/counter.entity";
-import { CounterType } from "../shared/util/counter.type.enum";
+import { CounterType } from 'carbon-services-lib';
 import { Pool } from "pg";
 import { Programme } from "../shared/entities/programme.entity";
 import { plainToClass } from "class-transformer";

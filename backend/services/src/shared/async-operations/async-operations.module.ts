@@ -8,7 +8,7 @@ import { AsyncOperationsDatabaseService } from "./async-operations-database.serv
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AsyncActionEntity } from "../entities/async.action.entity";
 import { TypeOrmConfigService } from "../typeorm.config.service";
-import { UtilModule } from "../util/util.module";
+import { UtilModule } from "carbon-services-lib";
 
 @Module({
   exports: [AsyncOperationsInterface],

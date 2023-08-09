@@ -9,7 +9,7 @@ import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
 import { ChartStatList } from "../shared/dto/chartStats.list.dto";
 import { ChartType } from "../shared/enum/chart.type.enum";
-import { HelperService } from "../shared/util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
 import { programmeStatusRequestDto } from "../shared/dto/programmeStatus.request.dto";
 import { CreditStatType } from "../shared/enum/credit.stat.type.enum";

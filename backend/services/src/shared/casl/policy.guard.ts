@@ -14,7 +14,7 @@ import { Action } from "./action.enum";
 import { CaslAbilityFactory, AppAbility } from "./casl-ability.factory";
 import { CHECK_POLICIES_KEY } from "./policy.decorator";
 import { PolicyHandler } from "./policy.handler";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 const { rulesToQuery } = require("@casl/ability/extra");
 
 @Injectable()

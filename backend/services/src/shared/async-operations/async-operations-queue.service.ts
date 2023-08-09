@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AsyncActionType } from "../enum/async.action.type.enum";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import {
   AsyncAction,
   AsyncOperationsInterface,

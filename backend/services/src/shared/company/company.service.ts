@@ -17,7 +17,7 @@ import { QueryDto } from "../dto/query.dto";
 import { DataListResponseDto } from "../dto/data.list.response";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { CompanyState } from "../enum/company.state.enum";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import { FindOrganisationQueryDto } from "../dto/find.organisation.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { OrganisationUpdateDto } from "../dto/organisation.update.dto";
@@ -30,8 +30,8 @@ import { Programme } from "../entities/programme.entity";
 import { EmailTemplates } from "../email-helper/email.template";
 import { SystemActionType } from "../enum/system.action.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CounterType } from "../util/counter.type.enum";
-import { CounterService } from "../util/counter.service";
+import { CounterType } from "carbon-services-lib";
+import { CounterService } from "carbon-services-lib";
 
 @Injectable()
 export class CompanyService {

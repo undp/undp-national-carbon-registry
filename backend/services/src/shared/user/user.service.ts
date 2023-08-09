@@ -36,11 +36,11 @@ import { CompanyRole } from "../../shared/enum/company.role.enum";
 import { plainToClass } from "class-transformer";
 import { Company } from "../../shared/entities/company.entity";
 import { CompanyService } from "../company/company.service";
-import { HelperService } from "../util/helpers.service";
-import { CounterService } from "../util/counter.service";
-import { CounterType } from "../util/counter.type.enum";
+import { HelperService } from 'carbon-services-lib';
+import { CounterService } from "carbon-services-lib";
+import { CounterType } from "carbon-services-lib";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CountryService } from "../util/country.service";
+import { CountryService } from "carbon-services-lib";
 import {
   AsyncAction,
   AsyncOperationsInterface,

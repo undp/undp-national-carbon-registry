@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { CaslAbilityFactory } from "./casl-ability.factory";
-import { UtilModule } from "../util/util.module";
+import { UtilModule } from "carbon-services-lib";
 
 @Module({
   imports: [UtilModule],

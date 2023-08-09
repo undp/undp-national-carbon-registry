@@ -27,9 +27,9 @@ import { QueryDto } from "../shared/dto/query.dto";
 import { UserUpdateDto } from "../shared/dto/user.update.dto";
 import { PasswordUpdateDto } from "../shared/dto/password.update.dto";
 import { Role } from "../shared/casl/role.enum";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { HelperService } from "../shared/util/helpers.service";
-import { ApiKeyJwtAuthGuard } from "../shared/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "carbon-services-lib";
+import { HelperService } from 'carbon-services-lib';
+import { ApiKeyJwtAuthGuard } from "carbon-services-lib";
 
 @ApiTags("User")
 @ApiBearerAuth()

@@ -20,7 +20,7 @@ import { TrimPipe } from "./validation/trim-pipe.transform";
 import { ValidationException } from "./validation/validation.exception";
 import { ValidationExceptionFilter } from "./validation/validation-exception.filter";
 import { useContainer } from "class-validator";
-import { UtilModule } from "./util/util.module";
+import { UtilModule } from "carbon-services-lib";
 import * as bodyParser from "body-parser";
 
 const express = require("express");

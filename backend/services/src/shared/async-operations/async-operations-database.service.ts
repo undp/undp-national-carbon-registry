@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AsyncActionEntity } from "../entities/async.action.entity";
 import { AsyncActionType } from "../enum/async.action.type.enum";
-import { HelperService } from "../util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import {
   AsyncAction,
   AsyncOperationsInterface,

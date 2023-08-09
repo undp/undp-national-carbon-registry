@@ -7,7 +7,7 @@ import { TypeOrmConfigService } from '../../shared/typeorm.config.service';
 import configuration from '../../shared/configuration';
 import { ConfigModule } from '@nestjs/config';
 import { CompanyModule } from '../company/company.module';
-import { UtilModule } from '../util/util.module';
+import { UtilModule } from 'carbon-services-lib';
 import { EmailHelperModule } from '../email-helper/email-helper.module';
 import { FileHandlerModule } from '../file-handler/filehandler.module';
 import { AsyncOperationsModule } from '../async-operations/async-operations.module';

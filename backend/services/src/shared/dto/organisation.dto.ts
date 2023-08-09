@@ -12,7 +12,7 @@ import {
 } from "class-validator";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
-import { IsValidCountry } from "../util/validcountry.decorator";
+import { IsValidCountry } from "carbon-services-lib";
 
 export class OrganisationDto {
   companyId: number;

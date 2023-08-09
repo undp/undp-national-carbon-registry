@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { IsValidCountry } from "../util/validcountry.decorator";
+import { IsValidCountry } from "carbon-services-lib";
 
 export class BasicOrgInfo {
   @IsString()

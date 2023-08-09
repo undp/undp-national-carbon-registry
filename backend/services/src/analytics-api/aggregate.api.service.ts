@@ -6,7 +6,7 @@ import { Programme } from "../shared/entities/programme.entity";
 import { Repository } from "typeorm";
 import { StatList } from "../shared/dto/stat.list.dto";
 import { StatType } from "../shared/enum/stat.type.enum";
-import { HelperService } from "../shared/util/helpers.service";
+import { HelperService } from 'carbon-services-lib';
 import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
 import { QueryDto } from "../shared/dto/query.dto";
 import { FilterEntry } from "../shared/dto/filter.entry";
