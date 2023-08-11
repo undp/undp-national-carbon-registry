@@ -1,4 +1,4 @@
-name: Deploy Services
+name: Public Libs
 on:
   push:
     branches:
@@ -28,7 +28,7 @@ jobs:
           CI_COMMIT_MESSAGE: Continuous Integration Version Update
           CI_COMMIT_AUTHOR: Continuous Integration
         working-directory: libs/carbon-services-lib
-      - run: yarn run build
+      - run: yarn run build && cp package.json ./dist/
         working-directory: libs/carbon-services-lib
       - run: npm publish --access public
         working-directory: libs/carbon-services-lib/dist
