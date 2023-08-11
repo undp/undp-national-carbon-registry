@@ -10,7 +10,7 @@ import {
   MaxLength,
   ValidateIf,
 } from "class-validator";
-import { Role } from "../casl/role.enum";
+import { Role } from "carbon-services-lib";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "carbon-services-lib";
 

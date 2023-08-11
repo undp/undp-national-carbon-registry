@@ -1,10 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { ProgrammeService } from "../shared/programme/programme.service";
-import { CompanyService } from "../shared/company/company.service";
 import { ImporterInterface } from "./importer.interface";
 import { ITMOSystemImporter } from "./importers/itmo-system.service";
-import { UserService } from "../shared/user/user.service";
+import { UserService ,CompanyService} from "carbon-services-lib";
 
 @Injectable()
 export class DataImporterService {

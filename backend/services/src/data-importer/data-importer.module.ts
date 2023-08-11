@@ -7,8 +7,7 @@ import { TypeOrmConfigService } from '../shared/typeorm.config.service';
 import { LedgerType } from '../shared/enum/ledger.type';
 import { ProgrammeModule } from '../shared/programme/programme.module';
 import { DataImporterService } from './data-importer.service';
-import { CompanyModule } from '../shared/company/company.module';
-import { UserModule } from '../shared/user/user.module';
+import { CompanyModule,UserModule } from 'carbon-services-lib';
 
 @Module({
   imports: [

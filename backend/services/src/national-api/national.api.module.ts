@@ -6,16 +6,12 @@ import configuration from '../shared/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../shared/typeorm.config.service';
 // import { Programme } from './entities/programme.entity';
-import { AuthModule } from "carbon-services-lib";
-import { CaslModule } from '../shared/casl/casl.module';
+import { AuthModule ,CompanyModule,UserModule,UtilModule,CaslModule} from "carbon-services-lib";
 import { ProgrammeModule } from '../shared/programme/programme.module';
-import { CompanyModule } from '../shared/company/company.module';
 import { CompanyController } from './company.controller';
-import { UserModule } from '../shared/user/user.module';
 import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
-import { UtilModule } from 'carbon-services-lib';
 import { SettingsController } from './settings.controller';
 
 @Module({

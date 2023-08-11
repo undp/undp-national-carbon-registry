@@ -12,17 +12,11 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Company } from "../shared/entities/company.entity";
-import { Action } from "../shared/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
 import { QueryDto } from "../shared/dto/query.dto";
-import { CompanyService } from "../shared/company/company.service";
-import { CaslAbilityFactory } from "../shared/casl/casl-ability.factory";
-import { JwtAuthGuard } from "carbon-services-lib";
 import { OrganisationSuspendDto } from "../shared/dto/organisation.suspend.dto";
 import { FindOrganisationQueryDto } from "../shared/dto/find.organisation.dto";
 import { OrganisationUpdateDto } from "../shared/dto/organisation.update.dto";
-import { CountryService } from 'carbon-services-lib';
-import { HelperService } from 'carbon-services-lib';
+import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from 'carbon-services-lib';
 
 @ApiTags("Organisation")
 @ApiBearerAuth()

@@ -10,7 +10,7 @@ import { LedgerReplicatorInterface } from './replicator-interface.service';
 import { PgSqlReplicatorService } from './pgsql-replicator.service';
 import { ProcessEventService } from './process.event.service';
 import { Counter } from '../shared/entities/counter.entity';
-import { LocationModule } from '../shared/location/location.module';
+import { LocationModule } from 'carbon-services-lib';
 import { LedgerType } from '../shared/enum/ledger.type';
 
 @Module({

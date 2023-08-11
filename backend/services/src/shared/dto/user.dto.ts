@@ -12,7 +12,7 @@ import {
   ValidateIf,
   ValidateNested,
 } from "class-validator";
-import { Role } from "../casl/role.enum";
+import { Role } from "carbon-services-lib";
 import { OrganisationDto } from "./organisation.dto";
 import MutuallyExclusive from "carbon-services-lib/shared/util/mutualexclusive.decorator";
 

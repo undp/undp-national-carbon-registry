@@ -2,15 +2,13 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
 import { ProgrammeService } from "../../shared/programme/programme.service";
-import { CompanyService } from "../../shared/company/company.service";
 import { ImporterInterface } from "../importer.interface";
 import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
 import { CompanyRole } from "../../shared/enum/company.role.enum";
 import { SectoralScope } from "@undp/serial-number-gen";
 import { Sector } from "../../shared/enum/sector.enum";
 import { TypeOfMitigation } from "../../shared/enum/typeofmitigation.enum";
-import { UserService } from "../../shared/user/user.service";
-import { Role } from "../../shared/casl/role.enum";
+import { UserService ,CompanyService,Role} from "carbon-services-lib";
 import { GHGs } from "../../shared/enum/ghgs.enum";
 import { Programme } from "../../shared/entities/programme.entity";
 

@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { Company } from "../shared/entities/company.entity";
 import { Programme } from "../shared/entities/programme.entity";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
-import { LocationInterface } from "../shared/location/location.interface";
+import { LocationInterface } from "carbon-services-lib";
 import { CompanyRole } from "src/shared/enum/company.role.enum";
 
 @Injectable()

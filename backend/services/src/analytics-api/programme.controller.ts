@@ -10,9 +10,7 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { StatList } from "../shared/dto/stat.list.dto";
-import { ApiKeyJwtAuthGuard } from "carbon-services-lib";
-import { Action } from "../shared/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
+import { ApiKeyJwtAuthGuard ,PoliciesGuardEx,Action} from "carbon-services-lib";
 import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "../shared/dto/stat.dto";
 import { ChartStatList } from "../shared/dto/chartStats.list.dto";

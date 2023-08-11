@@ -1,4 +1,4 @@
-import { Role } from "../casl/role.enum"
+import { Role } from "carbon-services-lib"
 import { CompanyRole } from "../enum/company.role.enum"
 
 export class JWTPayload {

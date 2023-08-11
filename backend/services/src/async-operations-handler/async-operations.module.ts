@@ -1,7 +1,6 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { EmailModule } from "src/shared/email/email.module";
 import { AsyncActionEntity } from "src/shared/entities/async.action.entity";
 import { Counter } from "src/shared/entities/counter.entity";
 import configuration from "../shared/configuration";
@@ -10,7 +9,7 @@ import { TypeOrmConfigService } from "../shared/typeorm.config.service";
 import { AsyncOperationsDatabaseHandlerService } from "./async-operations-database-handler.service";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsQueueHandlerService } from "./async-operations-queue-handler.service";
-import { RegistryClientModule } from "../shared/registry-client/registry-client.module";
+import { RegistryClientModule ,EmailModule} from "carbon-services-lib";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
 
 @Module({
