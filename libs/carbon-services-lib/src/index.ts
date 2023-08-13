@@ -57,5 +57,5 @@ export * from './shared/validation/validation-exception.filter'
 export * from './shared/configuration';
 export * from './shared/constants';
 export * from './shared/server';
-
+export * from './shared/typeorm.config.service';
 
