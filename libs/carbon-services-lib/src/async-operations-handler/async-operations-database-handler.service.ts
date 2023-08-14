@@ -1,11 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { AsyncActionEntity } from "carbon-services-lib";
-import { Counter } from "carbon-services-lib";
-import { CounterType } from 'carbon-services-lib';
 import { Repository } from "typeorm";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
+import { AsyncActionEntity } from "../shared/entities/async.action.entity";
+import { CounterType } from "../shared/util/counter.type.enum";
+import { Counter } from "../shared/entities/counter.entity";
 
 @Injectable()
 export class AsyncOperationsDatabaseHandlerService

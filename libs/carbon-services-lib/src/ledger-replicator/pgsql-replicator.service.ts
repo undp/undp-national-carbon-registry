@@ -3,13 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ConfigService } from "@nestjs/config";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
-import { Counter } from "carbon-services-lib";
-import { CounterType } from 'carbon-services-lib';
 import { Pool } from "pg";
-import { Programme } from "carbon-services-lib";
 import { plainToClass } from "class-transformer";
 import { ProcessEventService } from "./process.event.service";
-import { CreditOverall } from "carbon-services-lib";
+import { Counter } from "../shared/entities/counter.entity";
+import { CounterType } from "../shared/util/counter.type.enum";
+import { Programme } from "../shared/entities/programme.entity";
+import { CreditOverall } from "../shared/entities/credit.overall.entity";
 
 
 @Injectable()

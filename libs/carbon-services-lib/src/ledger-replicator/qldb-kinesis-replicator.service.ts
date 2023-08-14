@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import axios from "axios";
-import { Programme } from "carbon-services-lib";
 import { dom } from "ion-js";
 import { plainToClass } from "class-transformer";
 import { ConfigService } from "@nestjs/config";
-import { CreditOverall } from "carbon-services-lib";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { ProcessEventService } from "./process.event.service";
+import { Programme } from "../shared/entities/programme.entity";
+import { CreditOverall } from "src/shared/entities/credit.overall.entity";
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";

@@ -1,12 +1,12 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { TxType } from "carbon-services-lib";
 import { Repository } from "typeorm";
-import { Company } from "carbon-services-lib";
-import { Programme } from "carbon-services-lib";
-import { CreditOverall } from "carbon-services-lib";
-import { LocationInterface } from "carbon-services-lib";
-import { CompanyRole } from "carbon-services-lib";
+import { TxType } from "../shared/enum/txtype.enum";
+import { Company } from "../shared/entities/company.entity";
+import { Programme } from "../shared/entities/programme.entity";
+import { CreditOverall } from "../shared/entities/credit.overall.entity";
+import { LocationInterface } from "../shared/location/location.interface";
+import { CompanyRole } from "../shared/enum/company.role.enum";
 
 @Injectable()
 export class ProcessEventService {

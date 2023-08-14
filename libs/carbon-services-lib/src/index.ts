@@ -60,6 +60,19 @@ export * as configuration from './shared/configuration';
 export * from './shared/constants';
 export * from './shared/server';
 export * from './shared/typeorm.config.service';
+export * from './async-operations-handler/async-operations-database-handler.service'
+export * from './async-operations-handler/async-operations-handler-interface.service'
+export * from './async-operations-handler/async-operations-handler.service'
+export * from './async-operations-handler/async-operations-queue-handler.service'
+export * from './data-importer/data-importer.module'
+export * from './data-importer/data-importer.service'
+export * from './data-importer/importer.interface'
+export * from './data-importer/importers/itmo-system.service'
+export * from './ledger-replicator/ledger-replicator.module'
+export * from './ledger-replicator/pgsql-replicator.service'
+export * from './ledger-replicator/process.event.service'
+export * from './ledger-replicator/qldb-kinesis-replicator.service'
+export * from './ledger-replicator/replicator-interface.service'
 
 //DTOs
 export * from './shared/dto/aggr.entry'
