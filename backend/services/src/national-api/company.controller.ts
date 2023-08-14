@@ -11,7 +11,7 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Company } from "../shared/entities/company.entity";
+import { Company } from "carbon-services-lib";
 import { QueryDto } from "carbon-services-lib";
 import { OrganisationSuspendDto } from "carbon-services-lib";
 import { FindOrganisationQueryDto } from "carbon-services-lib";

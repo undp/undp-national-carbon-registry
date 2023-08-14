@@ -1,15 +1,15 @@
 import { NestFactory } from "@nestjs/core";
-import { UserDto } from "../shared/dto/user.dto";
-import { getLogger } from "../shared/server";
+import { UserDto } from "carbon-services-lib";
+import { getLogger } from "carbon-services-lib";
 import { UtilModule, LocationInterface,LocationModule,LedgerDBInterface,LedgerDbModule,CountryService ,CompanyModule,CompanyService,UserModule,UserService,Role} from "carbon-services-lib";
-import { Country } from "../shared/entities/country.entity";
-import { CreditOverall } from "../shared/entities/credit.overall.entity";
+import { Country } from "carbon-services-lib";
+import { CreditOverall } from "carbon-services-lib";
 import { OrganisationDto as OrganisationDto } from "carbon-services-lib";
-import { CompanyRole } from "../shared/enum/company.role.enum";
-import { TxType } from "../shared/enum/txtype.enum";
+import { CompanyRole } from "carbon-services-lib";
+import { TxType } from "carbon-services-lib";
 import { Handler } from "aws-lambda";
-import { ProgrammeModule } from "../shared/programme/programme.module";
-import { ProgrammeService } from "../shared/programme/programme.service";
+import { ProgrammeModule } from "carbon-services-lib";
+import { ProgrammeService } from "carbon-services-lib";
 import { ConfigService } from "@nestjs/config";
 const fs = require("fs");
 

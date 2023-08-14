@@ -10,7 +10,7 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard ,Action,PoliciesGuardEx,ConfigurationSettingsService} from "carbon-services-lib";;
 import { SettingsDto } from "carbon-services-lib";
-import { ConfigurationSettings } from "../shared/entities/configuration.settings";
+import { ConfigurationSettings } from "carbon-services-lib";
 
 @ApiTags("Settings")
 @Controller("Settings")

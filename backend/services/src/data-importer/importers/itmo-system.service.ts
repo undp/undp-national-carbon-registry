@@ -1,16 +1,16 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
-import { ProgrammeService } from "../../shared/programme/programme.service";
+import { ProgrammeService } from "carbon-services-lib";
 import { ImporterInterface } from "../importer.interface";
-import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
-import { CompanyRole } from "../../shared/enum/company.role.enum";
+import { ProgrammeStage } from "carbon-services-lib";
+import { CompanyRole } from "carbon-services-lib";
 import { SectoralScope } from "@undp/serial-number-gen";
-import { Sector } from "../../shared/enum/sector.enum";
-import { TypeOfMitigation } from "../../shared/enum/typeofmitigation.enum";
+import { Sector } from "carbon-services-lib";
+import { TypeOfMitigation } from "carbon-services-lib";
 import { UserService ,CompanyService,Role} from "carbon-services-lib";
-import { GHGs } from "../../shared/enum/ghgs.enum";
-import { Programme } from "../../shared/entities/programme.entity";
+import { GHGs } from "carbon-services-lib";
+import { Programme } from "carbon-services-lib";
 
 function flatten(ary) {
   if (!ary) {

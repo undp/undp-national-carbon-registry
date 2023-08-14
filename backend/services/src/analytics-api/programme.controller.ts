@@ -13,7 +13,7 @@ import { StatList } from "carbon-services-lib";
 import { ApiKeyJwtAuthGuard ,PoliciesGuardEx,Action,ChartStatList} from "carbon-services-lib";
 import { AnalyticsAPIService } from "./analytics.api.service";
 import { Stat } from "carbon-services-lib";
-import { Programme } from "../shared/entities/programme.entity";
+import { Programme } from "carbon-services-lib";
 import { AggregateAPIService } from "./aggregate.api.service";
 
 @ApiTags("Programme")

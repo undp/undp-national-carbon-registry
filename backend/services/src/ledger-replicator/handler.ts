@@ -3,7 +3,7 @@ import { Handler, Context } from 'aws-lambda';
 import { Server } from 'http';
 import { NestFactory } from '@nestjs/core';
 import { LedgerReplicatorModule } from './ledger-replicator.module';
-import { getLogger } from '../shared/server';
+import { getLogger } from 'carbon-services-lib';
 import { LedgerReplicatorInterface } from './replicator-interface.service';
 
 export const handler: Handler = async (event: any, context: Context) => {

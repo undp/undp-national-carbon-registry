@@ -1,24 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataCountResponseDto } from "../shared/dto/data.count.response";
-import { Programme } from "../shared/entities/programme.entity";
-import { ProgrammeTransfer } from "../shared/entities/programme.transfer";
+import { DataCountResponseDto } from "carbon-services-lib";
+import { Programme } from "carbon-services-lib";
+import { ProgrammeTransfer } from "carbon-services-lib";
 import { Repository } from "typeorm";
 import { StatList } from "carbon-services-lib";
-import { StatType } from "../shared/enum/stat.type.enum";
-import { ChartType } from "../shared/enum/chart.type.enum";
+import { StatType } from "carbon-services-lib";
+import { ChartType } from "carbon-services-lib";
 import { HelperService,ChartStatList, ChartStatsResponseDto ,chartStatsRequestDto} from 'carbon-services-lib';
-import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { ProgrammeStage } from "carbon-services-lib";
 import { programmeStatusRequestDto } from "carbon-services-lib";
-import { CreditStatType } from "../shared/enum/credit.stat.type.enum";
+import { CreditStatType } from "carbon-services-lib";
 import {
   chartStatsResultInMonths,
   chartStatsResultInitialValueInMonths,
   chartStatsResultSend,
   chartStatsResultInitialValueSend,
 } from "carbon-services-lib";
-import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
+import { ProgrammeTransferViewEntityQuery } from "carbon-services-lib";
 
 @Injectable()
 export class AnalyticsAPIService {

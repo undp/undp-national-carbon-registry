@@ -1,0 +1,36 @@
+name: Public Libs
+on:
+  push:
+    branches:
+      - mono
+    paths:
+      - libs/carbon-services-lib/**
+      - .github/workflows/lib-*
+
+jobs:
+  deploy_front_end:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install --frozen-lockfile
+        working-directory: libs/carbon-services-lib
+      - run: |
+          git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --global user.email "palinda@xeptagon.com"
+          yarn version --patch
+          git push --follow-tags
+        env:
+          CI_COMMIT_MESSAGE: Continuous Integration Version Update
+          CI_COMMIT_AUTHOR: Continuous Integration
+        working-directory: libs/carbon-services-lib
+      - run: yarn run build && cp package.json ./dist/
+        working-directory: libs/carbon-services-lib
+      - run: npm publish --access public
+        working-directory: libs/carbon-services-lib/dist
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

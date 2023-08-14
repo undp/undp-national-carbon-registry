@@ -54,6 +54,12 @@ export * from './shared/location/openstreet.location.service'
 export * from './shared/validation/validation.exception'
 export * from './shared/validation/trim-pipe.transform'
 export * from './shared/validation/validation-exception.filter'
+export * from './shared/programme/programme.module'
+export * from './shared/programme/programme.service'
+export * as configuration from './shared/configuration';
+export * from './shared/constants';
+export * from './shared/server';
+export * from './shared/typeorm.config.service';
 
 //DTOs
 export * from './shared/dto/aggr.entry'

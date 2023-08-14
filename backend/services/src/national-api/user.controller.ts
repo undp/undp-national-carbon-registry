@@ -13,12 +13,12 @@ import {
   Put,
 } from "@nestjs/common";
 
-import { User } from "../shared/entities/user.entity";
-import { UserDto } from "../shared/dto/user.dto";
+import { User } from "carbon-services-lib";
+import { UserDto } from "carbon-services-lib";
 import { UserService,Action ,AppAbility,CaslAbilityFactory,CheckPolicies, PoliciesGuard, PoliciesGuardEx, Role} from "carbon-services-lib";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { QueryDto } from "carbon-services-lib";
-import { UserUpdateDto } from "../shared/dto/user.update.dto";
+import { UserUpdateDto } from "carbon-services-lib";
 import { PasswordUpdateDto } from "carbon-services-lib";
 import { JwtAuthGuard } from "carbon-services-lib";
 import { HelperService } from 'carbon-services-lib';

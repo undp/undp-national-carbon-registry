@@ -1,11 +1,11 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AsyncActionEntity } from "src/shared/entities/async.action.entity";
-import { Counter } from "src/shared/entities/counter.entity";
-import configuration from "../shared/configuration";
-import { AsyncOperationType } from "../shared/enum/async.operation.type.enum";
-import { TypeOrmConfigService } from "../shared/typeorm.config.service";
+import { AsyncActionEntity } from "carbon-services-lib";
+import { Counter } from "carbon-services-lib";
+import { configuration } from "carbon-services-lib";
+import { AsyncOperationType } from "carbon-services-lib";
+import { TypeOrmConfigService } from "carbon-services-lib";
 import { AsyncOperationsDatabaseHandlerService } from "./async-operations-database-handler.service";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsQueueHandlerService } from "./async-operations-queue-handler.service";
@@ -16,7 +16,7 @@ import { AsyncOperationsHandlerService } from "./async-operations-handler.servic
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration.default],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
     TypeOrmModule.forRootAsync({

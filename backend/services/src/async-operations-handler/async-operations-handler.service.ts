@@ -1,5 +1,5 @@
 import { RegistryClientService ,EmailService} from "carbon-services-lib";
-import { AsyncActionType } from "../shared/enum/async.action.type.enum";
+import { AsyncActionType } from "carbon-services-lib";
 import { Injectable, Logger } from "@nestjs/common";
 
 @Injectable()

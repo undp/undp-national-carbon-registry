@@ -1,27 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataCountResponseDto } from "../shared/dto/data.count.response";
-import { Programme } from "../shared/entities/programme.entity";
+import { DataCountResponseDto } from "carbon-services-lib";
+import { Programme } from "carbon-services-lib";
 import { Repository } from "typeorm";
 import { StatList } from "carbon-services-lib";
-import { StatType } from "../shared/enum/stat.type.enum";
+import { StatType } from "carbon-services-lib";
 import { HelperService, AggrEntry } from 'carbon-services-lib';
-import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
+import { ProgrammeTransferViewEntityQuery } from "carbon-services-lib";
 import { QueryDto } from "carbon-services-lib";
 import { FilterEntry } from "carbon-services-lib";
 import { SortEntry } from "carbon-services-lib";
-import { Company } from "../shared/entities/company.entity";
+import { Company } from "carbon-services-lib";
 import { StatFilter } from "carbon-services-lib";
-import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { ProgrammeStage } from "carbon-services-lib";
 import { Stat } from "carbon-services-lib";
-import { Sector } from "../shared/enum/sector.enum";
+import { Sector } from "carbon-services-lib";
 import {
   StatusGroupedByTimedata,
   StatusGroupedByTimedataThere,
 } from "carbon-services-lib";
-import { TransferStatus } from "../shared/enum/transform.status.enum";
-import { CompanyRole } from "../shared/enum/company.role.enum";
+import { TransferStatus } from "carbon-services-lib";
+import { CompanyRole } from "carbon-services-lib";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 
 @Injectable()
