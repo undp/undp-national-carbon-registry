@@ -2,8 +2,8 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Programme } from '../shared/entities/programme.entity';
-import configuration from '../shared/configuration';
-import { TypeOrmConfigService } from '../shared/typeorm.config.service';
+import { configuration } from "carbon-services-lib";
+import { TypeOrmConfigService } from 'carbon-services-lib';
 import { QLDBKinesisReplicatorService } from './qldb-kinesis-replicator.service';
 import { Company } from '../shared/entities/company.entity';
 import { LedgerReplicatorInterface } from './replicator-interface.service';
@@ -17,7 +17,7 @@ import { LedgerType } from '../shared/enum/ledger.type';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration.default],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
     }),
     TypeOrmModule.forRootAsync({

@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { UserDto } from "../shared/dto/user.dto";
-import { getLogger } from "../shared/server";
+import { getLogger } from "carbon-services-lib";
 import { UtilModule, LocationInterface,LocationModule,LedgerDBInterface,LedgerDbModule,CountryService ,CompanyModule,CompanyService,UserModule,UserService,Role} from "carbon-services-lib";
 import { Country } from "../shared/entities/country.entity";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";

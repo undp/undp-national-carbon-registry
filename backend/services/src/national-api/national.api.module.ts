@@ -2,9 +2,9 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NationalAPIController } from './national.api.controller';
 import { NationalAPIService } from './national.api.service';
-import configuration from '../shared/configuration';
+import { configuration } from "carbon-services-lib";
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../shared/typeorm.config.service';
+import { TypeOrmConfigService } from 'carbon-services-lib';
 // import { Programme } from './entities/programme.entity';
 import { AuthModule ,CompanyModule,UserModule,UtilModule,CaslModule} from "carbon-services-lib";
 import { ProgrammeModule } from '../shared/programme/programme.module';
@@ -18,7 +18,7 @@ import { SettingsController } from './settings.controller';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration.default],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
     }),
     TypeOrmModule.forRootAsync({
