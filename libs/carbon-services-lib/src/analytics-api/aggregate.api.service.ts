@@ -1,28 +1,27 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataCountResponseDto } from "carbon-services-lib";
-import { Programme } from "carbon-services-lib";
+
 import { Repository } from "typeorm";
-import { StatList } from "carbon-services-lib";
-import { StatType } from "carbon-services-lib";
-import { HelperService, AggrEntry } from 'carbon-services-lib';
-import { ProgrammeTransferViewEntityQuery } from "carbon-services-lib";
-import { QueryDto } from "carbon-services-lib";
-import { FilterEntry } from "carbon-services-lib";
-import { SortEntry } from "carbon-services-lib";
-import { Company } from "carbon-services-lib";
-import { StatFilter } from "carbon-services-lib";
-import { ProgrammeStage } from "carbon-services-lib";
-import { Stat } from "carbon-services-lib";
-import { Sector } from "carbon-services-lib";
-import {
-  StatusGroupedByTimedata,
-  StatusGroupedByTimedataThere,
-} from "carbon-services-lib";
-import { TransferStatus } from "carbon-services-lib";
-import { CompanyRole } from "carbon-services-lib";
+import { StatList } from "../shared/dto/stat.list.dto";
+import { StatType } from "../shared/enum/stat.type.enum";
+import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
+import { QueryDto } from "../shared/dto/query.dto";
+import { FilterEntry } from "../shared/dto/filter.entry";
+import { SortEntry } from "../shared/dto/sort.entry";
+import { AggrEntry } from "../shared/dto/aggr.entry";
+import { Company } from "../shared/entities/company.entity";
+import { StatFilter } from "../shared/dto/stat.filter";
+import { ProgrammeStage } from "../shared/enum/programme-status.enum";
+import { Stat } from "../shared/dto/stat.dto";
+import { Sector } from "../shared/enum/sector.enum";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
+import { HelperService } from "../shared/util/helpers.service";
+import { Programme } from "../shared/entities/programme.entity";
+import { StatusGroupedByTimedata, StatusGroupedByTimedataThere } from "../shared/dto/programmeStatus.timeGrouped.result";
+import { CompanyRole } from "../shared/enum/company.role.enum";
+import { TransferStatus } from "../shared/enum/transform.status.enum";
+import { DataCountResponseDto } from "../shared/dto/data.count.response";
 
 @Injectable()
 export class AggregateAPIService {

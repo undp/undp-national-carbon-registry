@@ -158,3 +158,5 @@ export * from './shared/entities/programmeTransfer.view.entity'
 export * from './shared/entities/region.entity'
 export * from './shared/entities/user.entity'
 export * from './shared/entities/userPasswordResetToken.entity'
+export * from './analytics-api/aggregate.api.service';
+export * from './analytics-api/analytics.api.module';
