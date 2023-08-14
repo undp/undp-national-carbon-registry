@@ -73,6 +73,8 @@ export * from './ledger-replicator/pgsql-replicator.service'
 export * from './ledger-replicator/process.event.service'
 export * from './ledger-replicator/qldb-kinesis-replicator.service'
 export * from './ledger-replicator/replicator-interface.service'
+export * from './analytics-api/aggregate.api.service';
+export * from './analytics-api/analytics.api.module';
 
 //DTOs
 export * from './shared/dto/aggr.entry'
@@ -171,5 +173,3 @@ export * from './shared/entities/programmeTransfer.view.entity'
 export * from './shared/entities/region.entity'
 export * from './shared/entities/user.entity'
 export * from './shared/entities/userPasswordResetToken.entity'
-export * from './analytics-api/aggregate.api.service';
-export * from './analytics-api/analytics.api.module';
