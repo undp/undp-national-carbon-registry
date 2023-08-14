@@ -4,7 +4,7 @@ import { getLogger } from "../shared/server";
 import { UtilModule, LocationInterface,LocationModule,LedgerDBInterface,LedgerDbModule,CountryService ,CompanyModule,CompanyService,UserModule,UserService,Role} from "carbon-services-lib";
 import { Country } from "../shared/entities/country.entity";
 import { CreditOverall } from "../shared/entities/credit.overall.entity";
-import { OrganisationDto as OrganisationDto } from "../shared/dto/organisation.dto";
+import { OrganisationDto as OrganisationDto } from "carbon-services-lib";
 import { CompanyRole } from "../shared/enum/company.role.enum";
 import { TxType } from "../shared/enum/txtype.enum";
 import { Handler } from "aws-lambda";

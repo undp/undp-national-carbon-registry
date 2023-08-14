@@ -9,11 +9,10 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { StatList } from "../shared/dto/stat.list.dto";
-import { ApiKeyJwtAuthGuard ,PoliciesGuardEx,Action} from "carbon-services-lib";
+import { StatList } from "carbon-services-lib";
+import { ApiKeyJwtAuthGuard ,PoliciesGuardEx,Action,ChartStatList} from "carbon-services-lib";
 import { AnalyticsAPIService } from "./analytics.api.service";
-import { Stat } from "../shared/dto/stat.dto";
-import { ChartStatList } from "../shared/dto/chartStats.list.dto";
+import { Stat } from "carbon-services-lib";
 import { Programme } from "../shared/entities/programme.entity";
 import { AggregateAPIService } from "./aggregate.api.service";
 

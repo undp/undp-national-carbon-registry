@@ -12,10 +12,10 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Company } from "../shared/entities/company.entity";
-import { QueryDto } from "../shared/dto/query.dto";
-import { OrganisationSuspendDto } from "../shared/dto/organisation.suspend.dto";
-import { FindOrganisationQueryDto } from "../shared/dto/find.organisation.dto";
-import { OrganisationUpdateDto } from "../shared/dto/organisation.update.dto";
+import { QueryDto } from "carbon-services-lib";
+import { OrganisationSuspendDto } from "carbon-services-lib";
+import { FindOrganisationQueryDto } from "carbon-services-lib";
+import { OrganisationUpdateDto } from "carbon-services-lib";
 import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from 'carbon-services-lib';
 
 @ApiTags("Organisation")

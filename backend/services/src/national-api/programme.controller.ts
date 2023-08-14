@@ -1,27 +1,27 @@
 import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Programme } from '../shared/entities/programme.entity';
-import { ProgrammeDto } from '../shared/dto/programme.dto';
+import { ProgrammeDto } from 'carbon-services-lib';
 import { ProgrammeService } from '../shared/programme/programme.service';
-import { QueryDto } from '../shared/dto/query.dto';
-import { ConstantUpdateDto } from '../shared/dto/constants.update.dto';
-import { ProgrammeApprove } from '../shared/dto/programme.approve';
-import { ProgrammeReject } from '../shared/dto/programme.reject';
-import { ProgrammeRetire } from '../shared/dto/programme.retire';
+import { QueryDto } from 'carbon-services-lib';
+import { ConstantUpdateDto } from 'carbon-services-lib';
+import { ProgrammeApprove } from 'carbon-services-lib';
+import { ProgrammeReject } from 'carbon-services-lib';
+import { ProgrammeRetire } from 'carbon-services-lib';
 import { ApiKeyJwtAuthGuard ,Action,AppAbility,CheckPolicies, PoliciesGuard, TransferFreezeGuard,PoliciesGuardEx} from "carbon-services-lib";
-import { ProgrammeTransferRequest } from '../shared/dto/programme.transfer.request';
+import { ProgrammeTransferRequest } from 'carbon-services-lib';
 import { ProgrammeTransfer } from '../shared/entities/programme.transfer';
-import { ProgrammeTransferApprove } from '../shared/dto/programme.transfer.approve';
-import { ProgrammeTransferReject } from '../shared/dto/programme.transfer.reject';
-import { ProgrammeCertify } from '../shared/dto/programme.certify';
-import { ProgrammeTransferCancel } from '../shared/dto/programme.transfer.cancel';
-import { ProgrammeIssue } from '../shared/dto/programme.issue';
-import { ProgrammeRevoke } from '../shared/dto/programme.revoke';
-import { ProgrammeDocumentDto } from '../shared/dto/programme.document.dto';
-import { MitigationProperties } from '../shared/dto/mitigation.properties';
-import { OwnershipUpdateDto } from '../shared/dto/ownership.update';
-import { MitigationAddDto } from '../shared/dto/mitigation.add.dto';
-import { ProgrammeAcceptedDto } from '../shared/dto/programme.accepted.dto';
+import { ProgrammeTransferApprove } from 'carbon-services-lib';
+import { ProgrammeTransferReject } from 'carbon-services-lib';
+import { ProgrammeCertify } from 'carbon-services-lib';
+import { ProgrammeTransferCancel } from 'carbon-services-lib';
+import { ProgrammeIssue } from 'carbon-services-lib';
+import { ProgrammeRevoke } from 'carbon-services-lib';
+import { ProgrammeDocumentDto } from 'carbon-services-lib';
+import { MitigationProperties } from 'carbon-services-lib';
+import { OwnershipUpdateDto } from 'carbon-services-lib';
+import { MitigationAddDto } from 'carbon-services-lib';
+import { ProgrammeAcceptedDto } from 'carbon-services-lib';
 
 @ApiTags('Programme')
 @ApiBearerAuth()

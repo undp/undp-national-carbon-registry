@@ -4,7 +4,7 @@ import { QueryDto } from "../dto/query.dto";
 import { StatList } from "../dto/stat.list.dto";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
-import { programmeStatusRequestDto } from "../dto/programmeStatus.request.dto";
+import { programmeStatusRequestDto } from "carbon-services-lib";
 import { chartStatsRequestDto } from "../dto/chartStats.request.dto";
 import { ConfigService } from "@nestjs/config";
 import { I18nService } from "nestjs-i18n";

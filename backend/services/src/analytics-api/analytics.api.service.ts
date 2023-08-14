@@ -5,22 +5,19 @@ import { DataCountResponseDto } from "../shared/dto/data.count.response";
 import { Programme } from "../shared/entities/programme.entity";
 import { ProgrammeTransfer } from "../shared/entities/programme.transfer";
 import { Repository } from "typeorm";
-import { StatList } from "../shared/dto/stat.list.dto";
+import { StatList } from "carbon-services-lib";
 import { StatType } from "../shared/enum/stat.type.enum";
-import { ChartStatList } from "../shared/dto/chartStats.list.dto";
 import { ChartType } from "../shared/enum/chart.type.enum";
-import { HelperService } from 'carbon-services-lib';
+import { HelperService,ChartStatList, ChartStatsResponseDto ,chartStatsRequestDto} from 'carbon-services-lib';
 import { ProgrammeStage } from "../shared/enum/programme-status.enum";
-import { programmeStatusRequestDto } from "../shared/dto/programmeStatus.request.dto";
+import { programmeStatusRequestDto } from "carbon-services-lib";
 import { CreditStatType } from "../shared/enum/credit.stat.type.enum";
-import { chartStatsRequestDto } from "../shared/dto/chartStats.request.dto";
-import { ChartStatsResponseDto } from "../shared/dto/charts.stats.response";
 import {
   chartStatsResultInMonths,
   chartStatsResultInitialValueInMonths,
   chartStatsResultSend,
   chartStatsResultInitialValueSend,
-} from "../shared/dto/chart.stats.result";
+} from "carbon-services-lib";
 import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
 
 @Injectable()
