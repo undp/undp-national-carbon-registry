@@ -39,8 +39,7 @@ function setupSwagger(
   const config = new DocumentBuilder()
     .setTitle(`${name.replace("APIModule", " API")}`)
     .setDescription(
-      `RESTful Web API Documentation.
-      <div id="links-header"><a target="_blank" href="https://github.com/undp/carbon-registry">Github</a><a target="_blank" href="http://status.carbreg.org">Status</a></div>`
+      `RESTful Web API Documentation.`
     )
     .setVersion("0.5")
     .addBearerAuth()
