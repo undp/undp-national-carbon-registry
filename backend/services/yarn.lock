@@ -5133,10 +5133,10 @@ caniuse-lite@^1.0.30001449:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001474.tgz#13b6fe301a831fe666cce8ca4ef89352334133d5"
   integrity sha512-iaIZ8gVrWfemh5DG3T9/YqarVZoYf0r188IjaGwx68j4Pf0SGY6CQkmJUIE+NZHkkecQGohzXmBGEwWDr9aM3Q==
 
-carbon-services-lib@^0.0.26:
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.26.tgz#705bd1c49024d2c7d5184f283d357a8d9bea8f3b"
-  integrity sha512-oKuwxkJe5FVfBZWcRPPRfTxCPkfLW6AHOR4Eg0eK62k9A+tLTVi/77FSxQRy/0oOBXXAIWMk9fMLnAkD9nNotA==
+carbon-services-lib@^0.0.27:
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.27.tgz#0a0e8dddfd512f0056e65f16be304484790beb8e"
+  integrity sha512-TOcKnwC7BvH3iTh0u8KPN2gIS+s7k/RU9tHqGPop5xLH1SNQ9wkngAqGQ4cYmou8283QvVv6ZYDofo6ueJ5p2w==
   dependencies:
     "@aws-sdk/client-qldb" "^3.209.0"
     "@aws-sdk/client-qldb-session" "^3.204.0"

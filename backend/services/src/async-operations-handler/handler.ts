@@ -2,13 +2,13 @@ import { NestFactory } from "@nestjs/core";
 import { Handler, Context } from "aws-lambda";
 import { getLogger } from "carbon-services-lib";
 import { AsyncOperationsHandlerInterface } from "carbon-services-lib";
-import { AsyncOperationsModule } from "carbon-services-lib";
+import { AsyncOperationsModuleMain } from "carbon-services-lib";
 
 export const handler: Handler = async (event: any, context: Context) => {
   const app = await NestFactory.createApplicationContext(
-    AsyncOperationsModule,
+    AsyncOperationsModuleMain,
     {
-      logger: getLogger(AsyncOperationsModule),
+      logger: getLogger(AsyncOperationsModuleMain),
     }
   );
 
