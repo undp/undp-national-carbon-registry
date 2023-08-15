@@ -76,6 +76,7 @@ export * from './ledger-replicator/qldb-kinesis-replicator.service'
 export * from './ledger-replicator/replicator-interface.service'
 export * from './analytics-api/aggregate.api.service';
 export * from './analytics-api/analytics.api.module';
+export * from './analytics-api/programme.controller'
 
 //DTOs
 export * from './shared/dto/aggr.entry'

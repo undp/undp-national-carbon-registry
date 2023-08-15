@@ -12,6 +12,7 @@ import { CaslModule } from "../shared/casl/casl.module";
 import { UtilModule } from "../shared/util/util.module";
 import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledger.module";
 import { TypeOrmConfigService } from "../shared/typeorm.config.service";
+import { ProgrammeController } from "./programme.controller";
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { TypeOrmConfigService } from "../shared/typeorm.config.service";
     UtilModule,
     ProgrammeLedgerModule,
   ],
-  controllers: [],
+  controllers: [ProgrammeController],
   providers: [Logger, AggregateAPIService],
 })
 export class AnalyticsAPIModule {}
