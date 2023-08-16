@@ -30,6 +30,8 @@ import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
 import { message } from 'antd';
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
+import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
+import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
 
 // message.config({
 //   duration: 60,
@@ -88,6 +90,13 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<ProgrammeManagement />} />
                     <Route path="view" element={<ProgrammeView />} />
+                  </Route>
+                  <Route
+                    path="/investmentManagement"
+                    element={<CustomLayout selectedKey="investmentManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<InvestmentManagement />} />
+                    <Route path="addInvestment" element={<AddInvestmentComponent />} />
                   </Route>
                   <Route
                     path="/companyManagement"
