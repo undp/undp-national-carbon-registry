@@ -41,7 +41,8 @@ export class ProgrammeController {
       req.abilityCondition,
       query,
       companyId,
-      req.user?.companyRole
+      req.user?.companyRole,
+      query.system
     );
   }
 }

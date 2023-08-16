@@ -8,6 +8,7 @@ import { ProgrammeProperties } from "./programme.properties";
 import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
+import { NDCActionDto } from "./ndc.action.dto";
 
 export class ProgrammeDto {
 
@@ -94,20 +95,31 @@ export class ProgrammeDto {
     // @Type(() => SolarProperties)
     // solarProperties?: SolarProperties;
 
-    @ApiPropertyOptional({
-        type: "array",
-        items: {
-            $ref: getSchemaPath(MitigationProperties),
-        }
-    })
-    @IsOptional()
-    @ValidateNested({ each: true })
-    @Type(() => MitigationProperties)
-    mitigationActions?: MitigationProperties[] 
+    // @ApiPropertyOptional({
+    //     type: "array",
+    //     items: {
+    //         $ref: getSchemaPath(MitigationProperties),
+    //     }
+    // })
+    // @IsOptional()
+    // @ValidateNested({ each: true })
+    // @Type(() => MitigationProperties)
+    // mitigationActions?: MitigationProperties[] 
 
     @ApiPropertyOptional()
     @IsNotEmpty()
     @IsOptional()
     @IsNumber()
     creditEst: number;
+
+    @ApiPropertyOptional()
+    @ValidateNested()
+    @Type(() => NDCActionDto)
+    ndcAction?: NDCActionDto;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
+    @IsNotEmpty()
+    designDocument?: string;
 }
