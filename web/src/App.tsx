@@ -32,6 +32,7 @@ import { message } from 'antd';
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
 import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
+import NdcActionManagement from './Pages/NdcActionManagement/ndcActionManagement';
 
 // message.config({
 //   duration: 60,
@@ -97,6 +98,12 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<InvestmentManagement />} />
                     <Route path="addInvestment" element={<AddInvestmentComponent />} />
+                  </Route>
+                  <Route
+                    path="/ndcManagement"
+                    element={<CustomLayout selectedKey="ndcManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<NdcActionManagement />} />
                   </Route>
                   <Route
                     path="/companyManagement"
