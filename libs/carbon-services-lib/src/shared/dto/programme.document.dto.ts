@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { DocType } from "../enum/document.type";
 
 export class ProgrammeDocumentDto {
 
@@ -11,12 +12,15 @@ export class ProgrammeDocumentDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
-    externalId: string;
+    programmeId: string;
 
     @IsNotEmpty()
-    @IsString()
-    @ApiProperty()
-    type: string;
+    @ApiProperty({ enum: DocType })
+    @IsEnum(DocType, {
+        message:
+        "Invalid doc type. Supported following types:" + Object.values(DocType),
+    })
+    type: DocType;
 
     @IsOptional()
     @ApiPropertyOptional()
