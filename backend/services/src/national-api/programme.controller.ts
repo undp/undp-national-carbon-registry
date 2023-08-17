@@ -36,8 +36,11 @@ import {
   ProgrammeTransferReject,
   ProgrammeTransferRequest,
   QueryDto,
+  DocumentAction,
+  NDCActionDto,
+  NDCActionViewEntity,
+  ProgrammeDocumentViewEntity,
 } from "carbon-services-lib";
-
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -48,29 +51,50 @@ export class ProgrammeController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
-  @Post('create')
-  async addProgramme(@Body()programme: ProgrammeDto, @Request() req) {
+  @Post("create")
+  async addProgramme(@Body() programme: ProgrammeDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.programmeService.create(programme, req.user)
+    return this.programmeService.create(programme, req.user);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, DocumentAction))
-  @Post('addDocument')
-  async addDocument(@Body()docDto: ProgrammeDocumentDto, @Request() req) {
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+  @Post("addNDCAction")
+  async addNDCAction(@Body() ndcAction: NDCActionDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.programmeService.addDocument(docDto, req.user)
+    return this.programmeService.addNDCAction(ndcAction, req.user);
   }
 
-  @ApiBearerAuth("api_key")
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
-  @Post("acceptProgramme")
-  async acceptProgramme(@Body() acc: ProgrammeAcceptedDto) {
-    return this.programmeService.programmeAccept(acc);
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Create, DocumentAction)
+  )
+  @Post("addDocument")
+  async addDocument(@Body() docDto: ProgrammeDocumentDto, @Request() req) {
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.programmeService.addDocument(docDto, req.user);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, DocumentAction)
+  )
+  @Post("docAction")
+  async docAction(@Body() docAction: DocumentAction, @Request() req) {
+    return this.programmeService.docAction(docAction, req.user);
+  }
+
+  // @ApiBearerAuth("api_key")
+  // @ApiBearerAuth()
+  // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
+  // @Post("acceptProgramme")
+  // async acceptProgramme(@Body() acc: ProgrammeAcceptedDto) {
+  //   return this.programmeService.programmeAccept(acc);
+  // }
 
   // @ApiBearerAuth('api_key')
   // @ApiBearerAuth()
@@ -89,6 +113,28 @@ export class ProgrammeController {
   // async updateOwnership(@Body() update: OwnershipUpdateDto) {
   //   return this.programmeService.updateOwnership(update);
   // }
+
+  @ApiBearerAuth()
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, ProgrammeDocumentViewEntity, true)
+  )
+  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
+  @Post("queryDocs")
+  async queryDocuments(@Body() query: QueryDto, @Request() req) {
+    return this.programmeService.queryDocuments(query, req.abilityCondition);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, NDCActionViewEntity, true)
+  )
+  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
+  @Post("queryNdcActions")
+  async queryNdcActions(@Body() query: QueryDto, @Request() req) {
+    return this.programmeService.queryNdcActions(query, req.abilityCondition);
+  }
 
   @ApiBearerAuth()
   @UseGuards(
