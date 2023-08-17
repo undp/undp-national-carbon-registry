@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
-import StasticCard from '../../Components/StasticCard/StasticCard';
+import StasticCard from '../../../Components/StasticCard/StasticCard';
 import './dashboard.scss';
 import {
   optionDonutPieA,
@@ -12,11 +12,11 @@ import {
 } from './CHART_OPTIONS';
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import {
   addCommSep,
   addRoundNumber,
-} from '../../Definitions/InterfacesAndType/programme.definitions';
+} from '../../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
   BoxArrowInRight,
@@ -29,7 +29,7 @@ import {
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import LegendItem from '../../Components/LegendItem/legendItem';
+import LegendItem from '../../../Components/LegendItem/legendItem';
 import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
@@ -37,21 +37,21 @@ import {
   getTotalProgrammesInitialValues,
   getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
-import { Sector } from '../../Casl/enums/sector.enum';
-import { ProgrammeStage, ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
-import { CompanyRole } from '../../Casl/enums/company.role.enum';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { Sector } from '../../../Casl/enums/sector.enum';
+import { ProgrammeStage, ProgrammeStageLegend } from '../../../Casl/enums/programme-status.enum';
+import { CompanyRole } from '../../../Casl/enums/company.role.enum';
+import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
-import MapComponent from '../../Components/Maps/MapComponent';
+import MapComponent from '../../../Components/Maps/MapComponent';
 import {
   MapSourceData,
   MapTypes,
   MarkerData,
-} from '../../Definitions/InterfacesAndType/mapComponent.definitions';
-
+} from '../../../Definitions/InterfacesAndType/mapComponent.definitions';
+import { Link } from 'react-router-dom';
 const { RangePicker } = DatePicker;
 
-const Dashboard = () => {
+const RegistryDashboard = () => {
   const { get, post, delete: del } = useConnection();
   const { userInfoState } = useUserContext();
   const { t } = useTranslation(['dashboard']);
@@ -1697,6 +1697,7 @@ ${total}
 
   return (
     <div className="dashboard-main-container">
+      <Link to="/dashboard/product">Go to product</Link>
       <div className="stastics-cards-container">
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
@@ -2113,4 +2114,4 @@ ${total}
   );
 };
 
-export default Dashboard;
+export default RegistryDashboard;

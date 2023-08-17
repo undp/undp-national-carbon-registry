@@ -1,5 +1,5 @@
-import { CompanyRole } from '../../Casl/enums/company.role.enum';
-import { StatsCardsTypes } from '../../Casl/enums/statsCards.type.enum';
+import { CompanyRole } from '../../../Casl/enums/company.role.enum';
+import { StatsCardsTypes } from '../../../Casl/enums/statsCards.type.enum';
 
 export const toolTipTextGen = (companyRole: any, cardType: any, mine?: boolean) => {
   let text: any = '';

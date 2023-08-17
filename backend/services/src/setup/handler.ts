@@ -172,13 +172,13 @@ export const handler: Handler = async (event) => {
 
   try {
     const company = new OrganisationDto();
-    company.country = event["systemCountryCode"];
-    company.name = event["name"];
+    company.country = "default" //event["systemCountryCode"];
+    company.name = "test";
     company.logo = event["logoBase64"];
     company.companyRole = CompanyRole.GOVERNMENT;
 
     const user = new UserDto();
-    user.email = event["rootEmail"];
+    user.email = "gayanathr@xeptagon.com" //event["rootEmail"];
     user.name = "Root";
     user.role = Role.Root;
     user.phoneNo = "-";
