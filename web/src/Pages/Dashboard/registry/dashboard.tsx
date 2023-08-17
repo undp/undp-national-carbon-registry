@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
 import StasticCard from '../../../Components/StasticCard/StasticCard';
+import { SystemNames } from '../../../Casl/enums/statsCards.type.enum';
 import './dashboard.scss';
 import {
   optionDonutPieA,
@@ -184,6 +185,7 @@ const RegistryDashboard = () => {
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
+      system: SystemNames.CARBON_REGISTRY,
       stats: [
         {
           type: 'AGG_PROGRAMME_BY_STATUS',
@@ -210,6 +212,7 @@ const RegistryDashboard = () => {
   const getAllProgrammeAnalyticsStatsParams = () => {
     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'MY_AGG_PROGRAMME_BY_STATUS',
@@ -236,6 +239,7 @@ const RegistryDashboard = () => {
       };
     } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'CERTIFIED_BY_ME_BY_STATE',
@@ -262,6 +266,7 @@ const RegistryDashboard = () => {
       };
     } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
@@ -288,6 +293,7 @@ const RegistryDashboard = () => {
       };
     } else {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
@@ -318,6 +324,7 @@ const RegistryDashboard = () => {
   const getAllChartsParams = () => {
     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'MY_AGG_PROGRAMME_BY_STATUS',
@@ -361,6 +368,7 @@ const RegistryDashboard = () => {
       };
     } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'CERTIFIED_BY_ME_BY_STATE',
@@ -404,6 +412,7 @@ const RegistryDashboard = () => {
       };
     } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
@@ -447,6 +456,7 @@ const RegistryDashboard = () => {
       };
     } else {
       return {
+        system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
             type: 'AGG_PROGRAMME_BY_STATUS',
@@ -1697,7 +1707,10 @@ ${total}
 
   return (
     <div className="dashboard-main-container">
-      <Link to="/dashboard/product">Go to product</Link>
+      
+      <Link to="/dashboard/product">
+        <button>Transparancy</button>
+      </Link>
       <div className="stastics-cards-container">
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">

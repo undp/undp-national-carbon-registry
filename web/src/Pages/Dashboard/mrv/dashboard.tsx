@@ -9,11 +9,12 @@ import { CompanyRole } from '../../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
 import { WidgetType } from '../../../Casl/enums/widget.type.enum';
-import { MrvStatsCardsTypes } from '../../../Casl/enums/statsCards.type.enum';
+import { MrvStatsCardsTypes, SystemNames } from '../../../Casl/enums/statsCards.type.enum';
 import ListWidget from './listWidget';
 import { Clipboard2Pulse, HandThumbsUp } from 'react-bootstrap-icons';
 import { MapSourceData, MapTypes, MarkerData } from '@undp/carbon-library';
 import MapStats from './mapStats';
+import { Link } from 'react-router-dom';
 
 const { RangePicker } = DatePicker;
 
@@ -59,6 +60,7 @@ const MRVDashboard = () => {
       });
     }
     return {
+      system: SystemNames.CARBON_TRANSPARENCY,
       stats: stats,
     };
   };
@@ -672,6 +674,9 @@ const MRVDashboard = () => {
 
   return (
     <div className="dashboard-main-container">
+      <Link to="/dashboard">
+        <button>Registry</button>
+      </Link>
       <div className="filter-container">
         <div className="date-filter">
           <RangePicker
