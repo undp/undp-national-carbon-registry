@@ -18,6 +18,7 @@ import { UserModule } from "../user/user.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { ConfigurationSettingsService } from "./configurationSettings.service";
 import { ConfigurationSettings } from "../entities/configuration.settings";
+import { ObjectionLetterGen } from "./objection.letter.gen";
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { ConfigurationSettings } from "../entities/configuration.settings";
     HelperService,
     PasswordResetService,
     ConfigurationSettingsService,
+    ObjectionLetterGen
   ],
 })
 export class UtilModule {}
