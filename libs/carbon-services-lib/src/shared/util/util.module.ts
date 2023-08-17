@@ -19,6 +19,7 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
 import { ConfigurationSettingsService } from "./configurationSettings.service";
 import { ConfigurationSettings } from "../entities/configuration.settings";
 import { ObjectionLetterGen } from "./objection.letter.gen";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { ObjectionLetterGen } from "./objection.letter.gen";
       ConfigurationSettings,
     ]),
     forwardRef(() => AsyncOperationsModule),
+    FileHandlerModule
   ],
   providers: [
     CounterService,
