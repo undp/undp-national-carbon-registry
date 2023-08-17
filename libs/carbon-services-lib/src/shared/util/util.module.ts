@@ -59,6 +59,7 @@ import { ObjectionLetterGen } from "./objection.letter.gen";
     PasswordResetService,
     Logger,
     ConfigurationSettingsService,
+    ObjectionLetterGen
   ],
   exports: [
     CounterService,
