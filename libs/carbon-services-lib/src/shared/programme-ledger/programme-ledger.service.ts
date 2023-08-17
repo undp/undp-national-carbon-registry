@@ -408,7 +408,8 @@ export class ProgrammeLedgerService {
     programmeId: string,
     certifierId: number,
     add: boolean,
-    user: string
+    user: string,
+    updatePrStatus?: ProgrammeStage
   ) {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {

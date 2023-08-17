@@ -18,6 +18,8 @@ import { UserModule } from "../user/user.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { ConfigurationSettingsService } from "./configurationSettings.service";
 import { ConfigurationSettings } from "../entities/configuration.settings";
+import { ObjectionLetterGen } from "./objection.letter.gen";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { ConfigurationSettings } from "../entities/configuration.settings";
       ConfigurationSettings,
     ]),
     forwardRef(() => AsyncOperationsModule),
+    FileHandlerModule
   ],
   providers: [
     CounterService,
@@ -58,6 +61,7 @@ import { ConfigurationSettings } from "../entities/configuration.settings";
     PasswordResetService,
     Logger,
     ConfigurationSettingsService,
+    ObjectionLetterGen
   ],
   exports: [
     CounterService,
@@ -65,6 +69,7 @@ import { ConfigurationSettings } from "../entities/configuration.settings";
     HelperService,
     PasswordResetService,
     ConfigurationSettingsService,
+    ObjectionLetterGen
   ],
 })
 export class UtilModule {}

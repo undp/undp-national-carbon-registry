@@ -13,6 +13,8 @@ import { UtilModule } from "../shared/util/util.module";
 import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledger.module";
 import { TypeOrmConfigService } from "../shared/typeorm.config.service";
 import { ProgrammeController } from "./programme.controller";
+import { InvestmentView } from "../shared/entities/investment.view.entity";
+import { NDCActionViewEntity } from "../shared/entities/ndc.view.entity";
 
 @Module({
   imports: [
@@ -29,7 +31,9 @@ import { ProgrammeController } from "./programme.controller";
       Programme,
       ProgrammeTransfer,
       ProgrammeTransferViewEntityQuery,
-      Company
+      Company,
+      NDCActionViewEntity,
+      InvestmentView
     ]),
     AuthModule,
     CaslModule,

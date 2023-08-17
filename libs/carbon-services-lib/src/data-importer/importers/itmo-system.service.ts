@@ -158,6 +158,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       country: this.configService.get("systemCountry"),
                       companyRole: CompanyRole.PROGRAMME_DEVELOPER,
                       createdTime: undefined,
+                      regions: []
                     },
                     password: undefined,
                     companyId: undefined,
@@ -203,7 +204,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                 // pr.programmeProperties["projectMaterial"] = step.files;
               }
 
-              await this.programmeService.create(pr);
+              await this.programmeService.create(pr, rootUser);
             } else if (
               programmeEvents && programmeEvents.length > 0 &&
               programmeEvents[programmeEvents.length - 1].data.currentStage === ProgrammeStage.AUTHORISED &&

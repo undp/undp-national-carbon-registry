@@ -22,6 +22,10 @@ import { StatusGroupedByTimedata, StatusGroupedByTimedataThere } from "../shared
 import { CompanyRole } from "../shared/enum/company.role.enum";
 import { TransferStatus } from "../shared/enum/transform.status.enum";
 import { DataCountResponseDto } from "../shared/dto/data.count.response";
+import { InvestmentView } from "../shared/entities/investment.view.entity";
+import { NDCActionViewEntity } from "../shared/entities/ndc.view.entity";
+import { InvestmentStatus } from "../shared/enum/investment.status";
+import { SYSTEM_NAMES } from "../shared/enum/system.names.enum";
 
 @Injectable()
 export class AggregateAPIService {
@@ -34,7 +38,8 @@ export class AggregateAPIService {
     "programmeCertifierId",
     "initiatorCompanyId",
     "isRetirement",
-    "createdTime"
+    "createdTime",
+    "status"
   ]
 
   constructor(
@@ -42,6 +47,8 @@ export class AggregateAPIService {
     private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
+    @InjectRepository(InvestmentView) private investmentRepo: Repository<InvestmentView>,
+    @InjectRepository(NDCActionViewEntity) private ndcRepo: Repository<NDCActionViewEntity>,
     @InjectRepository(ProgrammeTransferViewEntityQuery)
     private programmeTransferRepo: Repository<ProgrammeTransferViewEntityQuery>
   ) {}
@@ -255,7 +262,7 @@ export class AggregateAPIService {
     return resultS;
   }
 
-  private async programmeLocationDataFormatter(data) {
+  private async programmeLocationDataFormatter(data,groupField?) {
     const locationData = [...data];
     let locationsGeoData: any = {};
     let features: any[] = [];
@@ -269,7 +276,16 @@ export class AggregateAPIService {
         let geometry: any = {};
         properties.id = String(index);
         properties.count = parseInt(locationDataItem?.count);
-        properties.stage = locationDataItem?.stage;
+        if(groupField!==undefined){
+          if (locationDataItem[groupField] == null) {
+            properties[groupField] = "Unknown"
+          } else {
+            properties[groupField] = locationDataItem[groupField];
+          }
+        }
+        else{
+          properties.stage = locationDataItem?.stage;
+        }
         geometry.type = "Point";
         geometry.coordinates = location;
         programmeGeoData.properties = properties;
@@ -718,13 +734,135 @@ export class AggregateAPIService {
     lastTimeForWhere,
     statCache,
     companyId,
-    companyRole
+    companyRole,
+    system:SYSTEM_NAMES
   ) {
     const key = stat.key ? stat.key : stat.type;
     console.log(stat.type)
     switch (stat.type) {
       case StatType.AGG_PROGRAMME_BY_STATUS:
+      //from transparency
       case StatType.AGG_PROGRAMME_BY_SECTOR:
+        results[key] = await this.generateProgrammeAggregates(
+          stat,
+          frzAgg,
+          abilityCondition,
+          lastTimeForWhere,
+          statCache,
+          companyId
+        );
+        break;
+      case StatType.AGG_INVESTMENT_BY_TYPE:
+        results[key] = await this.generateInvestmentAggregates(
+          stat,
+          abilityCondition,
+          lastTimeForWhere,
+          statCache,
+          companyId
+        );
+        break;
+      case StatType.AGG_NDC_ACTION_BY_TYPE:
+        results[key] = await this.generateNDCAggregates(
+          stat,
+          abilityCondition,
+          lastTimeForWhere,
+          statCache,
+          companyId
+        );
+        break;
+      case StatType.TOTAL_EMISSIONS:
+        results[key] = await this.getEmissions(
+          stat,
+          companyId,
+          abilityCondition,
+          lastTimeForWhere,
+          statCache
+        );
+        break;
+      case StatType.MY_PROGRAMME_LOCATION://conflict with existing
+        if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
+          stat.statFilter
+            ? (stat.statFilter.onlyMine = true)
+            : (stat.statFilter = { onlyMine: true });
+        }
+        const whereC = [];
+        whereC.push(`p."programmeId" != 'null'`);
+        if (stat.statFilter && stat.statFilter.onlyMine) {
+          whereC.push(
+            `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
+          );
+        }
+        if (stat.statFilter && stat.statFilter.startTime) {
+          whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
+        }
+        if (stat.statFilter && stat.statFilter.endTime) {
+          whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
+        }
+
+        console.log('Query', `SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
+        FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
+        ${whereC.length > 0 ? " where " : " "}
+        ${whereC.join(" and ")}
+        GROUP  BY p."programmeId", b."currentStage"`)
+
+        const resultsProgrammeLocations = await this.programmeRepo.manager
+          .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
+          FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
+          ${whereC.length > 0 ? " where " : " "}
+          ${whereC.join(" and ")}
+          GROUP  BY p."programmeId", b."currentStage"`);
+        if(system===SYSTEM_NAMES.CARBON_TRANSPARENCY){
+          results[key] = await this.programmeLocationDataFormatter(
+            resultsProgrammeLocations, "stage"
+          );
+          results[key]['last'] = await this.getProgrammeLocationTime(whereC.slice(1), lastTimeForWhere);
+        }
+        else if(system===SYSTEM_NAMES.CARBON_REGISTRY){
+          results[key] = await this.programmeLocationDataFormatter(
+            resultsProgrammeLocations
+          );
+        }
+        break;
+      case StatType.MY_INVESTMENT_LOCATION:
+        if (stat.type === StatType.MY_INVESTMENT_LOCATION) {
+          stat.statFilter
+            ? (stat.statFilter.onlyMine = true)
+            : (stat.statFilter = { onlyMine: true });
+        }
+        const whereCW = [];
+        whereCW.push(`p."requestId" != 'null'`);
+        if (stat.statFilter && stat.statFilter.onlyMine) {
+          whereCW.push(
+            `${companyId} = b."fromCompanyId"`
+          );
+        }
+        if (stat.statFilter && stat.statFilter.startTime) {
+          whereCW.push(`"createdTime" >= ${stat.statFilter.startTime}`);
+        }
+        if (stat.statFilter && stat.statFilter.endTime) {
+          whereCW.push(`"createdTime" <= ${stat.statFilter.endTime}`);
+        }
+
+        whereCW.push(`status = '${InvestmentStatus.APPROVED}'`)
+
+        const query = `SELECT p."requestId" as loc, b."type" as type, count(*) AS count
+        FROM  investment_view b, jsonb_array_elements(b."toGeo") p("requestId")
+        ${whereCW.length > 0 ? " where " : " "}
+        ${whereCW.join(" and ")}
+        GROUP  BY p."requestId", b."type"`;
+
+        console.log('INVESTMENT_LOCATION query', query)
+        const resultsProgrammeLocationsI = await this.investmentRepo.manager
+          .query(query);
+
+        console.log('INVESTMENT_LOCATION resp', resultsProgrammeLocationsI)
+        results[key] = await this.programmeLocationDataFormatter(
+          resultsProgrammeLocationsI, "type"
+        );
+        results[key]['last'] = await this.getInvestmentLocationTime(whereCW.slice(1), lastTimeForWhere);
+        break;
+
+      //existing
       case StatType.MY_AGG_PROGRAMME_BY_STATUS:
       case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
       case StatType.AGG_AUTH_PROGRAMME_BY_STATUS:
@@ -738,7 +876,6 @@ export class AggregateAPIService {
           companyId
         );
         break;
-
       case StatType.MY_CREDIT:
         results[key] = await this.getCompanyCredits(companyId);
         break;
@@ -809,22 +946,6 @@ export class AggregateAPIService {
           stat.statFilter.timeGroup
         );
         break;
-      // case StatType.CERTIFIED_PROGRAMMES:
-      // case StatType.REVOKED_PROGRAMMES:
-      //   if (!results[stat.type]) {
-      //     results[stat.type] = await this.getCertifiedProgrammes(
-      //       stat.statFilter,
-      //       abilityCondition,
-      //       lastTimeForWhere,
-      //       statCache,
-      //       companyId,
-      //       stat.type === StatType.CERTIFIED_PROGRAMMES
-      //         ? ["certifierId"]
-      //         : ["revokedCertifierId"],
-      //       frzAgg
-      //     );
-      //   }
-      //   break;
       case StatType.CERTIFIED_REVOKED_PROGRAMMES:
       case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
         if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES) {
@@ -912,35 +1033,35 @@ export class AggregateAPIService {
         );
         break;
       case StatType.ALL_PROGRAMME_LOCATION:
-      case StatType.MY_PROGRAMME_LOCATION:
-        if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
-          stat.statFilter
-            ? (stat.statFilter.onlyMine = true)
-            : (stat.statFilter = { onlyMine: true });
-        }
-        const whereC = [];
-        whereC.push(`p."programmeId" != 'null'`);
-        if (stat.statFilter && stat.statFilter.onlyMine) {
-          whereC.push(
-            `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
-          );
-        }
-        if (stat.statFilter && stat.statFilter.startTime) {
-          whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
-        }
-        if (stat.statFilter && stat.statFilter.endTime) {
-          whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
-        }
-        const resultsProgrammeLocations = await this.programmeRepo.manager
-          .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
-          FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-          ${whereC.length > 0 ? " where " : " "}
-          ${whereC.join(" and ")}
-          GROUP  BY p."programmeId", b."currentStage"`);
-        results[key] = await this.programmeLocationDataFormatter(
-          resultsProgrammeLocations
-        );
-        break;
+      // case StatType.MY_PROGRAMME_LOCATION:
+      //   if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
+      //     stat.statFilter
+      //       ? (stat.statFilter.onlyMine = true)
+      //       : (stat.statFilter = { onlyMine: true });
+      //   }
+      //   const whereC = [];
+      //   whereC.push(`p."programmeId" != 'null'`);
+      //   if (stat.statFilter && stat.statFilter.onlyMine) {
+      //     whereC.push(
+      //       `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
+      //     );
+      //   }
+      //   if (stat.statFilter && stat.statFilter.startTime) {
+      //     whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
+      //   }
+      //   if (stat.statFilter && stat.statFilter.endTime) {
+      //     whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
+      //   }
+      //   const resultsProgrammeLocations = await this.programmeRepo.manager
+      //     .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
+      //     FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
+      //     ${whereC.length > 0 ? " where " : " "}
+      //     ${whereC.join(" and ")}
+      //     GROUP  BY p."programmeId", b."currentStage"`);
+      //   results[key] = await this.programmeLocationDataFormatter(
+      //     resultsProgrammeLocations
+      //   );
+      //   break;
       case StatType.ALL_TRANSFER_LOCATION:
       case StatType.MY_TRANSFER_LOCATION:
         if (stat.type === StatType.MY_TRANSFER_LOCATION) {
@@ -996,9 +1117,59 @@ export class AggregateAPIService {
           ["authTime"]
         );
         break;
+      // case StatType.CERTIFIED_PROGRAMMES:
+        // case StatType.REVOKED_PROGRAMMES:
+        //   if (!results[stat.type]) {
+        //     results[stat.type] = await this.getCertifiedProgrammes(
+        //       stat.statFilter,
+        //       abilityCondition,
+        //       lastTimeForWhere,
+        //       statCache,
+        //       companyId,
+        //       stat.type === StatType.CERTIFIED_PROGRAMMES
+        //         ? ["certifierId"]
+        //         : ["revokedCertifierId"],
+        //       frzAgg
+        //     );
+        //   }
+        //   break;
     }
     console.log('Calc stat done', stat.type)
     return results;
+  }
+
+  async getProgrammeLocationTime(whereC: string[], lastTimeForWhere: any) {
+    const tc = 'createdTime'
+    const tableName = 'programme'
+    const timeWhere = whereC.join(" and ").replace(/b./g, "programme.");
+    const cacheKey = timeWhere + " " + tc + " from " + tableName;
+    let colTime;
+    console.log("Cache key", cacheKey);
+    if (lastTimeForWhere[cacheKey]) {
+      console.log("Last time hit from the cache");
+      colTime = lastTimeForWhere[cacheKey];
+    } else {
+      colTime = await this.getLastTime(this.programmeRepo, tableName, timeWhere, tc);
+      lastTimeForWhere[cacheKey] = colTime;
+    }
+    return colTime;
+  }
+
+  async getInvestmentLocationTime(whereC: string[], lastTimeForWhere: any) {
+    const tc = 'createdTime'
+    const tableName = 'investment'
+    const timeWhere = whereC.join(" and ").replace(/b./g, "investment.");
+    const cacheKey = timeWhere + " " + tc + " from " + tableName;
+    let colTime;
+    console.log("Cache key", cacheKey);
+    if (lastTimeForWhere[cacheKey]) {
+      console.log("Last time hit from the cache");
+      colTime = lastTimeForWhere[cacheKey];
+    } else {
+      colTime = await this.getLastTime(this.investmentRepo, tableName, timeWhere, tc);
+      lastTimeForWhere[cacheKey] = colTime;
+    }
+    return colTime;
   }
 
   async getCertifiedRevokedAgg(
@@ -1195,7 +1366,8 @@ export class AggregateAPIService {
     abilityCondition: string,
     query: StatList,
     companyId: any,
-    companyRole: CompanyRole
+    companyRole: CompanyRole,
+    system: SYSTEM_NAMES
   ): Promise<DataCountResponseDto> {
     let results = {};
     let lastTimeForWhere = {};
@@ -1213,12 +1385,196 @@ export class AggregateAPIService {
         lastTimeForWhere,
         statCache,
         companyId,
-        companyRole
+        companyRole,
+        system
       );
     }
     return new DataCountResponseDto(results);
   }
 
+  async getEmissions(
+    stat,
+    companyId,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache
+  ) {
+
+    console.log('get Emissions', stat, companyId)
+    if (
+      [
+        StatType.MY_TOTAL_EMISSIONS
+      ].includes(stat.type)
+    ) {
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
+    }
+
+    let filterAnd = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      {
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      },
+      "createdTime"
+    );
+
+    return await this.genAggregateTypeOrmQuery(
+      this.programmeRepo,
+      "programme",
+      null,
+      [
+        {
+          key: "emissionReductionExpected",
+          operation: "SUM",
+          fieldName: "totEmissionReductionExpected",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
+        },
+        {
+          key: "emissionReductionAchieved",
+          operation: "SUM",
+          fieldName: "totEmissionReductionAchieved",
+          mineCompanyId: stat?.statFilter?.onlyMine ? companyId : undefined,
+        },
+      ],
+      filterAnd,
+      null,
+      stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
+      abilityCondition,
+      lastTimeForWhere,
+      statCache,
+      ["creditUpdateTime"],
+      stat.statFilter?.timeGroup ? "createdAt" : undefined,
+      stat.statFilter?.timeGroup ? "day" : undefined
+    );
+  }
+
+  async generateNDCAggregates(
+    stat,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache,
+    companyId
+  ) {
+    if (
+      [
+        StatType.MY_AGG_NDC_ACTION_BY_SECTOR,
+        StatType.MY_AGG_NDC_ACTION_BY_TYPE
+      ].includes(stat.type)
+    ) {
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
+    }
+
+    let filterAnd = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      {
+        value: companyId,
+        key: "companyId",
+        operation: "ANY",
+      },
+      "createdTime"
+    );
+
+
+    return await this.genAggregateTypeOrmQuery(
+      this.ndcRepo,
+      "ndcaction",
+      [
+        StatType.AGG_NDC_ACTION_BY_TYPE,
+        StatType.MY_AGG_NDC_ACTION_BY_TYPE,
+      ].includes(stat.type)
+        ? ["action"]
+        : ["sector"],
+      [
+        new AggrEntry("id", "COUNT", "count")
+      ],
+      filterAnd,
+      null,
+      stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
+      abilityCondition,
+      lastTimeForWhere,
+      statCache,
+      [("createdTime"), "createdTime"],
+      stat.statFilter?.timeGroup ? "createdAt" : undefined,
+      stat.statFilter?.timeGroup ? "day" : undefined
+    );
+  }
+
+  async generateInvestmentAggregates(stat,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache,
+    companyId
+  ) {
+    if (
+      [
+        StatType.MY_AGG_INVESTMENT_BY_TYPE
+      ].includes(stat.type)
+    ) {
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
+    }
+
+    let filterAnd = this.getFilterAndByStatFilter(
+      stat.statFilter,
+      {
+        value: companyId,
+        key: "fromCompanyId",
+        operation: "=",
+      },
+      "createdTime"
+    );
+
+    if (!filterAnd) {
+      filterAnd = []
+    }
+    filterAnd.push({
+      value: 'Approved',
+      key: "status",
+      operation: "=",
+    })
+    let filterOr = undefined;
+    // if (stat.statFilter && stat.statFilter.onlyMine) {
+    //   filterOr = [];
+    //   filterOr.push({
+    //     value: companyId,
+    //     key: "fromCompanyId",
+    //     operation: "=",
+    //   });
+    // }
+
+    const d = await this.genAggregateTypeOrmQuery(
+      this.investmentRepo,
+      "investment",
+      ["type"],
+      [
+        new AggrEntry("amount", "SUM", "amount")
+      ],
+      filterAnd,
+      null,
+      stat.statFilter?.timeGroup ? { key: "time_group", order: "ASC" } : null,
+      abilityCondition,
+      lastTimeForWhere,
+      statCache,
+      ["createdTime"],
+      stat.statFilter?.timeGroup ? "createdAt" : undefined,
+      stat.statFilter?.timeGroup ? "day" : undefined
+    );
+    if (d && d.data) {
+      for (const r of d.data) {
+        if (r.type === 0 || r.type === '0') {
+          r.type = 'Unknown'
+        }
+      }
+    }
+    return d;
+  }
+  
   async getCertifiedStatData(
     results,
     stat,

@@ -123,6 +123,7 @@ export const handler: Handler = async (event) => {
               country: configService.get("systemCountry"),
               companyRole: cr,
               createdTime: undefined,
+              regions: []
             });
         console.log('Company created', org)
       } catch (e) {
