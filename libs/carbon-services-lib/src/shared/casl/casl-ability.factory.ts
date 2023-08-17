@@ -22,6 +22,11 @@ import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";
 import { ProgrammeTransferRequest } from "../dto/programme.transfer.request";
 import { ConfigurationSettings } from "../entities/configuration.settings";
+import { DocumentAction } from "../dto/document.action";
+import { Investment } from "../entities/investment.entity";
+import { InvestmentStatus } from "../enum/investment.status";
+import { ProgrammeDocumentViewEntity } from "../entities/document.view.entity";
+import { NDCActionViewEntity } from "../entities/ndc.view.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -95,7 +100,10 @@ export class CaslAbilityFactory {
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
           can(Action.Manage, ProgrammeTransferRequest);
+          can(Action.Manage, DocumentAction);
+          can(Action.Manage, Investment);
         } else {
+          can(Action.Read, Investment);
           can(Action.Read, ProgrammeTransfer);
           can(Action.Read, Programme);
         }
@@ -109,7 +117,7 @@ export class CaslAbilityFactory {
       }
 
       if (user.role == Role.Admin && user.companyRole == CompanyRole.API) {
-        can([Action.Create, Action.Read], Programme);
+        can([Action.Create, Action.Read, Action.Update], Programme);
         can([Action.Create, Action.Read], User);
         can([Action.Create, Action.Read], Company);
       } else if (user.companyRole == CompanyRole.CERTIFIER) {
@@ -122,12 +130,35 @@ export class CaslAbilityFactory {
         can(Action.Read, ProgrammeTransfer, {
           status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] },
         });
-      } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
-        can(Action.Read, Programme, {
-          currentStage: { $eq: ProgrammeStage.AUTHORISED },
+        can(Action.Read, Investment, {
+          status: { $eq: InvestmentStatus.APPROVED },
         });
+        can(Action.Read, Programme, {
+          certifierId: { $elemMatch: { $eq: user.companyId } },
+        });
+        can(Action.Read, Programme);
+        can(Action.Manage, DocumentAction);
+      } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
+        // can(Action.Read, Programme, {
+        //   currentStage: { $eq: ProgrammeStage.AUTHORISED },
+        // });
         can(Action.Read, ProgrammeTransfer, {
           status: { $in: [TransferStatus.APPROVED, TransferStatus.RECOGNISED] },
+        });
+        can([Action.Create, Action.Read], DocumentAction);
+        can(Action.Read, ProgrammeDocumentViewEntity, {
+          companyId: { $elemMatch: { $eq: user.companyId } },
+        });
+
+        can(Action.Read, NDCActionViewEntity, {
+          companyId: { $elemMatch: { $eq: user.companyId } },
+        });
+
+        can(Action.Read, Programme, {
+          currentStage: { $in: [ProgrammeStage.AUTHORISED, ProgrammeStage.APPROVED] },
+        });
+        can(Action.Read, Investment, {
+          status: { $eq: InvestmentStatus.APPROVED },
         });
         if (user.role != Role.ViewOnly) {
           can(Action.Manage, Programme, {
@@ -143,6 +174,16 @@ export class CaslAbilityFactory {
             initiatorCompanyId: { $eq: user.companyId },
           });
           can(Action.Manage, ProgrammeTransferRequest);
+          can(Action.Manage, Investment, {
+            toCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Manage, Investment, {
+            fromCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Manage, Investment, {
+            initiatorCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Manage, Investment);
         } else {
           can(Action.Read, Programme, {
             companyId: { $elemMatch: { $eq: user.companyId } },
@@ -154,6 +195,15 @@ export class CaslAbilityFactory {
             fromCompanyId: { $eq: user.companyId },
           });
           can(Action.Read, ProgrammeTransfer, {
+            initiatorCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Read, Investment, {
+            toCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Read, Investment, {
+            fromCompanyId: { $eq: user.companyId },
+          });
+          can(Action.Read, Investment, {
             initiatorCompanyId: { $eq: user.companyId },
           });
         }
