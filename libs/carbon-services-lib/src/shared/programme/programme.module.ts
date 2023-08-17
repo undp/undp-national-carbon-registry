@@ -15,21 +15,41 @@ import { CompanyModule } from '../company/company.module';
 import { UserModule } from '../user/user.module';
 import { EmailHelperModule } from '../email-helper/email-helper.module';
 import { CaslModule } from '../casl/casl.module';
+import { ProgrammeDocument } from '../entities/programme.document';
+import { NDCActionViewEntity } from '../entities/ndc.view.entity';
+import { Investment } from '../entities/investment.entity';
+import { InvestmentView } from '../entities/investment.view.entity';
+import { ProgrammeDocumentViewEntity } from '../entities/document.view.entity';
+import { NDCAction } from '../entities/ndc.action.entity';
+import { FileHandlerModule } from '../file-handler/filehandler.module';
 
 @Module({
   imports: [
-    ProgrammeLedgerModule, 
-    CaslModule, 
-    TypeOrmModule.forFeature([Programme, ProgrammeTransfer, ConstantEntity, Company, ProgrammeQueryEntity, ProgrammeTransferViewEntityQuery]), 
-    UtilModule, 
-    CompanyModule, 
+    ProgrammeLedgerModule,
+    CaslModule,
+    TypeOrmModule.forFeature([
+      Programme,
+      ProgrammeTransfer,
+      ConstantEntity,
+      Company,
+      ProgrammeQueryEntity,
+      ProgrammeTransferViewEntityQuery,
+      NDCAction,
+      ProgrammeDocument,
+      NDCActionViewEntity,
+      Investment,
+      InvestmentView,
+      ProgrammeDocumentViewEntity,
+    ]),
+    UtilModule,
+    CompanyModule,
     UserModule,
     EmailHelperModule,
     LocationModule,
-    AsyncOperationsModule
+    AsyncOperationsModule,
+    FileHandlerModule,
   ],
   providers: [Logger, ProgrammeService],
-  exports: [ProgrammeService]
+  exports: [ProgrammeService],
 })
 export class ProgrammeModule {}
-
