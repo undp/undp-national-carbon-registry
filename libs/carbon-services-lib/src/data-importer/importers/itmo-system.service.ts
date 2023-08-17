@@ -158,6 +158,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       country: this.configService.get("systemCountry"),
                       companyRole: CompanyRole.PROGRAMME_DEVELOPER,
                       createdTime: undefined,
+                      regions: []
                     },
                     password: undefined,
                     companyId: undefined,

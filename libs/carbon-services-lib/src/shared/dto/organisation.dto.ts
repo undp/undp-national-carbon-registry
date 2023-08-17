@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
+  IsArray,
+  ArrayMinSize,
   IsEmail,
   IsEnum,
   IsNotEmpty,
@@ -38,6 +40,14 @@ export class OrganisationDto {
   @ApiProperty()
   email: string;
 
+  @ApiPropertyOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  @MaxLength(100, { each: true })
+  @IsNotEmpty({ each: true })
+  @IsOptional()
+  regions: string[];
+  
   @ValidateIf(
     (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
@@ -83,4 +93,6 @@ export class OrganisationDto {
   companyRole: CompanyRole;
 
   createdTime: number;
+
+  geographicalLocationCordintes?: any
 }

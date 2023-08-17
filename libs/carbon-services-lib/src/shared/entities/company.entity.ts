@@ -73,6 +73,17 @@ export class Company implements EntitySubject {
   @Column({ type: "bigint", nullable: true })
   createdTime: number;
 
+  @Column({
+    type: "jsonb",
+    array: false,
+    nullable: true,
+  })
+  geographicalLocationCordintes: any;
+
+  @Column("varchar", { array: true, nullable: true })
+  regions: string[];
+
+
   @BeforeInsert()
   setDefaultState() {
     if (
