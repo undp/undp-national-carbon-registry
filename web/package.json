@@ -49,7 +49,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start:dev": "set PORT=3030 env-cmd -e development && craco start",
+    "start:dev": "PORT=3030 env-cmd -e development craco start",
     "start:prod": "set PORT=3030 env-cmd -e production && craco start",
     "clean": "npx rimraf build",
     "build": "yarn run clean && craco build",
