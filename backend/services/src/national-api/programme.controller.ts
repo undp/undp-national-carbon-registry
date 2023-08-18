@@ -40,6 +40,11 @@ import {
   NDCActionDto,
   NDCActionViewEntity,
   ProgrammeDocumentViewEntity,
+  InvestmentRequestDto,
+  Investment,
+  InvestmentApprove,
+  InvestmentReject,
+  InvestmentCancel,
 } from "carbon-services-lib";
 
 @ApiTags("Programme")
@@ -311,5 +316,41 @@ export class ProgrammeController {
       req.abilityCondition,
       req.user
     );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Investment))
+  @Post('addInvestment')
+  async addInvestment(@Body() investment: InvestmentRequestDto, @Request() req) {
+      return this.programmeService.addInvestment(investment, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, Investment))
+  @Post('investmentApprove')
+  async investmentApprove(@Body() body: InvestmentApprove, @Request() req) {
+      return this.programmeService.investmentApprove(body, req.user)
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
+  @Post('investmentReject')
+  async investmentReject(@Body() body: InvestmentReject, @Request() req) {
+      return this.programmeService.investmentReject(body, req.user)
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
+  @Post('investmentCancel')
+  async investmentCancel(@Body() body: InvestmentCancel, @Request() req) {
+      return this.programmeService.investmentCancel(body, req.user)
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
+  @Post('investmentQuery')
+  queryInvestmentUser(@Body()query: QueryDto, @Request() req) {
+    console.log(req.abilityCondition)
+    return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
   }
 }
