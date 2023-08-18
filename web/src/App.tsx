@@ -10,7 +10,8 @@ import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
 import AddUser from './Pages/AddUser/addUser';
 import UserManagement from './Pages/UserManagement/userManagement';
-import Dashboard from './Pages/Dashboard/dashboard';
+import MRVDashboard from './Pages/Dashboard/mrv/mrvdashboard';
+import RegistryDashboard from './Pages/Dashboard/registry/registrydashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
 import CompanyManagement from './Pages/CompanyManagement/companyManagement';
 import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
@@ -83,7 +84,8 @@ const App = () => {
                 <Route path="/" element={<Homepage />} />
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
-                    <Route index element={<Dashboard />} />
+                    <Route path="/dashboard" element={<RegistryDashboard />} />
+                    <Route path="/dashboard/mrv" element={<MRVDashboard />} />
                   </Route>
                   <Route
                     path="/programmeManagement"

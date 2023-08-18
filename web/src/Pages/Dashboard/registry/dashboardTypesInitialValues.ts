@@ -1,5 +1,5 @@
-import { ProgrammeStageLegend } from '../../Casl/enums/programme-status.enum';
-import { Sector } from '../../Casl/enums/sector.enum';
+import { ProgrammeStageLegend } from '../../../Casl/enums/programme-status.enum';
+import { Sector } from '../../../Casl/enums/sector.enum';
 
 export interface ChartSeriesItem {
   name: string;

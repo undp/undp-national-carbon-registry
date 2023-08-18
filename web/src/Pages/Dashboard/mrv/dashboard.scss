@@ -1,8 +1,22 @@
-@import '../Common/colors.dashboard.scss';
+@import '../../Common/colors.dashboard.scss';
+@import '../../../Styles/variables.scss';
 
 .mapboxgl-popup-content {
   background-color: $white !important;
   color: $card-title !important;
+}
+
+.unit {
+  display: flex;
+  // margin: 0 0 0 0.5rem;
+  font-family: 'Inter';
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: rgba(58, 53, 65, 0.5);
+}
+
+.card-icons {
+  color: $primary-color;
 }
 
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
@@ -31,6 +45,15 @@
 
 .margin-top-1 {
   margin-top: 1rem;
+}
+
+.ant-tooltip-inner {
+  border-radius: 5px ;
+  background-color: $primary-purple;
+}
+
+.ant-tooltip-arrow-content {
+  --antd-arrow-background-color: linear-gradient(to right bottom, #9155fd, #9155fd) !important;
 }
 
 .cards-title {
@@ -131,7 +154,7 @@
 
     .apexcharts-legend-series {
       display: flex !important;
-      width: 38%;
+      width: 42%;
     }
   }
 
@@ -169,7 +192,7 @@
           .title-section {
             display: flex;
             flex-direction: row;
-            align-items: flex-end;
+            align-items: flex-start;
             justify-content: space-between;
             width: 100%;
             padding: 1rem 1rem 0 1rem;
@@ -199,7 +222,7 @@
             align-items: center;
             justify-content: space-between;
             height: 150px;
-            margin-top: -0.5rem;
+            margin-top: 1rem;
 
             .details {
               display: flex;
@@ -249,7 +272,7 @@
             justify-content: flex-start;
             height: 100px;
             width: 100%;
-            margin-top: -1rem;
+            margin-top: 1rem;
             margin-bottom: 0.5rem;
             padding: 0 0.5rem 0 0.5rem;
 
@@ -349,8 +372,8 @@
               font-size: 0.75rem;
               border-radius: 3.125rem;
               padding: 0.05rem 0.8rem 0.05rem 0.8rem;
-              color: $primary-blue;
-              background-color: rgba($color: #b9e2f4, $alpha: 0.4);
+              color: $primary-color;
+              background-color: $primary-color-light-bg;
             }
           }
 
