@@ -676,7 +676,7 @@ const MRVDashboard = () => {
 
   return (
     <div className="dashboard-main-container">
-      <div className="systemchange-container">
+      <div className="systemchange-container" style={{ marginLeft: `20px` }}>
         <ButtonGroup aria-label="outlined button group">
           <Link to="/dashboard">
             <Button>Carbon Registry</Button>
