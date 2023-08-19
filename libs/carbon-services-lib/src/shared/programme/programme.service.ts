@@ -1003,7 +1003,7 @@ export class ProgrammeService {
     // programme.constantVersion = constants
     //   ? String(constants.version)
     //   : "default";
-    programme.currentStage = ProgrammeStage.NEW;
+    programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
     programme.companyId = companyIds;
     programme.txTime = new Date().getTime();
     if (programme.proponentPercentage) {
@@ -3051,7 +3051,7 @@ export class ProgrammeService {
       );
     }
 
-    if (program.currentStage != ProgrammeStage.AWAITING_AUTHORIZATION) {
+    if (program.currentStage != ProgrammeStage.APPROVED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programme.notInPendingState",
