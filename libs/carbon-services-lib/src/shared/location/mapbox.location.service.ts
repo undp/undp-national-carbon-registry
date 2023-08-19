@@ -11,7 +11,7 @@ export class MapboxLocationService implements LocationInterface {
     private configService: ConfigService
   ) {}
   
-  public init(): Promise<void> {
+  public init(data: any): Promise<void> {
     return null;
   }
 

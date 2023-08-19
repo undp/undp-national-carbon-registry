@@ -17,14 +17,21 @@ export class FileLocationService implements LocationInterface {
    
   }
   
-  public async init(): Promise<void> {
+  public async init(data: any): Promise<void> {
     this.logger.log('file location init')
-    return await this.retrieveData();
+    return await this.retrieveData(data);
   }
 
-  public async retrieveData() {
+  public async retrieveData(data: any) {
+
+    let regionRawData;
+    if (!data) {
+      regionRawData = fs.readFileSync('regions.csv', 'utf8');
+    } else {
+      regionRawData = data;
+    }
     const deliminator = ','
-    const regionRawData = fs.readFileSync('regions.csv', 'utf8');
+    
     const headers = regionRawData.slice(0, regionRawData.indexOf("\n")).split(deliminator).map(e => e.trim().replace('\r', ''))
     const rows = regionRawData.slice(regionRawData.indexOf("\n") + 1).split("\n")
 
