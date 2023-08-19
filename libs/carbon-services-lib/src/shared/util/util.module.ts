@@ -20,6 +20,7 @@ import { ConfigurationSettingsService } from "./configurationSettings.service";
 import { ConfigurationSettings } from "../entities/configuration.settings";
 import { ObjectionLetterGen } from "./objection.letter.gen";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
+import { Region } from "../entities/region.entity";
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { FileHandlerModule } from "../file-handler/filehandler.module";
       PasswordReset,
       User,
       ConfigurationSettings,
+      Region
     ]),
     forwardRef(() => AsyncOperationsModule),
     FileHandlerModule
