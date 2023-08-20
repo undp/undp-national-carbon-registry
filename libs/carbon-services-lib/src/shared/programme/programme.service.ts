@@ -3190,7 +3190,7 @@ export class ProgrammeService {
       return null;
     }
     const userId = Number(usrId);
-    if (userId == undefined || userId == null) {
+    if (userId == undefined || userId == null || isNaN(userId)) {
       return null;
     }
     if (this.userNameCache[userId]) {
