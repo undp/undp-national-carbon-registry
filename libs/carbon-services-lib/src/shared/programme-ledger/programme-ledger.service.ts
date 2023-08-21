@@ -1061,7 +1061,7 @@ export class ProgrammeLedgerService {
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
-          currentStage: ProgrammeStage.AWAITING_AUTHORIZATION.valueOf(),
+          currentStage: ProgrammeStage.APPROVED.valueOf(),
         };
 
         updateMap[this.ledger.overallTableName] = {

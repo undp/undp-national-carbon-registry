@@ -3151,7 +3151,7 @@ export class ProgrammeService {
     const updated = await this.programmeLedger.updateProgrammeStatus(
       req.programmeId,
       ProgrammeStage.REJECTED,
-      ProgrammeStage.AWAITING_AUTHORIZATION,
+      ProgrammeStage.APPROVED,
       this.getUserRefWithRemarks(user, req.comment)
     );
     if (!updated) {
