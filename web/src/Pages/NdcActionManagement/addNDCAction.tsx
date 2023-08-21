@@ -11,7 +11,7 @@ import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.
 
 const AddNDCAction = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'ndcAction']);
+  const { t } = useTranslation(['ndcAction']);
   const sdgGoalImages = getSdgGoalImages();
 
   const onNavigateToProgrammeManagementView = (programmeId: any) => {
