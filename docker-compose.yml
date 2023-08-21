@@ -34,11 +34,11 @@ services:
       DB_PASSWORD: "123"
       RUN_MODULE: national-api
       rootEmail: lochanaf@xeptagon.com
-      systemCountryCode: "NG"
+      systemCountryCode: "NA"
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
-      LOCATION_SERVICE: OPENSTREET
+      LOCATION_SERVICE: FILE
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"
@@ -76,7 +76,7 @@ services:
       DB_PASSWORD: "123"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
-      LOCATION_SERVICE: OPENSTREET
+      LOCATION_SERVICE: FILE
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
@@ -102,20 +102,20 @@ services:
   #     SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
   #     SMTP_PASSWORD: "<ANY PASSOWORD>"
   #     ASYNC_OPERATIONS_TYPE: Database
-  web:
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile
-      args:
-        PORT: 3030
-        REACT_APP_BACKEND: http://localhost:3000
-        REACT_APP_STAT_URL: http://localhost:3100
-        REACT_APP_COUNTRY_NAME: "CountryX"
-        REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
-        REACT_APP_COUNTRY_CODE: "NG"
-        REACT_APP_MAP_TYPE: "None"
-    ports:
-      - "3030:3030"
-    depends_on:
-      - db
-      - national
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: ./web/Dockerfile
+  #     args:
+  #       PORT: 3030
+  #       REACT_APP_BACKEND: http://localhost:3000
+  #       REACT_APP_STAT_URL: http://localhost:3100
+  #       REACT_APP_COUNTRY_NAME: "CountryX"
+  #       REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+  #       REACT_APP_COUNTRY_CODE: "NA"
+  #       REACT_APP_MAP_TYPE: "None"
+  #   ports:
+  #     - "3030:3030"
+  #   depends_on:
+  #     - db
+  #     - national

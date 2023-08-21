@@ -37,6 +37,7 @@ import {
   PlusOutlined,
   PoweroffOutlined,
   PushpinOutlined,
+  QrcodeOutlined,
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
@@ -84,11 +85,16 @@ import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { ProgrammeTransfer } from '@undp/carbon-library';
+import { ProgrammeStageMRV, ProgrammeTransfer } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import ProgrammeDocuments from '../../Components/Programme/programmeDocuments';
+import { DocumentStatus } from '../../Casl/enums/document.status';
+import { DocType } from '../../Casl/enums/document.type';
+import NdcActionBody from '../../Components/NdcActionBody/ndcActionBody';
+import InvestmentBody from '../../Components/InvestmentBody/investmentBody';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -98,6 +104,8 @@ const ProgrammeView = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Programme>();
   const [historyData, setHistoryData] = useState<any>([]);
+  const [investmentHistory, setInvestmentHistory] = useState<any>([]);
+  const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
   const { i18n, t } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
@@ -110,9 +118,17 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
+  const [loadingNDC, setLoadingNDC] = useState<boolean>(true);
+  const [ndcActionData, setNdcActionData] = useState<any>([]);
+  const [documentsData, setDocumentsData] = useState<any[]>([]);
+  const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
+  const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
+  const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
+  const [ndcActionHistoryDataGrouped, setNdcActionHistoryDataGrouped] = useState<any>();
+  const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
 
   const showModal = () => {
     setOpenModal(true);
@@ -204,6 +220,64 @@ const ProgrammeView = () => {
       long += l[1];
     }
     return [lat / count, long / count];
+  };
+
+  const getInvestmentHistory = async (programmeId: string) => {
+    setLoadingHistory(true);
+    setLoadingInvestment(true);
+    try {
+      const response: any = await post('national/programme/investmentQuery', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      const investmentHisData = response?.data?.map((item: any) => {
+        const investmentData: any = {
+          invester: item?.receiver[0]?.name,
+          amount: item?.amount,
+          createdAt: item?.createdTime,
+          type: item?.type,
+          level: item?.level,
+          stream: item?.stream,
+          status: item?.status,
+          requestId: item?.requestId,
+          sender: item?.sender,
+        };
+        return investmentData;
+      });
+      const elArr = investmentHisData?.map((investmentData: any, index: any) => {
+        const element = {
+          status: 'process',
+          title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
+          subTitle: '',
+          description: <InvestmentBody data={investmentData} />,
+          icon: (
+            <span className="step-icon freeze-step">
+              <Icon.Circle />
+            </span>
+          ),
+        };
+        return element;
+      });
+      setInvestmentHistory(elArr);
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingHistory(false);
+      setLoadingInvestment(false);
+    }
   };
 
   const drawMap = () => {
@@ -785,6 +859,44 @@ const ProgrammeView = () => {
     genPieData(response.data);
   };
 
+  const getDocuments = async (programmeId: string) => {
+    setLoadingHistory(true);
+    setLoadingNDC(true);
+    try {
+      const response: any = await post('national/programme/queryDocs', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      if (response?.data?.length > 0) {
+        const objectsWithoutNullActionId = response?.data.filter(
+          (obj: any) => obj.actionId !== null
+        );
+        const objectsWithNullActionId = response?.data.filter((obj: any) => obj.actionId === null);
+        const hasAcceptedMethReport = objectsWithNullActionId?.some(
+          (item: any) =>
+            item?.type === DocType.METHODOLOGY_DOCUMENT && item?.status === DocumentStatus.ACCEPTED
+        );
+        if (hasAcceptedMethReport && data?.currentStage === ProgrammeStage.Authorised) {
+          setUploadMonitoringReport(true);
+        }
+        setNdcActionData(objectsWithoutNullActionId);
+        setDocumentsData(response?.data);
+      }
+    } catch (err: any) {
+      console.log('Error in getting documents - ', err);
+    } finally {
+      setLoadingHistory(false);
+      setLoadingNDC(false);
+    }
+  };
+
   const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
     return response.data instanceof Array ? initMsg : successMsg;
   };
@@ -1020,7 +1132,9 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     if (data) {
+      getInvestmentHistory(data?.programmeId);
       getProgrammeHistory(data.programmeId);
+      getDocuments(data?.programmeId);
       drawMap();
       for (const company of data.company) {
         if (
@@ -1033,6 +1147,86 @@ const ProgrammeView = () => {
       }
     }
   }, [data]);
+
+  const onClickedAddAction = () => {
+    navigate('/programmeManagement/addNdcAction', { state: { record: data } });
+  };
+
+  const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
+    setLoadingHistory(true);
+    setLoadingNDC(true);
+    try {
+      const response: any = await post('national/programme/queryNdcActions', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      const groupedByActionId = response.data.reduce((result: any, obj: any) => {
+        const actionId = obj.id;
+        if (!result[actionId]) {
+          result[actionId] = [];
+        }
+        result[actionId].push(obj);
+        return result;
+      }, {});
+
+      ndcActionData?.map((ndcData: any) => {
+        if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
+          if (ndcData?.type === DocType.MONITORING_REPORT) {
+            groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
+          } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
+            groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
+          }
+        }
+      });
+      setNdcActionHistoryDataGrouped(groupedByActionId);
+      const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
+        status: 'process',
+        title: actionId,
+        subTitle: '',
+        description: (
+          <NdcActionBody
+            data={groupedByActionId[actionId]}
+            programmeId={data?.programmeId}
+            programmeOwnerId={programmeOwnerId}
+            canUploadMonitorReport={uploadMonitoringReport}
+            getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+          />
+        ),
+        icon: (
+          <span className="step-icon freeze-step">
+            <Icon.Circle />
+          </span>
+        ),
+      }));
+      setNdcActionHistoryData(mappedElements);
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingHistory(false);
+      setLoadingNDC(false);
+    }
+  };
+
+  useEffect(() => {
+    if (data) {
+      setProgrammeOwnerId(data?.companyId);
+      setCurrentProgrammeStatus(data?.currentStage);
+      getNdcActionHistory(data?.programmeId, ndcActionData);
+    }
+  }, [data, ndcActionData]);
 
   if (!data) {
     return <Loading />;
@@ -1083,7 +1277,33 @@ const ProgrammeView = () => {
   const actionBtns = [];
 
   if (userInfoState?.userRole !== 'ViewOnly') {
-    if (data.currentStage.toString() === 'AwaitingAuthorization') {
+    if (userInfoState && data.currentStage !== ProgrammeStage.Rejected) {
+      if (
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+          data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId))
+      ) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              navigate('/investmentManagement/addInvestment', { state: { record: data } });
+            }}
+          >
+            {t('view:addInvestment')}
+          </Button>
+        );
+        if ((data.currentStage as any) === ProgrammeStage.Authorised) {
+          actionBtns.push(
+            <Button type="primary" onClick={onClickedAddAction}>
+              {t('view:addAction')}
+            </Button>
+          );
+        }
+      }
+    }
+
+    if (data.currentStage.toString() === 'Approved') {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
         actionBtns.push(
           <Button
@@ -1674,6 +1894,23 @@ const ProgrammeView = () => {
                 />
               </div>
             </Card>
+            <Card className="card-container">
+              <div>
+                <ProgrammeDocuments
+                  data={documentsData}
+                  title={t('view:programmeDocs')}
+                  icon={<QrcodeOutlined />}
+                  programmeId={data?.programmeId}
+                  programmeOwnerId={programmeOwnerId}
+                  getDocumentDetails={() => {
+                    getDocuments(data?.programmeId);
+                  }}
+                  getProgrammeById={() => {
+                    getProgrammeById(data?.programmeId);
+                  }}
+                />
+              </div>
+            </Card>
           </Col>
           <Col md={24} lg={14}>
             <Card className="card-container">
@@ -1736,6 +1973,40 @@ const ProgrammeView = () => {
               </Card>
             ) : (
               <span></span>
+            )}
+            {investmentHistory?.length > 0 && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<ClockCircleOutlined />}</span>
+                    <span className="title-text">{t('view:investment')}</span>
+                  </div>
+                  <div className="content">
+                    {loadingInvestment ? (
+                      <Skeleton />
+                    ) : (
+                      <Steps current={0} direction="vertical" items={investmentHistory} />
+                    )}
+                  </div>
+                </div>
+              </Card>
+            )}
+            {ndcActionHistoryData?.length > 0 && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<ExperimentOutlined />}</span>
+                    <span className="title-text">{t('view:ndcActions')}</span>
+                  </div>
+                  <div className="content">
+                    {loadingNDC ? (
+                      <Skeleton />
+                    ) : (
+                      <Steps current={0} direction="vertical" items={ndcActionHistoryData} />
+                    )}
+                  </div>
+                </div>
+              </Card>
             )}
             <Card className="card-container">
               <div className="info-view">

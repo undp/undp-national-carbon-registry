@@ -633,6 +633,8 @@ export class ProgrammeService {
     
     if (certifierId && program) {
       await this.programmeLedger.updateCertifier(program.programmeId, certifierId, true, "TODO", d.type == DocType.METHODOLOGY_DOCUMENT ? ProgrammeStage.APPROVED : undefined);
+    } else if(program && d.type == DocType.METHODOLOGY_DOCUMENT) {
+      await this.programmeLedger.updateProgrammeStatus(program.programmeId, ProgrammeStage.APPROVED, ProgrammeStage.AWAITING_AUTHORIZATION, "TODO");
     }
   }
 
@@ -1003,7 +1005,7 @@ export class ProgrammeService {
     // programme.constantVersion = constants
     //   ? String(constants.version)
     //   : "default";
-    programme.currentStage = ProgrammeStage.NEW;
+    programme.currentStage = ProgrammeStage.AWAITING_AUTHORIZATION;
     programme.companyId = companyIds;
     programme.txTime = new Date().getTime();
     if (programme.proponentPercentage) {
@@ -3051,7 +3053,7 @@ export class ProgrammeService {
       );
     }
 
-    if (program.currentStage != ProgrammeStage.AWAITING_AUTHORIZATION) {
+    if (program.currentStage != ProgrammeStage.APPROVED) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programme.notInPendingState",
@@ -3188,7 +3190,7 @@ export class ProgrammeService {
       return null;
     }
     const userId = Number(usrId);
-    if (userId == undefined || userId == null) {
+    if (userId == undefined || userId == null || isNaN(userId)) {
       return null;
     }
     if (this.userNameCache[userId]) {

@@ -6,7 +6,13 @@ import {
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import { Company, BaseEntity, ProgrammeTransfer, User } from '@undp/carbon-library';
+import {
+  Company,
+  BaseEntity,
+  ProgrammeTransfer,
+  User,
+  ProgrammeEntity,
+} from '@undp/carbon-library';
 import { Programme } from './entities/Programme';
 import { ProgrammeCertify } from './entities/ProgrammeCertify';
 import { Action } from './enums/action.enum';
@@ -83,11 +89,14 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       can(Action.Manage, ProgrammeTransfer);
+      can(Action.Manage, Programme);
+      can(Action.Manage, ProgrammeEntity);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, ProgrammeTransfer);
       can(Action.Manage, Programme);
+      can(Action.Manage, ProgrammeEntity);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.CERTIFIER) {

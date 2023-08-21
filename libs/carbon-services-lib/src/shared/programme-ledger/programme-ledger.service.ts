@@ -902,7 +902,7 @@ export class ProgrammeLedgerService {
         currentStage: status.valueOf(),
         txTime: new Date().getTime(),
         txRef: user,
-        txType: status == ProgrammeStage.REJECTED ? TxType.REJECT : null,
+        txType: status == ProgrammeStage.REJECTED ? TxType.REJECT : status == ProgrammeStage.APPROVED ? TxType.APPROVE : null,
       },
       {
         programmeId: programmeId,

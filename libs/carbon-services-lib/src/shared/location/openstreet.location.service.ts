@@ -14,7 +14,7 @@ export class OpenStreetLocationService implements LocationInterface {
     @InjectRepository(Region) private regionRepo: Repository<Region>
   ) {}
 
-  public async init(): Promise<void> {
+  public async init(data: any): Promise<void> {
     this.logger.log('open street init')
     return await this.retrieveData();
   }
