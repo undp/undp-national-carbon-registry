@@ -1,18 +1,18 @@
 export const sectoralScopesMapped: any = {
     Energy: [
-      'Energy Industries (Renewable – / Non-Renewable Sources)',
-      'Energy Distribution',
-      'Energy Demand',
+      'EnergyIndustry',
+      'EnergyDistribution',
+      'EnergyDemand',
     ],
     Transport: ['Transport'],
-    Manufacturing: ['Manufacturing Industries', 'Chemical Industries', 'Metal Production'],
-    Forestry: ['Afforestation and Reforestation'],
-    Waste: ['Waste Handling and Disposal', 'Fugitive Emissions From Fuels (Solid, Oil and Gas)'],
+    Manufacturing: ['ManufacturingIndustries', 'ChemicalIndustries', 'MetalProduction'],
+    Forestry: ['AfforestationAndReforestation'],
+    Waste: ['WasteHandlingDisposal', 'FugitiveEmissionsFromFuels'],
     Agriculture: ['Agriculture'],
     Other: [
-      'Mining/Mineral Production',
+      'MiningAndMineral',
       'Construction',
-      'Fugitive Emissions From Production and Consumption of Halocarbons and Sulphur Hexafluoride',
-      'Solvent Use',
+      'FugitiveEmissionsFromProductionConsumption',
+      'SolventUse',
     ],
   };

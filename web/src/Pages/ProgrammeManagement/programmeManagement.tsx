@@ -3,6 +3,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ProgrammeManagementComponent, ProgrammeManagementColumns } from '@undp/carbon-library';
+import './programmeManagement.scss';
 import { useAbilityContext } from '../../Casl/Can';
 
 const ProgrammeManagement = () => {
@@ -29,6 +30,10 @@ const ProgrammeManagement = () => {
 
   const onClickAddProgramme = () => {
     navigate('/programmeManagement/addProgramme');
+  };
+
+  const onClickAddInvestment = () => {
+    navigate('/programmeManagement/addInvestment');
   };
 
   return (

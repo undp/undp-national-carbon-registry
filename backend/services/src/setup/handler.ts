@@ -215,5 +215,6 @@ export const handler: Handler = async (event) => {
     }
   );
   const locationInterface = locationApp.get(LocationInterface);
-  await locationInterface.init();
+  const regionRawData = fs.readFileSync('regions.csv', 'utf8');
+  await locationInterface.init(regionRawData);
 };

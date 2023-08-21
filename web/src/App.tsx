@@ -34,8 +34,9 @@ import { SettingsContextProvider } from './Context/SettingsContext/settingsConte
 import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
 import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
 import NdcActionManagement from './Pages/NdcActionManagement/ndcActionManagement';
-import AddProgrammeComponent from './Pages/ProgrammeCreation/programmeCreation';
-import AddNdcAction from './Pages/AddNdcAction/addNdcAction';
+import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
+import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
+
 
 // message.config({
 //   duration: 60,
@@ -95,8 +96,8 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<ProgrammeManagement />} />
                     <Route path="view" element={<ProgrammeView />} />
-                    <Route path="addProgramme" element={<AddProgrammeComponent />} />
-                    <Route path="addNdcAction" element={<AddNdcAction />} />
+                    <Route path="addProgramme" element={<AddProgramme />} />
+                    <Route path="addNdcAction" element={<AddNDCAction />} />
                   </Route>
                   <Route
                     path="/investmentManagement"

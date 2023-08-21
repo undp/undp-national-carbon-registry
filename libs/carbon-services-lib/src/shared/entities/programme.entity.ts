@@ -39,7 +39,7 @@ export class Programme implements EntitySubject {
     type: "enum",
     enum: ProgrammeStage,
     array: false,
-    default: ProgrammeStage.NEW,
+    default: ProgrammeStage.AWAITING_AUTHORIZATION,
   })
   currentStage: ProgrammeStage;
 
