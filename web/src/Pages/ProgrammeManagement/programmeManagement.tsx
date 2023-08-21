@@ -19,9 +19,9 @@ const ProgrammeManagement = () => {
     ProgrammeManagementColumns.creditBalance,
     ProgrammeManagementColumns.creditTransferred,
     ProgrammeManagementColumns.certifierId,
+    ProgrammeManagementColumns.serialNo,
     ProgrammeManagementColumns.emissionReductionExpected,
     ProgrammeManagementColumns.emissionReductionAchieved,
-    ProgrammeManagementColumns.serialNo,
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
