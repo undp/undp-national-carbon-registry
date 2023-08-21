@@ -1709,7 +1709,7 @@ ${total}
 
   return (
     <div className="dashboard-main-container">
-      <div className="systemchange-container">
+      <div className="systemchange-container" style={{ marginLeft: `20px` }}>
         <ButtonGroup>
           <Button type="primary">Carbon Registry</Button>
           <Link to="/dashboard/mrv">
@@ -1717,7 +1717,7 @@ ${total}
           </Link>
         </ButtonGroup>
       </div>
-      <div className="stastics-cards-container">
+      <div className="stastics-cards-container" style={{ marginTop: `50px` }}>
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
