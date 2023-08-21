@@ -2733,11 +2733,10 @@
     "@types/node" "^18.11.9"
     convert-units "^2.3.4"
 
-"@undp/carbon-library@^1.0.67":
-  version "1.0.67"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.67.tgz#784908511d55aa3c8eff3b0f73b8a32b1b33698a"
-  integrity sha512-yjXd9/MVj18rjuQV9B116cOCN9ib+MOu3njVaNfHmKbbuHhPw8/eOA5sl6n6dJDchAPj3LysV7dXd1WsszzgdA==
-
+"@undp/carbon-library@^1.0.71":
+  version "1.0.71"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.71.tgz#b0bb20b2c38140339daf5d12a9bf2ecd1da10850"
+  integrity sha512-xqbqu50QmgHUJ8nKYxUX87cuRE47P4ACnU4xopm21vvP8k76hnlbA3xy941imyhUbRqOrWiYtfKftB54IiT1Bw==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-node-resolve" "^15.0.2"
@@ -2751,10 +2750,6 @@
     rollup-plugin-postcss "^4.0.2"
     tslib "^2.5.2"
     typescript "^5.0.4"
-
-"@undp/carbon-library@https://github.com/xeptagondev/carbon-library.git#feature/carbon-258":
-  version "1.0.63"
-  resolved "https://github.com/xeptagondev/carbon-library.git#86445a4f20cddb29ec9fd4e97e5a57ab3e6cc7a9"
 
 "@webassemblyjs/ast@1.11.6", "@webassemblyjs/ast@^1.11.5":
   version "1.11.6"
