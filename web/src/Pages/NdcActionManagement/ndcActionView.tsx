@@ -4,10 +4,12 @@ import { useUserContext } from '../../Context/UserInformationContext/userInforma
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
+import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
 
 const NdcActionView = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['ndcAction']);
+  const sdgGoalImages = getSdgGoalImages();
 
   const onNavigateToNdcManagementView = (record: any) => {
     navigate('/ndcManagement/viewAll', { replace: true });
@@ -22,6 +24,7 @@ const NdcActionView = () => {
       useLocation={useLocation}
       onNavigateToNdcManagementView={onNavigateToNdcManagementView}
       t={t}
+      sdgGoalImages={sdgGoalImages}
     ></NdcActionViewComponent>
   );
 };
