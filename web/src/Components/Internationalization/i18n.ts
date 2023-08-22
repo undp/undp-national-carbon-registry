@@ -35,6 +35,8 @@ i18n
       'safeguards',
       'social',
       'economic',
+      'creditTransfer',
+      'addProgramme',
     ],
   });
 export default i18n;

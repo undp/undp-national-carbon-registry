@@ -1015,6 +1015,7 @@ export class ProgrammeService {
     if (!programme.creditUnit) {
       programme.creditUnit = this.configService.get("defaultCreditUnit");
     }
+    programme.emissionReductionExpected = programme.creditEst;
 
     let orgNamesList = "";
     if (companyNames.length > 1) {
@@ -2209,14 +2210,15 @@ export class ProgrammeService {
 
     const fromCompanyListMap = {};
     for (const j in req.fromCompanyIds) {
-      const fromCompanyId = req.fromCompanyIds[j];
+      const fromCompanyId= req.fromCompanyIds[j];
       this.logger.log(
-        `Transfer request from ${typeof fromCompanyId} to programme owned by ${typeof programme.companyId[0]} ${typeof programme}`
+        `Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`
       );
       const fromCompany = await this.companyService.findByCompanyId(
         fromCompanyId
       );
       fromCompanyListMap[fromCompanyId] = fromCompany;
+      //const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
 
       if (!programme.companyId.includes(fromCompanyId)) {
         throw new HttpException(
@@ -3535,8 +3537,5 @@ export class ProgrammeService {
     return transferResult;
   }
 
-}
-function typeOf(fromCompanyId: number) {
-  throw new Error("Function not implemented.");
 }
 

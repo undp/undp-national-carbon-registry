@@ -143,10 +143,10 @@ export class ProgrammeLedgerService {
         }
         const programmes: Programme[] = results[this.ledger.tableName].map(
           (domValue) => {
-            return plainToClass(
-              Programme,
-              JSON.parse(JSON.stringify(domValue))
-            );
+            let programme = plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+            const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
+            programme.companyId = intCompanyIds
+            return programme;
           }
         );
         if (programmes.length <= 0) {
@@ -369,7 +369,10 @@ export class ProgrammeLedgerService {
         programmeId: programmeId,
       })
     ).map((domValue) => {
-      return plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+      let programme = plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+      const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
+      programme.companyId = intCompanyIds
+      return programme;
     });
     return p.length <= 0 ? null : p[0];
   }
@@ -1022,6 +1025,7 @@ export class ProgrammeLedgerService {
         }
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
+        programme.emissionReductionAchieved = programme.creditIssued;
         programme.txRef = user;
         programme.txType = TxType.AUTH;
         updatedProgramme = programme;
@@ -1055,6 +1059,7 @@ export class ProgrammeLedgerService {
           creditIssued: programme.creditIssued,
           creditBalance: programme.creditBalance,
           creditChange: programme.creditChange,
+          emissionReductionAchieved: programme.emissionReductionAchieved,
           txRef: programme.txRef,
           txTime: programme.txTime,
           txType: programme.txType,
@@ -1174,6 +1179,7 @@ export class ProgrammeLedgerService {
           programme.creditChange = issueCredit;
           // programme.creditPending = programme.creditEst - issueCredit;
         }
+        programme.emissionReductionAchieved = programme.creditIssued
         const currentTotalBalance = programme.creditBalance;
         programme.creditBalance += programme.creditChange;
         programme.txRef = user;
@@ -1218,6 +1224,7 @@ export class ProgrammeLedgerService {
           txTime: programme.txTime,
           txType: programme.txType,
           creditOwnerPercentage: programme.creditOwnerPercentage,
+          emissionReductionAchieved: programme.emissionReductionAchieved
         };
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
