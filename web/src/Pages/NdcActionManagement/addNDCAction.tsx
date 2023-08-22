@@ -11,7 +11,16 @@ import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.
 
 const AddNDCAction = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['ndcAction']);
+  const { t, i18n } = useTranslation([
+    'ndcAction',
+    'coBenifits',
+    'common',
+    'economic',
+    'environment',
+    'genderParity',
+    'safeguards',
+    'social',
+  ]);
   const sdgGoalImages = getSdgGoalImages();
 
   const onNavigateToProgrammeManagementView = (programmeId: any) => {
@@ -24,7 +33,7 @@ const AddNDCAction = () => {
 
   return (
     <AddNdcActionComponent
-      t={t}
+      translator={i18n}
       useLocation={useLocation}
       useConnection={useConnection}
       useUserContext={useUserContext}

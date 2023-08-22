@@ -8,7 +8,16 @@ import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.
 
 const NdcActionView = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['ndcAction']);
+  const { t, i18n } = useTranslation([
+    'ndcAction',
+    'coBenifits',
+    'common',
+    'economic',
+    'environment',
+    'genderParity',
+    'safeguards',
+    'social',
+  ]);
   const sdgGoalImages = getSdgGoalImages();
 
   const onNavigateToNdcManagementView = (record: any) => {
@@ -23,7 +32,7 @@ const NdcActionView = () => {
       useUserContext={useUserContext}
       useLocation={useLocation}
       onNavigateToNdcManagementView={onNavigateToNdcManagementView}
-      t={t}
+      translator={i18n}
       sdgGoalImages={sdgGoalImages}
     ></NdcActionViewComponent>
   );
