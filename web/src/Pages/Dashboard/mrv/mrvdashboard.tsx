@@ -679,9 +679,11 @@ const MRVDashboard = () => {
       <div className="systemchange-container" style={{ marginLeft: `20px` }}>
         <ButtonGroup aria-label="outlined button group">
           <Link to="/dashboard">
-            <Button>Carbon Registry</Button>
+            <Button className="mrvdefault">Carbon Registry</Button>
           </Link>
-          <Button type="primary">Transparancy System</Button>
+          <Button type="primary" className="mrvprimary">
+            Transparancy System
+          </Button>
         </ButtonGroup>
       </div>
       <div className="filter-container">

@@ -56,6 +56,13 @@
   --antd-arrow-background-color: linear-gradient(to right bottom, #9155fd, #9155fd) !important;
 }
 
+.mrvdefault{
+  border-radius: 5px 0px 0px 5px !important;
+}
+.mrvprimary{
+  border-radius: 0px 5px 5px 0px !important;
+}
+
 .cards-title {
   font-family: 'Inter';
   align-items: flex-start;
