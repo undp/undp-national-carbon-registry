@@ -369,7 +369,10 @@ export class ProgrammeLedgerService {
         programmeId: programmeId,
       })
     ).map((domValue) => {
-      return plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+      let programme = plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+      const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
+      programme.companyId = intCompanyIds
+      return programme;
     });
     return p.length <= 0 ? null : p[0];
   }
