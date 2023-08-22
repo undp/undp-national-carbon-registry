@@ -237,7 +237,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
           <span className="title-text">{title}</span>
         </div>
         <div>
-          <Row className="field" key="Design Document" gutter={[16, 16]}>
+          <Row className="field" key="Design Document">
             <Col span={14} className="field-key">
               <div className="label-container">
                 <div className={designDocUrl !== '' ? 'label-uploaded' : 'label'}>
@@ -417,7 +417,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
             </Col>
           </Row>
           {noObjectionDocUrl !== '' && (
-            <Row className="field" key="Objection Document" gutter={[16, 16]}>
+            <Row className="field" key="Objection Document">
               <Col span={14} className="field-key">
                 <div className="label-uploaded">{t('programme:objectionLett')}</div>
                 <div className="time">
@@ -433,7 +433,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
               </Col>
             </Row>
           )}
-          <Row className="field" key="Methodology Document" gutter={[16, 16]}>
+          <Row className="field" key="Methodology Document">
             <Col span={14} className="field-key">
               <div className="label-container">
                 <div className={methodologyDocUrl !== '' ? 'label-uploaded' : 'label'}>
@@ -622,7 +622,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
             </Col>
           </Row>
           {authorisationDocUrl !== '' && (
-            <Row className="field" key="Authorisation Document" gutter={[16, 16]}>
+            <Row className="field" key="Authorisation Document">
               <Col span={14} className="field-key">
                 <div className="label-uploaded">{t('programme:authLetterLabel')}</div>
                 <div className="time">

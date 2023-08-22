@@ -31,7 +31,9 @@
   "specify":"Specify",
   "contactInformation":"Contact Information",
   "feasibilityReport":"Feasibility Report",
-  "invalidFileFormat": "Unsupported file format"
+  "invalidFileFormat": "Unsupported file format",
+  "email": "Email",
+  "isInvalid": "is invalid!"
 }
 
 

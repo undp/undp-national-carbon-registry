@@ -172,7 +172,7 @@ export class ProgrammeService {
 
     const savedProgramme = await this.entityManager
       .transaction(async (em) => {
-        await em.update(
+        return await em.update(
           Investment,
           {
             requestId: transfer.requestId
@@ -2211,7 +2211,7 @@ export class ProgrammeService {
     for (const j in req.fromCompanyIds) {
       const fromCompanyId = req.fromCompanyIds[j];
       this.logger.log(
-        `Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`
+        `Transfer request from ${typeof fromCompanyId} to programme owned by ${typeof programme.companyId[0]} ${typeof programme}`
       );
       const fromCompany = await this.companyService.findByCompanyId(
         fromCompanyId
@@ -3536,3 +3536,7 @@ export class ProgrammeService {
   }
 
 }
+function typeOf(fromCompanyId: number) {
+  throw new Error("Function not implemented.");
+}
+
