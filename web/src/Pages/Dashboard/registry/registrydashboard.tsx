@@ -1711,9 +1711,11 @@ ${total}
     <div className="dashboard-main-container">
       <div className="systemchange-container" style={{ marginLeft: `20px` }}>
         <ButtonGroup>
-          <Button type="primary">Carbon Registry</Button>
+          <Button type="primary" className="rgprimary">
+            Carbon Registry
+          </Button>
           <Link to="/dashboard/mrv">
-            <Button>Transparancy System</Button>
+            <Button className="rgdefault">Transparancy System</Button>
           </Link>
         </ButtonGroup>
       </div>
