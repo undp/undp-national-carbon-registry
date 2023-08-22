@@ -7,7 +7,7 @@ import { useSettingsContext } from '../../Context/SettingsContext/settingsContex
 
 const InvestmentManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'programme']);
+  const { t, i18n } = useTranslation(['common', 'programme', 'creditTransfer', 'view']);
 
   const onNavigateToProgrammeView = (programmeId: any) => {
     navigate('/programmeManagement/view', { state: { id: programmeId } });
@@ -15,7 +15,7 @@ const InvestmentManagement = () => {
 
   return (
     <InvestmentManagementComponent
-      t={t}
+      translator={i18n}
       useConnection={useConnection}
       onNavigateToProgrammeView={onNavigateToProgrammeView}
       useUserContext={useUserContext}
