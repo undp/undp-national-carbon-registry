@@ -2217,8 +2217,8 @@ export class ProgrammeService {
         fromCompanyId
       );
       fromCompanyListMap[fromCompanyId] = fromCompany;
-
-      if (!programme.companyId.includes(fromCompanyId)) {
+      const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
+      if (!intCompanyIds.includes(fromCompanyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "programme.fromCompInReqIsNotOwnerOfProgramme",
