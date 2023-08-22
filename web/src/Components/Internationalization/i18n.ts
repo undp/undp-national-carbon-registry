@@ -36,6 +36,7 @@ i18n
       'social',
       'economic',
       'creditTransfer',
+      'addProgramme',
     ],
   });
 export default i18n;

@@ -6,15 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 const AddProgramme = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'addProgramme']);
+  const { i18n } = useTranslation(['common', 'addProgramme']);
 
-  const onNavigateToProgrammeManagementView = (programmeId: any) => {
-    navigate('/programmeManagement/viewAll', { state: { id: programmeId } });
+  const onNavigateToProgrammeManagementView = () => {
+    navigate('/programmeManagement/viewAll');
   };
 
   return (
     <ProgrammeCreationComponent
-      t={t}
+      translator={i18n}
       useLocation={useLocation}
       useConnection={useConnection}
       useUserContext={useUserContext}
