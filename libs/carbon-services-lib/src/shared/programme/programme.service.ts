@@ -2209,9 +2209,9 @@ export class ProgrammeService {
 
     const fromCompanyListMap = {};
     for (const j in req.fromCompanyIds) {
-      const fromCompanyId = req.fromCompanyIds[j];
+      const fromCompanyId= req.fromCompanyIds[j];
       this.logger.log(
-        `Transfer request from ${typeof fromCompanyId} to programme owned by ${typeof programme.companyId[0]} ${typeof programme}`
+        `Transfer request from ${fromCompanyId}:${typeof fromCompanyId} to programme owned by ${programme.companyId[0]}:${typeof programme.companyId[0]}  ${typeof programme.companyId}:${typeof programme.companyId}`
       );
       const fromCompany = await this.companyService.findByCompanyId(
         fromCompanyId
@@ -3535,8 +3535,5 @@ export class ProgrammeService {
     return transferResult;
   }
 
-}
-function typeOf(fromCompanyId: number) {
-  throw new Error("Function not implemented.");
 }
 
