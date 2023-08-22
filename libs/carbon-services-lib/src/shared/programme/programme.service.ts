@@ -1015,6 +1015,7 @@ export class ProgrammeService {
     if (!programme.creditUnit) {
       programme.creditUnit = this.configService.get("defaultCreditUnit");
     }
+    programme.emissionReductionExpected = programme.creditEst;
 
     let orgNamesList = "";
     if (companyNames.length > 1) {
