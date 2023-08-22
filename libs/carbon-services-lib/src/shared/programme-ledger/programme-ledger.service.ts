@@ -143,10 +143,10 @@ export class ProgrammeLedgerService {
         }
         const programmes: Programme[] = results[this.ledger.tableName].map(
           (domValue) => {
-            return plainToClass(
-              Programme,
-              JSON.parse(JSON.stringify(domValue))
-            );
+            let programme = plainToClass(Programme, JSON.parse(JSON.stringify(domValue)));
+            const intCompanyIds = programme.companyId.map((id)=>{return Number(id)})
+            programme.companyId = intCompanyIds
+            return programme;
           }
         );
         if (programmes.length <= 0) {

@@ -2211,7 +2211,7 @@ export class ProgrammeService {
     for (const j in req.fromCompanyIds) {
       const fromCompanyId= req.fromCompanyIds[j];
       this.logger.log(
-        `Transfer request from ${fromCompanyId}:${typeof fromCompanyId} to programme owned by ${programme.companyId[0]}:${typeof programme.companyId[0]}  ${typeof programme.companyId}:${typeof programme.companyId}`
+        `Transfer request from ${fromCompanyId} to programme owned by ${programme.companyId}`
       );
       const fromCompany = await this.companyService.findByCompanyId(
         fromCompanyId
