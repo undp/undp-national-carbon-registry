@@ -172,7 +172,7 @@ export class ProgrammeService {
 
     const savedProgramme = await this.entityManager
       .transaction(async (em) => {
-        await em.update(
+        return await em.update(
           Investment,
           {
             requestId: transfer.requestId
