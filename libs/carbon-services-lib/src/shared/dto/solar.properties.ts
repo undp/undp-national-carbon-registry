@@ -3,7 +3,7 @@ import { BuildingType } from "@undp/carbon-credit-calculator";
 import { IsNotEmpty, IsPositive, IsNumber, IsEnum } from "class-validator";
 import { MitigationProperties } from "./mitigation.properties";
 
-export class SolarProperties extends MitigationProperties {
+export class SolarProperties {
     
     @ApiProperty()
     @IsNotEmpty()
