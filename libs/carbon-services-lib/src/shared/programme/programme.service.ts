@@ -2218,7 +2218,7 @@ export class ProgrammeService {
       );
       fromCompanyListMap[fromCompanyId] = fromCompany;
 
-      if (!programme.companyId.includes(fromCompanyId)) {
+      if (!(programme.companyId).includes(fromCompanyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "programme.fromCompInReqIsNotOwnerOfProgramme",
