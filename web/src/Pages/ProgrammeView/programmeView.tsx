@@ -21,7 +21,7 @@ import './programmeView.scss';
 import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
-import InfoView from '../../Components/InfoView/info.view';
+import { InfoView } from '@undp/carbon-library';
 import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,

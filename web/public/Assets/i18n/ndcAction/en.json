@@ -70,6 +70,20 @@
   "methodologyEstimatedCreditsInvalid": "Methodology Estimated Credits should be greater than 0",
   "userEstimatedCreditsInvalid": "Estimated Credits for the NDC Action cannot be greater than the Estimated Credits for the programme",
   "coBenefitsSubTitle": "Co-Benefits",
-  "ministryLevel": "Minitry Level"
+  "ministryLevel": "Minitry Level",
+  "ghgEmiReduced": "GHG Emissions Reduced (tCO2e)",
+  "ghgEmiAvoided": "GHG Emissions Avoided (tCO2e)",
+  "type": "Type",
+  "capacityBuilding": "Capacity Building",
+  "instiArrangement": "Institutional Arrangement",
+  "stakeholderFramework": "Stakeholder Framework",
+  "techTransfer": "Technology Transfer",
+  "inNAP": "Included in NAP",
+  "inNAPToolTip": "National Adaptation Plan (NAP)",
+  "yes": "YES",
+  "no": "NO",
+  "value": "Value",
+  "viewGhgEmissionsAvoided": "GHG Emissions Avoided (tCO2e)",
+  "viewGhgEmissionsReduced": "GHG Emissions Reduced (tCO2e)",
+  "viewIncludedInNAP": "Included in NAP"
 }
-
