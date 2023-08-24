@@ -1172,6 +1172,7 @@ export class ProgrammeService {
   }
 
   async addNDCAction(ndcActionDto: NDCActionDto, user: User): Promise<DataResponseDto> {
+    console.log('testing ndcActionDto',ndcActionDto);
     if (!ndcActionDto.programmeId) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -1234,7 +1235,7 @@ export class ProgrammeService {
     ndcAction.coBenefitsProperties = ndcActionDto.coBenefitsProperties;
     await this.checkTotalUserEstimatedCredits(ndcAction, program);
     await this.calcCreditNDCAction(ndcAction, program);
-    console.log("2222", ndcAction);
+    console.log("testing ndcAction", ndcAction);
     this.calcAddNDCFields(ndcAction, program);
 
     if (ndcAction.action == NDCActionType.Enablement && ndcAction.enablementProperties.report) {
