@@ -4,5 +4,6 @@ export enum Instrument {
     GRANT = 'Grant',
     EQUITY = 'Equity',
     GUARANTEE = 'Guarantee',
-    OTHER = 'Other'
+    INKIND = 'In-Kind',
+    OTHER = 'Other',
 }

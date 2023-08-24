@@ -69,5 +69,6 @@
     "notAuthToUploadDoc": "You are not authorised to upload this document",
     "orgNotAuth": "Your organisation is not authorised to upload or view this document",
     "authLetterLabel": "Letter of Authorisation",
-    "ministryLevel": "Minitry Level"
+    "ministryLevel": "Minitry Level",
+    "description": "Description"
 }

@@ -28,7 +28,9 @@ export class NDCAction {
   })
   action: NDCActionType;
 
-  @Column()
+  @Column({
+    nullable: true
+  })
   methodology: string;
 
   @Column({

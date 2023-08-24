@@ -26,6 +26,7 @@ export class NDCActionDto {
   })
   action: NDCActionType;
 
+  @ValidateIf((c) => c.action === NDCActionType.Mitigation)
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
