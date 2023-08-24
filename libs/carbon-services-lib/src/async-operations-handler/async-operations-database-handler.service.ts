@@ -53,7 +53,7 @@ export class AsyncOperationsDatabaseHandlerService
             action.actionType,
             JSON.parse(action.actionProps)
           );
-          lastSeq = action.actionId;
+          lastSeq = action.actionId ;
           await this.counterRepo.save({
             id: CounterType.ASYNC_OPERATIONS,
             counter: lastSeq,
