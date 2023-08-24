@@ -29,42 +29,47 @@ export class AsyncOperationsDatabaseHandlerService
     if (seqObj) {
       lastSeq = seqObj.counter;
     }
-
-    setInterval(async () => {
-      const asyncPromises = [];
-
+    let retryCount = 0;
+    const retryLimit = 10;
+    const intervalId = setInterval(async () => {
       const notExecutedActions = await this.asyncActionRepo
         .createQueryBuilder("asyncAction")
         .where("asyncAction.actionId > :lastExecuted", {
           lastExecuted: lastSeq,
         })
+        .orderBy(
+          '"actionId"',
+          'ASC',
+        )
         .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();
 
-      if(notExecutedActions.length === 0)
-        return;
-        
-      const startedSeq = lastSeq;
-      notExecutedActions.forEach((action: any) => {
-        console.log('Processing action', action.actionId)
-        asyncPromises.push(
-          this.asyncOperationsHandlerService.handler(
-            action.actionType,
-            JSON.parse(action.actionProps)
-          )
-        );
-        lastSeq = action.actionId;
-      });
+      if(notExecutedActions.length === 0)return;
 
       try {
-        await Promise.all(asyncPromises);
-        await this.counterRepo.save({
-          id: CounterType.ASYNC_OPERATIONS,
-          counter: lastSeq,
-        });
+        for (const action of notExecutedActions) {
+          console.log('Action start', action.actionType, action.actionId)
+          await this.asyncOperationsHandlerService.handler(
+            action.actionType,
+            JSON.parse(action.actionProps)
+          );
+          lastSeq = action.actionId;
+          await this.counterRepo.save({
+            id: CounterType.ASYNC_OPERATIONS,
+            counter: lastSeq,
+          });
+          retryCount=0
+        }
+        
       } catch (exception) {
         this.logger.log("database asyncHandler failed", exception);
-        lastSeq = startedSeq;
+        if(retryCount>retryLimit){
+          this.logger.log("database asyncHandler terminated")
+          clearInterval(intervalId)
+        }
+        else {
+          retryCount+=1
+        }
       }
     }, 5000);
   }

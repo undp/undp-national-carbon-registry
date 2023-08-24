@@ -1292,7 +1292,7 @@ const ProgrammeView = () => {
             {t('view:addInvestment')}
           </Button>
         );
-        if ((data.currentStage as any) === ProgrammeStage.Authorised) {
+        if ((data.currentStage as any) === ProgrammeStage.Authorised || (data.currentStage as any) === ProgrammeStage.Approved) {
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
               {t('view:addAction')}
