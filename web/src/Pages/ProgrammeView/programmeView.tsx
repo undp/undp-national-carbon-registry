@@ -21,7 +21,6 @@ import './programmeView.scss';
 import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
-import { InfoView } from '@undp/carbon-library';
 import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,
@@ -85,7 +84,7 @@ import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import Loading from '../../Components/Loading/Loading';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { ProgrammeStageMRV, ProgrammeTransfer } from '@undp/carbon-library';
+import { InfoView, ProgrammeTransfer } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
