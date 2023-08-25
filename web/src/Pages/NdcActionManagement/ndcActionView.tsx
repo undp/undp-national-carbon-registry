@@ -1,10 +1,10 @@
-import { NdcActionViewComponent } from '@undp/carbon-library';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
+import { NdcActionViewComponent } from '../../Components/NdcView/ndcActionViewComponent';
 
 const NdcActionView = () => {
   const navigate = useNavigate();
