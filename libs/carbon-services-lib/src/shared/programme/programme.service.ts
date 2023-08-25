@@ -2982,9 +2982,9 @@ export class ProgrammeService {
         issueAmount: req.issueAmount,
       },
     };
-    await this.asyncOperationsInterface.AddAction(
-      issueCReq
-    );
+    // await this.asyncOperationsInterface.AddAction(
+    //   issueCReq
+    // );
 
     const hostAddress = this.configService.get("host");
     updated.companyId.forEach(async (companyId) => {
