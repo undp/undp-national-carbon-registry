@@ -30,7 +30,7 @@ import {
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import LegendItem from '../../../Components/LegendItem/legendItem';
+import { LegendItem, MapComponent } from '@undp/carbon-library';
 import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
@@ -43,7 +43,6 @@ import { ProgrammeStage, ProgrammeStageLegend } from '../../../Casl/enums/progra
 import { CompanyRole } from '../../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
-import MapComponent from '../../../Components/Maps/MapComponent';
 import {
   MapSourceData,
   MapTypes,
@@ -184,6 +183,9 @@ const RegistryDashboard = () => {
   const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
 
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
+  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : '';
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -2049,6 +2051,7 @@ ${total}
                         height={360}
                         style="mapbox://styles/mapbox/light-v11"
                         onRender={programmeLocationsMapOnRender}
+                        accessToken={accessToken}
                       ></MapComponent>
                     </div>
                     <div className="stage-legends">
@@ -2115,6 +2118,7 @@ ${total}
                         layer={transferLocationsMapLayer}
                         height={360}
                         style="mapbox://styles/mapbox/streets-v11"
+                        accessToken={accessToken}
                       ></MapComponent>
                     </div>
                     <div className="updated-on margin-top-2">
