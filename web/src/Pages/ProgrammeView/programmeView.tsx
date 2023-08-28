@@ -83,7 +83,13 @@ import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
 import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
 import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { InfoView, ProgrammeTransfer, MapComponent, Loading } from '@undp/carbon-library';
+import {
+  InfoView,
+  ProgrammeTransfer,
+  MapComponent,
+  Loading,
+  InvestmentBody,
+} from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
@@ -91,7 +97,6 @@ import ProgrammeDocuments from '../../Components/Programme/programmeDocuments';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { DocType } from '../../Casl/enums/document.type';
 import NdcActionBody from '../../Components/NdcActionBody/ndcActionBody';
-import InvestmentBody from '../../Components/InvestmentBody/investmentBody';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -103,7 +108,7 @@ const ProgrammeView = () => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { i18n, t } = useTranslation(['view']);
+  const { t, i18n } = useTranslation(['view']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
@@ -257,7 +262,7 @@ const ProgrammeView = () => {
           status: 'process',
           title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
           subTitle: '',
-          description: <InvestmentBody data={investmentData} />,
+          description: <InvestmentBody data={investmentData} translator={i18n} />,
           icon: (
             <span className="step-icon freeze-step">
               <Icon.Circle />
