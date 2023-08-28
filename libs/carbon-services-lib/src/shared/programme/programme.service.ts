@@ -2975,13 +2975,13 @@ export class ProgrammeService {
       );
     }
 
-    const issueCReq: AsyncAction = {
-      actionType: AsyncActionType.IssueCredit,
-      actionProps: {
-        externalId: program.externalId,
-        issueAmount: req.issueAmount,
-      },
-    };
+    // const issueCReq: AsyncAction = {
+    //   actionType: AsyncActionType.IssueCredit,
+    //   actionProps: {
+    //     externalId: program.externalId,
+    //     issueAmount: req.issueAmount,
+    //   },
+    // };
     // await this.asyncOperationsInterface.AddAction(
     //   issueCReq
     // );
@@ -3091,17 +3091,17 @@ export class ProgrammeService {
       );
     }
 
-    const authRe: AsyncAction = {
-      actionType: AsyncActionType.AuthProgramme,
-      actionProps: {
-        externalId: program.externalId,
-        issueAmount: req.issueAmount,
-        serialNo: updated.serialNo
-      },
-    };
-    await this.asyncOperationsInterface.AddAction(
-      authRe
-    );
+    // const authRe: AsyncAction = {
+    //   actionType: AsyncActionType.AuthProgramme,
+    //   actionProps: {
+    //     externalId: program.externalId,
+    //     issueAmount: req.issueAmount,
+    //     serialNo: updated.serialNo
+    //   },
+    // };
+    // await this.asyncOperationsInterface.AddAction(
+    //   authRe
+    // );
 
     updated.company = await this.companyRepo.find({
       where: { companyId: In(updated.companyId) },
@@ -3167,16 +3167,16 @@ export class ProgrammeService {
       );
     }
 
-    const authRe: AsyncAction = {
-      actionType: AsyncActionType.RejectProgramme,
-      actionProps: {
-        externalId: programme.externalId,
-        comment: req.comment
-      },
-    };
-    await this.asyncOperationsInterface.AddAction(
-      authRe
-    );
+    // const authRe: AsyncAction = {
+    //   actionType: AsyncActionType.RejectProgramme,
+    //   actionProps: {
+    //     externalId: programme.externalId,
+    //     comment: req.comment
+    //   },
+    // };
+    // await this.asyncOperationsInterface.AddAction(
+    //   authRe
+    // );
 
     await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
       req.programmeId,

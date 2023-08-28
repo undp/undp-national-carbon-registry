@@ -606,15 +606,15 @@ export class UserService {
 
     u.createdTime = new Date().getTime();
 
-    if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
-      const registryCompanyCreateAction: AsyncAction = {
-        actionType: AsyncActionType.RegistryCompanyCreate,
-        actionProps: createdUserDto,
-      };
-      await this.asyncOperationsInterface.AddAction(
-        registryCompanyCreateAction
-      );
-    }
+    // if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
+    //   const registryCompanyCreateAction: AsyncAction = {
+    //     actionType: AsyncActionType.RegistryCompanyCreate,
+    //     actionProps: createdUserDto,
+    //   };
+    //   await this.asyncOperationsInterface.AddAction(
+    //     registryCompanyCreateAction
+    //   );
+    // }
 
     const usr = await this.entityManger
       .transaction(async (em) => {
