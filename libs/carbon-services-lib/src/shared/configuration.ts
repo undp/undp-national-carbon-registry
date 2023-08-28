@@ -60,6 +60,9 @@ export default () => ({
     email: process.env.ITMO_EMAIL,
     password: process.env.ITMO_PASSWORD,
   },
+  CERTIFIER:{
+    image:process.env.CERTIFIER_IMAGE
+  },
   registry: {
     syncEnable: process.env.REGISTRY_SYNC_ENABLE || false,
     endpoint: process.env.MRV_ENDPOINT || 'https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev',
