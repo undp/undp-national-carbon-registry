@@ -8,6 +8,7 @@ import { CompanyModule } from '../shared/company/company.module';
 import { UserModule } from '../shared/user/user.module';
 import { ProgrammeModule } from '../shared/programme/programme.module';
 import { TypeOrmConfigService } from '../shared/typeorm.config.service';
+import { Company } from '../shared/entities/company.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { TypeOrmConfigService } from '../shared/typeorm.config.service';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
-    TypeOrmModule.forFeature([Programme]),
+    TypeOrmModule.forFeature([Programme,Company]),
     ProgrammeModule,
     CompanyModule,
     UserModule
