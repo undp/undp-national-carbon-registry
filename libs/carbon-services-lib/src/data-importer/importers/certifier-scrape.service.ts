@@ -155,10 +155,10 @@ export class CertifierScrapeService implements ImporterInterface {
             const emailcheck = 'nce.digital+'+intial+'@undp.org'
             const qry0 = 'SELECT "email" FROM "company" WHERE "email" LIKE '+"'%"+emailcheck+"%'"+''
             const u = await this.companyRepo.query(qry0)
-            if (u){
+            if (u.length>0){
               const qry= 'SELECT "email" FROM "company" WHERE "email" LIKE '+"'%"+intial+"%'"+' ORDER BY "email" DESC LIMIT 1'
               const existemails = await this.companyRepo.query(qry)
-              if (existemails){
+              if (existemails.length>0){
                   const existinitial = existemails[0].email.match(/\+(.*)@/)
                   const existsuf = String((existinitial[1].split("_").pop()))
                   if(existsuf.trim()!=intial.trim() && existsuf.trim()!=null){
