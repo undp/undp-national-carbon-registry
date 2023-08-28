@@ -152,15 +152,22 @@ export class CertifierScrapeService implements ImporterInterface {
           //       user.phoneNo = certifier.number;
           //   }}
           if (!c) {
+            console.log("Yes1......................................................")
             const emailcheck = 'nce.digital+'+intial+'@undp.org'
             const qry0 = 'SELECT "email" FROM "company" WHERE "email" LIKE '+"'%"+emailcheck+"%'"+''
+            console.log(qry0,".....................................")
             const u = await this.companyRepo.query(qry0)
+            console.log(u)
             if (u){
+              console.log("Yes2......................................................")
               const qry= 'SELECT "email" FROM "company" WHERE "email" LIKE '+"'%"+intial+"%'"+' ORDER BY "email" DESC LIMIT 1'
+              console.log(qry,"....................................")
               const existemails = await this.companyRepo.query(qry)
+              console.log(existemails)
               if (existemails){
                   const existinitial = existemails[0].email.match(/\+(.*)@/)
                   const existsuf = String((existinitial[1].split("_").pop()))
+                  console.log(existsuf)
                   if(existsuf.trim()!=intial.trim() && existsuf.trim()!=null){
                     intial = intial+"_"+(Number(existsuf)+1)
                   }
