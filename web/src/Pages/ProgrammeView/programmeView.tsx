@@ -18,7 +18,6 @@ import {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './programmeView.scss';
-import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
 import * as Icon from 'react-bootstrap-icons';
@@ -40,7 +39,6 @@ import {
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
-import RoleIcon from '../../Components/RoleIcon/role.icon';
 import {
   CertBGColor,
   CertColor,
@@ -85,16 +83,19 @@ import {
   Loading,
   InvestmentBody,
   ProgrammeU,
+  NdcActionBody,
+  OrganisationStatus,
+  isBase64,
+  ProgrammeDocuments,
+  RoleIcon,
 } from '@undp/carbon-library';
-import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import ProgrammeDocuments from '../../Components/Programme/programmeDocuments';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { DocType } from '../../Casl/enums/document.type';
-import NdcActionBody from '../../Components/NdcActionBody/ndcActionBody';
+import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -107,6 +108,7 @@ const ProgrammeView = () => {
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
   const { t, i18n } = useTranslation(['view']);
+  const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
@@ -1196,6 +1198,11 @@ const ProgrammeView = () => {
             programmeOwnerId={programmeOwnerId}
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+            useConnection={useConnection}
+            translator={programmeViewTranslator}
+            useUserContext={useUserContext}
+            linkDocVisible={linkDocVisible}
+            uploadDocUserPermission={uploadDocUserPermission}
           />
         ),
         icon: (
@@ -1267,7 +1274,10 @@ const ProgrammeView = () => {
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
           </div>
-          <OrganisationStatus organisationStatus={parseInt(ele.company.state)}></OrganisationStatus>
+          <OrganisationStatus
+            organisationStatus={parseInt(ele.company.state)}
+            t={t}
+          ></OrganisationStatus>
         </div>
       </div>
     );
@@ -1921,6 +1931,11 @@ const ProgrammeView = () => {
                   getProgrammeById={() => {
                     getProgrammeById(data?.programmeId);
                   }}
+                  linkDocVisible={linkDocVisible}
+                  uploadDocUserPermission={uploadDocUserPermission}
+                  useConnection={useConnection}
+                  useUserContext={useUserContext}
+                  translator={i18n}
                 />
               </div>
             </Card>
