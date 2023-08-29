@@ -90,6 +90,7 @@ import {
   RoleIcon,
 } from '@undp/carbon-library';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
+import { InfoView, ProgrammeTransfer, addCommSepRound } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
@@ -131,6 +132,8 @@ const ProgrammeView = () => {
   const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
   const [ndcActionHistoryDataGrouped, setNdcActionHistoryDataGrouped] = useState<any>();
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
+  const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
+  const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -814,6 +817,25 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+        } else if (activity.data.txType === TxType.OWNERSHIP_UPDATE) {
+          el = {
+            status: 'process',
+            title: t('view:tlOwnership'),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            description: (
+              <TimelineBody
+                text={formatString('view:tlOwnershipDesc', [
+                  getTxRefValues(activity.data.txRef, 1),
+                  getTxRefValues(activity.data.txRef, 4) + '%',
+                ])}
+              />
+            ),
+            icon: (
+              <span className="step-icon issue-step">
+                <Icon.PersonAdd />
+              </span>
+            ),
+          };
         }
         if (el) {
           const toDelete = [];
@@ -1130,6 +1152,33 @@ const ProgrammeView = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      getInvestmentHistory(data?.programmeId);
+      getDocuments(data?.programmeId);
+      setEmissionsReductionExpected(
+        data?.emissionReductionExpected !== null || data?.emissionReductionExpected !== undefined
+          ? Number(data?.emissionReductionExpected)
+          : 0
+      );
+      setEmissionsReductionAchieved(
+        data?.emissionReductionAchieved !== null || data?.emissionReductionAchieved !== undefined
+          ? Number(data?.emissionReductionAchieved)
+          : 0
+      );
+      drawMap();
+      for (const company of data.company) {
+        if (
+          parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
+          company.companyId !== userInfoState?.companyId
+        ) {
+          setIsAllOwnersDeactivated(false);
+          break;
+        }
+      }
+    }
+  }, [data]);
 
   useEffect(() => {
     if (data) {
@@ -1879,6 +1928,102 @@ const ProgrammeView = () => {
               </Card>
             ) : (
               <div></div>
+            )}
+            {(emissionsReductionExpected !== 0 || emissionsReductionAchieved !== 0) && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<BlockOutlined />}</span>
+                    <span className="title-text">
+                      {formatString('view:emissionsReductions', [])}
+                    </span>
+                  </div>
+                  <div className="map-content">
+                    <Chart
+                      id={'creditChart'}
+                      options={{
+                        labels: ['Achieved', 'Pending'],
+                        legend: {
+                          position: 'bottom',
+                        },
+                        colors: ['#b3b3ff', '#e0e0eb'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                          enabled: true,
+                          y: {
+                            formatter: function (value: any) {
+                              return addCommSepRound(value);
+                            },
+                          },
+                        },
+                        states: {
+                          normal: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          hover: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          active: {
+                            allowMultipleDataPointsSelection: true,
+                            filter: {
+                              type: 'darken',
+                              value: 0.7,
+                            },
+                          },
+                        },
+                        stroke: {
+                          colors: ['#00'],
+                        },
+                        plotOptions: {
+                          pie: {
+                            expandOnClick: false,
+                            donut: {
+                              labels: {
+                                show: true,
+                                total: {
+                                  showAlways: true,
+                                  show: true,
+                                  label: 'Expected',
+                                  formatter: () => '' + addCommSep(data?.emissionReductionExpected),
+                                },
+                              },
+                            },
+                          },
+                        },
+                        dataLabels: {
+                          enabled: false,
+                        },
+                        responsive: [
+                          {
+                            breakpoint: 480,
+                            options: {
+                              chart: {
+                                width: '15vw',
+                              },
+                              legend: {
+                                position: 'bottom',
+                              },
+                            },
+                          },
+                        ],
+                      }}
+                      series={[
+                        emissionsReductionAchieved,
+                        emissionsReductionExpected - emissionsReductionAchieved,
+                      ]}
+                      type="donut"
+                      width="100%"
+                      fontFamily="inter"
+                    />
+                  </div>
+                </div>
+              </Card>
             )}
             {data.programmeProperties.programmeMaterials &&
               data.programmeProperties.programmeMaterials.length > 0 && (
