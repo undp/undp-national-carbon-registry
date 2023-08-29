@@ -88,9 +88,9 @@ import {
   isBase64,
   ProgrammeDocuments,
   RoleIcon,
+  addCommSepRound,
 } from '@undp/carbon-library';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { InfoView, ProgrammeTransfer, addCommSepRound } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
