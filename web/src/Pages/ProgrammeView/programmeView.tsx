@@ -18,7 +18,6 @@ import {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './programmeView.scss';
-import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
 import * as Icon from 'react-bootstrap-icons';
@@ -41,25 +40,6 @@ import {
   TransactionOutlined,
 } from '@ant-design/icons';
 import {
-  addCommSep,
-  addSpaces,
-  CompanyRole,
-  CreditTransferStage,
-  getFinancialFields,
-  getGeneralFields,
-  getRetirementTypeString,
-  getStageEnumVal,
-  getStageTagType,
-  Programme,
-  ProgrammeStage,
-  RetireType,
-  sumArray,
-  TxType,
-  TypeOfMitigation,
-  UnitField,
-} from '../../Definitions/InterfacesAndType/programme.definitions';
-import RoleIcon from '../../Components/RoleIcon/role.icon';
-import {
   CertBGColor,
   CertColor,
   DevBGColor,
@@ -77,23 +57,46 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
 import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
-import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
-import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
-import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
-import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
-import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
-import Loading from '../../Components/Loading/Loading';
+import {
+  ProgrammeIssueForm,
+  ProgrammeRetireForm,
+  ProgrammeRevokeForm,
+  ProgrammeStageUnified,
+  ProgrammeTransferForm,
+  addCommSep,
+  addSpaces,
+  CompanyRole,
+  CreditTransferStage,
+  getFinancialFields,
+  getGeneralFields,
+  getRetirementTypeString,
+  getStageEnumVal,
+  getStageTagType,
+  RetireType,
+  sumArray,
+  TxType,
+  TypeOfMitigation,
+  UnitField,
+  InfoView,
+  ProgrammeTransfer,
+  MapComponent,
+  Loading,
+  InvestmentBody,
+  ProgrammeU,
+  NdcActionBody,
+  OrganisationStatus,
+  isBase64,
+  ProgrammeDocuments,
+  RoleIcon,
+  addCommSepRound,
+} from '@undp/carbon-library';
 import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { InfoView, ProgrammeTransfer, addCommSepRound } from '@undp/carbon-library';
 import TimelineBody from '../../Components/TimelineBody/TimelineBody';
-import MapComponent from '../../Components/Maps/MapComponent';
 import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import ProgrammeDocuments from '../../Components/Programme/programmeDocuments';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { DocType } from '../../Casl/enums/document.type';
-import NdcActionBody from '../../Components/NdcActionBody/ndcActionBody';
-import InvestmentBody from '../../Components/InvestmentBody/investmentBody';
+import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -101,11 +104,12 @@ const ProgrammeView = () => {
   const { userInfoState } = useUserContext();
   const { state } = useLocation();
   const navigate = useNavigate();
-  const [data, setData] = useState<Programme>();
+  const [data, setData] = useState<ProgrammeU>();
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { i18n, t } = useTranslation(['view']);
+  const { t, i18n } = useTranslation(['view']);
+  const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
@@ -130,6 +134,10 @@ const ProgrammeView = () => {
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+
+  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : '';
 
   const showModal = () => {
     setOpenModal(true);
@@ -191,7 +199,7 @@ const ProgrammeView = () => {
     return n ? Number(n) : 0;
   };
 
-  const getPieChartData = (d: Programme) => {
+  const getPieChartData = (d: ProgrammeU) => {
     const frozen = d.creditFrozen
       ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
       : 0;
@@ -257,7 +265,7 @@ const ProgrammeView = () => {
           status: 'process',
           title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
           subTitle: '',
-          description: <InvestmentBody data={investmentData} />,
+          description: <InvestmentBody data={investmentData} translator={i18n} />,
           icon: (
             <span className="step-icon freeze-step">
               <Icon.Circle />
@@ -299,11 +307,6 @@ const ProgrammeView = () => {
 
         setMarkers(markerList);
       } else {
-        let accessToken;
-        if (mapType === MapTypes.Mapbox && process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN) {
-          accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
-        }
-
         if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
 
         for (const address of data!.programmeProperties.geographicalLocation) {
@@ -338,7 +341,7 @@ const ProgrammeView = () => {
     }, 1000);
   };
 
-  const genPieData = (d: Programme) => {
+  const genPieData = (d: ProgrammeU) => {
     // ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen']
 
     const dt = getPieChartData(d);
@@ -903,7 +906,7 @@ const ProgrammeView = () => {
           (item: any) =>
             item?.type === DocType.METHODOLOGY_DOCUMENT && item?.status === DocumentStatus.ACCEPTED
         );
-        if (hasAcceptedMethReport && data?.currentStage === ProgrammeStage.Authorised) {
+        if (hasAcceptedMethReport && data?.currentStage === ProgrammeStageUnified.Authorised) {
           setUploadMonitoringReport(true);
         }
         setNdcActionData(objectsWithoutNullActionId);
@@ -1062,7 +1065,7 @@ const ProgrammeView = () => {
             genCerts(response.data, certTimes);
             genPieData(response.data);
           } else if (action === 'Reject') {
-            data!.currentStage = ProgrammeStage.Rejected;
+            data!.currentStage = ProgrammeStageUnified.Rejected;
             setData(data);
           }
 
@@ -1244,6 +1247,11 @@ const ProgrammeView = () => {
             programmeOwnerId={programmeOwnerId}
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+            useConnection={useConnection}
+            translator={programmeViewTranslator}
+            useUserContext={useUserContext}
+            linkDocVisible={linkDocVisible}
+            uploadDocUserPermission={uploadDocUserPermission}
           />
         ),
         icon: (
@@ -1315,7 +1323,10 @@ const ProgrammeView = () => {
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
           </div>
-          <OrganisationStatus organisationStatus={parseInt(ele.company.state)}></OrganisationStatus>
+          <OrganisationStatus
+            organisationStatus={parseInt(ele.company.state)}
+            t={t}
+          ></OrganisationStatus>
         </div>
       </div>
     );
@@ -1324,7 +1335,7 @@ const ProgrammeView = () => {
   const actionBtns = [];
 
   if (userInfoState?.userRole !== 'ViewOnly') {
-    if (userInfoState && data.currentStage !== ProgrammeStage.Rejected) {
+    if (userInfoState && data.currentStage !== ProgrammeStageUnified.Rejected) {
       if (
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
@@ -1341,8 +1352,8 @@ const ProgrammeView = () => {
           </Button>
         );
         if (
-          (data.currentStage as any) === ProgrammeStage.Authorised ||
-          (data.currentStage as any) === ProgrammeStage.Approved
+          (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
+          (data.currentStage as any) === ProgrammeStageUnified.Approved
         ) {
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
@@ -1403,6 +1414,7 @@ const ProgrammeView = () => {
                         updateProgrammeData
                       )
                     }
+                    translator={i18n}
                   />
                 ),
               });
@@ -1414,7 +1426,7 @@ const ProgrammeView = () => {
         );
       }
     } else if (
-      data.currentStage.toString() === ProgrammeStage.Authorised &&
+      data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -1449,6 +1461,7 @@ const ProgrammeView = () => {
                           updateProgrammeData
                         )
                       }
+                      translator={i18n}
                     />
                   ),
                 });
@@ -1562,6 +1575,7 @@ const ProgrammeView = () => {
                     )
                   }
                   showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                  translator={i18n}
                 />
               ),
             });
@@ -1580,7 +1594,9 @@ const ProgrammeView = () => {
     const text = t('view:' + k);
     if (k === 'currentStatus') {
       generalInfo[text] = (
-        <Tag color={getStageTagType(v as ProgrammeStage)}>{getStageEnumVal(v as string)}</Tag>
+        <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
+          {getStageEnumVal(v as string)}
+        </Tag>
       );
     } else if (k === 'sector') {
       generalInfo[text] = (
@@ -1654,7 +1670,7 @@ const ProgrammeView = () => {
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
-            {getStageEnumVal(data.currentStage) === ProgrammeStage.Authorised ? (
+            {getStageEnumVal(data.currentStage) === ProgrammeStageUnified.Authorised ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
@@ -1738,7 +1754,7 @@ const ProgrammeView = () => {
                     {userInfoState?.userRole !== 'ViewOnly' &&
                       userInfoState?.companyRole !== 'Certifier' && (
                         <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStage.Authorised &&
+                          {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
                             data.creditBalance -
                               (data.creditFrozen
                                 ? data.creditFrozen.reduce(
@@ -1794,6 +1810,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -1838,6 +1856,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -1888,6 +1908,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -2054,6 +2076,11 @@ const ProgrammeView = () => {
                   getProgrammeById={() => {
                     getProgrammeById(data?.programmeId);
                   }}
+                  linkDocVisible={linkDocVisible}
+                  uploadDocUserPermission={uploadDocUserPermission}
+                  useConnection={useConnection}
+                  useUserContext={useUserContext}
+                  translator={i18n}
                 />
               </div>
             </Card>
@@ -2079,6 +2106,7 @@ const ProgrammeView = () => {
                       markers={markers}
                       height={250}
                       style="mapbox://styles/mapbox/streets-v11"
+                      accessToken={accessToken}
                     ></MapComponent>
                     <Row className="region-list">
                       {data.programmeProperties.geographicalLocation &&

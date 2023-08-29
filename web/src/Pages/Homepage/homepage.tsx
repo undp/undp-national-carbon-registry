@@ -11,7 +11,7 @@ import forestfall from '../../Assets/Images/forest.png';
 import resources from '../../Assets/Images/resources.webp';
 import resourcesfall from '../../Assets/Images/resources.png';
 import LayoutFooter from '../../Components/Footer/layout.footer';
-import ImgWithFallback from '../../Components/ImgwithFallback/ImgWithFallback';
+import { ImgWithFallback } from '@undp/carbon-library';
 import './homepage.scss';
 import { BarChart, Gem, Calculator } from 'react-bootstrap-icons';
 const Homepage = () => {
