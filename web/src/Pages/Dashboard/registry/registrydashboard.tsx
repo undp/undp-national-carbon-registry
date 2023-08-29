@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
-import StasticCard from '../../../Components/StasticCard/StasticCard';
 import { SystemNames } from '../../../Casl/enums/statsCards.type.enum';
 import './dashboard.scss';
 import {
@@ -30,7 +29,7 @@ import {
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import { LegendItem, MapComponent } from '@undp/carbon-library';
+import { LegendItem, MapComponent, StasticCard } from '@undp/carbon-library';
 import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
