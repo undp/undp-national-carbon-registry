@@ -15,8 +15,7 @@ import { Skeleton, Tooltip, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole, Role } from '@undp/carbon-library';
-import RejectDocumentationConfirmationModel from '../Models/rejectDocumentForm';
+import { CompanyRole, Role, RejectDocumentationConfirmationModel } from '@undp/carbon-library';
 import moment from 'moment';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
@@ -39,7 +38,7 @@ const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps) => {
     getProgrammeDocs,
     ministryLevelPermission,
   } = props;
-  const { t } = useTranslation(['programme']);
+  const { i18n, t } = useTranslation(['programme', 'common']);
   const { userInfoState } = useUserContext();
   const fileInputMonitoringRef: any = useRef(null);
   const fileInputVerificationRef: any = useRef(null);
@@ -654,6 +653,7 @@ const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps) => {
         openModal={openRejectDocConfirmationModal}
         errorMsg={''}
         loading={loading}
+        translator={i18n}
       />
     </>
   );

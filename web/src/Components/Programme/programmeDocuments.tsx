@@ -17,8 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../Casl/enums/company.role.enum';
-import RejectDocumentationConfirmationModel from '../Models/rejectDocumentForm';
-import { Role } from '@undp/carbon-library';
+import { Role, RejectDocumentationConfirmationModel } from '@undp/carbon-library';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 export interface ProgrammeDocumentsProps {
@@ -43,7 +42,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
     getProgrammeById,
     ministryLevelPermission,
   } = props;
-  const { t } = useTranslation(['programme']);
+  const { t, i18n } = useTranslation(['programme', 'common']);
   const { userInfoState } = useUserContext();
   const { delete: del, post } = useConnection();
   const fileInputRef: any = useRef(null);
@@ -647,6 +646,7 @@ const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: ProgrammeDocumen
         openModal={openRejectDocConfirmationModal}
         errorMsg={''}
         loading={loading}
+        translator={i18n}
       />
     </>
   );

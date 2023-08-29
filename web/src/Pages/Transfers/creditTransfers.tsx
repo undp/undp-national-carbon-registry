@@ -41,8 +41,7 @@ import './programmeTransferManagement.scss';
 import './creditTransfer.scss';
 import '../Common/common.table.scss';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import TransferActionModel from '../../Components/Models/TransferActionModel';
-import { ProgrammeTransfer } from '@undp/carbon-library';
+import { ProgrammeTransfer, TransferActionModel } from '@undp/carbon-library';
 import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../Common/role.color.constants';
 import { creditUnit } from '../Common/configs';
@@ -69,7 +68,7 @@ type PopupInfo = {
 const CreditTransfer = () => {
   const navigate = useNavigate();
   const { userInfoState } = useUserContext();
-  const { i18n, t } = useTranslation(['common', 'creditTransfer', 'programme']);
+  const { i18n, t } = useTranslation(['common', 'creditTransfer', 'programme', 'view']);
 
   const statusOptions = Object.keys(CreditTransferStage).map((k, index) => ({
     label: addSpaces(Object.values(CreditTransferStage)[index]),
@@ -825,6 +824,7 @@ const CreditTransfer = () => {
           title={popupInfo!.title}
           type={popupInfo!.type}
           remarkRequired={popupInfo.remarkRequired}
+          translator={i18n}
         />
       )}
       {/* <Modal
