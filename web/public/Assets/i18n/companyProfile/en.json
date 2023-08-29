@@ -21,5 +21,6 @@
     "deauthorisationSuccess": "Company deactivated successfully!",
     "reActivateConfirmHeaderText": "Are you sure you want to reactivate this organisation?",
     "reActivateConfirmText": "Note: all users associated with the organisation will also be reactivated.",
-    "reactivationSuccess": "Company reactivated successfully!"
+    "reactivationSuccess": "Company reactivated successfully!",
+    "region": "Region"
 }
