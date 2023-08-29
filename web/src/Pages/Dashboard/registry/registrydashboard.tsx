@@ -29,7 +29,14 @@ import {
 } from 'react-bootstrap-icons';
 import PieChartsStat from './pieChartStat';
 import BarChartsStat from './barChartStats';
-import { LegendItem, MapComponent, StasticCard } from '@undp/carbon-library';
+import {
+  LegendItem,
+  MapComponent,
+  StasticCard,
+  MapTypes,
+  MapSourceData,
+  MarkerData,
+} from '@undp/carbon-library';
 import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
@@ -42,11 +49,6 @@ import { ProgrammeStage, ProgrammeStageLegend } from '../../../Casl/enums/progra
 import { CompanyRole } from '../../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
-import {
-  MapSourceData,
-  MapTypes,
-  MarkerData,
-} from '../../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { Link } from 'react-router-dom';
 import ButtonGroup from 'antd/lib/button/button-group';
 import Button from 'antd/lib/button/button';

@@ -90,9 +90,10 @@ import {
   RoleIcon,
   addCommSepRound,
   TimelineBody,
+  MapTypes,
+  MarkerData,
+  CompanyState,
 } from '@undp/carbon-library';
-import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { DocType } from '../../Casl/enums/document.type';
