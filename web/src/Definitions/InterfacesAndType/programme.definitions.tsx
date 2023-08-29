@@ -205,6 +205,8 @@ export interface Programme {
   txRef: string;
   typeOfMitigation: TypeOfMitigation;
   geographicalLocationCordintes: any;
+  emissionReductionExpected: number;
+  emissionReductionAchieved: number;
 }
 
 export const getGeneralFields = (programme: Programme) => {
@@ -221,6 +223,8 @@ export const getGeneralFields = (programme: Programme) => {
     startDate: DateTime.fromSeconds(Number(programme.startTime)),
     endDate: DateTime.fromSeconds(Number(programme.endTime)),
     buyerCountry: programme.programmeProperties.buyerCountryEligibility,
+    emissionsReductionExpected: programme.emissionReductionExpected,
+    emissionsReductionAchieved: programme.emissionReductionAchieved,
   };
 };
 
@@ -255,12 +259,13 @@ export const addSpaces = (text: string) => {
 export const getFinancialFields = (programme: Programme) => {
   return {
     estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
+    creditEst: addCommSep(programme.creditEst),
     financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: new UnitField(
       'USD',
       addCommSep(programme.programmeProperties.grantEquivalentAmount)
     ),
-    carbonPrice: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+    carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
   };
 };
 
