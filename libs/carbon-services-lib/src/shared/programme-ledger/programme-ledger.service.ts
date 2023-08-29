@@ -417,7 +417,7 @@ export class ProgrammeLedgerService {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
       programmeId: programmeId,
-    };
+    }; 
 
     let updatedProgramme;
     const resp = await this.ledger.getAndUpdateTx(
@@ -456,7 +456,7 @@ export class ProgrammeLedgerService {
             );
           }
 
-          if (programme.currentStage != ProgrammeStage.AUTHORISED) {
+          if (!(programme.currentStage == ProgrammeStage.AUTHORISED || programme.currentStage == ProgrammeStage.APPROVED || programme.currentStage == ProgrammeStage.AWAITING_AUTHORIZATION) ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "programme.unAuth",
