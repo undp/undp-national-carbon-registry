@@ -89,10 +89,11 @@ import {
   ProgrammeDocuments,
   RoleIcon,
   addCommSepRound,
+  TimelineBody,
+  MapTypes,
+  MarkerData,
+  CompanyState,
 } from '@undp/carbon-library';
-import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import TimelineBody from '../../Components/TimelineBody/TimelineBody';
-import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { DocumentStatus } from '../../Casl/enums/document.status';
 import { DocType } from '../../Casl/enums/document.type';
@@ -448,6 +449,7 @@ const ProgrammeView = () => {
               ])}
               remark={transfer.comment}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -481,6 +483,7 @@ const ProgrammeView = () => {
               ])}
               remark={transfer.comment}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -517,6 +520,7 @@ const ProgrammeView = () => {
               )}
               remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -562,6 +566,7 @@ const ProgrammeView = () => {
               )}
               remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -600,7 +605,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} />,
+            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} t={t} />,
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -623,6 +628,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -645,6 +651,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -663,6 +670,7 @@ const ProgrammeView = () => {
                 text={formatString('view:tlRejectDesc', [getTxRefValues(activity.data.txRef, 1)])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -687,6 +695,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -713,6 +722,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -731,6 +741,7 @@ const ProgrammeView = () => {
                 text={formatString('view:tlCertifyDesc', [getTxRefValues(activity.data.txRef, 1)])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -763,6 +774,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -786,6 +798,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -809,6 +822,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -828,6 +842,7 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 1),
                   getTxRefValues(activity.data.txRef, 4) + '%',
                 ])}
+                t={t}
               />
             ),
             icon: (
