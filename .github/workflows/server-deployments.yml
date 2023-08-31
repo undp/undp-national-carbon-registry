@@ -2,8 +2,7 @@ name: Deploy Services
 on:
   push:
     branches:
-      - develop
-      - main
+      - mono
     paths:
       - backend/**
       - .github/workflows/server*
@@ -42,23 +41,23 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/mono'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Login to Amazon ECR
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/mono'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push the image to Amazon ECR
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/mono'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-services
-          IMAGE_TAG: namibia
+          IMAGE_TAG: mono
         run: |
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
