@@ -3092,17 +3092,19 @@ export class ProgrammeService {
       );
     }
 
-    // const authRe: AsyncAction = {
-    //   actionType: AsyncActionType.AuthProgramme,
-    //   actionProps: {
-    //     externalId: program.externalId,
-    //     issueAmount: req.issueAmount,
-    //     serialNo: updated.serialNo
-    //   },
-    // };
-    // await this.asyncOperationsInterface.AddAction(
-    //   authRe
-    // );
+    const authRe: AsyncAction = {
+      actionType: AsyncActionType.AuthProgramme,
+      actionProps: {
+        // externalId: program.externalId,
+        // issueAmount: req.issueAmount,
+        // serialNo: updated.serialNo,
+        programmeId: program.programmeId,
+        authOrganisationId: user.companyId
+      },
+    };
+    await this.asyncOperationsInterface.AddAction(
+      authRe
+    );
 
     updated.company = await this.companyRepo.find({
       where: { companyId: In(updated.companyId) },
