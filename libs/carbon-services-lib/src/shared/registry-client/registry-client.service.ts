@@ -124,7 +124,8 @@ export class RegistryClientService {
     this.logger.log(programme.programmeId)
     this.logger.log(programme.title)
     this.logger.log(authOrganisationName)
-    const orgNamesList = orgData.map(e =>e['name'])
+    let orgNamesList=[] 
+    orgData.map(e =>orgNamesList.push(e['name']))
     this.logger.log(orgNamesList)
     this.logger.log(orgData.map(e => {return e['name']}))
     this.logger.log(designDocUrl)
