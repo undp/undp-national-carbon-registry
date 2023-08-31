@@ -115,7 +115,7 @@ export class RegistryClientService {
       }
     }
 
-    const companyIds:FindOrganisationQueryDto={companyIds:[actionProps.authOrganisationId]}
+    const companyIds:FindOrganisationQueryDto={companyIds:[Number(actionProps.authOrganisationId)]}
     const companies = await this.companyService.findByCompanyIds(companyIds)[0]
     this.logger.log("companyIds",companyIds,"companies",companies)
     const authOrganisationName = await this.companyService.findByCompanyIds(companyIds)[0].name
