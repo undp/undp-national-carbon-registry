@@ -117,9 +117,10 @@ export class RegistryClientService {
 
     const companyIds:FindOrganisationQueryDto={companyIds:[Number(actionProps.authOrganisationId)]}
     const companies = await this.companyService.findByCompanyIds(companyIds)[0]
-    this.logger.log("companyIds",companyIds,"companies",companies)
-    const authOrganisationName = await this.companyService.findByCompanyIds(companyIds)[0].name
-
+    this.logger.log("Ids",companyIds)
+    this.logger.log("res",companies)
+    const authOrganisationName = (await this.companyService.findByCompanyIds(companyIds))[0].name
+    this.logger.log("authLetterGen")
     const authLetterUrl = await this.authLetterGen.generateLetter(
       programme.programmeId,
       programme.title,
@@ -128,6 +129,7 @@ export class RegistryClientService {
       designDocUrl,
       methodologyDocUrl
     );
+    this.logger.log("authLetterSave")
     const dr = new ProgrammeDocument();
     dr.programmeId = programme.programmeId;
     dr.externalId = programme.externalId;
