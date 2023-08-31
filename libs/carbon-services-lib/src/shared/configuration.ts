@@ -1,7 +1,7 @@
 export default () => ({
   stage: process.env.STAGE || "local",
-  systemCountry: process.env.systemCountryCode || "NA",
-  systemCountryName: process.env.systemCountryName || "Namibia",
+  systemCountry: process.env.systemCountryCode || "NG",
+  systemCountryName: process.env.systemCountryName || "CountryX",
   defaultCreditUnit: process.env.defaultCreditUnit || "ITMO",
   dateTimeFormat: "DD LLLL yyyy @ HH:mm",
   dateFormat: "DD LLLL yyyy",
@@ -42,7 +42,7 @@ export default () => ({
     name: "carbon-common-" + (process.env.NODE_ENV || "dev"),
   },
   host: process.env.HOST || "https://test.carbreg.org",
-  liveChat: "https://tawk.to/chat/649c605ccc26a871b0253274/1h41dgrg2",
+  liveChat: "https://undp2020cdo.typeform.com/to/emSWOmDo",
   mapbox: {
     key: process.env.MAPBOX_PK,
   },
@@ -59,9 +59,6 @@ export default () => ({
     apiKey: process.env.ITMO_API_KEY,
     email: process.env.ITMO_EMAIL,
     password: process.env.ITMO_PASSWORD,
-  },
-  CERTIFIER:{
-    image:process.env.CERTIFIER_IMAGE
   },
   registry: {
     syncEnable: process.env.REGISTRY_SYNC_ENABLE || false,
