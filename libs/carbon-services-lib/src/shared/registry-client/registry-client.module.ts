@@ -5,6 +5,8 @@ import configuration from '../configuration';
 import { UtilModule } from '../util/util.module';
 import { CompanyModule } from '../company/company.module';
 import { ProgrammeModule } from '../programme/programme.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProgrammeDocument } from '../entities/programme.document';
 
 @Module({
   imports: [
@@ -13,6 +15,9 @@ import { ProgrammeModule } from '../programme/programme.module';
       load: [configuration],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
+    TypeOrmModule.forFeature([
+      ProgrammeDocument
+    ]),
     UtilModule,
     CompanyModule,
     ProgrammeModule
