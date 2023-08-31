@@ -118,9 +118,18 @@ export class RegistryClientService {
     const companyIds:FindOrganisationQueryDto={companyIds:[Number(actionProps.authOrganisationId)]}
     const companies = await this.companyService.findByCompanyIds(companyIds)[0]
     this.logger.log("Ids",companyIds)
+    console.log(companyIds)
     this.logger.log("res",companies)
+    console.log(companies)
     const authOrganisationName = (await this.companyService.findByCompanyIds(companyIds))[0].name
     this.logger.log("authLetterGen")
+    this.logger.log(programme.programmeId)
+    this.logger.log(programme.title)
+    this.logger.log(authOrganisationName)
+    this.logger.log(orgNames.data.map(e => e['name']))
+    this.logger.log(designDocUrl)
+    this.logger.log(methodologyDocUrl)
+
     const authLetterUrl = await this.authLetterGen.generateLetter(
       programme.programmeId,
       programme.title,
