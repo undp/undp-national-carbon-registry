@@ -122,6 +122,8 @@ export class RegistryClientService {
     this.logger.log(programme.programmeId)
     this.logger.log(programme.title)
     this.logger.log(authOrganisationName)
+    const orgNamesList = orgNames.data.map(e =>e['name'])
+    this.logger.log(orgNamesList)
     this.logger.log(orgNames.data.map(e => {return e['name']}))
     this.logger.log(designDocUrl)
     this.logger.log(methodologyDocUrl)
@@ -130,7 +132,7 @@ export class RegistryClientService {
       programme.programmeId,
       programme.title,
       authOrganisationName,
-      orgNames.data.map(e => e['name']),
+      orgNamesList,
       designDocUrl,
       methodologyDocUrl
     );
