@@ -12,6 +12,7 @@ import { Repository } from "typeorm";
 import { DocumentStatus } from "../enum/document.status";
 import { DocType } from "../enum/document.type";
 import { FindOrganisationQueryDto } from "../dto/find.organisation.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
 
 @Injectable()
 export class RegistryClientService {
@@ -85,7 +86,7 @@ export class RegistryClientService {
 
     const programme = await this.programmeService.findById(actionProps.programmeId)
     
-    const orgNames = await this.companyService.queryNames({
+    const orgNames:DataListResponseDto  = await this.companyService.queryNames({
       size: 10,
       page: 1,
       filterAnd: [{
@@ -96,8 +97,9 @@ export class RegistryClientService {
       filterOr: undefined,
       sort: undefined
     }, undefined) ;
-    this.logger.log("orgNames",orgNames)
-    console.log(orgNames)
+    this.logger.log("orgNamesdata",orgNames)
+    let orgData = orgNames.data
+    console.log(orgNames.data)
     const documents = await this.documentRepo.find({
       where: [
         { programmeId: programme.programmeId, status: DocumentStatus.ACCEPTED,type: DocType.DESIGN_DOCUMENT },
@@ -122,9 +124,9 @@ export class RegistryClientService {
     this.logger.log(programme.programmeId)
     this.logger.log(programme.title)
     this.logger.log(authOrganisationName)
-    const orgNamesList = orgNames.data.map(e =>e['name'])
+    const orgNamesList = orgData.map(e =>e['name'])
     this.logger.log(orgNamesList)
-    this.logger.log(orgNames.data.map(e => {return e['name']}))
+    this.logger.log(orgData.map(e => {return e['name']}))
     this.logger.log(designDocUrl)
     this.logger.log(methodologyDocUrl)
 
