@@ -39,7 +39,6 @@ import {
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
-import { DevBGColor, DevColor } from '../Common/role.color.constants';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
@@ -86,6 +85,8 @@ import {
   DocType,
   DocumentStatus,
   dateFormat,
+  DevBGColor,
+  DevColor,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
