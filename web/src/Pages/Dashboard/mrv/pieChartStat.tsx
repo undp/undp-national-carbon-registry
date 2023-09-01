@@ -1,11 +1,7 @@
 import React, { FC } from 'react';
-import { DatePicker, Skeleton, Tooltip } from 'antd';
+import { Skeleton, Tooltip } from 'antd';
 import Chart from 'react-apexcharts';
-import moment from 'moment';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { StatsCardsTypes } from '../../../Casl/enums/statsCards.type.enum';
-
-const { RangePicker } = DatePicker;
 
 export interface PieChartStatsProps {
   id: string;

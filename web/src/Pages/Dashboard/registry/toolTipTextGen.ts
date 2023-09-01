@@ -1,5 +1,4 @@
-import { CompanyRole } from '../../../Casl/enums/company.role.enum';
-import { StatsCardsTypes } from '../../../Casl/enums/statsCards.type.enum';
+import { CompanyRole, StatsCardsTypes } from '@undp/carbon-library';
 
 export const toolTipTextGen = (companyRole: any, cardType: any, mine?: boolean) => {
   let text: any = '';
