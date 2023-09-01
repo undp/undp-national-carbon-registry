@@ -1,4 +1,3 @@
-import './dashboard.scss';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
