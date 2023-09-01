@@ -285,6 +285,8 @@ export class AuthorizationLetterGen {
       content
     );
 
+    console.log('url',url);
+
     return url;
   }
 }
