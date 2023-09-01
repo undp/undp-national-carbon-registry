@@ -132,7 +132,7 @@ export class RegistryClientService {
       programme.programmeId,
       programme.title,
       authOrganisationName,
-      ['orgNameHere'],
+      orgData.map(e => e.name),
       designDocUrl,
       methodologyDocUrl
     );
