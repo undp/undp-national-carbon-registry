@@ -74,7 +74,7 @@ export class CertifierScrapeService implements ImporterInterface {
                 const alternativeAddress = $('table.formTable:nth-child(1) tbody:nth-child(1) tr:nth-child(4)')
                 let address:string
                 addressTable.each( function() {
-                  let addressspan = $(this).find('tbody:nth-child(1)').text().trim();
+                  let addressspan = $(this).find('tbody:nth-child(1)').text().trim().replace(/\n/g, ' ');
                   const addrsreplace = /Address:([\s\S]*?)(?=Postal code:|\n\n|$)/.exec(addressspan)
                   const postcodereplace =/Postal code:([\s\S]*?)(?=City:|\n\n|$)/.exec(addressspan)
                   const cityreplace = /City:([\s\S]*?)(?=Country:|\n\n|$)/.exec(addressspan)
@@ -180,7 +180,7 @@ export class CertifierScrapeService implements ImporterInterface {
               company.logo = this.configService.get("CERTIFIER.image");
               company.email = 'nce.digital+'+intial+'@undp.org' ;
               company.phoneNo = number;
-              company.address = certifier.address;
+              company.address = (certifier.address).trim().replaceAll(',,', ',');
               company.companyRole = CompanyRole.CERTIFIER;
                     
               const user = new UserDto();
