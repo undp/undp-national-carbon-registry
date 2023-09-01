@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Col, DatePicker, Radio, Row, Skeleton, Tooltip, message } from 'antd';
-import { SystemNames } from '../../../Casl/enums/statsCards.type.enum';
 import './dashboard.scss';
 import {
   optionDonutPieA,
@@ -13,10 +12,6 @@ import {
 import ProgrammeRejectAndTransfer from './ProgrammeRejectAndTransfer';
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import {
-  addCommSep,
-  addRoundNumber,
-} from '../../../Definitions/InterfacesAndType/programme.definitions';
 import {
   ClockHistory,
   BoxArrowInRight,
@@ -36,6 +31,13 @@ import {
   MapTypes,
   MapSourceData,
   MarkerData,
+  CompanyRole,
+  addCommSep,
+  addRoundNumber,
+  Sector,
+  ProgrammeStageR,
+  ProgrammeStageLegend,
+  SystemNames,
 } from '@undp/carbon-library';
 import {
   ChartSeriesItem,
@@ -44,9 +46,6 @@ import {
   getTotalProgrammesInitialValues,
   getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
-import { Sector } from '../../../Casl/enums/sector.enum';
-import { ProgrammeStage, ProgrammeStageLegend } from '../../../Casl/enums/programme-status.enum';
-import { CompanyRole } from '../../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -1226,15 +1225,15 @@ const RegistryDashboard = () => {
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
           console.log('mine --> check -- > ', programmeByStatusAggregationResponse);
-          if ([ProgrammeStage.AWAITING_AUTHORIZATION].includes(responseItem?.currentStage)) {
+          if ([ProgrammeStageR.AwaitingAuthorization].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             pendingProgrammesC = parseInt(responseItem?.count);
           }
-          if ([ProgrammeStage.REJECTED].includes(responseItem?.currentStage)) {
+          if ([ProgrammeStageR.Rejected].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             rejectedProgrammesC = parseInt(responseItem?.count);
           }
-          if ([ProgrammeStage.AUTHORISED].includes(responseItem?.currentStage)) {
+          if ([ProgrammeStageR.Authorised].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             authorisedProgrammesC = parseInt(responseItem?.count);
           }

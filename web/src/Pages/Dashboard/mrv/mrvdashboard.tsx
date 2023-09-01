@@ -5,14 +5,19 @@ import { getChartOptions } from './CHART_OPTIONS';
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import PieChartsStat from './pieChartStat';
-import { CompanyRole } from '../../../Casl/enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useTranslation } from 'react-i18next';
-import { WidgetType } from '../../../Casl/enums/widget.type.enum';
-import { MrvStatsCardsTypes, SystemNames } from '../../../Casl/enums/statsCards.type.enum';
 import ListWidget from './listWidget';
 import { Clipboard2Pulse, HandThumbsUp } from 'react-bootstrap-icons';
-import { MapSourceData, MapTypes, MarkerData } from '@undp/carbon-library';
+import {
+  MapSourceData,
+  MapTypes,
+  MarkerData,
+  CompanyRole,
+  MrvStatsCardsTypes,
+  WidgetType,
+  SystemNames,
+} from '@undp/carbon-library';
 import MapStats from './mapStats';
 import { Link } from 'react-router-dom';
 import ButtonGroup from 'antd/lib/button/button-group';

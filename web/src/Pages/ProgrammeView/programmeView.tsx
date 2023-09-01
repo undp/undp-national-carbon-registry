@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Row,
   Col,
@@ -39,24 +39,12 @@ import {
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
-import {
-  CertBGColor,
-  CertColor,
-  DevBGColor,
-  DevColor,
-  GovBGColor,
-  GovColor,
-  RootBGColor,
-  RootColor,
-  ViewBGColor,
-  ViewColor,
-} from '../Common/role.color.constants';
+import { DevBGColor, DevColor } from '../Common/role.color.constants';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
-import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import {
   ProgrammeIssueForm,
   ProgrammeRetireForm,
@@ -93,10 +81,13 @@ import {
   MapTypes,
   MarkerData,
   CompanyState,
+  dateTimeFormat,
+  creditUnit,
+  DocType,
+  DocumentStatus,
+  dateFormat,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { DocumentStatus } from '../../Casl/enums/document.status';
-import { DocType } from '../../Casl/enums/document.type';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
