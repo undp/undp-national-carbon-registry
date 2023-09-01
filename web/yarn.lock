@@ -2733,10 +2733,10 @@
     "@types/node" "^18.11.9"
     convert-units "^2.3.4"
 
-"@undp/carbon-library@^1.0.84":
-  version "1.0.84"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.84.tgz#62e9092c40a3ad1d3a62bb7327fe7d90e24c55c1"
-  integrity sha512-hv6RsjEfAGMdP2fFpFwOm65uAewfIPzic7AUKg/yx0hbHPEU8bo0bV5ka13QwnvL0RksiDshXrAAbcKaj5mQfA==
+"@undp/carbon-library@^1.0.85":
+  version "1.0.85"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.85.tgz#bea87b2827437651fbc76c4f393c36d05d205799"
+  integrity sha512-XGNNxtVWPZBwvPSGHjOQwDc9o+WqXDd4z/2pBqWvq6430Wyq3j0KOurgDIoqrl1dZwmd7tsBUUWLKOo1VzfaHg==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-node-resolve" "^15.0.2"
@@ -2744,6 +2744,7 @@
     "@undp/carbon-credit-calculator" "^1.0.0"
     node-sass "^7.0.3"
     postcss "^8.4.23"
+    react-circle-flags "^0.0.19"
     rollup "^3.22.0"
     rollup-plugin-dts "^5.3.0"
     rollup-plugin-peer-deps-external "^2.2.4"
@@ -10233,6 +10234,11 @@ react-circle-flags@^0.0.18:
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/react-circle-flags/-/react-circle-flags-0.0.18.tgz#ab48b410435dd2bb4419cda6f59b4378019fbbec"
   integrity sha512-3taT04bifZ2oSARDfoO4bMDfdIDfAxW6MeOaJ6fR17OcEn+/dGivE/nrtUYwfGKFp9/Sq92yo4FTT2I+DqAIqA==
+
+react-circle-flags@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/react-circle-flags/-/react-circle-flags-0.0.19.tgz#365451ce666cd9cd85e3055c411b6f1eb91ddb92"
+  integrity sha512-QJ96+CIEpHZ/QmgB7tXaaHFvaCNGS06kJHQJ7q7a60bXjcImQTrPxcO//b/d4hFrVmHeL61viJtUYYHKcLZszQ==
 
 react-dev-utils@^12.0.1:
   version "12.0.1"

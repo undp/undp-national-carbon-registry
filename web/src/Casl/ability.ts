@@ -12,13 +12,12 @@ import {
   ProgrammeTransfer,
   User,
   ProgrammeEntity,
+  CompanyRole,
+  Role,
+  ProgrammeStageUnified,
+  Action,
+  ProgrammeCertify,
 } from '@undp/carbon-library';
-import { Programme } from './entities/Programme';
-import { ProgrammeCertify } from './entities/ProgrammeCertify';
-import { Action } from './enums/action.enum';
-import { CompanyRole } from './enums/company.role.enum';
-import { ProgrammeStage } from './enums/programme-status.enum';
-import { Role } from './enums/role.enum';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 
@@ -89,13 +88,13 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       can(Action.Manage, ProgrammeTransfer);
-      can(Action.Manage, Programme);
+      can(Action.Manage, ProgrammeEntity);
       can(Action.Manage, ProgrammeEntity);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, ProgrammeTransfer);
-      can(Action.Manage, Programme);
+      can(Action.Manage, ProgrammeEntity);
       can(Action.Manage, ProgrammeEntity);
     }
 
@@ -104,13 +103,17 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     }
 
     if (user.role === Role.Admin && user.companyRole === CompanyRole.MRV) {
-      can([Action.Create, Action.Read], Programme);
+      can([Action.Create, Action.Read], ProgrammeEntity);
     } else if (user.companyRole === CompanyRole.CERTIFIER) {
-      can(Action.Read, Programme, { currentStage: { $in: [ProgrammeStage.AUTHORISED] } });
-      can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } } });
+      can(Action.Read, ProgrammeEntity, {
+        currentStage: { $in: [ProgrammeStageUnified.Authorised] },
+      });
+      can(Action.Read, ProgrammeEntity, { certifierId: { $elemMatch: { $eq: user.companyId } } });
     } else if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.AUTHORISED } });
-      can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } } });
+      can(Action.Read, ProgrammeEntity, {
+        currentStage: { $eq: ProgrammeStageUnified.Authorised },
+      });
+      can(Action.Read, ProgrammeEntity, { companyId: { $elemMatch: { $eq: user.companyId } } });
     }
 
     // cannot(Action.Delete, User, { id: { $eq: user.id } })

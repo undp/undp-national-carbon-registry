@@ -1,5 +1,4 @@
-import { ProgrammeStageLegend } from '../../../Casl/enums/programme-status.enum';
-import { Sector } from '../../../Casl/enums/sector.enum';
+import { Sector, ProgrammeStageLegend } from '@undp/carbon-library';
 
 export interface ChartSeriesItem {
   name: string;
