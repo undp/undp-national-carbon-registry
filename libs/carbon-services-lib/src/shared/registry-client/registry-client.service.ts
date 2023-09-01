@@ -83,9 +83,7 @@ export class RegistryClientService {
   }
 
   public async authProgramme(actionProps:any) {
-
     const programme = await this.programmeService.findById(actionProps.programmeId)
-    
     const orgNames:DataListResponseDto  = await this.companyService.queryNames({
       size: 10,
       page: 1,
@@ -98,7 +96,6 @@ export class RegistryClientService {
       sort: undefined
     }, undefined) ;
     let orgData = orgNames.data
-    console.log(orgNames.data)
     
     const documents = await this.documentRepo.find({
       where: [
@@ -120,13 +117,6 @@ export class RegistryClientService {
 
     const companyIds:FindOrganisationQueryDto={companyIds:[Number(actionProps.authOrganisationId)]}
     const authOrganisationName = (await this.companyService.findByCompanyIds(companyIds))[0].name
-    this.logger.log("authLetterGen")
-    this.logger.log(programme.programmeId)
-    this.logger.log(programme.title)
-    this.logger.log(authOrganisationName)
-    this.logger.log(orgData.map(e => e.name))
-    this.logger.log(designDocUrl)
-    this.logger.log(methodologyDocUrl)
 
     const authLetterUrl = await this.authLetterGen.generateLetter(
       programme.programmeId,
@@ -136,7 +126,7 @@ export class RegistryClientService {
       designDocUrl,
       methodologyDocUrl
     );
-    this.logger.log("authLetterSave")
+
     const dr = new ProgrammeDocument();
     dr.programmeId = programme.programmeId;
     dr.externalId = programme.externalId;

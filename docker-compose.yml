@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "123"
+      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
       POSTGRES_USER: root
       PSQL_USERNAME: root
       # POSTGRES_HOST_AUTH_METHOD: trust
@@ -31,9 +31,9 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "123"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
-      rootEmail: lochanaf@xeptagon.com
+      rootEmail: <ROOT EMAIL>
       systemCountryCode: "NA"
       name: "Antactic Region"
       logoBase64: "sss"
@@ -59,7 +59,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "123"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
@@ -73,7 +73,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "123"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: FILE
@@ -87,6 +87,8 @@ services:
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
       REGISTRY_SYNC_ENABLE: true
       MRV_API_TOKEN: ''
+    volumes:
+      - filestore:/app/backend/services/public
   # async-operations-handler:
   #   build:
   #     context: .

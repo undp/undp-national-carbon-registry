@@ -22,12 +22,12 @@ export class AuthorizationLetterGen {
     designDocUrl,
     methodologyDocUrl
   ) {
-    this.logger.log("programmeId",programmeId)
-    this.logger.log("programmeName",programmeName)
-    this.logger.log("authorisedCompanyName",authorisedCompanyName)
-    this.logger.log("orgs",orgs)
-    this.logger.log("designDocUrl",designDocUrl)
-    this.logger.log("methodologyDocUrl",methodologyDocUrl)
+    // this.logger.log("programmeId",programmeId)
+    // this.logger.log("programmeName",programmeName)
+    // this.logger.log("authorisedCompanyName",authorisedCompanyName)
+    // this.logger.log("orgs",orgs)
+    // this.logger.log("designDocUrl",designDocUrl)
+    // this.logger.log("methodologyDocUrl",methodologyDocUrl)
 
     const country = this.configService.get("systemCountryName");
     const minister = this.configService.get("docGenerate.ministerName");
@@ -289,13 +289,10 @@ export class AuthorizationLetterGen {
       });
     });
 
-    this.logger.log("content",content)
     const url = await this.fileHandler.uploadFile(
       "documents/" + filepath,
       content
     );
-
-    console.log('url',url);
 
     return url;
   }
