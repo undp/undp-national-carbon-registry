@@ -42,6 +42,7 @@ export default () => ({
     name: "carbon-common-" + (process.env.NODE_ENV || "dev"),
   },
   host: process.env.HOST || "https://test.carbreg.org",
+  backendHost: process.env.BACKEND_HOST || "http://localhost:3000",
   liveChat: "https://tawk.to/chat/649c605ccc26a871b0253274/1h41dgrg2",
   mapbox: {
     key: process.env.MAPBOX_PK,

@@ -97,9 +97,9 @@ export class RegistryClientService {
       filterOr: undefined,
       sort: undefined
     }, undefined) ;
-    this.logger.log("orgNamesdata",orgNames)
     let orgData = orgNames.data
     console.log(orgNames.data)
+    
     const documents = await this.documentRepo.find({
       where: [
         { programmeId: programme.programmeId, status: DocumentStatus.ACCEPTED,type: DocType.DESIGN_DOCUMENT },
@@ -124,10 +124,7 @@ export class RegistryClientService {
     this.logger.log(programme.programmeId)
     this.logger.log(programme.title)
     this.logger.log(authOrganisationName)
-    let orgNamesList=[] 
-    orgData.map(e =>orgNamesList.push(e.name))
-    this.logger.log(orgNamesList)
-    this.logger.log(orgData.map(e => {return e.name}))
+    this.logger.log(orgData.map(e => e.name))
     this.logger.log(designDocUrl)
     this.logger.log(methodologyDocUrl)
 
@@ -135,7 +132,7 @@ export class RegistryClientService {
       programme.programmeId,
       programme.title,
       authOrganisationName,
-      orgNamesList,
+      orgData.map(e => e.name),
       designDocUrl,
       methodologyDocUrl
     );
