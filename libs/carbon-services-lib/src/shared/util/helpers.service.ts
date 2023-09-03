@@ -444,6 +444,7 @@ export class HelperService {
     return final;
   }
 
+  
   public getEmailTemplateMessage(template: string, data, isSubject: boolean) :string{
     if (template == undefined) {
         return template;
