@@ -31,5 +31,7 @@
     "companyAddedSuccess": "The organisation has been created successfully",
     "companyUpdatedSuccess": "The organisation has been updated successfully ",
     "errorInAddUser": "Error in adding user!",
-    "errorInUpdatingCompany": "Error in updating company!"
+    "errorInUpdatingCompany": "Error in updating company!",
+    "region": "Region",
+    "national": "National"
 }

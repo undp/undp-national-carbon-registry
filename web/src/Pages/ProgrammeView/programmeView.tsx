@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Row,
   Col,
@@ -18,10 +18,8 @@ import {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './programmeView.scss';
-import { isBase64 } from '../../Components/ProfileIcon/profile.icon';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
-import InfoView from '../../Components/InfoView/info.view';
 import * as Icon from 'react-bootstrap-icons';
 import {
   BlockOutlined,
@@ -37,10 +35,21 @@ import {
   PlusOutlined,
   PoweroffOutlined,
   PushpinOutlined,
+  QrcodeOutlined,
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
+import { DateTime } from 'luxon';
+import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
+import TextArea from 'antd/lib/input/TextArea';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { ShieldCheck } from 'react-bootstrap-icons';
 import {
+  ProgrammeIssueForm,
+  ProgrammeRetireForm,
+  ProgrammeRevokeForm,
+  ProgrammeStageUnified,
+  ProgrammeTransferForm,
   addCommSep,
   addSpaces,
   CompanyRole,
@@ -50,45 +59,38 @@ import {
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
-  Programme,
-  ProgrammeStage,
   RetireType,
   sumArray,
   TxType,
   TypeOfMitigation,
   UnitField,
-} from '../../Definitions/InterfacesAndType/programme.definitions';
-import RoleIcon from '../../Components/RoleIcon/role.icon';
-import {
-  CertBGColor,
-  CertColor,
+  InfoView,
+  ProgrammeTransfer,
+  MapComponent,
+  Loading,
+  InvestmentBody,
+  ProgrammeU,
+  NdcActionBody,
+  OrganisationStatus,
+  isBase64,
+  ProgrammeDocuments,
+  RoleIcon,
+  addCommSepRound,
+  TimelineBody,
+  MapTypes,
+  MarkerData,
+  CompanyState,
+  dateTimeFormat,
+  creditUnit,
+  DocType,
+  DocumentStatus,
+  dateFormat,
   DevBGColor,
   DevColor,
-  GovBGColor,
-  GovColor,
-  RootBGColor,
-  RootColor,
-  ViewBGColor,
-  ViewColor,
-} from '../Common/role.color.constants';
-import { DateTime } from 'luxon';
-import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
-import TextArea from 'antd/lib/input/TextArea';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { ShieldCheck } from 'react-bootstrap-icons';
-import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
-import ProgrammeIssueForm from '../../Components/Models/ProgrammeIssueForm';
-import ProgrammeTransferForm from '../../Components/Models/ProgrammeTransferForm';
-import ProgrammeRetireForm from '../../Components/Models/ProgrammeRetireForm';
-import ProgrammeRevokeForm from '../../Components/Models/ProgrammeRevokeForm';
-import OrganisationStatus from '../../Components/Organisation/OrganisationStatus';
-import Loading from '../../Components/Loading/Loading';
-import { CompanyState } from '../../Definitions/InterfacesAndType/companyManagement.definitions';
-import { ProgrammeTransfer } from '@undp/carbon-library';
-import TimelineBody from '../../Components/TimelineBody/TimelineBody';
-import MapComponent from '../../Components/Maps/MapComponent';
-import { MapTypes, MarkerData } from '../../Definitions/InterfacesAndType/mapComponent.definitions';
+  Role,
+} from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -96,9 +98,12 @@ const ProgrammeView = () => {
   const { userInfoState } = useUserContext();
   const { state } = useLocation();
   const navigate = useNavigate();
-  const [data, setData] = useState<Programme>();
+  const [data, setData] = useState<ProgrammeU>();
   const [historyData, setHistoryData] = useState<any>([]);
-  const { i18n, t } = useTranslation(['view']);
+  const [investmentHistory, setInvestmentHistory] = useState<any>([]);
+  const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
+  const { t, i18n } = useTranslation(['view']);
+  const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
@@ -110,9 +115,24 @@ const ProgrammeView = () => {
   const [retireReason, setRetireReason] = useState<any>();
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
+  const [loadingNDC, setLoadingNDC] = useState<boolean>(true);
+  const [ndcActionData, setNdcActionData] = useState<any>([]);
+  const [documentsData, setDocumentsData] = useState<any[]>([]);
+  const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
+  const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
+  const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
+  const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
+  const [ndcActionHistoryDataGrouped, setNdcActionHistoryDataGrouped] = useState<any>();
+  const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
+  const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
+  const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+
+  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : '';
 
   const showModal = () => {
     setOpenModal(true);
@@ -174,7 +194,7 @@ const ProgrammeView = () => {
     return n ? Number(n) : 0;
   };
 
-  const getPieChartData = (d: Programme) => {
+  const getPieChartData = (d: ProgrammeU) => {
     const frozen = d.creditFrozen
       ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
       : 0;
@@ -206,6 +226,64 @@ const ProgrammeView = () => {
     return [lat / count, long / count];
   };
 
+  const getInvestmentHistory = async (programmeId: string) => {
+    setLoadingHistory(true);
+    setLoadingInvestment(true);
+    try {
+      const response: any = await post('national/programme/investmentQuery', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      const investmentHisData = response?.data?.map((item: any) => {
+        const investmentData: any = {
+          invester: item?.receiver[0]?.name,
+          amount: item?.amount,
+          createdAt: item?.createdTime,
+          type: item?.type,
+          level: item?.level,
+          stream: item?.stream,
+          status: item?.status,
+          requestId: item?.requestId,
+          sender: item?.sender,
+        };
+        return investmentData;
+      });
+      const elArr = investmentHisData?.map((investmentData: any, index: any) => {
+        const element = {
+          status: 'process',
+          title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
+          subTitle: '',
+          description: <InvestmentBody data={investmentData} translator={i18n} />,
+          icon: (
+            <span className="step-icon freeze-step">
+              <Icon.Circle />
+            </span>
+          ),
+        };
+        return element;
+      });
+      setInvestmentHistory(elArr);
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingHistory(false);
+      setLoadingInvestment(false);
+    }
+  };
+
   const drawMap = () => {
     setTimeout(async () => {
       if (data?.geographicalLocationCordintes && data?.geographicalLocationCordintes.length > 0) {
@@ -224,11 +302,6 @@ const ProgrammeView = () => {
 
         setMarkers(markerList);
       } else {
-        let accessToken;
-        if (mapType === MapTypes.Mapbox && process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN) {
-          accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN;
-        }
-
         if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
         const locMarkers: MarkerData[] = [];
         for (const address in data!.programmeProperties.geographicalLocation) {
@@ -266,7 +339,7 @@ const ProgrammeView = () => {
     }, 1000);
   };
 
-  const genPieData = (d: Programme) => {
+  const genPieData = (d: ProgrammeU) => {
     // ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen']
 
     const dt = getPieChartData(d);
@@ -373,6 +446,7 @@ const ProgrammeView = () => {
               ])}
               remark={transfer.comment}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -406,6 +480,7 @@ const ProgrammeView = () => {
               ])}
               remark={transfer.comment}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -442,6 +517,7 @@ const ProgrammeView = () => {
               )}
               remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -487,6 +563,7 @@ const ProgrammeView = () => {
               )}
               remark={transfer.txRef?.split('#')[0]}
               via={transfer.userName}
+              t={t}
             />
           ),
           icon: (
@@ -525,7 +602,7 @@ const ProgrammeView = () => {
             status: 'process',
             title: t('view:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} />,
+            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} t={t} />,
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -548,6 +625,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -570,6 +648,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -588,6 +667,7 @@ const ProgrammeView = () => {
                 text={formatString('view:tlRejectDesc', [getTxRefValues(activity.data.txRef, 1)])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -612,6 +692,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -638,6 +719,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -656,6 +738,7 @@ const ProgrammeView = () => {
                 text={formatString('view:tlCertifyDesc', [getTxRefValues(activity.data.txRef, 1)])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -688,6 +771,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -711,6 +795,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -734,6 +819,7 @@ const ProgrammeView = () => {
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
+                t={t}
               />
             ),
             icon: (
@@ -753,6 +839,7 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 1),
                   getTxRefValues(activity.data.txRef, 4) + '%',
                 ])}
+                t={t}
               />
             ),
             icon: (
@@ -805,6 +892,44 @@ const ProgrammeView = () => {
     navigate('.', { state: { record: response.data } });
     genCerts(response.data, certTimes);
     genPieData(response.data);
+  };
+
+  const getDocuments = async (programmeId: string) => {
+    setLoadingHistory(true);
+    setLoadingNDC(true);
+    try {
+      const response: any = await post('national/programme/queryDocs', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      if (response?.data?.length > 0) {
+        const objectsWithoutNullActionId = response?.data.filter(
+          (obj: any) => obj.actionId !== null
+        );
+        const objectsWithNullActionId = response?.data.filter((obj: any) => obj.actionId === null);
+        const hasAcceptedMethReport = objectsWithNullActionId?.some(
+          (item: any) =>
+            item?.type === DocType.METHODOLOGY_DOCUMENT && item?.status === DocumentStatus.ACCEPTED
+        );
+        if (hasAcceptedMethReport && data?.currentStage === ProgrammeStageUnified.Authorised) {
+          setUploadMonitoringReport(true);
+        }
+        setNdcActionData(objectsWithoutNullActionId);
+        setDocumentsData(response?.data);
+      }
+    } catch (err: any) {
+      console.log('Error in getting documents - ', err);
+    } finally {
+      setLoadingHistory(false);
+      setLoadingNDC(false);
+    }
   };
 
   const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
@@ -952,7 +1077,7 @@ const ProgrammeView = () => {
             genCerts(response.data, certTimes);
             genPieData(response.data);
           } else if (action === 'Reject') {
-            data!.currentStage = ProgrammeStage.Rejected;
+            data!.currentStage = ProgrammeStageUnified.Rejected;
             setData(data);
           }
 
@@ -1042,7 +1167,18 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     if (data) {
-      getProgrammeHistory(data.programmeId);
+      getInvestmentHistory(data?.programmeId);
+      getDocuments(data?.programmeId);
+      setEmissionsReductionExpected(
+        data?.emissionReductionExpected !== null || data?.emissionReductionExpected !== undefined
+          ? Number(data?.emissionReductionExpected)
+          : 0
+      );
+      setEmissionsReductionAchieved(
+        data?.emissionReductionAchieved !== null || data?.emissionReductionAchieved !== undefined
+          ? Number(data?.emissionReductionAchieved)
+          : 0
+      );
       drawMap();
       for (const company of data.company) {
         if (
@@ -1055,6 +1191,153 @@ const ProgrammeView = () => {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      getInvestmentHistory(data?.programmeId);
+      getProgrammeHistory(data.programmeId);
+      getDocuments(data?.programmeId);
+      drawMap();
+      for (const company of data.company) {
+        if (
+          parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
+          company.companyId !== userInfoState?.companyId
+        ) {
+          setIsAllOwnersDeactivated(false);
+          break;
+        }
+      }
+    }
+  }, [data]);
+
+  const onClickedAddAction = () => {
+    navigate('/programmeManagement/addNdcAction', { state: { record: data } });
+  };
+
+  const getUserDetails = async () => {
+    setLoadingAll(true);
+    try {
+      const response: any = await post('national/user/query', {
+        page: 1,
+        size: 10,
+        filterAnd: [
+          {
+            key: 'id',
+            operation: '=',
+            value: userInfoState?.id,
+          },
+        ],
+      });
+      if (response && response.data) {
+        if (
+          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
+          response?.data[0]?.company &&
+          response?.data[0]?.company?.sectoralScope
+        ) {
+          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
+        }
+      }
+      setLoadingAll(false);
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingAll(false);
+    }
+  };
+
+  const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
+    setLoadingHistory(true);
+    setLoadingNDC(true);
+    try {
+      const response: any = await post('national/programme/queryNdcActions', {
+        page: 1,
+        size: 100,
+        filterAnd: [
+          {
+            key: 'programmeId',
+            operation: '=',
+            value: programmeId,
+          },
+        ],
+      });
+      const groupedByActionId = response.data.reduce((result: any, obj: any) => {
+        const actionId = obj.id;
+        if (!result[actionId]) {
+          result[actionId] = [];
+        }
+        result[actionId].push(obj);
+        return result;
+      }, {});
+
+      ndcActionData?.map((ndcData: any) => {
+        if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
+          if (ndcData?.type === DocType.MONITORING_REPORT) {
+            groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
+          } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
+            groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
+          }
+        }
+      });
+      setNdcActionHistoryDataGrouped(groupedByActionId);
+      const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
+        status: 'process',
+        title: actionId,
+        subTitle: '',
+        description: (
+          <NdcActionBody
+            data={groupedByActionId[actionId]}
+            programmeId={data?.programmeId}
+            programmeOwnerId={programmeOwnerId}
+            canUploadMonitorReport={uploadMonitoringReport}
+            getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+            ministryLevelPermission={
+              data &&
+              userInfoState?.companyRole === CompanyRole.MINISTRY &&
+              ministrySectoralScope.includes(data.sectoralScope)
+            }
+            useConnection={useConnection}
+            translator={programmeViewTranslator}
+            useUserContext={useUserContext}
+            linkDocVisible={linkDocVisible}
+            uploadDocUserPermission={uploadDocUserPermission}
+          />
+        ),
+        icon: (
+          <span className="step-icon freeze-step">
+            <Icon.Circle />
+          </span>
+        ),
+      }));
+      setNdcActionHistoryData(mappedElements);
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingHistory(false);
+      setLoadingNDC(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
+      getUserDetails();
+    }
+    if (data) {
+      setProgrammeOwnerId(data?.companyId);
+      setCurrentProgrammeStatus(data?.currentStage);
+      getNdcActionHistory(data?.programmeId, ndcActionData);
+    }
+  }, [data, ndcActionData]);
 
   if (!data) {
     return <Loading />;
@@ -1096,7 +1379,10 @@ const ProgrammeView = () => {
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
           </div>
-          <OrganisationStatus organisationStatus={parseInt(ele.company.state)}></OrganisationStatus>
+          <OrganisationStatus
+            organisationStatus={parseInt(ele.company.state)}
+            t={t}
+          ></OrganisationStatus>
         </div>
       </div>
     );
@@ -1105,7 +1391,39 @@ const ProgrammeView = () => {
   const actionBtns = [];
 
   if (userInfoState?.userRole !== 'ViewOnly') {
-    if (data.currentStage.toString() === 'AwaitingAuthorization') {
+    if (userInfoState && data.currentStage !== ProgrammeStageUnified.Rejected) {
+      if (
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+          data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId)) ||
+        (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+          ministrySectoralScope.includes(data.sectoralScope) &&
+          userInfoState?.userRole !== Role.ViewOnly)
+      ) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              navigate('/investmentManagement/addInvestment', { state: { record: data } });
+            }}
+          >
+            {t('view:addInvestment')}
+          </Button>
+        );
+        if (
+          (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
+          (data.currentStage as any) === ProgrammeStageUnified.Approved
+        ) {
+          actionBtns.push(
+            <Button type="primary" onClick={onClickedAddAction}>
+              {t('view:addAction')}
+            </Button>
+          );
+        }
+      }
+    }
+
+    if (data.currentStage.toString() === 'Approved') {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
         actionBtns.push(
           <Button
@@ -1155,6 +1473,7 @@ const ProgrammeView = () => {
                         updateProgrammeData
                       )
                     }
+                    translator={i18n}
                   />
                 ),
               });
@@ -1166,7 +1485,7 @@ const ProgrammeView = () => {
         );
       }
     } else if (
-      data.currentStage.toString() === ProgrammeStage.Authorised &&
+      data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
@@ -1201,6 +1520,7 @@ const ProgrammeView = () => {
                           updateProgrammeData
                         )
                       }
+                      translator={i18n}
                     />
                   ),
                 });
@@ -1314,6 +1634,7 @@ const ProgrammeView = () => {
                     )
                   }
                   showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                  translator={i18n}
                 />
               ),
             });
@@ -1332,7 +1653,9 @@ const ProgrammeView = () => {
     const text = t('view:' + k);
     if (k === 'currentStatus') {
       generalInfo[text] = (
-        <Tag color={getStageTagType(v as ProgrammeStage)}>{getStageEnumVal(v as string)}</Tag>
+        <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
+          {getStageEnumVal(v as string)}
+        </Tag>
       );
     } else if (k === 'sector') {
       generalInfo[text] = (
@@ -1406,7 +1729,7 @@ const ProgrammeView = () => {
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
-            {getStageEnumVal(data.currentStage) === ProgrammeStage.Authorised ? (
+            {getStageEnumVal(data.currentStage) === ProgrammeStageUnified.Authorised ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
@@ -1490,7 +1813,7 @@ const ProgrammeView = () => {
                     {userInfoState?.userRole !== 'ViewOnly' &&
                       userInfoState?.companyRole !== 'Certifier' && (
                         <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStage.Authorised &&
+                          {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
                             data.creditBalance -
                               (data.creditFrozen
                                 ? data.creditFrozen.reduce(
@@ -1546,6 +1869,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -1590,6 +1915,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -1640,6 +1967,8 @@ const ProgrammeView = () => {
                                                   updateCreditInfo
                                                 )
                                               }
+                                              translator={i18n}
+                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -1658,6 +1987,102 @@ const ProgrammeView = () => {
               </Card>
             ) : (
               <div></div>
+            )}
+            {(emissionsReductionExpected !== 0 || emissionsReductionAchieved !== 0) && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<BlockOutlined />}</span>
+                    <span className="title-text">
+                      {formatString('view:emissionsReductions', [])}
+                    </span>
+                  </div>
+                  <div className="map-content">
+                    <Chart
+                      id={'creditChart'}
+                      options={{
+                        labels: ['Achieved', 'Pending'],
+                        legend: {
+                          position: 'bottom',
+                        },
+                        colors: ['#b3b3ff', '#e0e0eb'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                          enabled: true,
+                          y: {
+                            formatter: function (value: any) {
+                              return addCommSepRound(value);
+                            },
+                          },
+                        },
+                        states: {
+                          normal: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          hover: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          active: {
+                            allowMultipleDataPointsSelection: true,
+                            filter: {
+                              type: 'darken',
+                              value: 0.7,
+                            },
+                          },
+                        },
+                        stroke: {
+                          colors: ['#00'],
+                        },
+                        plotOptions: {
+                          pie: {
+                            expandOnClick: false,
+                            donut: {
+                              labels: {
+                                show: true,
+                                total: {
+                                  showAlways: true,
+                                  show: true,
+                                  label: 'Expected',
+                                  formatter: () => '' + addCommSep(data?.emissionReductionExpected),
+                                },
+                              },
+                            },
+                          },
+                        },
+                        dataLabels: {
+                          enabled: false,
+                        },
+                        responsive: [
+                          {
+                            breakpoint: 480,
+                            options: {
+                              chart: {
+                                width: '15vw',
+                              },
+                              legend: {
+                                position: 'bottom',
+                              },
+                            },
+                          },
+                        ],
+                      }}
+                      series={[
+                        emissionsReductionAchieved,
+                        emissionsReductionExpected - emissionsReductionAchieved,
+                      ]}
+                      type="donut"
+                      width="100%"
+                      fontFamily="inter"
+                    />
+                  </div>
+                </div>
+              </Card>
             )}
             {data.programmeProperties.programmeMaterials &&
               data.programmeProperties.programmeMaterials.length > 0 && (
@@ -1696,6 +2121,33 @@ const ProgrammeView = () => {
                 />
               </div>
             </Card>
+            <Card className="card-container">
+              <div>
+                <ProgrammeDocuments
+                  data={documentsData}
+                  title={t('view:programmeDocs')}
+                  icon={<QrcodeOutlined />}
+                  programmeId={data?.programmeId}
+                  programmeOwnerId={programmeOwnerId}
+                  getDocumentDetails={() => {
+                    getDocuments(data?.programmeId);
+                  }}
+                  getProgrammeById={() => {
+                    getProgrammeById(data?.programmeId);
+                  }}
+                  ministryLevelPermission={
+                    data &&
+                    userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                    ministrySectoralScope.includes(data.sectoralScope)
+                  }
+                  linkDocVisible={linkDocVisible}
+                  uploadDocUserPermission={uploadDocUserPermission}
+                  useConnection={useConnection}
+                  useUserContext={useUserContext}
+                  translator={i18n}
+                />
+              </div>
+            </Card>
           </Col>
           <Col md={24} lg={14}>
             <Card className="card-container">
@@ -1718,6 +2170,7 @@ const ProgrammeView = () => {
                       markers={markers}
                       height={250}
                       style="mapbox://styles/mapbox/streets-v11"
+                      accessToken={accessToken}
                     ></MapComponent>
                     <Row className="region-list">
                       {data.programmeProperties.geographicalLocation &&
@@ -1758,6 +2211,40 @@ const ProgrammeView = () => {
               </Card>
             ) : (
               <span></span>
+            )}
+            {investmentHistory?.length > 0 && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<ClockCircleOutlined />}</span>
+                    <span className="title-text">{t('view:investment')}</span>
+                  </div>
+                  <div className="content">
+                    {loadingInvestment ? (
+                      <Skeleton />
+                    ) : (
+                      <Steps current={0} direction="vertical" items={investmentHistory} />
+                    )}
+                  </div>
+                </div>
+              </Card>
+            )}
+            {ndcActionHistoryData?.length > 0 && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<ExperimentOutlined />}</span>
+                    <span className="title-text">{t('view:ndcActions')}</span>
+                  </div>
+                  <div className="content">
+                    {loadingNDC ? (
+                      <Skeleton />
+                    ) : (
+                      <Steps current={0} direction="vertical" items={ndcActionHistoryData} />
+                    )}
+                  </div>
+                </div>
+              </Card>
             )}
             <Card className="card-container">
               <div className="info-view">

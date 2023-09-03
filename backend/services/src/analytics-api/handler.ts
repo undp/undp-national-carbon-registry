@@ -2,8 +2,7 @@
 import { Handler, Context } from "aws-lambda";
 import { Server } from "http";
 import { proxy } from "aws-serverless-express";
-import { bootstrapServer } from "../shared/server";
-import { AnalyticsAPIModule } from "./analytics.api.module";
+import { AnalyticsAPIModule, bootstrapServer } from "carbon-services-lib";
 
 let cachedServer: Server;
 

@@ -14,12 +14,12 @@
 
   .action-btns {
     justify-content: center !important;
-    button:first-child {
-      margin-right: 15px;
+    button {
+      margin-right: 10px;
       margin-left: 10px;
     }
     button:last-child {
-      margin-right: 15px;
+      margin-right: 0px;
     }
   }
 

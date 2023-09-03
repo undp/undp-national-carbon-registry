@@ -10,7 +10,8 @@ import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
 import AddUser from './Pages/AddUser/addUser';
 import UserManagement from './Pages/UserManagement/userManagement';
-import Dashboard from './Pages/Dashboard/dashboard';
+import MRVDashboard from './Pages/Dashboard/mrv/mrvdashboard';
+import RegistryDashboard from './Pages/Dashboard/registry/registrydashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
 import CompanyManagement from './Pages/CompanyManagement/companyManagement';
 import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
@@ -30,6 +31,12 @@ import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
 import { message } from 'antd';
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
+import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
+import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
+import NdcActionManagement from './Pages/NdcActionManagement/ndcActionManagement';
+import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
+import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
+import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 
 // message.config({
 //   duration: 60,
@@ -80,7 +87,8 @@ const App = () => {
                 <Route path="/" element={<Homepage />} />
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
-                    <Route index element={<Dashboard />} />
+                    <Route path="/dashboard" element={<RegistryDashboard />} />
+                    <Route path="/dashboard/mrv" element={<MRVDashboard />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
@@ -88,6 +96,22 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<ProgrammeManagement />} />
                     <Route path="view" element={<ProgrammeView />} />
+                    <Route path="addProgramme" element={<AddProgramme />} />
+                    <Route path="addNdcAction" element={<AddNDCAction />} />
+                  </Route>
+                  <Route
+                    path="/investmentManagement"
+                    element={<CustomLayout selectedKey="investmentManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<InvestmentManagement />} />
+                    <Route path="addInvestment" element={<AddInvestmentComponent />} />
+                  </Route>
+                  <Route
+                    path="/ndcManagement"
+                    element={<CustomLayout selectedKey="ndcManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<NdcActionManagement />} />
+                    <Route path="view" element={<NdcActionView />} />
                   </Route>
                   <Route
                     path="/companyManagement"

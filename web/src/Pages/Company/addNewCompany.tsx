@@ -24,6 +24,7 @@ const AddNewCompany = () => {
       useConnection={useConnection}
       useUserContext={useUserContext}
       useLocation={useLocation}
+      regionField
     ></AddNewCompanyComponent>
   );
 };

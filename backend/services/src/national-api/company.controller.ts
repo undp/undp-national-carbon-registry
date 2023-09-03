@@ -11,18 +11,12 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Company } from "../shared/entities/company.entity";
-import { Action } from "../shared/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
-import { QueryDto } from "../shared/dto/query.dto";
-import { CompanyService } from "../shared/company/company.service";
-import { CaslAbilityFactory } from "../shared/casl/casl-ability.factory";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { OrganisationSuspendDto } from "../shared/dto/organisation.suspend.dto";
-import { FindOrganisationQueryDto } from "../shared/dto/find.organisation.dto";
-import { OrganisationUpdateDto } from "../shared/dto/organisation.update.dto";
-import { CountryService } from "../shared/util/country.service";
-import { HelperService } from "../shared/util/helpers.service";
+import { Company } from "carbon-services-lib";
+import { QueryDto } from "carbon-services-lib";
+import { OrganisationSuspendDto } from "carbon-services-lib";
+import { FindOrganisationQueryDto } from "carbon-services-lib";
+import { OrganisationUpdateDto } from "carbon-services-lib";
+import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from 'carbon-services-lib';
 
 @ApiTags("Organisation")
 @ApiBearerAuth()
@@ -136,4 +130,11 @@ export class CompanyController {
   async getAvailableCountries(@Request() req) {
     return await this.countryService.getAvailableCountries();
   }
+  
+  @UseGuards(JwtAuthGuard)
+  @Post("regions")
+  async getRegionList(@Body() query: QueryDto, @Request() req) {
+    return await this.countryService.getRegionList(query);
+  }
+
 }

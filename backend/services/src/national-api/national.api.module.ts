@@ -2,27 +2,23 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NationalAPIController } from './national.api.controller';
 import { NationalAPIService } from './national.api.service';
-import configuration from '../shared/configuration';
+import { configuration } from "carbon-services-lib";
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../shared/typeorm.config.service';
+import { TypeOrmConfigService } from 'carbon-services-lib';
 // import { Programme } from './entities/programme.entity';
-import { AuthModule } from '../shared/auth/auth.module';
-import { CaslModule } from '../shared/casl/casl.module';
-import { ProgrammeModule } from '../shared/programme/programme.module';
-import { CompanyModule } from '../shared/company/company.module';
+import { AuthModule ,CompanyModule,UserModule,UtilModule,CaslModule} from "carbon-services-lib";
+import { ProgrammeModule } from 'carbon-services-lib';
 import { CompanyController } from './company.controller';
-import { UserModule } from '../shared/user/user.module';
 import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
-import { UtilModule } from '../shared/util/util.module';
 import { SettingsController } from './settings.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration.default],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
     }),
     TypeOrmModule.forRootAsync({
