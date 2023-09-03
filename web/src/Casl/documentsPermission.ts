@@ -1,6 +1,4 @@
-import { CompanyRole, Role } from '@undp/carbon-library';
-import { DocType } from './enums/document.type';
-import { DocumentStatus } from './enums/document.status';
+import { CompanyRole, DocType, DocumentStatus, Role } from '@undp/carbon-library';
 
 export const linkDocVisible = (docStatus: DocumentStatus) => {
   let visible = false;

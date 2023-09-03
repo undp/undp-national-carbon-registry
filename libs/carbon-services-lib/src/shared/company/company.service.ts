@@ -269,8 +269,6 @@ export class CompanyService {
       .offset(query.size * query.page - query.size)
       .limit(query.size)
       .getRawMany();
-
-    console.log(resp);
     return new DataListResponseDto(resp, undefined);
   }
 
@@ -281,6 +279,16 @@ export class CompanyService {
     const companies = await this.companyRepo.find({
       where: {
         taxId: taxId,
+      },
+    });
+    return companies && companies.length > 0 ? companies[0] : undefined;
+  }
+
+  async findMinByCountry(countryCode: string): Promise<Company | undefined> {
+    const companies = await this.companyRepo.find({
+      where: {
+        country: countryCode,
+        companyRole: CompanyRole.MINISTRY,
       },
     });
     return companies && companies.length > 0 ? companies[0] : undefined;

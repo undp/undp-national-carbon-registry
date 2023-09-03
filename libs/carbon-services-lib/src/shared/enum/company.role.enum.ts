@@ -13,5 +13,6 @@ export enum CompanyRole {
     INTERNAL_ORGANIZATION = 'InternationalOrganization',
     PROGRAMME_DEVELOPER = 'ProgrammeDeveloper',
     API = 'API',
-    GOVERNMENT = 'Government'
+    GOVERNMENT = 'Government',
+    MINISTRY = 'Ministry'
 }

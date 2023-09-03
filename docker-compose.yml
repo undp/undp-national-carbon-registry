@@ -87,6 +87,8 @@ services:
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
       REGISTRY_SYNC_ENABLE: true
       MRV_API_TOKEN: ''
+    volumes:
+      - filestore:/app/backend/services/public
   # async-operations-handler:
   #   build:
   #     context: .

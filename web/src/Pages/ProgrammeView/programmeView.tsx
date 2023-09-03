@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Row,
   Col,
@@ -39,24 +39,11 @@ import {
   SafetyOutlined,
   TransactionOutlined,
 } from '@ant-design/icons';
-import {
-  CertBGColor,
-  CertColor,
-  DevBGColor,
-  DevColor,
-  GovBGColor,
-  GovColor,
-  RootBGColor,
-  RootColor,
-  ViewBGColor,
-  ViewColor,
-} from '../Common/role.color.constants';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
-import { creditUnit, dateFormat, dateTimeFormat } from '../Common/configs';
 import {
   ProgrammeIssueForm,
   ProgrammeRetireForm,
@@ -93,10 +80,16 @@ import {
   MapTypes,
   MarkerData,
   CompanyState,
+  dateTimeFormat,
+  creditUnit,
+  DocType,
+  DocumentStatus,
+  dateFormat,
+  DevBGColor,
+  DevColor,
+  Role,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { DocumentStatus } from '../../Casl/enums/document.status';
-import { DocType } from '../../Casl/enums/document.type';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
@@ -130,6 +123,7 @@ const ProgrammeView = () => {
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
+  const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
   const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
   const [ndcActionHistoryDataGrouped, setNdcActionHistoryDataGrouped] = useState<any>();
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
@@ -1220,6 +1214,42 @@ const ProgrammeView = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
   };
 
+  const getUserDetails = async () => {
+    setLoadingAll(true);
+    try {
+      const response: any = await post('national/user/query', {
+        page: 1,
+        size: 10,
+        filterAnd: [
+          {
+            key: 'id',
+            operation: '=',
+            value: userInfoState?.id,
+          },
+        ],
+      });
+      if (response && response.data) {
+        if (
+          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
+          response?.data[0]?.company &&
+          response?.data[0]?.company?.sectoralScope
+        ) {
+          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
+        }
+      }
+      setLoadingAll(false);
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingAll(false);
+    }
+  };
+
   const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
@@ -1265,6 +1295,11 @@ const ProgrammeView = () => {
             programmeOwnerId={programmeOwnerId}
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+            ministryLevelPermission={
+              data &&
+              userInfoState?.companyRole === CompanyRole.MINISTRY &&
+              ministrySectoralScope.includes(data.sectoralScope)
+            }
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
@@ -1294,6 +1329,9 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
+    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
+      getUserDetails();
+    }
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
@@ -1357,7 +1395,10 @@ const ProgrammeView = () => {
       if (
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-          data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId))
+          data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId)) ||
+        (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+          ministrySectoralScope.includes(data.sectoralScope) &&
+          userInfoState?.userRole !== Role.ViewOnly)
       ) {
         actionBtns.push(
           <Button
@@ -2094,6 +2135,11 @@ const ProgrammeView = () => {
                   getProgrammeById={() => {
                     getProgrammeById(data?.programmeId);
                   }}
+                  ministryLevelPermission={
+                    data &&
+                    userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                    ministrySectoralScope.includes(data.sectoralScope)
+                  }
                   linkDocVisible={linkDocVisible}
                   uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
