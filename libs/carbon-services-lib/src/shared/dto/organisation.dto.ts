@@ -15,12 +15,13 @@ import {
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "../util/validcountry.decorator";
+import { SectoralScope } from "@undp/serial-number-gen";
 
 export class OrganisationDto {
   companyId: number;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -91,6 +92,27 @@ export class OrganisationDto {
       "Invalid role. Supported following roles:" + Object.values(CompanyRole),
   })
   companyRole: CompanyRole;
+
+  @ValidateIf((c) => c.companyRole === CompanyRole.MINISTRY)
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  nameOfMinister: string;
+
+  @ValidateIf((c) => c.companyRole === CompanyRole.MINISTRY)
+  @IsArray()
+  @ArrayMinSize(1)
+  @MaxLength(100, { each: true })
+  @IsNotEmpty({ each: true })
+  @IsEnum(SectoralScope, {
+      each: true,
+      message: 'Invalid sectoral scope. Supported following sectoral scope:' + Object.values(SectoralScope)
+  })
+  @ApiProperty({
+    type: [String],
+    enum: Object.values(SectoralScope),
+  })
+  sectoralScope: SectoralScope[];
 
   createdTime: number;
 

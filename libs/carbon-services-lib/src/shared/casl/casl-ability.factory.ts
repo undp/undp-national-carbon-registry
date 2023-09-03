@@ -51,7 +51,7 @@ export class CaslAbilityFactory {
         });
       } else if (
         user.role == Role.Admin &&
-        user.companyRole == CompanyRole.GOVERNMENT
+        (user.companyRole == CompanyRole.GOVERNMENT || user.companyRole == CompanyRole.MINISTRY)
       ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
         can([Action.Manage], ConfigurationSettings);
@@ -60,6 +60,14 @@ export class CaslAbilityFactory {
           companyId: { $ne: user.companyId },
         });
         cannot(Action.Update, Company, { companyId: { $ne: user.companyId } });
+
+        if (user.companyRole === CompanyRole.MINISTRY) {
+          cannot([Action.Update, Action.Delete], User, {
+            companyId: { $ne: user.companyId },
+          });
+          cannot(Action.Delete, Company, { companyRole: { $eq: user.companyRole } });
+          cannot(Action.Delete, Company, { companyId: { $eq: user.companyId } });
+        }
       } else if (
         user.role == Role.Admin &&
         user.companyRole != CompanyRole.GOVERNMENT
@@ -78,7 +86,17 @@ export class CaslAbilityFactory {
             can([Action.Delete], Company);
           }
         } else {
-          can(Action.Read, User, { companyId: { $eq: user.companyId } });
+          if(user.companyRole == CompanyRole.MINISTRY) {
+            can(Action.Read, User);
+            if (user.role === Role.Manager) {
+              can([Action.Delete], Company);
+              cannot(Action.Delete, Company, { companyRole: { $eq: user.companyRole } });
+              cannot(Action.Delete, Company, { companyId: { $eq: user.companyId } });
+            }
+          } 
+          else {
+            can(Action.Read, User, { companyId: { $eq: user.companyId } });
+          }
         }
 
         cannot([Action.Create], Company);
@@ -109,6 +127,17 @@ export class CaslAbilityFactory {
         }
       }
 
+      if (user.companyRole == CompanyRole.MINISTRY) {
+        if (user.role != Role.ViewOnly) {
+          can(Action.Manage, Programme);
+          can(Action.Manage, DocumentAction);
+          can(Action.Manage, Investment);
+        } else {
+          can(Action.Read, Investment);
+          can(Action.Read, Programme);
+        }
+      }
+      
       if (
         user.role != Role.ViewOnly &&
         user.companyRole != CompanyRole.PROGRAMME_DEVELOPER

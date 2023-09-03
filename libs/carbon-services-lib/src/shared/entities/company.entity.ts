@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
 import { CompanyRole } from "../enum/company.role.enum";
 import { CompanyState } from "../enum/company.state.enum";
 import { EntitySubject } from "./entity.subject";
+import { SectoralScope } from "@undp/serial-number-gen";
 
 @Entity()
 export class Company implements EntitySubject {
@@ -83,7 +84,12 @@ export class Company implements EntitySubject {
   @Column("varchar", { array: true, nullable: true })
   regions: string[];
 
+  @Column({ nullable: true })
+  nameOfMinister: string;
 
+  @Column("varchar", { array: true, nullable: true })
+  sectoralScope: SectoralScope[];
+  
   @BeforeInsert()
   setDefaultState() {
     if (

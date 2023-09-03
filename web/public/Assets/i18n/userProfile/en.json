@@ -27,5 +27,7 @@
     "logOut": "LOG OUT",
     "changePassword": "CHANGE PASSWORD",
     "passwordResetSuccess": "The password has been reset successfully",
-    "userDeletionSuccess": "The user has been deleted successfully"
+    "userDeletionSuccess": "The user has been deleted successfully",
+    "ministerName": "Name of the Minister",
+    "sectoralScope": "Sectoral Scope"
 }

@@ -343,8 +343,8 @@ export class UserService {
     APIkey: string
   ) {
     let company: Company;
-    if (companyRole != CompanyRole.GOVERNMENT) {
-      if (!taxId) {
+    if (companyRole != CompanyRole.GOVERNMENT && companyRole !== CompanyRole.MINISTRY) {
+      if (!taxId || taxId === '') {
         throw new HttpException(
           "Tax id cannot be empty:" + email,
           HttpStatus.BAD_REQUEST
@@ -352,7 +352,11 @@ export class UserService {
       }
       company = await this.companyService.findByTaxId(taxId);
     } else {
-      company = await this.companyService.findGovByCountry(this.configService.get("systemCountry"))
+      if(companyRole === CompanyRole.GOVERNMENT) {
+        company = await this.companyService.findGovByCountry(this.configService.get("systemCountry"))
+      } else if(companyRole === CompanyRole.MINISTRY) {
+        company = await this.companyService.findMinByCountry(this.configService.get("systemCountry"))
+      }
     }
 
     if (!company) {
@@ -423,7 +427,7 @@ export class UserService {
       }
     }
     if (company) {
-      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.API) {
+      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.API && companyRole !== CompanyRole.MINISTRY) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
@@ -442,6 +446,16 @@ export class UserService {
         );
       } else if (!userFields.role) {
         userFields.role = Role.Admin;
+      }
+
+      if(company.companyRole === CompanyRole.MINISTRY && companyRole === CompanyRole.MINISTRY) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "user.minUserCannotCreateMin",
+            []
+          ),
+          HttpStatus.FORBIDDEN
+        );
       }
 
       if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
