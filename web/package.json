@@ -92,6 +92,7 @@
     "prettier": "2.7.1",
     "react-scripts": "5.0.1",
     "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.3.9",
     "tslint-config-prettier": "^1.18.0"
   },
   "lint-staged": {
