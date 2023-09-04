@@ -1550,7 +1550,8 @@ export class ProgrammeLedgerService {
     percentages: number[],
     investor: number,
     owner: number,
-    shareFromOwner: number
+    shareFromOwner: number,
+    user: string
   ) {
     const getQueries = {};
     getQueries[this.ledger.tableName] = {
@@ -1638,7 +1639,7 @@ export class ProgrammeLedgerService {
         }
         programme.txTime = new Date().getTime()
         programme.txType = TxType.OWNERSHIP_UPDATE
-        programme.txRef = `${investor}#${investorName}#${owner}#${ownerName}#${investmentPerc}`
+        programme.txRef = `${user}#${investmentPerc}`
         programme.proponentTaxVatId = taxIds;
         programme.proponentPercentage = percentages;
         programme.companyId = companyIds;
