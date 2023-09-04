@@ -22,7 +22,6 @@ import { Company } from "../entities/company.entity";
 import { url } from "inspector";
 import { CompanyRole } from "../enum/company.role.enum";
 import { MitigationProperties } from "../dto/mitigation.properties";
-import { OwnershipUpdateDto } from "../dto/ownership.update";
 
 @Injectable()
 export class ProgrammeLedgerService {
