@@ -38,6 +38,7 @@ services:
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      EMAILPREFIX: ""
       LOCATION_SERVICE: OPENSTREET
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
@@ -80,6 +81,7 @@ services:
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
+      EMAILPREFIX: ""
       ASYNC_OPERATIONS_TYPE: Database
       ITMO_API_KEY: ""
       ITMO_EMAIL: ""

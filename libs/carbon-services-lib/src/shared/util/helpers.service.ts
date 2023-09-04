@@ -457,8 +457,8 @@ export class HelperService {
         }
     }
 
-    if(isSubject)
-      return `🏬📐 🇦🇶 Carbon Registry: ${template}`;
+    if(isSubject) 
+      return `${this.configService.get("email.getemailprefix")} Carbon Registry: ${template}`;
     else 
       return template;
 }
