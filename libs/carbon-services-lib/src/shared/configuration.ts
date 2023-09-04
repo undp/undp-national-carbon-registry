@@ -37,6 +37,7 @@ export default () => ({
     disabled: process.env.IS_EMAIL_DISABLED === "true" ? true : false,
     disableLowPriorityEmails:
       process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
+    getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶"
   },
   s3CommonBucket: {
     name: "carbon-common-" + (process.env.NODE_ENV || "dev"),
