@@ -888,6 +888,7 @@ export class ProgrammeService {
           value: programme.companyId
         }],
         filterOr: undefined,
+        filterBy:undefined,
         sort: undefined
       }, undefined) ;
 
@@ -1600,6 +1601,7 @@ export class ProgrammeService {
         },
       ],
       filterOr: undefined,
+      filterBy:undefined,
       sort: undefined,
     };
 

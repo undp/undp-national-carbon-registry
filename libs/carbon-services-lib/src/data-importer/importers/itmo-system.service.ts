@@ -152,6 +152,8 @@ export class ITMOSystemImporter implements ImporterInterface {
                       name: project.company,
                       email: email,
                       phoneNo: "00",
+                      nameOfMinister:undefined,
+                      sectoralScope:undefined,
                       website: undefined,
                       address: this.configService.get("systemCountryName"),
                       logo: undefined,
