@@ -1550,8 +1550,6 @@ export class ProgrammeLedgerService {
     percentages: number[],
     investor: number,
     owner: number,
-    investorName: string,
-    ownerName: string,
     shareFromOwner: number
   ) {
     const getQueries = {};
