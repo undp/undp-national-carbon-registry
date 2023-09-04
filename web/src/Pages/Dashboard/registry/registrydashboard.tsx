@@ -7,13 +7,13 @@ import ButtonGroup from 'antd/lib/button/button-group';
 import { RegistryDashboardComponent } from '@undp/carbon-library';
 
 const RegistryDashboard = () => {
-  const { i18n } = useTranslation(['dashboard']);
+  const { t } = useTranslation(['dashboard']);
   return (
     <RegistryDashboardComponent
       useUserContext={useUserContext}
       useConnection={useConnection}
       Chart={Chart}
-      translator={i18n}
+      t={t}
       ButtonGroup={ButtonGroup}
       Link={Link}
     ></RegistryDashboardComponent>

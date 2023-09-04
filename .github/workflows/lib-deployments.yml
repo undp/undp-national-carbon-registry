@@ -8,7 +8,7 @@ on:
       - .github/workflows/lib-*
 
 jobs:
-  deploy_front_end:
+  publish_libs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -93,6 +93,7 @@ export class RegistryClientService {
         value: programme.companyId
       }],
       filterOr: undefined,
+      filterBy:undefined,
       sort: undefined
     }, undefined) ;
     let orgData = orgNames.data
