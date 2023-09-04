@@ -168,7 +168,7 @@ export class ProgrammeService {
       ownerTaxId = programme.proponentTaxVatId[companyIndex];
     }
 
-    const resp = await this.programmeLedger.updateOwnership(programme.externalId, programme.companyId, programme.proponentTaxVatId, programme.proponentPercentage, transfer.toCompanyId, transfer.fromCompanyId, transfer.shareFromOwner);
+    const resp = await this.programmeLedger.updateOwnership(programme.externalId, programme.companyId, programme.proponentTaxVatId, programme.proponentPercentage, transfer.toCompanyId, transfer.fromCompanyId, transfer.shareFromOwner, user);
 
     const savedProgramme = await this.entityManager
       .transaction(async (em) => {
