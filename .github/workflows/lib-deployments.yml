@@ -23,8 +23,6 @@ jobs:
           git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
           git config --global user.email "palinda@xeptagon.com"
           yarn version --patch
-          git config pull.rebase true
-          git pull origin HEAD
           git push --follow-tags
         env:
           CI_COMMIT_MESSAGE: Continuous Integration Version Update
