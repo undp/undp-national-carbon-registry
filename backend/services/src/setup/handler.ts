@@ -117,6 +117,8 @@ export const handler: Handler = async (event) => {
               name: fields[0],
               email: fields[1],
               phoneNo: fields[2],
+              nameOfMinister:undefined,
+              sectoralScope:undefined,
               website: undefined,
               address: configService.get("systemCountryName"),
               logo: undefined,
