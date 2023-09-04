@@ -7,14 +7,14 @@ import Chart from 'react-apexcharts';
 import ButtonGroup from 'antd/lib/button/button-group';
 
 const MRVDashboard = () => {
-  const { i18n } = useTranslation(['mrvdashboard']);
+  const { t } = useTranslation(['mrvdashboard']);
   return (
     <MrvDashboardComponent
       useConnection={useConnection}
       useUserContext={useUserContext}
       Link={Link}
       Chart={Chart}
-      translator={i18n}
+      t={t}
       ButtonGroup={ButtonGroup}
     ></MrvDashboardComponent>
   );
