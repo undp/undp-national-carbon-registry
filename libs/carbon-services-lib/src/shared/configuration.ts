@@ -69,5 +69,10 @@ export default () => ({
     syncEnable: process.env.REGISTRY_SYNC_ENABLE || false,
     endpoint: process.env.MRV_ENDPOINT || 'https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev',
     apiToken: process.env.MRV_API_TOKEN
+  },
+  docGenerate: {
+    ministerName: process.env.MINISTER_NAME || 'Minister X',
+    ministryName: "Ministry of Environment, Forestry & Tourism",
+    countryCapital: process.env.COUNTRY_CAPITAL || "Capital X"
   }
 });
