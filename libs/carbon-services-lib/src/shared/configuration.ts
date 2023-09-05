@@ -37,7 +37,8 @@ export default () => ({
     disabled: process.env.IS_EMAIL_DISABLED === "true" ? true : false,
     disableLowPriorityEmails:
       process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
-    getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶"
+    getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶",
+    adresss: process.env.HOST_ADDRESS || "Address <br>Region, Country Zipcode"
   },
   s3CommonBucket: {
     name: "carbon-common-" + (process.env.NODE_ENV || "dev"),
@@ -69,5 +70,10 @@ export default () => ({
     syncEnable: process.env.REGISTRY_SYNC_ENABLE || false,
     endpoint: process.env.MRV_ENDPOINT || 'https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev',
     apiToken: process.env.MRV_API_TOKEN
+  },
+  docGenerate: {
+    ministerName: process.env.MINISTER_NAME || 'Minister X',
+    ministryName: "Ministry of Environment, Forestry & Tourism",
+    countryCapital: process.env.COUNTRY_CAPITAL || "Capital X"
   }
 });

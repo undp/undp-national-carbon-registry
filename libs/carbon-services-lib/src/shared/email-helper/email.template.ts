@@ -39,8 +39,7 @@ export const EmailTemplates = {
         <br>
         <div style="font-size:12px">
             {{countryName}} <br>
-            Address  <br>
-            Region, Country Zipcode 
+            {{address}}
         </div>
         `,
     text: "",
