@@ -12,8 +12,8 @@ import {
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { LayoutSiderProps } from '../../Definitions/InterfacesAndType/layout.sider.definitions';
 import { useTranslation } from 'react-i18next';
+import { LayoutSiderProps } from '@undp/carbon-library';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
