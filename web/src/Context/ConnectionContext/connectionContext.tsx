@@ -1,16 +1,12 @@
 import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import {
-  ConnectionProps,
-  ConnectionContextProviderProps,
-  Methods,
-} from '../../Definitions/InterfacesAndType/connectionContext.definitions';
+import jwt_decode from 'jwt-decode';
+import { useTranslation } from 'react-i18next';
+import { ConnectionContextProviderProps, ConnectionProps, Methods } from '@undp/carbon-library';
 
 const ConnectionContext = createContext<{
   connection?: ConnectionProps;
 }>({});
-import jwt_decode from 'jwt-decode';
-import { useTranslation } from 'react-i18next';
 
 export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   props: ConnectionContextProviderProps
