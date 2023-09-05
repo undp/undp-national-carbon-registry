@@ -5,7 +5,7 @@ export const EmailTemplates = {
     html: `
         Welcome {{organisationName}},<br><br>
         Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br><br>
-        Explore the Registry here {{home}}. <br><br>
+        Explore the Registry <a href="{{home}}">here</a>. <br><br>
 
         Sincerely,<br>
         The {{countryName}} Carbon Credit Registry Team
@@ -18,14 +18,14 @@ export const EmailTemplates = {
         Welcome {{name}}, <br><br>
 
         Your account has been created for the {{countryName}} Carbon Credit
-        Registry. You can access your account using the temporary Homepage: {{home}} <br><br>
+        Registry. You can access your account using the temporary Homepage: <a href="{{home}}">{{home}}</a> <br><br>
 
         User: {{email}} <br>
         Password (temporary): {{tempPassword}} <br><br>
 
         If you have any questions, feel free to email our customer success
         team <a href="mailto:help@carbreg.org?subject=I Need Help With The {{countryName}} Carbon Credit Registry">customer success team</a>
-        (We’re lightning quick at replying.) We also offer live chat {{liveChat}}.
+        (We’re lightning quick at replying.) We also offer live chat <a href="{{liveChat}}">{{liveChat}}</a>.
         <br><br>
 
         Sincerely, <br>
@@ -108,15 +108,30 @@ export const EmailTemplates = {
         `,
     text: "",
   },
+  // PROGRAMME_CREATE: { //obsolete email notification from carbon registry
+  //   id: "PROGRAMME_CREATE",
+  //   subject: "New Programme Received for Authorisation",
+  //   html: `
+  //       Hi {{name}}, <br><br>
+
+  //       A new programme owned by {{organisationName}} is awaiting authorisation. <br><br>
+
+  //       Click <a href="{{programmePageLink}}">here</a> to access all the programmes that require authorisation.
+  //       <br><br>
+
+  //       Sincerely,  <br>
+  //       The {{countryName}} Carbon Credit Registry Team
+  //       `,
+  // },
   PROGRAMME_CREATE: {
     id: "PROGRAMME_CREATE",
-    subject: "New Programme Received for Authorisation",
+    subject: "New Programme Created",
     html: `
         Hi {{name}}, <br><br>
 
-        A new programme owned by {{organisationName}} is awaiting authorisation. <br><br>
+        A new programme owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> to access all the programmes that require authorisation.
+        Click <a href="{{programmePageLink}}">here</a> for more details of the programme.
         <br><br>
 
         Sincerely,  <br>
@@ -452,7 +467,7 @@ export const EmailTemplates = {
   },
   CREDIT_RETIREMENT_CANCEL: {
     id: "CREDIT_RETIREMENT_CANCEL",
-    subject: "International Transfer Retire Request Cancelled",
+    subject: "International Transfer Retire Request Cancelled", 
     html: `
         Hi {{name}},<br><br>
 

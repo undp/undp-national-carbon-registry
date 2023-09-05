@@ -1226,6 +1226,18 @@ export class ProgrammeService {
             `/programmeManagement/view?id=${programme.programmeId}`,
         }
       );
+      savedProgramme.companyId.forEach(async (companyId) => {
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
+          companyId,
+          EmailTemplates.PROGRAMME_CREATE,
+          {
+            organisationName: orgNamesList,
+          programmePageLink:
+            hostAddress +
+            `/programmeManagement/view?id=${programme.programmeId}`,
+          }
+        );
+      });
     }
 
     return savedProgramme;
