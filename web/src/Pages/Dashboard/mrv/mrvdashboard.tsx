@@ -16,6 +16,7 @@ const MRVDashboard = () => {
       Chart={Chart}
       t={t}
       ButtonGroup={ButtonGroup}
+      isMultipleDashboardsVisible={true}
     ></MrvDashboardComponent>
   );
 };
