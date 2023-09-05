@@ -600,6 +600,7 @@ export class UserService {
       tempPassword: u.password,
       home: hostAddress,
       email: u.email,
+      address: this.configService.get("email.adresss"),
       liveChat: this.configService.get("liveChat"),
       helpDoc: "https://nationalcarbonregistrydemo.tawk.help",
     };
