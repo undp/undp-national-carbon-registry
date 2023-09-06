@@ -429,11 +429,7 @@ export class ProgrammeService {
       updateProgramme = (
         await this.doInvestment(
           trf,
-          `${this.getUserRef(requester)}#${toCompany.companyId}#${
-            toCompany.name
-          }#${fromCompanyListMap[trf.fromCompanyId].companyId}#${
-            fromCompanyListMap[trf.fromCompanyId].name
-          }`,
+          `${toCompany.companyId}#${toCompany.name}#${this.getUserRef(requester)}`.split('#',4).join('#'),
           programme,
           toCompany
         )
@@ -3641,9 +3637,7 @@ export class ProgrammeService {
 
     const transferResult = await this.doInvestment(
       investment,
-      `${this.getUserRef(approver)}#${receiver.companyId}#${receiver.name}#${
-        giver.companyId
-      }#${giver.name}`,
+      `${receiver.companyId}#${receiver.name}#${this.getUserRef(approver)}`.split('#',4).join('#'),
       programme,
       receiver
     );
