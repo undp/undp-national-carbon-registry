@@ -527,7 +527,7 @@ export class UserService {
     }
 
     u.password = this.helperService.generateRandomPassword();
-    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.API) {
+    if (userDto.role == Role.Admin) {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
