@@ -103,6 +103,7 @@ const ProgrammeView = () => {
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
   const { t, i18n } = useTranslation(['view']);
+  const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
@@ -1381,7 +1382,7 @@ const ProgrammeView = () => {
           </div>
           <OrganisationStatus
             organisationStatus={parseInt(ele.company.state)}
-            t={t}
+            t={companyProfileTranslations}
           ></OrganisationStatus>
         </div>
       </div>
