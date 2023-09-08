@@ -1651,7 +1651,7 @@ const ProgrammeView = () => {
 
   // }
   const generalInfo: any = {};
-  Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
+  Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(([k, v]) => {
     const text = t('view:' + k);
     if (k === 'currentStatus') {
       generalInfo[text] = (
@@ -2113,7 +2113,7 @@ const ProgrammeView = () => {
             <Card className="card-container">
               <div>
                 <InfoView
-                  data={mapArrayToi18n(getFinancialFields(data, CarbonSystemType.UNIFIED))}
+                  data={mapArrayToi18n(getFinancialFields(data))}
                   title={t('view:financial')}
                   icon={
                     <span className="b-icon">
