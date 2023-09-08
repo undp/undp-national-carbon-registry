@@ -5157,10 +5157,10 @@ caniuse-lite@^1.0.30001449:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001474.tgz#13b6fe301a831fe666cce8ca4ef89352334133d5"
   integrity sha512-iaIZ8gVrWfemh5DG3T9/YqarVZoYf0r188IjaGwx68j4Pf0SGY6CQkmJUIE+NZHkkecQGohzXmBGEwWDr9aM3Q==
 
-carbon-services-lib@^0.0.122:
-  version "0.0.122"
-  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.122.tgz#e009bc5b45b7149d191a43a549551ca031ed5ad6"
-  integrity sha512-5y7Z/Npi1G5SSRBsvhunST1ibOvj5kSkKJCvl9ASMChEyZInj487XoADhY5p/1b7tWy4rk/wr0wUKfjsDch+Ag==
+carbon-services-lib@^0.0.124:
+  version "0.0.124"
+  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.124.tgz#1014bc52ee99d9cb10977c6ffd3b060dba92a669"
+  integrity sha512-kyk3xcyTFcyuvdoez7AlrKhW8DWTXAmXDcfEvIgazdACgdutqWi0Q+nLqEXvzzbTI2hax3d8YIT5zEZLObTDcA==
   dependencies:
     "@casl/ability" "^6.3.2"
     "@drdgvhbh/postgres-error-codes" "^0.0.6"
@@ -5176,7 +5176,6 @@ carbon-services-lib@^0.0.122:
     "@undp/serial-number-gen" "^1.0.0"
     amazon-qldb-driver-nodejs "^3.0.1"
     aws-kinesis-agg "^4.2.6"
-    aws-lambda "^1.0.7"
     aws-serverless-express "^3.4.0"
     axios "^1.2.4"
     cheerio "^1.0.0-rc.12"
