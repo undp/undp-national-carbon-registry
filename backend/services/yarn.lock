@@ -5157,13 +5157,11 @@ caniuse-lite@^1.0.30001449:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001474.tgz#13b6fe301a831fe666cce8ca4ef89352334133d5"
   integrity sha512-iaIZ8gVrWfemh5DG3T9/YqarVZoYf0r188IjaGwx68j4Pf0SGY6CQkmJUIE+NZHkkecQGohzXmBGEwWDr9aM3Q==
 
-carbon-services-lib@^0.0.120:
-  version "0.0.120"
-  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.120.tgz#5f33eacea2a0ff92315cc3ecc0d8381650a88c43"
-  integrity sha512-k13Zz5KzF+Vt+IH882tuJBz50mIUgtQryQjJynPD2nN20q51plSkgwOXiQ9Ampu4huSufoiwx5HRWoIeN6yStw==
+carbon-services-lib@^0.0.122:
+  version "0.0.122"
+  resolved "https://registry.yarnpkg.com/carbon-services-lib/-/carbon-services-lib-0.0.122.tgz#e009bc5b45b7149d191a43a549551ca031ed5ad6"
+  integrity sha512-5y7Z/Npi1G5SSRBsvhunST1ibOvj5kSkKJCvl9ASMChEyZInj487XoADhY5p/1b7tWy4rk/wr0wUKfjsDch+Ag==
   dependencies:
-    "@aws-sdk/client-qldb" "^3.209.0"
-    "@aws-sdk/client-qldb-session" "^3.204.0"
     "@casl/ability" "^6.3.2"
     "@drdgvhbh/postgres-error-codes" "^0.0.6"
     "@nestjs/common" "^9.0.0"
