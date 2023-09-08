@@ -48,6 +48,7 @@ import {
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { AsyncOperationType } from "../enum/async.operation.type.enum";
+import { LocationInterface } from "../location/location.interface";
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,8 @@ export class UserService {
     private counterService: CounterService,
     private countryService: CountryService,
     private fileHandler: FileHandlerInterface,
-    private asyncOperationsInterface: AsyncOperationsInterface
+    private asyncOperationsInterface: AsyncOperationsInterface,
+    private locationService: LocationInterface
   ) {}
 
   private async generateApiKey(email) {
@@ -527,7 +529,7 @@ export class UserService {
     }
 
     u.password = this.helperService.generateRandomPassword();
-    if (userDto.role == Role.Admin && u.companyRole == CompanyRole.API) {
+    if (userDto.role == Role.Admin) {
       u.apiKey = await this.generateApiKey(userDto.email);
     }
 
@@ -635,6 +637,13 @@ export class UserService {
     //     registryCompanyCreateAction
     //   );
     // }
+
+    company.geographicalLocationCordintes = await this.locationService
+    .getCoordinatesForRegion(company.regions)
+    .then((response: any) => {
+      console.log("response from forwardGeoCoding function -> ", response);
+      return  [...response];
+    });
 
     const usr = await this.entityManger
       .transaction(async (em) => {
