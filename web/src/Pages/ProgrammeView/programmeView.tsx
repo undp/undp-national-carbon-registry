@@ -88,6 +88,7 @@ import {
   DevBGColor,
   DevColor,
   Role,
+  CarbonSystemType,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
@@ -1574,7 +1575,8 @@ const ProgrammeView = () => {
       userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
+      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId) &&
+      data.currentStage.toString() !== ProgrammeStageUnified.Rejected
     ) {
       actionBtns.push(
         <Button
@@ -2111,7 +2113,7 @@ const ProgrammeView = () => {
             <Card className="card-container">
               <div>
                 <InfoView
-                  data={mapArrayToi18n(getFinancialFields(data))}
+                  data={mapArrayToi18n(getFinancialFields(data, CarbonSystemType.UNIFIED))}
                   title={t('view:financial')}
                   icon={
                     <span className="b-icon">
