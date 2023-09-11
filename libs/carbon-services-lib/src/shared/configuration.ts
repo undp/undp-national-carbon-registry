@@ -67,7 +67,7 @@ export default () => ({
     image:process.env.CERTIFIER_IMAGE
   },
   registry: {
-    syncEnable: process.env.REGISTRY_SYNC_ENABLE || false,
+    syncEnable: process.env.SYNC_ENABLE || false,
     endpoint: process.env.MRV_ENDPOINT || 'https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev',
     apiToken: process.env.MRV_API_TOKEN
   },

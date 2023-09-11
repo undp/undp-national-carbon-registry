@@ -87,7 +87,7 @@ services:
       ITMO_EMAIL: ""
       ITMO_PASSWORD: ""
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
-      REGISTRY_SYNC_ENABLE: true
+      SYNC_ENABLE: false
       MRV_API_TOKEN: ''
     volumes:
       - filestore:/app/backend/services/public
