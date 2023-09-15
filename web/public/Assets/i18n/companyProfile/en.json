@@ -6,6 +6,7 @@
     "organisationDetailsHeading": "Organisation Details",
     "name" : "Name",
     "taxId" : "VAT Registration #",
+    "paymentId" : "Registration Payment ID",
     "companyRole": "Role",
     "email" : "Email",
     "phoneNo" : "Phone",
