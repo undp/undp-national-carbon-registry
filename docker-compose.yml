@@ -35,6 +35,8 @@ services:
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
       systemCountryCode: "NG"
+      systemCountryName: "CountryX"
+      systemContinentName: "CountryX"
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
