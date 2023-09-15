@@ -1252,6 +1252,12 @@ const ProgrammeView = () => {
     }
   };
 
+  const methodologyDocumentApproved = () => {
+    if (data) {
+      getProgrammeById(data?.programmeId);
+    }
+  };
+
   const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
@@ -2148,6 +2154,7 @@ const ProgrammeView = () => {
                   useConnection={useConnection}
                   useUserContext={useUserContext}
                   translator={i18n}
+                  methodologyDocumentUpdated={methodologyDocumentApproved}
                 />
               </div>
             </Card>
