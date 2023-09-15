@@ -38,12 +38,14 @@ services:
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       LOCATION_SERVICE: OPENSTREET
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"
       EXPIRES_IN: "7200"
+      BACKEND_HOST: "http://192.168.1.16:3000"
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
@@ -79,8 +81,10 @@ services:
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_USERNAME: ***REMOVED***
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       ASYNC_OPERATIONS_TYPE: Database
       ITMO_API_KEY: ""
