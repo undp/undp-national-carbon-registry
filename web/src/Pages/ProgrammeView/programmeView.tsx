@@ -1172,12 +1172,16 @@ const ProgrammeView = () => {
       getInvestmentHistory(data?.programmeId);
       getDocuments(data?.programmeId);
       setEmissionsReductionExpected(
-        data?.emissionReductionExpected !== null || data?.emissionReductionExpected !== undefined
+        data?.emissionReductionExpected !== null &&
+          data?.emissionReductionExpected !== undefined &&
+          !isNaN(data?.emissionReductionExpected)
           ? Number(data?.emissionReductionExpected)
           : 0
       );
       setEmissionsReductionAchieved(
-        data?.emissionReductionAchieved !== null || data?.emissionReductionAchieved !== undefined
+        data?.emissionReductionAchieved !== null &&
+          data?.emissionReductionAchieved !== undefined &&
+          !isNaN(data?.emissionReductionAchieved)
           ? Number(data?.emissionReductionAchieved)
           : 0
       );
