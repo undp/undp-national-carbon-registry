@@ -142,6 +142,11 @@ const ProgrammeView = () => {
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
 
+  const ministryLevelPermission =
+    data &&
+    userInfoState?.companyRole === CompanyRole.MINISTRY &&
+    ministrySectoralScope.includes(data.sectoralScope);
+
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
     if (index > 0) {
@@ -1307,11 +1312,7 @@ const ProgrammeView = () => {
             programmeOwnerId={programmeOwnerId}
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
-            ministryLevelPermission={
-              data &&
-              userInfoState?.companyRole === CompanyRole.MINISTRY &&
-              ministrySectoralScope.includes(data.sectoralScope)
-            }
+            ministryLevelPermission={ministryLevelPermission}
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
@@ -1408,9 +1409,7 @@ const ProgrammeView = () => {
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
           data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId)) ||
-        (userInfoState?.companyRole === CompanyRole.MINISTRY &&
-          ministrySectoralScope.includes(data.sectoralScope) &&
-          userInfoState?.userRole !== Role.ViewOnly)
+        ministryLevelPermission
       ) {
         actionBtns.push(
           <Button
@@ -1436,7 +1435,7 @@ const ProgrammeView = () => {
     }
 
     if (data.currentStage.toString() === 'Approved') {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         actionBtns.push(
           <Button
             danger
@@ -1500,7 +1499,7 @@ const ProgrammeView = () => {
       data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         if (Number(data.creditEst) > Number(data.creditIssued)) {
           actionBtns.push(
             <Button
@@ -1615,7 +1614,8 @@ const ProgrammeView = () => {
       data.certifier.length > 0 &&
       ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
         data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
-        userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        ministryLevelPermission)
     ) {
       actionBtns.push(
         <Button
@@ -1837,7 +1837,8 @@ const ProgrammeView = () => {
                               0 &&
                             !isTransferFrozen && (
                               <div>
-                                {((userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+                                {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                  ministryLevelPermission) &&
                                   !isAllOwnersDeactivated) ||
                                   (data.companyId
                                     .map((e) => Number(e))
@@ -2148,11 +2149,7 @@ const ProgrammeView = () => {
                   getProgrammeById={() => {
                     getProgrammeById(data?.programmeId);
                   }}
-                  ministryLevelPermission={
-                    data &&
-                    userInfoState?.companyRole === CompanyRole.MINISTRY &&
-                    ministrySectoralScope.includes(data.sectoralScope)
-                  }
+                  ministryLevelPermission={ministryLevelPermission}
                   linkDocVisible={linkDocVisible}
                   uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
