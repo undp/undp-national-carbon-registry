@@ -103,6 +103,7 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.MINISTRY) {
       can(Action.Manage, ProgrammeTransfer);
       can(Action.Manage, ProgrammeEntity);
+      can([Action.Delete], Company);
     }
 
     if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
