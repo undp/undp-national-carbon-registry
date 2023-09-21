@@ -48,6 +48,7 @@ services:
       DOMAIN_MAP: "true"
       EXPIRES_IN: "7200"
       BACKEND_HOST: "http://192.168.1.16:3000"
+      CONTACT_EMAIL: countryx@email.com
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
