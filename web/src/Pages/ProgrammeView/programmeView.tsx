@@ -1042,10 +1042,12 @@ const ProgrammeView = () => {
     let error = undefined;
     if (body) {
       body.programmeId = data?.programmeId;
+      body.externalId = data?.externalId;
     } else {
       body = {
         comment: comment,
         programmeId: data?.programmeId,
+        externalId: data?.externalId,
       };
     }
     try {
@@ -1860,7 +1862,8 @@ const ProgrammeView = () => {
                                             <ProgrammeRetireForm
                                               hideType={
                                                 userInfoState?.companyRole !==
-                                                CompanyRole.GOVERNMENT
+                                                  CompanyRole.GOVERNMENT &&
+                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
                                               }
                                               myCompanyId={userInfoState?.companyId}
                                               programme={data}
@@ -1931,6 +1934,7 @@ const ProgrammeView = () => {
                                               }
                                               translator={i18n}
                                               useConnection={useConnection}
+                                              ministryLevelPermission={ministryLevelPermission}
                                             />
                                           ),
                                         });
