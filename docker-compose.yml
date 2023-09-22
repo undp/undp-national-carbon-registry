@@ -49,6 +49,7 @@ services:
       EXPIRES_IN: "7200"
       BACKEND_HOST: "http://192.168.1.16:3000"
       CONTACT_EMAIL: countryx@email.com
+      MINISTER_NAME_AND_DESIGNATION : "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
