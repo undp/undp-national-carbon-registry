@@ -1648,7 +1648,10 @@ const ProgrammeView = () => {
                       updateProgrammeData
                     )
                   }
-                  showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                  showCertifiers={
+                    userInfoState.companyRole === CompanyRole.GOVERNMENT ||
+                    userInfoState.companyRole === CompanyRole.MINISTRY
+                  }
                   translator={i18n}
                 />
               ),
