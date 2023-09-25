@@ -3,10 +3,12 @@ on:
   workflow_dispatch
 
 jobs:
-  deploy_front_end:
+  update_fe_lib:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
       - name: Cache modules
         uses: actions/cache@v1
         id: yarn-cache
