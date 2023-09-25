@@ -15,5 +15,6 @@
   "signIn": "Sign In",
   "loginFailed": "Login failed",
   "networkError": "Network error. Please check your internet connection and try again.",
-  "systemError": "Something went wrong. Please try again."
+  "systemError": "Something went wrong. Please try again.",
+  "maxSizeVal": "Maximum upload file size is 5MB"
 }
