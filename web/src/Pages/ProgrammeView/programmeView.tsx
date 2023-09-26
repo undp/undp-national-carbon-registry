@@ -1155,6 +1155,42 @@ const ProgrammeView = () => {
     return info;
   };
 
+  const getUserDetails = async () => {
+    setLoadingAll(true);
+    try {
+      const response: any = await post('national/user/query', {
+        page: 1,
+        size: 10,
+        filterAnd: [
+          {
+            key: 'id',
+            operation: '=',
+            value: userInfoState?.id,
+          },
+        ],
+      });
+      if (response && response.data) {
+        if (
+          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
+          response?.data[0]?.company &&
+          response?.data[0]?.company?.sectoralScope
+        ) {
+          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
+        }
+      }
+      setLoadingAll(false);
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingAll(false);
+    }
+  };
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const programmeId = queryParams.get('id');
@@ -1171,6 +1207,10 @@ const ProgrammeView = () => {
         setLoadingAll(false);
         setData(state.record);
       }
+    }
+
+    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
+      getUserDetails();
     }
   }, []);
 
@@ -1225,42 +1265,6 @@ const ProgrammeView = () => {
 
   const onClickedAddAction = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
-  };
-
-  const getUserDetails = async () => {
-    setLoadingAll(true);
-    try {
-      const response: any = await post('national/user/query', {
-        page: 1,
-        size: 10,
-        filterAnd: [
-          {
-            key: 'id',
-            operation: '=',
-            value: userInfoState?.id,
-          },
-        ],
-      });
-      if (response && response.data) {
-        if (
-          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
-          response?.data[0]?.company &&
-          response?.data[0]?.company?.sectoralScope
-        ) {
-          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
-        }
-      }
-      setLoadingAll(false);
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoadingAll(false);
-    }
   };
 
   const methodologyDocumentApproved = () => {
@@ -1344,9 +1348,6 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
-    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
-      getUserDetails();
-    }
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
