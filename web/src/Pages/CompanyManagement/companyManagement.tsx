@@ -7,7 +7,7 @@ import { CompanyManagementComponent, CompanyManagementColumns } from '@undp/carb
 const CompanyManagement = () => {
   const navigate = useNavigate();
   const { post } = useConnection();
-  const { t } = useTranslation(['company']);
+  const { t } = useTranslation(['company', 'companyProfile']);
 
   const visibleColumns = [
     CompanyManagementColumns.logo,
@@ -15,6 +15,7 @@ const CompanyManagement = () => {
     CompanyManagementColumns.taxId,
     CompanyManagementColumns.companyRole,
     CompanyManagementColumns.programmeCount,
+    CompanyManagementColumns.companyState,
   ];
 
   const navigateToCompanyProfile = (record: any) => {

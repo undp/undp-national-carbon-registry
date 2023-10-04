@@ -3,6 +3,8 @@
     "subTitle": "View the details of the selected organisation",
     "deauthorise": "DEACTIVATE",
     "reActivate": "REACTIVATE",
+    "approve": "APPROVE",
+    "reject": "REJECT",
     "organisationDetailsHeading": "Organisation Details",
     "name" : "Name",
     "taxId" : "VAT Registration #",
@@ -18,6 +20,8 @@
     "deauthoriseConfirmText":"Organisation will still be visible but no further action will be able to take place.\n Note: all users associated with the organisation will also be deactivated.",
     "activeStatus": "Active",
     "deauthorisedStatus": "Deactivated",
+    "pendingStatus": "Pending",
+    "rejectedStatus": "Rejected",
     "remarks": "Remarks",
     "deauthorisationSuccess": "Company deactivated successfully!",
     "reActivateConfirmHeaderText": "Are you sure you want to reactivate this organisation?",
@@ -25,5 +29,14 @@
     "reactivationSuccess": "Company reactivated successfully!",
     "region": "Region",
     "ministerName": "Name of the Minister",
-    "sectoralScope": "Sectoral Scope"
+    "sectoralScope": "Sectoral Scope",
+    "approveConfirmHeaderText": "Are you sure you want to authorise this organisation?",
+    "approveConfirmText": "You can't undo this action",
+    "approvedSuccessfully": "Company is approved",
+    "rejectConfirmHeaderText": "Are you sure you want to reject this organisation?",
+    "rejectConfirmText": "You can't undo this action",
+    "rejectedSuccessfully": "Company is rejected",
+    "adminDetailsHeading": "Organisation Administrator Details",
+    "adminName": "Name",
+    "adminEmail": "Email"
 }
