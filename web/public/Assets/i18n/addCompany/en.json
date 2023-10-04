@@ -30,6 +30,7 @@
     "cancel": "CANCEL",
     "companyAddedSuccess": "The organisation has been created successfully",
     "companyUpdatedSuccess": "The organisation has been updated successfully ",
+    "companyRegisteredSuccess": "User registration request has been sent",
     "errorInAddUser": "Error in adding user!",
     "errorInUpdatingCompany": "Error in updating company!",
     "region": "Region",

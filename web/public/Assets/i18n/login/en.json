@@ -4,6 +4,7 @@
   "management": "DEMO",
   "welcome": "Welcome",
   "welcome-back": "Welcome Back",
-  "register-acc": "Don't have an account yet",
-  "forgot-pwd": "Forgot Password"
+  "register-acc": "Need an account?",
+  "forgot-pwd": "Forgot Password",
+  "register-here": "Register here"
 }
