@@ -63,6 +63,23 @@ export class UserController {
     );
   }
 
+  @Post("register")
+  registerUser(@Body() user: UserDto, @Request() req) {
+    if (user.role == Role.Root) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.userService.create(
+      user,
+      null,
+      user.company.companyRole,
+      true
+    );
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, User))
   // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
