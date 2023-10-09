@@ -14,7 +14,7 @@
     "@types/react-dom": "^18.0.8",
     "@types/styled-components": "^5.1.26",
     "@types/validator": "^13.7.13",
-    "@undp/carbon-library": "^1.0.117",
+    "@undp/carbon-library": "^1.0.119",
     "antd": "^4.24.1",
     "apexcharts": "^3.36.3",
     "axios": "^1.1.3",
