@@ -38,5 +38,6 @@
   "endTimeVal": "End date cannot be earlier than the start date",
   "invalidFileFormat": "Unsupported file format",
   "duplicateOrg": "This organisation is already selected!",
-  "isRequired": "is required!"
+  "isRequired": "is required!",
+  "environmentalImpactAssessment": "Environmental Impact Assessment"
 }
