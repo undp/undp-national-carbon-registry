@@ -71,5 +71,6 @@
     "authLetterLabel": "Letter of Authorisation",
     "ministryLevel": "Ministry Level",
     "description": "Description",
-    "emissionReductionAchievedandCreditIssued": "Emission Reduction Achieved/ Credit Issued"
+    "emissionReductionAchievedandCreditIssued": "Emission Reduction Achieved/ Credit Issued",
+    "environmentalImpactAssessment": "Environmental Impact Assessment"
 }
