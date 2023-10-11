@@ -14,6 +14,7 @@ import {
   Radio,
   Space,
   Form,
+  Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -1424,10 +1425,20 @@ const ProgrammeView = () => {
             {t('view:addInvestment')}
           </Button>
         );
+        actionBtns.push(
+          <Tooltip
+            title={'Cannot submit until methodology document is approved.'}
+            color={'#6ACDFF'}
+            key={'#6ACDFF'}
+          >
+            <Button disabled>{t('view:addAction')}</Button>
+          </Tooltip>
+        );
         if (
           (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
           (data.currentStage as any) === ProgrammeStageUnified.Approved
         ) {
+          actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
               {t('view:addAction')}
