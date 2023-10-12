@@ -118,6 +118,7 @@ export class ProgrammeController {
   // async updateOwnership(@Body() update: OwnershipUpdateDto) {
   //   return this.programmeService.updateOwnership(update);
   // }
+  
 
   @ApiBearerAuth()
   @UseGuards(
