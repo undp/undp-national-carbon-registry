@@ -617,7 +617,16 @@ const ProgrammeView = () => {
         let el = undefined;
         let newEl = undefined;
         let creditEl = undefined;
+        let upcomingAuthorisation: any;
+        const day = Math.floor(
+          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
+        );
         if (activity.data.txType === TxType.CREATE) {
+          if (day === 1) {
+            upcomingAuthorisation = `Awaiting Action : ${day} Day`;
+          } else {
+            upcomingAuthorisation = `Awaiting Action : ${day} Days`;
+          }
           el = {
             status: 'process',
             title: t('view:tlCreate'),
@@ -632,9 +641,7 @@ const ProgrammeView = () => {
           newEl = {
             status: 'process',
             title: t('view:tlAuthorisation'),
-            subTitle: `Awaiting Action : ${Math.round(
-              DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
-            )} Days`,
+            subTitle: upcomingAuthorisation,
             icon: (
               <span className="step-icon upcom-auth-step">
                 <Icon.ClipboardCheck />
