@@ -99,7 +99,7 @@ const App = () => {
                     element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                   >
                     <Route path="viewAll" element={<ProgrammeManagement />} />
-                    <Route path="view" element={<ProgrammeView />} />
+                    <Route path="view/:id" element={<ProgrammeView />} />
                     <Route path="addProgramme" element={<AddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                   </Route>

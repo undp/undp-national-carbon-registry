@@ -16,7 +16,7 @@ import {
   Form,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
@@ -131,6 +131,7 @@ const ProgrammeView = () => {
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+  const { id } = useParams();
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -1192,20 +1193,14 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const programmeId = queryParams.get('id');
-    if (programmeId) {
-      getProgrammeById(programmeId);
-    } else if (!state) {
-      navigate('/programmeManagement/viewAll', { replace: true });
+    if (state && state.record) {
+      setLoadingAll(false);
+      setData(state.record);
     } else {
-      if (!state.record) {
-        if (state.id) {
-          getProgrammeById(state.id);
-        }
+      if (id) {
+        getProgrammeById(id);
       } else {
-        setLoadingAll(false);
-        setData(state.record);
+        navigate('/programmeManagement/viewAll', { replace: true });
       }
     }
 

@@ -23,7 +23,7 @@ const ProgrammeManagement = () => {
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
-    navigate('/programmeManagement/view', { state: { record } });
+    navigate(`/programmeManagement/view/${record.programmeId}`, { state: { record } });
   };
 
   const onClickAddProgramme = () => {
