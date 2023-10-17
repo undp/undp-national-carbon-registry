@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - '**'        # matches every branch
+      - '!unified' 
       - '!develop'  
       - '!main'   # excludes master
     paths:
