@@ -14,6 +14,7 @@ import {
   Radio,
   Space,
   Form,
+  Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -89,6 +90,7 @@ import {
   DevColor,
   Role,
   CarbonSystemType,
+  TooltipColor,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
@@ -1493,10 +1495,20 @@ const ProgrammeView = () => {
             {t('view:addInvestment')}
           </Button>
         );
+        actionBtns.push(
+          <Tooltip
+            title={'Cannot submit until methodology document is approved.'}
+            color={TooltipColor}
+            key={TooltipColor}
+          >
+            <Button disabled>{t('view:addAction')}</Button>
+          </Tooltip>
+        );
         if (
           (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
           (data.currentStage as any) === ProgrammeStageUnified.Approved
         ) {
+          actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
               {t('view:addAction')}
