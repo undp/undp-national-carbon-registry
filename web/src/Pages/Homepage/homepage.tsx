@@ -15,9 +15,7 @@ import ESA from '../../Assets/Images/ESA.webp';
 import ESAff from '../../Assets/Images/ESA.png';
 import WBANK from '../../Assets/Images/WBANK.webp';
 import WBANKff from '../../Assets/Images/WBANK.png';
-import undpLogofall from '../../Assets/Images/undp1.png';
-import forest from '../../Assets/Images/forest.webp';
-import forestfall from '../../Assets/Images/forest.png';
+import forestfall from '../../Assets/Images/forestnew.png';
 import resources from '../../Assets/Images/resources.webp';
 import resourcesfall from '../../Assets/Images/resources.png';
 import LayoutFooter from '../../Components/Footer/layout.footer';
@@ -300,7 +298,7 @@ const Homepage = () => {
               <Col flex={3} md={12} lg={12}>
                 <ImgWithFallback
                   className="forest-image"
-                  src={forest}
+                  src={forestfall}
                   fallbackSrc={forestfall}
                   mediaType="image/webp"
                   alt="forestry"
