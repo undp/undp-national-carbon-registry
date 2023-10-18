@@ -45,7 +45,7 @@ const CookiePolicy = () => {
             <div className="cookie-sub">Last updated February 02, 2023</div>
             <div className="cookie-body">
               This Cookie Policy explains how {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'} (
-              <b>"Company"</b>, "<b>we</b>","<b>us</b>", and "<b>our</b>") uses cookies and similar
+              <b>"Company"</b>, "<b>we</b>", "<b>us</b>", and "<b>our</b>") uses cookies and similar
               technologies to recognize you when you visit our websites at{' '}
               <a target="_blank" href="https://carbreg.org">
                 https://carbreg.org
@@ -612,19 +612,18 @@ const CookiePolicy = () => {
             <div className="cookie-subtitle">Where can I get further information?</div>
             <div className="cookie-body-contact">
               If you have any questions about our use of cookies or other technologies, please email
-              us at address@CountryX.org or by post to:
+              us at digital@undp.org or by post to:
               <br />
               <br />
               <br />
-              CountryX
+              {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+              <br />1 United Nations Plaza
               <br />
-              Address
+              New York, New York
               <br />
-              City, Region
+              United States
               <br />
-              Country
-              <br />
-              Phone: +1-123-456-7890
+              Phone: +260-211-263258
               <br />
               <br />
               This cookie policy was created using Termly's{' '}
