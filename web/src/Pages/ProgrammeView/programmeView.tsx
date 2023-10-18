@@ -603,8 +603,30 @@ const ProgrammeView = () => {
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
+        let programmecreateindex: any;
+        const createIndex = activityList.findIndex((item) => item.title === t('view:tlCreate'));
+        const upcomCreditIndex = activityList.findIndex(
+          (item) => item.subTitle === t('view:tlPending')
+        );
+        const upcomAuthorisationIndex = activityList.findIndex(
+          (item) => item.title === 'Authorisation'
+        );
+        if (createIndex !== -1) {
+          programmecreateindex = createIndex;
+        }
         let el = undefined;
+        let newEl = undefined;
+        let creditEl = undefined;
+        let upcomingAuthorisation: any;
+        const day = Math.floor(
+          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
+        );
         if (activity.data.txType === TxType.CREATE) {
+          if (day === 1) {
+            upcomingAuthorisation = `Awaiting Action : ${day} Day`;
+          } else {
+            upcomingAuthorisation = `Awaiting Action : ${day} Days`;
+          }
           el = {
             status: 'process',
             title: t('view:tlCreate'),
@@ -613,6 +635,16 @@ const ProgrammeView = () => {
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
+              </span>
+            ),
+          };
+          newEl = {
+            status: 'process',
+            title: t('view:tlAuthorisation'),
+            subTitle: upcomingAuthorisation,
+            icon: (
+              <span className="step-icon upcom-auth-step">
+                <Icon.ClipboardCheck />
               </span>
             ),
           };
@@ -641,6 +673,9 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
             status: 'process',
@@ -683,6 +718,12 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
         } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
             status: 'process',
@@ -856,6 +897,27 @@ const ProgrammeView = () => {
             ),
           };
         }
+        if (
+          activity.data.creditEst !== activity.data.creditIssued &&
+          activity.data.txType !== TxType.REJECT
+        ) {
+          creditEl = {
+            status: 'process',
+            title: t('view:tlIssue'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Award />
+              </span>
+            ),
+          };
+          activityList.splice(upcomCreditIndex, 1);
+        }
+        if (activity.data.creditEst === activity.data.creditIssued) {
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
+        }
         if (el) {
           const toDelete = [];
           for (const txT of txListKeys) {
@@ -869,6 +931,13 @@ const ProgrammeView = () => {
           toDelete.forEach((e) => delete txList[e]);
           txListKeys = Object.keys(txList).sort();
           activityList.unshift(el);
+        }
+        if (newEl) {
+          const insertIndexauth = Number(programmecreateindex) + 1;
+          activityList.splice(insertIndexauth, 0, newEl);
+        }
+        if (creditEl) {
+          activityList.splice(0, 0, creditEl);
         }
       }
 
