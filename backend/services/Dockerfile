@@ -7,8 +7,6 @@ WORKDIR /app/backend/services
 COPY ./backend/services/package.json ./
 COPY ./backend/services/yarn.lock ./
 
-COPY ./libs ../../libs
-
 # Install app dependencies
 RUN yarn run sls:installProd
 

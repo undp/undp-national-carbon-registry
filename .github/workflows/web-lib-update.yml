@@ -1,0 +1,33 @@
+name: Web Library Version Update
+on:
+  workflow_dispatch
+
+jobs:
+  update_fe_lib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+      - name: Cache modules
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Update Version
+        working-directory: ./web
+        run: yarn upgrade @undp/carbon-library --latest
+      - name: Commit Changes
+        working-directory: ./web
+        run: |
+          git config --global user.name "System Generated"
+          git config --global user.email "palinda@xeptagon.com"
+          git add package.json yarn.lock
+          git commit -m "Update Web Lib Version"
+          git push origin HEAD

@@ -70,7 +70,7 @@
   "methodologyEstimatedCreditsInvalid": "Methodology Estimated Credits should be greater than 0",
   "userEstimatedCreditsInvalid": "Estimated Credits for the NDC Action cannot be greater than the Estimated Credits for the programme",
   "coBenefitsSubTitle": "Co-Benefits",
-  "ministryLevel": "Minitry Level",
+  "ministryLevel": "Ministry Level",
   "ghgEmiReduced": "GHG Emissions Reduced (tCO2e)",
   "ghgEmiAvoided": "GHG Emissions Avoided (tCO2e)",
   "type": "Type",

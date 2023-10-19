@@ -14,6 +14,7 @@ import {
   Radio,
   Space,
   Form,
+  Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -88,6 +89,8 @@ import {
   DevBGColor,
   DevColor,
   Role,
+  CarbonSystemType,
+  TooltipColor,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
@@ -103,6 +106,7 @@ const ProgrammeView = () => {
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
   const { t, i18n } = useTranslation(['view']);
+  const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
@@ -139,6 +143,11 @@ const ProgrammeView = () => {
   };
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
+
+  const ministryLevelPermission =
+    data &&
+    userInfoState?.companyRole === CompanyRole.MINISTRY &&
+    ministrySectoralScope.includes(data.sectoralScope);
 
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
@@ -596,8 +605,30 @@ const ProgrammeView = () => {
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
+        let programmecreateindex: any;
+        const createIndex = activityList.findIndex((item) => item.title === t('view:tlCreate'));
+        const upcomCreditIndex = activityList.findIndex(
+          (item) => item.subTitle === t('view:tlPending')
+        );
+        const upcomAuthorisationIndex = activityList.findIndex(
+          (item) => item.title === 'Authorisation'
+        );
+        if (createIndex !== -1) {
+          programmecreateindex = createIndex;
+        }
         let el = undefined;
+        let newEl = undefined;
+        let creditEl = undefined;
+        let upcomingAuthorisation: any;
+        const day = Math.floor(
+          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
+        );
         if (activity.data.txType === TxType.CREATE) {
+          if (day === 1) {
+            upcomingAuthorisation = `Awaiting Action : ${day} Day`;
+          } else {
+            upcomingAuthorisation = `Awaiting Action : ${day} Days`;
+          }
           el = {
             status: 'process',
             title: t('view:tlCreate'),
@@ -606,6 +637,16 @@ const ProgrammeView = () => {
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
+              </span>
+            ),
+          };
+          newEl = {
+            status: 'process',
+            title: t('view:tlAuthorisation'),
+            subTitle: upcomingAuthorisation,
+            icon: (
+              <span className="step-icon upcom-auth-step">
+                <Icon.ClipboardCheck />
               </span>
             ),
           };
@@ -634,6 +675,9 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
             status: 'process',
@@ -676,6 +720,12 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
         } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
             status: 'process',
@@ -849,6 +899,27 @@ const ProgrammeView = () => {
             ),
           };
         }
+        if (
+          activity.data.creditEst !== activity.data.creditIssued &&
+          activity.data.txType !== TxType.REJECT
+        ) {
+          creditEl = {
+            status: 'process',
+            title: t('view:tlIssue'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Award />
+              </span>
+            ),
+          };
+          activityList.splice(upcomCreditIndex, 1);
+        }
+        if (activity.data.creditEst === activity.data.creditIssued) {
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
+        }
         if (el) {
           const toDelete = [];
           for (const txT of txListKeys) {
@@ -862,6 +933,13 @@ const ProgrammeView = () => {
           toDelete.forEach((e) => delete txList[e]);
           txListKeys = Object.keys(txList).sort();
           activityList.unshift(el);
+        }
+        if (newEl) {
+          const insertIndexauth = Number(programmecreateindex) + 1;
+          activityList.splice(insertIndexauth, 0, newEl);
+        }
+        if (creditEl) {
+          activityList.splice(0, 0, creditEl);
         }
       }
 
@@ -1035,10 +1113,12 @@ const ProgrammeView = () => {
     let error = undefined;
     if (body) {
       body.programmeId = data?.programmeId;
+      body.externalId = data?.externalId;
     } else {
       body = {
         comment: comment,
         programmeId: data?.programmeId,
+        externalId: data?.externalId,
       };
     }
     try {
@@ -1146,6 +1226,42 @@ const ProgrammeView = () => {
     return info;
   };
 
+  const getUserDetails = async () => {
+    setLoadingAll(true);
+    try {
+      const response: any = await post('national/user/query', {
+        page: 1,
+        size: 10,
+        filterAnd: [
+          {
+            key: 'id',
+            operation: '=',
+            value: userInfoState?.id,
+          },
+        ],
+      });
+      if (response && response.data) {
+        if (
+          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
+          response?.data[0]?.company &&
+          response?.data[0]?.company?.sectoralScope
+        ) {
+          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
+        }
+      }
+      setLoadingAll(false);
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoadingAll(false);
+    }
+  };
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const programmeId = queryParams.get('id');
@@ -1163,6 +1279,10 @@ const ProgrammeView = () => {
         setData(state.record);
       }
     }
+
+    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
+      getUserDetails();
+    }
   }, []);
 
   useEffect(() => {
@@ -1170,12 +1290,16 @@ const ProgrammeView = () => {
       getInvestmentHistory(data?.programmeId);
       getDocuments(data?.programmeId);
       setEmissionsReductionExpected(
-        data?.emissionReductionExpected !== null || data?.emissionReductionExpected !== undefined
+        data?.emissionReductionExpected !== null &&
+          data?.emissionReductionExpected !== undefined &&
+          !isNaN(data?.emissionReductionExpected)
           ? Number(data?.emissionReductionExpected)
           : 0
       );
       setEmissionsReductionAchieved(
-        data?.emissionReductionAchieved !== null || data?.emissionReductionAchieved !== undefined
+        data?.emissionReductionAchieved !== null &&
+          data?.emissionReductionAchieved !== undefined &&
+          !isNaN(data?.emissionReductionAchieved)
           ? Number(data?.emissionReductionAchieved)
           : 0
       );
@@ -1214,39 +1338,9 @@ const ProgrammeView = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
   };
 
-  const getUserDetails = async () => {
-    setLoadingAll(true);
-    try {
-      const response: any = await post('national/user/query', {
-        page: 1,
-        size: 10,
-        filterAnd: [
-          {
-            key: 'id',
-            operation: '=',
-            value: userInfoState?.id,
-          },
-        ],
-      });
-      if (response && response.data) {
-        if (
-          response?.data[0]?.companyRole === CompanyRole.MINISTRY &&
-          response?.data[0]?.company &&
-          response?.data[0]?.company?.sectoralScope
-        ) {
-          setMinistrySectoralScope(response?.data[0]?.company?.sectoralScope);
-        }
-      }
-      setLoadingAll(false);
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoadingAll(false);
+  const methodologyDocumentApproved = () => {
+    if (data) {
+      getProgrammeById(data?.programmeId);
     }
   };
 
@@ -1295,11 +1389,7 @@ const ProgrammeView = () => {
             programmeOwnerId={programmeOwnerId}
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
-            ministryLevelPermission={
-              data &&
-              userInfoState?.companyRole === CompanyRole.MINISTRY &&
-              ministrySectoralScope.includes(data.sectoralScope)
-            }
+            ministryLevelPermission={ministryLevelPermission}
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
@@ -1329,9 +1419,6 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
-    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
-      getUserDetails();
-    }
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
@@ -1381,7 +1468,7 @@ const ProgrammeView = () => {
           </div>
           <OrganisationStatus
             organisationStatus={parseInt(ele.company.state)}
-            t={t}
+            t={companyProfileTranslations}
           ></OrganisationStatus>
         </div>
       </div>
@@ -1396,9 +1483,7 @@ const ProgrammeView = () => {
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
           data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId)) ||
-        (userInfoState?.companyRole === CompanyRole.MINISTRY &&
-          ministrySectoralScope.includes(data.sectoralScope) &&
-          userInfoState?.userRole !== Role.ViewOnly)
+        ministryLevelPermission
       ) {
         actionBtns.push(
           <Button
@@ -1410,10 +1495,20 @@ const ProgrammeView = () => {
             {t('view:addInvestment')}
           </Button>
         );
+        actionBtns.push(
+          <Tooltip
+            title={'Cannot submit until methodology document is approved.'}
+            color={TooltipColor}
+            key={TooltipColor}
+          >
+            <Button disabled>{t('view:addAction')}</Button>
+          </Tooltip>
+        );
         if (
           (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
           (data.currentStage as any) === ProgrammeStageUnified.Approved
         ) {
+          actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
               {t('view:addAction')}
@@ -1424,7 +1519,7 @@ const ProgrammeView = () => {
     }
 
     if (data.currentStage.toString() === 'Approved') {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         actionBtns.push(
           <Button
             danger
@@ -1488,7 +1583,7 @@ const ProgrammeView = () => {
       data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT) {
+      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         if (Number(data.creditEst) > Number(data.creditIssued)) {
           actionBtns.push(
             <Button
@@ -1574,7 +1669,8 @@ const ProgrammeView = () => {
       userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)
+      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId) &&
+      data.currentStage.toString() !== ProgrammeStageUnified.Rejected
     ) {
       actionBtns.push(
         <Button
@@ -1602,7 +1698,8 @@ const ProgrammeView = () => {
       data.certifier.length > 0 &&
       ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
         data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
-        userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        ministryLevelPermission)
     ) {
       actionBtns.push(
         <Button
@@ -1633,7 +1730,10 @@ const ProgrammeView = () => {
                       updateProgrammeData
                     )
                   }
-                  showCertifiers={userInfoState.companyRole === CompanyRole.GOVERNMENT}
+                  showCertifiers={
+                    userInfoState.companyRole === CompanyRole.GOVERNMENT ||
+                    userInfoState.companyRole === CompanyRole.MINISTRY
+                  }
                   translator={i18n}
                 />
               ),
@@ -1649,7 +1749,7 @@ const ProgrammeView = () => {
 
   // }
   const generalInfo: any = {};
-  Object.entries(getGeneralFields(data)).forEach(([k, v]) => {
+  Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(([k, v]) => {
     const text = t('view:' + k);
     if (k === 'currentStatus') {
       generalInfo[text] = (
@@ -1824,7 +1924,8 @@ const ProgrammeView = () => {
                               0 &&
                             !isTransferFrozen && (
                               <div>
-                                {((userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+                                {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                  ministryLevelPermission) &&
                                   !isAllOwnersDeactivated) ||
                                   (data.companyId
                                     .map((e) => Number(e))
@@ -1846,7 +1947,8 @@ const ProgrammeView = () => {
                                             <ProgrammeRetireForm
                                               hideType={
                                                 userInfoState?.companyRole !==
-                                                CompanyRole.GOVERNMENT
+                                                  CompanyRole.GOVERNMENT &&
+                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
                                               }
                                               myCompanyId={userInfoState?.companyId}
                                               programme={data}
@@ -1917,6 +2019,7 @@ const ProgrammeView = () => {
                                               }
                                               translator={i18n}
                                               useConnection={useConnection}
+                                              ministryLevelPermission={ministryLevelPermission}
                                             />
                                           ),
                                         });
@@ -2135,16 +2238,13 @@ const ProgrammeView = () => {
                   getProgrammeById={() => {
                     getProgrammeById(data?.programmeId);
                   }}
-                  ministryLevelPermission={
-                    data &&
-                    userInfoState?.companyRole === CompanyRole.MINISTRY &&
-                    ministrySectoralScope.includes(data.sectoralScope)
-                  }
+                  ministryLevelPermission={ministryLevelPermission}
                   linkDocVisible={linkDocVisible}
                   uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
                   useUserContext={useUserContext}
                   translator={i18n}
+                  methodologyDocumentUpdated={methodologyDocumentApproved}
                 />
               </div>
             </Card>

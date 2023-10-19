@@ -14,13 +14,12 @@ const ProgrammeManagement = () => {
     ProgrammeManagementColumns.company,
     ProgrammeManagementColumns.sector,
     ProgrammeManagementColumns.currentStage,
-    ProgrammeManagementColumns.creditIssued,
     ProgrammeManagementColumns.creditBalance,
     ProgrammeManagementColumns.creditTransferred,
     ProgrammeManagementColumns.certifierId,
     ProgrammeManagementColumns.serialNo,
     ProgrammeManagementColumns.emissionReductionExpected,
-    ProgrammeManagementColumns.emissionReductionAchieved,
+    ProgrammeManagementColumns.emissionReductionAchievedandCreditIssued,
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
