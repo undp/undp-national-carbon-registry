@@ -35,15 +35,22 @@ services:
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
       systemCountryCode: "NG"
+      systemCountryName: "CountryX"
+      systemContinentName: "CountryX"
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       LOCATION_SERVICE: OPENSTREET
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"
       EXPIRES_IN: "7200"
+      BACKEND_HOST: "http://192.168.1.16:3000"
+      CONTACT_EMAIL: countryx@email.com
+      MINISTER_NAME_AND_DESIGNATION : "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
+      SYSTEM_NAME: Carbon Registry
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
@@ -79,15 +86,17 @@ services:
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
+      SMTP_USERNAME: ***REMOVED***
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       ASYNC_OPERATIONS_TYPE: Database
       ITMO_API_KEY: ""
       ITMO_EMAIL: ""
       ITMO_PASSWORD: ""
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
-      REGISTRY_SYNC_ENABLE: true
+      SYNC_ENABLE: false
       MRV_API_TOKEN: ''
     volumes:
       - filestore:/app/backend/services/public
@@ -118,6 +127,7 @@ services:
         REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         REACT_APP_COUNTRY_CODE: "NG"
         REACT_APP_MAP_TYPE: "None"
+        REACT_APP_ENABLE_REGISTRATION: true
     ports:
       - "3030:3030"
     depends_on:

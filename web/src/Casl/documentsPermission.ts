@@ -19,7 +19,7 @@ export const uploadDocUserPermission = (
   ministryLevelPermission?: boolean
 ) => {
   let permission = false;
-  if (docType === DocType.DESIGN_DOCUMENT) {
+  if (docType === DocType.DESIGN_DOCUMENT || docType === DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT) {
     if (
       (userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.MINISTRY && ministryLevelPermission)) &&

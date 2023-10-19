@@ -34,7 +34,7 @@ export class CompanyController {
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {
     console.log(req.abilityCondition);
-    return this.companyService.query(query, req.abilityCondition);
+    return this.companyService.query(query, req.abilityCondition, req.user.companyRole);
   }
 
   @ApiBearerAuth()
@@ -96,6 +96,36 @@ export class CompanyController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Approve, Company))
+  @Put("approve")
+  approve(
+    @Query("id") companyId: number,
+    @Body() body: OrganisationSuspendDto,
+    @Request() req
+  ) {
+    return this.companyService.approve(
+      companyId,
+      req.abilityCondition
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Reject, Company))
+  @Put("reject")
+  reject(
+    @Query("id") companyId: number,
+    @Body() body: OrganisationSuspendDto,
+    @Request() req
+  ) {
+    return this.companyService.reject(
+      companyId,
+      req.user,
+      body.remarks,
+      req.abilityCondition
+    );
+  }
+
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company))
   @Post("findByIds")
   async findByCompanyId(
@@ -119,19 +149,16 @@ export class CompanyController {
     return await this.companyService.update(company, req.abilityCondition);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post("countries")
   async getCountries(@Body() query: QueryDto, @Request() req) {
     return await this.countryService.getCountryList(query);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get("countries")
   async getAvailableCountries(@Request() req) {
     return await this.countryService.getAvailableCountries();
   }
   
-  @UseGuards(JwtAuthGuard)
   @Post("regions")
   async getRegionList(@Body() query: QueryDto, @Request() req) {
     return await this.countryService.getRegionList(query);
