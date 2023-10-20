@@ -91,6 +91,8 @@ import {
   Role,
   CarbonSystemType,
   TooltipColor,
+  getValidNdcActions,
+  addNdcDesc,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
@@ -686,8 +688,11 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlIssueDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
+                  addNdcDesc({
+                    ndcActions: getTxRefValues(activity.data.txRef, 4),
+                    t: t,
+                    creditUnit: creditUnit,
+                  }),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
@@ -1584,7 +1589,10 @@ const ProgrammeView = () => {
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        if (Number(data.creditEst) > Number(data.creditIssued)) {
+        if (
+          Number(data.creditEst) > Number(data.creditIssued) &&
+          getValidNdcActions(data).length > 0
+        ) {
           actionBtns.push(
             <Button
               type="primary"
@@ -1616,6 +1624,7 @@ const ProgrammeView = () => {
                         )
                       }
                       translator={i18n}
+                      ndcActions={getValidNdcActions(data)}
                     />
                   ),
                 });
