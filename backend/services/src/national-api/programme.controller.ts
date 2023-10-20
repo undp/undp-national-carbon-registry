@@ -46,7 +46,7 @@ import {
   InvestmentReject,
   InvestmentCancel,
   ProgrammeMitigationIssue
-} from "carbon-services-lib";
+} from "@undp/carbon-services-lib";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
