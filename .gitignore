@@ -11,4 +11,3 @@ backend/services/.env.local
 web/src/Assets/.DS_Store
 .yalc
 yalc.lock
-
