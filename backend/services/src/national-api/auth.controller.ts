@@ -19,8 +19,8 @@ import { LoginDto } from "@undp/carbon-services-lib";
 import { AuthService } from "@undp/carbon-services-lib";
 import { ForgotPasswordDto } from "@undp/carbon-services-lib";
 import { PasswordResetDto } from "@undp/carbon-services-lib";
-import { PasswordResetService } from 'carbon-services-lib';
-import { HelperService } from 'carbon-services-lib';
+import { PasswordResetService } from '@undp/carbon-services-lib';
+import { HelperService } from '@undp/carbon-services-lib';
 
 @ApiTags("Auth")
 @Controller("auth")

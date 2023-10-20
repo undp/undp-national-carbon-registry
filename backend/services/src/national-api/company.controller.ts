@@ -16,7 +16,7 @@ import { QueryDto } from "@undp/carbon-services-lib";
 import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
 import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
 import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
-import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from 'carbon-services-lib';
+import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from '@undp/carbon-services-lib';
 
 @ApiTags("Organisation")
 @ApiBearerAuth()

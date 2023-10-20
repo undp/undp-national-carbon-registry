@@ -21,7 +21,7 @@ import { QueryDto } from "@undp/carbon-services-lib";
 import { UserUpdateDto } from "@undp/carbon-services-lib";
 import { PasswordUpdateDto } from "@undp/carbon-services-lib";
 import { JwtAuthGuard } from "@undp/carbon-services-lib";
-import { HelperService } from 'carbon-services-lib';
+import { HelperService } from '@undp/carbon-services-lib';
 import { ApiKeyJwtAuthGuard } from "@undp/carbon-services-lib";
 
 @ApiTags("User")
