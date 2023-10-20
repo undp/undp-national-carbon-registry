@@ -11,11 +11,11 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Company } from "carbon-services-lib";
-import { QueryDto } from "carbon-services-lib";
-import { OrganisationSuspendDto } from "carbon-services-lib";
-import { FindOrganisationQueryDto } from "carbon-services-lib";
-import { OrganisationUpdateDto } from "carbon-services-lib";
+import { Company } from "@undp/carbon-services-lib";
+import { QueryDto } from "@undp/carbon-services-lib";
+import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
+import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
+import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
 import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from 'carbon-services-lib';
 
 @ApiTags("Organisation")

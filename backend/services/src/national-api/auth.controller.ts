@@ -15,10 +15,10 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { LoginDto } from "carbon-services-lib";
-import { AuthService } from "carbon-services-lib";
-import { ForgotPasswordDto } from "carbon-services-lib";
-import { PasswordResetDto } from "carbon-services-lib";
+import { LoginDto } from "@undp/carbon-services-lib";
+import { AuthService } from "@undp/carbon-services-lib";
+import { ForgotPasswordDto } from "@undp/carbon-services-lib";
+import { PasswordResetDto } from "@undp/carbon-services-lib";
 import { PasswordResetService } from 'carbon-services-lib';
 import { HelperService } from 'carbon-services-lib';
 

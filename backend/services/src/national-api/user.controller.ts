@@ -13,16 +13,16 @@ import {
   Put,
 } from "@nestjs/common";
 
-import { User } from "carbon-services-lib";
-import { UserDto } from "carbon-services-lib";
-import { UserService,Action ,AppAbility,CaslAbilityFactory,CheckPolicies, PoliciesGuard, PoliciesGuardEx, Role} from "carbon-services-lib";
+import { User } from "@undp/carbon-services-lib";
+import { UserDto } from "@undp/carbon-services-lib";
+import { UserService,Action ,AppAbility,CaslAbilityFactory,CheckPolicies, PoliciesGuard, PoliciesGuardEx, Role} from "@undp/carbon-services-lib";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { QueryDto } from "carbon-services-lib";
-import { UserUpdateDto } from "carbon-services-lib";
-import { PasswordUpdateDto } from "carbon-services-lib";
-import { JwtAuthGuard } from "carbon-services-lib";
+import { QueryDto } from "@undp/carbon-services-lib";
+import { UserUpdateDto } from "@undp/carbon-services-lib";
+import { PasswordUpdateDto } from "@undp/carbon-services-lib";
+import { JwtAuthGuard } from "@undp/carbon-services-lib";
 import { HelperService } from 'carbon-services-lib';
-import { ApiKeyJwtAuthGuard } from "carbon-services-lib";
+import { ApiKeyJwtAuthGuard } from "@undp/carbon-services-lib";
 
 @ApiTags("User")
 @ApiBearerAuth()
