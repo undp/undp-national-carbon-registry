@@ -93,7 +93,6 @@ import {
   TooltipColor,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -1393,8 +1392,6 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
-            linkDocVisible={linkDocVisible}
-            uploadDocUserPermission={uploadDocUserPermission}
           />
         ),
         icon: (
@@ -2239,12 +2236,11 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  linkDocVisible={linkDocVisible}
-                  uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
                   useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
+                  programmeStatus={data?.currentStage}
                 />
               </div>
             </Card>
