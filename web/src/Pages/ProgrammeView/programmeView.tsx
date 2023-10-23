@@ -146,7 +146,8 @@ const ProgrammeView = () => {
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
-    ministrySectoralScope.includes(data.sectoralScope);
+    ministrySectoralScope.includes(data.sectoralScope) &&
+    userInfoState?.userRole !== Role.ViewOnly;
 
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
@@ -2027,57 +2028,60 @@ const ProgrammeView = () => {
                                     </Button>
                                   </span>
                                 )}
-                                {!isAllOwnersDeactivated &&
+                                {((!isAllOwnersDeactivated &&
                                   userInfoState!.companyState !==
                                     CompanyState.SUSPENDED.valueOf() &&
-                                  !isTransferFrozen && (
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Request',
-                                          text: '',
-                                          title: t('view:transferTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowInRight />,
-                                          contentComp: (
-                                            <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              userCompanyId={userInfoState?.companyId}
-                                              receiverLabelText={t('view:by')}
-                                              disableToCompany={true}
-                                              toCompanyDefault={{
-                                                label: userInfoState?.companyName,
-                                                value: userInfoState?.companyId,
-                                              }}
-                                              programme={data}
-                                              subText={t('view:popupText')}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('view:request')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'transferRequest',
-                                                  t('view:successRequest'),
-                                                  post,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                              useConnection={useConnection}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('view:transfer')}
-                                    </Button>
-                                  )}
+                                  !isTransferFrozen &&
+                                  userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
+                                  (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                                    ministryLevelPermission)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                            translator={i18n}
+                                            useConnection={useConnection}
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
                               </div>
                             )}
                         </div>
