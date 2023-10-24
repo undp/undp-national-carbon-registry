@@ -44,9 +44,9 @@ const CookiePolicy = () => {
             <div className="cookietitle">SAMPLE COOKIE POLICY</div>
             <div className="cookie-sub">Last updated February 02, 2023</div>
             <div className="cookie-body">
-              This Cookie Policy explains how CountryX (<b>"Company"</b>, "<b>we</b>","<b>us</b>",
-              and "<b>our</b>") uses cookies and similar technologies to recognize you when you
-              visit our websites at{' '}
+              This Cookie Policy explains how {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'} (
+              <b>"Company"</b>, "<b>we</b>", "<b>us</b>", and "<b>our</b>") uses cookies and similar
+              technologies to recognize you when you visit our websites at{' '}
               <a target="_blank" href="https://carbreg.org">
                 https://carbreg.org
               </a>
@@ -67,13 +67,13 @@ const CookiePolicy = () => {
               you visit a website. Cookies are widely used by website owners in order to make their
               websites work, or to work more efficiently, as well as to provide reporting
               information.
-              <br /> Cookies set by the website owner (in this case, United Nations Development
-              Programme) are called "first party cookies". Cookies set by parties other than the
-              website owner are called "third party cookies". Third party cookies enable third party
-              features or functionality to be provided on or through the website (e.g. like
-              advertising, interactive content and analytics). The parties that set these third
-              party cookies can recognize your computer both when it visits the website in question
-              and also when it visits certain other websites.
+              <br /> Cookies set by the website owner (in this case,{' '}
+              {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}) are called "first party cookies".
+              Cookies set by parties other than the website owner are called "third party cookies".
+              Third party cookies enable third party features or functionality to be provided on or
+              through the website (e.g. like advertising, interactive content and analytics). The
+              parties that set these third party cookies can recognize your computer both when it
+              visits the website in question and also when it visits certain other websites.
             </div>
           </Col>
         </Row>
@@ -612,19 +612,18 @@ const CookiePolicy = () => {
             <div className="cookie-subtitle">Where can I get further information?</div>
             <div className="cookie-body-contact">
               If you have any questions about our use of cookies or other technologies, please email
-              us at address@CountryX.org or by post to:
+              us at digital@undp.org or by post to:
               <br />
               <br />
               <br />
-              CountryX
+              {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+              <br />1 United Nations Plaza
               <br />
-              Address
+              New York, New York
               <br />
-              City, Region
+              United States
               <br />
-              Country
-              <br />
-              Phone: +1-123-456-7890
+              Phone: +260-211-263258
               <br />
               <br />
               This cookie policy was created using Termly's{' '}
