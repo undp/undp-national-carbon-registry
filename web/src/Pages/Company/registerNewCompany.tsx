@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { AddNewCompanyComponent } from '@undp/carbon-library';
+import './registerNewCompany.scss';
 
 const RegisterNewCompany = () => {
   const navigate = useNavigate();
@@ -17,16 +18,18 @@ const RegisterNewCompany = () => {
   };
 
   return (
-    <AddNewCompanyComponent
-      t={t}
-      maximumImageSize={maximumImageSize}
-      useConnection={useConnection}
-      useUserContext={useUserContext}
-      useLocation={useLocation}
-      regionField
-      isGuest={true}
-      onNavigateToHome={onNavigateToHome}
-    ></AddNewCompanyComponent>
+    <div className="register-company-container">
+      <AddNewCompanyComponent
+        t={t}
+        maximumImageSize={maximumImageSize}
+        useConnection={useConnection}
+        useUserContext={useUserContext}
+        useLocation={useLocation}
+        regionField
+        isGuest={true}
+        onNavigateToHome={onNavigateToHome}
+      ></AddNewCompanyComponent>
+    </div>
   );
 };
 
