@@ -45,7 +45,7 @@ import {
   InvestmentApprove,
   InvestmentReject,
   InvestmentCancel,
-} from "carbon-services-lib";
+} from "@undp/carbon-services-lib";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -118,6 +118,7 @@ export class ProgrammeController {
   // async updateOwnership(@Body() update: OwnershipUpdateDto) {
   //   return this.programmeService.updateOwnership(update);
   // }
+  
 
   @ApiBearerAuth()
   @UseGuards(

@@ -32,11 +32,12 @@
     "sectoralScope": "Sectoral Scope",
     "approveConfirmHeaderText": "Are you sure you want to authorise this organisation?",
     "approveConfirmText": "You can't undo this action",
-    "approvedSuccessfully": "Company is approved",
+    "approvedSuccessfully": "The Organisation was approved successfully",
     "rejectConfirmHeaderText": "Are you sure you want to reject this organisation?",
     "rejectConfirmText": "You can't undo this action",
-    "rejectedSuccessfully": "Company is rejected",
-    "adminDetailsHeading": "Organisation Administrator Details",
+    "rejectedSuccessfully": "The Organisation was rejected successfully",
+    "adminDetailsHeading": "Organisation Admin Details",
     "adminName": "Name",
-    "adminEmail": "Email"
+    "adminEmail": "Email",
+    "adminPhone": "Phone"
 }
