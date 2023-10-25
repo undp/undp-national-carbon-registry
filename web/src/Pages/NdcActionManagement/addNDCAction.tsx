@@ -20,6 +20,7 @@ const AddNDCAction = () => {
     'genderParity',
     'safeguards',
     'social',
+    'socialEnvironmentalRisk',
   ]);
   const sdgGoalImages = getSdgGoalImages();
 
