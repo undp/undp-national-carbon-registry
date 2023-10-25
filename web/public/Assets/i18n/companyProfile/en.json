@@ -38,5 +38,6 @@
     "rejectedSuccessfully": "Company is rejected",
     "adminDetailsHeading": "Organisation Administrator Details",
     "adminName": "Name",
-    "adminEmail": "Email"
+    "adminEmail": "Email",
+    "nationalSopValue": "National Share of Proceeds"
 }
