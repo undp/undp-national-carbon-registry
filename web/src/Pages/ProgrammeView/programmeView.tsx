@@ -1360,7 +1360,7 @@ const ProgrammeView = () => {
             subTitle: t('view:tlPending'),
             icon: (
               <span className="step-icon upcom-issue-step">
-                <Icon.Award />
+                <Icon.Binoculars />
               </span>
             ),
           };
@@ -1389,7 +1389,7 @@ const ProgrammeView = () => {
             subTitle: t('view:tlPending'),
             icon: (
               <span className="step-icon upcom-issue-step">
-                <Icon.Award />
+                <Icon.Flag />
               </span>
             ),
           };
