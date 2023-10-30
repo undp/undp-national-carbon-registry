@@ -1075,7 +1075,8 @@ const ProgrammeView = () => {
         }
       }
     }
-    return calculations;
+    const { issuedCredits, availableCredits, ...details } = calculations;
+    return details;
   };
 
   const onPopupAction = async (
