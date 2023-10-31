@@ -43,7 +43,6 @@
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
     "axios": "^1.2.4",
-    "carbon-services-lib": "file:.yalc/carbon-services-lib",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "dotenv-flow": "^3.2.0",
