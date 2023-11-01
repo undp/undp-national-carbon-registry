@@ -95,7 +95,6 @@ import {
   addNdcDesc,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -149,7 +148,8 @@ const ProgrammeView = () => {
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
-    ministrySectoralScope.includes(data.sectoralScope);
+    ministrySectoralScope.includes(data.sectoralScope) &&
+    userInfoState?.userRole !== Role.ViewOnly;
 
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
@@ -1399,8 +1399,6 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
-            linkDocVisible={linkDocVisible}
-            uploadDocUserPermission={uploadDocUserPermission}
           />
         ),
         icon: (
@@ -2041,57 +2039,60 @@ const ProgrammeView = () => {
                                     </Button>
                                   </span>
                                 )}
-                                {!isAllOwnersDeactivated &&
+                                {((!isAllOwnersDeactivated &&
                                   userInfoState!.companyState !==
                                     CompanyState.SUSPENDED.valueOf() &&
-                                  !isTransferFrozen && (
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Request',
-                                          text: '',
-                                          title: t('view:transferTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowInRight />,
-                                          contentComp: (
-                                            <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              userCompanyId={userInfoState?.companyId}
-                                              receiverLabelText={t('view:by')}
-                                              disableToCompany={true}
-                                              toCompanyDefault={{
-                                                label: userInfoState?.companyName,
-                                                value: userInfoState?.companyId,
-                                              }}
-                                              programme={data}
-                                              subText={t('view:popupText')}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('view:request')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'transferRequest',
-                                                  t('view:successRequest'),
-                                                  post,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                              useConnection={useConnection}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('view:transfer')}
-                                    </Button>
-                                  )}
+                                  !isTransferFrozen &&
+                                  userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
+                                  (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                                    ministryLevelPermission)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                            translator={i18n}
+                                            useConnection={useConnection}
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
                               </div>
                             )}
                         </div>
@@ -2250,12 +2251,11 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  linkDocVisible={linkDocVisible}
-                  uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
                   useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
+                  programmeStatus={data?.currentStage}
                 />
               </div>
             </Card>
