@@ -1410,6 +1410,7 @@ const ProgrammeView = () => {
         ),
       }));
       setNdcActionHistoryData(mappedElements);
+      getProgrammeById(programmeId);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
