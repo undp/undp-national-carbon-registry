@@ -9,7 +9,6 @@
   "coBenefitsTitle": "Co-Benefits",
   "projectReportsTitle": "Project Reports",
   "ndcAction": "NDC Action",
-  "methodology": "Metholology",
   "goldStandard": "Gold Standard",
   "mitigationType": "Mitigation Type",
   "userEstimatedCredits": "User Estimated Credits",
@@ -85,5 +84,6 @@
   "value": "Value",
   "viewGhgEmissionsAvoided": "GHG Emissions Avoided (tCO2e)",
   "viewGhgEmissionsReduced": "GHG Emissions Reduced (tCO2e)",
-  "viewIncludedInNAP": "Included in NAP"
+  "viewIncludedInNAP": "Included in NAP",
+  "methodology": "Methodology"
 }
