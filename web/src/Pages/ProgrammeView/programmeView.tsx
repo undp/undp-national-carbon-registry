@@ -93,6 +93,7 @@ import {
   TooltipColor,
   getValidNdcActions,
   addNdcDesc,
+  mitigationTypeList,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
@@ -1066,12 +1067,33 @@ const ProgrammeView = () => {
         delete calculations.energyGenerationUnit;
       }
     }
-    calculations.constantVersion = mitigation.properties.constantVersion;
+    calculations.constantVersion = mitigation.properties.constantVersion
+      ? mitigation.properties.constantVersion
+      : '-';
 
     for (const key in mitigation) {
       if (mitigation.hasOwnProperty(key)) {
         if (key !== 'properties' && key !== 'projectMaterial') {
-          calculations[key] = mitigation[key];
+          if (key === 'userEstimatedCredits' || key === 'systemEstimatedCredits') {
+            calculations[key] = addCommSep(mitigation[key]);
+            if (key === 'systemEstimatedCredits' && mitigation[key] === 0) {
+              calculations[key] = '-';
+            }
+          } else {
+            if (key === 'constantVersion' && mitigation[key] === 'undefined') {
+              calculations[key] = '-';
+            } else if (key === 'typeOfMitigation') {
+              mitigationTypeList?.map((type: any) => {
+                if (mitigation[key] === type.value) {
+                  calculations[key] = type.label;
+                }
+              });
+            } else if (key === 'methodology') {
+              calculations[key] = mitigation[key];
+            } else {
+              calculations[key] = mitigation[key];
+            }
+          }
         }
       }
     }
