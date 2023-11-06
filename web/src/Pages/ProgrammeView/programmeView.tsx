@@ -1399,6 +1399,10 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
+            onFinish={(d: any) => {
+              setData(d);
+            }}
+            programme={data}
           />
         ),
         icon: (
