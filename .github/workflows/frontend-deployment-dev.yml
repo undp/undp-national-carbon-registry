@@ -73,3 +73,21 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Deploy docker image to Amazon EC2
+        if: github.ref == 'refs/heads/unified'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-web
+          IMAGE_TAG: unified
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
+          HOSTNAME: ${{secrets.HOST_IP}}
+          USER_NAME: ec2-user
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+            cd repos/carbon-registry &&
+            sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
+            sudo docker stop carbon-registry-web-1 || true &&
+            sudo docker rm carbon-registry-web-1 &&
+            sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:unified &&
+            docker-compose -f docker-compose-image.yml up -d web '
