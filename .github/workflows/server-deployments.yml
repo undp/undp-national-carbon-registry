@@ -70,8 +70,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-services
           IMAGE_TAG: unified
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE }}
-          HOSTNAME: ${{secrets.HOST_IP}}
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_UNIFIED }}
+          HOSTNAME: ${{secrets.HOST_IP_UNIFIED }}
           USER_NAME: ec2-user
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
