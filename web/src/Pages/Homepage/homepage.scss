@@ -315,6 +315,17 @@
         justify-content: center;
         align-items: center;
         font-size: 1.125rem;
+
+        @media (max-width: $lg-size) {
+          font-size: 1rem;
+          margin-top: 1rem;
+          color: $title-text-color;
+          line-height: 1.5em;
+        }
+
+        @media (max-width: 1200px) {
+          margin-top: 3rem;
+        }
       }
 
       .homepagebody_logoaboutuslines {
