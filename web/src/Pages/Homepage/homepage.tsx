@@ -225,7 +225,7 @@ const Homepage = () => {
                     alt="EBRD"
                   />
                 </Col>
-                <Col className="gutter-row" xl={3} md={8} sm={12} xs={12}>
+                <Col className="gutter-row align-to-end" xl={3} md={8} sm={12} xs={12}>
                   <ImgWithFallback
                     className="undp"
                     src={undpLogo}
@@ -234,7 +234,7 @@ const Homepage = () => {
                     alt="UNDP"
                   />
                 </Col>
-                <Col className="gutter-row" xl={3} md={8} sm={12} xs={12}>
+                <Col className="gutter-row align-to-start" xl={3} md={8} sm={12} xs={12}>
                   <ImgWithFallback
                     className="unfccc"
                     src={UNFCCC}
