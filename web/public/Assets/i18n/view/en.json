@@ -137,5 +137,7 @@
     "addAction": "ADD ACTION",
     "ministryLevel": "Ministry Level",
     "environmentalAssessmentRegistrationNo": "Environmental Assessment Registration Number",
-    "methodology": "Methodology"
+    "methodology": "Methodology",
+    "verificationEl": "Verification",
+    "monitoringEl": "Monitoring"
   }
