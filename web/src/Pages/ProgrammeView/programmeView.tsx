@@ -2334,7 +2334,7 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {mitigationWidgets && mitigationWidgets}
+            {/* {mitigationWidgets && mitigationWidgets} */}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">
