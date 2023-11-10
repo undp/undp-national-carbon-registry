@@ -38,6 +38,7 @@ import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
+import { Loading } from '@undp/carbon-library';
 
 // message.config({
 //   duration: 60,
@@ -45,9 +46,8 @@ import RegisterNewCompany from './Pages/Company/registerNewCompany';
 
 const App = () => {
   const ability = defineAbility();
-  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION
-    ? process.env.REACT_APP_ENABLE_REGISTRATION
-    : true;
+  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
+
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
     console.log(process.env.REACT_APP_STAT_URL);
@@ -161,11 +161,11 @@ const App = () => {
                       <Route path="updateUser" element={<UpdateUser />} />
                     </Route> */}
                 </Route>
-                {enableRegistration && (
+                {enableRegistration === 'true' && (
                   <Route
                     path="registerCompany"
                     element={
-                      <Suspense fallback={<div>"Loading..."</div>}>
+                      <Suspense fallback={<Loading />}>
                         <RegisterNewCompany />
                       </Suspense>
                     }
