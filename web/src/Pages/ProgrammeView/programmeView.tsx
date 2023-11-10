@@ -1041,75 +1041,6 @@ const ProgrammeView = () => {
     }
   };
 
-  const mitigationData = (mitigation: any) => {
-    if (!mitigation) {
-      return {};
-    }
-    let calculations: any = {};
-    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.landAreaUnit) {
-          calculations.landArea = new UnitField(
-            mitigation.properties.landAreaUnit,
-            addCommSep(mitigation.properties.landArea)
-          );
-        }
-        delete calculations.landAreaUnit;
-      }
-    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.energyGenerationUnit) {
-          calculations.energyGeneration = new UnitField(
-            mitigation.properties.energyGenerationUnit,
-            addCommSep(mitigation.properties.energyGeneration)
-          );
-          // addCommSep(data.solarProperties.energyGeneration) +
-          // ' ' +
-          // data.solarProperties.energyGenerationUnit;
-        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-          calculations.consumerGroup = (
-            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-          );
-        }
-        delete calculations.energyGenerationUnit;
-      }
-    }
-    calculations.constantVersion = mitigation.properties.constantVersion
-      ? mitigation.properties.constantVersion
-      : '-';
-
-    for (const key in mitigation) {
-      if (mitigation.hasOwnProperty(key)) {
-        if (key !== 'properties' && key !== 'projectMaterial') {
-          if (key === 'userEstimatedCredits' || key === 'systemEstimatedCredits') {
-            calculations[key] = addCommSep(mitigation[key]);
-            if (key === 'systemEstimatedCredits' && mitigation[key] === 0) {
-              calculations[key] = '-';
-            }
-          } else {
-            if (key === 'constantVersion' && mitigation[key] === 'undefined') {
-              calculations[key] = '-';
-            } else if (key === 'typeOfMitigation') {
-              mitigationTypeList?.map((type: any) => {
-                if (mitigation[key] === type.value) {
-                  calculations[key] = type.label;
-                }
-              });
-            } else if (key === 'methodology') {
-              calculations[key] = mitigation[key];
-            } else {
-              calculations[key] = mitigation[key];
-            }
-          }
-        }
-      }
-    }
-    const { issuedCredits, availableCredits, ...details } = calculations;
-    return details;
-  };
-
   const onPopupAction = async (
     body: any,
     endpoint: any,
@@ -1909,31 +1840,6 @@ const ProgrammeView = () => {
     }
   });
 
-  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
-    return (
-      <Card className="card-container">
-        <div>
-          <InfoView
-            data={mapArrayToi18n(mitigationData(ele))}
-            title={t('view:calculation') + ' - ' + ele?.actionId}
-            icon={<BulbOutlined />}
-          />
-          {ele.projectMaterial && ele.projectMaterial.length > 0 && (
-            <div className="info-view only-head">
-              <div className="title">
-                <span className="title-icon"></span>
-                <span className="title-text" style={{ marginLeft: '15px' }}>
-                  {t('view:projectMaterial')}
-                </span>
-                <div>{getFileContent(ele.projectMaterial)}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
-  });
-
   return loadingAll ? (
     <Loading />
   ) : (
@@ -2436,7 +2342,6 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {/* {mitigationWidgets && mitigationWidgets} */}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">
