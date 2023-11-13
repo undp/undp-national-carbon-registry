@@ -39,5 +39,6 @@
     "adminDetailsHeading": "Organisation Admin Details",
     "adminName": "Name",
     "adminEmail": "Email",
-    "adminPhone": "Phone"
+    "adminPhone": "Phone",
+    "nationalSopValue": "National Share of Proceeds"
 }
