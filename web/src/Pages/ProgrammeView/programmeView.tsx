@@ -14,6 +14,7 @@ import {
   Radio,
   Space,
   Form,
+  Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -89,9 +90,9 @@ import {
   DevColor,
   Role,
   CarbonSystemType,
+  TooltipColor,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { linkDocVisible, uploadDocUserPermission } from '../../Casl/documentsPermission';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -118,7 +119,7 @@ const ProgrammeView = () => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
   const [loadingNDC, setLoadingNDC] = useState<boolean>(true);
-  const [ndcActionData, setNdcActionData] = useState<any>([]);
+  const [ndcActionDocumentData, setNdcActionDocumentData] = useState<any>([]);
   const [documentsData, setDocumentsData] = useState<any[]>([]);
   const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
@@ -131,6 +132,11 @@ const ProgrammeView = () => {
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState(false);
+  const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] = useState(false);
+  const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
+  const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
+    useState(false);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -145,7 +151,8 @@ const ProgrammeView = () => {
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
-    ministrySectoralScope.includes(data.sectoralScope);
+    ministrySectoralScope.includes(data.sectoralScope) &&
+    userInfoState?.userRole !== Role.ViewOnly;
 
   const getFileName = (filepath: string) => {
     const index = filepath.indexOf('?');
@@ -588,6 +595,7 @@ const ProgrammeView = () => {
   };
 
   const getProgrammeHistory = async (programmeId: string) => {
+    setProgrammeHistoryLoaded(false);
     setLoadingHistory(true);
     try {
       const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
@@ -603,8 +611,30 @@ const ProgrammeView = () => {
       const certifiedTime: any = {};
       const activityList: any[] = [];
       for (const activity of response.data) {
+        let programmecreateindex: any;
+        const createIndex = activityList.findIndex((item) => item.title === t('view:tlCreate'));
+        const upcomCreditIndex = activityList.findIndex(
+          (item) => item.subTitle === t('view:tlPending')
+        );
+        const upcomAuthorisationIndex = activityList.findIndex(
+          (item) => item.title === 'Authorisation'
+        );
+        if (createIndex !== -1) {
+          programmecreateindex = createIndex;
+        }
         let el = undefined;
+        let newEl = undefined;
+        let creditEl = undefined;
+        let upcomingAuthorisation: any;
+        const day = Math.floor(
+          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
+        );
         if (activity.data.txType === TxType.CREATE) {
+          if (day === 1) {
+            upcomingAuthorisation = `Awaiting Action : ${day} Day`;
+          } else {
+            upcomingAuthorisation = `Awaiting Action : ${day} Days`;
+          }
           el = {
             status: 'process',
             title: t('view:tlCreate'),
@@ -613,6 +643,16 @@ const ProgrammeView = () => {
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
+              </span>
+            ),
+          };
+          newEl = {
+            status: 'process',
+            title: t('view:tlAuthorisation'),
+            subTitle: upcomingAuthorisation,
+            icon: (
+              <span className="step-icon upcom-auth-step">
+                <Icon.ClipboardCheck />
               </span>
             ),
           };
@@ -641,6 +681,9 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
             status: 'process',
@@ -683,6 +726,12 @@ const ProgrammeView = () => {
               </span>
             ),
           };
+          if (upcomAuthorisationIndex !== -1) {
+            activityList.splice(upcomAuthorisationIndex, 1);
+          }
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
         } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
             status: 'process',
@@ -856,6 +905,27 @@ const ProgrammeView = () => {
             ),
           };
         }
+        if (
+          activity.data.creditEst !== activity.data.creditIssued &&
+          activity.data.txType !== TxType.REJECT
+        ) {
+          creditEl = {
+            status: 'process',
+            title: t('view:tlIssue'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Award />
+              </span>
+            ),
+          };
+          activityList.splice(upcomCreditIndex, 1);
+        }
+        if (activity.data.creditEst === activity.data.creditIssued) {
+          if (upcomCreditIndex !== -1) {
+            activityList.splice(upcomCreditIndex, 1);
+          }
+        }
         if (el) {
           const toDelete = [];
           for (const txT of txListKeys) {
@@ -870,6 +940,13 @@ const ProgrammeView = () => {
           txListKeys = Object.keys(txList).sort();
           activityList.unshift(el);
         }
+        if (newEl) {
+          const insertIndexauth = Number(programmecreateindex) + 1;
+          activityList.splice(insertIndexauth, 0, newEl);
+        }
+        if (creditEl) {
+          activityList.splice(0, 0, creditEl);
+        }
       }
 
       for (const txT of txListKeys) {
@@ -880,6 +957,7 @@ const ProgrammeView = () => {
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
+      setProgrammeHistoryLoaded(true);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -902,6 +980,7 @@ const ProgrammeView = () => {
   };
 
   const getDocuments = async (programmeId: string) => {
+    setNdcActionDocumentDataLoaded(false);
     setLoadingHistory(true);
     setLoadingNDC(true);
     try {
@@ -928,8 +1007,9 @@ const ProgrammeView = () => {
         if (hasAcceptedMethReport && data?.currentStage === ProgrammeStageUnified.Authorised) {
           setUploadMonitoringReport(true);
         }
-        setNdcActionData(objectsWithoutNullActionId);
+        setNdcActionDocumentData(objectsWithoutNullActionId);
         setDocumentsData(response?.data);
+        setNdcActionDocumentDataLoaded(true);
       }
     } catch (err: any) {
       console.log('Error in getting documents - ', err);
@@ -1263,6 +1343,83 @@ const ProgrammeView = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (programmeHistoryLoaded && ndcActionHistoryDataGrouped) {
+      const monitoringElIndex = historyData.findIndex(
+        (item: any) => item.title === t('view:monitoringEl')
+      );
+      const verificationElIndex = historyData.findIndex(
+        (item: any) => item.title === t('view:verificationEl')
+      );
+
+      if (
+        upcomingTimeLineMonitoringVisible &&
+        data?.currentStage !== ProgrammeStageUnified.Rejected
+      ) {
+        if (monitoringElIndex === -1) {
+          const monitoringEl = {
+            status: 'process',
+            title: t('view:monitoringEl'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Binoculars />
+              </span>
+            ),
+          };
+
+          if (
+            historyData.length > 0 &&
+            historyData[0].title === t('view:tlIssue') &&
+            historyData[0].subTitle === t('view:tlPending')
+          ) {
+            historyData.splice(1, 0, monitoringEl);
+          } else {
+            historyData.unshift(monitoringEl);
+          }
+        }
+      } else {
+        if (monitoringElIndex !== -1) {
+          historyData.splice(monitoringElIndex, 1);
+        }
+      }
+
+      if (
+        upcomingTimeLineVerificationVisible &&
+        data?.currentStage !== ProgrammeStageUnified.Rejected
+      ) {
+        if (verificationElIndex === -1) {
+          const verificationEl = {
+            status: 'process',
+            title: t('view:verificationEl'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Flag />
+              </span>
+            ),
+          };
+
+          if (
+            historyData.length > 0 &&
+            historyData[0].title === t('view:tlIssue') &&
+            historyData[0].subTitle === t('view:tlPending')
+          ) {
+            historyData.splice(1, 0, verificationEl);
+          } else {
+            historyData.unshift(verificationEl);
+          }
+        }
+      } else {
+        if (verificationElIndex !== -1) {
+          historyData.splice(verificationElIndex, 1);
+        }
+      }
+
+      setHistoryData(historyData);
+    }
+  }, [ndcActionHistoryDataGrouped, programmeHistoryLoaded]);
+
   const onClickedAddAction = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
   };
@@ -1297,7 +1454,7 @@ const ProgrammeView = () => {
         return result;
       }, {});
 
-      ndcActionData?.map((ndcData: any) => {
+      ndcActionDocumentData?.map((ndcData: any) => {
         if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
           if (ndcData?.type === DocType.MONITORING_REPORT) {
             groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
@@ -1306,6 +1463,22 @@ const ProgrammeView = () => {
           }
         }
       });
+
+      setUpcomingTimeLineMonitoringVisible(false);
+      setUpcomingTimeLineVerificationVisible(false);
+      if (groupedByActionId && ndcActionDocumentDataLoaded) {
+        Object.values(groupedByActionId).forEach((element: any) => {
+          element.forEach((item: any) => {
+            if (!item.monitoringReport) {
+              setUpcomingTimeLineMonitoringVisible(true);
+            }
+            if (!item.verificationReport) {
+              setUpcomingTimeLineVerificationVisible(true);
+            }
+          });
+        });
+      }
+
       setNdcActionHistoryDataGrouped(groupedByActionId);
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
@@ -1322,8 +1495,6 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
-            linkDocVisible={linkDocVisible}
-            uploadDocUserPermission={uploadDocUserPermission}
           />
         ),
         icon: (
@@ -1351,9 +1522,9 @@ const ProgrammeView = () => {
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
-      getNdcActionHistory(data?.programmeId, ndcActionData);
+      getNdcActionHistory(data?.programmeId, ndcActionDocumentData);
     }
-  }, [data, ndcActionData]);
+  }, [data, ndcActionDocumentData]);
 
   if (!data) {
     return <Loading />;
@@ -1424,10 +1595,20 @@ const ProgrammeView = () => {
             {t('view:addInvestment')}
           </Button>
         );
+        actionBtns.push(
+          <Tooltip
+            title={'Cannot submit until methodology document is approved.'}
+            color={TooltipColor}
+            key={TooltipColor}
+          >
+            <Button disabled>{t('view:addAction')}</Button>
+          </Tooltip>
+        );
         if (
           (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
           (data.currentStage as any) === ProgrammeStageUnified.Approved
         ) {
+          actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
               {t('view:addAction')}
@@ -1949,57 +2130,60 @@ const ProgrammeView = () => {
                                     </Button>
                                   </span>
                                 )}
-                                {!isAllOwnersDeactivated &&
+                                {((!isAllOwnersDeactivated &&
                                   userInfoState!.companyState !==
                                     CompanyState.SUSPENDED.valueOf() &&
-                                  !isTransferFrozen && (
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Request',
-                                          text: '',
-                                          title: t('view:transferTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowInRight />,
-                                          contentComp: (
-                                            <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              userCompanyId={userInfoState?.companyId}
-                                              receiverLabelText={t('view:by')}
-                                              disableToCompany={true}
-                                              toCompanyDefault={{
-                                                label: userInfoState?.companyName,
-                                                value: userInfoState?.companyId,
-                                              }}
-                                              programme={data}
-                                              subText={t('view:popupText')}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('view:request')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'transferRequest',
-                                                  t('view:successRequest'),
-                                                  post,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                              useConnection={useConnection}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('view:transfer')}
-                                    </Button>
-                                  )}
+                                  !isTransferFrozen &&
+                                  userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
+                                  (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                                    ministryLevelPermission)) && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Request',
+                                        text: '',
+                                        title: t('view:transferTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowInRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            userCompanyId={userInfoState?.companyId}
+                                            receiverLabelText={t('view:by')}
+                                            disableToCompany={true}
+                                            toCompanyDefault={{
+                                              label: userInfoState?.companyName,
+                                              value: userInfoState?.companyId,
+                                            }}
+                                            programme={data}
+                                            subText={t('view:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('view:request')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                t('view:successRequest'),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                            translator={i18n}
+                                            useConnection={useConnection}
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('view:transfer')}
+                                  </Button>
+                                )}
                               </div>
                             )}
                         </div>
@@ -2158,12 +2342,11 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  linkDocVisible={linkDocVisible}
-                  uploadDocUserPermission={uploadDocUserPermission}
                   useConnection={useConnection}
                   useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
+                  programmeStatus={data?.currentStage}
                 />
               </div>
             </Card>

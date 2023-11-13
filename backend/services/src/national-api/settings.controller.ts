@@ -8,9 +8,9 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard ,Action,PoliciesGuardEx,ConfigurationSettingsService} from "carbon-services-lib";;
-import { SettingsDto } from "carbon-services-lib";
-import { ConfigurationSettings } from "carbon-services-lib";
+import { JwtAuthGuard ,Action,PoliciesGuardEx,ConfigurationSettingsService} from "@undp/carbon-services-lib";;
+import { SettingsDto } from "@undp/carbon-services-lib";
+import { ConfigurationSettings } from "@undp/carbon-services-lib";
 
 @ApiTags("Settings")
 @Controller("Settings")

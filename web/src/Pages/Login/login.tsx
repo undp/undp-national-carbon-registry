@@ -30,9 +30,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
-  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION
-    ? process.env.REACT_APP_ENABLE_REGISTRATION
-    : true;
+  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -257,10 +255,10 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                           </div>
                         )}
                       </Form>
-                      {enableRegistration && (
+                      {enableRegistration === 'true' && (
                         <div className="login-register-new-container">
                           <span className="login-register-new-txt">
-                            {t('login:register-acc')}?&nbsp;&nbsp;
+                            {t('login:register-acc')}&nbsp;&nbsp;
                             <span
                               className="login-register-new-txt-span"
                               onClick={() => navigate('/registerCompany')}
