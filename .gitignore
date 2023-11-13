@@ -9,3 +9,5 @@ backend/services/.env.local
 ./data/*
 !./data/README.md
 web/src/Assets/.DS_Store
+.yalc
+yalc.lock

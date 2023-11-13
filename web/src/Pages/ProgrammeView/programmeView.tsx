@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
@@ -119,7 +119,7 @@ const ProgrammeView = () => {
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [centerPoint, setCenterPoint] = useState<number[]>([]);
   const [loadingNDC, setLoadingNDC] = useState<boolean>(true);
-  const [ndcActionData, setNdcActionData] = useState<any>([]);
+  const [ndcActionDocumentData, setNdcActionDocumentData] = useState<any>([]);
   const [documentsData, setDocumentsData] = useState<any[]>([]);
   const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
@@ -132,6 +132,12 @@ const ProgrammeView = () => {
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState(false);
+  const { id } = useParams();
+  const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] = useState(false);
+  const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
+  const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
+    useState(false);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -590,6 +596,7 @@ const ProgrammeView = () => {
   };
 
   const getProgrammeHistory = async (programmeId: string) => {
+    setProgrammeHistoryLoaded(false);
     setLoadingHistory(true);
     try {
       const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
@@ -951,6 +958,7 @@ const ProgrammeView = () => {
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
+      setProgrammeHistoryLoaded(true);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -973,6 +981,7 @@ const ProgrammeView = () => {
   };
 
   const getDocuments = async (programmeId: string) => {
+    setNdcActionDocumentDataLoaded(false);
     setLoadingHistory(true);
     setLoadingNDC(true);
     try {
@@ -999,8 +1008,9 @@ const ProgrammeView = () => {
         if (hasAcceptedMethReport && data?.currentStage === ProgrammeStageUnified.Authorised) {
           setUploadMonitoringReport(true);
         }
-        setNdcActionData(objectsWithoutNullActionId);
+        setNdcActionDocumentData(objectsWithoutNullActionId);
         setDocumentsData(response?.data);
+        setNdcActionDocumentDataLoaded(true);
       }
     } catch (err: any) {
       console.log('Error in getting documents - ', err);
@@ -1263,20 +1273,14 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const programmeId = queryParams.get('id');
-    if (programmeId) {
-      getProgrammeById(programmeId);
-    } else if (!state) {
-      navigate('/programmeManagement/viewAll', { replace: true });
+    if (state && state.record) {
+      setLoadingAll(false);
+      setData(state.record);
     } else {
-      if (!state.record) {
-        if (state.id) {
-          getProgrammeById(state.id);
-        }
+      if (id) {
+        getProgrammeById(id);
       } else {
-        setLoadingAll(false);
-        setData(state.record);
+        navigate('/programmeManagement/viewAll', { replace: true });
       }
     }
 
@@ -1334,6 +1338,83 @@ const ProgrammeView = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (programmeHistoryLoaded && ndcActionHistoryDataGrouped) {
+      const monitoringElIndex = historyData.findIndex(
+        (item: any) => item.title === t('view:monitoringEl')
+      );
+      const verificationElIndex = historyData.findIndex(
+        (item: any) => item.title === t('view:verificationEl')
+      );
+
+      if (
+        upcomingTimeLineMonitoringVisible &&
+        data?.currentStage !== ProgrammeStageUnified.Rejected
+      ) {
+        if (monitoringElIndex === -1) {
+          const monitoringEl = {
+            status: 'process',
+            title: t('view:monitoringEl'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Binoculars />
+              </span>
+            ),
+          };
+
+          if (
+            historyData.length > 0 &&
+            historyData[0].title === t('view:tlIssue') &&
+            historyData[0].subTitle === t('view:tlPending')
+          ) {
+            historyData.splice(1, 0, monitoringEl);
+          } else {
+            historyData.unshift(monitoringEl);
+          }
+        }
+      } else {
+        if (monitoringElIndex !== -1) {
+          historyData.splice(monitoringElIndex, 1);
+        }
+      }
+
+      if (
+        upcomingTimeLineVerificationVisible &&
+        data?.currentStage !== ProgrammeStageUnified.Rejected
+      ) {
+        if (verificationElIndex === -1) {
+          const verificationEl = {
+            status: 'process',
+            title: t('view:verificationEl'),
+            subTitle: t('view:tlPending'),
+            icon: (
+              <span className="step-icon upcom-issue-step">
+                <Icon.Flag />
+              </span>
+            ),
+          };
+
+          if (
+            historyData.length > 0 &&
+            historyData[0].title === t('view:tlIssue') &&
+            historyData[0].subTitle === t('view:tlPending')
+          ) {
+            historyData.splice(1, 0, verificationEl);
+          } else {
+            historyData.unshift(verificationEl);
+          }
+        }
+      } else {
+        if (verificationElIndex !== -1) {
+          historyData.splice(verificationElIndex, 1);
+        }
+      }
+
+      setHistoryData(historyData);
+    }
+  }, [ndcActionHistoryDataGrouped, programmeHistoryLoaded]);
+
   const onClickedAddAction = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
   };
@@ -1368,7 +1449,7 @@ const ProgrammeView = () => {
         return result;
       }, {});
 
-      ndcActionData?.map((ndcData: any) => {
+      ndcActionDocumentData?.map((ndcData: any) => {
         if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
           if (ndcData?.type === DocType.MONITORING_REPORT) {
             groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
@@ -1377,6 +1458,22 @@ const ProgrammeView = () => {
           }
         }
       });
+
+      setUpcomingTimeLineMonitoringVisible(false);
+      setUpcomingTimeLineVerificationVisible(false);
+      if (groupedByActionId && ndcActionDocumentDataLoaded) {
+        Object.values(groupedByActionId).forEach((element: any) => {
+          element.forEach((item: any) => {
+            if (!item.monitoringReport) {
+              setUpcomingTimeLineMonitoringVisible(true);
+            }
+            if (!item.verificationReport) {
+              setUpcomingTimeLineVerificationVisible(true);
+            }
+          });
+        });
+      }
+
       setNdcActionHistoryDataGrouped(groupedByActionId);
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
@@ -1420,9 +1517,9 @@ const ProgrammeView = () => {
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
-      getNdcActionHistory(data?.programmeId, ndcActionData);
+      getNdcActionHistory(data?.programmeId, ndcActionDocumentData);
     }
-  }, [data, ndcActionData]);
+  }, [data, ndcActionDocumentData]);
 
   if (!data) {
     return <Loading />;
