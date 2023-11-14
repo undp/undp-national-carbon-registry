@@ -11,6 +11,7 @@ import {
   ShopOutlined,
   UnorderedListOutlined,
   UserOutlined,
+  FallOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { LayoutSiderProps } from '@undp/carbon-library';
@@ -42,6 +43,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    getItem(t('nav:emissions'), 'emissions/view', <AppstoreOutlined />),
+    getItem(t('nav:projections'), 'projections/view', <FallOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),

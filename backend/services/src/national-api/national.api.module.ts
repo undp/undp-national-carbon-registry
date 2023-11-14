@@ -2,7 +2,7 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NationalAPIController } from './national.api.controller';
 import { NationalAPIService } from './national.api.service';
-import { configuration } from "@undp/carbon-services-lib";
+import { GhgInventoryModule, configuration } from "@undp/carbon-services-lib";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '@undp/carbon-services-lib';
 // import { Programme } from './entities/programme.entity';
@@ -13,6 +13,8 @@ import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
 import { SettingsController } from './settings.controller';
+import { GHGEmissionController } from './ghg,emission.controller';
+import { GHGProjectionController } from './ghg,projection.controller';
 
 @Module({
   imports: [
@@ -30,9 +32,10 @@ import { SettingsController } from './settings.controller';
     CaslModule,
     ProgrammeModule,
     CompanyModule,
-    UtilModule
+    UtilModule,
+    GhgInventoryModule
   ],
-  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, SettingsController ],
+  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, SettingsController, GHGEmissionController, GHGProjectionController ],
   providers: [
     NationalAPIService, 
     Logger
