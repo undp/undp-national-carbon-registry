@@ -39,6 +39,8 @@ import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
 import { Loading } from '@undp/carbon-library';
+import GhgEmissions from './Pages/GhgInventory/emissions';
+import GhgProjections from './Pages/GhgInventory/projections';
 
 // message.config({
 //   duration: 60,
@@ -160,6 +162,15 @@ const App = () => {
                       <Route path="addUser" element={<AddUser />} />
                       <Route path="updateUser" element={<UpdateUser />} />
                     </Route> */}
+                  <Route path="/emissions" element={<CustomLayout selectedKey="emissions/view" />}>
+                    <Route path="view" element={<GhgEmissions />} />
+                  </Route>
+                  <Route
+                    path="/projections"
+                    element={<CustomLayout selectedKey="projections/view" />}
+                  >
+                    <Route path="view" element={<GhgProjections />} />
+                  </Route>
                 </Route>
                 {enableRegistration === 'true' && (
                   <Route
