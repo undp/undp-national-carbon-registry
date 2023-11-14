@@ -95,6 +95,7 @@
   "viewGhgEmissionsReduced": "GHG Emissions Reduced (tCO2e)",
   "viewIncludedInNAP": "Included in NAP",
   "allowOnlyNumericValue": "Allow only numeric value",
-  "allowOnlyNumericValueAndDecimal": "Allow only numeric value and decimal"
+  "allowOnlyNumericValueAndDecimal": "Allow only numeric value and decimal",
+  "allowOnlyIntegerValue": "Allow only numeric value and integer"
   
 }
