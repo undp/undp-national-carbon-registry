@@ -35,4 +35,21 @@ module.exports = {
       }
     }
   ],
+  webpack: {
+    configure:{
+      resolve: {
+        fallback: {
+          stream: false,
+          http: false,
+          url: false,
+          https: false,
+          zlib: false,
+          assert: false,
+          util: false,
+          path: false
+        }
+      }
+    }
+  }
+  
 };
