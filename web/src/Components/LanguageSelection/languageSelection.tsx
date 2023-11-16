@@ -1,7 +1,5 @@
 import { Select } from 'antd';
-// import i18n from '../Internationalization/i18n';
-import {i18n} from '@undp/carbon-library';
-
+import i18n from '../Internationalization/i18n';
 import './languageSelection.scss';
 
 const LanguageSelection = () => {

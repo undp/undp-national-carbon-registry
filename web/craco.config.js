@@ -1,5 +1,8 @@
 const CracoLessPlugin = require('craco-less');
 const TerserPlugin = require("terser-webpack-plugin");
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const path = require('path');
+const fs = require('fs-extra');
 
 module.exports = {
   babel: {
@@ -30,25 +33,25 @@ module.exports = {
       plugin: {
         overrideWebpackConfig: ({ webpackConfig }) => {
           webpackConfig.optimization.minimizer.push(new TerserPlugin({ parallel: true }));
+          // Define the paths for source and destination
+          const localeSrcDir = path.resolve(__dirname, 'node_modules/@undp/carbon-library/dist/locales');
+          const localeDestDir = path.resolve(__dirname, 'public/locales');
+
+          // Ensure the destination directory exists, then copy the files
+          if (fs.existsSync(localeSrcDir)) {
+            fs.ensureDirSync(localeDestDir);
+            fs.copySync(localeSrcDir, localeDestDir);
+          }
           return webpackConfig;
         }
       }
     }
   ],
   webpack: {
-    configure:{
-      resolve: {
-        fallback: {
-          stream: false,
-          http: false,
-          url: false,
-          https: false,
-          zlib: false,
-          assert: false,
-          util: false,
-          path: false
-        }
-      }
+    plugins: {
+      add: [
+        new NodePolyfillPlugin()
+      ]
     }
   }
   
