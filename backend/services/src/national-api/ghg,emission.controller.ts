@@ -6,6 +6,7 @@ import {
   Request,
   Res,
   HttpStatus,
+  Get,
 } from "@nestjs/common";
 import { Response } from 'express';
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -42,5 +43,10 @@ export class GHGEmissionController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getEmissions(@Request() req) {
+    return await this.emissionService.getAllEmissions();
+  }
   
 }

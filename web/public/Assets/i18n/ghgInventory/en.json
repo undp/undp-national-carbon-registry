@@ -51,6 +51,7 @@
     "projectionCreationSuccess" : "Projection data created successfully",
     "projectionUpdateSuccess" : "Projection data updated successfully",
     "invalidFileType" : "Only XLSX and XLS files are allowed",
-    "invalidDataInExcel" : "Incorrect data format"
+    "invalidDataInExcel" : "Incorrect data format",
+    "discardHeaderText" : "Are you sure you want to cancel this edit?"
   }
   

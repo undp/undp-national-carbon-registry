@@ -6,6 +6,7 @@ import {
   Request,
   Res,
   HttpStatus,
+  Get,
 } from "@nestjs/common";
 import { Response } from 'express';
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -40,6 +41,12 @@ export class GHGProjectionController {
       // Handle errors and set the appropriate status code
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
     }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getProjections(@Request() req) {
+    return await this.projectionService.getAllProjections();
   }
 
   
