@@ -1,6 +1,5 @@
 const CracoLessPlugin = require('craco-less');
 const TerserPlugin = require("terser-webpack-plugin");
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const path = require('path');
 const fs = require('fs-extra');
 
@@ -46,13 +45,6 @@ module.exports = {
         }
       }
     }
-  ],
-  webpack: {
-    plugins: {
-      add: [
-        new NodePolyfillPlugin()
-      ]
-    }
-  }
+  ]
   
 };
