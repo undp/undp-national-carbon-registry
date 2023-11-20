@@ -72,5 +72,6 @@
     "ministryLevel": "Ministry Level",
     "description": "Description",
     "emissionReductionAchievedandCreditIssued": "Emission Reduction Achieved/ Credit Issued",
-    "environmentalImpactAssessment": "Environmental Impact Assessment"
+    "environmentalImpactAssessment": "Environmental Impact Assessment",
+    "docUploadProgrammeRejected": "This document cannot be uploaded for rejected programmes"
 }

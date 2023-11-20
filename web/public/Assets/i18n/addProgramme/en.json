@@ -19,6 +19,7 @@
   "sector": "Sector",
   "startTime": "Programme Start Date",
   "designDoc": "Design Document",
+  "designDocTooltip": "Design a Project Document with the UNFCCC CDM Mechanism Tool Prototype",
   "buyerCountryEligibility": "Buyer Country Eligibility",
   "company": "Organisation",
   "proponentPercentage": "Ownership Percentage",
