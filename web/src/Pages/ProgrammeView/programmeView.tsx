@@ -91,6 +91,9 @@ import {
   Role,
   CarbonSystemType,
   TooltipColor,
+  getValidNdcActions,
+  addNdcDesc,
+  mitigationTypeList,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
@@ -693,8 +696,11 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlIssueDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
+                  addNdcDesc({
+                    ndcActions: getTxRefValues(activity.data.txRef, 4),
+                    t: t,
+                    creditUnit: creditUnit,
+                  }),
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
@@ -1034,53 +1040,6 @@ const ProgrammeView = () => {
       genCerts(response.data, certTimes);
       genPieData(response.data);
     }
-  };
-
-  const mitigationData = (mitigation: any) => {
-    if (!mitigation) {
-      return {};
-    }
-    let calculations: any = {};
-    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.landAreaUnit) {
-          calculations.landArea = new UnitField(
-            mitigation.properties.landAreaUnit,
-            addCommSep(mitigation.properties.landArea)
-          );
-        }
-        delete calculations.landAreaUnit;
-      }
-    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.energyGenerationUnit) {
-          calculations.energyGeneration = new UnitField(
-            mitigation.properties.energyGenerationUnit,
-            addCommSep(mitigation.properties.energyGeneration)
-          );
-          // addCommSep(data.solarProperties.energyGeneration) +
-          // ' ' +
-          // data.solarProperties.energyGenerationUnit;
-        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-          calculations.consumerGroup = (
-            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-          );
-        }
-        delete calculations.energyGenerationUnit;
-      }
-    }
-    calculations.constantVersion = mitigation.properties.constantVersion;
-
-    for (const key in mitigation) {
-      if (mitigation.hasOwnProperty(key)) {
-        if (key !== 'properties' && key !== 'projectMaterial') {
-          calculations[key] = mitigation[key];
-        }
-      }
-    }
-    return calculations;
   };
 
   const onPopupAction = async (
@@ -1490,6 +1449,10 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
+            onFinish={(d: any) => {
+              setData(d);
+            }}
+            programme={data}
           />
         ),
         icon: (
@@ -1679,7 +1642,10 @@ const ProgrammeView = () => {
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        if (Number(data.creditEst) > Number(data.creditIssued)) {
+        if (
+          Number(data.creditEst) > Number(data.creditIssued) &&
+          getValidNdcActions(data).length > 0
+        ) {
           actionBtns.push(
             <Button
               type="primary"
@@ -1711,6 +1677,7 @@ const ProgrammeView = () => {
                         )
                       }
                       translator={i18n}
+                      ndcActions={getValidNdcActions(data)}
                     />
                   ),
                 });
@@ -1866,31 +1833,6 @@ const ProgrammeView = () => {
     } else {
       generalInfo[text] = v;
     }
-  });
-
-  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
-    return (
-      <Card className="card-container">
-        <div>
-          <InfoView
-            data={mapArrayToi18n(mitigationData(ele))}
-            title={t('view:calculation') + ' - ' + ele?.actionId}
-            icon={<BulbOutlined />}
-          />
-          {ele.projectMaterial && ele.projectMaterial.length > 0 && (
-            <div className="info-view only-head">
-              <div className="title">
-                <span className="title-icon"></span>
-                <span className="title-text" style={{ marginLeft: '15px' }}>
-                  {t('view:projectMaterial')}
-                </span>
-                <div>{getFileContent(ele.projectMaterial)}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
   });
 
   return loadingAll ? (
@@ -2395,7 +2337,6 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {mitigationWidgets && mitigationWidgets}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">
