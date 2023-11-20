@@ -355,4 +355,5 @@ export class ProgrammeController {
     console.log(req.abilityCondition)
     return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
   }
+
 }
