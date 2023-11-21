@@ -32,15 +32,9 @@ export class GHGProjectionController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Projection))
   @Post()
   async addProjection(@Body() projection: ProjectionDto, @Request() req, @Res() res: Response) {
-    try {
       const response = await this.projectionService.create(projection, req.user);
-
       // Set the response status and send the response data
       res.status(response.status).json(response.data);
-    } catch (error) {
-      // Handle errors and set the appropriate status code
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
-    }
   }
 
   @UseGuards(JwtAuthGuard)

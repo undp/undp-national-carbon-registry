@@ -4,6 +4,7 @@
     "totalNationalEmissionSubTitle" : "Total national emissions and removals",
     "addNew" : "Add New",
     "year": "Year",
+    "isRequired": "is required!",
     "totalNationalEmission" : "Total National Emission and Removals",
     "energyEmissions": "Energy",
     "fuelCombustionActivities": "Fuel Combustion Activities",
@@ -46,12 +47,18 @@
     "totalCo2WithLand": "Total CO2 equivalent emissions with land use, land-use change and forestry",
     "upload": "Upload",
     "emissionRemovalDocument" : "Emissions & Removals Document",
-    "emissionCreationSuccess" : "Emission data created successfully",
-    "emissionUpdateSuccess" : "Emission data updated successfully",
-    "projectionCreationSuccess" : "Projection data created successfully",
-    "projectionUpdateSuccess" : "Projection data updated successfully",
+    "emissionCreationSuccess" : "The changes to the form has been submitted successfully",
+    "emissionUpdateSuccess" : "The changes to the form has been submitted successfully",
+    "emissionFinalizedSuccess" : "The form has been finalised successfully",
+    "projectionCreationSuccess" : "The changes to the form has been submitted successfully",
+    "projectionUpdateSuccess" : "The changes to the form has been submitted successfully",
+    "projectionFinalizedSuccess" : "The form has been finalised successfully",
     "invalidFileType" : "Only XLSX and XLS files are allowed",
     "invalidDataInExcel" : "Incorrect data format",
-    "discardHeaderText" : "Are you sure you want to cancel this edit?"
+    "discardHeaderText" : "Are you sure you want to cancel this edit?",
+    "formNotChanged" : "No changes has been done to the form",
+    "formCancelledSuccess" : "The changes to the form has been cancelled successfully",
+    "submitModelHeader" : "Are you sure you want to submit this edit?",
+    "finalizeModelHeader" : "Are you sure you want to finalize this form? This action cannot be undone."
   }
   
