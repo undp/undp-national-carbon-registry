@@ -695,14 +695,22 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlIssueDesc', [
-                  addNdcDesc({
-                    ndcActions: getTxRefValues(activity.data.txRef, 4),
-                    t: t,
-                    creditUnit: creditUnit,
-                  }),
-                  getTxRefValues(activity.data.txRef, 1),
-                ])}
+                text={formatString(
+                  'view:tlIssueDesc',
+                  getTxRefValues(activity.data.txRef, 4)
+                    ? [
+                        addNdcDesc({
+                          ndcActions: getTxRefValues(activity.data.txRef, 4),
+                          t: t,
+                          creditUnit: creditUnit,
+                        }),
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                    : [
+                        `${addCommSep(activity.data.creditChange)} ${creditUnit} credits`,
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                )}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
