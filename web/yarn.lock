@@ -2432,9 +2432,9 @@
   integrity sha512-8q9ZexmdYYyc5/cfujaXb4YOucpQxAV4RMG0himLyDUOEr8Mr79VrqsFI+cQ2M2h89YIuy95lbxuYjxT4Hk4kQ==
 
 "@types/node@^18.11.9":
-  version "18.18.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.10.tgz#4971bffdf3a43977c4c8166aa714b2c0b05b3256"
-  integrity sha512-luANqZxPmjTll8bduz4ACs/lNTCLuWssCyjqTY9yLdsv1xnViQp3ISKwsEWOIecO13JWUqjVdig/Vjjc09o8uA==
+  version "18.18.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.12.tgz#0c40e52e5ff2569386b160f6f6bb019ff1361cb4"
+  integrity sha512-G7slVfkwOm7g8VqcEF1/5SXiMjP3Tbt+pXDU3r/qhlM2KkGm786DUD4xyMA2QzEElFrv/KZV9gjygv4LnkpbMQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -2745,10 +2745,10 @@
     "@types/node" "^18.11.9"
     convert-units "^2.3.4"
 
-"@undp/carbon-library@1.0.157-CARBON-339.3":
-  version "1.0.157-CARBON-339.3"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.157-CARBON-339.3.tgz#61516c7e326b46db0b5af99d7694876777776e5f"
-  integrity sha512-2pqjqoyHkutDuIGIl3/DbjlZqWyD9t0F3WXABTawFHSQfsgg4PQJPbRcdvYkqG9XAZ9X04MMzH68cTsvmnAutg==
+"@undp/carbon-library@1.0.157-CARBON-339.5":
+  version "1.0.157-CARBON-339.5"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.157-CARBON-339.5.tgz#cdc0e2a9743e18c267d94b036d1957e29a5f227d"
+  integrity sha512-bAkSeZtFxBCSWo3zt//a11xtikhxSWDNI74DCseyAjxXBDoNaQhyhuZA9Znp02/mj783MZqaT3v8NKFx+lNI1w==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-json" "^6.0.1"
@@ -12076,9 +12076,9 @@ typescript@^4.8.4:
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 typescript@^5.0.4:
-  version "5.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.2.2.tgz#5ebb5e5a5b75f085f22bc3f8460fba308310fa78"
-  integrity sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.3.2.tgz#00d1c7c1c46928c5845c1ee8d0cc2791031d4c43"
+  integrity sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"
