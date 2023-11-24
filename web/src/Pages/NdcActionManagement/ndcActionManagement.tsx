@@ -13,7 +13,7 @@ const NdcActionManagement = () => {
   };
 
   const onNavigateToProgrammeManagementView = (programmeId: any) => {
-    navigate('/programmeManagement/view', { state: { id: programmeId } });
+    navigate('/programmeManagement/view/' + programmeId);
   };
 
   return (

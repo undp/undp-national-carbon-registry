@@ -48,6 +48,7 @@
     "by": "By",
     "programme": "Programme",
     "issueCreditText": "Credits to be issued",
+    "issueCreditNdcIdText": "Action ID",
     "authCreditText": "Credits to authorise",
     "totalTransferCredit": "Total Amount",
     "totalRetireCredit": "Retired Credit Amount",
@@ -88,7 +89,8 @@
     "tlAuth": "Authorised",
     "tlAuthDesc": "The programme was authorised for {} {} credits until {} with the Serial Number {} by {}",
     "tlIssue": "Credits Issued",
-    "tlIssueDesc": "The programme was issued {} {} credits by {}",
+    "tlIssueDesc": "The programme was issued {} by {}", 
+    "t1IssueNdcDesc": "{} {} credits for the NDC Action {}",
     "tlReject": "Rejected",
     "tlRejectDesc": "The programme was rejected by {}",
     "tlTransfer": "Transferred",
@@ -138,5 +140,8 @@
     "environmentalAssessmentRegistrationNo": "Environmental Assessment Registration Number",
     "govInternationalAcc":"Government International Account",
     "omgeAcc":"OMGE Account",
-    "omgeDesc":"Overall Mitigation in Global Emissins (OMGE)"
+    "omgeDesc":"Overall Mitigation in Global Emissins (OMGE)",
+    "methodology": "Methodology",
+    "verificationEl": "Verification",
+    "monitoringEl": "Monitoring"
   }
