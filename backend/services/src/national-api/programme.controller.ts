@@ -45,14 +45,16 @@ import {
   InvestmentApprove,
   InvestmentReject,
   InvestmentCancel,
-  ProgrammeMitigationIssue
+  ProgrammeMitigationIssue,
+  NdcDetailsActionDto,
+  NdcDetailsPeriodDto
 } from "@undp/carbon-services-lib";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
 @Controller("programme")
 export class ProgrammeController {
-  constructor(private programmeService: ProgrammeService) {}
+  constructor(private programmeService: ProgrammeService) { }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -119,7 +121,7 @@ export class ProgrammeController {
   // async updateOwnership(@Body() update: OwnershipUpdateDto) {
   //   return this.programmeService.updateOwnership(update);
   // }
-  
+
 
   @ApiBearerAuth()
   @UseGuards(
@@ -324,36 +326,90 @@ export class ProgrammeController {
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Investment))
   @Post('addInvestment')
   async addInvestment(@Body() investment: InvestmentRequestDto, @Request() req) {
-      return this.programmeService.addInvestment(investment, req.user);
+    return this.programmeService.addInvestment(investment, req.user);
   }
 
   @ApiBearerAuth()
   @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, Investment))
   @Post('investmentApprove')
   async investmentApprove(@Body() body: InvestmentApprove, @Request() req) {
-      return this.programmeService.investmentApprove(body, req.user)
+    return this.programmeService.investmentApprove(body, req.user)
   }
 
   @ApiBearerAuth()
   @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
   @Post('investmentReject')
   async investmentReject(@Body() body: InvestmentReject, @Request() req) {
-      return this.programmeService.investmentReject(body, req.user)
+    return this.programmeService.investmentReject(body, req.user)
   }
 
   @ApiBearerAuth()
   @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
   @Post('investmentCancel')
   async investmentCancel(@Body() body: InvestmentCancel, @Request() req) {
-      return this.programmeService.investmentCancel(body, req.user)
+    return this.programmeService.investmentCancel(body, req.user)
   }
 
   @ApiBearerAuth()
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
   @Post('investmentQuery')
-  queryInvestmentUser(@Body()query: QueryDto, @Request() req) {
+  queryInvestmentUser(@Body() query: QueryDto, @Request() req) {
     console.log(req.abilityCondition)
     return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("queryNdcDetailsPeriod")
+  getNdcDetailsPeriods(@Request() req) {
+    return this.programmeService.getNdcDetailsPeriods(req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("addNdcDetailsPeriod")
+  addNdcDetailsPeriod(@Body() body: NdcDetailsPeriodDto, @Request() req) {
+    return this.programmeService.addNdcDetailsPeriod(body, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("deleteNdcDetailsPeriod")
+  deleteNdcDetailsPeriod(@Body() id: number, @Request() req) {
+    return this.programmeService.deleteNdcDetailsPeriod(id, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("finalizeNdcDetailsPeriod")
+  finalizeNdcDetailsPeriod(@Body() id: number, @Request() req) {
+    return this.programmeService.finalizeNdcDetailsPeriod(id, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('queryNdcDetailsAction')
+  getNdcDetailActions(@Request() req) {
+    return this.programmeService.getNdcDetailActions(req.abilityCondition, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('addNdcDetailsAction')
+  addNdcDetailsAction(@Body() body: NdcDetailsActionDto, @Request() req) {
+    return this.programmeService.addNdcDetailAction(body, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('updateNdcDetailsAction')
+  updateNdcDetailsAction(@Body() body: NdcDetailsActionDto, @Request() req) {
+    return this.programmeService.updateNdcDetailsAction(body, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('approveNdcDetailsAction')
+  approveNdcDetailsAction(@Body() id: number, @Request() req) {
+    return this.programmeService.approveNdcDetailsAction(id, req.abilityCondition, req.user)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('rejectNdcDetailsAction')
+  rejectNdcDetailsAction(@Body() id: number, @Request() req) {
+    return this.programmeService.rejectNdcDetailsAction(id, req.abilityCondition, req.user)
   }
 
 }
