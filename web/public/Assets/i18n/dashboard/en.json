@@ -26,7 +26,7 @@
     "tTprogrammespendingGoverment": "Pending state projects awaiting authorisation",
     "tTTransferReqSentGovernment": "Pending credit transfer requests sent to project owners initiated by your organisation",
     "tTCreditBalanceGovernment": "Total credit balance owned by your organisation",
-    "tTProgrammesGoverment": "Number of rojects created during the specified period and their project state in the carbon registry at present",
+    "tTProgrammesGoverment": "Number of projects created during the specified period and their project state in the carbon registry at present",
     "tTCreditsGovernment": "Number of credits of authorised projects created during the specified period and their credit state in the carbon registry at present",
     "tTCertifiedCreditsGovernment": "Number of credits of projects created during the specified period, uncertified, certified and revoked in the carbon registry at present",
     "tTTotalProgrammesGovernment": "Graphical representation of the number of projects created during the specified period in each project state in the carbon registry at present",
