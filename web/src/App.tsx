@@ -41,6 +41,7 @@ import RegisterNewCompany from './Pages/Company/registerNewCompany';
 import { Loading } from '@undp/carbon-library';
 import GhgEmissions from './Pages/GhgInventory/emissions';
 import GhgProjections from './Pages/GhgInventory/projections';
+import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
 
 // message.config({
 //   duration: 60,
@@ -95,6 +96,7 @@ const App = () => {
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
                     <Route path="/dashboard/mrv" element={<MRVDashboard />} />
+                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} />
                   </Route>
                   <Route
                     path="/programmeManagement"

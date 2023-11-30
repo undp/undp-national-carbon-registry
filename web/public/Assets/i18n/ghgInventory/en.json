@@ -5,7 +5,7 @@
     "addNew" : "Add New",
     "year": "Year",
     "isRequired": "is required!",
-    "totalNationalEmission" : "Total National Emission and Removals",
+    "totalNationalEmission" : "Total National Emission and Removals (in tCO\u2082-eq)",
     "energyEmissions": "Energy",
     "fuelCombustionActivities": "Fuel Combustion Activities",
     "fugitiveEmissionsFromFuels" : "Fugitive emissions from fuels",
@@ -59,6 +59,16 @@
     "formNotChanged" : "No changes has been done to the form",
     "formCancelledSuccess" : "The changes to the form has been cancelled successfully",
     "submitModelHeader" : "Are you sure you want to submit this edit?",
-    "finalizeModelHeader" : "Are you sure you want to finalize this form? This action cannot be undone."
+    "finalizeModelHeader" : "Are you sure you want to finalize this form? This action cannot be undone.",
+    "emissionsBySectorTitle": "GHG Emissions: Sector",
+    "emissionsBySectorTT": "Amount of gas emitted in each year by each sector during the specified period.",
+    "emissionsByGasTitle": "GHG Emissions: Gas",
+    "emissionsByGasTT": "Amount of gas emitted in each year by each type of gas during the specified period",
+    "emissionsMitigationPotentialBySectorTitle": "GHG Mitigation Potential: Sector",
+    "emissionsMitigationPotentialBySectorTT": "Amount of gas emission projected in each year by each sector during the specified period",
+    "emissionsReductionPercentageBySectorTitle": "GHG % Reduction compared to BAU scenario in 2030: Sector",
+    "emissionsReductionPercentageBySectorTT": "Estimated and actual percentage of reduction compared to projected Business-As-Usual of each sub sector during the specified period",
+    "emissionsComparisonTitle": "GHG Emission Comparison",
+    "emissionsComparisonTT": "Emissions projected and actual projections for each year under each type during the specified period"
   }
   

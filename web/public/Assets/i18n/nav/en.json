@@ -8,6 +8,7 @@
   "addNew": "Add New",
   "investments": "Investments",
   "ndcActions": "NDC Actions",
+  "ghgInventory": "GHG Inventory", 
   "emissions" : "Emissions",
   "projections" : "Projections"
 }
