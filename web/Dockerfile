@@ -41,6 +41,7 @@ RUN CI=false yarn build
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 COPY ./web/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 COPY ./web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE $PORT
