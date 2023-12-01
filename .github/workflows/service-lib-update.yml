@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Update Version
         working-directory: ./backend/services
-        run: yarn upgrade carbon-services-lib --latest
+        run: yarn upgrade @undp/carbon-services-lib --latest
       - name: Commit Changes
         working-directory: ./backend/services
         run: |

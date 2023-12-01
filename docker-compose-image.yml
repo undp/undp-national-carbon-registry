@@ -21,7 +21,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - data:/data/postgres
   national:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     # build:
     # context: .
     # dockerfile: ./backend/services/Dockerfile
@@ -59,7 +59,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./backend/services/Dockerfile
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     ports:
       - "3100:3100"
     depends_on:
@@ -73,7 +73,7 @@ services:
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
   replicator:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     # build:
     #   context: .
     #   dockerfile: ./backend/services/Dockerfile
@@ -83,7 +83,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "<ANY PASSWORD>"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
@@ -103,7 +103,7 @@ services:
     volumes:
       - filestore:/app/backend/services/public
   web:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:CARBON-329-U
     # build:
     #   context: .
     #   dockerfile: ./web/Dockerfile

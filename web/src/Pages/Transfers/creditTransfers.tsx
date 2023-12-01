@@ -10,7 +10,7 @@ const CreditTransfer = () => {
   const { i18n } = useTranslation(['common', 'creditTransfer', 'programme', 'view']);
 
   const onNavigateToProgrammeView = (programmeId: any) => {
-    navigate('/programmeManagement/view', { state: { id: programmeId } });
+    navigate('/programmeManagement/view/' + programmeId);
   };
 
   return (

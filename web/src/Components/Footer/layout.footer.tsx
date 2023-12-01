@@ -42,28 +42,32 @@ const LayoutFooter = () => {
         </Col>
         <Col md={14} lg={14}>
           <div className="footertext-link-container">
-            <a
-              href="https://nationalcarbonregistrydemo.tawk.help/"
-              target={'blank'}
-              className="footertext-links"
-            >
-              {t('homepage:Help')}
-            </a>
-            <a href="https://status.carbreg.org/" target={'blank'} className="footertext-links">
-              {t('homepage:Status')}
-            </a>
-            <a href="/cookie" className="footertext-links">
-              {t('homepage:Cookie')}
-            </a>
-            <a href="codeconduct" className="footertext-links">
-              {t('homepage:codeconduct')}
-            </a>
-            <a href="/terms#termuse" className="footertext-links">
-              {t('homepage:terms')}
-            </a>
-            <a href="/privacy" className="footertext-links">
-              {t('homepage:privacy')}
-            </a>
+            <div>
+              <a
+                href="https://nationalcarbonregistrydemo.tawk.help/"
+                target={'blank'}
+                className="footertext-links"
+              >
+                {t('homepage:Help')}
+              </a>
+              <a href="https://status.carbreg.org/" target={'blank'} className="footertext-links">
+                {t('homepage:Status')}
+              </a>
+              <a href="/cookie" className="footertext-links">
+                {t('homepage:Cookie')}
+              </a>
+            </div>
+            <div>
+              <a href="codeconduct" className="footertext-links">
+                {t('homepage:codeconduct')}
+              </a>
+              <a href="/terms#termuse" className="footertext-links">
+                {t('homepage:terms')}
+              </a>
+              <a href="/privacy" className="footertext-links">
+                {t('homepage:privacy')}
+              </a>
+            </div>
           </div>
         </Col>
       </Row>
