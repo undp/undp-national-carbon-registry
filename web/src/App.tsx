@@ -1,10 +1,10 @@
 import { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { ConnectionContextProvider } from './Context/ConnectionContext/connectionContext';
+import { ConnectionContextProvider } from '@undp/carbon-library';
 import 'antd/dist/antd.css';
 import './Styles/app.scss';
 import Login from './Pages/Login/login';
-import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
+import { UserInformationContextProvider } from '@undp/carbon-library';
 import PrivateRoute from './Components/PrivateRoute/privateRoute';
 import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
@@ -30,7 +30,7 @@ import CompanyProfile from './Pages/CompanyProfile/companyProfile';
 import { AbilityContext } from './Casl/Can';
 import { defineAbility, updateUserAbility } from './Casl/ability';
 import { message } from 'antd';
-import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
+import { SettingsContextProvider } from '@undp/carbon-library';
 import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
 import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
 import NdcActionManagement from './Pages/NdcActionManagement/ndcActionManagement';
@@ -39,6 +39,7 @@ import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
 import { Loading } from '@undp/carbon-library';
+import { useTranslation } from 'react-i18next';
 
 // message.config({
 //   duration: 60,
@@ -47,6 +48,7 @@ import { Loading } from '@undp/carbon-library';
 const App = () => {
   const ability = defineAbility();
   const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
+  const { i18n, t } = useTranslation(['common']);
 
   useEffect(() => {
     console.log(process.env.REACT_APP_BACKEND);
@@ -74,6 +76,7 @@ const App = () => {
             ? process.env.REACT_APP_BACKEND
             : 'http://localhost:3000/local'
         }
+        t={t}
       >
         <UserInformationContextProvider>
           <SettingsContextProvider>

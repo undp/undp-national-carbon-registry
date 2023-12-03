@@ -1,7 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ProgrammeManagementComponent, ProgrammeManagementColumns } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
 
@@ -38,8 +36,6 @@ const ProgrammeManagement = () => {
     <ProgrammeManagementComponent
       t={t}
       visibleColumns={visibleColumns}
-      useUserContext={useUserContext}
-      useConnection={useConnection}
       onNavigateToProgrammeView={onNavigateToProgrammeView}
       onClickAddProgramme={onClickAddProgramme}
       enableAddProgramme

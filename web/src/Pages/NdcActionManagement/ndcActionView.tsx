@@ -1,5 +1,3 @@
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
@@ -26,8 +24,6 @@ const NdcActionView = () => {
 
   return (
     <NdcActionViewComponent
-      useConnection={useConnection}
-      useUserContext={useUserContext}
       useLocation={useLocation}
       onNavigateToNdcManagementView={onNavigateToNdcManagementView}
       translator={i18n}

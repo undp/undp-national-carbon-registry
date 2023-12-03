@@ -2,7 +2,7 @@ import React, { FC, Suspense, useContext, useEffect, useState } from 'react';
 import './login.scss';
 import { Button, Col, Form, Input, Row, Spin } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useConnection } from '@undp/carbon-library';
 import i18next from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
