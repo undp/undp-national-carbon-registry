@@ -50,7 +50,6 @@ services:
       BACKEND_HOST: "http://192.168.1.16:3000"
       CONTACT_EMAIL: countryx@email.com
       MINISTER_NAME_AND_DESIGNATION : "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
-      SYSTEM_NAME: Carbon Registry
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
@@ -127,7 +126,6 @@ services:
         REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         REACT_APP_COUNTRY_CODE: "NG"
         REACT_APP_MAP_TYPE: "None"
-        REACT_APP_ENABLE_REGISTRATION: true
     ports:
       - "3030:3030"
     depends_on:

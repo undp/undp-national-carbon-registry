@@ -45,6 +45,7 @@ import {
   InvestmentApprove,
   InvestmentReject,
   InvestmentCancel,
+  ProgrammeMitigationIssue
 } from "@undp/carbon-services-lib";
 
 @ApiTags("Programme")
@@ -191,7 +192,7 @@ export class ProgrammeController {
     PoliciesGuardEx(true, Action.Update, Programme)
   )
   @Put("issue")
-  async programmeIssue(@Body() body: ProgrammeIssue, @Request() req) {
+  async programmeIssue(@Body() body: ProgrammeMitigationIssue, @Request() req) {
     return this.programmeService.issueProgrammeCredit(body, req.user);
   }
 
@@ -354,4 +355,5 @@ export class ProgrammeController {
     console.log(req.abilityCondition)
     return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
   }
+
 }

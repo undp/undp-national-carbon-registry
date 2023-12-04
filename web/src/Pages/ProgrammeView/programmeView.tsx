@@ -17,7 +17,7 @@ import {
   Tooltip,
 } from 'antd';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
 import { useTranslation } from 'react-i18next';
@@ -91,6 +91,9 @@ import {
   Role,
   CarbonSystemType,
   TooltipColor,
+  getValidNdcActions,
+  addNdcDesc,
+  mitigationTypeList,
 } from '@undp/carbon-library';
 import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
@@ -133,6 +136,7 @@ const ProgrammeView = () => {
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
   const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState(false);
+  const { id } = useParams();
   const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] = useState(false);
   const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
@@ -691,11 +695,22 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlIssueDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
-                  getTxRefValues(activity.data.txRef, 1),
-                ])}
+                text={formatString(
+                  'view:tlIssueDesc',
+                  getTxRefValues(activity.data.txRef, 4)
+                    ? [
+                        addNdcDesc({
+                          ndcActions: getTxRefValues(activity.data.txRef, 4),
+                          t: t,
+                          creditUnit: creditUnit,
+                        }),
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                    : [
+                        `${addCommSep(activity.data.creditChange)} ${creditUnit} credits`,
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                )}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -1035,53 +1050,6 @@ const ProgrammeView = () => {
     }
   };
 
-  const mitigationData = (mitigation: any) => {
-    if (!mitigation) {
-      return {};
-    }
-    let calculations: any = {};
-    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.landAreaUnit) {
-          calculations.landArea = new UnitField(
-            mitigation.properties.landAreaUnit,
-            addCommSep(mitigation.properties.landArea)
-          );
-        }
-        delete calculations.landAreaUnit;
-      }
-    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.energyGenerationUnit) {
-          calculations.energyGeneration = new UnitField(
-            mitigation.properties.energyGenerationUnit,
-            addCommSep(mitigation.properties.energyGeneration)
-          );
-          // addCommSep(data.solarProperties.energyGeneration) +
-          // ' ' +
-          // data.solarProperties.energyGenerationUnit;
-        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-          calculations.consumerGroup = (
-            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-          );
-        }
-        delete calculations.energyGenerationUnit;
-      }
-    }
-    calculations.constantVersion = mitigation.properties.constantVersion;
-
-    for (const key in mitigation) {
-      if (mitigation.hasOwnProperty(key)) {
-        if (key !== 'properties' && key !== 'projectMaterial') {
-          calculations[key] = mitigation[key];
-        }
-      }
-    }
-    return calculations;
-  };
-
   const onPopupAction = async (
     body: any,
     endpoint: any,
@@ -1272,20 +1240,14 @@ const ProgrammeView = () => {
   };
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const programmeId = queryParams.get('id');
-    if (programmeId) {
-      getProgrammeById(programmeId);
-    } else if (!state) {
-      navigate('/programmeManagement/viewAll', { replace: true });
+    if (state && state.record) {
+      setLoadingAll(false);
+      setData(state.record);
     } else {
-      if (!state.record) {
-        if (state.id) {
-          getProgrammeById(state.id);
-        }
+      if (id) {
+        getProgrammeById(id);
       } else {
-        setLoadingAll(false);
-        setData(state.record);
+        navigate('/programmeManagement/viewAll', { replace: true });
       }
     }
 
@@ -1495,6 +1457,10 @@ const ProgrammeView = () => {
             useConnection={useConnection}
             translator={programmeViewTranslator}
             useUserContext={useUserContext}
+            onFinish={(d: any) => {
+              setData(d);
+            }}
+            programme={data}
           />
         ),
         icon: (
@@ -1684,7 +1650,10 @@ const ProgrammeView = () => {
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        if (Number(data.creditEst) > Number(data.creditIssued)) {
+        if (
+          Number(data.creditEst) > Number(data.creditIssued) &&
+          getValidNdcActions(data).length > 0
+        ) {
           actionBtns.push(
             <Button
               type="primary"
@@ -1716,6 +1685,7 @@ const ProgrammeView = () => {
                         )
                       }
                       translator={i18n}
+                      ndcActions={getValidNdcActions(data)}
                     />
                   ),
                 });
@@ -1871,31 +1841,6 @@ const ProgrammeView = () => {
     } else {
       generalInfo[text] = v;
     }
-  });
-
-  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
-    return (
-      <Card className="card-container">
-        <div>
-          <InfoView
-            data={mapArrayToi18n(mitigationData(ele))}
-            title={t('view:calculation') + ' - ' + ele?.actionId}
-            icon={<BulbOutlined />}
-          />
-          {ele.projectMaterial && ele.projectMaterial.length > 0 && (
-            <div className="info-view only-head">
-              <div className="title">
-                <span className="title-icon"></span>
-                <span className="title-text" style={{ marginLeft: '15px' }}>
-                  {t('view:projectMaterial')}
-                </span>
-                <div>{getFileContent(ele.projectMaterial)}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
   });
 
   return loadingAll ? (
@@ -2400,7 +2345,6 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {mitigationWidgets && mitigationWidgets}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">

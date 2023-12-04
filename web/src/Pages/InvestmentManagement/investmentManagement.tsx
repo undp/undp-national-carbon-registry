@@ -10,7 +10,7 @@ const InvestmentManagement = () => {
   const { t, i18n } = useTranslation(['common', 'programme', 'creditTransfer', 'view']);
 
   const onNavigateToProgrammeView = (programmeId: any) => {
-    navigate('/programmeManagement/view', { state: { id: programmeId } });
+    navigate('/programmeManagement/view/' + programmeId);
   };
 
   return (

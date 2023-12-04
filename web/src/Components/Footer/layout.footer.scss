@@ -1,89 +1,153 @@
 @import '../../Assets/Fonts/fonts.scss';
 @import '../../Styles/variables.scss';
 
-
 .homepage-footer-container {
+  background-color: $background-color-dark;
+  min-height: 200px;
+  height: 100%;
+  align-items: center;
+  padding: 1rem 2rem 0 1rem;
+  cursor: pointer;
 
-    background-color: $background-color-dark;
-    min-height: 200px;
-    height: 100%;
-    align-items: center;
-    padding: 1rem 2rem 0 1rem;
-    cursor: pointer;
-
-    .footertext {
-      color: $dark-text-color;
-      padding: 5px 60px 20px 60px;
-      font-size: 0.875rem;
-
-    }
-    .footer-raw{
-      display:flex;
-    }
-    .footertext-bottom {
-      color: $dark-text-color;
-      padding: 100px 60px 28px 60px;
-      font-size: 0.875rem;
-      font-family: 'MuseoSans';
-      font-weight: 100;
-
-      .cc {
-        margin: 5px;
-      }
-    }
-    .footertext-link-container {
-      display: flex;
-      color: $dark-text-color;
-      padding: 100px 60px 20px 60px;
-      font-size: 0.75rem;
-      text-decoration: underline;
-      justify-content: right;
-    }
-    .footertext-links {
-      padding-left: 30px;
-      color: $dark-text-color;
+  .ant-divider {
+    @media (max-width: 660px) {
+      margin: 2px 60px 2px 60px !important;
     }
 
-    .divider {
-      margin: 2px 60px 2px 60px;
-      width: calc(100% - 120px) !important;
-      min-width: calc(100% - 120px);
-    }
-    .logocontainer {
-      display: flex;
-      margin-top: 10px;
-
-      .title {
-        font-family: 'MuseoSans';
-        font-size: 2rem;
-        color: $dark-text-color;
-        font-weight: 700;
-        margin-right: 0.5rem;
-        margin-left: 0.5rem;
-      }
-
-      .title-sub {
-        font-weight: 100 !important;
-        font-family: 'MuseoSans';
-        font-size: 2rem;
-        color: $dark-text-color;
-      }
-
-      .logo {
-        height: 97px;
-        width:110px;
-        img {
-          object-fit: cover;
-          height: auto;
-          height: 70%;
-          margin-left: 60px;
-        }
-      }
-      .footer-country-name {
-        font-size: 0.875rem;
-        color: $dark-text-color;
-        font-family: 'MuseoSans';
-        margin-left: 0.6rem;
-      }
+    @media (max-width: 645px) {
+      margin: 2px 60px 2px 12px !important;
     }
   }
+
+  .footertext {
+    color: $dark-text-color;
+    padding: 5px 60px 20px 60px;
+    font-size: 0.875rem;
+
+    @media (max-width: 645px) {
+      padding: 5px 10px 20px 10px;
+      // text-align: center;
+    }
+  }
+
+  .footer-raw {
+    display: flex;
+  }
+
+  .footertext-bottom {
+    color: $dark-text-color;
+    padding: 100px 60px 28px 60px;
+    font-size: 0.875rem;
+    font-family: 'MuseoSans';
+    font-weight: 100;
+
+    @media (max-width: 837px) {
+      padding: 10px 60px 28px 60px;
+    }
+
+    @media (max-width: 645px) {
+      padding: 10px 60px 28px 10px;
+    }
+
+    .cc {
+      margin: 5px;
+    }
+  }
+
+  .footertext-link-container {
+    display: flex;
+    color: $dark-text-color;
+    padding: 100px 60px 20px 60px;
+    font-size: 0.75rem;
+    text-decoration: underline;
+    justify-content: right;
+
+    @media (max-width: 1077px) {
+      flex-direction: column;
+    }
+
+    @media (max-width: 837px) {
+      padding: 10px 60px 20px 60px;
+    }
+
+    @media (max-width: 645px) {
+      padding: 10px 60px 20px 10px;
+    }
+
+    @media (max-width: 390px) {
+      font-size: 0.65rem;
+    }
+  }
+
+  .footertext-links {
+    padding-right: 15px;
+    color: $dark-text-color;
+
+    @media (max-width: 645px) {
+      padding-left: 0;
+      padding-right: 10px;
+    }
+
+    @media (max-width: 390px) {
+      font-size: 6px;
+    }
+  }
+
+  .divider {
+    margin: 2px 60px 2px 60px;
+    width: calc(100% - 120px) !important;
+    min-width: calc(100% - 120px);
+  }
+
+  .logocontainer {
+    display: flex;
+    margin-top: 10px;
+
+    @media (max-width: 645px) {
+      margin-left: -3.5rem;
+    }
+
+    .title {
+      font-family: 'MuseoSans';
+      font-size: 2rem;
+      color: $dark-text-color;
+      font-weight: 700;
+      margin-right: 0.5rem;
+      margin-left: 0.5rem;
+
+      @media (max-width: 645px) {
+        font-size: 1.8rem;
+      }
+    }
+
+    .title-sub {
+      font-weight: 100 !important;
+      font-family: 'MuseoSans';
+      font-size: 2rem;
+      color: $dark-text-color;
+
+      @media (max-width: 645px) {
+        font-size: 1.8rem;
+      }
+    }
+
+    .logo {
+      height: 97px;
+      width: 110px;
+
+      img {
+        object-fit: cover;
+        height: auto;
+        height: 70%;
+        margin-left: 60px;
+      }
+    }
+
+    .footer-country-name {
+      font-size: 0.875rem;
+      color: $dark-text-color;
+      font-family: 'MuseoSans';
+      margin-left: 0.6rem;
+    }
+  }
+}
