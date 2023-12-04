@@ -393,7 +393,7 @@ Web frontend implemented using ReactJS framework. Please refer [getting started 
 ### Localization
 * Languages (Current): English
 * Languages (In Progress): French. Spanish 
-For updating translations or adding new ones, reference https://github.com/undp/carbon-registry/tree/main/web/public/Assets/i18n 
+Please refer [here](./web/public/locales/i18n/README.md) for adding a new language translation file.
 
 <a name="api"></a>
 ### Application Programming Interface (API)
