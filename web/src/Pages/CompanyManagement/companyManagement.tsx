@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { useConnection } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
-import { CompanyManagementComponent, CompanyManagementColumns } from '@undp/carbon-library';
+import { CompanyManagementComponent, CompanyManagementColumns, useConnection } from '@undp/carbon-library';
 
 const CompanyManagement = () => {
   const navigate = useNavigate();
