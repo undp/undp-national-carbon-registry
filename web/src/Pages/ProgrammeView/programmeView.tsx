@@ -94,7 +94,7 @@ import {
   mitigationTypeList,
   useConnection,
   useSettingsContext,
-  useUserContext
+  useUserContext,
 } from '@undp/carbon-library';
 
 const ProgrammeView = () => {

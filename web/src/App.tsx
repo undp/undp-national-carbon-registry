@@ -35,7 +35,12 @@ import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
-import { Loading, ConnectionContextProvider, UserInformationContextProvider, SettingsContextProvider } from '@undp/carbon-library';
+import {
+  Loading,
+  ConnectionContextProvider,
+  UserInformationContextProvider,
+  SettingsContextProvider,
+} from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 
 // message.config({
