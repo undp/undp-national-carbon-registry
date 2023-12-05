@@ -105,6 +105,7 @@
     "tlFrozenDesc": "{} {} credits were frozen due to the deactivation of {} by {}",
     "tlRetInit": "Retirement Initiated",
     "tlRetInitDesc": "Retirement of {} {} credits of this project from {} {}as {} was initiated by {}",
+    "t1RetInitOmgeDesc":"and {} ITMO credits as Overall Mitigation in Global Emissions ",
     "tlRetRejectTitle": "Retirement Not Recognised",
     "tlTxRetRejectDesc": "The request to transfer {} {} credits from {} to {} was not recognised by {}",
     "tlRetCancelTitle": "Retire request cancelled",
@@ -137,6 +138,9 @@
     "addAction": "ADD ACTIVITY",
     "ministryLevel": "Ministry Level",
     "environmentalAssessmentRegistrationNo": "Environmental Assessment Registration Number",
+    "govInternationalAcc":"Government International Account",
+    "omgeAcc":"OMGE Account",
+    "omgeDesc":"Overall Mitigation in Global Emissins (OMGE)",
     "methodology": "Methodology",
     "verificationEl": "Verification",
     "monitoringEl": "Monitoring"

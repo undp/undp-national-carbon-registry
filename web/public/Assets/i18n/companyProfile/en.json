@@ -40,5 +40,6 @@
     "adminName": "Name",
     "adminEmail": "Email",
     "adminPhone": "Phone",
+    "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
     "nationalSopValue": "National Share of Proceeds"
 }
