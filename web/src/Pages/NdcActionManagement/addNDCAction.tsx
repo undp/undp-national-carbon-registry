@@ -30,7 +30,9 @@ const AddNDCAction = () => {
   };
 
   const onNavigateToProgrammeView = (programmeDetails: any) => {
-    navigate('/programmeManagement/view', { state: { record: programmeDetails } });
+    navigate(`/programmeManagement/view/${programmeDetails.programmeId}`, {
+      state: { record: programmeDetails },
+    });
   };
 
   return (

@@ -6,6 +6,11 @@ on:
     paths:
       - web/**
       - .github/workflows/frontend*
+      - docker-compose*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy_front_end:
@@ -19,6 +24,12 @@ jobs:
       REACT_APP_MAP_TYPE : "Mapbox"
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+      - name: Check Docker variable changes
+        run: |
+          echo "docker-compose file Change...."
+          git diff HEAD~ -- HEAD -z ./docker-compose*
       - name: Cache modules
         uses: actions/cache@v1
         id: yarn-cache
@@ -49,6 +60,18 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      # - name: Build, tag, and push the image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: carbon-web
+      #     IMAGE_TAG: unified
+      #   run: |
+      #     # Build a docker container and push it to ECR 
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} 
+      #     echo "Pushing image to ECR..."
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
@@ -57,7 +80,24 @@ jobs:
           IMAGE_TAG: unified
         run: |
           # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://localhost:3000 --build-arg REACT_APP_STAT_URL=http://localhost:3100 --build-arg COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} 
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Deploy docker image to Amazon EC2
+        if: github.ref == 'refs/heads/unified'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-web
+          IMAGE_TAG: unified
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_UNIFIED }}
+          HOSTNAME: ${{ secrets.HOST_IP_UNIFIED }}
+          USER_NAME: ec2-user
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+            cd repos/carbon-registry &&
+            sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
+            (docker stop carbon-registry-web-1 > /dev/null &&  docker rm carbon-registry-web-1 ) 2>/dev/null || true &&
+            sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:unified &&
+            docker-compose -f docker-compose-image.yml up -d web '
