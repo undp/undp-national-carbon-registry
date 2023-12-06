@@ -4,7 +4,7 @@ import { Server } from "http";
 import { proxy } from "aws-serverless-express";
 import { AnalyticsAPIModule, bootstrapServer } from "@undp/carbon-services-lib";
 
-let cachedServer: Server;
+let cachedServer: Server; 
 
 export const handler: Handler = async (event: any, context: Context) => {
   const httpBase = "/stats";

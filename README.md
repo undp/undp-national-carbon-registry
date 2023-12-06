@@ -10,7 +10,7 @@
 # National Carbon Credit Registry
 The National Carbon Registry enables carbon credit trading in order to reduce greenhouse gas emissions.
 
-As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by programmes, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
+As an online database, the National Carbon Registry uses national and international standards for quantifying and verifying greenhouse gas emissions reductions by projects, tracking issued carbon credits and enabling credit transfers in an efficient and transparent manner. The Registry functions by receiving, processing, recording and storing data on mitigations projects, the issuance, holding, transfer, acquisition, cancellation, and retirement of emission reduction credits. This information is publicly accessible to increase public confidence in the emissions reduction agenda.
 
 The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more. 
 
@@ -51,10 +51,10 @@ UNDP Carbon Registry is based on service oriented architecture (SOA). Following 
 ### **System Services**
 #### *National Service*
 
-Authenticate, Validate and Accept user (Government, Programme Developer/Certifier) API requests related to the following functionalities,
+Authenticate, Validate and Accept user (Government, Project Developer/Certifier) API requests related to the following functionalities,
 - User and company CRUD operations.
 - User authentication.
-- Programme life cycle management. 
+- Project life cycle management. 
 - Credit life cycle management.
 
 Service is horizontally scalable and state maintained in the following locations,
@@ -62,8 +62,8 @@ Service is horizontally scalable and state maintained in the following locations
 - Operational Database.
 - Ledger Database.
 
-Uses the Carbon Credit Calculator and Serial Number Generator node modules to estimate the programme carbon credit amount and issue a serial number.
-Uses Ledger interface to persist programme and credit life cycles.
+Uses the Carbon Credit Calculator and Serial Number Generator node modules to estimate the project carbon credit amount and issue a serial number.
+Uses Ledger interface to persist project and credit life cycles.
 
 #### *Analytics Service*
 Serve all the system analytics. Generate all the statistics using the operational database. 
@@ -104,8 +104,8 @@ Can add more options by implementing [file handler interface](./backend/services
 Change by environment variable `FILE_SERVICE`. Supported types `S3`, `LOCAL(Default)`
 
 ### **Database Architecture**
-Primary/secondary database architecture used to store carbon programme and account balances. 
-Ledger database is the primary database. Add/update programmes and update account balances in a single transaction. Currently implemented only for AWS QLDB
+Primary/secondary database architecture used to store carbon project and account balances. 
+Ledger database is the primary database. Add/update projects and update account balances in a single transaction. Currently implemented only for AWS QLDB
 
 Operational Database is the secondary database. Eventually replicated to this from primary database via data stream. Implemented based on PostgresSQL
 
@@ -115,7 +115,7 @@ Operational Database is the secondary database. Eventually replicated to this fr
 3. Scalability - Primary/secondary database architecture is scalable since additional secondary databases can be added as needed to handle more read operations.
 
 **Why Ledger Database?**
-1. Immutable and Transparent - Track and maintain a sequenced history of every carbon programme and credit change. 
+1. Immutable and Transparent - Track and maintain a sequenced history of every carbon project and credit change. 
 2. Data Integrity (Cryptographic verification by third party).
 3. Reconcile carbon credits and company account balance.
 
@@ -123,7 +123,7 @@ Operational Database is the secondary database. Eventually replicated to this fr
 
 This enables the capability to add any blockchain or ledger database support to the carbon registry without functionality module changes. Currently implemented for PostgresSQL and AWS QLDB.
 
-**PostgresSQL Ledger Implementation** storage all the carbon programme and credit events in a separate event database with the sequence number. Support all the ledger functionalities except immutability.  
+**PostgresSQL Ledger Implementation** storage all the carbon project and credit events in a separate event database with the sequence number. Support all the ledger functionalities except immutability.  
 
 
 Single database approach used for user and company management. 
@@ -131,11 +131,11 @@ Single database approach used for user and company management.
 
 ### **Ledger Layout**
 Carbon Registry contains 3 ledger tables.
-1. Programme ledger - Contains all the programme and credit transactions.
+1. Project ledger - Contains all the project and credit transactions.
 2. Company Account Ledger (Credit) - Contains company accounts credit transactions.
 3. Country Account Ledger (Credit) - Contains country credit transactions.
 
-The below diagram demonstrates the the ledger behavior of programme create, authorise, issue and transfer processes. Blue color document icon denotes a single data block in a ledger.
+The below diagram demonstrates the the ledger behavior of project create, authorise, issue and transfer processes. Blue color document icon denotes a single data block in a ledger.
 
 ![alt text](./documention/imgs/Ledger.svg)
 
@@ -159,7 +159,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
             ├── serverless.yml          # Service deployment scripts [Serverless + AWS Lambda]
     ├── libs
         ├── carbon-credit-calculator    # Implementation for the Carbon credit calculation library [Node module + Typescript]
-        ├── serial-number-gen           # Implementation for the carbon programme serial number calculation [Node module + Typescript]
+        ├── serial-number-gen           # Implementation for the carbon project serial number calculation [Node module + Typescript]
     ├── web                             # System web frontend implementation [ReactJS]
     ├── .gitignore
     ├── docker-compose.yml              # Docker container definitions
@@ -177,7 +177,7 @@ The below diagram demonstrates the the ledger behavior of programme create, auth
         - `SMTP_PASSWORD`
     - Use `DB_PASSWORD` env variable to change PostgresSQL database password
     - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
-    - By default frontend does not show map images on dashboard and programme view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
+    - By default frontend does not show map images on dashboard and project view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container. 
 - Add user data
   - Update [organisations.csv](./organisations.csv) file to add organisations.
   - Update [users.csv](./users.csv) file to add users.
@@ -242,27 +242,27 @@ Serial Number generation implemented in a separate node module. [Please refer th
 ## External Connectivity
 
 ### ITMO Platform
-1. Carbon Registry make a daily to the retrieve ITMO platform programmes.
-2. Programmes create in the Carbon Registry when programmes are authorized in the ITMO Platform 
-3. The Carbon Registry update when the programmes are Issued with credits in the ITMO Platform 
+1. Carbon Registry make a daily to the retrieve ITMO platform projects.
+2. Projects create in the Carbon Registry when projects are authorized in the ITMO Platform 
+3. The Carbon Registry update when the projects are Issued with credits in the ITMO Platform 
 
 #### <b>Lifecycle</b>
 ![alt text](./documention/imgs/ITMOxCARBON_LifeCycle.svg)
 
-#### <b>Programme Creation and Authorisation</b>
-- Authorisation of programmes in the ITMO Platform identified by the event name: "ITMO-Design Document (DD) & Validation Report / Upload on National Public Registry". 
+#### <b>Project Creation and Authorisation</b>
+- Authorisation of projects in the ITMO Platform identified by the event name: "ITMO-Design Document (DD) & Validation Report / Upload on National Public Registry". 
 - If the Company Tax Id doesn’t exist in the Carbon Registry, that company created in the Carbon Registry.
-- When creating the programme: 
-    - The programme created with the state “Pending”  
+- When creating the project: 
+    - The project created with the state “Pending”  
     - The credit estimate set to 100 by default
     - The company percentage set to 100% 
-    - The serial number for the programme generated the same as any other programme in the Carbon Registry. 
-- Programmes retrieved from the ITMO Platform and created in the Carbon Registry can Authorised/Rejected by a Government user the same as any other programme in the Carbon Registry
-- When a programme is authorised, the authorised credits will be the default credit estimate mentioned above. The programme can be issued with credits by a Government user the same as any other programme in the Carbon Registry. 
+    - The serial number for the project generated the same as any other project in the Carbon Registry. 
+- Projects retrieved from the ITMO Platform and created in the Carbon Registry can Authorised/Rejected by a Government user the same as any other project in the Carbon Registry
+- When a project is authorised, the authorised credits will be the default credit estimate mentioned above. The project can be issued with credits by a Government user the same as any other project in the Carbon Registry. 
 
 #### <b>Credit Issuance</b>
-- Credits can be issued for programmes retrieved from the ITMO Platform and created in the Carbon Registry in two ways; 
-    - By a Government user the same as any other programme. 
+- Credits can be issued for projects retrieved from the ITMO Platform and created in the Carbon Registry in two ways; 
+    - By a Government user the same as any other project. 
     - Credit issuance in the ITMO Platform which should be reflected in the Carbon Registry. 
 - In the case of 2 above, 
     - Credit issuance identified by the event name: "Upload Final Monitoring Report" in the ITMO Platform. 
@@ -290,21 +290,21 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Role (_role_)  | Yes  | Set default : Admin  |
 | Phone Number (_phoneNo_)  |   | Set default : 00  |
 
-<br><b>Programme</b>
+<br><b>Project</b>
 | **Name in the Carbon Registry**   | **Mandatory in the Carbon Registry**   | **Name in the ITMO Platform**   |
 | --- | --- | --- |
-| Programme Name (title)  | Yes  | Name  |
+| Project Name (title)  | Yes  | Name  |
 | External ID (externalId)  | Yes  | id  |
 | Credit Issuance Serial Number   |   |   |
 | Current Status   |   | Set default : Pending  |
-| Applicant Type   |   | Set default : Programme Developer  |
+| Applicant Type   |   | Set default : Project Developer  |
 | Sector (_sector_)  | Yes  | [Sector](#itmo-sector-mapping)  |
 | Sectoral Scope (_sectoralScope_)  | Yes  | [Sector](#itmo-sector-mapping)|
-| Programme Start Date (_startTime_)  | Yes  | createdAt  |
-| Programme End Date  (_endTime_)  | Yes  | createdAt + 10 years  |
+| Project Start Date (_startTime_)  | Yes  | createdAt  |
+| Project End Date  (_endTime_)  | Yes  | createdAt + 10 years  |
 | Geographical Location (Regional) (_geographicalLocation_)  | Yes  | country _(Name not mentioned as ISO3 or actual name)_  |
 | Buyer Country Eligibility   |   |   |
-| Programme Cost (USD) (_programmeCostUSD_)  | Yes  | Set default : Null  |
+| Project Cost (USD) (_programmeCostUSD_)  | Yes  | Set default : Null  |
 | Financing Type   |   |   |
 | Grant Equivalent Amount   |   |   |
 | Carbon Price (Dollars per ton)   |   |   |
@@ -320,7 +320,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 | Credits Retired   |   |   |
 | Credits authorised for international transfer and use (Total cumulative maximum amount of Mitigation Outcomes for which international transfer and use is authorized)   |   |   |
 | Crediting Period (years)   |   |   |
-| Programme Materials   |   | Files \*   |
+| Project Materials   |   | Files \*   |
 | Project Materials  |   | Files \*  |
 | **Credit Calculation Fields / Mitigation Type Calculation**    |   |   |
 | **Agriculture**   |   |   |
@@ -341,8 +341,8 @@ Serial Number generation implemented in a separate node module. [Please refer th
 
 
 #### <b>Assumptions</b>
-- Programme estimated credit amount is 100.
-- Programme issued credit amount is always 10.
+- Project estimated credit amount is 100.
+- Project issued credit amount is always 10.
 
 #### <b>Docker Integration Setup</b>
 1. Append `data-importer` to `docker-compose` file `replicator` service `RUN_MODULE` env variable with comma separated. 
@@ -351,7 +351,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
     - ITMO_EMAIL
     - ITMO_PASSWORD
     - ITMO_ENDPOINT
-3. Programmes will import on each docker restart. 
+3. Projects will import on each docker restart. 
 
 <a name="user"></a>
 ## User Onboarding and Permissions Model
@@ -359,7 +359,7 @@ Serial Number generation implemented in a separate node module. [Please refer th
 ### User Roles
 System pre-defined user roles are as follows,
 - Root
-- Company Level (National Government, Programme and Certification Company come under this level) 
+- Company Level (National Government, Project and Certification Company come under this level) 
     - Admin 
     - Manager 
     - View Only 
@@ -393,7 +393,7 @@ Web frontend implemented using ReactJS framework. Please refer [getting started 
 ### Localization
 * Languages (Current): English
 * Languages (In Progress): French. Spanish 
-For updating translations or adding new ones, reference https://github.com/undp/carbon-registry/tree/main/web/public/Assets/i18n 
+Please refer [here](./web/public/locales/i18n/README.md) for adding a new language translation file.
 
 <a name="api"></a>
 ### Application Programming Interface (API)
