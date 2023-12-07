@@ -181,6 +181,7 @@ export const handler: Handler = async (event) => {
     company.name = event["name"];
     company.logo = event["logoBase64"];
     company.companyRole = CompanyRole.GOVERNMENT;
+    company.taxId = `00000${event["systemCountryCode"]}`
 
     const user = new UserDto();
     user.email = event["rootEmail"];
