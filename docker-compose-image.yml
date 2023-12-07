@@ -100,6 +100,7 @@ services:
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
       SYNC_ENABLE: false
       MRV_API_TOKEN: ''
+      BACKEND_HOST: "http://192.168.1.16:3000"
     volumes:
       - filestore:/app/backend/services/public
   web:

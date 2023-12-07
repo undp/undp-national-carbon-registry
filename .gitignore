@@ -9,5 +9,6 @@ backend/services/.env.local
 ./data/*
 !./data/README.md
 web/src/Assets/.DS_Store
+web/public/locales/*
 .yalc
 yalc.lock
