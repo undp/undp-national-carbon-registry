@@ -501,7 +501,7 @@ const ProgrammeView = () => {
                   : transfer.retirementType === RetireType.LEGAL_ACTION
                   ? 'legal action'
                   : 'other',
-                transfer.retirementType === RetireType.CROSS_BORDER
+                transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
                   ? formatString('view:t1RetInitOmgeDesc', [
                       addCommSep(
                         transfer.creditAmount
@@ -854,7 +854,11 @@ const ProgrammeView = () => {
                       ? activity.data.creditChange -
                           Number(
                             (
-                              (Number(getTxRefValues(activity.data.txRef, 10)) *
+                              (Number(
+                                getTxRefValues(activity.data.txRef, 10)
+                                  ? getTxRefValues(activity.data.txRef, 10)
+                                  : 0
+                              ) *
                                 activity.data.creditChange) /
                               100
                             ).toFixed(2)
@@ -865,7 +869,8 @@ const ProgrammeView = () => {
                   getTxRefValues(activity.data.txRef, 6),
                   `${crossCountry ? 'to ' + crossCountry : ''} `,
                   getRetirementTypeString(tx?.retirementType)?.toLowerCase(),
-                  tx?.retirementType === RetireType.CROSS_BORDER
+                  tx?.retirementType === RetireType.CROSS_BORDER &&
+                  getTxRefValues(activity.data.txRef, 10)
                     ? formatString('view:t1RetInitOmgeDesc', [
                         addCommSep(
                           (
