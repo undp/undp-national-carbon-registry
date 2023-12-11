@@ -2,6 +2,8 @@
   "sdgGoals": "SDG Goals",
   "genderPart": "Gender Parity",
   "safeguards": "Safeguards",
+  "undpSesp": "UNDP SESP",
+  "unfcccSdTool": "UNFCCC SD Tool",
   "environmental": "Environmental",
   "social": "Social",
   "economic": "Economic",
@@ -23,18 +25,17 @@
   "n/a": "N/A",
   "yes": "YES",
   "no": "NO",
-  "back":"BACK",
-  "submit":"SUBMIT",
-  "verifyingOrgNamelbl":"Name or type of verifying organisation or any other relevant information",
-  "information":"information",
-  "verifyingDetailslbl":"Details",
-  "specify":"Specify",
-  "contactInformation":"Contact Information",
-  "feasibilityReport":"Feasibility Report",
+  "back": "BACK",
+  "submit": "SUBMIT",
+  "verifyingOrgNamelbl": "Name or type of verifying organisation or any other relevant information",
+  "information": "information",
+  "verifyingDetailslbl": "Details",
+  "specify": "Specify",
+  "contactInformation": "Contact Information",
+  "feasibilityReport": "Feasibility Report",
   "invalidFileFormat": "Unsupported file format",
   "email": "Email",
-  "isInvalid": "is invalid!"
+  "isInvalid": "is invalid!",
+  "socialEnvironmentalRisk": "Social & Environmental Risk"
 }
-
-
 

@@ -17,6 +17,7 @@ const NdcActionView = () => {
     'genderParity',
     'safeguards',
     'social',
+    'unfcccSdTool',
   ]);
   const sdgGoalImages = getSdgGoalImages();
 
