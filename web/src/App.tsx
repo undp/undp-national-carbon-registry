@@ -79,6 +79,11 @@ const App = () => {
             : 'http://localhost:3000/local'
         }
         t={t}
+        statServerUrl={
+          process.env.REACT_APP_STAT_URL
+            ? process.env.REACT_APP_STAT_URL
+            : 'http://localhost:3100/local'
+        }
       >
         <UserInformationContextProvider>
           <SettingsContextProvider>
