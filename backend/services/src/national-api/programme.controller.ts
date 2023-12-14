@@ -47,7 +47,8 @@ import {
   InvestmentCancel,
   ProgrammeMitigationIssue,
   NdcDetailsActionDto,
-  NdcDetailsPeriodDto
+  NdcDetailsPeriodDto,
+  BaseIdDto
 } from "@undp/carbon-services-lib";
 
 @ApiTags("Programme")
@@ -402,14 +403,14 @@ export class ProgrammeController {
 
   @UseGuards(JwtAuthGuard)
   @Post('approveNdcDetailsAction')
-  approveNdcDetailsAction(@Body() id: number, @Request() req) {
-    return this.programmeService.approveNdcDetailsAction(id, req.abilityCondition, req.user)
+  approveNdcDetailsAction(@Body() baseIdDto: BaseIdDto, @Request() req) {
+    return this.programmeService.approveNdcDetailsAction(baseIdDto, req.abilityCondition, req.user)
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('rejectNdcDetailsAction')
-  rejectNdcDetailsAction(@Body() id: number, @Request() req) {
-    return this.programmeService.rejectNdcDetailsAction(id, req.abilityCondition, req.user)
+  rejectNdcDetailsAction(@Body() baseIdDto: BaseIdDto, @Request() req) {
+    return this.programmeService.rejectNdcDetailsAction(baseIdDto, req.abilityCondition, req.user)
   }
 
 }
