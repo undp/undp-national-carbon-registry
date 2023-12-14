@@ -2745,10 +2745,10 @@
     "@types/node" "^18.11.9"
     convert-units "^2.3.4"
 
-"@undp/carbon-library@1.0.273-palindaa-patch-1.0":
-  version "1.0.273-palindaa-patch-1.0"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.273-palindaa-patch-1.0.tgz#0346e5c773f61e2ebde266d1b65d3e032028167e"
-  integrity sha512-ZpD62WTV37Dc4jT5Yv4Zcb4h1nR8g+3xUCeL4BEYrmtoNmPvkIBooQK+ShZocp4PEIBBJ9wuuIxPRtjpQPYFXw==
+"@undp/carbon-library@1.0.274":
+  version "1.0.274"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.274.tgz#d3c8cb40d0d60b7409c05c84985df31fa6222d2c"
+  integrity sha512-5PV+gPFZGtMXeqgknoIdx7LE2n20uiD0eew1s71kKSrH2EKCvhl7G8HIEL5G5xZedC6VfzzshDW3r9/ygkn25A==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-json" "^6.0.1"
