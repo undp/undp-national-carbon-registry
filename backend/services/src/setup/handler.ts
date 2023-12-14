@@ -120,6 +120,8 @@ export const handler: Handler = async (event) => {
               phoneNo: fields[2],
               nameOfMinister:undefined,
               sectoralScope:undefined,
+              ministry:undefined,
+              govDep:undefined,
               website: undefined,
               address: configService.get("systemCountryName"),
               logo: undefined,
