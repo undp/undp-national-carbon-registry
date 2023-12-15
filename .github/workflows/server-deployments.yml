@@ -87,8 +87,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            cd repos/carbon-registry &&
-            sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
-            ( docker stop carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 > /dev/null &&  docker rm carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 ) 2>/dev/null || true &&
-            sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified &&
-            docker-compose -f docker-compose-image.yml up -d national stats replicator '
+            repos/carbon-registry/backend_deploy.sh '
+            # sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
+            # ( docker stop carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 > /dev/null &&  docker rm carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 ) 2>/dev/null || true &&
+            # sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified &&
+            # docker-compose -f docker-compose-image.yml up -d national stats replicator '
