@@ -116,9 +116,11 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     }
 
     if (user.companyRole === CompanyRole.MINISTRY || user.companyRole === CompanyRole.GOVERNMENT) {
-      can(Action.Create, Emission);
+      if (user.role !== Role.ViewOnly) {
+        can(Action.Create, Emission);
+        can(Action.Create, Projection);
+      }
       can(Action.Read, Emission);
-      can(Action.Create, Projection);
       can(Action.Read, Projection);
     } else {
       can(Action.Read, Emission);

@@ -40,7 +40,7 @@ export class GHGProjectionController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getProjections(@Request() req) {
-    return await this.projectionService.getAllProjections();
+    return await this.projectionService.getAllProjections(req.user);
   }
 
   

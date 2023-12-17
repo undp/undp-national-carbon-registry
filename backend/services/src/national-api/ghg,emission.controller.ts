@@ -40,7 +40,7 @@ export class GHGEmissionController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async getEmissions(@Request() req) {
-    return await this.emissionService.getAllEmissions();
+    return await this.emissionService.getAllEmissions(req.user);
   }
   
 }
