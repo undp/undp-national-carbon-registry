@@ -10,7 +10,7 @@ i18n
   .init({
     backend: {
       // translation file path
-      loadPath: '/Assets/i18n/{{ns}}/{{lng}}.json',
+      loadPath: '/locales/i18n/{{ns}}/{{lng}}.json',
     },
     //NOTE - Uncomment to reset the language to english once the user coming back again
     // lng: 'en',
@@ -37,6 +37,7 @@ i18n
       'economic',
       'creditTransfer',
       'addProgramme',
+      'socialEnvironmentalRisk',
     ],
   });
 export default i18n;

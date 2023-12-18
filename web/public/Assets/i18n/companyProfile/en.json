@@ -15,7 +15,7 @@
     "website" : "Website",
     "address" : "Address",
     "creditBalance":"Credit Balance",
-    "programmeCount":"Number of Programmes",
+    "programmeCount":"Number of Projects",
     "deauthoriseConfirmHeaderText": "Are you sure you want to deactivate this organisation?",
     "deauthoriseConfirmText":"Organisation will still be visible but no further action will be able to take place.\n Note: all users associated with the organisation will also be deactivated.",
     "activeStatus": "Active",
@@ -40,5 +40,6 @@
     "adminName": "Name",
     "adminEmail": "Email",
     "adminPhone": "Phone",
+    "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
     "nationalSopValue": "National Share of Proceeds"
 }
