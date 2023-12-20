@@ -23,7 +23,7 @@ const CookiePolicy = () => {
   return (
     <div className="cookie-container">
       <Row>
-        <Col sm={24} md={24} lg={24}>
+        <Col span={24}>
           <div onClick={() => navigate('/')} className="cookie-header-container">
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />

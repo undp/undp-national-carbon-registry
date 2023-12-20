@@ -23,7 +23,7 @@ const TermsOfUse = () => {
   return (
     <div className="term-container">
       <Row>
-        <Col md={24} lg={24}>
+        <Col span={24}>
           <div onClick={() => navigate('/')} className="term-header-container">
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />

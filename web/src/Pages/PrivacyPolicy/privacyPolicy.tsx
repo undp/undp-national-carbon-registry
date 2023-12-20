@@ -23,7 +23,7 @@ const PrivacyPolicy = () => {
   return (
     <div id="policy" className="privacy-container">
       <Row>
-        <Col md={24} lg={24}>
+        <Col span={24}>
           <div onClick={() => navigate('/')} className="privacy-header-container">
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />
