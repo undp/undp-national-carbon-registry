@@ -122,9 +122,10 @@
         background: none;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
+        color: $primary-color !important;
 
         a {
-          color: $primary-color;
+          color: $primary-color !important;
         }
       }
     }
