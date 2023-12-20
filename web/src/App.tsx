@@ -39,6 +39,7 @@ import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
 import { Loading } from '@undp/carbon-library';
+import NdcDetails from './Pages/NdcDetails/ndcDetails';
 import GhgEmissions from './Pages/GhgInventory/emissions';
 import GhgProjections from './Pages/GhgInventory/projections';
 import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
@@ -120,6 +121,12 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<NdcActionManagement />} />
                     <Route path="view" element={<NdcActionView />} />
+                  </Route>
+                  <Route
+                    path="/ndcDetails"
+                    element={<CustomLayout selectedKey="ndcDetails/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<NdcDetails />} />
                   </Route>
                   <Route
                     path="/companyManagement"

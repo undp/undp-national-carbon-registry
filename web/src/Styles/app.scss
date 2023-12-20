@@ -174,7 +174,7 @@ body {
 .layout-content-container {
   padding-bottom: 100px;
   .ant-btn-primary {
-    background-color: $primary-color;
+    background-color: $primary-color !important;
     color: $dark-text-color;
     border: none;
   }
@@ -726,4 +726,39 @@ body {
 
 .inline {
   display: inline-block;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: $primary-color;
+}
+
+.ant-tabs-tab:hover {
+  color: $primary-color;
+}
+
+.btnAddNewMainAct {
+  margin-bottom: 16;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  border: 1px solid rgba(58, 53, 65, 0.5);
+  background: #fff;
+  color: $primary-color;
+  text-align: center;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.btnAddNewMainAct:disabled {
+  color: rgba(0, 0, 0, 0.25);
+  border-color: #d9d9d9;
+  background: #f5f5f5;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.ant-tabs-ink-bar {
+  background: $primary-color;
 }

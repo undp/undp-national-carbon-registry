@@ -624,7 +624,6 @@ const ProgrammeView = () => {
       );
 
       const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
-
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
       let txListKeys = Object.keys(txList).sort();
