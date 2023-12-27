@@ -1233,14 +1233,19 @@ const ProgrammeView = () => {
     if (!map) {
       return {};
     }
-
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
-      const text = t('view:' + k);
-      if (v instanceof UnitField) {
-        info[text + ` (${v.unit})`] = v.value;
-      } else {
-        info[text] = v;
+      if (
+        data?.article6trade === true ||
+        data?.article6trade === undefined ||
+        (data?.article6trade === false && k !== 'carbonPriceUSDPerTon')
+      ) {
+        const text = t('view:' + k);
+        if (v instanceof UnitField) {
+          info[text + ` (${v.unit})`] = v.value;
+        } else {
+          info[text] = v;
+        }
       }
     });
     return info;
@@ -1627,7 +1632,10 @@ const ProgrammeView = () => {
       }
     }
 
-    if (data.currentStage.toString() === 'Approved') {
+    if (
+      data.currentStage.toString() === 'Approved' &&
+      (data?.article6trade === true || data?.article6trade === undefined)
+    ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         actionBtns.push(
           <Button
@@ -1863,26 +1871,32 @@ const ProgrammeView = () => {
   // }
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(([k, v]) => {
-    const text = t('view:' + k);
-    if (k === 'currentStatus') {
-      generalInfo[text] = (
-        <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
-          {getStageEnumVal(v as string)}
-        </Tag>
-      );
-    } else if (k === 'sector') {
-      generalInfo[text] = (
-        <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
-      );
-    } else if (k === 'applicationType') {
-      generalInfo[text] = (
-        <span>
-          <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
-          <span>{v as string}</span>
-        </span>
-      );
-    } else {
-      generalInfo[text] = v;
+    if (
+      data?.article6trade === true ||
+      data?.article6trade === undefined ||
+      (data?.article6trade === false && k !== 'serialNo')
+    ) {
+      const text = t('view:' + k);
+      if (k === 'currentStatus') {
+        generalInfo[text] = (
+          <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
+            {getStageEnumVal(v as string)}
+          </Tag>
+        );
+      } else if (k === 'sector') {
+        generalInfo[text] = (
+          <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
+        );
+      } else if (k === 'applicationType') {
+        generalInfo[text] = (
+          <span>
+            <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
+            <span>{v as string}</span>
+          </span>
+        );
+      } else {
+        generalInfo[text] = v;
+      }
     }
   });
 
