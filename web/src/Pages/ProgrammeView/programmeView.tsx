@@ -227,7 +227,7 @@ const ProgrammeView = () => {
         ).toFixed(2)
       ),
       Number(sumArray(d.creditTransferred).toFixed(2)),
-      Number(sumArray(d.creditRetired).tofixed(2)),
+      Number(sumArray(d.creditRetired).toFixed(2)),
       frozen,
     ];
     return dt;
