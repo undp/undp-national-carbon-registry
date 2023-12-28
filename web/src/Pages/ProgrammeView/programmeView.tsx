@@ -214,16 +214,20 @@ const ProgrammeView = () => {
 
   const getPieChartData = (d: ProgrammeU) => {
     const frozen = d.creditFrozen
-      ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
+      ? Number(d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0).toFixed(2))
       : 0;
     const dt = [
-      numIsExist(d.creditEst) - numIsExist(d.creditIssued),
-      numIsExist(d.creditIssued) -
-        sumArray(d.creditTransferred) -
-        sumArray(d.creditRetired) -
-        frozen,
-      sumArray(d.creditTransferred),
-      sumArray(d.creditRetired),
+      Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
+      Number(
+        (
+          numIsExist(d.creditIssued) -
+          sumArray(d.creditTransferred) -
+          sumArray(d.creditRetired) -
+          frozen
+        ).toFixed(2)
+      ),
+      Number(sumArray(d.creditTransferred).toFixed(2)),
+      Number(sumArray(d.creditRetired).tofixed(2)),
       frozen,
     ];
     return dt;
@@ -2268,7 +2272,9 @@ const ProgrammeView = () => {
                       }}
                       series={[
                         emissionsReductionAchieved,
-                        emissionsReductionExpected - emissionsReductionAchieved,
+                        Number(
+                          (emissionsReductionExpected - emissionsReductionAchieved).toFixed(2)
+                        ),
                       ]}
                       type="donut"
                       width="100%"
