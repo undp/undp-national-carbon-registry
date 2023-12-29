@@ -124,6 +124,7 @@ services:
         REACT_APP_BACKEND: http://localhost:3000
         REACT_APP_STAT_URL: http://localhost:3100
         REACT_APP_COUNTRY_NAME: "CountryX"
+        REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment"
         REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
         REACT_APP_COUNTRY_CODE: "NG"
         REACT_APP_MAP_TYPE: "None"

@@ -39,6 +39,10 @@ import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
 import { Loading } from '@undp/carbon-library';
+import NdcDetails from './Pages/NdcDetails/ndcDetails';
+import GhgEmissions from './Pages/GhgInventory/emissions';
+import GhgProjections from './Pages/GhgInventory/projections';
+import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
 
 // message.config({
 //   duration: 60,
@@ -93,6 +97,7 @@ const App = () => {
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
                     <Route path="/dashboard/mrv" element={<MRVDashboard />} />
+                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
@@ -116,6 +121,12 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<NdcActionManagement />} />
                     <Route path="view" element={<NdcActionView />} />
+                  </Route>
+                  <Route
+                    path="/ndcDetails"
+                    element={<CustomLayout selectedKey="ndcDetails/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<NdcDetails />} />
                   </Route>
                   <Route
                     path="/companyManagement"
@@ -160,6 +171,15 @@ const App = () => {
                       <Route path="addUser" element={<AddUser />} />
                       <Route path="updateUser" element={<UpdateUser />} />
                     </Route> */}
+                  <Route path="/emissions" element={<CustomLayout selectedKey="emissions/view" />}>
+                    <Route path="view" element={<GhgEmissions />} />
+                  </Route>
+                  <Route
+                    path="/projections"
+                    element={<CustomLayout selectedKey="projections/view" />}
+                  >
+                    <Route path="view" element={<GhgProjections />} />
+                  </Route>
                 </Route>
                 {enableRegistration === 'true' && (
                   <Route
