@@ -612,6 +612,86 @@ const ProgrammeView = () => {
     return hist;
   };
 
+  function updatePendingTimeLineForNdc(currentHistory: any) {
+    const monitoringElIndex = currentHistory.findIndex(
+      (item: any) => item.title === t('view:monitoringEl')
+    );
+    const verificationElIndex = currentHistory.findIndex(
+      (item: any) => item.title === t('view:verificationEl')
+    );
+
+    if (
+      upcomingTimeLineMonitoringVisible &&
+      data?.currentStage !== ProgrammeStageUnified.Rejected
+    ) {
+      if (monitoringElIndex === -1) {
+        const monitoringEl = {
+          status: 'process',
+          title: t('view:monitoringEl'),
+          subTitle: t('view:tlPending'),
+          icon: (
+            <span className="step-icon upcom-issue-step">
+              <Icon.Binoculars />
+            </span>
+          ),
+        };
+
+        if (
+          currentHistory.length > 0 &&
+          currentHistory[0].title === t('view:tlIssue') &&
+          currentHistory[0].subTitle === t('view:tlPending')
+        ) {
+          currentHistory.splice(1, 0, monitoringEl);
+        } else {
+          currentHistory.unshift(monitoringEl);
+        }
+      }
+    } else {
+      if (monitoringElIndex !== -1) {
+        currentHistory.splice(monitoringElIndex, 1);
+      }
+    }
+
+    if (
+      upcomingTimeLineVerificationVisible &&
+      data?.currentStage !== ProgrammeStageUnified.Rejected
+    ) {
+      if (verificationElIndex === -1) {
+        const verificationEl = {
+          status: 'process',
+          title: t('view:verificationEl'),
+          subTitle: t('view:tlPending'),
+          icon: (
+            <span className="step-icon upcom-issue-step">
+              <Icon.Flag />
+            </span>
+          ),
+        };
+
+        if (
+          currentHistory.length > 0 &&
+          currentHistory[0].title === t('view:tlIssue') &&
+          currentHistory[0].subTitle === t('view:tlPending')
+        ) {
+          currentHistory.splice(1, 0, verificationEl);
+        } else {
+          currentHistory.unshift(verificationEl);
+        }
+      }
+    } else {
+      if (verificationElIndex !== -1) {
+        currentHistory.splice(verificationElIndex, 1);
+      }
+    }
+
+    return currentHistory;
+  }
+
+  useEffect(() => {
+    const updatedHistory = updatePendingTimeLineForNdc(historyData);
+    setHistoryData(updatedHistory);
+  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible]);
+
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
     try {
@@ -1007,7 +1087,8 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
-      setHistoryData(activityList);
+      const updatedActivityList = updatePendingTimeLineForNdc(activityList);
+      setHistoryData(updatedActivityList);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
@@ -1342,85 +1423,6 @@ const ProgrammeView = () => {
       }
     }
   }, [data]);
-
-  const updatePendingTimeLineForNdc = () => {
-    const monitoringElIndex = historyData.findIndex(
-      (item: any) => item.title === t('view:monitoringEl')
-    );
-    const verificationElIndex = historyData.findIndex(
-      (item: any) => item.title === t('view:verificationEl')
-    );
-
-    if (
-      upcomingTimeLineMonitoringVisible &&
-      data?.currentStage !== ProgrammeStageUnified.Rejected
-    ) {
-      if (monitoringElIndex === -1) {
-        const monitoringEl = {
-          status: 'process',
-          title: t('view:monitoringEl'),
-          subTitle: t('view:tlPending'),
-          icon: (
-            <span className="step-icon upcom-issue-step">
-              <Icon.Binoculars />
-            </span>
-          ),
-        };
-
-        if (
-          historyData.length > 0 &&
-          historyData[0].title === t('view:tlIssue') &&
-          historyData[0].subTitle === t('view:tlPending')
-        ) {
-          historyData.splice(1, 0, monitoringEl);
-        } else {
-          historyData.unshift(monitoringEl);
-        }
-      }
-    } else {
-      if (monitoringElIndex !== -1) {
-        historyData.splice(monitoringElIndex, 1);
-      }
-    }
-
-    if (
-      upcomingTimeLineVerificationVisible &&
-      data?.currentStage !== ProgrammeStageUnified.Rejected
-    ) {
-      if (verificationElIndex === -1) {
-        const verificationEl = {
-          status: 'process',
-          title: t('view:verificationEl'),
-          subTitle: t('view:tlPending'),
-          icon: (
-            <span className="step-icon upcom-issue-step">
-              <Icon.Flag />
-            </span>
-          ),
-        };
-
-        if (
-          historyData.length > 0 &&
-          historyData[0].title === t('view:tlIssue') &&
-          historyData[0].subTitle === t('view:tlPending')
-        ) {
-          historyData.splice(1, 0, verificationEl);
-        } else {
-          historyData.unshift(verificationEl);
-        }
-      }
-    } else {
-      if (verificationElIndex !== -1) {
-        historyData.splice(verificationElIndex, 1);
-      }
-    }
-
-    setHistoryData(historyData);
-  };
-
-  useEffect(() => {
-    updatePendingTimeLineForNdc();
-  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible]);
 
   const onClickedAddAction = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
