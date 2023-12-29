@@ -1468,20 +1468,23 @@ const ProgrammeView = () => {
         }
       });
 
-      setUpcomingTimeLineMonitoringVisible(false);
-      setUpcomingTimeLineVerificationVisible(false);
+      let monitoringVisible = false;
+      let verificationVisible = false;
       if (groupedByActionId && ndcActionDocumentDataLoaded) {
         Object.values(groupedByActionId).forEach((element: any) => {
           element.forEach((item: any) => {
             if (!item.monitoringReport) {
-              setUpcomingTimeLineMonitoringVisible(true);
+              monitoringVisible = true;
             }
             if (!item.verificationReport) {
-              setUpcomingTimeLineVerificationVisible(true);
+              verificationVisible = true;
             }
           });
         });
       }
+
+      setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+      setUpcomingTimeLineVerificationVisible(verificationVisible);
 
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
