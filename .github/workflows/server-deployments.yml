@@ -52,18 +52,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/mono'
+        if: github.ref == 'refs/heads/unified'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Login to Amazon ECR
-        if: github.ref == 'refs/heads/mono'
+        if: github.ref == 'refs/heads/unified'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push the image to Amazon ECR
-        if: github.ref == 'refs/heads/mono'
+        if: github.ref == 'refs/heads/unified'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -87,8 +87,8 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            cd repos/carbon-registry &&
-            sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
-            ( docker stop carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 > /dev/null &&  docker rm carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 ) 2>/dev/null || true &&
-            sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified &&
-            docker-compose -f docker-compose-image.yml up -d national stats replicator '
+            repos/carbon-registry/backend_deploy.sh '
+            # sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
+            # ( docker stop carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 > /dev/null &&  docker rm carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 ) 2>/dev/null || true &&
+            # sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified &&
+            # docker-compose -f docker-compose-image.yml up -d national stats replicator '

@@ -624,7 +624,6 @@ const ProgrammeView = () => {
       );
 
       const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
-
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
       let txListKeys = Object.keys(txList).sort();
@@ -1438,6 +1437,7 @@ const ProgrammeView = () => {
   const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
+    setNdcActionHistoryDataGrouped(null);
     try {
       const response: any = await post('national/programme/queryNdcActions', {
         page: 1,

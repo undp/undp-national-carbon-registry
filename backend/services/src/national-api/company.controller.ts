@@ -175,4 +175,10 @@ export class CompanyController {
     return await this.countryService.getRegionList(query);
   }
 
+  @ApiBearerAuth()
+  @Get("getMinistries")
+  getMinistryUser(@Request() req) {
+    return this.companyService.getMinistries();
+  }
+
 }
