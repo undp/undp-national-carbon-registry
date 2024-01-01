@@ -691,13 +691,11 @@ const ProgrammeView = () => {
   useEffect(() => {
     if (programmeHistoryLoaded) {
       const updatedHistory = updatePendingTimeLineForNdc(historyData);
-      setHistoryData(updatedHistory);
+      if (historyData.length !== updatedHistory.length) {
+        setHistoryData(updatedHistory);
+      }
     }
-  }, [
-    upcomingTimeLineMonitoringVisible,
-    upcomingTimeLineVerificationVisible,
-    programmeHistoryLoaded,
-  ]);
+  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible, historyData]);
 
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
