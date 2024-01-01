@@ -111,6 +111,7 @@ const ProgrammeView = () => {
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -688,9 +689,15 @@ const ProgrammeView = () => {
   }
 
   useEffect(() => {
-    const updatedHistory = updatePendingTimeLineForNdc(historyData);
-    setHistoryData(updatedHistory);
-  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible]);
+    if (programmeHistoryLoaded) {
+      const updatedHistory = updatePendingTimeLineForNdc(historyData);
+      setHistoryData(updatedHistory);
+    }
+  }, [
+    upcomingTimeLineMonitoringVisible,
+    upcomingTimeLineVerificationVisible,
+    programmeHistoryLoaded,
+  ]);
 
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1087,8 +1094,8 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
-      const updatedActivityList = updatePendingTimeLineForNdc(activityList);
-      setHistoryData(updatedActivityList);
+      setHistoryData(activityList);
+      setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
@@ -1481,10 +1488,10 @@ const ProgrammeView = () => {
             }
           });
         });
-      }
 
-      setUpcomingTimeLineMonitoringVisible(monitoringVisible);
-      setUpcomingTimeLineVerificationVisible(verificationVisible);
+        setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+        setUpcomingTimeLineVerificationVisible(verificationVisible);
+      }
 
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
