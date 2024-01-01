@@ -140,6 +140,7 @@ const ProgrammeView = () => {
   const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
     useState(false);
+  const [activityTimelineKey, setActivityTimelineKey] = useState(0);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -689,9 +690,12 @@ const ProgrammeView = () => {
   }
 
   useEffect(() => {
+    setActivityTimelineKey((key) => key + 1);
+  }, historyData);
+
+  useEffect(() => {
     if (programmeHistoryLoaded) {
       const updatedHistory = updatePendingTimeLineForNdc(historyData);
-      console.log('inside side effect setHistoryData', updatedHistory);
       setHistoryData(updatedHistory);
     }
   }, [
@@ -1095,7 +1099,6 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
-      console.log('inside get programme history setHistoryData', activityList);
       setHistoryData(activityList);
       setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
@@ -2455,7 +2458,12 @@ const ProgrammeView = () => {
                   {loadingHistory ? (
                     <Skeleton />
                   ) : (
-                    <Steps current={0} direction="vertical" items={historyData} />
+                    <Steps
+                      key={activityTimelineKey}
+                      current={0}
+                      direction="vertical"
+                      items={historyData}
+                    />
                   )}
                 </div>
               </div>
