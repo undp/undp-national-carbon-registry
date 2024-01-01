@@ -691,7 +691,7 @@ const ProgrammeView = () => {
 
   useEffect(() => {
     setActivityTimelineKey((key) => key + 1);
-  }, historyData);
+  }, [historyData.length]);
 
   useEffect(() => {
     if (programmeHistoryLoaded) {
