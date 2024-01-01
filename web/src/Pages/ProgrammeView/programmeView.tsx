@@ -691,11 +691,14 @@ const ProgrammeView = () => {
   useEffect(() => {
     if (programmeHistoryLoaded) {
       const updatedHistory = updatePendingTimeLineForNdc(historyData);
-      if (historyData.length !== updatedHistory.length) {
-        setHistoryData(updatedHistory);
-      }
+      console.log('inside side effect setHistoryData', updatedHistory);
+      setHistoryData(updatedHistory);
     }
-  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible, historyData]);
+  }, [
+    upcomingTimeLineMonitoringVisible,
+    upcomingTimeLineVerificationVisible,
+    programmeHistoryLoaded,
+  ]);
 
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1092,6 +1095,7 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
+      console.log('inside get programme history setHistoryData', activityList);
       setHistoryData(activityList);
       setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
