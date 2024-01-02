@@ -1,7 +1,5 @@
-import { GHGProjectionsComponent } from '@undp/carbon-library';
+import { GHGProjectionsComponent, useConnection, useUserContext } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const GhgProjections = () => {
   const { t } = useTranslation(['ghgInventory']);
