@@ -171,4 +171,10 @@ export class CompanyController {
       return this.companyService.addNationalInvestment(investment, req.user);
   }
 
+  @ApiBearerAuth()
+  @Get("getMinistries")
+  getMinistryUser(@Request() req) {
+    return this.companyService.getMinistries();
+  }
+
 }

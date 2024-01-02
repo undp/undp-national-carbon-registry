@@ -37,6 +37,7 @@ i18n
       'economic',
       'creditTransfer',
       'addProgramme',
+      'socialEnvironmentalRisk',
     ],
   });
 export default i18n;
