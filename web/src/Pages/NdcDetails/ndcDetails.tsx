@@ -6,9 +6,7 @@ const NdcDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['ndc']);
 
-  return (
-    <NdcDetailsComponent t={t}></NdcDetailsComponent>
-  );
+  return <NdcDetailsComponent t={t}></NdcDetailsComponent>;
 };
 
 export default NdcDetails;
