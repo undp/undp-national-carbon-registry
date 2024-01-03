@@ -7,9 +7,7 @@ const NdcDetails = () => {
   const { t } = useTranslation(['ndc']);
 
   return (
-    <NdcDetailsComponent
-      t={t}
-    ></NdcDetailsComponent>
+    <NdcDetailsComponent t={t}></NdcDetailsComponent>
   );
 };
 

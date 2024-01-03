@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 const GhgProjections = () => {
   const { t } = useTranslation(['ghgInventory']);
   return (
-    <GHGProjectionsComponent
-      t={t}
-    ></GHGProjectionsComponent>
+    <GHGProjectionsComponent t={t}></GHGProjectionsComponent>
   );
 };
 
