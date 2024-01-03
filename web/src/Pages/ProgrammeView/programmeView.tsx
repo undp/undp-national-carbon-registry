@@ -111,6 +111,7 @@ const ProgrammeView = () => {
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -139,6 +140,7 @@ const ProgrammeView = () => {
   const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
     useState(false);
+  const [activityTimelineKey, setActivityTimelineKey] = useState(0);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -688,9 +690,19 @@ const ProgrammeView = () => {
   }
 
   useEffect(() => {
-    const updatedHistory = updatePendingTimeLineForNdc(historyData);
-    setHistoryData(updatedHistory);
-  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible]);
+    setActivityTimelineKey((key) => key + 1);
+  }, [historyData.length]);
+
+  useEffect(() => {
+    if (programmeHistoryLoaded) {
+      const updatedHistory = updatePendingTimeLineForNdc(historyData);
+      setHistoryData(updatedHistory);
+    }
+  }, [
+    upcomingTimeLineMonitoringVisible,
+    upcomingTimeLineVerificationVisible,
+    programmeHistoryLoaded,
+  ]);
 
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1087,8 +1099,8 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
-      const updatedActivityList = updatePendingTimeLineForNdc(activityList);
-      setHistoryData(updatedActivityList);
+      setHistoryData(activityList);
+      setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
@@ -1468,19 +1480,22 @@ const ProgrammeView = () => {
         }
       });
 
-      setUpcomingTimeLineMonitoringVisible(false);
-      setUpcomingTimeLineVerificationVisible(false);
+      let monitoringVisible = false;
+      let verificationVisible = false;
       if (groupedByActionId && ndcActionDocumentDataLoaded) {
         Object.values(groupedByActionId).forEach((element: any) => {
           element.forEach((item: any) => {
             if (!item.monitoringReport) {
-              setUpcomingTimeLineMonitoringVisible(true);
+              monitoringVisible = true;
             }
             if (!item.verificationReport) {
-              setUpcomingTimeLineVerificationVisible(true);
+              verificationVisible = true;
             }
           });
         });
+
+        setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+        setUpcomingTimeLineVerificationVisible(verificationVisible);
       }
 
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
@@ -2443,7 +2458,12 @@ const ProgrammeView = () => {
                   {loadingHistory ? (
                     <Skeleton />
                   ) : (
-                    <Steps current={0} direction="vertical" items={historyData} />
+                    <Steps
+                      key={activityTimelineKey}
+                      current={0}
+                      direction="vertical"
+                      items={historyData}
+                    />
                   )}
                 </div>
               </div>
