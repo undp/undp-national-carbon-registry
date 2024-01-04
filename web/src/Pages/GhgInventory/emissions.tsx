@@ -3,13 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const GhgEmissions = () => {
   const { t } = useTranslation(['ghgInventory']);
-  return (
-    <GHGEmissionsComponent
-      t={t}
-      useConnection={useConnection}
-      useUserContext={useUserContext}
-    ></GHGEmissionsComponent>
-  );
+  return <GHGEmissionsComponent t={t}></GHGEmissionsComponent>;
 };
 
 export default GhgEmissions;

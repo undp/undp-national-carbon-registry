@@ -35,7 +35,13 @@ import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
-import { Loading } from '@undp/carbon-library';
+import {
+  Loading,
+  ConnectionContextProvider,
+  UserInformationContextProvider,
+  SettingsContextProvider,
+} from '@undp/carbon-library';
+import { useTranslation } from 'react-i18next';
 import NdcDetails from './Pages/NdcDetails/ndcDetails';
 import GhgEmissions from './Pages/GhgInventory/emissions';
 import GhgProjections from './Pages/GhgInventory/projections';
@@ -77,6 +83,11 @@ const App = () => {
             : 'http://localhost:3000/local'
         }
         t={t}
+        statServerUrl={
+          process.env.REACT_APP_STAT_URL
+            ? process.env.REACT_APP_STAT_URL
+            : 'http://localhost:3100/local'
+        }
       >
         <UserInformationContextProvider>
           <SettingsContextProvider>

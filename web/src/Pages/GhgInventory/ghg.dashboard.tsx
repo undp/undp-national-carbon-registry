@@ -13,8 +13,6 @@ const GHGDashboard = () => {
       ButtonGroup={ButtonGroup}
       Link={Link}
       Chart={Chart}
-      useConnection={useConnection}
-      useUserContext={useUserContext}
       isMultipleDashboardsVisible={true}
     ></GHGDashboardComponent>
   );

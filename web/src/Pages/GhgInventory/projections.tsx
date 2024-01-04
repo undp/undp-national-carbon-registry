@@ -3,13 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const GhgProjections = () => {
   const { t } = useTranslation(['ghgInventory']);
-  return (
-    <GHGProjectionsComponent
-      t={t}
-      useConnection={useConnection}
-      useUserContext={useUserContext}
-    ></GHGProjectionsComponent>
-  );
+  return <GHGProjectionsComponent t={t}></GHGProjectionsComponent>;
 };
 
 export default GhgProjections;
