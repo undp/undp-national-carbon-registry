@@ -23,7 +23,7 @@ const CodeOfConduct = () => {
   return (
     <div className="code-container">
       <Row>
-        <Col md={24} lg={24}>
+        <Col span={24}>
           <div onClick={() => navigate('/')} className="code-header-container">
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />
@@ -44,8 +44,8 @@ const CodeOfConduct = () => {
             <div className="codetitle">CONTRIBUTOR COVENANT CODE OF CONDUCT</div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Our Pledge</div>
             <div className="code-body">
               We as members, contributors, and leaders pledge to make participation in our community
@@ -59,8 +59,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Our Standards</div>
             <div className="code-body">
               <p>
@@ -102,8 +102,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Enforcement Responsibilities</div>
             <div className="code-body">
               <p>
@@ -120,8 +120,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Scope</div>
             <div className="code-body">
               <p>
@@ -134,8 +134,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Enforcement</div>
             <div className="code-body">
               <p>
@@ -150,8 +150,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Enforcement Guidelines</div>
             <div className="code-body">
               <p>
@@ -161,8 +161,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">1. Correction</div>
             <div className="code-body">
               <p>
@@ -177,8 +177,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">2. Warning</div>
             <div className="code-body">
               <p> Community Impact: A violation through a single incident or series of actions.</p>
@@ -193,8 +193,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">3. Temporary Ban</div>
             <div className="code-body">
               <p>
@@ -211,8 +211,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">4. Permanent Ban</div>
             <div className="code-body">
               <p>
@@ -227,8 +227,8 @@ const CodeOfConduct = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="code-subtitle">Attribution</div>
             <div className="code-body">
               <p>

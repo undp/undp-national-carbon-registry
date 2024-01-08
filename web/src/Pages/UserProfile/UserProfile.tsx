@@ -4,7 +4,7 @@ import { UserProfileComponent } from '@undp/carbon-library';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['userProfile']);
+  const { t, i18n } = useTranslation(['userProfile', 'companyDetails']);
 
   const onNavigateUpdateUser = (organisationDetails: any, userDetails: any) => {
     navigate('/userManagement/updateUser', {
