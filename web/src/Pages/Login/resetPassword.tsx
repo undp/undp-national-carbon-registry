@@ -3,7 +3,7 @@ import './login.scss';
 import { Button, Col, Form, Input, Row, message } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams, useParams, useNavigate } from 'react-router-dom';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useConnection } from '@undp/carbon-library';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface ResetPasswordPageProps {

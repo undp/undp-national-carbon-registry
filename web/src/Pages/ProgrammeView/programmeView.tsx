@@ -16,7 +16,6 @@ import {
   Form,
   Tooltip,
 } from 'antd';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
@@ -43,7 +42,6 @@ import {
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
 import {
   ProgrammeIssueForm,
@@ -94,8 +92,10 @@ import {
   getValidNdcActions,
   addNdcDesc,
   mitigationTypeList,
+  useConnection,
+  useSettingsContext,
+  useUserContext,
 } from '@undp/carbon-library';
-import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -1510,9 +1510,7 @@ const ProgrammeView = () => {
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
             ministryLevelPermission={ministryLevelPermission}
-            useConnection={useConnection}
             translator={programmeViewTranslator}
-            useUserContext={useUserContext}
             onFinish={(d: any) => {
               setData(d);
             }}
@@ -2073,7 +2071,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -2119,7 +2116,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                               ministryLevelPermission={ministryLevelPermission}
                                             />
                                           ),
@@ -2175,7 +2171,6 @@ const ProgrammeView = () => {
                                               )
                                             }
                                             translator={i18n}
-                                            useConnection={useConnection}
                                           />
                                         ),
                                       });
@@ -2343,8 +2338,6 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  useConnection={useConnection}
-                  useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
                   programmeStatus={data?.currentStage}
