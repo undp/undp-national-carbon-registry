@@ -14,7 +14,7 @@ RUN yarn run sls:installProd
 COPY ./backend/services .
 
 ENV NODE_ENV production
-RUN yarn add @nestjs/cli --dev && yarn run build && yarn remove @nestjs/cli && yarn cache clean
+RUN yarn add @nestjs/cli@9.0.0 --dev && yarn run build && yarn remove @nestjs/cli && yarn cache clean
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
