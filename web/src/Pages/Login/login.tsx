@@ -1,18 +1,16 @@
 import { Button, Col, Form, Input, message, Row, Select, Spin } from 'antd';
 import React, { FC, Suspense, useContext, useEffect, useState } from 'react';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
 import countryLogo from '../../Assets/Images/logo-slider.png';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { AbilityContext } from '../../Casl/Can';
 import { updateUserAbility } from '../../Casl/ability';
 import ForgotPassword from './forgotPassword';
 import ResetPassword from './resetPassword';
-import { LoginProps } from '@undp/carbon-library';
+import { LoginProps, useConnection, useUserContext } from '@undp/carbon-library';
 
 export interface LoginPageProps {
   forgotPassword?: boolean;
