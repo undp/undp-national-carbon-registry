@@ -22,15 +22,19 @@ const RegisterNewCompany = () => {
       <Row>
         <Col md={18} lg={21} xs={17} flex="auto">
           <div className="homepage-header-container">
-            <div className="logo">
-              <img src={sliderLogo} alt="slider-logo" />
-            </div>
-            <div>
-              <div style={{ display: 'flex' }}>
-                <div className="title">{'CARBON'}</div>
-                <div className="title-sub">{'REGISTRY'}</div>
+            <div className="homepage-header-container-logo" onClick={() => navigate('/')}>
+              <div className="logo">
+                <img src={sliderLogo} alt="slider-logo" />
               </div>
-              <div className="country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
+              <div>
+                <div style={{ display: 'flex' }}>
+                  <div className="title">{'CARBON'}</div>
+                  <div className="title-sub">{'REGISTRY'}</div>
+                </div>
+                <div className="country-name">
+                  {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+                </div>
+              </div>
             </div>
           </div>
         </Col>

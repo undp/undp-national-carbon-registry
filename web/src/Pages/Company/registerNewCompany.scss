@@ -17,40 +17,47 @@
         html {
           scroll-behavior: smooth;
         }
-    
-        .title {
-          font-family: 'MuseoSans';
-          font-size: 1.2rem;
-          color: $logo-text-color;
-          font-weight: 700;
-          margin-right: 0.5rem;
-          padding-left: 5px;
-        }
-    
-        .title-sub {
-          font-weight: 100 !important;
-          font-family: 'MuseoSans';
-          font-size: 1.2rem;
-          color: $logo-text-color;
-        }
-    
-        .logo {
-          height: 40px;
-          padding-left: 2vw;
-    
-          img {
-            object-fit: cover;
-            height: 40px;
-            width: 36px;
+
+        .homepage-header-container-logo {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          cursor: pointer;
+
+          .title {
+            font-family: 'MuseoSans';
+            font-size: 1.2rem;
+            color: $logo-text-color;
+            font-weight: 700;
+            margin-right: 0.5rem;
+            padding-left: 5px;
           }
-        }
-    
-        .country-name {
-          font-size: 0.65rem;
-          color: $logo-text-color;
-          margin-top: -5px;
-          font-family: 'MuseoSans';
-          margin-left: 6px;
+      
+          .title-sub {
+            font-weight: 100 !important;
+            font-family: 'MuseoSans';
+            font-size: 1.2rem;
+            color: $logo-text-color;
+          }
+      
+          .logo {
+            height: 40px;
+            padding-left: 2vw;
+      
+            img {
+              object-fit: cover;
+              height: 40px;
+              width: 36px;
+            }
+          }
+      
+          .country-name {
+            font-size: 0.65rem;
+            color: $logo-text-color;
+            margin-top: -5px;
+            font-family: 'MuseoSans';
+            margin-left: 6px;
+          }
         }
       }
     
