@@ -1,7 +1,5 @@
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { AddNewCompanyComponent } from '@undp/carbon-library';
 import './registerNewCompany.scss';
 import { Row, Col, Button } from 'antd';
@@ -49,8 +47,6 @@ const RegisterNewCompany = () => {
       <AddNewCompanyComponent
         t={t}
         maximumImageSize={maximumImageSize}
-        useConnection={useConnection}
-        useUserContext={useUserContext}
         useLocation={useLocation}
         regionField
         isGuest={true}
