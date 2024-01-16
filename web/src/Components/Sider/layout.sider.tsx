@@ -6,11 +6,14 @@ import './layout.sider.scss';
 import * as Icon from 'react-bootstrap-icons';
 import {
   AppstoreOutlined,
+  CompassOutlined,
   DashboardOutlined,
   HomeOutlined,
   ShopOutlined,
   UnorderedListOutlined,
   UserOutlined,
+  FallOutlined,
+  CloudOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { LayoutSiderProps } from '@undp/carbon-library';
@@ -42,9 +45,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    getItem(t('nav:ghgInventory'), 'ghgInventory', <CloudOutlined />, [
+      getItem(t('nav:emissions'), 'emissions/view', <AppstoreOutlined />),
+      getItem(t('nav:projections'), 'projections/view', <FallOutlined />),
+    ]),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
+    getItem(t('nav:ndcDetails'), 'ndcDetails/viewAll', <CompassOutlined />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     getItem(t('nav:companies'), 'companyManagement/viewAll', <ShopOutlined />),
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),

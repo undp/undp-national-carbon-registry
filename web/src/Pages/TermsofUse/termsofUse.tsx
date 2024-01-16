@@ -23,7 +23,7 @@ const TermsOfUse = () => {
   return (
     <div className="term-container">
       <Row>
-        <Col md={24} lg={24}>
+        <Col span={24}>
           <div onClick={() => navigate('/')} className="term-header-container">
             <div className="logo">
               <img src={sliderLogo} alt="slider-logo" />
@@ -45,8 +45,8 @@ const TermsOfUse = () => {
             <div className="term-sub">Last updated February 02, 2023</div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div className="term-subtitle">TABLE OF CONTENTS</div>
             <div className="term-body">
               <ol>
@@ -123,8 +123,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="agreement" className="term-subtitle">
               1. AGREEMENT TO TERMS
             </div>
@@ -180,8 +180,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="ip" className="term-subtitle">
               2. INTELLECTUAL PROPERTY RIGHTS
             </div>
@@ -224,8 +224,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="userreps" className="term-subtitle">
               3. USER REPRESENTATIONS
             </div>
@@ -246,8 +246,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="prohibited" className="term-subtitle">
               4. PROHIBITED ACTIVITIES
             </div>
@@ -355,8 +355,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="ugc" className="term-subtitle">
               5. USER GENERATED CONTRIBUTIONS
             </div>
@@ -437,8 +437,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="license" className="term-subtitle">
               6. CONTRIBUTION LICENSE
             </div>
@@ -483,8 +483,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="submissions" className="term-subtitle">
               7. SUBMISSIONS
             </div>
@@ -505,8 +505,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="thirdparty" className="term-subtitle">
               8. THIRD-PARTY WEBSITE AND CONTENT
             </div>
@@ -542,8 +542,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="sitemanage" className="term-subtitle">
               9. SITE MANAGEMENT
             </div>
@@ -564,8 +564,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="privacypolicy1" className="term-subtitle">
               10. PRIVACY POLICY
             </div>
@@ -583,8 +583,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="terms" className="term-subtitle">
               11. TERM AND TERMINATION
             </div>
@@ -609,8 +609,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="modifications" className="term-subtitle">
               12. MODIFICATIONS AND INTERRUPTIONS
             </div>
@@ -637,8 +637,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="law" className="term-subtitle">
               13. GOVERNING LAW{' '}
             </div>
@@ -652,8 +652,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="disputes" className="term-subtitle">
               14. DISPUTE RESOLUTION
             </div>
@@ -744,8 +744,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="corrections" className="term-subtitle">
               15. CORRECTIONS
             </div>
@@ -760,8 +760,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="disclaimer" className="term-subtitle">
               16. DISCLAIMER
             </div>
@@ -795,8 +795,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="liability" className="term-subtitle">
               17. LIMITATIONS OF LIABILITY
             </div>
@@ -817,8 +817,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="indemnification" className="term-subtitle">
               18. INDEMNIFICATION
             </div>
@@ -842,8 +842,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="userdata" className="term-subtitle">
               19. USER DATA
             </div>
@@ -860,8 +860,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="electronic" className="term-subtitle">
               20. ELECTRONIC COMMUNICATIONS, TRANSACTIONS, AND SIGNATURES
             </div>
@@ -882,8 +882,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="california" className="term-subtitle">
               21. CALIFORNIA USERS AND RESIDENTS
             </div>
@@ -897,8 +897,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="misc" className="term-subtitle">
               22. MISCELLANEOUS
             </div>
@@ -924,8 +924,8 @@ const TermsOfUse = () => {
             </div>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row justify="center">
+          <Col span={20}>
             <div id="contact" className="term-subtitle">
               23. CONTACT US
             </div>
