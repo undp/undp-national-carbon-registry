@@ -4,7 +4,7 @@ import { NdcDetailsComponent } from '@undp/carbon-library';
 
 const NdcDetails = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['ndc']);
+  const { t } = useTranslation(['ndc', 'userProfile']);
 
   return <NdcDetailsComponent t={t}></NdcDetailsComponent>;
 };
