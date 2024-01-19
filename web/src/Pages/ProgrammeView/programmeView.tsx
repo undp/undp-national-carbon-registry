@@ -16,7 +16,6 @@ import {
   Form,
   Tooltip,
 } from 'antd';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
@@ -43,7 +42,6 @@ import {
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
 import {
   ProgrammeIssueForm,
@@ -94,8 +92,10 @@ import {
   getValidNdcActions,
   addNdcDesc,
   mitigationTypeList,
+  useConnection,
+  useSettingsContext,
+  useUserContext,
 } from '@undp/carbon-library';
-import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -111,6 +111,7 @@ const ProgrammeView = () => {
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -139,6 +140,7 @@ const ProgrammeView = () => {
   const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
     useState(false);
+  const [activityTimelineKey, setActivityTimelineKey] = useState(0);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -688,9 +690,19 @@ const ProgrammeView = () => {
   }
 
   useEffect(() => {
-    const updatedHistory = updatePendingTimeLineForNdc(historyData);
-    setHistoryData(updatedHistory);
-  }, [upcomingTimeLineMonitoringVisible, upcomingTimeLineVerificationVisible]);
+    setActivityTimelineKey((key) => key + 1);
+  }, [historyData.length]);
+
+  useEffect(() => {
+    if (programmeHistoryLoaded) {
+      const updatedHistory = updatePendingTimeLineForNdc(historyData);
+      setHistoryData(updatedHistory);
+    }
+  }, [
+    upcomingTimeLineMonitoringVisible,
+    upcomingTimeLineVerificationVisible,
+    programmeHistoryLoaded,
+  ]);
 
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1087,8 +1099,8 @@ const ProgrammeView = () => {
         activityList.unshift(...txList[txT]);
       }
 
-      const updatedActivityList = updatePendingTimeLineForNdc(activityList);
-      setHistoryData(updatedActivityList);
+      setHistoryData(activityList);
+      setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
@@ -1481,10 +1493,10 @@ const ProgrammeView = () => {
             }
           });
         });
-      }
 
-      setUpcomingTimeLineMonitoringVisible(monitoringVisible);
-      setUpcomingTimeLineVerificationVisible(verificationVisible);
+        setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+        setUpcomingTimeLineVerificationVisible(verificationVisible);
+      }
 
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
@@ -1498,9 +1510,7 @@ const ProgrammeView = () => {
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
             ministryLevelPermission={ministryLevelPermission}
-            useConnection={useConnection}
             translator={programmeViewTranslator}
-            useUserContext={useUserContext}
             onFinish={(d: any) => {
               setData(d);
             }}
@@ -2061,7 +2071,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -2107,7 +2116,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                               ministryLevelPermission={ministryLevelPermission}
                                             />
                                           ),
@@ -2163,7 +2171,6 @@ const ProgrammeView = () => {
                                               )
                                             }
                                             translator={i18n}
-                                            useConnection={useConnection}
                                           />
                                         ),
                                       });
@@ -2331,8 +2338,6 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  useConnection={useConnection}
-                  useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
                   programmeStatus={data?.currentStage}
@@ -2446,7 +2451,12 @@ const ProgrammeView = () => {
                   {loadingHistory ? (
                     <Skeleton />
                   ) : (
-                    <Steps current={0} direction="vertical" items={historyData} />
+                    <Steps
+                      key={activityTimelineKey}
+                      current={0}
+                      direction="vertical"
+                      items={historyData}
+                    />
                   )}
                 </div>
               </div>

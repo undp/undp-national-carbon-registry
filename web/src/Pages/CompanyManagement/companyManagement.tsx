@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
 import { CompanyManagementComponent, CompanyManagementColumns } from '@undp/carbon-library';
 
 const CompanyManagement = () => {
   const navigate = useNavigate();
-  const { post } = useConnection();
   const { t } = useTranslation(['company', 'companyProfile']);
 
   const visibleColumns = [
@@ -30,7 +28,6 @@ const CompanyManagement = () => {
     <CompanyManagementComponent
       t={t}
       useAbilityContext={useAbilityContext}
-      post={post}
       visibleColumns={visibleColumns}
       onNavigateToCompanyProfile={navigateToCompanyProfile}
       onClickAddCompany={navigateToAddNewCompany}
