@@ -11,12 +11,12 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Company, DataExportQueryDto } from "@undp/carbon-services-lib";
+import { ApiKeyJwtAuthGuard, Company, InvestmentDto, DataExportQueryDto } from "@undp/carbon-services-lib";
 import { QueryDto } from "@undp/carbon-services-lib";
 import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
 import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
 import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
-import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory} from '@undp/carbon-services-lib';
+import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory,Investment} from '@undp/carbon-services-lib';
 
 @ApiTags("Organisation")
 @ApiBearerAuth()
@@ -173,6 +173,13 @@ export class CompanyController {
   @Post("regions")
   async getRegionList(@Body() query: QueryDto, @Request() req) {
     return await this.countryService.getRegionList(query);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Investment))
+  @Post('addInvestment')
+  async addInvestment(@Body() investment: InvestmentDto, @Request() req) {
+      return this.companyService.addNationalInvestment(investment, req.user);
   }
 
   @ApiBearerAuth()
