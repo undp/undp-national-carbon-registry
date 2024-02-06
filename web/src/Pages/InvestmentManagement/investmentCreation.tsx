@@ -14,12 +14,17 @@ const AddInvestmentComponent = () => {
     navigate('/programmeManagement/viewAll');
   };
 
+  const onNavigateToInvestmentManagementView = () => {
+    navigate('/investmentManagement/viewAll');
+  };
+
   return (
     <InvestmentCreationComponent
       t={t}
       useLocation={useLocation}
       onNavigateToProgrammeManagementView={onNavigateToProgrammeManagementView}
       onNavigateToProgrammeView={onNavigateToProgrammeView}
+      onNavigateToInvestmentManagementView={onNavigateToInvestmentManagementView}
     ></InvestmentCreationComponent>
   );
 };
