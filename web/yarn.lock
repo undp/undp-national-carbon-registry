@@ -2757,10 +2757,10 @@
     "@types/node" "^18.11.9"
     convert-units "^2.3.4"
 
-"@undp/carbon-library@1.0.292-CARBON-423.1":
-  version "1.0.292-CARBON-423.1"
-  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.292-CARBON-423.1.tgz#7b0f8b03fa9b92adce2746c364eeb6b91e45aea1"
-  integrity sha512-KHZUtx80znd1m7V5yuOPhFQxkVh2ZLJ5R8941Z06Ha27FzOhOV97x4KidgK1X/9kRKTlYAKPxZ5Zr6oNuQlsXw==
+"@undp/carbon-library@1.0.301":
+  version "1.0.301"
+  resolved "https://registry.yarnpkg.com/@undp/carbon-library/-/carbon-library-1.0.301.tgz#f732430a4d84e4ffa571ab5747e2b2b64f8ecf4e"
+  integrity sha512-Ts8h9gqUzmsg1MV9r5ShRibglKjFx25NhPDHiXzudP9mwCjiS5IXtRTopVXcYktPJ7qC5Uw8CW3J29+ixbntVg==
   dependencies:
     "@rollup/plugin-commonjs" "^25.0.0"
     "@rollup/plugin-json" "^6.0.1"
@@ -3356,9 +3356,9 @@ async-validator@^4.1.0:
   integrity sha512-7HhHjtERjqlNbZtqNqy2rckN/SpOOlmDliet+lP7k+eKZEjPk3DgyeU9lIXLdeLz0uBbbVp+9Qdow9wJWgwwfg==
 
 async@^3.2.3:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/async/-/async-3.2.4.tgz#2d22e00f8cddeb5fde5dd33522b56d1cf569a81c"
-  integrity sha512-iAB+JbDEGXhyIUavoDl9WP/Jj106Kz9DEn1DPgYw5ruDn0e3Wgi3sKFm55sASdGBNOQB8F59d9qQ7deqrHA8wQ==
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.5.tgz#ebd52a8fdaf7a2289a24df399f8d8485c8a46b66"
+  integrity sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==
 
 asynckit@^0.4.0:
   version "0.4.0"

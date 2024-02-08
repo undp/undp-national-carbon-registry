@@ -1,4 +1,4 @@
-import { GHGEmissionsComponent } from '@undp/carbon-library';
+import { GHGEmissionsComponent, useConnection, useUserContext } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 
 const GhgEmissions = () => {

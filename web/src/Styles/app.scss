@@ -6,6 +6,10 @@ body {
   font-weight: 400;
 }
 
+.title-container .main {
+  color: $primary-color !important;
+}
+
 .ant-menu {
   background-color: $background-color;
 }
@@ -63,6 +67,28 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+
+.condition-radio-container, .yes-no-radio-container, .radio-container {
+  .ant-radio-button-checked {
+    background: $primary-color !important;
+    color: #ffffff;
+  }
+}
+
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  color: $dark-text-color !important;
+  border-color: $primary-color !important;
+  box-shadow: none;
+}
+
+.dashboard-main-container .stastics-and-charts-container .stastic-card-row .stastic-card-col .stastics-and-pie-card .mrv-total-programme-details .details .value {
+  color: $primary-purple !important;
+}
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after, 
+.ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after {
+  background-color: $primary-color !important;
+  width: 1.7px !important;
 }
 
 .ant-radio-group-large .ant-radio-button-wrapper {
@@ -168,6 +194,13 @@ body {
     height: 40px;
     border-right: 1px solid #40a9ff !important;
     outline: 1px solid #40a9ff;
+  }
+}
+.company-details-form {
+  .ant-btn-primary {
+    background-color: $primary-color !important;
+    color: $dark-text-color;
+    border: none;
   }
 }
 
