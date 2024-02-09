@@ -4,7 +4,7 @@ import { NdcDetailsComponent, useConnection, useUserContext } from '@undp/carbon
 
 const NdcDetails = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['ndc']);
+  const { t } = useTranslation(['ndc', 'userProfile']);
 
   return <NdcDetailsComponent t={t}></NdcDetailsComponent>;
 };
