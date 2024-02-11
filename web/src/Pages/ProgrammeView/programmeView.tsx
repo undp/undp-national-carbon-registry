@@ -1282,7 +1282,7 @@ const ProgrammeView = () => {
                 : action === 'Issue'
                 ? 'Successfully issued'
                 : action === 'Certify'
-                ? 'Successfully certified'
+                ? 'The programme has been certified successfully '
                 : action === 'Revoke'
                 ? t('view:successRevokeCertifcate')
                 : t('view:successRetire'),
