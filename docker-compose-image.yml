@@ -41,6 +41,8 @@ services:
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      Minister: ''
+      Department : ''
       DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       LOCATION_SERVICE: OPENSTREET
