@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - develop
-      - main
     paths:
       - backend/**
       - .github/workflows/server*
