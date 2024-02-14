@@ -2,7 +2,7 @@ name: Deploy Services
 on:
   push:
     branches:
-      - unified
+      - develop
     paths:
       - backend/**
       - .github/workflows/server*
@@ -52,18 +52,18 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/unified'
+        if: github.ref == 'refs/heads/develop'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Login to Amazon ECR
-        if: github.ref == 'refs/heads/unified'
+        if: github.ref == 'refs/heads/develop'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push the image to Amazon ECR
-        if: github.ref == 'refs/heads/unified'
+        if: github.ref == 'refs/heads/develop'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -76,7 +76,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/unified'
+        if: github.ref == 'refs/heads/develop'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-services

@@ -2,7 +2,7 @@ name: Deploy Front end in S3
 on:
   push:
     branches:
-      - unified
+      - develop
     paths:
       - web/**
       - .github/workflows/frontend*
