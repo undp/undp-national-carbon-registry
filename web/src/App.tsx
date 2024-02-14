@@ -102,8 +102,8 @@ const App = () => {
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
-                    <Route path="/dashboard/mrv" element={<MRVDashboard />} />
-                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} />
+                    {/* <Route path="/dashboard/mrv" element={<MRVDashboard />} />
+                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} /> */}
                   </Route>
                   <Route
                     path="/programmeManagement"
