@@ -38,6 +38,7 @@ i18n
       'creditTransfer',
       'addProgramme',
       'socialEnvironmentalRisk',
+      'unfcccSdTool',
     ],
   });
 export default i18n;

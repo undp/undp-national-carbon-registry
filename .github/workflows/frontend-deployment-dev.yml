@@ -2,7 +2,7 @@ name: Deploy Front end in S3
 on:
   push:
     branches:
-      - unified
+      - develop
     paths:
       - web/**
       - .github/workflows/frontend*
@@ -86,7 +86,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/unified'
+        if: github.ref == 'refs/heads/develop'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-web

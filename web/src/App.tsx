@@ -56,24 +56,20 @@ const App = () => {
   const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
   const { i18n, t } = useTranslation(['common']);
 
-  useEffect(() => {
-    console.log(process.env.REACT_APP_BACKEND);
-    console.log(process.env.REACT_APP_STAT_URL);
-    if (
-      localStorage.getItem('companyId') &&
-      localStorage.getItem('userRole') &&
-      localStorage.getItem('userId') &&
-      localStorage.getItem('companyState') &&
-      localStorage.getItem('companyRole')
-    )
-      updateUserAbility(ability, {
-        id: parseInt(localStorage.getItem('userId') as string),
-        role: localStorage.getItem('userRole') as string,
-        companyId: parseInt(localStorage.getItem('companyId') as string),
-        companyState: parseInt(localStorage.getItem('companyState') as string),
-        companyRole: localStorage.getItem('companyRole') as string,
-      });
-  }, []);
+  if (
+    localStorage.getItem('companyId') &&
+    localStorage.getItem('userRole') &&
+    localStorage.getItem('userId') &&
+    localStorage.getItem('companyState') &&
+    localStorage.getItem('companyRole')
+  )
+    updateUserAbility(ability, {
+      id: parseInt(localStorage.getItem('userId') as string),
+      role: localStorage.getItem('userRole') as string,
+      companyId: parseInt(localStorage.getItem('companyId') as string),
+      companyState: parseInt(localStorage.getItem('companyState') as string),
+      companyRole: localStorage.getItem('companyRole') as string,
+    });
   return (
     <AbilityContext.Provider value={ability}>
       <ConnectionContextProvider
@@ -106,8 +102,8 @@ const App = () => {
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
-                    <Route path="/dashboard/mrv" element={<MRVDashboard />} />
-                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} />
+                    {/* <Route path="/dashboard/mrv" element={<MRVDashboard />} />
+                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} /> */}
                   </Route>
                   <Route
                     path="/programmeManagement"

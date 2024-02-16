@@ -34,6 +34,8 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
+      Minister: ''
+      Department : ''
       systemCountryCode: "NG"
       systemCountryName: "CountryX"
       systemContinentName: "CountryX"
