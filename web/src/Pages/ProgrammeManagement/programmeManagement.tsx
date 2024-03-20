@@ -18,6 +18,7 @@ const ProgrammeManagement = () => {
     ProgrammeManagementColumns.serialNo,
     ProgrammeManagementColumns.emissionReductionExpected,
     ProgrammeManagementColumns.emissionReductionAchievedandCreditIssued,
+    ProgrammeManagementColumns.action,
   ];
 
   const onNavigateToProgrammeView = (record: any) => {

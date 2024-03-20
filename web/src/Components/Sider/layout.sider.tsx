@@ -21,7 +21,11 @@ import { LayoutSiderProps } from '@undp/carbon-library';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = {
+  key: React.Key;
+  icon?: React.ReactNode;
+  label: React.ReactNode;
+} | null;
 
 function getItem(
   label: React.ReactNode,
@@ -45,18 +49,12 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    // getItem(t('nav:ghgInventory'), 'ghgInventory', <CloudOutlined />, [
-    //   getItem(t('nav:emissions'), 'emissions/view', <AppstoreOutlined />),
-    //   getItem(t('nav:projections'), 'projections/view', <FallOutlined />),
-    // ]),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
-    getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
-    // getItem(t('nav:ndcDetails'), 'ndcDetails/viewAll', <CompassOutlined />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
+    getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t('nav:companies'), 'companyManagement/viewAll', <ShopOutlined />),
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
-    // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
   ];
 
   const onClick: MenuProps['onClick'] = (e) => {
@@ -70,10 +68,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
       className="layout-sider-container"
       breakpoint={collapsed ? undefined : 'lg'}
       collapsed={collapsed}
-      // collapsedWidth="70"
-      // onCollapse={(col) => {
-      //   setCollapsed(col);
-      // }}
     >
       <div className="layout-sider-div-container">
         <div
@@ -107,12 +101,25 @@ const LayoutSider = (props: LayoutSiderProps) => {
         <div className="layout-sider-menu-container">
           <Menu
             theme="light"
-            //defaultSelectedKeys={[selectedKey ?? 'dashboard']}
             selectedKeys={[selectedKey ? selectedKey : 'dashboard']}
             mode="inline"
             onClick={onClick}
-            items={items}
-          />
+          >
+            {items.map((item) => (
+              <Menu.Item
+                key={item?.key}
+                icon={item?.icon}
+                className={
+                  item?.key === 'ndcManagement/viewAll' ||
+                  item?.key === 'investmentManagement/viewAll'
+                    ? 'custom-padding-left'
+                    : ''
+                }
+              >
+                <Link to={`/${item?.key}`}>{item?.label}</Link>
+              </Menu.Item>
+            ))}
+          </Menu>
         </div>
       </div>
       <div

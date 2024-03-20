@@ -14,6 +14,7 @@ const CompanyManagement = () => {
     CompanyManagementColumns.companyRole,
     CompanyManagementColumns.programmeCount,
     CompanyManagementColumns.companyState,
+    CompanyManagementColumns.action,
   ];
 
   const navigateToCompanyProfile = (record: any) => {
