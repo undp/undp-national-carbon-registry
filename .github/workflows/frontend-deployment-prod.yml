@@ -7,15 +7,19 @@ on:
       - web/**
       - .github/workflows/frontend*
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy_front_end:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_COUNTRY_NAME: 'UNDP Digital Public Good National'
-      REACT_APP_COUNTRY_FLAG_URL: 'https://carbon-common-prod.s3.amazonaws.com/flag.png'
-      COUNTRY_CODE: 'NG'
+      REACT_APP_COUNTRY_NAME: "UNDP Digital Public Good National"
+      REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-prod.s3.amazonaws.com/flag.png"
+      COUNTRY_CODE: "NG"
       REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
-      REACT_APP_MAP_TYPE : "Mapbox"
+      REACT_APP_MAP_TYPE: "Mapbox"
       REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment"
     steps:
       - uses: actions/checkout@v3
