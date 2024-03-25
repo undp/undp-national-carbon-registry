@@ -3,9 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - '**'        # matches every branch
-      - '!develop'  
-      - '!main'   # excludes master
+      - 'CARBON-Sprint-*'
+      - 'hotfix-*'
     paths:
       - backend/**
       - web/**

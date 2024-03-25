@@ -2,5 +2,119 @@
 @import '../../Styles/variables.scss';
 
 .register-company-container {
-    margin-top: 30px;
+    .homepage-header-container {
+        background-color: rgba(255, 255, 255, 0.5);
+        height: 90px;
+        padding-top: 15px;
+    
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0rem 0rem 0 0vw;
+        cursor: pointer;
+        margin-bottom: 30px;
+    
+        html {
+          scroll-behavior: smooth;
+        }
+
+        .homepage-header-container-logo {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          cursor: pointer;
+
+          .title {
+            font-family: 'MuseoSans';
+            font-size: 1.2rem;
+            color: $logo-text-color;
+            font-weight: 700;
+            margin-right: 0.5rem;
+            padding-left: 5px;
+          }
+      
+          .title-sub {
+            font-weight: 100 !important;
+            font-family: 'MuseoSans';
+            font-size: 1.2rem;
+            color: $logo-text-color;
+          }
+      
+          .logo {
+            height: 40px;
+            padding-left: 2vw;
+      
+            img {
+              object-fit: cover;
+              height: 40px;
+              width: 36px;
+            }
+          }
+      
+          .country-name {
+            font-size: 0.65rem;
+            color: $logo-text-color;
+            margin-top: -5px;
+            font-family: 'MuseoSans';
+            margin-left: 6px;
+          }
+        }
+      }
+    
+      .homepage-button-container {
+        display: flex;
+        justify-content: right;
+        height: 90px;
+        background-color: rgba(255, 255, 255, 0.5);
+    
+        button {
+          margin-top: 29px;
+          margin-right: 30px;
+          margin-left: 30px;
+          text-transform: uppercase;
+    
+          @media (max-width: 678px) {
+            margin-right: 2vw;
+          }
+        }
+    
+        .ant-btn-primary {
+          background: linear-gradient(to right, #1890ff, $gradient-background-end);
+          color: $dark-text-color;
+          border: none;
+        }
+    
+        .ant-btn-primary:hover {
+          background: linear-gradient(to right, $gradient-background-end, #1890ff);
+        }
+      }
+      .image-container {
+        background-image: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.3) 10%,
+            rgba(22, 177, 255, 0.4) 40%),
+          url('../../Assets/Images/factory.webp');
+        background-image: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.3) 10%,
+            rgba(22, 177, 255, 0.4) 40%),
+          image-set('../../Assets/Images/factory.png'type('image/png'),
+            '../../Assets/Images/factory.webp'type('image/webp'));
+        background-size: cover;
+      }
+    
+      .homepage-img-container {
+        height: 100vh;
+        background-position-x: 100%;
+        background-position-y: 100%;
+        flex-direction: column;
+        justify-content: flex-start;
+        display: flex;
+        flex: 1;
+        text-align: left;
+    
+        .header-row {
+          @media (max-width: 536px) {
+            flex-flow: row;
+          }
+        }
+    }
 }

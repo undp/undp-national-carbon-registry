@@ -21,7 +21,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - data:/data/postgres
   national:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     # build:
     # context: .
     # dockerfile: ./backend/services/Dockerfile
@@ -41,6 +41,8 @@ services:
       name: "Antactic Region"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
+      Minister: ''
+      Department : ''
       DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
       LOCATION_SERVICE: OPENSTREET
@@ -59,7 +61,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: ./backend/services/Dockerfile
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     ports:
       - "3100:3100"
     depends_on:
@@ -73,7 +75,7 @@ services:
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
   replicator:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:CARBON-329-U
     # build:
     #   context: .
     #   dockerfile: ./backend/services/Dockerfile
@@ -83,7 +85,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: "<ANY PASSWORD>"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
@@ -100,16 +102,18 @@ services:
       MRV_ENDPOINT: 'http://192.168.123.20:9000'
       SYNC_ENABLE: false
       MRV_API_TOKEN: ''
+      BACKEND_HOST: "http://192.168.1.16:3000"
     volumes:
       - filestore:/app/backend/services/public
   web:
-    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:unified
+    image: 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-web:CARBON-329-U
     # build:
     #   context: .
     #   dockerfile: ./web/Dockerfile
     #   args:
     #     PORT: 3030
     #     REACT_APP_BACKEND: http://localhost:3000
+    #     REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment",
     #     REACT_APP_STAT_URL: http://localhost:3100
     #     REACT_APP_COUNTRY_NAME: "CountryX"
     #     REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"

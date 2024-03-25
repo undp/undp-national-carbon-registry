@@ -16,7 +16,6 @@ import {
   Form,
   Tooltip,
 } from 'antd';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import './programmeView.scss';
 import Chart from 'react-apexcharts';
@@ -43,7 +42,6 @@ import {
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { ShieldCheck } from 'react-bootstrap-icons';
 import {
   ProgrammeIssueForm,
@@ -91,8 +89,13 @@ import {
   Role,
   CarbonSystemType,
   TooltipColor,
+  getValidNdcActions,
+  addNdcDesc,
+  mitigationTypeList,
+  useConnection,
+  useSettingsContext,
+  useUserContext,
 } from '@undp/carbon-library';
-import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -108,6 +111,7 @@ const ProgrammeView = () => {
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -128,16 +132,15 @@ const ProgrammeView = () => {
   const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
   const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
   const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
-  const [ndcActionHistoryDataGrouped, setNdcActionHistoryDataGrouped] = useState<any>();
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
-  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState(false);
   const { id } = useParams();
   const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] = useState(false);
   const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
     useState(false);
+  const [activityTimelineKey, setActivityTimelineKey] = useState(0);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -211,16 +214,20 @@ const ProgrammeView = () => {
 
   const getPieChartData = (d: ProgrammeU) => {
     const frozen = d.creditFrozen
-      ? d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
+      ? Number(d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0).toFixed(2))
       : 0;
     const dt = [
-      numIsExist(d.creditEst) - numIsExist(d.creditIssued),
-      numIsExist(d.creditIssued) -
-        sumArray(d.creditTransferred) -
-        sumArray(d.creditRetired) -
-        frozen,
-      sumArray(d.creditTransferred),
-      sumArray(d.creditRetired),
+      Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
+      Number(
+        (
+          numIsExist(d.creditIssued) -
+          sumArray(d.creditTransferred) -
+          sumArray(d.creditRetired) -
+          frozen
+        ).toFixed(2)
+      ),
+      Number(sumArray(d.creditTransferred).toFixed(2)),
+      Number(sumArray(d.creditRetired).toFixed(2)),
       frozen,
     ];
     return dt;
@@ -478,7 +485,14 @@ const ProgrammeView = () => {
           description: (
             <TimelineBody
               text={formatString('view:tlRetInitDesc', [
-                addCommSep(transfer.creditAmount),
+                addCommSep(
+                  transfer.creditAmount
+                    ? transfer.retirementType === RetireType.CROSS_BORDER
+                      ? transfer.creditAmount -
+                        Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
+                      : transfer.creditAmount
+                    : transfer.creditAmount
+                ),
                 creditUnit,
                 transfer.sender[0]?.name,
                 `${
@@ -491,6 +505,15 @@ const ProgrammeView = () => {
                   : transfer.retirementType === RetireType.LEGAL_ACTION
                   ? 'legal action'
                   : 'other',
+                transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
+                  ? formatString('view:t1RetInitOmgeDesc', [
+                      addCommSep(
+                        transfer.creditAmount
+                          ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
+                          : undefined
+                      ),
+                    ])
+                  : '',
                 transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
@@ -595,8 +618,97 @@ const ProgrammeView = () => {
     return hist;
   };
 
+  function updatePendingTimeLineForNdc(currentHistory: any) {
+    const monitoringElIndex = currentHistory.findIndex(
+      (item: any) => item.title === t('view:monitoringEl')
+    );
+    const verificationElIndex = currentHistory.findIndex(
+      (item: any) => item.title === t('view:verificationEl')
+    );
+
+    if (
+      upcomingTimeLineMonitoringVisible &&
+      data?.currentStage !== ProgrammeStageUnified.Rejected
+    ) {
+      if (monitoringElIndex === -1) {
+        const monitoringEl = {
+          status: 'process',
+          title: t('view:monitoringEl'),
+          subTitle: t('view:tlPending'),
+          icon: (
+            <span className="step-icon upcom-issue-step">
+              <Icon.Binoculars />
+            </span>
+          ),
+        };
+
+        if (
+          currentHistory.length > 0 &&
+          currentHistory[0].title === t('view:tlIssue') &&
+          currentHistory[0].subTitle === t('view:tlPending')
+        ) {
+          currentHistory.splice(1, 0, monitoringEl);
+        } else {
+          currentHistory.unshift(monitoringEl);
+        }
+      }
+    } else {
+      if (monitoringElIndex !== -1) {
+        currentHistory.splice(monitoringElIndex, 1);
+      }
+    }
+
+    if (
+      upcomingTimeLineVerificationVisible &&
+      data?.currentStage !== ProgrammeStageUnified.Rejected
+    ) {
+      if (verificationElIndex === -1) {
+        const verificationEl = {
+          status: 'process',
+          title: t('view:verificationEl'),
+          subTitle: t('view:tlPending'),
+          icon: (
+            <span className="step-icon upcom-issue-step">
+              <Icon.Flag />
+            </span>
+          ),
+        };
+
+        if (
+          currentHistory.length > 0 &&
+          currentHistory[0].title === t('view:tlIssue') &&
+          currentHistory[0].subTitle === t('view:tlPending')
+        ) {
+          currentHistory.splice(1, 0, verificationEl);
+        } else {
+          currentHistory.unshift(verificationEl);
+        }
+      }
+    } else {
+      if (verificationElIndex !== -1) {
+        currentHistory.splice(verificationElIndex, 1);
+      }
+    }
+
+    return currentHistory;
+  }
+
+  useEffect(() => {
+    setActivityTimelineKey((key) => key + 1);
+  }, [historyData.length]);
+
+  useEffect(() => {
+    if (programmeHistoryLoaded) {
+      const updatedHistory = updatePendingTimeLineForNdc(historyData);
+      setHistoryData(updatedHistory);
+    }
+  }, [
+    upcomingTimeLineMonitoringVisible,
+    upcomingTimeLineVerificationVisible,
+    programmeHistoryLoaded,
+  ]);
+
   const getProgrammeHistory = async (programmeId: string) => {
-    setProgrammeHistoryLoaded(false);
     setLoadingHistory(true);
     try {
       const historyPromise = get(`national/programme/getHistory?programmeId=${programmeId}`);
@@ -605,7 +717,6 @@ const ProgrammeView = () => {
       );
 
       const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
-
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
       let txListKeys = Object.keys(txList).sort();
@@ -692,11 +803,22 @@ const ProgrammeView = () => {
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlIssueDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
-                  getTxRefValues(activity.data.txRef, 1),
-                ])}
+                text={formatString(
+                  'view:tlIssueDesc',
+                  getTxRefValues(activity.data.txRef, 4)
+                    ? [
+                        addNdcDesc({
+                          ndcActions: getTxRefValues(activity.data.txRef, 4),
+                          t: t,
+                          creditUnit: creditUnit,
+                        }),
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                    : [
+                        `${addCommSep(activity.data.creditChange)} ${creditUnit} credits`,
+                        getTxRefValues(activity.data.txRef, 1),
+                      ]
+                )}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -819,11 +941,38 @@ const ProgrammeView = () => {
             description: (
               <TimelineBody
                 text={formatString('view:tlRetireDesc', [
-                  addCommSep(activity.data.creditChange),
+                  addCommSep(
+                    tx?.retirementType === RetireType.CROSS_BORDER
+                      ? activity.data.creditChange -
+                          Number(
+                            (
+                              (Number(
+                                getTxRefValues(activity.data.txRef, 10)
+                                  ? getTxRefValues(activity.data.txRef, 10)
+                                  : 0
+                              ) *
+                                activity.data.creditChange) /
+                              100
+                            ).toFixed(2)
+                          )
+                      : activity.data.creditChange
+                  ),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 6),
                   `${crossCountry ? 'to ' + crossCountry : ''} `,
                   getRetirementTypeString(tx?.retirementType)?.toLowerCase(),
+                  tx?.retirementType === RetireType.CROSS_BORDER &&
+                  getTxRefValues(activity.data.txRef, 10)
+                    ? formatString('view:t1RetInitOmgeDesc', [
+                        addCommSep(
+                          (
+                            (Number(getTxRefValues(activity.data.txRef, 10)) *
+                              activity.data.creditChange) /
+                            100
+                          ).toFixed(2)
+                        ),
+                      ])
+                    : '',
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
@@ -955,10 +1104,10 @@ const ProgrammeView = () => {
       }
 
       setHistoryData(activityList);
+      setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
-      setProgrammeHistoryLoaded(true);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -1034,53 +1183,6 @@ const ProgrammeView = () => {
       genCerts(response.data, certTimes);
       genPieData(response.data);
     }
-  };
-
-  const mitigationData = (mitigation: any) => {
-    if (!mitigation) {
-      return {};
-    }
-    let calculations: any = {};
-    if (mitigation.typeOfMitigation === TypeOfMitigation.AGRICULTURE) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.landAreaUnit) {
-          calculations.landArea = new UnitField(
-            mitigation.properties.landAreaUnit,
-            addCommSep(mitigation.properties.landArea)
-          );
-        }
-        delete calculations.landAreaUnit;
-      }
-    } else if (mitigation.typeOfMitigation === TypeOfMitigation.SOLAR) {
-      if (mitigation.properties) {
-        calculations = mitigation.properties;
-        if (calculations.energyGenerationUnit) {
-          calculations.energyGeneration = new UnitField(
-            mitigation.properties.energyGenerationUnit,
-            addCommSep(mitigation.properties.energyGeneration)
-          );
-          // addCommSep(data.solarProperties.energyGeneration) +
-          // ' ' +
-          // data.solarProperties.energyGenerationUnit;
-        } else if (calculations.consumerGroup && typeof calculations.consumerGroup === 'string') {
-          calculations.consumerGroup = (
-            <Tag color={'processing'}>{addSpaces(calculations.consumerGroup)}</Tag>
-          );
-        }
-        delete calculations.energyGenerationUnit;
-      }
-    }
-    calculations.constantVersion = mitigation.properties.constantVersion;
-
-    for (const key in mitigation) {
-      if (mitigation.hasOwnProperty(key)) {
-        if (key !== 'properties' && key !== 'projectMaterial') {
-          calculations[key] = mitigation[key];
-        }
-      }
-    }
-    return calculations;
   };
 
   const onPopupAction = async (
@@ -1184,7 +1286,7 @@ const ProgrammeView = () => {
                 : action === 'Issue'
                 ? 'Successfully issued'
                 : action === 'Certify'
-                ? 'Successfully certified'
+                ? 'The programme has been certified successfully '
                 : action === 'Revoke'
                 ? t('view:successRevokeCertifcate')
                 : t('view:successRetire'),
@@ -1223,14 +1325,19 @@ const ProgrammeView = () => {
     if (!map) {
       return {};
     }
-
     const info: any = {};
     Object.entries(map).forEach(([k, v]) => {
-      const text = t('view:' + k);
-      if (v instanceof UnitField) {
-        info[text + ` (${v.unit})`] = v.value;
-      } else {
-        info[text] = v;
+      if (
+        data?.article6trade === true ||
+        data?.article6trade === undefined ||
+        (data?.article6trade === false && k !== 'carbonPriceUSDPerTon')
+      ) {
+        const text = t('view:' + k);
+        if (v instanceof UnitField) {
+          info[text + ` (${v.unit})`] = v.value;
+        } else {
+          info[text] = v;
+        }
       }
     });
     return info;
@@ -1338,83 +1445,6 @@ const ProgrammeView = () => {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (programmeHistoryLoaded && ndcActionHistoryDataGrouped) {
-      const monitoringElIndex = historyData.findIndex(
-        (item: any) => item.title === t('view:monitoringEl')
-      );
-      const verificationElIndex = historyData.findIndex(
-        (item: any) => item.title === t('view:verificationEl')
-      );
-
-      if (
-        upcomingTimeLineMonitoringVisible &&
-        data?.currentStage !== ProgrammeStageUnified.Rejected
-      ) {
-        if (monitoringElIndex === -1) {
-          const monitoringEl = {
-            status: 'process',
-            title: t('view:monitoringEl'),
-            subTitle: t('view:tlPending'),
-            icon: (
-              <span className="step-icon upcom-issue-step">
-                <Icon.Binoculars />
-              </span>
-            ),
-          };
-
-          if (
-            historyData.length > 0 &&
-            historyData[0].title === t('view:tlIssue') &&
-            historyData[0].subTitle === t('view:tlPending')
-          ) {
-            historyData.splice(1, 0, monitoringEl);
-          } else {
-            historyData.unshift(monitoringEl);
-          }
-        }
-      } else {
-        if (monitoringElIndex !== -1) {
-          historyData.splice(monitoringElIndex, 1);
-        }
-      }
-
-      if (
-        upcomingTimeLineVerificationVisible &&
-        data?.currentStage !== ProgrammeStageUnified.Rejected
-      ) {
-        if (verificationElIndex === -1) {
-          const verificationEl = {
-            status: 'process',
-            title: t('view:verificationEl'),
-            subTitle: t('view:tlPending'),
-            icon: (
-              <span className="step-icon upcom-issue-step">
-                <Icon.Flag />
-              </span>
-            ),
-          };
-
-          if (
-            historyData.length > 0 &&
-            historyData[0].title === t('view:tlIssue') &&
-            historyData[0].subTitle === t('view:tlPending')
-          ) {
-            historyData.splice(1, 0, verificationEl);
-          } else {
-            historyData.unshift(verificationEl);
-          }
-        }
-      } else {
-        if (verificationElIndex !== -1) {
-          historyData.splice(verificationElIndex, 1);
-        }
-      }
-
-      setHistoryData(historyData);
-    }
-  }, [ndcActionHistoryDataGrouped, programmeHistoryLoaded]);
-
   const onClickedAddAction = () => {
     navigate('/programmeManagement/addNdcAction', { state: { record: data } });
   };
@@ -1459,22 +1489,24 @@ const ProgrammeView = () => {
         }
       });
 
-      setUpcomingTimeLineMonitoringVisible(false);
-      setUpcomingTimeLineVerificationVisible(false);
+      let monitoringVisible = false;
+      let verificationVisible = false;
       if (groupedByActionId && ndcActionDocumentDataLoaded) {
         Object.values(groupedByActionId).forEach((element: any) => {
           element.forEach((item: any) => {
             if (!item.monitoringReport) {
-              setUpcomingTimeLineMonitoringVisible(true);
+              monitoringVisible = true;
             }
             if (!item.verificationReport) {
-              setUpcomingTimeLineVerificationVisible(true);
+              verificationVisible = true;
             }
           });
         });
+
+        setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+        setUpcomingTimeLineVerificationVisible(verificationVisible);
       }
 
-      setNdcActionHistoryDataGrouped(groupedByActionId);
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
         status: 'process',
         title: actionId,
@@ -1487,9 +1519,11 @@ const ProgrammeView = () => {
             canUploadMonitorReport={uploadMonitoringReport}
             getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
             ministryLevelPermission={ministryLevelPermission}
-            useConnection={useConnection}
             translator={programmeViewTranslator}
-            useUserContext={useUserContext}
+            onFinish={(d: any) => {
+              setData(d);
+            }}
+            programme={data}
           />
         ),
         icon: (
@@ -1613,7 +1647,10 @@ const ProgrammeView = () => {
       }
     }
 
-    if (data.currentStage.toString() === 'Approved') {
+    if (
+      data.currentStage.toString() === 'Approved' &&
+      (data?.article6trade === true || data?.article6trade === undefined)
+    ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
         actionBtns.push(
           <Button
@@ -1679,7 +1716,10 @@ const ProgrammeView = () => {
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
       if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        if (Number(data.creditEst) > Number(data.creditIssued)) {
+        if (
+          Number(data.creditEst) > Number(data.creditIssued) &&
+          getValidNdcActions(data).length > 0
+        ) {
           actionBtns.push(
             <Button
               type="primary"
@@ -1711,6 +1751,7 @@ const ProgrammeView = () => {
                         )
                       }
                       translator={i18n}
+                      ndcActions={getValidNdcActions(data)}
                     />
                   ),
                 });
@@ -1845,52 +1886,33 @@ const ProgrammeView = () => {
   // }
   const generalInfo: any = {};
   Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(([k, v]) => {
-    const text = t('view:' + k);
-    if (k === 'currentStatus') {
-      generalInfo[text] = (
-        <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
-          {getStageEnumVal(v as string)}
-        </Tag>
-      );
-    } else if (k === 'sector') {
-      generalInfo[text] = (
-        <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
-      );
-    } else if (k === 'applicationType') {
-      generalInfo[text] = (
-        <span>
-          <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
-          <span>{v as string}</span>
-        </span>
-      );
-    } else {
-      generalInfo[text] = v;
+    if (
+      data?.article6trade === true ||
+      data?.article6trade === undefined ||
+      (data?.article6trade === false && k !== 'serialNo')
+    ) {
+      const text = t('view:' + k);
+      if (k === 'currentStatus') {
+        generalInfo[text] = (
+          <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
+            {getStageEnumVal(v as string)}
+          </Tag>
+        );
+      } else if (k === 'sector') {
+        generalInfo[text] = (
+          <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
+        );
+      } else if (k === 'applicationType') {
+        generalInfo[text] = (
+          <span>
+            <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
+            <span>{v as string}</span>
+          </span>
+        );
+      } else {
+        generalInfo[text] = v;
+      }
     }
-  });
-
-  const mitigationWidgets = data?.mitigationActions?.map((ele: any, index: number) => {
-    return (
-      <Card className="card-container">
-        <div>
-          <InfoView
-            data={mapArrayToi18n(mitigationData(ele))}
-            title={t('view:calculation') + ' - ' + ele?.actionId}
-            icon={<BulbOutlined />}
-          />
-          {ele.projectMaterial && ele.projectMaterial.length > 0 && (
-            <div className="info-view only-head">
-              <div className="title">
-                <span className="title-icon"></span>
-                <span className="title-text" style={{ marginLeft: '15px' }}>
-                  {t('view:projectMaterial')}
-                </span>
-                <div>{getFileContent(ele.projectMaterial)}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </Card>
-    );
   });
 
   return loadingAll ? (
@@ -2067,7 +2089,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                             />
                                           ),
                                         });
@@ -2113,7 +2134,6 @@ const ProgrammeView = () => {
                                                 )
                                               }
                                               translator={i18n}
-                                              useConnection={useConnection}
                                               ministryLevelPermission={ministryLevelPermission}
                                             />
                                           ),
@@ -2169,7 +2189,6 @@ const ProgrammeView = () => {
                                               )
                                             }
                                             translator={i18n}
-                                            useConnection={useConnection}
                                           />
                                         ),
                                       });
@@ -2275,7 +2294,9 @@ const ProgrammeView = () => {
                       }}
                       series={[
                         emissionsReductionAchieved,
-                        emissionsReductionExpected - emissionsReductionAchieved,
+                        Number(
+                          (emissionsReductionExpected - emissionsReductionAchieved).toFixed(2)
+                        ),
                       ]}
                       type="donut"
                       width="100%"
@@ -2337,8 +2358,6 @@ const ProgrammeView = () => {
                     getProgrammeById(data?.programmeId);
                   }}
                   ministryLevelPermission={ministryLevelPermission}
-                  useConnection={useConnection}
-                  useUserContext={useUserContext}
                   translator={i18n}
                   methodologyDocumentUpdated={methodologyDocumentApproved}
                   programmeStatus={data?.currentStage}
@@ -2395,7 +2414,6 @@ const ProgrammeView = () => {
             ) : (
               ''
             )}
-            {mitigationWidgets && mitigationWidgets}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">
@@ -2453,7 +2471,12 @@ const ProgrammeView = () => {
                   {loadingHistory ? (
                     <Skeleton />
                   ) : (
-                    <Steps current={0} direction="vertical" items={historyData} />
+                    <Steps
+                      key={activityTimelineKey}
+                      current={0}
+                      direction="vertical"
+                      items={historyData}
+                    />
                   )}
                 </div>
               </div>

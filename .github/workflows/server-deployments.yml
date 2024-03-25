@@ -2,57 +2,49 @@ name: Deploy Services
 on:
   push:
     branches:
-      - unified
+      - develop
+      - main
     paths:
       - backend/**
       - .github/workflows/server*
-    
+      - docker-compose*
+
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: us-east-1
 
 jobs:
-  check_dependency_change:
+  development_deploy:
+    if: github.ref == 'refs/heads/develop'
+    name: deploy_dev
     runs-on: ubuntu-latest
-    # Declare outputs for next jobs
-    outputs:
-      deps_changed: ${{ steps.check_file_changed.outputs.deps_changed }}
-      stage: ${{ steps.branch_check.outputs.stage }}
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - id: branch_check
-      run: |
-        if [[ ${GITHUB_REF} == 'refs/heads/main' ]]; then
-          echo "stage=prod" >> $GITHUB_OUTPUT
-        else
-          echo "stage=dev" >> $GITHUB_OUTPUT
-        fi
-  deploy:
-    name: deploy
-    runs-on: ubuntu-latest
-    needs: [check_dependency_change]
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-'dev'
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+      - name: Check Docker variable changes
+        run: |
+          echo "docker-compose file Change...."
+          git diff HEAD~ -- HEAD -z ./docker-compose*
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/mono'
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       - name: Login to Amazon ECR
-        if: github.ref == 'refs/heads/mono'
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push the image to Amazon ECR
-        if: github.ref == 'refs/heads/mono'
+      - name: Build, tag, and push the development image to Amazon ECR
+        if: github.ref == 'refs/heads/develop'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -64,21 +56,65 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/unified'
+      - name: Deploy development docker image to Amazon EC2
+        if: github.ref == 'refs/heads/develop'
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services
-          IMAGE_TAG: unified
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_UNIFIED }}
           HOSTNAME: ${{secrets.HOST_IP_UNIFIED }}
           USER_NAME: ec2-user
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            cd repos/carbon-registry &&
-            sudo $(aws ecr get-login --no-include-email --region us-east-1) &&
-            sudo docker stop carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 || true &&
-            sudo docker rm carbon-registry-national-1  carbon-registry-replicator-1 carbon-registry-stats-1 &&
-            sudo docker pull 302213478610.dkr.ecr.us-east-1.amazonaws.com/carbon-services:unified &&
-            docker-compose -f docker-compose-image.yml up -d national stats replicator '
+            repos/carbon-registry/backend_deploy.sh '
+
+  production_deploy:
+    if: github.ref == 'refs/heads/main'
+    name: deploy_prod
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-'prod'
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+      - name: Check Docker variable changes
+        run: |
+          echo "docker-compose file Change...."
+          git diff HEAD~ -- HEAD -z ./docker-compose*
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push the production image to Amazon ECR
+        if: github.ref == 'refs/heads/main'
+        id: build-image-prod
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-services
+          IMAGE_TAG: main
+        run: |
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Deploy production docker image to Amazon EC2
+        if: github.ref == 'refs/heads/main'
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_DEMO }}
+          HOSTNAME: ${{secrets.HOST_IP_DEMO }}
+          USER_NAME: ec2-user
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+            repos/carbon-registry/backend_deploy.sh '

@@ -17,6 +17,8 @@ import {
   ProgrammeStageUnified,
   Action,
   ProgrammeCertify,
+  Emission,
+  Projection,
 } from '@undp/carbon-library';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
@@ -104,13 +106,28 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can([Action.Delete], Company);
     }
 
-    if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
+    if (
+      user.role === Role.Manager &&
+      (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.MINISTRY)
+    ) {
       can([Action.Delete], Company);
     }
 
     if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Approve, Company);
       can(Action.Reject, Company);
+    }
+
+    if (user.companyRole === CompanyRole.MINISTRY || user.companyRole === CompanyRole.GOVERNMENT) {
+      if (user.role !== Role.ViewOnly) {
+        can(Action.Create, Emission);
+        can(Action.Create, Projection);
+      }
+      can(Action.Read, Emission);
+      can(Action.Read, Projection);
+    } else {
+      can(Action.Read, Emission);
+      can(Action.Read, Projection);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {

@@ -62,7 +62,7 @@
 
     .privacy-body {
       color: $title-text-color;
-      padding: 20px 200px 20px 200px;
+      padding: 20px 0px 20px 0px;
     }
     p {
       margin: 30px;
@@ -82,7 +82,7 @@
       font-weight: 700;
       color: $title-text-color;
       text-align: left;
-      padding: 20px 200px 20px 200px;
+      padding: 20px 0px 20px 0px;
     }
     .privacy-sub {
       text-align: center;
@@ -117,7 +117,7 @@
       padding-top: 30px;
       font-size: 20px;
       font-weight: 700;
-      padding-left: 200px;
+      padding-left: 0px;
     }
     .privacy-subtitle-summary {
       display: flex;
@@ -128,11 +128,11 @@
       padding-top: 30px;
       font-size: 20px;
       font-weight: 700;
-      padding-left: 230px;
+      padding-left: 0px;
     }
     .privacy-subline {
       padding-top: 20px;
-      padding-left: 200px;
+      padding-left: 0px;
       font-weight: 700;
       color: $title-text-color;
       font-size: 16px;
@@ -164,5 +164,9 @@
         }
       }
     }
+  }
+
+  a {
+    word-wrap: break-word;
   }
 }
