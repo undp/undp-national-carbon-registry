@@ -17,7 +17,7 @@
     "@undp/carbon-library": "2.1.12",
     "antd": "^4.24.1",
     "apexcharts": "^3.36.3",
-    "axios": "^1.1.3",
+    "axios": "^1.6.0",
     "bootstrap-icons": "^1.10.2",
     "buffer": "^6.0.3",
     "class-transformer": "^0.5.1",
