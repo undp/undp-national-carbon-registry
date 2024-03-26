@@ -42,7 +42,7 @@
     "aws-kinesis-agg": "^4.2.6",
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
-    "axios": "^1.2.4",
+    "axios": "^1.6.0",
     "carbon-services-lib": "0.0.231-CARBON-323.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
