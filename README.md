@@ -22,6 +22,7 @@ The system has 3 key features:
 ## Index
 * [About](#about)
 * [Standards](#standards)
+* [Changelog](#changelog)
 * [Architecture](#architecture)
 * [Project Structure](#structure)
 * [Run as Containers](#container)
@@ -40,6 +41,12 @@ This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
 It is built according to the Principles for Digital Development:
 https://digitalprinciples.org/ 
+
+
+<a name="changelog"></a>
+## Changelog
+[Learn about the latest improvements.](./CHANGES.md)
+
 
 <a name="architecture"></a>
 ## System Architecture
