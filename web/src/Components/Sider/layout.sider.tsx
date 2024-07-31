@@ -4,17 +4,7 @@ import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { Link, useNavigate } from 'react-router-dom';
 import './layout.sider.scss';
 import * as Icon from 'react-bootstrap-icons';
-import {
-  AppstoreOutlined,
-  CompassOutlined,
-  DashboardOutlined,
-  HomeOutlined,
-  ShopOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-  FallOutlined,
-  CloudOutlined,
-} from '@ant-design/icons';
+import { AppstoreOutlined, DashboardOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
 // import { LayoutSiderProps } from '@undp/carbon-library';

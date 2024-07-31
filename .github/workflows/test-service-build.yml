@@ -5,6 +5,7 @@ on:
     branches:
       - 'CARBON-Sprint-*'
       - 'hotfix-*'
+      - 'lib-removed'
     paths:
       - backend/**
       - web/**

@@ -17,7 +17,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import './ndcActionDetails.scss';
-import '../../Styles/common.table.scss';
+import '../../../Styles/common.table.scss';
 import { RcFile } from 'rc-upload/lib/interface';
 import {
   AgricultureCreationRequest,
@@ -45,7 +45,7 @@ import {
 //   methodologyOptions,
 // } from '../Definitions';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { ndcActionTypeList, NdcActionTypes } from '../../Definitions/Enums/ndcActionTypes.enum';
+import { ndcActionTypeList, NdcActionTypes } from '../../../Definitions/Enums/ndcActionTypes.enum';
 import {
   methodologyOptions,
   MitigationSubTypes,
@@ -53,14 +53,14 @@ import {
   mitigationTypeList,
   MitigationTypes,
   sectorMitigationTypesListMapped,
-} from '../../Definitions/Enums/mitigation.types.enum';
-import { addCommSepRound, getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { Sector } from '../../Definitions/Enums/sector.enum';
-import { energyGenerationUnitList } from '../../Definitions/Enums/energyGenerationUnits.enum';
-import { consumerGroupList } from '../../Definitions/Enums/consumerGroups.enum';
-import { landAreaUnitList } from '../../Definitions/Enums/landAreaUnits.enum';
-import { enablementTypesAndValues } from '../../Definitions/Enums/enablementTypes.enum';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
+} from '../../../Definitions/Enums/mitigation.types.enum';
+import { addCommSepRound, getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { Sector } from '../../../Definitions/Enums/sector.enum';
+import { energyGenerationUnitList } from '../../../Definitions/Enums/energyGenerationUnits.enum';
+import { consumerGroupList } from '../../../Definitions/Enums/consumerGroups.enum';
+import { landAreaUnitList } from '../../../Definitions/Enums/landAreaUnits.enum';
+import { enablementTypesAndValues } from '../../../Definitions/Enums/enablementTypes.enum';
+import { isValidateFileType } from '../../../Utils/DocumentValidator';
 // import { enablementTypesAndValues } from '../../../Definitions/Enums/enablementTypes.enum';
 // import { isValidateFileType } from '../../../Utils/DocumentValidator';
 

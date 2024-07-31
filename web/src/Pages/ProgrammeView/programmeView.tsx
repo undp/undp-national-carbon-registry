@@ -77,7 +77,7 @@ import { TxType } from '../../Definitions/Enums/TxType.enum';
 import { DocType } from '../../Definitions/Enums/document.type';
 import { DocumentStatus } from '../../Definitions/Enums/document.status';
 import { CompanyState } from '../../Definitions/Enums/company.state.enum';
-import { NdcActionBody } from '../../Components/NdcActions/ndcActionBody';
+import { NdcActionBody } from '../../Components/NdcActions/NdcActionBody/ndcActionBody';
 import { Loading } from '../../Components/Loading/loading';
 import { OrganisationStatus } from '../../Components/OrganisationStatus/organisationStatus';
 import { DevBGColor, DevColor, TooltipColor } from '../../Styles/role.color.constants';

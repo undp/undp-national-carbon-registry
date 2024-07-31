@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Form, Input, message, Radio, Tooltip, Skeleton } from 'antd';
 import PhoneInput, {
@@ -177,7 +179,7 @@ export const AddNewUserComponent = (props: any) => {
     try {
       setIsLoading(true);
       const userId = userInfoState?.id;
-      const response = await del(`national/user/delete?userId=${userId}`);
+      await del(`national/user/delete?userId=${userId}`);
       setOpenDeleteConfirmationModal(false);
       message.open({
         type: 'success',

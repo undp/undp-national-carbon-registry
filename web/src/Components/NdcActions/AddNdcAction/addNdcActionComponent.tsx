@@ -8,7 +8,7 @@ import { InfoCircle } from 'react-bootstrap-icons';
 import { getBase64, Programme } from '../../../Definitions/Definitions/programme.definitions';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { ProgrammeStageR } from '../../../Definitions/Enums/programmeStage.enum';
-import NdcActionDetails from '../../NdcActionDetails/ndcActionDetails';
+import NdcActionDetails from '../NdcActionDetails/ndcActionDetails';
 import { CoBenifitsComponent } from '../../CoBenifits/coBenifits';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 // import { CoBenifitsComponent } from '../../Common/CoBenifits/coBenifits';

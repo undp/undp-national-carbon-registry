@@ -42,7 +42,7 @@ import RegisterNewCompany from './Pages/Company/registerNewCompany';
 //   SettingsContextProvider,
 // } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
-import NdcDetails from './Pages/NdcDetails/ndcDetails';
+// import NdcDetails from './Pages/NdcDetails/ndcDetails';
 import { ConnectionContextProvider } from './Context/ConnectionContext/connectionContext';
 import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
@@ -128,12 +128,12 @@ const App = () => {
                     <Route path="viewAll" element={<NdcActionManagement />} />
                     <Route path="view" element={<NdcActionView />} />
                   </Route>
-                  <Route
+                  {/* <Route
                     path="/ndcDetails"
                     element={<CustomLayout selectedKey="ndcDetails/viewAll" />}
                   >
                     <Route path="viewAll" element={<NdcDetails />} />
-                  </Route>
+                  </Route> */}
                   <Route
                     path="/companyManagement"
                     element={<CustomLayout selectedKey="companyManagement/viewAll" />}
