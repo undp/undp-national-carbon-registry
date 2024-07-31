@@ -4,15 +4,19 @@ import { useTranslation } from 'react-i18next';
 const { Header, Sider, Content } = Layout;
 import { Outlet } from 'react-router-dom';
 import LayoutHeader from '../Header/layout.header';
-import {
-  ConfigurationSettingsType,
-  Loading,
-  useConnection,
-  useSettingsContext,
-} from '@undp/carbon-library';
+// import {
+//   ConfigurationSettingsType,
+//   Loading,
+//   useConnection,
+//   useSettingsContext,
+// } from '@undp/carbon-library';
 import LayoutSider from '../Sider/layout.sider';
 import './layout.scss';
 import { PauseCircleFill } from 'react-bootstrap-icons';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { ConfigurationSettingsType } from '../../Definitions/Definitions/settings.definitions';
+import { Loading } from '../Loading/loading';
 
 const CustomLayout = (props: any) => {
   const { selectedKey } = props;

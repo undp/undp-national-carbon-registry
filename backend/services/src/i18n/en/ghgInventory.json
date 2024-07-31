@@ -1,0 +1,12 @@
+{
+    "cannotEditEmissionFinalized": "Finalised emissions cannot be edited",
+    "cannotEditProjectionFinalized": "Finalised projections cannot be edited",
+    "emissionUpdateFailed": "Failed to update the emission",
+    "emissionSaveFailed": "Failed to save the emission",
+    "projectionUpdateFailed": "Failed to update the projection",
+    "projectionSaveFailed": "Failed to save the projection",
+    "notTheLatestVersion" : "The form version being updated is not the latest version",
+    "negativeValuesNotAllowed" : "Negative values are not allowed",
+    "invalidDataType": "Invalid data type"
+   
+}

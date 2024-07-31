@@ -43,59 +43,106 @@ import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { ShieldCheck } from 'react-bootstrap-icons';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import {
-  ProgrammeIssueForm,
-  ProgrammeRetireForm,
-  ProgrammeRevokeForm,
-  ProgrammeStageUnified,
-  ProgrammeTransferForm,
   addCommSep,
-  addSpaces,
-  CompanyRole,
-  CreditTransferStage,
+  addCommSepRound,
   getFinancialFields,
   getGeneralFields,
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
-  RetireType,
-  sumArray,
-  TxType,
-  TypeOfMitigation,
-  UnitField,
-  InfoView,
-  ProgrammeTransfer,
-  MapComponent,
-  Loading,
-  InvestmentBody,
   ProgrammeU,
-  NdcActionBody,
-  OrganisationStatus,
-  isBase64,
-  ProgrammeDocuments,
-  RoleIcon,
-  addCommSepRound,
-  TimelineBody,
-  MapTypes,
-  MarkerData,
-  CompanyState,
-  dateTimeFormat,
+  sumArray,
+  UnitField,
+} from '../../Definitions/Definitions/programme.definitions';
+import { MapTypes, MarkerData } from '../../Definitions/Definitions/mapComponent.definitions';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { Role } from '../../Definitions/Enums/role.enum';
+import { InvestmentBody } from '../../Components/Investment/investmentBody';
+import { isBase64 } from '../../Components/IconComponents/ProfileIcon/profile.icon';
+import { ProgrammeTransfer } from '../../Definitions/Entities/programmeTransfer';
+import {
   creditUnit,
-  DocType,
-  DocumentStatus,
   dateFormat,
-  DevBGColor,
-  DevColor,
-  Role,
-  CarbonSystemType,
-  TooltipColor,
-  getValidNdcActions,
-  addNdcDesc,
-  mitigationTypeList,
-  useConnection,
-  useSettingsContext,
-  useUserContext,
-} from '@undp/carbon-library';
+  dateTimeFormat,
+} from '../../Definitions/Definitions/common.definitions';
+import { addNdcDesc, TimelineBody } from '../../Components/TimelineBody/timelineBody';
+import { RetireType } from '../../Definitions/Enums/retireType.enum';
+import { CreditTransferStage } from '../../Definitions/Enums/creditTransferStage.enum';
+import { ProgrammeStageUnified } from '../../Definitions/Enums/programmeStage.enum';
+import { TxType } from '../../Definitions/Enums/TxType.enum';
+import { DocType } from '../../Definitions/Enums/document.type';
+import { DocumentStatus } from '../../Definitions/Enums/document.status';
+import { CompanyState } from '../../Definitions/Enums/company.state.enum';
+import { NdcActionBody } from '../../Components/NdcActions/ndcActionBody';
+import { Loading } from '../../Components/Loading/loading';
+import { OrganisationStatus } from '../../Components/OrganisationStatus/organisationStatus';
+import { DevBGColor, DevColor, TooltipColor } from '../../Styles/role.color.constants';
+import { getValidNdcActions, ProgrammeIssueForm } from '../../Components/Models/programmeIssueForm';
+import { ProgrammeRevokeForm } from '../../Components/Models/programmeRevokeForm';
+import { CarbonSystemType } from '../../Definitions/Enums/carbonSystemType.enum';
+import { RoleIcon } from '../../Components/IconComponents/RoleIcon/role.icon';
+import { ProgrammeRetireForm } from '../../Components/Models/programmeRetireForm';
+import { ProgrammeTransferForm } from '../../Components/Models/programmeTransferForm';
+import { InfoView } from '../../Components/InfoView/info.view';
+import { ProgrammeDocuments } from '../../Components/ProgrammeDocuments/programmeDocuments';
+import { MapComponent } from '../../Components/Maps/mapComponent';
+// import {
+//   ProgrammeIssueForm,
+//   ProgrammeRetireForm,
+//   ProgrammeRevokeForm,
+//   ProgrammeStageUnified,
+//   ProgrammeTransferForm,
+//   addCommSep,
+//   addSpaces,
+//   CompanyRole,
+//   CreditTransferStage,
+//   getFinancialFields,
+//   getGeneralFields,
+//   getRetirementTypeString,
+//   getStageEnumVal,
+//   getStageTagType,
+//   RetireType,
+//   sumArray,
+//   TxType,
+//   TypeOfMitigation,
+//   UnitField,
+//   InfoView,
+//   ProgrammeTransfer,
+//   MapComponent,
+//   Loading,
+//   InvestmentBody,
+//   ProgrammeU,
+//   NdcActionBody,
+//   OrganisationStatus,
+//   isBase64,
+//   ProgrammeDocuments,
+//   RoleIcon,
+//   addCommSepRound,
+//   TimelineBody,
+//   MapTypes,
+//   MarkerData,
+//   CompanyState,
+//   dateTimeFormat,
+//   creditUnit,
+//   DocType,
+//   DocumentStatus,
+//   dateFormat,
+//   DevBGColor,
+//   DevColor,
+//   Role,
+//   CarbonSystemType,
+//   TooltipColor,
+//   getValidNdcActions,
+//   addNdcDesc,
+//   mitigationTypeList,
+//   useConnection,
+//   useSettingsContext,
+//   useUserContext,
+// } from '@undp/carbon-library';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();

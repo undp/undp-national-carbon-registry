@@ -1,0 +1,120 @@
+$title-main: #6642eb;
+$title-sub: #555657;
+$common-form-white: #ffffff;
+$steps-title: #3a3541;
+$steps-count: rgba(58, 53, 65, 0.8);
+$primary-color: #9155fd;
+
+.add-ndc-main-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+    border-color: #ff4d4f !important;
+  }
+
+  .step-title-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    .step-count {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-right: 0.4rem;
+      color: $steps-count;
+    }
+
+    .title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $steps-title;
+      white-space: nowrap;
+    }
+  }
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: $title-main;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: $title-sub;
+    }
+  }
+
+  .steps-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    .mg-left-1 {
+      margin-left: 1rem;
+    }
+  }
+
+  .adding-section {
+    display: flex;
+    flex-direction: column;
+    background-color: $common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+
+    .design-upload-section {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: start;
+      width: 100%;
+
+      .icon-color {
+        color: $primary-color !important;
+      }
+
+      .ant-upload {
+        width: 130px;
+      }
+
+      .ant-upload-list {
+        align-items: center;
+        justify-content: center;
+        width: 300px;
+
+        .ant-upload-list-item {
+          margin-top: 0;
+        }
+      }
+    }
+  }
+
+  .info-container {
+    display: flex;
+    flex-direction: row;
+    width: 10%;
+    height: 30px;
+    align-items: center;
+    justify-content: start;
+    margin-left: 10px;
+  }
+
+  .upload-doc {
+    height: 40px !important;
+    margin-right: 240px;
+  }
+
+  .ant-upload-list-item {
+    border-radius: 5px !important;
+    height: 40px !important;
+  }
+}

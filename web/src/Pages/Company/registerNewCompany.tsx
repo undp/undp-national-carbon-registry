@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AddNewCompanyComponent } from '@undp/carbon-library';
+// import { AddNewCompanyComponent } from '@undp/carbon-library';
 import './registerNewCompany.scss';
 import { Row, Col, Button } from 'antd';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
+import { AddNewCompanyComponent } from '../../Components/Company/AddNewCompany/addNewCompanyComponent';
 
 const RegisterNewCompany = () => {
   const navigate = useNavigate();

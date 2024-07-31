@@ -1,0 +1,283 @@
+@import "../../../Styles/colors.addCompany.scss";
+@import "../../../Styles/colors.role.scss";
+@import "../../../Styles/variables.scss";
+
+.company-details-form-container {
+  width: 100%;
+  .company-details-form {
+    .steps-actions {
+      display: flex;
+      flex-direction: row-reverse;
+      .mg-left-1 {
+        margin-left: 1rem;
+      }
+    }
+    .row {
+      .website {
+        .ant-input {
+          margin-left: 0.3rem;
+        }
+        .ant-input-group-addon {
+          border: 1px solid $common-form-input-border;
+        }
+      }
+      .logo-upload-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        width: 100%;
+
+        .ant-upload {
+          width: 20%;
+        }
+
+        .ant-upload-list {
+          align-items: center;
+          justify-content: center;
+          width: 75%;
+
+          .ant-upload-list-item {
+            margin-top: 0;
+          }
+        }
+      }
+      .details-part-one {
+        .space-container {
+          width: 100%;
+          .ant-space-item {
+            width: 100%;
+          }
+        }
+      }
+      .details-part-two {
+        .role-group {
+          .certifier-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $cert-color !important;
+              border-color: $cert-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $cert-color;
+            }
+          }
+          .dev-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $dev-color !important;
+              border-color: $dev-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $dev-color;
+            }
+          }
+          .minister-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $ministry-color !important;
+              border-color: $ministry-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $ministry-color;
+            }
+          }
+          .gov-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $gov-color !important;
+              border-color: $gov-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $gov-color;
+            }
+          }
+          .observer-radio-container {
+            width: 25%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $view-color !important;
+              border-color: $view-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $view-color;
+            }
+          }
+          .ant-radio-button-wrapper::before {
+            background-color: transparent;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+
+          .anticon {
+            margin-right: 0.5rem;
+          }
+          .certifier {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $cert-bg-color;
+              color: $cert-color;
+            }
+          }
+          .dev {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $dev-bg-color;
+              color: $dev-color;
+            }
+          }
+          .gov {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $gov-bg-color;
+              color: $gov-color;
+            }
+          }
+          .minister {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $ministry-bg-color;
+              color: $ministry-color;
+            }
+          }
+          .observer {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $view-bg-color;
+              color: $view-color;
+            }
+          }
+          .role-icons {
+            margin-right: 5px;
+          }
+        }
+        .space-container {
+          width: 100%;
+          .ant-space-item {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.step-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: $steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $steps-title;
+  }
+}
+
+.add-company-main-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: $primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: $title-sub;
+    }
+  }
+
+  .adding-section {
+    display: flex;
+    flex-direction: column;
+    background-color: $common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+
+    .form-section {
+      display: flex;
+      margin-bottom: 2rem;
+
+      .form-one {
+        width: 100%;
+      }
+      .steps {
+        width: 15%;
+      }
+
+      .steps-content {
+        width: 85%;
+      }
+    }
+
+    .steps-action {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+  }
+}
+
+.ant-upload-list-picture .ant-upload-list-item-error,
+.ant-upload-list-picture-card .ant-upload-list-item-error {
+  height: auto;
+  max-height: 200px;
+}
+
+.hide {
+  display: none !important;
+}

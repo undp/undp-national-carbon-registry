@@ -32,5 +32,19 @@
   "reqIdFound": "Reset request id found",
   "resetEmailSent": "User found, An email was sent",
   "invalidCountry": "Country is invalid",
-  "editUserSuccess": "The user account has been updated successfully"
+  "editUserSuccess": "The user account has been updated successfully",
+
+  "MinistryDepartmentAlreadyExist": "Government Department Already Exist",
+  "createExistingUserInRegistry": "User already exists in the Carbon Registry System with the given email",
+  "createExistingUserInTransparency": "User already exists in the National NDC Transparency System with the given email",
+  "createExistingCompany": "This organisation already exists",
+  "createExistingCompanyWithEmailInRegistry": "Organisation already exists in the Carbon Registry System with the given email",
+  "createExistingCompanyWithPaymentIdInRegistry": "Organisation already exists in the Carbon Registry System with the given Registration Payment ID",
+  "createExistingCompanyWithTaxIdInRegistry": "Organisation already exists in the Carbon Registry System with the given Tax ID",
+  "createExistingCompanyWithEmailInTransparency": "Organisation already exists in the National NDC Transparency System with the given email",
+  "createExistingCompanyWithPaymentIdInTransparency": "Organisation already exists in the National NDC Transparency System with the given Registration Payment ID",
+  "createExistingCompanyWithTaxIdInTransparency": "Organisation already exists in the National NDC Transparency System with the given Tax ID",
+  "wrongMinistryAndGovDep": "Invalid Government Department Selected",
+  "paymentIdExistAlready": "The organisation already exists with the given Registration Payment ID"
+  
 }

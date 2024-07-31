@@ -1,6 +1,7 @@
-import { NdcActionManagementComponent, ProgrammeCreationComponent } from '@undp/carbon-library';
+// import { NdcActionManagementComponent, ProgrammeCreationComponent } from '@undp/carbon-library';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ProgrammeCreationComponent } from '../../Components/Programme/AddNewProgramme/programmeCreationComponent';
 
 const AddProgramme = () => {
   const navigate = useNavigate();

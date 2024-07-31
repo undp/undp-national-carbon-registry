@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CreditTransferComponent } from '@undp/carbon-library';
+import { CreditTransferComponent } from './creditTransfersComponent';
+// import { CreditTransferComponent } from '@undp/carbon-library';
 
 const CreditTransfer = () => {
   const navigate = useNavigate();

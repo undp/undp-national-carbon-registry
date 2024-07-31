@@ -1,0 +1,44 @@
+@import "../../../Styles/colors.userProfile.scss";
+@import "../../../Styles/variables.scss";
+
+.user-profile {
+  padding: 0px 50px;
+
+  .login-language-selection-txt .ant-select {
+    width: 120px;
+  }
+
+  .card-container {
+    margin-bottom: 20px;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .mg-left-1 {
+    margin-left: 1rem;
+  }
+
+  .mg-top-1 {
+    margin-top: 1rem;
+  }
+
+  .mg-bottom-1 {
+    margin-bottom: 1rem !important;
+  }
+
+  .profile-img {
+    width: 170px;
+  }
+
+  .company-name {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+    color: $company-name-cl;
+  }
+
+  .btn-danger {
+    color: $danger-btn !important;
+    border-color: $danger-btn-border !important;
+  }
+}

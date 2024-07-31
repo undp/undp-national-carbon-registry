@@ -11,12 +11,30 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { ApiKeyJwtAuthGuard, Company, InvestmentDto, DataExportQueryDto } from "@undp/carbon-services-lib";
-import { QueryDto } from "@undp/carbon-services-lib";
-import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
-import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
-import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
-import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory,Investment} from '@undp/carbon-services-lib';
+import { ApiKeyJwtAuthGuard } from "src/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { Action } from "src/casl/action.enum";
+import { CaslAbilityFactory } from "src/casl/casl-ability.factory";
+import { PoliciesGuardEx } from "src/casl/policy.guard";
+import { CompanyService } from "src/company/company.service";
+import { DataExportQueryDto } from "src/dto/data.export.query.dto";
+import { FindOrganisationQueryDto } from "src/dto/find.organisation.dto";
+import { InvestmentDto } from "src/dto/investment.dto";
+import { OrganisationSuspendDto } from "src/dto/organisation.suspend.dto";
+import { OrganisationUpdateDto } from "src/dto/organisation.update.dto";
+import { QueryDto } from "src/dto/query.dto";
+import { Company } from "src/entities/company.entity";
+import { Investment } from "src/entities/investment.entity";
+import { CountryService } from "src/util/country.service";
+import { HelperService } from "src/util/helpers.service";
+// import { ApiKeyJwtAuthGuard, Company, InvestmentDto, DataExportQueryDto } from "@undp/carbon-services-lib";
+// import { QueryDto } from "@undp/carbon-services-lib";
+// import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
+// import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
+// import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
+// import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory,Investment} from '@undp/carbon-services-lib';
+
+
 
 @ApiTags("Organisation")
 @ApiBearerAuth()

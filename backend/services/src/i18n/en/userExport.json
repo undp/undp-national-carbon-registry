@@ -1,0 +1,16 @@
+{
+    "id": "User Id",
+    "email": "Email",
+    "role": "Role",
+    "name": "Name",
+    "country": "Country",
+    "phoneNo": "Phone Number",
+    "companyId": "Organization Id",
+    "companyName": "Organization Name",
+    "companyRole": "Organization Type",
+    "createdTime": "Created At",
+    "isPending": "Pending Approval",
+    "nothingToExport": "Data not found for export",
+    "users": "Users"
+    
+}

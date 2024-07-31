@@ -6,20 +6,32 @@ import {
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import {
-  Company,
-  BaseEntity,
-  ProgrammeTransfer,
-  User,
-  ProgrammeEntity,
-  CompanyRole,
-  Role,
-  ProgrammeStageUnified,
-  Action,
-  ProgrammeCertify,
-  Emission,
-  Projection,
-} from '@undp/carbon-library';
+import { BaseEntity } from '../Definitions/Entities/baseEntity';
+import { Company } from '../Definitions/Entities/company';
+import { Emission } from '../Definitions/Entities/emission';
+import { ProgrammeEntity } from '../Definitions/Entities/programme';
+import { ProgrammeCertify } from '../Definitions/Entities/programmeCertify';
+import { ProgrammeTransfer } from '../Definitions/Entities/programmeTransfer';
+import { Projection } from '../Definitions/Entities/projection';
+import { User } from '../Definitions/Entities/user';
+import { Action } from '../Definitions/Enums/action.enum';
+import { CompanyRole } from '../Definitions/Enums/company.role.enum';
+import { ProgrammeStageUnified } from '../Definitions/Enums/programmeStage.enum';
+import { Role } from '../Definitions/Enums/role.enum';
+// import {
+//   Company,
+//   BaseEntity,
+//   ProgrammeTransfer,
+//   User,
+//   ProgrammeEntity,
+//   CompanyRole,
+//   Role,
+//   ProgrammeStageUnified,
+//   Action,
+//   ProgrammeCertify,
+//   Emission,
+//   Projection,
+// } from '@undp/carbon-library';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 

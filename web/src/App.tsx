@@ -8,7 +8,7 @@ import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
 import AddUser from './Pages/AddUser/addUser';
 import UserManagement from './Pages/UserManagement/userManagement';
-import MRVDashboard from './Pages/Dashboard/mrv/mrvdashboard';
+// import MRVDashboard from './Pages/Dashboard/mrv/mrvdashboard';
 import RegistryDashboard from './Pages/Dashboard/registry/registrydashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
 import CompanyManagement from './Pages/CompanyManagement/companyManagement';
@@ -35,17 +35,21 @@ import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
-import {
-  Loading,
-  ConnectionContextProvider,
-  UserInformationContextProvider,
-  SettingsContextProvider,
-} from '@undp/carbon-library';
+// import {
+//   Loading,
+//   ConnectionContextProvider,
+//   UserInformationContextProvider,
+//   SettingsContextProvider,
+// } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
 import NdcDetails from './Pages/NdcDetails/ndcDetails';
-import GhgEmissions from './Pages/GhgInventory/emissions';
-import GhgProjections from './Pages/GhgInventory/projections';
-import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
+import { ConnectionContextProvider } from './Context/ConnectionContext/connectionContext';
+import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
+import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
+import { Loading } from './Components/Loading/loading';
+// import GhgEmissions from './Pages/GhgInventory/emissions';
+// import GhgProjections from './Pages/GhgInventory/projections';
+// import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
 
 // message.config({
 //   duration: 60,
@@ -74,15 +78,11 @@ const App = () => {
     <AbilityContext.Provider value={ability}>
       <ConnectionContextProvider
         serverURL={
-          process.env.REACT_APP_BACKEND
-            ? process.env.REACT_APP_BACKEND
-            : 'http://localhost:3000/local'
+          process.env.REACT_APP_BACKEND ? process.env.REACT_APP_BACKEND : 'http://localhost:3000'
         }
         t={t}
         statServerUrl={
-          process.env.REACT_APP_STAT_URL
-            ? process.env.REACT_APP_STAT_URL
-            : 'http://localhost:3100/local'
+          process.env.REACT_APP_STAT_URL ? process.env.REACT_APP_STAT_URL : 'http://localhost:3100'
         }
       >
         <UserInformationContextProvider>
@@ -177,7 +177,7 @@ const App = () => {
                       <Route path="addUser" element={<AddUser />} />
                       <Route path="updateUser" element={<UpdateUser />} />
                     </Route> */}
-                  <Route path="/emissions" element={<CustomLayout selectedKey="emissions/view" />}>
+                  {/* <Route path="/emissions" element={<CustomLayout selectedKey="emissions/view" />}>
                     <Route path="view" element={<GhgEmissions />} />
                   </Route>
                   <Route
@@ -185,7 +185,7 @@ const App = () => {
                     element={<CustomLayout selectedKey="projections/view" />}
                   >
                     <Route path="view" element={<GhgProjections />} />
-                  </Route>
+                  </Route> */}
                 </Route>
                 {enableRegistration === 'true' && (
                   <Route

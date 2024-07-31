@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { NdcDetailsComponent, useConnection, useUserContext } from '@undp/carbon-library';
+import { NdcDetailsComponent } from '../../Components/Ndc/ndcDetailsComponent';
+// import { NdcDetailsComponent, useConnection, useUserContext } from '@undp/carbon-library';
 
 const NdcDetails = () => {
   const navigate = useNavigate();

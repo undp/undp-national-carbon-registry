@@ -1,0 +1,109 @@
+@import '../../../Styles/variables.scss';
+
+.ndc-details-view {
+    .card-container {
+      margin-bottom: 16px;
+      width: 100%;
+      border-radius: 10px;
+  
+      .co-benifits-view {
+        .title {
+          color: rgba(58, 53, 65, 0.8);
+          font-weight: 600;
+          margin-left: 0.5rem;
+        }
+      }
+  
+      .action-btns {
+        margin-top: 25px;
+        margin-bottom: -15px;
+        justify-content: end;
+      }
+    }
+  
+    .fix-height {
+      height: 350px;
+    }
+  }
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+  .ndc-action-report-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  
+    .report-details {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      margin: 5px 25px;
+      font-size: 0.8rem;
+      
+      .report-type {
+        display: flex;
+        flex-direction: row;
+        width: 60%;
+  
+        .name-time-container {
+          display: flex;
+          flex-direction: column;
+          width: 70%;
+          margin-bottom: 0.5rem;
+        }
+  
+        .name {
+          font-weight: 500;
+          color: rgba(58, 53, 65, 0.6);
+        }
+        
+        .time {
+          color: rgba(58, 53, 65, 0.5);
+          width: max-content;
+        }
+
+        .icon {
+          display: flex;
+          align-items: center;
+          width: 30%;
+          color: rgba(58, 53, 65, 0.6);
+        }
+  
+        .empty {
+          font-weight: 500;
+          color: rgba(58, 53, 65, 0.6);
+        }
+      }
+  
+      .ant-row{
+        margin: 0px 30px auto;
+      }
+
+      .report-link {
+        display: flex;
+        flex-direction: row;
+        width: 40%;
+  
+        .version {
+          font-weight: 600;
+          color: #cacaca;
+        }
+  
+        .link {
+          margin-left: 1rem;
+        }
+      }
+    }
+  }
+  

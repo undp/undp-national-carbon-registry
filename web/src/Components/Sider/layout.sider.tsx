@@ -16,7 +16,8 @@ import {
   CloudOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { LayoutSiderProps } from '@undp/carbon-library';
+import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
+// import { LayoutSiderProps } from '@undp/carbon-library';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
