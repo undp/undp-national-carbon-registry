@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 // import NdcActionDetails from '../../Common/NdcActionDetails/ndcActionDetails';
 import { Button, Form, Row, Steps, Tooltip, Upload, message } from 'antd';

@@ -58,7 +58,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
   const { userInfoState } = useUserContext();
   const fileInputMonitoringRef: any = useRef(null);
   const fileInputVerificationRef: any = useRef(null);
-  const { get, put, post } = useConnection();
+  const { post } = useConnection();
   const [loading, setLoading] = useState<boolean>(false);
   const [monitoringReportData, setMonitoringReportData] = useState<any>();
   const [monitoringReportversion, setMonitoringReportversion] = useState<any>('');
@@ -174,7 +174,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
   const docAction = async (id: any, status: DocumentStatus, actionId: any, type: any) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/docAction', {
+      await post('national/programme/docAction', {
         id: id,
         status: status,
         actionId: actionId,
