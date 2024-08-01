@@ -22,6 +22,7 @@ import { OrganisationStatus } from '../../OrganisationStatus/organisationStatus'
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 // import { useConnection } from '../../../Context';
 import { CompanyDetailsComponent } from '../CompanyDetails/companyDetailsComponent';
+import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 
 export const CompanyProfileComponent = (props: any) => {
   const {
@@ -437,6 +438,3 @@ export const CompanyProfileComponent = (props: any) => {
     </div>
   );
 };
-function useConnection(): { get: any; put: any; post: any } {
-  throw new Error('Function not implemented.');
-}
