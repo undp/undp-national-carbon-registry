@@ -17,26 +17,31 @@ export const OrganisationStatus = (props: OrganisationStatusProps) => {
   switch (organisationStatus) {
     case 1:
       orgState = (
-        <div className="mg-top-1 organisation-status-active">{t('companyProfile:activeStatus')}</div>
+        <div className="mg-top-1 organisation-status-active">
+          {t('companyProfile:activeStatus')}
+        </div>
       );
       break;
 
-      case 2:
+    case 2:
       orgState = (
-        <div className="mg-top-1 organisation-status-pending">{t('companyProfile:pendingStatus')}</div>
+        <div className="mg-top-1 organisation-status-pending">
+          {t('companyProfile:pendingStatus')}
+        </div>
       );
       break;
 
-      case 3:
-        orgState = (
-          <div className="mg-top-1 organisation-status-rejected">{t('companyProfile:rejectedStatus')}</div>
-        );
-        break;
-  
+    case 3:
+      orgState = (
+        <div className="mg-top-1 organisation-status-rejected">
+          {t('companyProfile:rejectedStatus')}
+        </div>
+      );
+      break;
+
     default:
       break;
   }
 
   return orgState;
 };
-
