@@ -1,0 +1,9 @@
+{
+  "forgot-pwd-title": "Recuperación de Cuenta",
+  "submit": "Enviar",
+  "forgot-pwd-sub": "Por favor, introduzca el correo electrónico utilizado para iniciar sesión en el Registro de Carbono",
+  "note-1": "Le enviaremos instrucciones por correo electrónico para establecer su contraseña si existe una cuenta con el correo electrónico que ingresó.",
+  "note-2": "Si no recibe un correo electrónico, asegúrese de haber ingresado la dirección vinculada a la cuenta del Registro de Carbono y verifique su carpeta de correo no deseado.",
+  "note": "Nota",
+  "emailSent": "¡Se ha enviado un correo electrónico!"
+}

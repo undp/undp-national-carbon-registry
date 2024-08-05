@@ -1,0 +1,9 @@
+{
+  "forgot-pwd-title": "Récupération de Compte",
+  "submit": "Envoyer",
+  "forgot-pwd-sub": "Veuillez entrer l'adresse e-mail utilisée pour vous connecter au Registre Carbone",
+  "note-1": "Nous vous enverrons des instructions par e-mail pour définir votre mot de passe si un compte existe avec l'adresse e-mail que vous avez saisie.",
+  "note-2": "Si vous ne recevez pas d'e-mail, assurez-vous d'avoir saisi l'adresse liée au compte du Registre Carbone et vérifiez votre dossier de courrier indésirable.",
+  "note": "Note",
+  "emailSent": "Un e-mail a été envoyé !"
+}

@@ -1,0 +1,22 @@
+{
+  "submit": "Submit",
+  "name": "Name",
+  "email": "Email",
+  "pwd": "Password",
+  "login": "Sign In",
+  "signUp": "Sign Up",
+  "language": "Language",
+  "company": "Organisations",
+  "edit": "EDIT",
+  "isRequired": "is required!",
+  "isInvalid": "is invalid!",
+  "sessionExpiredErrorMsg": "Your session has expired, Please log in again to continue working.",
+  "backto": "Back to",
+  "signIn": "Sign In",
+  "loginFailed": "Login failed",
+  "networkError": "Network error. Please check your internet connection and try again.",
+  "systemError": "Something went wrong. Please try again.",
+  "maxSizeVal": "Maximum upload file size is 5MB",
+  "approve": "APPROVE",
+  "reject": "REJECT"
+}
