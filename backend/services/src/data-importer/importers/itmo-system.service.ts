@@ -280,7 +280,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       "designDocUrl",
                       "methodologyDocUrl"
                     );
-                    const auth = await this.programmeService.approveProgramme({programmeId: programmedetails.programmeId, issueAmount: 0, comment: "ITMO Authorised"}, rootUser, authLetterUrl)
+                    const auth = await this.programmeService.authorizeProgramme({programmeId: programmedetails.programmeId, issueAmount: 0, comment: "ITMO Authorised"}, rootUser, authLetterUrl)
                     if(this.configService.get('systemType')==SYSTEM_TYPE.CARBON_REGISTRY){
                       const updateprogrammetable = await this.programmeLedger.addDocument(
                         projectDetails.id,
