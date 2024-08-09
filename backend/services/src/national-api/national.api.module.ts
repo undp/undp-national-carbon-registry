@@ -22,6 +22,8 @@ import { TypeOrmConfigService } from 'src/typeorm.config.service';
 import { UserModule } from 'src/user/user.module';
 import { UtilModule } from 'src/util/util.module';
 import configuration from 'src/configuration';
+import { NationalAccountingModule } from 'src/national-accounting/national.accounting.module';
+import { NationalAccountingController } from './national-accounting.controller';
 // import { GHGEmissionController } from './ghg,emission.controller';
 // import { GHGProjectionController } from './ghg,projection.controller';
 
@@ -42,6 +44,7 @@ import configuration from 'src/configuration';
     ProgrammeModule,
     CompanyModule,
     UtilModule,
+		NationalAccountingModule
     // GhgInventoryModule
   ],
   controllers: [ 
@@ -51,6 +54,7 @@ import configuration from 'src/configuration';
 		CompanyController, 
 		ProgrammeController, 
 		SettingsController, 
+		NationalAccountingController
 		// GHGEmissionController, 
 		// GHGProjectionController
 	 ],

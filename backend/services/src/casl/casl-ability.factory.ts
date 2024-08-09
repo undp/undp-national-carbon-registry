@@ -30,6 +30,7 @@ import { NDCActionViewEntity } from "../entities/ndc.view.entity";
 import { ProgrammeDocument } from "../entities/programme.document";
 import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
+import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -278,6 +279,15 @@ export class CaslAbilityFactory {
       can(Action.Read, Emission);
       can(Action.Read, Projection);
     }
+
+		if (
+			(user.role == Role.Root || user.role == Role.Admin) &&
+			user.companyRole === CompanyRole.GOVERNMENT
+		) {
+			can(Action.Read, CreditAuditLog);
+		} else {
+			cannot(Action.Read, CreditAuditLog);
+		}
     
     return build({
       detectSubjectType: (item) =>
