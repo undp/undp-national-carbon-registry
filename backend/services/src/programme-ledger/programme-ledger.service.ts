@@ -1618,7 +1618,7 @@ export class ProgrammeLedgerService {
     externalId: string,
     companyIds: number[],
     taxIds: string[],
-    percentages: number[],
+    propPercentages: number[],
     investor: number,
     owner: number,
     shareFromOwner: number,
@@ -1704,45 +1704,65 @@ export class ProgrammeLedgerService {
         }
 
         let investmentPerc = undefined
-        if (programme.creditBalance && Number(programme.creditBalance) != 0) {
-          const ownerCreditAmount = this.helperService.halfUpToPrecision(programme.creditBalance * programme.creditOwnerPercentage[ownerIndex] / 100);
-          for (const j in programme.companyId) {
-            // updatedCreditOwnership[companyIds[j]]
-            if (Number(companyIds[j]) === owner) {
-              const investorCredit =this.helperService.halfUpToPrecision(ownerCreditAmount * shareFromOwner / 100);
-              if (!ownershipPercentage[investor]) {
-                ownershipPercentage[investor] = 0
-              }
-              ownershipPercentage[investor] = this.helperService.halfUpToPrecision((ownershipPercentage[investor]+(investorCredit * 100 / programme.creditBalance)),6)
-              ownershipPercentage[owner] = this.helperService.halfUpToPrecision(((ownerCreditAmount - investorCredit) * 100 / programme.creditBalance),6)
-            } else {
-              if (ownershipPercentage[companyIds[j]]) {
-                ownershipPercentage[companyIds[j]] = this.helperService.halfUpToPrecision((ownershipPercentage[companyIds[j]] + programme.creditOwnerPercentage[j]) ,6) 
-              } else {
-                ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
-              }
-            }
-          }
-          for (const x in companyIds) {
-            ownershipPercentageList.push(ownershipPercentage[companyIds[x]])
-            if (Number(companyIds[x]) === investor) {
-              investmentPerc = percentages[x]
-            }
-          }
+        // if (programme.creditBalance && Number(programme.creditBalance) != 0) {
+        //   const ownerCreditAmount = this.helperService.halfUpToPrecision(programme.creditBalance * programme.creditOwnerPercentage[ownerIndex] / 100);
+        //   for (const j in programme.companyId) {
+        //     // updatedCreditOwnership[companyIds[j]]
+        //     if (Number(companyIds[j]) === owner) {
+        //       const investorCredit =this.helperService.halfUpToPrecision(ownerCreditAmount * shareFromOwner / 100);
+        //       if (!ownershipPercentage[investor]) {
+        //         ownershipPercentage[investor] = 0
+        //       }
+        //       ownershipPercentage[investor] = this.helperService.halfUpToPrecision((ownershipPercentage[investor]+(investorCredit * 100 / programme.creditBalance)),6)
+        //       ownershipPercentage[owner] = this.helperService.halfUpToPrecision(((ownerCreditAmount - investorCredit) * 100 / programme.creditBalance),6)
+        //     } else {
+        //       if (ownershipPercentage[companyIds[j]]) {
+        //         ownershipPercentage[companyIds[j]] = this.helperService.halfUpToPrecision((ownershipPercentage[companyIds[j]] + programme.creditOwnerPercentage[j]) ,6) 
+        //       } else {
+        //         ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j]
+        //       }
+        //     }
+        //   }
+        //   for (const x in companyIds) {
+        //     ownershipPercentageList.push(ownershipPercentage[companyIds[x]])
+        //     if (Number(companyIds[x]) === investor) {
+        //       investmentPerc = percentages[x]
+        //     }
+        //   }
 
-        } else {
-          ownershipPercentageList = percentages
-          for (const x in companyIds) {
-            if (Number(companyIds[x]) === investor) {
-              investmentPerc = percentages[x]
-            }
+        // } else {
+        //   ownershipPercentageList = percentages
+        //   for (const x in companyIds) {
+        //     if (Number(companyIds[x]) === investor) {
+        //       investmentPerc = percentages[x]
+        //     }
+        //   }
+        // }
+
+        for (const j in programme.companyId) {
+          if (ownershipPercentage[companyIds[j]]) {
+            ownershipPercentage[companyIds[j]] = this.helperService.halfUpToPrecision((ownershipPercentage[companyIds[j]] + programme.creditOwnerPercentage[j]),6); 
+          } else {
+            ownershipPercentage[companyIds[j]] = programme.creditOwnerPercentage[j];
           }
         }
+
+        if (!ownershipPercentage[investor]) {
+          ownershipPercentage[investor] = 0;
+        }
+
+        for (const x in companyIds) {
+          ownershipPercentageList.push(ownershipPercentage[companyIds[x]])
+          if (Number(companyIds[x]) === investor) {
+            investmentPerc = propPercentages[x]
+          }
+        }
+
         programme.txTime = new Date().getTime()
         programme.txType = TxType.OWNERSHIP_UPDATE
         programme.txRef = `${user}#${investmentPerc}`
         programme.proponentTaxVatId = taxIds;
-        programme.proponentPercentage = percentages;
+        programme.proponentPercentage = propPercentages;
         programme.companyId = companyIds;
         programme.creditOwnerPercentage = ownershipPercentageList;
 
