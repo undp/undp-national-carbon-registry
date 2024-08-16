@@ -20,6 +20,7 @@
     "transactionCount": "Transaction Count",
     "latestTransaction": "Last Transaction",
     "creditTransactions": "Credit Transactions",
-    "country": "country"
+    "country": "country",
+    "noRecords": "No records found"
 
 }

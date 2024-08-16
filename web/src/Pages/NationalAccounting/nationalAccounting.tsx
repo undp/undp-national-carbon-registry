@@ -567,9 +567,17 @@ const NationalAccountingDashboard = () => {
         <Row gutter={[40, 40]} className="stastic-card-row">
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.credits}
+              value={
+                totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.credits
+                  ? totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.credits
+                  : 0
+              }
               title="creditAuthorized"
-              updatedDate={moment(totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.lastUpdated).fromNow()}
+              updatedDate={
+                totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.lastUpdated
+                  ? moment(totalsWithoutTimeRange?.CREDIT_AUTHORIZED?.lastUpdated).fromNow()
+                  : '0'
+              }
               icon={<ShieldCheck color="#16B1FF" size={80} />}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
@@ -579,9 +587,17 @@ const NationalAccountingDashboard = () => {
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={totalsWithoutTimeRange?.CREDIT_ISSUED?.credits}
+              value={
+                totalsWithoutTimeRange?.CREDIT_ISSUED?.credits
+                  ? totalsWithoutTimeRange?.CREDIT_ISSUED?.credits
+                  : 0
+              }
               title="creditIssued"
-              updatedDate={moment(totalsWithoutTimeRange?.CREDIT_ISSUED?.lastUpdated).fromNow()}
+              updatedDate={
+                totalsWithoutTimeRange?.CREDIT_ISSUED?.lastUpdated
+                  ? moment(totalsWithoutTimeRange?.CREDIT_ISSUED?.lastUpdated).fromNow()
+                  : '0'
+              }
               icon={<CheckCircle color="#16B1FF" size={80} />}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
@@ -591,9 +607,17 @@ const NationalAccountingDashboard = () => {
           </Col>
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
-              value={totalsWithoutTimeRange?.CREDIT_RETIRED?.credits}
+              value={
+                totalsWithoutTimeRange?.CREDIT_RETIRED?.credits
+                  ? totalsWithoutTimeRange?.CREDIT_RETIRED?.credits
+                  : 0
+              }
               title="creditRetired"
-              updatedDate={moment(totalsWithoutTimeRange?.CREDIT_RETIRED?.lastUpdated).fromNow()}
+              updatedDate={
+                totalsWithoutTimeRange?.CREDIT_RETIRED?.lastUpdated
+                  ? moment(totalsWithoutTimeRange?.CREDIT_RETIRED?.lastUpdated).fromNow()
+                  : '0'
+              }
               icon={<Archive color="#16B1FF" size={80} />}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
