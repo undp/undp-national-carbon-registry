@@ -219,21 +219,10 @@ const NationalAccountingDashboard = () => {
         return (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {itemObj.country && (
-              <Tooltip
-                title={
-                  t('creditTransfer:iaccount') +
-                  `${itemObj.countryName ? ' - ' + itemObj.countryName : ''}`
-                }
-                color={TooltipColor}
-                key={TooltipColor}
-              >
-                {itemObj.country && (
-                  <CircleFlag
-                    className="profile-icon flag-ret-icon"
-                    countryCode={itemObj.country.toLowerCase()}
-                  />
-                )}
-              </Tooltip>
+              <CircleFlag
+                className="profile-icon flag-ret-icon"
+                countryCode={itemObj.country.toLowerCase()}
+              />
             )}
           </div>
         );
