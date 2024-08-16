@@ -31,6 +31,7 @@ import { ProgrammeDocument } from "../entities/programme.document";
 import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
 import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "src/entities/creditAuditLog.view.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -285,8 +286,10 @@ export class CaslAbilityFactory {
 			user.companyRole === CompanyRole.GOVERNMENT
 		) {
 			can(Action.Read, CreditAuditLog);
+			can(Action.Read, CreditAuditLogViewEntity);
 		} else {
 			cannot(Action.Read, CreditAuditLog);
+			cannot(Action.Read, CreditAuditLogViewEntity);
 		}
     
     return build({

@@ -130,8 +130,8 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     [send]
   );
   const get = useCallback(
-    (path: string, config?: AxiosRequestConfig) => {
-      return send('get', path, undefined, config);
+    (path: string, config?: AxiosRequestConfig, extraUrl?: string) => {
+      return send('get', path, undefined, config, extraUrl);
     },
     [send]
   );

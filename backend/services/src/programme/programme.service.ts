@@ -3637,7 +3637,7 @@ export class ProgrammeService {
 					transfer.programmeId,
 					transfer.creditAmount,
 					approver.id,
-					countryName
+					transfer.toCompanyMeta.country
 				)
 
         await this.emailHelperService.sendEmailToOrganisationAdmins(
@@ -3731,15 +3731,6 @@ export class ProgrammeService {
 
     if (result.affected > 0) {
       this.checkPendingTransferValidity(programme);
-			// if (isRetirement) {
-			// 	await this.createCreditAuditLogRecord(
-			// 		CreditAuditLogType.CREDIT_RETIRED,
-			// 		transfer.programmeId,
-			// 		transfer.creditAmount,
-			// 		user,
-			// 		countryName
-			// 	)
-			// }
 			
       return new DataResponseDto(HttpStatus.OK, programme);
     }

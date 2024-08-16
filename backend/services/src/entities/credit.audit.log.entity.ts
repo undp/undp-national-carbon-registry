@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 import { EntitySubject } from './entity.subject';
-import { EventLogType } from '../enum/event.log.type.enum';
 import { CreditAuditLogType } from 'src/enum/credit.audit.log.type.enum';
 import { PRECISION } from '@undp/carbon-credit-calculator/dist/esm/calculator';
 

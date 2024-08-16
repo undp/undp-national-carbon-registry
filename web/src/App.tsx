@@ -47,6 +47,7 @@ import { ConnectionContextProvider } from './Context/ConnectionContext/connectio
 import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 import { Loading } from './Components/Loading/loading';
+import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
 // import GhgEmissions from './Pages/GhgInventory/emissions';
 // import GhgProjections from './Pages/GhgInventory/projections';
 // import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
@@ -104,6 +105,12 @@ const App = () => {
                     <Route path="/dashboard" element={<RegistryDashboard />} />
                     {/* <Route path="/dashboard/mrv" element={<MRVDashboard />} />
                     <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} /> */}
+                  </Route>
+                  <Route
+                    path="/nationalAccounting"
+                    element={<CustomLayout selectedKey="nationalAccounting" />}
+                  >
+                    <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
                   </Route>
                   <Route
                     path="/programmeManagement"

@@ -6,26 +6,26 @@ import { Action } from "src/casl/action.enum";
 import { PoliciesGuard, PoliciesGuardEx } from "src/casl/policy.guard";
 import { QueryDto } from "src/dto/query.dto";
 import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
-import { NationalAccountingService } from "src/national-accounting/national.accounting.service";
+import { NationalAccountingService } from "src/analytics-api/national-accounting/national.accounting.service";
 
 @ApiTags("national-accounting")
 @ApiBearerAuth()
 @Controller("national-accounting")
 export class NationalAccountingController {
-  constructor(private nationalAccountingService: NationalAccountingService) { }
+	constructor(private nationalAccountingService: NationalAccountingService) { }
 
 	@ApiBearerAuth("api_key")
-  @ApiBearerAuth()
+	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, CreditAuditLog))
-  @Get("total")
-  async getTotalStats() {
-    return this.nationalAccountingService.getTotalStats();
-  }
+	@Get("total")
+	async getTotalStats() {
+		return this.nationalAccountingService.getTotalStats();
+	}
 
 	@ApiBearerAuth()
 	@UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, CreditAuditLog, true))
 	@Post("query")
-	queryActivity(@Body() query: QueryDto, @Request() req) {
+	queryTransactionRecords(@Body() query: QueryDto, @Request() req) {
 		console.log(req.abilityCondition);
 		return this.nationalAccountingService.getTransactionRecords(query, req.abilityCondition);
 	}
