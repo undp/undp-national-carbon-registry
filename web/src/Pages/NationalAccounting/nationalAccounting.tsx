@@ -36,8 +36,10 @@ const NationalAccountingDashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['nationalAccounting']);
   const { userInfoState } = useUserContext();
-  const { get, post, delete: del, statServerUrl } = useConnection();
-  const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
+  const { get, post, statServerUrl } = useConnection();
+  const [loadingTotals, setLoadingTotals] = useState<boolean>(false);
+  const [loadingTransactionRecords, setLoadingTransactionRecords] = useState<boolean>(false);
+  const [loadingCountryRecords, setLoadingCountryRecords] = useState<boolean>(false);
   const [totalsWithoutTimeRange, setTotalsWithoutTimeRange] = useState<any>();
   const [transactionRecordData, setTransactionRecordData] = useState<any>();
   const [totalTransactionRecords, setTotalTransactionRecords] = useState<number>();
@@ -277,8 +279,8 @@ const NationalAccountingDashboard = () => {
     },
   ];
 
-  const getAllCreditsWithoutTimeRange = async () => {
-    setLoadingWithoutTimeRange(true);
+  const getTotalCredits = async () => {
+    setLoadingTotals(true);
     try {
       const response: any = await get('stats/national-accounting/total', undefined, statServerUrl);
       setTotalsWithoutTimeRange(response?.data);
@@ -291,7 +293,7 @@ const NationalAccountingDashboard = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoadingWithoutTimeRange(false);
+      setLoadingTotals(false);
     }
   };
 
@@ -324,7 +326,7 @@ const NationalAccountingDashboard = () => {
 
     if (sortOrder && sortField) {
       sort = {
-        key: sortField === 'programmeCompanyId' ? 'programmeCompanyId[1]' : sortField,
+        key: sortField,
         order: sortOrder,
         nullFirst: false,
       };
@@ -413,7 +415,7 @@ const NationalAccountingDashboard = () => {
   };
 
   const getTransactionRecordsWithoutTimeRange = async (queryParams: () => any) => {
-    setLoadingWithoutTimeRange(true);
+    setLoadingTransactionRecords(true);
     try {
       const response: any = await post(
         'stats/national-accounting/query',
@@ -432,12 +434,12 @@ const NationalAccountingDashboard = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoadingWithoutTimeRange(false);
+      setLoadingTransactionRecords(false);
     }
   };
 
   const getCountryCreditRecords = async (queryParams: () => any) => {
-    setLoadingWithoutTimeRange(true);
+    setLoadingCountryRecords(true);
     try {
       const response: any = await post(
         'stats/national-accounting/query-by-country',
@@ -456,7 +458,7 @@ const NationalAccountingDashboard = () => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoadingWithoutTimeRange(false);
+      setLoadingCountryRecords(false);
     }
   };
 
@@ -480,7 +482,7 @@ const NationalAccountingDashboard = () => {
   };
 
   useEffect(() => {
-    getAllCreditsWithoutTimeRange();
+    getTotalCredits();
     getTransactionRecordsWithoutTimeRange(getTransactionRecordsDefaultParams);
     getCountryCreditRecords(getTransactionRecordsDefaultParams);
   }, []);
@@ -579,7 +581,7 @@ const NationalAccountingDashboard = () => {
                   : '0'
               }
               icon={<ShieldCheck color="#16B1FF" size={80} />}
-              loading={loadingWithoutTimeRange}
+              loading={loadingTotals}
               companyRole={userInfoState?.companyRole}
               tooltip={t('tCreditAuthorized')}
               t={t}
@@ -599,7 +601,7 @@ const NationalAccountingDashboard = () => {
                   : '0'
               }
               icon={<CheckCircle color="#16B1FF" size={80} />}
-              loading={loadingWithoutTimeRange}
+              loading={loadingTotals}
               companyRole={userInfoState?.companyRole}
               tooltip={t('tCreditIssued')}
               t={t}
@@ -619,7 +621,7 @@ const NationalAccountingDashboard = () => {
                   : '0'
               }
               icon={<Archive color="#16B1FF" size={80} />}
-              loading={loadingWithoutTimeRange}
+              loading={loadingTotals}
               companyRole={userInfoState?.companyRole}
               tooltip={t('tCreditRetired')}
               t={t}
@@ -659,7 +661,7 @@ const NationalAccountingDashboard = () => {
                   dataSource={countryRecordData}
                   columns={countryTableColumns}
                   className="common-table-class"
-                  loading={loadingWithoutTimeRange}
+                  loading={loadingCountryRecords}
                   scroll={{ x: 1150 }}
                   pagination={{
                     current: currentPageCountryTable,
@@ -746,7 +748,7 @@ const NationalAccountingDashboard = () => {
                   dataSource={transactionRecordData}
                   columns={recordsTableColumns}
                   className="common-table-class"
-                  loading={loadingWithoutTimeRange}
+                  loading={loadingTransactionRecords}
                   scroll={{ x: 1150 }}
                   pagination={{
                     current: currentPage,
