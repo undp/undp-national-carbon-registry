@@ -222,8 +222,6 @@ export class ProgrammeService {
 
     // Cannot be <= 0
     if (toCompanyIndex < 0) {
-      // programme.creditOwnerPercentage[companyIndex] -= transfer.percentage;
-      // programme.creditOwnerPercentage.push(transfer.percentage);
       programme.creditOwnerPercentage.push(0);
 
       programme.proponentPercentage[companyIndex] -= transfer.percentage;
@@ -233,8 +231,6 @@ export class ProgrammeService {
       programme.proponentTaxVatId.push(investor.taxId);
     } else {
       programme.proponentPercentage[toCompanyIndex] += transfer.percentage;
-      // programme.creditOwnerPercentage[toCompanyIndex] += transfer.percentage;
-      // programme.creditOwnerPercentage[companyIndex] -= transfer.percentage;
       programme.proponentPercentage[companyIndex] -= transfer.percentage;
     }
     if(nationalInvestment)nationalInvestment.amount-=transfer.amount
