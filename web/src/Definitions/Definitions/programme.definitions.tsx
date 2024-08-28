@@ -167,6 +167,7 @@ export interface Programme {
   txRef: string;
   typeOfMitigation: TypeOfMitigation;
   geographicalLocationCordintes: any;
+  projectLocation: any;
   mitigationActions: any;
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
@@ -206,6 +207,9 @@ export const getGeneralFields = (
       Object.keys(SectoralScope)[
         Object.values(SectoralScope).indexOf(programme.sectoralScope as SectoralScope)
       ],
+    location: programme.programmeProperties.geographicalLocation
+      ? programme.programmeProperties.geographicalLocation.join(', ')
+      : '-',
     startDate: DateTime.fromSeconds(Number(programme.startTime)),
     endDate: DateTime.fromSeconds(Number(programme.endTime)),
     buyerCountry: programme.programmeProperties.buyerCountryEligibility,

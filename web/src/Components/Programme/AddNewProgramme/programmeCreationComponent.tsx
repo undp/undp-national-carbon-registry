@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   Col,
@@ -38,6 +38,8 @@ import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { addCommSepRound } from '../../../Definitions/Definitions/programme.definitions';
 import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
+import { MapComponent } from '../../Maps/mapComponent';
+import { MapSourceData } from '../../../Definitions/Definitions/mapComponent.definitions';
 // import { useConnection, useUserContext } from '../../../Context';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
@@ -99,9 +101,24 @@ export const ProgrammeCreationComponent = (props: any) => {
   const [selectableSectoralScope, setSelectableSectoralScope] = useState<any[]>([]);
   const [availableSectar, setAvailableSectar] = useState<any[]>([]);
   const [article6trade, setArticletrade] = useState<boolean>(true);
+  const [article68trade, setArticle68trade] = useState<boolean>(false);
+  const [article64trade, setArticle64trade] = useState<boolean>(false);
+  const [article62trade, setArticle62trade] = useState<boolean>(false);
+  const [mvcAdjust, setMvcAdjust] = useState<boolean>(false);
+  const [mvcUnadjusted, setMvcUnadjusted] = useState<boolean>(false);
   const [ministryList, setMinistryList] = useState<any[]>([]);
   const [userGovernmentDepartmentValues, setUserGovernmentDepartmentValues] = useState<any>();
   const [implementOwner, setimplementOwner] = useState<any>();
+  const [projectLocation, setProjectLocation] = useState<any[]>([]);
+  const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
+  const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
+  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
+  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
+  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : '';
   // const initialOrganisationOwnershipValues: any[] = [
   //   {
   //     organisation:
@@ -114,6 +131,98 @@ export const ProgrammeCreationComponent = (props: any) => {
   //       (100-Number(govData.nationalSopValue)),
   //   },
   // ];
+
+  const getCenter = (list: any[]) => {
+    let count = 0;
+    let lat = 0;
+    let long = 0;
+    for (const l of list) {
+      if (l === null || l === 'null') {
+        continue;
+      }
+      count += 1;
+      lat += l[0];
+      long += l[1];
+    }
+    return [lat / count, long / count];
+  };
+
+  useEffect(() => {
+    setProjectLocationMapCenter(
+      projectLocation?.length > 0 ? getCenter(projectLocation) : [7.4924165, 5.5324032]
+    );
+
+    const mapSource: MapSourceData = {
+      key: 'projectLocation',
+      data: {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [projectLocation],
+          },
+          properties: null,
+        },
+      },
+    };
+
+    setProjectLocationMapSource(mapSource);
+
+    setProjectLocationMapLayer({
+      id: 'projectLocation',
+      type: 'fill',
+      source: 'projectLocation',
+      layout: {},
+      paint: {
+        'fill-color': '#0080ff',
+        'fill-opacity': 0.5,
+      },
+    });
+
+    setProjectLocationMapOutlineLayer({
+      id: 'projectLocationOutline',
+      type: 'line',
+      source: 'projectLocation',
+      layout: {},
+      paint: {
+        'line-color': '#000',
+        'line-width': 1,
+      },
+    });
+  }, [projectLocation]);
+
+  const onPolygonComplete = function (data: any) {
+    console.log('programme creation ploygon complete called');
+    if (data.features.length > 0) {
+      const coordinates = data.features[0].geometry.coordinates[0];
+      console.log(coordinates);
+      formOne.setFieldValue('projectLocation', coordinates);
+      setProjectLocation(coordinates);
+    }
+  };
+
+  const mapComponentMemoizedValue = useMemo(() => {
+    return (
+      <MapComponent
+        mapType={mapType}
+        center={projectLocationMapCenter}
+        zoom={4}
+        height={250}
+        style="mapbox://styles/mapbox/light-v11"
+        accessToken={accessToken}
+        onPolygonComplete={onPolygonComplete}
+        mapSource={projectLocationMapSource}
+        layer={projectLocationMapLayer}
+        outlineLayer={projectLocationMapOutlineLayer}
+      ></MapComponent>
+    );
+  }, [
+    projectLocationMapCenter,
+    projectLocationMapSource,
+    projectLocationMapLayer,
+    projectLocationMapOutlineLayer,
+  ]);
 
   const selectedSectoralScopes =
     selectedSector !== String(Sector.Health) &&
@@ -492,6 +601,11 @@ export const ProgrammeCreationComponent = (props: any) => {
             : proponentTxIds,
         proponentPercentage: proponentPercentages,
         article6trade: article6trade,
+        article68trade: article68trade,
+        article64trade: article64trade,
+        article62trade: article62trade,
+        mvcAdjust: mvcAdjust,
+        mvcUnadjusted: mvcUnadjusted,
         supportingowners: !article6trade && supportingOwners ? supportingOwners : undefined,
         implementinguser: !article6trade ? finalImplementingOwner : undefined,
         programmeProperties: {
@@ -505,6 +619,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           ...(includedInNDC !== undefined &&
             includedInNDC !== null && { includedInNdc: includedInNDC }),
         },
+        projectLocation: projectLocation,
         environmentalAssessmentRegistrationNo: values?.environmentalAssessmentRegistrationNo,
       };
       if (logoBase64?.length > 0) {
@@ -514,7 +629,7 @@ export const ProgrammeCreationComponent = (props: any) => {
         programmeDetails.environmentalImpactAssessment = environmentalImpactAssessmentData;
       }
       setLoading(false);
-      console.log(programmeDetails);
+      console.log('programmeDetails', programmeDetails);
       nextOne(programmeDetails);
     }
   };
@@ -647,6 +762,26 @@ export const ProgrammeCreationComponent = (props: any) => {
     formOne.resetFields(['ownershipPercentage']);
     formOne.resetFields(['article6Percentage']);
     formOne.resetFields(['implementingOwner']);
+  };
+
+  const onArticle68Trading = (event: any) => {
+    setArticle68trade(event.target.value);
+  };
+
+  const onArticle64Trading = (event: any) => {
+    setArticle64trade(event.target.value);
+  };
+
+  const onArticle62Trading = (event: any) => {
+    setArticle62trade(event.target.value);
+  };
+
+  const onMvcAdjust = (event: any) => {
+    setMvcAdjust(event.target.value);
+  };
+
+  const onMvcUnadjusted = (event: any) => {
+    setMvcUnadjusted(event.target.value);
   };
 
   const onChangeGeoLocation = (values: any[]) => {
@@ -960,6 +1095,171 @@ export const ProgrammeCreationComponent = (props: any) => {
                                         size="middle"
                                         value={article6trade}
                                         onChange={onArticle6Trading}
+                                        disabled={
+                                          userInfoState?.companyRole ===
+                                          CompanyRole.PROGRAMME_DEVELOPER
+                                        }
+                                      >
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={true}>
+                                            {t('addProgramme:yes')}
+                                          </Radio.Button>
+                                        </div>
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={false}>
+                                            {t('addProgramme:no')}
+                                          </Radio.Button>
+                                        </div>
+                                      </Radio.Group>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              </Row>
+                              <Row className="selection-details-row" gutter={[16, 16]}>
+                                <Col md={24} xl={12} className="in-ndc-col">
+                                  <Row className="in-ndc-row">
+                                    <Col md={16} lg={18} xl={18}>
+                                      <div className="included-label">
+                                        <div>{t('addProgramme:article68trading')}</div>
+                                      </div>
+                                    </Col>
+                                    <Col md={8} lg={6} xl={6} className="included-val">
+                                      <Radio.Group
+                                        size="middle"
+                                        value={article68trade}
+                                        onChange={onArticle68Trading}
+                                        disabled={
+                                          userInfoState?.companyRole ===
+                                          CompanyRole.PROGRAMME_DEVELOPER
+                                        }
+                                      >
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={true}>
+                                            {t('addProgramme:yes')}
+                                          </Radio.Button>
+                                        </div>
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={false}>
+                                            {t('addProgramme:no')}
+                                          </Radio.Button>
+                                        </div>
+                                      </Radio.Group>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              </Row>
+                              <Row className="selection-details-row" gutter={[16, 16]}>
+                                <Col md={24} xl={12} className="in-ndc-col">
+                                  <Row className="in-ndc-row">
+                                    <Col md={16} lg={18} xl={18}>
+                                      <div className="included-label">
+                                        <div>{t('addProgramme:article64trading')}</div>
+                                      </div>
+                                    </Col>
+                                    <Col md={8} lg={6} xl={6} className="included-val">
+                                      <Radio.Group
+                                        size="middle"
+                                        value={article64trade}
+                                        onChange={onArticle64Trading}
+                                        disabled={
+                                          userInfoState?.companyRole ===
+                                          CompanyRole.PROGRAMME_DEVELOPER
+                                        }
+                                      >
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={true}>
+                                            {t('addProgramme:yes')}
+                                          </Radio.Button>
+                                        </div>
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={false}>
+                                            {t('addProgramme:no')}
+                                          </Radio.Button>
+                                        </div>
+                                      </Radio.Group>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              </Row>
+                              <Row className="selection-details-row" gutter={[16, 16]}>
+                                <Col md={24} xl={12} className="in-ndc-col">
+                                  <Row className="in-ndc-row">
+                                    <Col md={16} lg={18} xl={18}>
+                                      <div className="included-label">
+                                        <div>{t('addProgramme:article62trading')}</div>
+                                      </div>
+                                    </Col>
+                                    <Col md={8} lg={6} xl={6} className="included-val">
+                                      <Radio.Group
+                                        size="middle"
+                                        value={article62trade}
+                                        onChange={onArticle62Trading}
+                                        disabled={
+                                          userInfoState?.companyRole ===
+                                          CompanyRole.PROGRAMME_DEVELOPER
+                                        }
+                                      >
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={true}>
+                                            {t('addProgramme:yes')}
+                                          </Radio.Button>
+                                        </div>
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={false}>
+                                            {t('addProgramme:no')}
+                                          </Radio.Button>
+                                        </div>
+                                      </Radio.Group>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              </Row>
+                              <Row className="selection-details-row" gutter={[16, 16]}>
+                                <Col md={24} xl={12} className="in-ndc-col">
+                                  <Row className="in-ndc-row">
+                                    <Col md={16} lg={18} xl={18}>
+                                      <div className="included-label">
+                                        <div>{t('addProgramme:mvcAdjust')}</div>
+                                      </div>
+                                    </Col>
+                                    <Col md={8} lg={6} xl={6} className="included-val">
+                                      <Radio.Group
+                                        size="middle"
+                                        value={mvcAdjust}
+                                        onChange={onMvcAdjust}
+                                        disabled={
+                                          userInfoState?.companyRole ===
+                                          CompanyRole.PROGRAMME_DEVELOPER
+                                        }
+                                      >
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={true}>
+                                            {t('addProgramme:yes')}
+                                          </Radio.Button>
+                                        </div>
+                                        <div className="yes-no-radio-container">
+                                          <Radio.Button className="yes-no-radio" value={false}>
+                                            {t('addProgramme:no')}
+                                          </Radio.Button>
+                                        </div>
+                                      </Radio.Group>
+                                    </Col>
+                                  </Row>
+                                </Col>
+                              </Row>
+                              <Row className="selection-details-row" gutter={[16, 16]}>
+                                <Col md={24} xl={12} className="in-ndc-col">
+                                  <Row className="in-ndc-row">
+                                    <Col md={16} lg={18} xl={18}>
+                                      <div className="included-label">
+                                        <div>{t('addProgramme:mvcUnadjusted')}</div>
+                                      </div>
+                                    </Col>
+                                    <Col md={8} lg={6} xl={6} className="included-val">
+                                      <Radio.Group
+                                        size="middle"
+                                        value={mvcUnadjusted}
+                                        onChange={onMvcUnadjusted}
                                         disabled={
                                           userInfoState?.companyRole ===
                                           CompanyRole.PROGRAMME_DEVELOPER
@@ -1652,6 +1952,20 @@ export const ProgrammeCreationComponent = (props: any) => {
                                     <Select.Option value={region}>{region}</Select.Option>
                                   ))}
                                 </Select>
+                              </Form.Item>
+                              <Form.Item
+                                label={t('addProgramme:projectLocation')}
+                                name="projectLocation"
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('addProgramme:projectLocation')} ${t(
+                                      'isRequired'
+                                    )}`,
+                                  },
+                                ]}
+                              >
+                                {mapComponentMemoizedValue}
                               </Form.Item>
                             </div>
                           </Col>
