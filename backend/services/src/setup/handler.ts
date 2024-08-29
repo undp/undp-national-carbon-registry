@@ -44,7 +44,6 @@ export const handler: Handler = async (event) => {
 
   function mapEnvironmentToEnum<T>(envValue: string, targetEnum: T): T[keyof T] | undefined {
     const enumValues = Object.values(targetEnum).filter((value) => typeof value === 'string') as string[];
-    console.log(enumValues, envValue,"=================hellooo")
     if (enumValues.includes(envValue)) {
       return envValue as T[keyof T];
     }
