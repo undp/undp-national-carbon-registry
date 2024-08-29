@@ -240,7 +240,7 @@ export class ProgrammeController {
   )
   @Put("authorize")
   async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
-    return this.programmeService.approveProgramme(body, req.user);
+    return this.programmeService.authorizeProgramme(body, req.user);
   }
 
   @ApiBearerAuth()

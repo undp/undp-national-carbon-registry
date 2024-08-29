@@ -28,7 +28,11 @@ export type ConnectionProps = {
     config?: AxiosRequestConfig,
     extraUrl?: string
   ): Promise<R>;
-  get<T = any, R = Response<T>>(path: string, config?: AxiosRequestConfig): Promise<R>;
+  get<T = any, R = Response<T>>(
+    path: string,
+    config?: AxiosRequestConfig,
+    extraUrl?: string
+  ): Promise<R>;
   delete<T = any, R = Response<T>>(path: string, config?: AxiosRequestConfig): Promise<R>;
   put<T = any, R = Response<T>>(path: string, data?: any, config?: AxiosRequestConfig): Promise<R>;
   patch<T = any, R = Response<T>>(

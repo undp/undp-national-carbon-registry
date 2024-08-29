@@ -296,7 +296,6 @@ export const CoBenifitsComponent = (props: CoBenefitProps) => {
         firstFieldValue: 'N/A',
       },
     };
-
     for (const key in economicDetailsFromForm) {
       const sectionName = key.replace(/Q\d+/, '');
       const fieldValue = economicDetailsFromForm[key];
