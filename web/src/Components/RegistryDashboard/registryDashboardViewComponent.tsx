@@ -1254,7 +1254,6 @@ export const RegistryDashboardComponent = (props: any) => {
       const programmeStatusA = Object.values(ProgrammeStageLegend);
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          console.log('mine --> check -- > ', programmeByStatusAggregationResponse);
           if (
             ProgrammeStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
           ) {
@@ -1520,7 +1519,6 @@ export const RegistryDashboardComponent = (props: any) => {
 
   // code for creating an SVG donut chart from feature properties
   const createDonutChart = (properties: any) => {
-    console.log('properties of donut creator --- > ', properties);
     const offsets = [];
     const offsetsStage = [];
     let counts: any = [];
@@ -1799,12 +1797,6 @@ ${total}
     const lastFourElements = fileNameWithoutExtension.slice(-4);
     setSelectedFile(lastFourElements);
   };
-  useEffect(() => {
-    if (selectedurl) {
-      // console.log(`Selected file:`, selectedurl);
-      // console.log("Selected url", selectedFile);
-    }
-  }, [selectedurl, selectedFile]);
 
   const menuProps = {
     items,

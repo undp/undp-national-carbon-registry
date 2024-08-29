@@ -41,7 +41,6 @@ const unAuthErrorMessage = "This action is unauthorised";
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    console.log("createForUser", user);
     const { can, cannot, build } = new AbilityBuilder(createAppAbility);
     if (user) {
       if (user.role == Role.Root) {

@@ -70,34 +70,7 @@ export class ProgrammeLedgerService {
         return [{}, {}, insertMap];
       }
     );
-    // let address: any[] = [];
-    // if (programme && programme.programmeProperties) {
-    //   if (programme.currentStage === "AwaitingAuthorization") {
-    //     const programmeProperties = programme.programmeProperties;
-    //     if (programmeProperties.geographicalLocation) {
-    //       for (
-    //         let index = 0;
-    //         index < programmeProperties.geographicalLocation.length;
-    //         index++
-    //       ) {
-    //         address.push(programmeProperties.geographicalLocation[index]);
-    //       }
-    //     }
-    //     await this.forwardGeocoding([...address]).then((response: any) => {
-    //       programme.geographicalLocationCordintes = [...response];
-    //     });
-    //   }
-    // }
-    // if (programme) {
-    //   await this.entityManger
-    //     .save<Programme>(plainToClass(Programme, programme))
-    //     .then((res: any) => {
-    //       console.log("create programme in repo -- ", res);
-    //     })
-    //     .catch((e: any) => {
-    //       console.log("create programme in repo -- ", e);
-    //     });
-    // }
+    
     return programme;
   }
 
@@ -1242,12 +1215,6 @@ export class ProgrammeLedgerService {
         };
 
         for (const com of programme.companyId) {
-          console.log(
-            "Credit issue",
-            com,
-            companyCreditBalances[String(com)],
-            companyCreditDistribution[String(com)]
-          );
           if (companyCreditBalances[String(com)] != undefined) {
             updateMap[this.ledger.companyTableName + "#" + com] = {
               credit: this.helperService.halfUpToPrecision(
@@ -1417,12 +1384,7 @@ export class ProgrammeLedgerService {
           const actionIndex = programme.mitigationActions?.findIndex(
             (e) => e.actionId == actionId
           );
-          console.log(
-            "Add document",
-            programme.mitigationActions,
-            actionId,
-            actionIndex
-          );
+
           if (!programme.mitigationActions || actionIndex < 0) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -1442,12 +1404,6 @@ export class ProgrammeLedgerService {
             timestamp:documentTxtime,
             accept:documentStatus
           }
-          );
-
-          console.log(
-            "Addition mitigation",
-            actionId,
-            programme.mitigationActions
           );
 
           updateMap[this.ledger.tableName]["mitigationActions"] =

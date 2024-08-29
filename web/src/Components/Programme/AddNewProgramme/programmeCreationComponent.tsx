@@ -173,7 +173,6 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      console.log('getting government profile');
       const response = await post('national/organisation/query', {
         page: 1,
         size: 100,
@@ -199,7 +198,6 @@ export const ProgrammeCreationComponent = (props: any) => {
           },
         ]);
         setGovData(response?.data[0]);
-        console.log('gov profile', response?.data[0]);
         return response?.data[0];
       }
     } catch (error: any) {
@@ -212,7 +210,6 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getMinistryDetails = async () => {
     setLoading(true);
     try {
-      console.log('getting Ministry profile');
       const response = await post('national/organisation/query', {
         page: 1,
         size: 100,
@@ -420,8 +417,6 @@ export const ProgrammeCreationComponent = (props: any) => {
           ? [userOrgTaxId, ...proponentTxIds]
           : proponentTxIds;
       duplicateIds = new Set(propTaxIds).size !== propTaxIds.length;
-      console.log('proponentTxIds', proponentTxIds);
-      console.log('ownershipPercentage', ownershipPercentage);
     }
     if (!article6trade) {
       ownershipPercentage = values?.article6Percentage
@@ -442,8 +437,6 @@ export const ProgrammeCreationComponent = (props: any) => {
       duplicateIds = new Set(propTaxIds).size !== propTaxIds.length;
       finalImplementingOwner = implementOwner ? implementOwner.taxId : values?.implementingOwner;
       supportingOwners = values?.article6Percentage?.map((item: any) => item.organisation);
-      console.log('implementingOwner', finalImplementingOwner);
-      console.log('supportingOwners', supportingOwners);
     }
     let environmentalImpactAssessmentData = '';
     if (values?.environmentalImpactAssessment?.length > 0) {
@@ -514,7 +507,6 @@ export const ProgrammeCreationComponent = (props: any) => {
         programmeDetails.environmentalImpactAssessment = environmentalImpactAssessmentData;
       }
       setLoading(false);
-      console.log(programmeDetails);
       nextOne(programmeDetails);
     }
   };
@@ -523,7 +515,6 @@ export const ProgrammeCreationComponent = (props: any) => {
     setLoading(true);
     try {
       const response: any = await post('national/programme/create', payload);
-      console.log('Programme creation -> ', response);
       if (response?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -714,7 +705,6 @@ export const ProgrammeCreationComponent = (props: any) => {
   }, [selectedSector]);
 
   if (!govData) {
-    console.log('gov data loading');
     return <></>;
   }
   return (

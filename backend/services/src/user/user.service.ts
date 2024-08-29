@@ -508,7 +508,6 @@ export class UserService {
     user.role = userRole;
     user.apiKey = APIkey;
 
-    console.log("Inserting user", user.email);
     return await this.userRepo
       .createQueryBuilder()
       .insert()
@@ -679,12 +678,6 @@ export class UserService {
       if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
         company.country = this.configService.get("systemCountry");
       }
-
-      console.log(
-        "Company Log",
-        company,
-        this.configService.get("systemCountry")
-      );
 
       if (company.companyRole == CompanyRole.GOVERNMENT) {
         const companyGov = await this.companyService.findGovByCountry(
@@ -859,7 +852,6 @@ export class UserService {
         company.geographicalLocationCordintes = await this.locationService
         .getCoordinatesForRegion(company.regions)
         .then((response: any) => {
-          console.log("response from forwardGeoCoding function -> ", response);
           return  [...response];
         });
       }
@@ -943,9 +935,7 @@ export class UserService {
         return user;
       })
       .catch((err: any) => {
-        console.log(err);
         if (err instanceof QueryFailedError) {
-          console.log(err);
           switch (err.driverError.code) {
             case PG_UNIQUE_VIOLATION:
               if (err.driverError.detail.includes("email")) {
@@ -1269,15 +1259,12 @@ export class UserService {
   }
 
   private async checkUserExistOnOtherSystem(userEmail: string) {
-    console.log('check if user already exist in other system with email :', userEmail)
     const resp = await this.httpUtilService.sendHttp("/national/user/exists", {
       "email": userEmail
     });
     if (typeof resp === 'boolean') {
       return resp;
     } else {
-      // 'resp' is of type 'AxiosResponse<any, any>'
-      console.log('Successfully requested and response received for ', userEmail);
       return resp.data;
     }
   }

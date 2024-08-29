@@ -197,7 +197,6 @@ export const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: Programme
           data: logoBase64,
           programmeId: programmeId,
         });
-        console.log(response);
         fileInputRefMeth.current = null;
         if (response?.data) {
           setDocData([...docData, response?.data]);

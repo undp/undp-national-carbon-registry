@@ -51,7 +51,6 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.companyService.query(query, req.abilityCondition, req.user.companyRole);
   }
 
@@ -59,7 +58,6 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
   @Post("queryNames")
   queryNames(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.companyService.queryNames(query, req.abilityCondition);
   }
 
