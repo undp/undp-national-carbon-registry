@@ -242,6 +242,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getImplementOwnerDetails = async () => {
     setLoading(true);
     try {
+      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
       const response: any = await post('national/user/query', {
         page: 1,
         size: 10,
@@ -249,7 +250,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           {
             key: 'id',
             operation: '=',
-            value: userInfoState?.id,
+            value: userId,
           },
         ],
       });
@@ -303,6 +304,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
+      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
       const response: any = await post('national/user/query', {
         page: 1,
         size: 10,
@@ -310,7 +312,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           {
             key: 'id',
             operation: '=',
-            value: userInfoState?.id,
+            value: userId,
           },
         ],
       });
