@@ -309,6 +309,9 @@ const ProgrammeView = () => {
             value: programmeId,
           },
         ],
+        extendedProperties: {
+          isGetInvestmentHistory: true,
+        },
       });
       const investmentHisData = response?.data?.map((item: any) => {
         const investmentData: any = {
@@ -1034,18 +1037,28 @@ const ProgrammeView = () => {
             ),
           };
         } else if (activity.data.txType === TxType.FREEZE) {
+          let text;
+          if (getTxRefValues(activity.data.txRef, 1)) {
+            text = formatString('view:tlFrozenDesc', [
+              addCommSep(activity.data.creditChange),
+              creditUnit,
+              getTxRefValues(activity.data.txRef, 4),
+              getTxRefValues(activity.data.txRef, 1),
+            ]);
+          } else {
+            text = formatString('view:tlFrozenDescWithoutUser', [
+              addCommSep(activity.data.creditChange),
+              creditUnit,
+              getTxRefValues(activity.data.txRef, 4),
+            ]);
+          }
           el = {
             status: 'process',
             title: t('view:tlFrozen'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlFrozenDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
-                  getTxRefValues(activity.data.txRef, 4),
-                  getTxRefValues(activity.data.txRef, 1),
-                ])}
+                text={text}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -1972,7 +1985,9 @@ const ProgrammeView = () => {
           <div className="body-sub-title">{t('view:desc')}</div>
         </div>
         <div className="flex-display action-btns">
-          {userInfoState?.userRole !== 'ViewOnly' && actionBtns}
+          {userInfoState?.userRole !== 'ViewOnly' &&
+            userInfoState?.companyState !== 0 &&
+            actionBtns}
         </div>
       </div>
       <div className="content-body">

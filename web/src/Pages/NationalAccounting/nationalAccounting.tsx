@@ -396,8 +396,8 @@ const NationalAccountingDashboard = () => {
     }
 
     return {
-      page: currentPage,
-      size: pageSize,
+      page: currentPageCountryTable,
+      size: pageSizeCountryTable,
       filterAnd: filterAndArray.length > 0 ? filterAndArray : null,
       sort: sort,
     };
@@ -482,7 +482,14 @@ const NationalAccountingDashboard = () => {
 
   useEffect(() => {
     getCountryCreditRecords(getCountryRecordsWithParams);
-  }, [startTime, endTime, sortFieldCountryRecords, sortOrderCountryRecords]);
+  }, [
+    startTime,
+    endTime,
+    sortFieldCountryRecords,
+    sortOrderCountryRecords,
+    currentPageCountryTable,
+    pageSizeCountryTable,
+  ]);
 
   useEffect(() => {
     if (currentPage !== 1) {

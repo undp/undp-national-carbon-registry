@@ -190,6 +190,7 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot(Action.Create, 'all');
       cannot(Action.Delete, 'all');
       cannot(Action.Update, 'all');
+      cannot(Action.Manage, 'all');
     }
 
     if (

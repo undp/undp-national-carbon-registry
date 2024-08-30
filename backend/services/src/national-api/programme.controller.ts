@@ -426,7 +426,7 @@ export class ProgrammeController {
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
   @Post('investments/download')
   async getInvestmentsDownload(@Body()query: DataExportQueryDto, @Request() req) {
-    return this.programmeService.downloadInvestments(query, req.abilityCondition); // Return the filePath as a JSON response
+    return this.programmeService.downloadInvestments(query, req.abilityCondition, req.user); // Return the filePath as a JSON response
   }
 
   @UseGuards(JwtAuthGuard)

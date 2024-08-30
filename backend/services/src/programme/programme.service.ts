@@ -1228,6 +1228,20 @@ export class ProgrammeService {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+		if(user.companyRole === CompanyRole.CERTIFIER && 
+      (d.type === DocType.METHODOLOGY_DOCUMENT || d.type === DocType.DESIGN_DOCUMENT || d.type === DocType.MONITORING_REPORT || d.type === DocType.VERIFICATION_REPORT )
+       && (documentAction.status == DocumentStatus.ACCEPTED  || documentAction.status === DocumentStatus.REJECTED)
+      ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          'user.userUnAUth',
+          [],
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     const pr = await this.findById(d.programmeId);
 
     if (user.companyRole === CompanyRole.MINISTRY) {
@@ -1496,6 +1510,18 @@ export class ProgrammeService {
   }
 
   async addDocument(documentDto: ProgrammeDocumentDto, user: User) {
+
+		if ((user.companyRole === CompanyRole.CERTIFIER || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) && user.role === Role.ViewOnly
+			&& (documentDto.type == DocType.METHODOLOGY_DOCUMENT || documentDto.type == DocType.MONITORING_REPORT || documentDto.type == DocType.VERIFICATION_REPORT)) {
+			throw new HttpException(
+				this.helperService.formatReqMessagesString(
+					'user.userUnAUth',
+					[],
+				),
+				HttpStatus.FORBIDDEN,
+			);
+		}
+
     let programme;
     if (documentDto.programmeId) {
       programme = await this.findById(documentDto.programmeId);
@@ -2024,6 +2050,14 @@ export class ProgrammeService {
           DocType.DESIGN_DOCUMENT,
           programme.programmeId,
           programmeDto.designDocument,
+        );
+      } else {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            'programme.programmeDesignDocumentIsRequired',
+            [],
+          ),
+          HttpStatus.BAD_REQUEST,
         );
       }
       let ndcAc: NDCAction = undefined;
@@ -6093,6 +6127,13 @@ export class ProgrammeService {
         });
     }
 
+		if (!(query.extendedProperties?.isGetInvestmentHistory) && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      queryBuilder = queryBuilder
+        .andWhere('(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)', {
+          developerCompanyId: user.companyId
+        });
+    }
+
     const resp = await queryBuilder
       .orderBy(
         query?.sort?.key &&
@@ -6115,7 +6156,8 @@ export class ProgrammeService {
 
   async downloadInvestments(
     queryData: DataExportQueryDto,
-    abilityCondition: string
+    abilityCondition: string,
+		user: User
   ) {
 
     const queryDto = new QueryDto();
@@ -6145,6 +6187,13 @@ export class ProgrammeService {
       )
         .andWhere("programme.sectoralScope IN (:...allowedScopes)", {
           allowedScopes: queryDto.filterBy.value
+        });
+    }
+
+		if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      queryBuilder = queryBuilder
+        .andWhere('(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)', {
+          developerCompanyId: user.companyId
         });
     }
 
@@ -6467,6 +6516,7 @@ export class ProgrammeService {
     );
 
     const programme = await this.findById(investment.programmeId);
+		programme.companyId = programme.companyId.map((c) => Number(c));
     console.log('shareFromOwner prev',investment.shareFromOwner)
     const propPerMap = {}
     for (const i in programme.companyId) {
@@ -6484,6 +6534,33 @@ export class ProgrammeService {
       receiver,
       nationalInvestment
     );
+
+		const companyData = await this.companyService.findByCompanyIds({
+      companyIds: programme.companyId,
+    });
+
+    const suspendedCompanies = companyData.filter(
+      (company) => company.state == CompanyState.SUSPENDED,
+    );
+
+    if (receiver.state == CompanyState.SUSPENDED) {
+      const updated = await this.programmeLedger.freezeIssuedCredit(
+        programme.programmeId,
+        programme.creditIssued,
+        '##',
+        suspendedCompanies,
+      );
+
+      if (!updated) {
+        return new BasicResponseDto(
+          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString(
+            'programme.internalErrorCreditFreezing',
+            [programme.programmeId],
+          ),
+        );
+      }
+    }
 
     return transferResult;
   }

@@ -19,7 +19,7 @@
     "crossBorderTransfer": "Cross Border Transactions",
     "transactionCount": "Transaction Count",
     "latestTransaction": "Last Transaction",
-    "creditTransactions": "Credit Transactions",
+    "creditTransactions": "Credit Activity Log",
     "country": "country",
     "noRecords": "No records found"
 

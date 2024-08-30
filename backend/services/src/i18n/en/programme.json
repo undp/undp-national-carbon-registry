@@ -110,5 +110,6 @@
   "companyNotExist": "User company does not exist",
   "ndcActionUpdateFailed":  " Internal error on Ndc Action update",
   "programmeCannotbeAuthorized": "Programme Cannot Authorise due to Article 6 Trading",
-  "programmeCannotbeReject": "Programme Cannot Reject due to Article 6 Trading"
+  "programmeCannotbeReject": "Programme Cannot Reject due to Article 6 Trading",
+  "programmeDesignDocumentIsRequired":"Design Document is required!"
 }
