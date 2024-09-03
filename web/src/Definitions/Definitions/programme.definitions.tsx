@@ -212,7 +212,9 @@ export const getGeneralFields = (
       : '-',
     startDate: DateTime.fromSeconds(Number(programme.startTime)),
     endDate: DateTime.fromSeconds(Number(programme.endTime)),
-    buyerCountry: programme.programmeProperties.buyerCountryEligibility,
+    buyerCountry: programme.programmeProperties.buyerCountryEligibility
+      ? programme.programmeProperties.buyerCountryEligibility
+      : '-',
     environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
   };
   if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {

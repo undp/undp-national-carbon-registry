@@ -131,6 +131,7 @@ import { Role } from "../casl/role.enum";
 import { BaseIdDto } from "../dto/base.id.dto";
 import { EventLog } from "../entities/event.log.entity";
 import { EventLogType } from "../enum/event.log.type.enum";
+import { Region } from "../entities/region.entity";
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -184,6 +185,8 @@ export class ProgrammeService {
     private ndcDetailsPeriodRepo: Repository<NdcDetailsPeriod>,
     @InjectRepository(NdcDetailsAction)
     private ndcDetailsActionRepo: Repository<NdcDetailsAction>,
+    @InjectRepository(Region)
+    private regionRepo: Repository<Region>,
     @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>
   ) {}
 
@@ -1702,6 +1705,28 @@ export class ProgrammeService {
           programmeDto.proponentPercentage[i]
         );
       }
+    }
+    
+    if (programmeDto.programmeProperties.geographicalLocation.length > 0) {
+      for (const location of programmeDto.programmeProperties.geographicalLocation) {
+        const isValid = await this.regionRepo.findOneBy({
+          regionName: location,
+          lang: "en",
+        });
+
+        if (!isValid) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.containsInvalidGeoLocationValues",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+    }
+    if (!programmeDto.article6trade) {
+      programmeDto.programmeProperties.buyerCountryEligibility = null;
     }
     const programme: Programme = this.toProgramme(programmeDto);
     if (programme.creditEst)

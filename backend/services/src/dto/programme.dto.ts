@@ -23,6 +23,7 @@ import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
+import { IsNotPastDate } from "../decorators/is.not.past.date";
 
 export class ProgrammeDto {
   @ApiProperty()
@@ -61,12 +62,14 @@ export class ProgrammeDto {
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
+  @IsNotPastDate()
   startTime: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
+  @IsNotPastDate()
   endTime: number;
 
   @ApiProperty()
@@ -172,10 +175,10 @@ export class ProgrammeDto {
   // @Type(() => MitigationProperties)
   // mitigationActions?: MitigationProperties[]
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsNotEmpty()
-  @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   creditEst: number;
 
   @ApiPropertyOptional()

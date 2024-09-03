@@ -115,7 +115,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
 
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'Mapbox';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
@@ -1292,7 +1292,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <Select size="large" loading={loadingList}>
+                                    <Select size="large" loading={loadingList} allowClear={true}>
                                       {countries.map((country: any) => (
                                         <Select.Option key={country.alpha2} value={country.alpha2}>
                                           {country.name}
