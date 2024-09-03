@@ -177,7 +177,7 @@ const ProgrammeView = () => {
   const [ndcActionDocumentData, setNdcActionDocumentData] = useState<any>([]);
   const [documentsData, setDocumentsData] = useState<any[]>([]);
   const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'Mapbox';
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
