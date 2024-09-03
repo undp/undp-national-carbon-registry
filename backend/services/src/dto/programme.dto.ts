@@ -23,7 +23,7 @@ import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
-import { IsNotPastDate } from "../decorators/is.not.past.date";
+import { IsNotPastDate } from "../util/isNotPastDate.decorator";
 
 export class ProgrammeDto {
   @ApiProperty()
