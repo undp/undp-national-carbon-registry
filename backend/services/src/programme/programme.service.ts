@@ -330,7 +330,6 @@ export class ProgrammeService {
         return;
       })
       .catch((err: any) => {
-        console.log(err);
         if (err instanceof QueryFailedError) {
           throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
         } else {
@@ -756,7 +755,6 @@ export class ProgrammeService {
       allInvestmentList.push(investment);
     }
     const results = await this.investmentRepo.insert(allInvestmentList);
-    // console.log(results);
     for (const i in allInvestmentList) {
       allInvestmentList[i].requestId = results.identifiers[i].requestId;
     }
@@ -767,7 +765,6 @@ export class ProgrammeService {
       const toCompany = await this.companyService.findByCompanyId(
         trf.toCompanyId,
       );
-      console.log('To Company', toCompany);
       updateProgramme = (
         await this.doInvestment(
           trf,
@@ -1092,7 +1089,6 @@ export class ProgrammeService {
       if (certifierId && program) {
         await this.updateProgrammeCertifier(program, certifierId, updT);
       }
-      console.log('Update T', updT);
 
       if (Object.keys(updT).length > 0) {
         updT['txTime'] = new Date().getTime();
@@ -1161,7 +1157,7 @@ export class ProgrammeService {
         eventLog.createdTime = new Date().getTime();
       }
     }
-    console.log('NDC COmmit', ndc);
+    
     if (ndc) {
       await em.update(
         NDCAction,
@@ -1475,10 +1471,7 @@ export class ProgrammeService {
       this.logger.log('Certifying the programme', updateCert)
     }
 
-    console.log('Add document on registry', sqlProgram, resp, documentDto)
-
     if (sqlProgram.currentStage != resp.currentStage) {
-      console.log('Add action', resp)
       if (sqlProgram.article6trade==true || sqlProgram.article6trade==undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
@@ -1543,8 +1536,6 @@ export class ProgrammeService {
       const approvedDesign = await this.documentRepo.findOne({
         where: whr,
       });
-
-      console.log('Where', whr);
 
       if (!approvedDesign) {
         throw new HttpException(
@@ -1699,7 +1690,6 @@ export class ProgrammeService {
         undefined,
       );
 
-      console.log('Company names', orgNames);
       const url = await this.letterGen.generateReport(
         orgNames.data.map((e) => e['name']),
         programme.title,
@@ -2204,10 +2194,6 @@ export class ProgrammeService {
             }
             await this.locationService.getCoordinatesForRegion([...address]).then(
               (response: any) => {
-                console.log(
-                  "response from forwardGeoCoding function -> ",
-                  response
-                );
                 programme.geographicalLocationCordintes = [...response];
               }
             );
@@ -2215,7 +2201,6 @@ export class ProgrammeService {
           }
         })
         .catch((err: any) => {
-          console.log(err);
           if (err instanceof QueryFailedError) {
             throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
           } else {
@@ -2330,7 +2315,6 @@ export class ProgrammeService {
     ndcActionDto: NDCActionDto,
     user: User,
   ): Promise<DataResponseDto> {
-    console.log('testing ndcActionDto', ndcActionDto);
     if (!ndcActionDto.programmeId) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -2481,7 +2465,6 @@ export class ProgrammeService {
     }
     await this.checkTotalUserEstimatedCredits(ndcAction, program);
     await this.calcCreditNDCAction(ndcAction, program);
-    console.log('testing ndcAction', ndcAction);
     this.calcAddNDCFields(ndcAction, program);
 
     if (
@@ -2577,7 +2560,6 @@ export class ProgrammeService {
         return n;
       })
       .catch((err: any) => {
-        console.log(err);
         if (err instanceof QueryFailedError) {
           throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
         } else {
@@ -3225,7 +3207,6 @@ export class ProgrammeService {
 
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
-        // console.log(e);
         e.certifier =
           e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
         if (
@@ -3455,7 +3436,6 @@ export class ProgrammeService {
 
   async transferApprove(req: ProgrammeTransferApprove, approver: User) {
     // TODO: Handle transaction, can happen
-    console.log('Approver', approver);
     const transfer = await this.programmeTransferRepo.findOneBy({
       requestId: req.requestId,
     });
@@ -3695,7 +3675,6 @@ export class ProgrammeService {
       isRetirement,
     );
 
-    console.log('Add action', programme)
     if (programme.article6trade==true || programme.article6trade == undefined) {
       await this.asyncOperationsInterface.AddAction({
         actionType: AsyncActionType.CADTTransferCredit,
@@ -4178,11 +4157,6 @@ export class ProgrammeService {
         );
       }
 
-      console.log(
-        programme.creditBalance,
-        ownershipMap[fromCompanyId],
-        frozenCredit[fromCompanyId],
-      );
       const companyAvailableCredit =
         this.helperService.halfUpToPrecision(this.helperService.halfUpToPrecision((programme.creditBalance * ownershipMap[fromCompanyId]) / 100) -
         (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0));
@@ -4230,7 +4204,7 @@ export class ProgrammeService {
       allTransferList.push(transfer);
     }
     const results = await this.programmeTransferRepo.insert(allTransferList);
-    // console.log(results);
+
     for (const i in allTransferList) {
       allTransferList[i].requestId = results.identifiers[i].requestId;
     }
@@ -4241,7 +4215,7 @@ export class ProgrammeService {
       const toCompany = await this.companyService.findByCompanyId(
         trf.toCompanyId,
       );
-      console.log('To Company', toCompany);
+
       updateProgramme = (
         await this.doTransfer(
           trf,
@@ -4332,10 +4306,8 @@ export class ProgrammeService {
   
         this.logger.log('Certifying the programme', updateCert)
       }
-    console.log('Add accept on registry', sqlProgram, resp, accept)
 
     if (sqlProgram.currentStage != resp.currentStage) {
-      console.log('Add action', resp)
       if (sqlProgram.article6trade==true || sqlProgram.article6trade == undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
@@ -5102,7 +5074,7 @@ export class ProgrammeService {
       allTransferList.push(transfer);
     }
     const results = await this.programmeTransferRepo.insert(allTransferList);
-    // console.log(results);
+
     for (const i in allTransferList) {
       allTransferList[i].requestId = results.identifiers[i].requestId;
     }
@@ -6021,7 +5993,6 @@ export class ProgrammeService {
       await this.locationService
         .getCoordinatesForRegion([...address])
         .then((response: any) => {
-          console.log('response from forwardGeoCoding function -> ', response);
           programme.geographicalLocationCordintes = [...response];
         });
 
@@ -6464,13 +6435,11 @@ export class ProgrammeService {
     );
 
     const programme = await this.findById(investment.programmeId);
-    console.log('shareFromOwner prev',investment.shareFromOwner)
     const propPerMap = {}
     for (const i in programme.companyId) {
       propPerMap[programme.companyId[i]] = programme.proponentPercentage[i];
     }
     investment.shareFromOwner = parseFloat((investment.percentage * 100 / propPerMap[investment.fromCompanyId]).toFixed(6))
-    console.log('shareFromOwner prev',investment.shareFromOwner)
 
     const transferResult = await this.doInvestment(
       investment,

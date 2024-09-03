@@ -120,8 +120,6 @@ export class CadtApiService {
 
     const pd = companies?.map((c) => c.name)?.join(', ');
 
-    console.log('Comp', companies, pd);
-
     let methodology = "Pending";
     if (programme.mitigationActions?.length > 0){
       if (programme.mitigationActions[0].properties.methodology) {
@@ -269,7 +267,6 @@ export class CadtApiService {
     }
 
     const amount = issueAmounts.reduce((n, {issueCredit}) => n + issueCredit, 0)
-    console.log("Programme", programme, amount)
 
     const gov = await this.companyService.findGovByCountry(this.configService.get('systemCountry'));
     const blockStart = this.getBlockStartFromSerialNumber(programme.serialNo) + Number(programme.creditIssued);
@@ -328,7 +325,6 @@ export class CadtApiService {
       })
     }
   
-    console.log('Bounds', blockBounds)
     await await this.sendHttpPost('v1/staging/commit', undefined);
 
     //TODO: Make this reliable
@@ -428,7 +424,6 @@ export class CadtApiService {
       }
     }
 
-    console.log("Bounds", programme.blockBounds)
     //TODO: Make this reliable
     const response = await this.programmeRepo
     .update(

@@ -122,7 +122,6 @@ export const AddNewUserComponent = (props: any) => {
       if (ability.can(Action.Update, plainToClass(User, state?.record), 'email'))
         values.email = formOneValues?.email;
 
-      console.log('form one values   -- > ', values, state.record);
       const response = await put('national/user/update', values);
       if (response.status === 200 || response.status === 201) {
         message.open({
@@ -235,7 +234,6 @@ export const AddNewUserComponent = (props: any) => {
   };
 
   useEffect(() => {
-    console.log('state -- val --- ', { ...state });
     getCountryList();
     setIsUpdate(state?.record ? true : false);
   }, []);

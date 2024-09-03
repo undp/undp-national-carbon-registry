@@ -49,10 +49,6 @@ export class ProcessEventService {
               }
               await this.locationService.getCoordinatesForRegion([...address]).then(
                 (response: any) => {
-                  console.log(
-                    "response from forwardGeoCoding function -> ",
-                    response
-                  );
                   programme.geographicalLocationCordintes = [...response];
                 }
               );

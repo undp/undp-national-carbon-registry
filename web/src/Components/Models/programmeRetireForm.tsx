@@ -67,7 +67,6 @@ export const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      console.log('getting government profile');
       const response = await post('national/organisation/query', {
         page: 1,
         size: 100,
@@ -81,7 +80,6 @@ export const ProgrammeRetireForm: FC<ProgrammeRetireFormProps> = (
       });
       if (response.data) {
         setGovData(response?.data[0]);
-        console.log('gov profile', response?.data[0]);
         return response?.data[0];
       }
     } catch (error: any) {

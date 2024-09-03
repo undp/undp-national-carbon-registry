@@ -290,7 +290,6 @@ const Environmental = (props: any) => {
       );
       setEnvironmentalUpdatedDetails(filteredEconomicData);
       setEnvironmentalDetails(filteredEconomicData);
-      console.log(filteredEconomicData);
     }
   }, []);
 

@@ -44,7 +44,6 @@ export const InvestmentBody: FC<InvestmentBodyProps> = (props: InvestmentBodyPro
 
   useEffect(() => {
     setInvestmentData(data);
-    console.log(data);
   }, [data]);
 
   return loading ? (

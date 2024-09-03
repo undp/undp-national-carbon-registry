@@ -40,7 +40,6 @@ export class FileLocationService implements LocationInterface {
     const countryIndex = headers.indexOf('Country')
     const longitudeIndex = headers.indexOf('Longitude')
     const languageIndex = headers.indexOf('Language')
-    // console.log(headers, nameIndex, latitudeIndex, longitudeIndex)
     if (nameIndex >=0 && latitudeIndex >=0 && longitudeIndex >=0 && countryIndex >= 0 && languageIndex >= 0) {
       const data: Region[] = [];
       for (let row of rows) {

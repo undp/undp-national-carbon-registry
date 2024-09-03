@@ -246,7 +246,6 @@ export const UserManagementComponent = (props: any) => {
       width: '20px',
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
-        console.log({ item, ...itemObj });
         return (
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <ProfileIcon
@@ -633,7 +632,6 @@ export const UserManagementComponent = (props: any) => {
   };
 
   const handleTableChange = (pag: any, sorter: any) => {
-    console.log(pag, sorter);
     if (sorter.order === 'ascend') {
       setSortOrder('ASC');
     } else if (sorter.order === 'descend') {

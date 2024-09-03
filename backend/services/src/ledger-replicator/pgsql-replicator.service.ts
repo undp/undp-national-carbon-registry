@@ -63,7 +63,6 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
           let newSeq = 0;
           for (const row of results.rows) {
             const data = row.data;
-            // console.log('Data', data);
             const programme: Programme = plainToClass(
               Programme,
               JSON.parse(JSON.stringify(data))

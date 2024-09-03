@@ -171,8 +171,6 @@ const SdgGoals = (props: any) => {
         const sdg = sdgGoalMap[g as SdgGoalsEnum];
         if (sdg) {
           sdg.selected = true;
-        } else {
-          console.log('AAA', g);
         }
       }
     } else {
@@ -180,7 +178,6 @@ const SdgGoals = (props: any) => {
         g.selected = false;
       }
     }
-    console.log(sdgGoalMap);
     const updatedSdgGoals = Object.values(sdgGoalMap);
     setSdgGoals(updatedSdgGoals);
   }, [sdgGoalsViewData]);
