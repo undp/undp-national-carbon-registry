@@ -42,16 +42,11 @@ export class RegistryClientService {
 
   public async createCompany(userDto: UserDto) {
     const resp = await this.httpUtilService.sendHttp("/national/user/sync", userDto);
-    console.log(
-      "Successfully create company on MRV",
-      userDto.company.name
-    );
     return resp;
   }
 
   public async CompanyUpdate(organisationSyncRequestDto: OrganisationSyncRequestDto) {
     const response = await this.httpUtilService.sendHttpPut("/national/organisation/sync", organisationSyncRequestDto);
-    console.log( "Successfully called organisation sync request", response );
     return response;
   }
 
@@ -141,44 +136,28 @@ export class RegistryClientService {
     }
     else if(this.configService.get('systemType')==SYSTEM_TYPE.CARBON_REGISTRY){
       const resp = await this.httpUtilService.sendHttpPut("/national/programme/authProgramme", actionProps);
-      console.log(
-        "Successfully authoirised programme on MRV",
-        actionProps
-      );
       return resp;
     }
   }
 
   public async rejectProgramme(reject) {
     const resp = await this.httpUtilService.sendHttpPut("/national/programme/rejectProgramme", reject);
-    console.log(
-      "Successfully rejected programme on MRV",
-      reject
-    );
     return resp;
   }
 
 
   public async issueCredit(issue) {
     const resp = await this.httpUtilService.sendHttpPut("/national/programme/issueCredit", issue);
-    console.log(
-      "Successfully issued programme on MRV",
-      issue
-    );
     return resp;
   }
 
   public async programmeAccept(document: any) {
-    console.log('programme accept on registry', document)
     const resp = await this.httpUtilService.sendHttp("/national/programme/acceptProgramme", document);
-    console.log('Successfully programme accepted on registry', document.actionId)
     return resp;
   }
 
   public async addDocument(document: ProgrammeDocumentDto) {
-    console.log('adding document on registry', document)
     const resp = await this.httpUtilService.sendHttp("/national/programme/addDocument", document);
-    console.log('Successfully create document on registry', document.actionId)
     return resp;
   }
 
@@ -204,7 +183,6 @@ export class RegistryClientService {
     if (programme.ndcAction && (programme.ndcAction.action === NDCActionType.Mitigation || programme.ndcAction.action === NDCActionType.CrossCutting) && programme.ndcAction.typeOfMitigation) {
         programmeReq["mitigationActions"] = [this.createNDCReq(programme.ndcAction)]
     }
-    console.log('Creating programme', JSON.stringify(programmeReq))
     const resp = await this.httpUtilService.sendHttp("/national/programme/create", programmeReq);
 
     this.logger.log('Successfully create programme on registry', resp)
@@ -212,28 +190,21 @@ export class RegistryClientService {
   }
 
   public async updateOwnership(req: any) {
-
-    console.log('creating ownership update on registry', req)
     const resp = await this.httpUtilService.sendHttp("/national/programme/updateOwnership", req);
-    console.log('Successfully create updated ownership on registry')
     return resp;
   }
 
   public async addMitigation(ndc: NDCAction) {
     const mitigationReq = this.createNDCReq(ndc);
-    console.log('creating mitigation action on registry', ndc, mitigationReq)
     const resp = await this.httpUtilService.sendHttp("/national/programme/addMitigation", {
         "mitigation": mitigationReq,
         "externalId": ndc.externalId
     });
-    console.log('Successfully create mitigation on registry', mitigationReq.actionId)
     return resp;
   }
 
   public async addNationalInvestment(investment:InvestmentSyncDto){
-    console.log('creating national Investment on registry', investment)
     const resp = await this.httpUtilService.sendHttp("/national/organisation/addInvestment", investment);
-    console.log('Successfully create national Investment on registry')
     return resp;
   }
 

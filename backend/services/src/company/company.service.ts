@@ -260,7 +260,6 @@ export class CompanyService {
         this.logger.error(err);
         return err;
       });
-    console.log('Investment', investment);
     //sync investment
     await this.asyncOperationsInterface.AddAction({
       actionType: AsyncActionType.NationalInvestment,
@@ -1005,10 +1004,6 @@ export class CompanyService {
         await this.locationService
           .getCoordinatesForRegion(companyUpdateDto.regions)
           .then((response: any) => {
-            console.log(
-              'response from forwardGeoCoding function -> ',
-              response,
-            );
             return [...response];
           });
     }
@@ -1115,7 +1110,6 @@ export class CompanyService {
       companyUpdateDto.geographicalLocationCordintes = await this.locationService
       .getCoordinatesForRegion(companyUpdateDto.regions)
       .then((response: any) => {
-        console.log("response from forwardGeoCoding function -> ", response);
         return  [...response];
       });
     }
@@ -1233,12 +1227,10 @@ export class CompanyService {
   public async checkCompanyExistOnOtherSystem(
     organisationDuplicateCheckDto: OrganisationDuplicateCheckDto
   ) {
-    console.log('check if organisation already exist in other system with taxId, paymentId or email', organisationDuplicateCheckDto)
     const resp = await this.httpUtilService.sendHttp("/national/organisation/exists", organisationDuplicateCheckDto);
     if (typeof resp === 'boolean') {
       return resp;
     } else {
-      console.log('Successfully requested and response received for ', organisationDuplicateCheckDto);
       return resp.data;
     }
   }
@@ -1246,7 +1238,6 @@ export class CompanyService {
   async findCompanyByTaxIdPaymentIdOrEmail(
     orgDuplicateCheckDto: OrganisationDuplicateCheckDto
   ): Promise<Company | undefined> {
-    console.log("INSIDE findCompanyByTaxIdPaymentIdOrEmail", orgDuplicateCheckDto.taxId, orgDuplicateCheckDto.paymentId, orgDuplicateCheckDto.email);
     const company = await this.companyRepo.createQueryBuilder('company')
       .where('company.taxId = :taxId OR company.paymentId = :paymentId OR company.email = :email', {
         taxId: orgDuplicateCheckDto.taxId,
@@ -1254,7 +1245,6 @@ export class CompanyService {
         email: orgDuplicateCheckDto.email
       })
       .getOne();
-    console.log("INSIDE findCompanyByTaxIdPaymentIdOrEmail company", company);
     return company;
   }
   

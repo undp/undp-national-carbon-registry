@@ -132,6 +132,8 @@ import { BaseIdDto } from "../dto/base.id.dto";
 import { EventLog } from "../entities/event.log.entity";
 import { EventLogType } from "../enum/event.log.type.enum";
 import { Region } from "../entities/region.entity";
+import { CreditAuditLog } from 'src/entities/credit.audit.log.entity';
+import { CreditAuditLogType } from 'src/enum/credit.audit.log.type.enum';
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -187,7 +189,8 @@ export class ProgrammeService {
     private ndcDetailsActionRepo: Repository<NdcDetailsAction>,
     @InjectRepository(Region)
     private regionRepo: Repository<Region>,
-    @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>
+    @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>,
+    @InjectRepository(CreditAuditLog) private creditAuditLogRepo: Repository<CreditAuditLog>,
   ) {}
 
   private fileExtensionMap = new Map([
@@ -225,8 +228,7 @@ export class ProgrammeService {
 
     // Cannot be <= 0
     if (toCompanyIndex < 0) {
-      programme.creditOwnerPercentage[companyIndex] -= transfer.percentage;
-      programme.creditOwnerPercentage.push(transfer.percentage);
+      programme.creditOwnerPercentage.push(0);
 
       programme.proponentPercentage[companyIndex] -= transfer.percentage;
       programme.proponentPercentage.push(transfer.percentage);
@@ -235,8 +237,6 @@ export class ProgrammeService {
       programme.proponentTaxVatId.push(investor.taxId);
     } else {
       programme.proponentPercentage[toCompanyIndex] += transfer.percentage;
-      programme.creditOwnerPercentage[toCompanyIndex] += transfer.percentage;
-      programme.creditOwnerPercentage[companyIndex] -= transfer.percentage;
       programme.proponentPercentage[companyIndex] -= transfer.percentage;
     }
     if (nationalInvestment) nationalInvestment.amount -= transfer.amount;
@@ -337,7 +337,6 @@ export class ProgrammeService {
         return;
       })
       .catch((err: any) => {
-        console.log(err);
         if (err instanceof QueryFailedError) {
           throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
         } else {
@@ -733,7 +732,6 @@ export class ProgrammeService {
       allInvestmentList.push(investment);
     }
     const results = await this.investmentRepo.insert(allInvestmentList);
-    // console.log(results);
     for (const i in allInvestmentList) {
       allInvestmentList[i].requestId = results.identifiers[i].requestId;
     }
@@ -741,8 +739,9 @@ export class ProgrammeService {
     let updateProgramme = undefined;
     for (const trf of autoApproveInvestmentList) {
       this.logger.log(`Investment send received ${trf}`);
-      const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
-      console.log("To Company", toCompany);
+      const toCompany = await this.companyService.findByCompanyId(
+        trf.toCompanyId,
+      );
       updateProgramme = (
         await this.doInvestment(
           trf,
@@ -1063,7 +1062,6 @@ export class ProgrammeService {
       if (certifierId && program) {
         await this.updateProgrammeCertifier(program, certifierId, updT);
       }
-      console.log("Update T", updT);
 
       if (Object.keys(updT).length > 0) {
         updT["txTime"] = new Date().getTime();
@@ -1130,7 +1128,7 @@ export class ProgrammeService {
         eventLog.createdTime = new Date().getTime();
       }
     }
-    console.log("NDC COmmit", ndc);
+    
     if (ndc) {
       await em.update(
         NDCAction,
@@ -1432,11 +1430,8 @@ export class ProgrammeService {
       this.logger.log("Certifying the programme", updateCert);
     }
 
-    console.log("Add document on registry", sqlProgram, resp, documentDto);
-
     if (sqlProgram.currentStage != resp.currentStage) {
-      console.log("Add action", resp);
-      if (sqlProgram.article6trade == true || sqlProgram.article6trade == undefined) {
+      if (sqlProgram.article6trade==true || sqlProgram.article6trade==undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
           actionProps: {
@@ -1491,8 +1486,6 @@ export class ProgrammeService {
       const approvedDesign = await this.documentRepo.findOne({
         where: whr,
       });
-
-      console.log("Where", whr);
 
       if (!approvedDesign) {
         throw new HttpException(
@@ -1634,7 +1627,6 @@ export class ProgrammeService {
         undefined
       );
 
-      console.log("Company names", orgNames);
       const url = await this.letterGen.generateReport(
         orgNames.data.map((e) => e["name"]),
         programme.title,
@@ -2151,17 +2143,14 @@ export class ProgrammeService {
                 address.push(programmeProperties.geographicalLocation[index]);
               }
             }
-            await this.locationService
-              .getCoordinatesForRegion([...address])
-              .then((response: any) => {
-                console.log("response from forwardGeoCoding function -> ", response);
+            await this.locationService.getCoordinatesForRegion([...address]).then(
+              (response: any) => {
                 programme.geographicalLocationCordintes = [...response];
               });
             return await em.save<Programme>(programme);
           }
         })
         .catch((err: any) => {
-          console.log(err);
           if (err instanceof QueryFailedError) {
             throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
           } else {
@@ -2271,8 +2260,10 @@ export class ProgrammeService {
     return savedProgramme ? savedProgramme : pr;
   }
 
-  async addNDCAction(ndcActionDto: NDCActionDto, user: User): Promise<DataResponseDto> {
-    console.log("testing ndcActionDto", ndcActionDto);
+  async addNDCAction(
+    ndcActionDto: NDCActionDto,
+    user: User,
+  ): Promise<DataResponseDto> {
     if (!ndcActionDto.programmeId) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
@@ -2448,7 +2439,6 @@ export class ProgrammeService {
     }
     await this.checkTotalUserEstimatedCredits(ndcAction, program);
     await this.calcCreditNDCAction(ndcAction, program);
-    console.log("testing ndcAction", ndcAction);
     this.calcAddNDCFields(ndcAction, program);
 
     if (ndcAction.action == NDCActionType.Enablement && ndcAction.enablementProperties.report) {
@@ -2545,7 +2535,6 @@ export class ProgrammeService {
         return n;
       })
       .catch((err: any) => {
-        console.log(err);
         if (err instanceof QueryFailedError) {
           throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
         } else {
@@ -3284,8 +3273,8 @@ export class ProgrammeService {
 
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
-        // console.log(e);
-        e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
+        e.certifier =
+          e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
         if (
           e.isRetirement &&
           e.retirementType == RetireType.CROSS_BORDER &&
@@ -3502,7 +3491,6 @@ export class ProgrammeService {
 
   async transferApprove(req: ProgrammeTransferApprove, approver: User) {
     // TODO: Handle transaction, can happen
-    console.log("Approver", approver);
     const transfer = await this.programmeTransferRepo.findOneBy({
       requestId: req.requestId,
     });
@@ -3638,10 +3626,15 @@ export class ProgrammeService {
         const countryName = await this.countryService.getCountryName(
           transfer.toCompanyMeta.country
         );
-        const omgeCredits =
-          transfer.retirementType == RetireType.CROSS_BORDER
-            ? Number(((transfer.creditAmount * transfer.omgePercentage) / 100).toFixed(2))
-            : 0;
+        const omgeCredits = transfer.retirementType==RetireType.CROSS_BORDER?Number((transfer.creditAmount*transfer.omgePercentage/100).toFixed(2)):0
+
+				await this.createCreditAuditLogRecord(
+					CreditAuditLogType.CREDIT_RETIRED,
+					transfer.programmeId,
+					transfer.creditAmount,
+					approver.id,
+					transfer.toCompanyMeta.country
+				)
 
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -3699,8 +3692,7 @@ export class ProgrammeService {
       isRetirement
     );
 
-    console.log("Add action", programme);
-    if (programme.article6trade == true || programme.article6trade == undefined) {
+    if (programme.article6trade==true || programme.article6trade == undefined) {
       await this.asyncOperationsInterface.AddAction({
         actionType: AsyncActionType.CADTTransferCredit,
         actionProps: {
@@ -3729,6 +3721,7 @@ export class ProgrammeService {
 
     if (result.affected > 0) {
       this.checkPendingTransferValidity(programme);
+			
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 
@@ -4147,16 +4140,9 @@ export class ProgrammeService {
         );
       }
 
-      console.log(
-        programme.creditBalance,
-        ownershipMap[fromCompanyId],
-        frozenCredit[fromCompanyId]
-      );
-      const companyAvailableCredit = this.helperService.halfUpToPrecision(
-        this.helperService.halfUpToPrecision(
-          (programme.creditBalance * ownershipMap[fromCompanyId]) / 100
-        ) - (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0)
-      );
+      const companyAvailableCredit =
+        this.helperService.halfUpToPrecision(this.helperService.halfUpToPrecision((programme.creditBalance * ownershipMap[fromCompanyId]) / 100) -
+        (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0));
 
       let transferCompanyCredit;
       if (req.fromCompanyIds.length == 1 && !req.companyCredit) {
@@ -4201,7 +4187,7 @@ export class ProgrammeService {
       allTransferList.push(transfer);
     }
     const results = await this.programmeTransferRepo.insert(allTransferList);
-    // console.log(results);
+
     for (const i in allTransferList) {
       allTransferList[i].requestId = results.identifiers[i].requestId;
     }
@@ -4209,8 +4195,10 @@ export class ProgrammeService {
     let updateProgramme = undefined;
     for (const trf of autoApproveTransferList) {
       this.logger.log(`Credit send received ${trf}`);
-      const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
-      console.log("To Company", toCompany);
+      const toCompany = await this.companyService.findByCompanyId(
+        trf.toCompanyId,
+      );
+
       updateProgramme = (
         await this.doTransfer(
           trf,
@@ -4303,17 +4291,14 @@ export class ProgrammeService {
         sqlProgram.programmeId,
         certifier.companyId,
         true,
-        certifier ? `${certifier.companyId}#${certifier.name}` : "",
-        undefined
-      );
-
-      this.logger.log("Certifying the programme", updateCert);
-    }
-    console.log("Add accept on registry", sqlProgram, resp, accept);
+        certifier ? `${certifier.companyId}#${certifier.name}`  : '',
+        undefined,)
+  
+        this.logger.log('Certifying the programme', updateCert)
+      }
 
     if (sqlProgram.currentStage != resp.currentStage) {
-      console.log("Add action", resp);
-      if (sqlProgram.article6trade == true || sqlProgram.article6trade == undefined) {
+      if (sqlProgram.article6trade==true || sqlProgram.article6trade == undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
           actionProps: {
@@ -4881,6 +4866,7 @@ export class ProgrammeService {
       }
     }
 
+		const transfer = new ProgrammeTransfer();
     const fromCompanyMap = {};
     for (const j in req.fromCompanyIds) {
       const fromCompanyId = req.fromCompanyIds[j];
@@ -4934,7 +4920,6 @@ export class ProgrammeService {
         continue;
       }
 
-      const transfer = new ProgrammeTransfer();
       transfer.programmeId = req.programmeId;
       transfer.fromCompanyId = fromCompanyId;
       transfer.toCompanyId = toCompany.companyId;
@@ -5006,7 +4991,7 @@ export class ProgrammeService {
       allTransferList.push(transfer);
     }
     const results = await this.programmeTransferRepo.insert(allTransferList);
-    // console.log(results);
+
     for (const i in allTransferList) {
       allTransferList[i].requestId = results.identifiers[i].requestId;
     }
@@ -5026,6 +5011,13 @@ export class ProgrammeService {
       ).data;
     }
     if (updateProgramme) {
+			await this.createCreditAuditLogRecord(
+				CreditAuditLogType.CREDIT_RETIRED,
+				transfer.programmeId,
+				transfer.creditAmount,
+				requester.id,
+				transfer.toCompanyMeta?.country
+			)
       return new DataResponseDto(HttpStatus.OK, updateProgramme);
     }
     return new DataListResponseDto(allTransferList, allTransferList.length);
@@ -5163,6 +5155,7 @@ export class ProgrammeService {
       eventLog.createdTime = new Date().getTime();
       eventLog.createdBy = user.id;
       await this.entityManager.transaction(async (em) => {
+				await this.createCreditAuditLogRecord(CreditAuditLogType.CREDIT_ISSUED, req.programmeId, actionDetails.issueCredit, user.id);
         return await em.save(eventLog);
       });
     });
@@ -5540,9 +5533,13 @@ export class ProgrammeService {
     return new DataResponseDto(HttpStatus.OK, programme);
   }
 
-  async approveProgramme(req: ProgrammeApprove, user: User, auth_letter?: string) {
-    this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`);
-    const program = await this.programmeLedger.getProgrammeById(req.programmeId);
+  async authorizeProgramme(req: ProgrammeApprove, user: User, auth_letter?:string ) {
+    this.logger.log(
+      `Programme ${req.programmeId} approve. Comment: ${req.comment}`,
+    );
+    const program = await this.programmeLedger.getProgrammeById(
+      req.programmeId,
+    );
     if (!program) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
@@ -5597,6 +5594,8 @@ export class ProgrammeService {
         ])`Does not found a pending programme for the given programme id ${req.programmeId}`
       );
     }
+
+		await this.createCreditAuditLogRecord(CreditAuditLogType.CREDIT_AUTHORIZED, req.programmeId, program.creditEst, user.id);
 
     await this.asyncOperationsInterface.AddAction({
       actionType: AsyncActionType.CADTUpdateProgramme,
@@ -5854,10 +5853,11 @@ export class ProgrammeService {
           address.push(programmeProperties.geographicalLocation[index]);
         }
       }
-      await this.locationService.getCoordinatesForRegion([...address]).then((response: any) => {
-        console.log("response from forwardGeoCoding function -> ", response);
-        programme.geographicalLocationCordintes = [...response];
-      });
+      await this.locationService
+        .getCoordinatesForRegion([...address])
+        .then((response: any) => {
+          programme.geographicalLocationCordintes = [...response];
+        });
 
       const result = await this.programmeRepo
         .update(
@@ -6228,15 +6228,11 @@ export class ProgrammeService {
     );
 
     const programme = await this.findById(investment.programmeId);
-    console.log("shareFromOwner prev", investment.shareFromOwner);
-    const propPerMap = {};
+    const propPerMap = {}
     for (const i in programme.companyId) {
       propPerMap[programme.companyId[i]] = programme.proponentPercentage[i];
     }
-    investment.shareFromOwner = parseFloat(
-      ((investment.percentage * 100) / propPerMap[investment.fromCompanyId]).toFixed(6)
-    );
-    console.log("shareFromOwner prev", investment.shareFromOwner);
+    investment.shareFromOwner = parseFloat((investment.percentage * 100 / propPerMap[investment.fromCompanyId]).toFixed(6))
 
     const transferResult = await this.doInvestment(
       investment,
@@ -6559,4 +6555,15 @@ export class ProgrammeService {
       });
     return new DataResponseDto(HttpStatus.OK, {});
   }
+
+	async createCreditAuditLogRecord(auditLogType: CreditAuditLogType, programmeId: string, creditAmount: number, userId: number, country?: string) {
+		const creditAuditLog = new CreditAuditLog;
+		creditAuditLog.programmeId = programmeId;
+		creditAuditLog.type = auditLogType;
+		creditAuditLog.createdBy = userId;
+		creditAuditLog.credits = creditAmount;
+		creditAuditLog.country = country;
+		await this.creditAuditLogRepo.save(creditAuditLog);
+
+	}
 }

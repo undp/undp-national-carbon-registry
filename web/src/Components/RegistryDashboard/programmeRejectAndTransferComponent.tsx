@@ -26,9 +26,6 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
   const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading, toolTipText, t } =
     props;
 
-  useEffect(() => {
-    console.log({ pending, totalPrgrammes });
-  });
   return (
     <div className="stastics-and-pie-card height-pie-rem">
       {loading ? (

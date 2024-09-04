@@ -126,11 +126,14 @@
         justify-content: center;
         color: rgba(58, 53, 65, 0.5);
       }
+      .ant-radio-button-checked {
+        background-color: $primary-blue !important;
+      }
 
       .ant-radio-button-wrapper-checked:not(
           .ant-radio-button-wrapper-disabled
         )::before {
-        background-color: transparent !important;
+        background-color: $primary-blue !important;
       }
 
       .overall {

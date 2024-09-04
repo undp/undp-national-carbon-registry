@@ -21,7 +21,6 @@ export class DataExportService {
     const seconds = currentDate.getSeconds().toString().padStart(2, '0');
 
     const formattedDateTime = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
-    // console.log(formattedDateTime); // Output: 2023-12-08_14-04-20
 
     const csvFile = fileName + '_' + formattedDateTime + '.csv';
 
@@ -44,7 +43,6 @@ export class DataExportService {
     fs.writeFileSync(csvFile, csvContent);
     const content = fs.readFileSync(csvFile, { encoding: 'base64' });
     const url = await this.fileHandler.uploadFile('documents/exports/' + csvFile, content);
-    console.log('========================PDF generate end', 'exports/', url);
     return { url, csvFile };
   }
 }

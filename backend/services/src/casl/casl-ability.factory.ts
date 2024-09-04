@@ -30,6 +30,8 @@ import { NDCActionViewEntity } from "../entities/ndc.view.entity";
 import { ProgrammeDocument } from "../entities/programme.document";
 import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
+import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "src/entities/creditAuditLog.view.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -41,7 +43,6 @@ const unAuthErrorMessage = "This action is unauthorised";
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: User) {
-    console.log("createForUser", user);
     const { can, cannot, build } = new AbilityBuilder(createAppAbility);
     if (user) {
       if (user.role == Role.Root) {
@@ -278,6 +279,17 @@ export class CaslAbilityFactory {
       can(Action.Read, Emission);
       can(Action.Read, Projection);
     }
+
+		if (
+			(user.role == Role.Root || user.role == Role.Admin) &&
+			user.companyRole === CompanyRole.GOVERNMENT
+		) {
+			can(Action.Read, CreditAuditLog);
+			can(Action.Read, CreditAuditLogViewEntity);
+		} else {
+			cannot(Action.Read, CreditAuditLog);
+			cannot(Action.Read, CreditAuditLogViewEntity);
+		}
     
     return build({
       detectSubjectType: (item) =>

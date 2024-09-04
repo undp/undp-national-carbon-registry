@@ -7,6 +7,9 @@ import * as Icon from 'react-bootstrap-icons';
 import { AppstoreOutlined, DashboardOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { Role } from '../../Definitions/Enums/role.enum';
 // import { LayoutSiderProps } from '@undp/carbon-library';
 
 const { Sider } = Layout;
@@ -35,11 +38,13 @@ function getItem(
 const LayoutSider = (props: LayoutSiderProps) => {
   const { selectedKey } = props;
   const navigate = useNavigate();
+  const { userInfoState } = useUserContext();
   const [collapsed, setCollapsed] = useState(false);
   const { i18n, t } = useTranslation(['nav']);
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    // getItem(t('nav:nationalAccounting'), 'nationalAccounting', <DashboardOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
@@ -48,8 +53,19 @@ const LayoutSider = (props: LayoutSiderProps) => {
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
   ];
 
+  if (
+    userInfoState?.userRole === Role.Root ||
+    (userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+      userInfoState?.userRole === Role.Admin)
+  ) {
+    items.splice(
+      1,
+      0,
+      getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
+    );
+  }
+
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click', e);
     navigate('/' + e.key);
   };
 

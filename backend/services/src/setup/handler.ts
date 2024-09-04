@@ -44,7 +44,6 @@ export const handler: Handler = async (event) => {
 
   function mapEnvironmentToEnum<T>(envValue: string, targetEnum: T): T[keyof T] | undefined {
     const enumValues = Object.values(targetEnum).filter((value) => typeof value === 'string') as string[];
-    console.log(enumValues, envValue,"=================hellooo")
     if (enumValues.includes(envValue)) {
       return envValue as T[keyof T];
     }
@@ -86,12 +85,7 @@ export const handler: Handler = async (event) => {
           : fields[5] == "Manager"
           ? Role.Manager
           : Role.ViewOnly;
-      console.log('Inserting user', fields[0],
-      cr,
-      fields[3],
-      fields[1],
-      ur,
-      fields[2])
+
       try {
         await userService.createUserWithPassword(
           fields[0],
@@ -162,7 +156,7 @@ export const handler: Handler = async (event) => {
               regions: [],
               state: undefined //double check this
             });
-        console.log('Company created', org)
+
       } catch (e) {
         console.log('Fail to create company', fields[1])
       }
@@ -203,13 +197,12 @@ export const handler: Handler = async (event) => {
     await ledgerModule.insertRecord(creditOverall, "overall");
     await ledgerModule.createTable();
     await ledgerModule.createIndex("programmeId");
-    console.log("QLDB Table created");
+
   } catch (e) {
     console.log("QLDB table does not create", e);
   }
 
   try {
-		console.log('-------------------event ---------', event);
     const company = new OrganisationDto();
     company.country = event["systemCountryCode"];
     company.name = event["name"];
@@ -225,9 +218,6 @@ export const handler: Handler = async (event) => {
     user.role = Role.Root;
     user.phoneNo = "-";
     user.company = company;
-
-    console.log("Adding company", company);
-    console.log("Adding user", user);
 
     await userService.create(user, -1, CompanyRole.GOVERNMENT);
   } catch (e) {

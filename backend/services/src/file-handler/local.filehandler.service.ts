@@ -17,7 +17,6 @@ export class LocalFileHandlerService implements FileHandlerInterface {
     const parts = path.split("/");
     if (parts.length > 1) {
       const folders = './public/' + parts.slice(0, -1).join("/");
-      console.log('Creating folder path:', folders)
       if (!(await fsAync.existsSync(folders))) {
         await fsAync.mkdirSync(folders, { recursive: true });
       }

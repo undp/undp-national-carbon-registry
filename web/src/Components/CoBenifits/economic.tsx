@@ -253,7 +253,6 @@ const Economic = (props: any) => {
       }
       const filteredEconomicData = updatedEconomicData.filter((item) => item.fields.length > 0);
       setEconomicDetails(filteredEconomicData);
-      console.log(updatedEconomicData);
     }
   }, []);
 

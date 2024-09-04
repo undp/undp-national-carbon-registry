@@ -15,10 +15,11 @@ import { TypeOrmConfigService } from "../typeorm.config.service";
 import { ProgrammeController } from "./programme.controller";
 import { InvestmentView } from "../entities/investment.view.entity";
 import { NDCActionViewEntity } from "../entities/ndc.view.entity";
-import { GHGInventoryController } from "./ghg-inventory.controller";
 import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
 import { EventLog } from "../entities/event.log.entity";
+import { NationalAccountingModule } from "src/analytics-api/national-accounting/national.accounting.module";
+import { NationalAccountingController } from "./national-accounting.controller";
 
 @Module({
   imports: [
@@ -46,8 +47,9 @@ import { EventLog } from "../entities/event.log.entity";
     CaslModule,
     UtilModule,
     ProgrammeLedgerModule,
+		NationalAccountingModule
   ],
-  controllers: [ProgrammeController, GHGInventoryController],
+  controllers: [ProgrammeController, NationalAccountingController],
   providers: [Logger, AggregateAPIService],
 })
 export class AnalyticsAPIModule {}

@@ -28,6 +28,7 @@ import { NdcDetailsPeriod } from '../entities/ndc.details.period.entity';
 import { NdcDetailsAction } from '../entities/ndc.details.action.entity';
 import { EventLog } from '../entities/event.log.entity';
 import { Region } from '../entities/region.entity';
+import { CreditAuditLog } from '../entities/credit.audit.log.entity';
 
 @Module({
   imports: [
@@ -49,7 +50,8 @@ import { Region } from '../entities/region.entity';
       NdcDetailsPeriod,
       NdcDetailsAction,
       EventLog,
-      Region,
+      Region,,
+			CreditAuditLog
     ]),
     UtilModule,
     CompanyModule,

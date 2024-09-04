@@ -6,6 +6,7 @@ on:
       - 'CARBON-Sprint-*'
       - 'hotfix-*'
       - 'lib-removed'
+      - 'CARBON-*'
     paths:
       - web/**
       - backend/**
