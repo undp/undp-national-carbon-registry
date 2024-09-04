@@ -88,13 +88,28 @@ export class Programme implements EntitySubject {
   @Column("bigint", { array: true })
   companyId: number[];
 
-  @Column({type: "boolean", nullable: false, default: true})
+  @Column({ type: "boolean", nullable: false, default: true })
   article6trade: boolean;
 
-  @Column("bigint", { array: false, nullable:true })
+  @Column({ type: "boolean", nullable: false, default: false })
+  article68trade: boolean;
+
+  @Column({ type: "boolean", nullable: false, default: false })
+  article64trade: boolean;
+
+  @Column({ type: "boolean", nullable: false, default: false })
+  article62trade: boolean;
+
+  @Column({ type: "boolean", nullable: false, default: false })
+  mvcAdjust: boolean;
+
+  @Column({ type: "boolean", nullable: false, default: false })
+  mvcUnadjusted: boolean;
+
+  @Column("bigint", { array: false, nullable: true })
   implementinguser: number;
 
-  @Column("bigint", { array: true , nullable: true })
+  @Column("bigint", { array: true, nullable: true })
   supportingowners: number[];
 
   @Column("real", { array: true, nullable: true })
@@ -157,6 +172,13 @@ export class Programme implements EntitySubject {
   })
   geographicalLocationCordintes: any;
 
+  @Column({
+    type: "jsonb",
+    array: false,
+    nullable: true,
+  })
+  projectLocation: [];
+
   @Column({ nullable: true })
   cadtId: string;
 
@@ -173,9 +195,9 @@ export class Programme implements EntitySubject {
   @Column({ unique: true, nullable: true })
   environmentalAssessmentRegistrationNo: string;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: "timestamptz", nullable: true })
   createdAt: Date;
 
-  @Column({ type: 'timestamptz', nullable: true })
+  @Column({ type: "timestamptz", nullable: true })
   updatedAt: Date;
 }
