@@ -351,7 +351,6 @@ export class ProgrammeController {
   )
   @Post("transferQuery")
   queryUser(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.programmeService.queryProgrammeTransfers(
       query,
       req.abilityCondition,
@@ -378,7 +377,6 @@ export class ProgrammeController {
     @Query("programmeId") programmeId: string,
     @Request() req
   ) {
-    console.log(req.abilityCondition);
     return this.programmeService.getTransferByProgrammeId(
       programmeId,
       req.abilityCondition,
@@ -418,7 +416,6 @@ export class ProgrammeController {
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
   @Post('investmentQuery')
   queryInvestmentUser(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition)
     return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
   }
 

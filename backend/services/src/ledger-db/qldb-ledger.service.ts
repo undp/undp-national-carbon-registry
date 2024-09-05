@@ -67,7 +67,6 @@ export class QLDBLedgerService implements LedgerDBInterface {
     public async fetchHistory(where: Record<string, any>): Promise<dom.Value[]> {
         const whereClause = Object.keys(where).map(k => (`h.data.${k} = ?`)).join(' and ');
         const x = (await this.execute(`SELECT * FROM history(${this.tableName}) as h WHERE ${whereClause}`, ...Object.values(where)))?.getResultList();
-        // console.log('Results', x);
         return x;
     }
 

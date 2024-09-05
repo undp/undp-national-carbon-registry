@@ -69,7 +69,6 @@ export class ObjectionLetterGen {
             });
         });
         const url = await this.fileHandler.uploadFile('documents/' + filepath, content)
-        console.log('PDF generate end', 'documents/' + filepath)
         return url;
     }
 }

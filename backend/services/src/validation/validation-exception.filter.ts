@@ -45,7 +45,6 @@ export class ValidationExceptionFilter implements ExceptionFilter {
       }
     };
 
-    console.log(JSON.stringify(exception));
     // Custom exception handling, to provide rich error message
     if (
       exception.errors.length == 2 &&

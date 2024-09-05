@@ -125,8 +125,7 @@ export class CertifierScrapeService implements ImporterInterface {
         });
         const deactiveRowsfinal = [...new Map(deactiveRows.map(item =>
           [item['refNumber'], item])).values()];
-        // new ObjectsToCsv(deactiveRowsfinal).toDisk('./deactive_users.csv', { append: true });        
-        //  console.log('CSV conversion completed.');
+        // new ObjectsToCsv(deactiveRowsfinal).toDisk('./deactive_users.csv', { append: true });
       return {activeRowsfinal,deactiveRowsfinal}
     } 
       catch (error) {
@@ -188,9 +187,6 @@ export class CertifierScrapeService implements ImporterInterface {
               user.role = Role.Admin;
               user.phoneNo = number;
               user.company = company;
-          
-              console.log("Adding company", company);
-              console.log("Adding user", user);
           
               await this.userService.create(user, -1, CompanyRole.GOVERNMENT);
               this.logger.log("Certifier Creation "+certifier.entity+" Complete.")

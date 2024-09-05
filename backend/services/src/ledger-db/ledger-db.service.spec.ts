@@ -34,13 +34,11 @@ describe('LedgerDbService', () => {
 
   it('insert record', async () => {
     return service.insertRecord({'test_name': 'name', 'val': 700}, 'test_table').then( data => {
-      console.log(data)
     })
   })
 
   it('get record', async () => {
     return service.fetchRecords({'test_name': 'name'}, 'test_table').then( data => {
-      console.log(data)
       expect(data.length).toEqual(1)
       expect(data[0]['val']).toEqual(700)
     })
@@ -48,7 +46,6 @@ describe('LedgerDbService', () => {
 
   it('get history', async () => {
     return service.fetchHistory({'test_name': 'name'}, 'test_table').then( data => {
-      console.log(data)
       expect(data.length).toBeGreaterThan(1)
       expect(data[0]['data']['val']).toEqual(700)
     })
@@ -57,9 +54,7 @@ describe('LedgerDbService', () => {
   it('update record', async () => {
     const txVal = 9999
     return service.updateRecords({'val': txVal}, {'test_name': 'name2'}, 'test_table').then( data => {
-      console.log(data)
       return service.fetchRecords({'test_name': 'name2'}, 'test_table').then( data2 => {
-        console.log(data2)
         expect(data2.length).toEqual(1)
         expect(data2[0]['val']).toEqual(txVal)
       })
@@ -75,7 +70,6 @@ describe('LedgerDbService', () => {
     const r = await service.getAndUpdateTx(
       getQueries,
       (results: Record<string, dom.Value[]>) => {
-        console.log(results)
         expect(results[table].length).toEqual(1);
         return [{
           test_table: {

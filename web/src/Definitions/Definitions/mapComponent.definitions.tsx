@@ -33,4 +33,6 @@ export interface MapComponentProps {
   style: string;
   onRender?: any;
   accessToken?: any;
+  onPolygonComplete?: any;
+  outlineLayer?: any;
 }

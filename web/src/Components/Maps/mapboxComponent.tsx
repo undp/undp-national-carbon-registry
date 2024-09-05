@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import {
   MapComponentProps,
   MarkerData,
@@ -9,6 +11,7 @@ import './mapboxComponent.scss';
 
 export const MapboxComponent = (props: MapComponentProps) => {
   const mapContainerRef = useRef(null);
+
   const {
     center,
     markers,
@@ -22,6 +25,8 @@ export const MapboxComponent = (props: MapComponentProps) => {
     zoom,
     onRender,
     accessToken,
+    onPolygonComplete,
+    outlineLayer,
   } = props;
 
   mapboxgl.accessToken = accessToken;
@@ -41,6 +46,24 @@ export const MapboxComponent = (props: MapComponentProps) => {
       zoom: zoom,
       maxZoom: 17,
     });
+
+    if (onPolygonComplete) {
+      const draw: any = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          trash: true,
+        },
+        defaultMode: 'draw_polygon',
+      });
+
+      map.addControl(draw);
+      map.on('draw.create', (e) => {
+        const data = draw.getAll();
+        console.log('draw.create called');
+        onPolygonComplete(data);
+      });
+    }
 
     map.on('load', () => {
       const currentMarkes: any = {};
@@ -69,6 +92,10 @@ export const MapboxComponent = (props: MapComponentProps) => {
 
       if (layer) {
         map.addLayer(layer);
+      }
+
+      if (outlineLayer) {
+        map.addLayer(outlineLayer);
       }
 
       if (onRender) {

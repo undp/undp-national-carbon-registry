@@ -53,7 +53,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
 
   // TODO: Handler session expire
   private async execute<TM>(queries: TxElement[]): Promise<QueryResult> {
-    console.log(`Statement: ${JSON.stringify(queries)}`);
     const client = await this.dbCon.connect();
     try {
       const responses = [];
@@ -61,7 +60,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       for (const c of queries) {
         const resp = await client.query(c.sql, c.params);
         responses.push(resp);
-        console.log("Execute resp", resp);
       }
       await client.query("COMMIT");
       return responses;
@@ -78,7 +76,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     client: Client,
     queries: { [key: string]: TxElement }
   ): Promise<{ [key: string]: QueryResult }> {
-    console.log(`Statement: ${JSON.stringify(queries)}`);
     try {
       const responses = {};
       await client.query("BEGIN");
@@ -86,7 +83,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         const c = queries[k];
         const resp = await client.query(c.sql, c.params);
         responses[k] = resp;
-        console.log("Execute resp", resp);
       }
       await client.query("COMMIT");
       return responses;
@@ -190,7 +186,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
         },
       ])
     )[0]?.rows;
-    // console.log("Results", x);
     return x;
   }
 
@@ -212,7 +207,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       getQueries,
       (results: Record<string, dom.Value[]>) => {
         const resTable = results[table];
-        console.log("Res table", resTable, update);
         const insertMap = {};
         for (const obj of resTable) {
           for (const k in update) {
@@ -220,12 +214,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           }
           insertMap[table] = obj;
         }
-        console.log("Updating records", insertMap);
         return [{}, {}, insertMap];
       }
     );
-
-    console.log(r);
 
     return r[table];
   }
@@ -260,7 +251,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     try {
       const getTxElements = {};
       for (const t in getQueries) {
-        console.log("getQueries t", t);
         if (getQueries.hasOwnProperty(t)) {
           const isHistoryQuery = t.includes("history(");
           let table = t;
@@ -311,7 +301,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           };
         }
       }
-      console.log("Get elements", getTxElements);
       const list = await this.executeTxn(client, getTxElements);
 
       const mapped = {};
@@ -320,7 +309,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       }
       let [update, updateWhere, insert] = processGetFn(mapped);
 
-      console.log("processGetFn", update, updateWhere, insert);
       const updateGetElements = {};
 
       if (update && Object.keys(update).length > 0) {
@@ -356,23 +344,19 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           }
         }
 
-        console.log("TEST", updateGetElements);
         const obj = await this.executeTxn(client, updateGetElements);
         const updatingObj = {};
         for (const el in obj) {
           updatingObj[el] = obj[el]?.rows.map((e) => e.data);
-          console.log('updateGetElements TEST', el, JSON.stringify(obj[el]))
         }
 
         if (!insert) {
           insert = {};
         }
 
-        console.log("Update property", updatingObj, update);
         for (const t in updatingObj) {
           if (updatingObj.hasOwnProperty(t)) {
             if (updatingObj[t]) {
-              console.log("Length", updatingObj[t].length);
               for (const o of updatingObj[t]) {
                 if (update[t]) {
                   for (const f in update[t]) {
@@ -384,7 +368,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             }
           }
         }
-        console.log("Updated prop", insert);
       }
 
       const updateTxElements = {};

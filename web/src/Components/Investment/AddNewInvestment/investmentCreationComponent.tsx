@@ -99,7 +99,6 @@ export const InvestmentCreationComponent = (props: any) => {
   }));
 
   const onInstrumentChange = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
     setInstrument([e.target.value]);
   };
 
@@ -110,7 +109,6 @@ export const InvestmentCreationComponent = (props: any) => {
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      console.log('getting government profile');
       const response = await post('national/organisation/query', {
         page: 1,
         size: 100,
@@ -124,7 +122,6 @@ export const InvestmentCreationComponent = (props: any) => {
       });
       if (response.data) {
         setGovData(response?.data[0]);
-        console.log('gov profile', response?.data[0]);
         return response?.data[0];
       }
     } catch (error: any) {
@@ -139,8 +136,6 @@ export const InvestmentCreationComponent = (props: any) => {
     try {
       if (data) {
         if (!data?.programmeId) {
-          console.log('data non existing', data);
-          console.log('getting all Project data');
           const response = await post('national/programme/query', {
             page: 1,
             size: 100,
@@ -154,10 +149,8 @@ export const InvestmentCreationComponent = (props: any) => {
           });
           if (response.data) {
             setAllProjectData(response?.data);
-            console.log('all Project data', response?.data);
           }
         } else {
-          console.log('setting current Project data');
           setAllProjectData([data]);
         }
       }
@@ -169,7 +162,6 @@ export const InvestmentCreationComponent = (props: any) => {
   };
 
   const setSelectedProgramme = async (value: any) => {
-    console.log('setSelectedProgramme', value);
     for (const obj of allProjectData) {
       if (obj.programmeId == value) {
         setProjectData(obj);
@@ -179,7 +171,6 @@ export const InvestmentCreationComponent = (props: any) => {
   };
 
   const setSelectedInvestment = async (value: any) => {
-    console.log('setSelectedInvestment', value);
     setInvestmentData(investmentNames[value]);
   };
 
@@ -235,7 +226,6 @@ export const InvestmentCreationComponent = (props: any) => {
           investmentData[investment.requestId] = investment;
         }
         setInvestmentNames(investmentData);
-        console.log(investmentData);
       }
     } catch (error: any) {
       console.log('Error in getting national Investments list', error);
@@ -251,7 +241,6 @@ export const InvestmentCreationComponent = (props: any) => {
         size: 100,
         filterAnd: [{ key: 'companyId', operation: '=', value: userInfoState?.companyId }],
       });
-      console.log('getUserOrganization', response.data[0]);
       setUserOrganization(response.data[0]);
       setMinistrySectoralScope(response.data[0].sectoralScope);
     } catch (error) {
@@ -306,7 +295,6 @@ export const InvestmentCreationComponent = (props: any) => {
           companyName[Number(company.companyId)] = company.name;
         }
         setCompanyNames(companyName);
-        console.log(companyName);
       }
     } catch (error: any) {
       console.log('Error in getting organization list', error);
@@ -321,10 +309,8 @@ export const InvestmentCreationComponent = (props: any) => {
       return;
     }
     if (state?.record) {
-      console.log('condition 1 data', state?.record);
       setData(state?.record);
     } else {
-      console.log('condition 2 data', { ownership: true });
       setData({ ownership: true });
     }
   }, []);
@@ -346,8 +332,6 @@ export const InvestmentCreationComponent = (props: any) => {
   if (!data && allProjectData.length == 0) {
     return <Loading />;
   }
-  console.log('data', data);
-  console.log('data', data);
 
   if (data && Object.keys(data)[0] !== 'ownership') {
     // for (const company of data!?.company) {
@@ -359,7 +343,6 @@ export const InvestmentCreationComponent = (props: any) => {
   }
 
   const nextOne = (val: any) => {
-    console.log('step 1 values', val);
     if (val.typeCreation == InvestmentCreationType.EXISTING) {
       val.toCompanyId = investmentData.toCompanyId;
     }
@@ -388,10 +371,6 @@ export const InvestmentCreationComponent = (props: any) => {
   };
 
   const submitInvestment = async (val: any) => {
-    console.log(val);
-    console.log(stepOneData);
-    console.log('OwnershipType', investmentOwnershipType);
-
     setLoading(true);
 
     const payload = stepOneData;
@@ -431,7 +410,6 @@ export const InvestmentCreationComponent = (props: any) => {
         payload.instrument = payload.instrument;
         response = await post('national/organisation/addInvestment', payload);
       }
-      console.log('investment creation -> ', response);
       if (response?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -459,13 +437,11 @@ export const InvestmentCreationComponent = (props: any) => {
   const deselectOnClick = (e: any, fieldName: string) => {
     const { value } = e.target;
     if (value === formOne.getFieldValue(fieldName)) {
-      console.log('double clicked button', value);
       formOne.setFieldValue(fieldName, null);
     }
   };
 
   const onChangeTypeCreation = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
     setTypeCreation(e.target.value);
     formOne.resetFields();
     formTwo.resetFields();
@@ -474,7 +450,6 @@ export const InvestmentCreationComponent = (props: any) => {
   };
 
   const onChangeInvestmentOwnershipType = (e: RadioChangeEvent) => {
-    console.log('investment ownership type radio checked', e.target.value);
     setInvestmentOwnershipType(e.target.value);
   };
 

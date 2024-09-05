@@ -27,6 +27,7 @@ import { CadtModule } from '../cadt/cadt.module';
 import { NdcDetailsPeriod } from '../entities/ndc.details.period.entity';
 import { NdcDetailsAction } from '../entities/ndc.details.action.entity';
 import { EventLog } from '../entities/event.log.entity';
+import { Region } from '../entities/region.entity';
 import { CreditAuditLog } from '../entities/credit.audit.log.entity';
 
 @Module({
@@ -49,6 +50,7 @@ import { CreditAuditLog } from '../entities/credit.audit.log.entity';
       NdcDetailsPeriod,
       NdcDetailsAction,
       EventLog,
+      Region,,
 			CreditAuditLog
     ]),
     UtilModule,

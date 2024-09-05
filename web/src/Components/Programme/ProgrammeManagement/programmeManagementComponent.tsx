@@ -85,8 +85,6 @@ export const ProgrammeManagementComponent = (props: any) => {
   const [checkAll, setCheckAll] = useState(true);
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
-    console.log(checkedValues);
-
     if (checkedValues !== selectedStatus) {
       setSelectedStatus(checkedValues);
 
@@ -499,7 +497,6 @@ export const ProgrammeManagementComponent = (props: any) => {
   };
 
   const handleTableChange = (pag: any, sorter: any) => {
-    console.log(pag, sorter);
     setSortOrder(
       sorter.order === 'ascend' ? 'ASC' : sorter.order === 'descend' ? 'DESC' : undefined
     );

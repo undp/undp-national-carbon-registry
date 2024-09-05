@@ -113,11 +113,9 @@ export const PoliciesGuardEx = (
         const mongoQuery = JSON.stringify(rulesToQuery(ability, action, subject, rule => {
           return rule.inverted ? { $not: rule.conditions } : rule.conditions
         }))
-        console.log(JSON.stringify(mongoQuery))
 
         if (mongoQuery && mongoQuery != "" && mongoQuery != "{}" && mongoQuery != '{"$or":[{}]}') {
           // const whereQuery = this.parseMongoQueryToSQL(JSON.parse(mongoQuery));
-          // console.log("Where", whereQuery)
           context.switchToHttp().getRequest()['abilityCondition'] = JSON.parse(mongoQuery);
         }
       }
@@ -128,10 +126,8 @@ export const PoliciesGuardEx = (
         for (const key in obj) {
           const possible = [];
           if (obj[key] instanceof Array) {
-            // console.log(obj[key]);
             for (const en of obj[key]) {
               for (const key2 in en) {
-                // console.log(action, en, key2);
                 if (ability.can(action, plainToClass(Stat, en), key2)) {
                   possible.push(en);
                 }
@@ -157,20 +153,12 @@ export const PoliciesGuardEx = (
       if (policyHandlers.length == 0 && action && subject && !onlyInject) {
         const obj = Object.assign(new subject(), body);
         let abilityCan: boolean = true;
-        // console.log(obj);
         if (action == Action.Update) {
           if (obj instanceof User && obj.companyId == undefined) {
             obj.companyId = user.companyId;
           }
           for (const key in obj) {
             if (!ability.can(action, obj, key)) {
-              console.log(
-                "Failed due to",
-                JSON.stringify(ability),
-                action,
-                obj,
-                key
-              );
               abilityCan = false;
             }
           }

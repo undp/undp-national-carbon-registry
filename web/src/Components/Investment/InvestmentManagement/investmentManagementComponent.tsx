@@ -100,8 +100,6 @@ export const InvestmentManagementComponent = (props: any) => {
   const [dataQuery, setDataQuery] = useState<any>();
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
-    console.log(checkedValues);
-
     if (checkedValues !== selectedStatus) {
       setSelectedStatus(checkedValues);
     }
@@ -191,7 +189,6 @@ export const InvestmentManagementComponent = (props: any) => {
         filterBy: filterBy,
       });
 
-      console.log(response);
       setTableData(response.data);
       setTotalProgramme(response.response.data.total);
       setDataQuery({
@@ -311,7 +308,6 @@ export const InvestmentManagementComponent = (props: any) => {
       if (isRetire) {
         successMsg = t('creditTransfer:internationalTransferReqCancelled');
       }
-      console.log(response);
       message.open({
         type: 'success',
         content: successText ? successText : successMsg,
@@ -663,7 +659,6 @@ export const InvestmentManagementComponent = (props: any) => {
   };
 
   const handleTableChange = (pag: any, sorter: any) => {
-    console.log(pag, sorter);
     setSortOrder(
       sorter.order === 'ascend' ? 'ASC' : sorter.order === 'descend' ? 'DESC' : undefined
     );

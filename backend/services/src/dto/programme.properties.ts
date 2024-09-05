@@ -16,6 +16,7 @@ import {
 } from "class-validator";
 import { GHGs } from "../enum/ghgs.enum";
 import { SourceOfFunding } from "../enum/sourceoffinding.enum";
+import { IsValidCountry } from "../util/validcountry.decorator";
 
 export class ProgrammeProperties {
   @ApiPropertyOptional()
@@ -33,7 +34,7 @@ export class ProgrammeProperties {
 
   @ApiProperty()
   @IsPositive()
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   estimatedProgrammeCostUSD?: number;
 
@@ -62,9 +63,8 @@ export class ProgrammeProperties {
 
   @ApiPropertyOptional()
   @IsString()
-  @ValidateIf(o => o.article6trade === true)
+  @IsValidCountry()
   @IsOptional()
-  @IsNotEmpty()
   buyerCountryEligibility?: string;
 
   @ApiProperty()
@@ -72,6 +72,7 @@ export class ProgrammeProperties {
   @ArrayMinSize(1)
   @MaxLength(100, { each: true })
   @IsNotEmpty({ each: true })
+  @IsString({ each: true })
   geographicalLocation: string[];
 
   @ApiProperty({ enum: GHGs, isArray: true })
