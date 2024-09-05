@@ -132,8 +132,8 @@ import { BaseIdDto } from "../dto/base.id.dto";
 import { EventLog } from "../entities/event.log.entity";
 import { EventLogType } from "../enum/event.log.type.enum";
 import { Region } from "../entities/region.entity";
-import { CreditAuditLog } from 'src/entities/credit.audit.log.entity';
-import { CreditAuditLogType } from 'src/enum/credit.audit.log.type.enum';
+import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
+import { CreditAuditLogType } from "src/enum/credit.audit.log.type.enum";
 
 export declare function PrimaryGeneratedColumn(options: PrimaryGeneratedColumnType): Function;
 
@@ -190,7 +190,7 @@ export class ProgrammeService {
     @InjectRepository(Region)
     private regionRepo: Repository<Region>,
     @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>,
-    @InjectRepository(CreditAuditLog) private creditAuditLogRepo: Repository<CreditAuditLog>,
+    @InjectRepository(CreditAuditLog) private creditAuditLogRepo: Repository<CreditAuditLog>
   ) {}
 
   private fileExtensionMap = new Map([
@@ -739,9 +739,7 @@ export class ProgrammeService {
     let updateProgramme = undefined;
     for (const trf of autoApproveInvestmentList) {
       this.logger.log(`Investment send received ${trf}`);
-      const toCompany = await this.companyService.findByCompanyId(
-        trf.toCompanyId,
-      );
+      const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
       updateProgramme = (
         await this.doInvestment(
           trf,
@@ -1128,7 +1126,7 @@ export class ProgrammeService {
         eventLog.createdTime = new Date().getTime();
       }
     }
-    
+
     if (ndc) {
       await em.update(
         NDCAction,
@@ -1182,16 +1180,18 @@ export class ProgrammeService {
       );
     }
 
-		if(user.companyRole === CompanyRole.CERTIFIER && 
-      (d.type === DocType.METHODOLOGY_DOCUMENT || d.type === DocType.DESIGN_DOCUMENT || d.type === DocType.MONITORING_REPORT || d.type === DocType.VERIFICATION_REPORT )
-       && (documentAction.status == DocumentStatus.ACCEPTED  || documentAction.status === DocumentStatus.REJECTED)
-      ) {
+    if (
+      user.companyRole === CompanyRole.CERTIFIER &&
+      (d.type === DocType.METHODOLOGY_DOCUMENT ||
+        d.type === DocType.DESIGN_DOCUMENT ||
+        d.type === DocType.MONITORING_REPORT ||
+        d.type === DocType.VERIFICATION_REPORT) &&
+      (documentAction.status == DocumentStatus.ACCEPTED ||
+        documentAction.status === DocumentStatus.REJECTED)
+    ) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'user.userUnAUth',
-          [],
-        ),
-        HttpStatus.FORBIDDEN,
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -1445,7 +1445,7 @@ export class ProgrammeService {
     }
 
     if (sqlProgram.currentStage != resp.currentStage) {
-      if (sqlProgram.article6trade==true || sqlProgram.article6trade==undefined) {
+      if (sqlProgram.article6trade == true || sqlProgram.article6trade == undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
           actionProps: {
@@ -1459,17 +1459,19 @@ export class ProgrammeService {
   }
 
   async addDocument(documentDto: ProgrammeDocumentDto, user: User) {
-
-		if ((user.companyRole === CompanyRole.CERTIFIER || user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) && user.role === Role.ViewOnly
-			&& (documentDto.type == DocType.METHODOLOGY_DOCUMENT || documentDto.type == DocType.MONITORING_REPORT || documentDto.type == DocType.VERIFICATION_REPORT)) {
-			throw new HttpException(
-				this.helperService.formatReqMessagesString(
-					'user.userUnAUth',
-					[],
-				),
-				HttpStatus.FORBIDDEN,
-			);
-		}
+    if (
+      (user.companyRole === CompanyRole.CERTIFIER ||
+        user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) &&
+      user.role === Role.ViewOnly &&
+      (documentDto.type == DocType.METHODOLOGY_DOCUMENT ||
+        documentDto.type == DocType.MONITORING_REPORT ||
+        documentDto.type == DocType.VERIFICATION_REPORT)
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
 
     let programme;
     if (documentDto.programmeId) {
@@ -1724,7 +1726,7 @@ export class ProgrammeService {
         );
       }
     }
-    
+
     if (programmeDto.programmeProperties.geographicalLocation.length > 0) {
       for (const location of programmeDto.programmeProperties.geographicalLocation) {
         const isValid = await this.regionRepo.findOneBy({
@@ -1989,10 +1991,10 @@ export class ProgrammeService {
       } else {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            'programme.programmeDesignDocumentIsRequired',
-            [],
+            "programme.programmeDesignDocumentIsRequired",
+            []
           ),
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.BAD_REQUEST
         );
       }
       let ndcAc: NDCAction = undefined;
@@ -2177,8 +2179,9 @@ export class ProgrammeService {
                 address.push(programmeProperties.geographicalLocation[index]);
               }
             }
-            await this.locationService.getCoordinatesForRegion([...address]).then(
-              (response: any) => {
+            await this.locationService
+              .getCoordinatesForRegion([...address])
+              .then((response: any) => {
                 programme.geographicalLocationCordintes = [...response];
               });
             return await em.save<Programme>(programme);
@@ -2294,10 +2297,7 @@ export class ProgrammeService {
     return savedProgramme ? savedProgramme : pr;
   }
 
-  async addNDCAction(
-    ndcActionDto: NDCActionDto,
-    user: User,
-  ): Promise<DataResponseDto> {
+  async addNDCAction(ndcActionDto: NDCActionDto, user: User): Promise<DataResponseDto> {
     if (!ndcActionDto.programmeId) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
@@ -3307,8 +3307,7 @@ export class ProgrammeService {
 
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
-        e.certifier =
-          e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
+        e.certifier = e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
         if (
           e.isRetirement &&
           e.retirementType == RetireType.CROSS_BORDER &&
@@ -3660,15 +3659,18 @@ export class ProgrammeService {
         const countryName = await this.countryService.getCountryName(
           transfer.toCompanyMeta.country
         );
-        const omgeCredits = transfer.retirementType==RetireType.CROSS_BORDER?Number((transfer.creditAmount*transfer.omgePercentage/100).toFixed(2)):0
+        const omgeCredits =
+          transfer.retirementType == RetireType.CROSS_BORDER
+            ? Number(((transfer.creditAmount * transfer.omgePercentage) / 100).toFixed(2))
+            : 0;
 
-				await this.createCreditAuditLogRecord(
-					CreditAuditLogType.CREDIT_RETIRED,
-					transfer.programmeId,
-					transfer.creditAmount,
-					approver.id,
-					transfer.toCompanyMeta.country
-				)
+        await this.createCreditAuditLogRecord(
+          CreditAuditLogType.CREDIT_RETIRED,
+          transfer.programmeId,
+          transfer.creditAmount,
+          approver.id,
+          transfer.toCompanyMeta.country
+        );
 
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -3726,7 +3728,7 @@ export class ProgrammeService {
       isRetirement
     );
 
-    if (programme.article6trade==true || programme.article6trade == undefined) {
+    if (programme.article6trade == true || programme.article6trade == undefined) {
       await this.asyncOperationsInterface.AddAction({
         actionType: AsyncActionType.CADTTransferCredit,
         actionProps: {
@@ -3755,7 +3757,7 @@ export class ProgrammeService {
 
     if (result.affected > 0) {
       this.checkPendingTransferValidity(programme);
-			
+
       return new DataResponseDto(HttpStatus.OK, programme);
     }
 
@@ -4174,9 +4176,11 @@ export class ProgrammeService {
         );
       }
 
-      const companyAvailableCredit =
-        this.helperService.halfUpToPrecision(this.helperService.halfUpToPrecision((programme.creditBalance * ownershipMap[fromCompanyId]) / 100) -
-        (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0));
+      const companyAvailableCredit = this.helperService.halfUpToPrecision(
+        this.helperService.halfUpToPrecision(
+          (programme.creditBalance * ownershipMap[fromCompanyId]) / 100
+        ) - (frozenCredit[fromCompanyId] ? frozenCredit[fromCompanyId] : 0)
+      );
 
       let transferCompanyCredit;
       if (req.fromCompanyIds.length == 1 && !req.companyCredit) {
@@ -4229,9 +4233,7 @@ export class ProgrammeService {
     let updateProgramme = undefined;
     for (const trf of autoApproveTransferList) {
       this.logger.log(`Credit send received ${trf}`);
-      const toCompany = await this.companyService.findByCompanyId(
-        trf.toCompanyId,
-      );
+      const toCompany = await this.companyService.findByCompanyId(trf.toCompanyId);
 
       updateProgramme = (
         await this.doTransfer(
@@ -4325,14 +4327,15 @@ export class ProgrammeService {
         sqlProgram.programmeId,
         certifier.companyId,
         true,
-        certifier ? `${certifier.companyId}#${certifier.name}`  : '',
-        undefined,)
-  
-        this.logger.log('Certifying the programme', updateCert)
-      }
+        certifier ? `${certifier.companyId}#${certifier.name}` : "",
+        undefined
+      );
+
+      this.logger.log("Certifying the programme", updateCert);
+    }
 
     if (sqlProgram.currentStage != resp.currentStage) {
-      if (sqlProgram.article6trade==true || sqlProgram.article6trade == undefined) {
+      if (sqlProgram.article6trade == true || sqlProgram.article6trade == undefined) {
         await this.asyncOperationsInterface.AddAction({
           actionType: AsyncActionType.CADTUpdateProgramme,
           actionProps: {
@@ -4900,7 +4903,7 @@ export class ProgrammeService {
       }
     }
 
-		const transfer = new ProgrammeTransfer();
+    const transfer = new ProgrammeTransfer();
     const fromCompanyMap = {};
     for (const j in req.fromCompanyIds) {
       const fromCompanyId = req.fromCompanyIds[j];
@@ -5045,13 +5048,13 @@ export class ProgrammeService {
       ).data;
     }
     if (updateProgramme) {
-			await this.createCreditAuditLogRecord(
-				CreditAuditLogType.CREDIT_RETIRED,
-				transfer.programmeId,
-				transfer.creditAmount,
-				requester.id,
-				transfer.toCompanyMeta?.country
-			)
+      await this.createCreditAuditLogRecord(
+        CreditAuditLogType.CREDIT_RETIRED,
+        transfer.programmeId,
+        transfer.creditAmount,
+        requester.id,
+        transfer.toCompanyMeta?.country
+      );
       return new DataResponseDto(HttpStatus.OK, updateProgramme);
     }
     return new DataListResponseDto(allTransferList, allTransferList.length);
@@ -5189,7 +5192,12 @@ export class ProgrammeService {
       eventLog.createdTime = new Date().getTime();
       eventLog.createdBy = user.id;
       await this.entityManager.transaction(async (em) => {
-				await this.createCreditAuditLogRecord(CreditAuditLogType.CREDIT_ISSUED, req.programmeId, actionDetails.issueCredit, user.id);
+        await this.createCreditAuditLogRecord(
+          CreditAuditLogType.CREDIT_ISSUED,
+          req.programmeId,
+          actionDetails.issueCredit,
+          user.id
+        );
         return await em.save(eventLog);
       });
     });
@@ -5567,13 +5575,9 @@ export class ProgrammeService {
     return new DataResponseDto(HttpStatus.OK, programme);
   }
 
-  async authorizeProgramme(req: ProgrammeApprove, user: User, auth_letter?:string ) {
-    this.logger.log(
-      `Programme ${req.programmeId} approve. Comment: ${req.comment}`,
-    );
-    const program = await this.programmeLedger.getProgrammeById(
-      req.programmeId,
-    );
+  async authorizeProgramme(req: ProgrammeApprove, user: User, auth_letter?: string) {
+    this.logger.log(`Programme ${req.programmeId} approve. Comment: ${req.comment}`);
+    const program = await this.programmeLedger.getProgrammeById(req.programmeId);
     if (!program) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
@@ -5629,7 +5633,12 @@ export class ProgrammeService {
       );
     }
 
-		await this.createCreditAuditLogRecord(CreditAuditLogType.CREDIT_AUTHORIZED, req.programmeId, program.creditEst, user.id);
+    await this.createCreditAuditLogRecord(
+      CreditAuditLogType.CREDIT_AUTHORIZED,
+      req.programmeId,
+      program.creditEst,
+      user.id
+    );
 
     await this.asyncOperationsInterface.AddAction({
       actionType: AsyncActionType.CADTUpdateProgramme,
@@ -5887,11 +5896,9 @@ export class ProgrammeService {
           address.push(programmeProperties.geographicalLocation[index]);
         }
       }
-      await this.locationService
-        .getCoordinatesForRegion([...address])
-        .then((response: any) => {
-          programme.geographicalLocationCordintes = [...response];
-        });
+      await this.locationService.getCoordinatesForRegion([...address]).then((response: any) => {
+        programme.geographicalLocationCordintes = [...response];
+      });
 
       const result = await this.programmeRepo
         .update(
@@ -5954,11 +5961,16 @@ export class ProgrammeService {
         });
     }
 
-		if (!(query.extendedProperties?.isGetInvestmentHistory) && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      queryBuilder = queryBuilder
-        .andWhere('(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)', {
-          developerCompanyId: user.companyId
-        });
+    if (
+      !query.extendedProperties?.isGetInvestmentHistory &&
+      user.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    ) {
+      queryBuilder = queryBuilder.andWhere(
+        "(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)",
+        {
+          developerCompanyId: user.companyId,
+        }
+      );
     }
 
     const resp = await queryBuilder
@@ -5980,12 +5992,7 @@ export class ProgrammeService {
     );
   }
 
-  async downloadInvestments(
-    queryData: DataExportQueryDto,
-    abilityCondition: string,
-		user: User
-  ) {
-
+  async downloadInvestments(queryData: DataExportQueryDto, abilityCondition: string, user: User) {
     const queryDto = new QueryDto();
     queryDto.filterAnd = queryData.filterAnd;
     queryDto.filterOr = queryData.filterOr;
@@ -6018,23 +6025,25 @@ export class ProgrammeService {
         });
     }
 
-		if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      queryBuilder = queryBuilder
-        .andWhere('(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)', {
-          developerCompanyId: user.companyId
-        });
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      queryBuilder = queryBuilder.andWhere(
+        "(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)",
+        {
+          developerCompanyId: user.companyId,
+        }
+      );
     }
 
-    const resp = await queryBuilder.orderBy(
-      queryDto?.sort?.key &&
-      this.helperService.generateSortCol(queryDto?.sort?.key),
-      queryDto?.sort?.order,
-      queryDto?.sort?.nullFirst !== undefined
-        ? queryDto?.sort?.nullFirst === true
-          ? "NULLS FIRST"
-          : "NULLS LAST"
-        : undefined
-    )
+    const resp = await queryBuilder
+      .orderBy(
+        queryDto?.sort?.key && this.helperService.generateSortCol(queryDto?.sort?.key),
+        queryDto?.sort?.order,
+        queryDto?.sort?.nullFirst !== undefined
+          ? queryDto?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
       .getMany();
 
     if (resp.length > 0) {
@@ -6281,13 +6290,15 @@ export class ProgrammeService {
     );
 
     const programme = await this.findById(investment.programmeId);
-		programme.companyId = programme.companyId.map((c) => Number(c));
-		
-    const propPerMap = {}
+    programme.companyId = programme.companyId.map((c) => Number(c));
+
+    const propPerMap = {};
     for (const i in programme.companyId) {
       propPerMap[programme.companyId[i]] = programme.proponentPercentage[i];
     }
-    investment.shareFromOwner = parseFloat((investment.percentage * 100 / propPerMap[investment.fromCompanyId]).toFixed(6))
+    investment.shareFromOwner = parseFloat(
+      ((investment.percentage * 100) / propPerMap[investment.fromCompanyId]).toFixed(6)
+    );
 
     const transferResult = await this.doInvestment(
       investment,
@@ -6297,29 +6308,28 @@ export class ProgrammeService {
       nationalInvestment
     );
 
-		const companyData = await this.companyService.findByCompanyIds({
+    const companyData = await this.companyService.findByCompanyIds({
       companyIds: programme.companyId,
     });
 
     const suspendedCompanies = companyData.filter(
-      (company) => company.state == CompanyState.SUSPENDED,
+      (company) => company.state == CompanyState.SUSPENDED
     );
 
     if (receiver.state == CompanyState.SUSPENDED) {
       const updated = await this.programmeLedger.freezeIssuedCredit(
         programme.programmeId,
         programme.creditIssued,
-        '##',
-        suspendedCompanies,
+        "##",
+        suspendedCompanies
       );
 
       if (!updated) {
         return new BasicResponseDto(
           HttpStatus.BAD_REQUEST,
-          this.helperService.formatReqMessagesString(
-            'programme.internalErrorCreditFreezing',
-            [programme.programmeId],
-          ),
+          this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
+            programme.programmeId,
+          ])
         );
       }
     }
@@ -6638,14 +6648,19 @@ export class ProgrammeService {
     return new DataResponseDto(HttpStatus.OK, {});
   }
 
-	async createCreditAuditLogRecord(auditLogType: CreditAuditLogType, programmeId: string, creditAmount: number, userId: number, country?: string) {
-		const creditAuditLog = new CreditAuditLog;
-		creditAuditLog.programmeId = programmeId;
-		creditAuditLog.type = auditLogType;
-		creditAuditLog.createdBy = userId;
-		creditAuditLog.credits = creditAmount;
-		creditAuditLog.country = country;
-		await this.creditAuditLogRepo.save(creditAuditLog);
-
-	}
+  async createCreditAuditLogRecord(
+    auditLogType: CreditAuditLogType,
+    programmeId: string,
+    creditAmount: number,
+    userId: number,
+    country?: string
+  ) {
+    const creditAuditLog = new CreditAuditLog();
+    creditAuditLog.programmeId = programmeId;
+    creditAuditLog.type = auditLogType;
+    creditAuditLog.createdBy = userId;
+    creditAuditLog.credits = creditAmount;
+    creditAuditLog.country = country;
+    await this.creditAuditLogRepo.save(creditAuditLog);
+  }
 }
