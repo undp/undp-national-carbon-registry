@@ -41,7 +41,9 @@ export type ConnectionProps = {
     config?: AxiosRequestConfig
   ): Promise<R>;
   updateToken: (token?: string) => void;
+  updateRefreshToken: (refreshToken?: string) => void;
   token?: string;
+  refreshToken?: string;
   removeToken: (tkn?: string) => void;
   statServerUrl?: string;
 };

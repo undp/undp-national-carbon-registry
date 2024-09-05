@@ -19,8 +19,10 @@ export default () => ({
     logging: ["error"],
   },
   jwt: {
-    expiresIn: process.env.EXPIRES_IN || "7200",
+    expiresIn: process.env.EXPIRES_IN || "30",
+    refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "12h",
     userSecret: process.env.USER_JWT_SECRET || "1324",
+    refreshTokenSecret: process.env.REFRESH_TOKEN_JWT_SECRET || "9823",
     adminSecret: process.env.ADMIN_JWT_SECRET || "8654",
     encodePassword: process.env.ENCODE_PASSWORD || false
   },
@@ -31,7 +33,7 @@ export default () => ({
     companyTable: "company",
   },
   email: {
-    source: process.env.SOURCE_EMAIL || "info@xeptagon.com", 
+    source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz", 
     endpoint:
       process.env.SMTP_ENDPOINT ||
       "vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com",

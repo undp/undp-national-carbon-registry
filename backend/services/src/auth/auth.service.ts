@@ -13,7 +13,10 @@ import { BasicResponseDto } from "../dto/basic.response.dto";
 import { Repository } from "typeorm";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "../util/passwordReset.service";
-import { AsyncAction, AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import {
+  AsyncAction,
+  AsyncOperationsInterface,
+} from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { PasswordHashService } from "../util/passwordHash.service";
 
@@ -42,9 +45,7 @@ export class AuthService {
   }
 
   async validateApiKey(apiKey: string): Promise<any> {
-    const parts = Buffer.from(apiKey, "base64")
-      .toString("utf-8")
-      .split(API_KEY_SEPARATOR);
+    const parts = Buffer.from(apiKey, "base64").toString("utf-8").split(API_KEY_SEPARATOR);
     if (parts.length != 2) {
       return null;
     }
@@ -57,9 +58,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const organisationDetails = await this.companyService.findByCompanyId(
-      user.companyId
-    );
+    const organisationDetails = await this.companyService.findByCompanyId(user.companyId);
     const payload = new JWTPayload(
       organisationDetails.name,
       user.name,
@@ -69,9 +68,23 @@ export class AuthService {
       user.companyRole,
       parseInt(organisationDetails.state)
     );
+
+    const refreshPayload = {
+      userId: user.id,
+      companyId: user.companyId,
+      role: user.role,
+      companyRole: user.companyRole,
+    };
+
+    const refreshToken = this.jwtService.sign(refreshPayload, {
+      secret: this.configService.get<string>("jwt.refreshTokenSecret"),
+      expiresIn: this.configService.get<string>("jwt.refreshTokenExpiresIn"),
+    });
+
     const ability = this.caslAbilityFactory.createForUser(user);
     return {
       access_token: this.jwtService.sign(instanceToPlain(payload)),
+      refresh_token: refreshToken,
       role: user.role,
       id: user.id,
       name: user.name,
@@ -82,6 +95,81 @@ export class AuthService {
       ability: JSON.stringify(ability),
       companyState: parseInt(organisationDetails.state),
     };
+  }
+
+  async generateAccessToken(userId: number, companyId: number): Promise<string> {
+    const organisationDetails = await this.companyService.findByCompanyId(companyId);
+
+    if (!organisationDetails) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("jwt expired", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("jwt expired", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const payload = new JWTPayload(
+      organisationDetails.name,
+      user.name,
+      user.id,
+      user.role,
+      user.companyId,
+      user.companyRole,
+      parseInt(organisationDetails.state)
+    );
+    return this.jwtService.sign(instanceToPlain(payload));
+  }
+
+  async refreshToken(refreshToken: string) {
+    if (!refreshToken) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("jwt expired", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    let userId;
+    let companyId;
+
+    try {
+      // Verify the refresh token
+      const decoded = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>("jwt.refreshTokenSecret"),
+      });
+      userId = decoded.userId;
+      companyId = decoded.companyId;
+    } catch (err) {
+      console.log(
+        "Unable to verify the refresh token for userId {}, companyId {} due to {}",
+        userId,
+        companyId,
+        err
+      );
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("jwt expired", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    try {
+      // Issue a new access token
+      const generatedAccessToken = await this.generateAccessToken(userId, companyId);
+      return { access_token: generatedAccessToken };
+    } catch (err) {
+      console.log("Unable to generate the access token for user {} due to {}", userId, err);
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("jwt expired", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 
   async forgotPassword(email: any) {
@@ -133,10 +221,7 @@ export class AuthService {
       );
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "user.forgotPwdUserNotFound",
-          []
-        ),
+        this.helperService.formatReqMessagesString("user.forgotPwdUserNotFound", []),
         HttpStatus.NOT_FOUND
       );
     }

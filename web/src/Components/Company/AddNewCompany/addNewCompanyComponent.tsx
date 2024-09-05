@@ -853,6 +853,10 @@ export const AddNewCompanyComponent = (props: any) => {
                           initialValue={state?.record?.nameOfMinister}
                           rules={[
                             {
+                              required: true,
+                              message: '',
+                            },
+                            {
                               validator: async (rule, value) => {
                                 if (
                                   String(value).trim() === '' ||

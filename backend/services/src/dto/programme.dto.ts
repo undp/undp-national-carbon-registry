@@ -23,6 +23,7 @@ import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
+import { IsNumericLength } from "../util/validNumericLength.decorator";
 import { IsNotPastDate } from "../util/isNotPastDate.decorator";
 
 export class ProgrammeDto {
@@ -175,10 +176,14 @@ export class ProgrammeDto {
   // @Type(() => MitigationProperties)
   // mitigationActions?: MitigationProperties[]
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
+  @IsOptional()
+  @IsNumber()
+  @IsNumericLength(8, 2, {
+    message:
+      "Estimated credits must be a numeric value with up to 8 digits before and 2 digits after the decimal point",
+  })
   creditEst: number;
 
   @ApiPropertyOptional()

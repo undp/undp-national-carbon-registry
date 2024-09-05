@@ -22,12 +22,13 @@ export const UserProfileComponent = (props: any) => {
   const { get } = useConnection();
   const [organisationDetails, setOrganisationDetails] = useState<any>(undefined);
   const [userDetails, setUserDetails] = useState<any>(undefined);
-  const { updateToken } = useConnection();
+  const { updateToken, updateRefreshToken } = useConnection();
   const { removeUserInfo } = useUserContext();
   const [isLoading, setIsLoading] = useState(false);
 
   const signOut = (): void => {
     updateToken();
+    updateRefreshToken();
     removeUserInfo();
     onNavigateLogin();
   };

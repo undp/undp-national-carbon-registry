@@ -348,6 +348,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getImplementOwnerDetails = async () => {
     setLoading(true);
     try {
+      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
       const response: any = await post('national/user/query', {
         page: 1,
         size: 10,
@@ -355,7 +356,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           {
             key: 'id',
             operation: '=',
-            value: userInfoState?.id,
+            value: userId,
           },
         ],
       });
@@ -409,6 +410,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
+      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
       const response: any = await post('national/user/query', {
         page: 1,
         size: 10,
@@ -416,7 +418,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           {
             key: 'id',
             operation: '=',
-            value: userInfoState?.id,
+            value: userId,
           },
         ],
       });
@@ -641,12 +643,26 @@ export const ProgrammeCreationComponent = (props: any) => {
       onNavigateToProgrammeView();
     } catch (error: any) {
       console.log('Error in programme creation - ', error);
-      message.open({
-        type: 'error',
-        content: error?.message,
-        duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
+      if (error && error.errors && error.errors.length > 0) {
+        error.errors.forEach((err: any) => {
+          Object.keys(err).forEach((field) => {
+            console.log(`Error in ${field}: ${err[field].join(', ')}`);
+            message.open({
+              type: 'error',
+              content: err[field].join(', '),
+              duration: 4,
+              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            });
+          });
+        });
+      } else {
+        message.open({
+          type: 'error',
+          content: error?.message,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      }
     } finally {
       setLoading(false);
     }

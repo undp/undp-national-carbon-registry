@@ -22,7 +22,7 @@ export interface LoginPageProps {
 
 const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { forgotPassword, resetPassword } = props;
-  const { post, updateToken, removeToken } = useConnection();
+  const { post, updateToken, updateRefreshToken, removeToken } = useConnection();
   const { IsAuthenticated, setUserInfo, isTokenExpired, setIsTokenExpired } = useUserContext();
   const { i18n, t } = useTranslation(['common', 'login']);
   const [loading, setLoading] = useState<boolean>(false);
@@ -60,6 +60,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
+        updateRefreshToken(response.data.refresh_token);
         setUserInfo({
           id: response.data.id,
           userRole: response.data.role,

@@ -75,4 +75,13 @@ export class QueryDto {
   @ValidateNested({ each: true })
   @Type(() => FilterBy)
   filterBy: FilterBy;
+
+	// allow users to pass parameters that are specific to a request such as flags
+  @ApiPropertyOptional({
+    type: "object",
+    example: { key: "isGetInvestmentHistory", values: true },
+  })
+  @IsOptional()
+  @Type(() => Object)
+  extendedProperties?: Record<string, any>;
 }

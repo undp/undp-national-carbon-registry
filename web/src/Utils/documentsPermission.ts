@@ -69,5 +69,10 @@ export const uploadDocUserPermission = (
       permission = true;
     }
   }
+
+  // eslint-disable-next-line eqeqeq
+  if (userInfoState?.companyState == 0) {
+    permission = false;
+  }
   return permission;
 };

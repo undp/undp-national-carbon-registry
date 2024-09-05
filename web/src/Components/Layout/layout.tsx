@@ -25,7 +25,7 @@ const CustomLayout = (props: any) => {
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const { t } = useTranslation(['creditTransfer']);
 
-  const getTranferFrozenStatus = async () => {
+  const getTransferFrozenStatus = async () => {
     const response = await get(
       `national/Settings/query?id=${ConfigurationSettingsType.isTransferFrozen}`
     );
@@ -37,7 +37,7 @@ const CustomLayout = (props: any) => {
   };
 
   useEffect(() => {
-    getTranferFrozenStatus();
+    getTransferFrozenStatus();
   }, []);
 
   return (
