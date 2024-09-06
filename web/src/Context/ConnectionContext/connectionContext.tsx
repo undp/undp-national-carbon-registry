@@ -98,12 +98,12 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
                   // window.location.reload();
                 }
 
-                // reject({
-                //   status: e.response.status,
-                //   statusText: 'ERROR',
-                //   errors: e.response.data?.errors,
-                //   message: e.response.data.message,
-                // });
+                reject({
+                  status: e.response.status,
+                  statusText: 'ERROR',
+                  errors: e.response.data?.errors,
+                  message: e.response.data.message,
+                });
               } else {
                 reject({
                   statusText: 'ERROR',
