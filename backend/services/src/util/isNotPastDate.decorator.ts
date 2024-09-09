@@ -20,6 +20,8 @@ export function IsNotPastDate(validationOptions?: ValidationOptions) {
           // Get the timestamp for the start of today
           const startOfToday = today.getTime();
 
+          console.log("startOfToday and incomingDate", startOfToday, date);
+
           if (date >= startOfToday) {
             return true;
           }
