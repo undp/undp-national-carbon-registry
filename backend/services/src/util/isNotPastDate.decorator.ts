@@ -18,8 +18,6 @@ export function IsNotPastDate(validationOptions?: ValidationOptions) {
           const today = new Date();
           const startOfValidationTime = today.getTime() - 24 * 60 * 60 * 1000;
 
-          console.log("startOfValidationTime and incomingTime:", startOfValidationTime, incomingTime);
-
           if (incomingTime >= startOfValidationTime) {
             return true;
           }
