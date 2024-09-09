@@ -123,7 +123,7 @@ export class QLDBLedgerService implements LedgerDBInterface {
                 }
             }
 
-            this.logger.verbose(`Insert queries`, JSON.stringify(insert));
+            // this.logger.verbose(`Insert queries`, JSON.stringify(insert));
             for (const qk in insert) {
                 const tableName = qk.split('#')[0];
                 if (insert.hasOwnProperty(qk)) {
