@@ -14,11 +14,11 @@ export function IsNotPastDate(validationOptions?: ValidationOptions) {
       validator: {
         validate(value: any, args: ValidationArguments) {
           const incomingTime = value * 1000;//convert epoch time to ms
-          
+
           const today = new Date();
           const startOfValidationTime = today.getTime() - 24 * 60 * 60 * 1000;
 
-          console.log("startOfValidationTime and incomingTime", startOfValidationTime, incomingTime);
+          console.log("startOfValidationTime and incomingTime:", startOfValidationTime, incomingTime);
 
           if (incomingTime >= startOfValidationTime) {
             return true;
