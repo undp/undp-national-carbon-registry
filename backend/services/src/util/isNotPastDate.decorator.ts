@@ -13,16 +13,19 @@ export function IsNotPastDate(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          const date = value * 1000;//Date.parse(value);
+          const incomingDate = new Date(value * 1000);//convert epoch time to ms and create a Date object wrt to server time zone
+          incomingDate.setHours(0, 0, 0, 0);
+          const startOfIncomingDate = incomingDate.getTime();
+
           const today = new Date();
           // Set the time to midnight (00:00:00)
           today.setHours(0, 0, 0, 0);
           // Get the timestamp for the start of today
           const startOfToday = today.getTime();
 
-          console.log("startOfToday and incomingDate", startOfToday, date);
+          console.log("startOfToday and incomingDate", startOfToday, startOfIncomingDate);
 
-          if (date >= startOfToday) {
+          if (startOfIncomingDate >= startOfToday) {
             return true;
           }
           return false;
