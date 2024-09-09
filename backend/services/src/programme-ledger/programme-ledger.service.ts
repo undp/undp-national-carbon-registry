@@ -35,7 +35,7 @@ export class ProgrammeLedgerService {
   ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
-    this.logger.debug("Creating programme", JSON.stringify(programme));
+    // this.logger.debug("Creating programme", JSON.stringify(programme));
     programme.txType = TxType.CREATE;
 
     const getQueries = {};

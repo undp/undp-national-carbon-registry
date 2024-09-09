@@ -208,7 +208,7 @@ export class ProgrammeService {
 
   private toProgramme(programmeDto: ProgrammeDto): Programme {
     const data = instanceToPlain(programmeDto);
-    this.logger.verbose("Converted programme", JSON.stringify(data));
+    // this.logger.verbose("Converted programme", JSON.stringify(data));
     return plainToClass(Programme, data);
   }
 
@@ -1718,7 +1718,7 @@ export class ProgrammeService {
   }
 
   async create(programmeDto: ProgrammeDto, user: User): Promise<Programme | undefined> {
-    this.logger.verbose("ProgrammeDTO received", JSON.stringify(programmeDto));
+    // this.logger.verbose("ProgrammeDTO received", JSON.stringify(programmeDto));
     if (programmeDto.proponentPercentage) {
       for (const i in programmeDto.proponentPercentage) {
         programmeDto.proponentPercentage[i] = this.helperService.halfUpToPrecision(

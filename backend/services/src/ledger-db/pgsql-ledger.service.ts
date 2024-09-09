@@ -371,7 +371,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       }
 
       const updateTxElements = {};
-      this.logger.log(`Insert queries`, JSON.stringify(insert));
+      // this.logger.log(`Insert queries`, JSON.stringify(insert));
       for (const qk in insert) {
         const tableName = qk.split("#")[0];
         if (insert.hasOwnProperty(qk)) {
