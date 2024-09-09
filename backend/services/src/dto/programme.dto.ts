@@ -176,10 +176,10 @@ export class ProgrammeDto {
   // @Type(() => MitigationProperties)
   // mitigationActions?: MitigationProperties[]
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @IsNotEmpty()
-  @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsPositive()
   @IsNumericLength(8, 2, {
     message:
       "Estimated credits must be a numeric value with up to 8 digits before and 2 digits after the decimal point",
