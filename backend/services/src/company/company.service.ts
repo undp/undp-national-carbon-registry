@@ -287,7 +287,7 @@ export class CompanyService {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           'programme.proponentTaxIdNotInSystem',
-          [investment.investorTaxId],
+          [],
         ),
         HttpStatus.BAD_REQUEST,
       );
