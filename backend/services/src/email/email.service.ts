@@ -41,6 +41,7 @@ export class EmailService {
             attachments: emailDataObj?.attachments
           },
           function (error, info) {
+            console.log('SendEmail Response', error, info);
             if (error) {
               reject(error);
             } else {

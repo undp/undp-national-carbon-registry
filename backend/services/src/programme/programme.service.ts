@@ -2745,34 +2745,6 @@ export class ProgrammeService {
       dto.creditCalculationNumberOfPeopleInHousehold =
         ndcAction.creditCalculationProperties?.numberOfPeopleInHousehold;
 
-      dto.adaptationImplementingAgency = ndcAction.adaptationProperties?.implementingAgency;
-      dto.adaptationNationalPlanObjectives = ndcAction.adaptationProperties?.nationalPlanObjectives;
-      dto.adaptationNationalPlanCoverage = ndcAction.adaptationProperties?.nationalPlanCoverage;
-      dto.adaptationGhgEmissionsAvoidedCO2 =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.CO2;
-      dto.adaptationGhgEmissionsAvoidedCH4 =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.CH4;
-      dto.adaptationGhgEmissionsAvoidedN2O =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.N2O;
-      dto.adaptationGhgEmissionsAvoidedHFCs =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.HFCs;
-      dto.adaptationGhgEmissionsAvoidedPFCs =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.PFCs;
-      dto.adaptationGhgEmissionsAvoidedSF6 =
-        ndcAction.adaptationProperties?.ghgEmissionsAvoided?.SF6;
-      dto.adaptationGhgEmissionsReducedCO2 =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.CO2;
-      dto.adaptationGhgEmissionsReducedCH4 =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.CH4;
-      dto.adaptationGhgEmissionsReducedN2O =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.N2O;
-      dto.adaptationGhgEmissionsReducedHFCs =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.HFCs;
-      dto.adaptationGhgEmissionsReducedPFCs =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.PFCs;
-      dto.adaptationGhgEmissionsReducedSF6 =
-        ndcAction.adaptationProperties?.ghgEmissionsReduced?.SF6;
-      dto.adaptationIncludedInNAP = ndcAction.adaptationProperties?.includedInNAP;
       dto.ndcFinancingUserEstimatedCredits = ndcAction.ndcFinancing?.userEstimatedCredits;
       dto.ndcFinancingSystemEstimatedCredits = ndcAction.ndcFinancing?.systemEstimatedCredits;
 
@@ -2925,24 +2897,51 @@ export class ProgrammeService {
       dto.coBenefitsPropertiesEconomicFurtherInfoQ1 =
         ndcAction.coBenefitsProperties?.economic?.furtherInfoQ1;
       // coBenefitsProperties:GenderParity
-      dto.coBenefitsPropertiesGenderParityDiscriminationAgainstGirls =
-        ndcAction.coBenefitsProperties?.genderParity?.discriminationAgainstGirls;
-      dto.coBenefitsPropertiesGenderParityViolationAgainstGirls =
-        ndcAction.coBenefitsProperties?.genderParity?.violationAgainstGirls;
-      dto.coBenefitsPropertiesGenderParityHarmfulPracticesAgainstGirls =
-        ndcAction.coBenefitsProperties?.genderParity?.harmfulPracticesAgainstGirls;
+      dto.coBenefitsPropertiesGenderParityDiscriminationAgainstGirls = ndcAction
+        .coBenefitsProperties?.genderPariy?.descriminationAgainstGirls !== undefined
+        ? ndcAction.coBenefitsProperties.genderPariy.descriminationAgainstGirls
+          ? "YES"
+          : "NO"
+        : undefined;
+
+      dto.coBenefitsPropertiesGenderParityViolationAgainstGirls = ndcAction.coBenefitsProperties
+        ?.genderPariy?.violationAgainstGirls !== undefined
+        ? ndcAction.coBenefitsProperties.genderPariy.violationAgainstGirls
+          ? "YES"
+          : "NO"
+        : undefined;
+
+      dto.coBenefitsPropertiesGenderParityHarmfulPracticesAgainstGirls = ndcAction
+        .coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls !== undefined
+        ? ndcAction.coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls
+          ? "YES"
+          : "NO"
+        : undefined;
+
       dto.coBenefitsPropertiesGenderParityEqualRightsToGirls =
-        ndcAction.coBenefitsProperties?.genderParity?.equalRightsToGirls;
-      dto.coBenefitsPropertiesGenderParityEqualRightsToHealthToGirls =
-        ndcAction.coBenefitsProperties?.genderParity?.equalRightsToHealthToGirls;
+        ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToGirls !== undefined
+          ? ndcAction.coBenefitsProperties.genderPariy.equealRightsToGirls
+            ? "YES"
+            : "NO"
+          : undefined;
+
+      dto.coBenefitsPropertiesGenderParityEqualRightsToHealthToGirls = ndcAction
+        .coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls !== undefined
+        ? ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls
+          ? "YES"
+          : "NO"
+        : undefined;
+
       dto.coBenefitsPropertiesGenderParityNumberOfWomenEmployed =
-        ndcAction.coBenefitsProperties?.genderParity?.numberOfWomenEmpoyed;
+        ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenEmpoyed;
       dto.coBenefitsPropertiesGenderParityNumberOfWomenTrained =
-        ndcAction.coBenefitsProperties?.genderParity?.numberOfWomenTrained;
+        ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenTrained;
       dto.coBenefitsPropertiesGenderParityNumberOfWomenSelectedForDecisionMaking =
-        ndcAction.coBenefitsProperties?.genderParity?.numberOfWomenSelectedForDecisionMaking;
+        ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenSelectedForDecisionMaking;
       dto.coBenefitsPropertiesGenderParityNumberOfWomenProvidedAccessForTech =
-        ndcAction.coBenefitsProperties?.genderParity?.numberOfWomenProvidedAccessForTech;
+        ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenProvidedAccessForTech;
+
+        
       // coBenefitsProperties:Environmental
       dto.coBenefitsPropertiesEnvironmentalAirQ1 =
         ndcAction.coBenefitsProperties?.environmental?.airQ1;
@@ -3068,9 +3067,6 @@ export class ProgrammeService {
       dto.coBenefitsPropertiesSocialValueWelfareRelatedSubQ8 =
         ndcAction.coBenefitsProperties?.socialValueDetails?.welfareRelatedSubQ8;
 
-      dto.enablementTitle = ndcAction.enablementProperties?.title;
-      dto.enablementType = ndcAction.enablementProperties?.type;
-      dto.enablementReport = ndcAction.enablementProperties?.report;
       dto.txTime = this.helperService.formatTimestamp(ndcAction.txTime);
       dto.createdTime = this.helperService.formatTimestamp(ndcAction.createdTime);
       dto.constantVersion = ndcAction.constantVersion;

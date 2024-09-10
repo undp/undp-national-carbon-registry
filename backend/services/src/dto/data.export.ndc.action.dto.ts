@@ -25,22 +25,6 @@ export class DataExportNdcActionDto extends DataExportDto {
     creditCalculationNumberOfDays;
     creditCalculationNumberOfPeopleInHousehold;
     
-    adaptationImplementingAgency;
-    adaptationNationalPlanObjectives;
-    adaptationNationalPlanCoverage;
-    adaptationGhgEmissionsAvoidedCO2;
-    adaptationGhgEmissionsAvoidedCH4;
-    adaptationGhgEmissionsAvoidedN2O;
-    adaptationGhgEmissionsAvoidedHFCs;
-    adaptationGhgEmissionsAvoidedPFCs;
-    adaptationGhgEmissionsAvoidedSF6;
-    adaptationGhgEmissionsReducedCO2;
-    adaptationGhgEmissionsReducedCH4;
-    adaptationGhgEmissionsReducedN2O;
-    adaptationGhgEmissionsReducedHFCs;
-    adaptationGhgEmissionsReducedPFCs;
-    adaptationGhgEmissionsReducedSF6;
-    adaptationIncludedInNAP;
     ndcFinancingUserEstimatedCredits;
     ndcFinancingSystemEstimatedCredits;
     coBenefitsPropertiesSdgGoals;
@@ -199,9 +183,6 @@ export class DataExportNdcActionDto extends DataExportDto {
     coBenefitsPropertiesSocialValueWelfareRelatedSubQ7;
     coBenefitsPropertiesSocialValueWelfareRelatedSubQ8;
 
-    enablementTitle;
-    enablementType;
-    enablementReport;
     txTime;
     createdTime;
     constantVersion;
