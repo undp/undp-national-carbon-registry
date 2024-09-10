@@ -98,7 +98,7 @@
   "wrongSubMitigationMapping": "The Sub Mitigation type doesn't match the Mitigation type.",
   "nothingToExport": "Data not found for export",
   "govermentOwnershipOfProgramme":"Government should be a project owner.",
-  "proponentIsNotAProgrammeDevOrGov": "The proponent is not a program developer.",
+  "proponentIsNotAProgrammeDevOrGov": "The proponent is not a program developer or government.",
   "issuedCreditCannotExceedEstMitigationActionCredits": "Credit issue amount from Activity:{} should be less than its estimated credit amount",
   "omgeRetireDesc": " and {} credits as Overall Mitigation in Global Emission",
   "paybackStartDate<currentDate":"Start of Payback cannot be older than the current date",

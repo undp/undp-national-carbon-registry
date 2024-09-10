@@ -413,9 +413,10 @@ export class ProgrammeService {
       const compo = await this.companyService.findByTaxId(taxId);
       if (!compo) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("programme.proponentTaxIdNotInSystem", [
-            taxId,
-          ]),
+          this.helperService.formatReqMessagesString(
+            "programme.proponentTaxIdNotInSystem",
+            [],
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1869,9 +1870,10 @@ export class ProgrammeService {
       const projectCompany = await this.companyService.findByTaxId(taxId);
       if (!projectCompany) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("programme.proponentTaxIdNotInSystem", [
-            taxId,
-          ]),
+          this.helperService.formatReqMessagesString(
+            "programme.proponentTaxIdNotInSystem",
+            [],
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1883,7 +1885,7 @@ export class ProgrammeService {
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "programme.proponentIsNotAProgrammeDevOrGov ",
+            "programme.proponentIsNotAProgrammeDevOrGov",
             []
           ),
           HttpStatus.BAD_REQUEST
