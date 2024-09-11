@@ -198,7 +198,10 @@ const SdgGoals = (props: any) => {
         <Row gutter={[5, 16]} className="row">
           {sdgGoals?.map((sdgGoal: any) => (
             <Col sm={12} md={12} lg={4} xl={4} className="col">
-              <div className={sdgGoalsViewData ? 'img-container-data' : 'img-container'}>
+              <div
+                className={sdgGoalsViewData ? 'img-container-data' : 'img-container'}
+                style={{ cursor: 'pointer' }}
+              >
                 <Form.Item name="images">
                   {!sdgGoal.selected && (
                     <img

@@ -11,6 +11,7 @@ import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
+import { EmailTemplates } from "./email.template";
 
 @Injectable()
 export class EmailHelperService {
@@ -61,6 +62,9 @@ export class EmailHelperService {
 
       case "PROGRAMME_CERTIFICATION":
         companyDetails = await this.companyService.findByCompanyId(companyId);
+        if (!programme.creditBalance || !programme.serialNo) {
+          template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION;
+        }
         templateData = {
           ...templateData,
           programmeName: programme.title,
@@ -73,6 +77,9 @@ export class EmailHelperService {
 
       case "PROGRAMME_CERTIFICATION_REVOKE_BY_CERT":
         companyDetails = await this.companyService.findByCompanyId(companyId);
+        if (!programme.creditBalance || !programme.serialNo) {
+          template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_CERT;
+        }
         templateData = {
           ...templateData,
           programmeName: programme.title,
@@ -88,6 +95,9 @@ export class EmailHelperService {
         const government = await this.companyService.findByCompanyId(
           governmentId
         );
+        if (!programme.creditBalance || !programme.serialNo) {
+          template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME;
+        }
         templateData = {
           ...templateData,
           programmeName: programme.title,
@@ -213,6 +223,9 @@ export class EmailHelperService {
           receiverCompanyId
         );
         programme = await this.programmeLedger.getProgrammeById(programmeId);
+        if (!programme.creditBalance || !programme.serialNo) {
+          template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT;
+        }
         templateData = {
           ...templateData,
           government: companyDetails.name,

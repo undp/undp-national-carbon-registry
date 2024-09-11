@@ -391,6 +391,19 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  NON_AUTHORIZED_PROGRAMME_CERTIFICATION: {
+    id: "NON_AUTHORIZED_PROGRAMME_CERTIFICATION",
+    subject: "Project Certified by {{organisationName}}",
+    html: `
+        Hi {{name}},<br><br>
+
+        The project with name {{programmeName}}, of your Organisation has been certified by {{organisationName}}. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_CERTIFICATION_REVOKE_BY_CERT: {
     id: "PROGRAMME_CERTIFICATION_REVOKE_BY_CERT",
     subject: "Project Certificate Revoked by {{organisationName}}",
@@ -398,6 +411,19 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
 
         The certification of the project {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by {{organisationName}}. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_CERT: {
+    id: "NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_CERT",
+    subject: "Project Certificate Revoked by {{organisationName}}",
+    html: `
+        Hi {{name}},<br><br>
+
+        The certification of the project {{programmeName}} has been revoked by {{organisationName}}. <br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
 
         Sincerely, <br>
@@ -417,6 +443,19 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME: {
+    id: "NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME",
+    subject: "Project Certificate Revoked by {{government}}",
+    html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the project {{programmeName}} has been revoked by the {{government}}. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT: {
     id: "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT",
     subject: "Project Certificate Revoked by {{government}}",
@@ -430,6 +469,19 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT: {
+    id: "NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT",
+    subject: "Project Certificate Revoked by {{government}}",
+    html: `
+        Hi {{name}},<br><br>
+
+        The certification given by your Organisation for the project {{programmeName}} has been revoked by the {{government}}. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM: {
     id: "PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM",
     subject: "Project Certificate Revoked by the System",
@@ -437,6 +489,19 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
 
         The certification given by {{organisationName}} for the project {{programmeName}} containing {{credits}} credits with the serial number {{serialNumber}} has been revoked by the system as {{organisationName}} was deactivated. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM: {
+    id: "NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM",
+    subject: "Project Certificate Revoked by the System",
+    html: `
+        Hi {{name}},<br><br>
+
+        The certification given by {{organisationName}} for the project {{programmeName}} has been revoked by the system as {{organisationName}} was deactivated. <br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the certification. <br><br>
 
         Sincerely, <br>

@@ -464,7 +464,9 @@ export const InvestmentManagementComponent = (props: any) => {
       onCell: (record: any, rowIndex: any) => {
         return {
           onClick: (ev: any) => {
-            onNavigateToProgrammeView(record.programmeId);
+            if (record.programmeId) {
+              onNavigateToProgrammeView(record.programmeId);
+            }
           },
         };
       },
