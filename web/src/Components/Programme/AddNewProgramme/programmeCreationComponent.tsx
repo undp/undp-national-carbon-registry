@@ -193,10 +193,8 @@ export const ProgrammeCreationComponent = (props: any) => {
   }, [projectLocation]);
 
   const onPolygonComplete = function (data: any) {
-    console.log('programme creation ploygon complete called');
     if (data.features.length > 0) {
       const coordinates = data.features[0].geometry.coordinates[0];
-      console.log(coordinates);
       formOne.setFieldValue('projectLocation', coordinates);
       setProjectLocation(coordinates);
     }
@@ -665,29 +663,6 @@ export const ProgrammeCreationComponent = (props: any) => {
       }
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handle2DecimalKeyPress = (event: any) => {
-    const { value } = event.target;
-    const key = event.key;
-    const regex = /^\d*\.?\d{0,2}$/;
-
-    // Allow Backspace, Delete, Tab, Escape, Enter, and Arrow keys
-    if (
-      key === 'Backspace' ||
-      key === 'Delete' ||
-      key === 'Tab' ||
-      key === 'Escape' ||
-      key === 'Enter' ||
-      (key >= 'ArrowLeft' && key <= 'ArrowRight')
-    ) {
-      return; // Allow the key press
-    }
-
-    // If the input value already has 2 decimal places, prevent further input
-    if (!regex.test(value + key)) {
-      event.preventDefault();
     }
   };
 
@@ -2059,6 +2034,12 @@ export const ProgrammeCreationComponent = (props: any) => {
                                             'isRequired'
                                           )}`
                                         );
+                                      } else if (!/^\d*\.?\d{1,2}$/.test(value)) {
+                                        throw new Error(
+                                          `${t('addProgramme:estimatedProgrammeCostUSD')} ${t(
+                                            'addProgramme:isNotInValidFormat'
+                                          )}`
+                                        );
                                       } else if (!isNaN(value) && Number(value) > 0) {
                                         return Promise.resolve();
                                       } else {
@@ -2076,7 +2057,6 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   type="number"
                                   size="large"
                                   style={{ width: '100%', paddingRight: 12 }}
-                                  onKeyDown={handle2DecimalKeyPress}
                                 />
                               </Form.Item>
                               {article6trade && (
@@ -2122,6 +2102,12 @@ export const ProgrammeCreationComponent = (props: any) => {
                                               : t('addProgramme:creditReduction')
                                           } ${t('isRequired')}`
                                         );
+                                      } else if (!/^\d{1,8}(\.\d{1,2})?$/.test(value)) {
+                                        throw new Error(
+                                          `${t('addProgramme:creditEst')} ${t(
+                                            'addProgramme:isNotInValidFormat'
+                                          )}`
+                                        );
                                       } else if (!isNaN(value) && Number(value) > 0) {
                                         return Promise.resolve();
                                       } else {
@@ -2137,7 +2123,6 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   type="number"
                                   size="large"
                                   style={{ width: '100%', paddingRight: 12 }}
-                                  onKeyDown={handle2DecimalKeyPress}
                                 />
                               </Form.Item>
                             </div>
