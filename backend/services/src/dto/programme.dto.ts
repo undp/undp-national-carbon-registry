@@ -25,6 +25,7 @@ import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
 import { IsNumericLength } from "../util/validNumericLength.decorator";
 import { IsNotPastDate } from "../util/isNotPastDate.decorator";
+import { IsNotLesserThanStartDate } from "../util/isNotLesserThanStartDate.decorator";
 
 export class ProgrammeDto {
   @ApiProperty()
@@ -71,6 +72,7 @@ export class ProgrammeDto {
   @IsPositive()
   @IsInt()
   @IsNotPastDate()
+  @IsNotLesserThanStartDate()
   endTime: number;
 
   @ApiProperty()
@@ -178,7 +180,7 @@ export class ProgrammeDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   @IsPositive()
   @IsNumericLength(8, 2, {
     message:

@@ -19,7 +19,7 @@ export default () => ({
     logging: ["error"],
   },
   jwt: {
-    expiresIn: process.env.EXPIRES_IN || "30",
+    expiresIn: process.env.EXPIRES_IN || "7200",
     refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "12h",
     userSecret: process.env.USER_JWT_SECRET || "1324",
     refreshTokenSecret: process.env.REFRESH_TOKEN_JWT_SECRET || "9823",

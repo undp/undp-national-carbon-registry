@@ -138,7 +138,7 @@ export const InvestmentCreationComponent = (props: any) => {
         if (!data?.programmeId) {
           const response = await post('national/programme/query', {
             page: 1,
-            size: 100,
+            size: 250,
             filterAnd: [
               {
                 key: 'currentStage',
