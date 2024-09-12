@@ -147,24 +147,24 @@ export class CompanyService {
           companyId,
           this.getUserRefWithRemarks(
             user,
-            `${remarks}#${SystemActionType.SUSPEND_REVOKE}#${company.name}`,
+            `${remarks}#${SystemActionType.SUSPEND_REVOKE}#${company.name}`
           ),
           async (programme: Programme) => {
-            const hostAddress = this.configService.get('host');
+            const hostAddress = this.configService.get("host");
             await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
               programme.programmeId,
-              EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,
+              !programme.creditBalance || !programme.serialNo
+                ? EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM
+                : EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_SYSTEM,
               {
                 organisationName: company.name,
                 programmeName: programme.title,
                 credits: programme.creditBalance,
                 serialNumber: programme.serialNo,
-                pageLink:
-                  hostAddress +
-                  `/programmeManagement/view/${programme.programmeId}`,
-              },
+                pageLink: hostAddress + `/programmeManagement/view/${programme.programmeId}`,
+              }
             );
-          },
+          }
         );
 
         await this.emailHelperService.sendEmail(
