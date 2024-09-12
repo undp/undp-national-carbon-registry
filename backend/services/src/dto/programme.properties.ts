@@ -34,7 +34,7 @@ export class ProgrammeProperties {
 
   @ApiProperty()
   @IsPositive()
-  @IsInt()
+  @IsNumber()
   @IsNotEmpty()
   estimatedProgrammeCostUSD?: number;
 

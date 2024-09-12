@@ -668,6 +668,29 @@ export const ProgrammeCreationComponent = (props: any) => {
     }
   };
 
+  const handle2DecimalKeyPress = (event: any) => {
+    const { value } = event.target;
+    const key = event.key;
+    const regex = /^\d*\.?\d{0,2}$/;
+
+    // Allow Backspace, Delete, Tab, Escape, Enter, and Arrow keys
+    if (
+      key === 'Backspace' ||
+      key === 'Delete' ||
+      key === 'Tab' ||
+      key === 'Escape' ||
+      key === 'Enter' ||
+      (key >= 'ArrowLeft' && key <= 'ArrowRight')
+    ) {
+      return; // Allow the key press
+    }
+
+    // If the input value already has 2 decimal places, prevent further input
+    if (!regex.test(value + key)) {
+      event.preventDefault();
+    }
+  };
+
   const onNdcActionDetailsSubmit = async (ndcActionDetailsObj: any) => {
     if (ndcActionDetailsObj.enablementReportData) {
       delete ndcActionDetailsObj.enablementReportData;
@@ -2050,8 +2073,10 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 ]}
                               >
                                 <InputNumber
+                                  type="number"
                                   size="large"
                                   style={{ width: '100%', paddingRight: 12 }}
+                                  onKeyDown={handle2DecimalKeyPress}
                                 />
                               </Form.Item>
                               {article6trade && (
@@ -2109,8 +2134,10 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 ]}
                               >
                                 <InputNumber
+                                  type="number"
                                   size="large"
                                   style={{ width: '100%', paddingRight: 12 }}
+                                  onKeyDown={handle2DecimalKeyPress}
                                 />
                               </Form.Item>
                             </div>
