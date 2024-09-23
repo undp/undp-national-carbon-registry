@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { BuildingType } from "@undp/carbon-credit-calculator";
 import { IsNotEmpty, IsPositive, IsNumber, IsEnum } from "class-validator";
 import { MitigationProperties } from "./mitigation.properties";
+import { EnergyGenerationUnits } from "../enum/energy.generation.units.enum";
 
 export class SolarProperties {
     
@@ -11,9 +12,12 @@ export class SolarProperties {
     @IsNumber()
     energyGeneration: number;
 
-    @ApiProperty({default: "kWh/year/unit"})
+    @ApiProperty({default: "kWh/year/unit", enum: EnergyGenerationUnits})
+    @IsEnum(EnergyGenerationUnits, {
+        message: 'Invalid energey generation unit. Supported following values:' + Object.values(EnergyGenerationUnits)
+    })
     @IsNotEmpty()
-    energyGenerationUnit: string;
+    energyGenerationUnit: EnergyGenerationUnits;
 
     @ApiProperty({ enum: BuildingType })
     @IsEnum(BuildingType, {
