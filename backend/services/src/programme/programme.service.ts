@@ -1231,7 +1231,11 @@ export class ProgrammeService {
             where: { companyId: documentCreatedUser.companyId },
           });
           if (company) {
-            documentCreatedUser.companyName = company.name;
+            if (company.state != CompanyState.ACTIVE) {
+              cid = undefined;
+            } else {
+              documentCreatedUser.companyName = company.name;
+            }
           }
         }
       }

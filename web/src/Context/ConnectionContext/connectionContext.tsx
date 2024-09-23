@@ -90,7 +90,10 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
           .catch((e: any) => {
             if (e.response) {
               if (e.response.status) {
-                if (e.response.data.message === 'jwt expired') {
+                if (
+                  e.response.data.message === 'jwt expired' ||
+                  e.response.data.message === t('common:organisationDeactivated')
+                ) {
                   setToken(undefined);
                   setRefreshToken(undefined);
                   // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define

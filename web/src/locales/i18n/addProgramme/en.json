@@ -51,5 +51,6 @@
   "duplicateOrg": "This organisation is already selected!",
   "isRequired": "is required!",
   "environmentalImpactAssessment": "Environmental Impact Assessment",
-  "environmentalAssessmentRegistrationNo": "Environmental Assessment Registration Number"
+  "environmentalAssessmentRegistrationNo": "Environmental Assessment Registration Number",
+  "isNotInValidFormat": "must be a numeric value with up to 8 digits before and 2 digits after the decimal point"
 }
