@@ -1,18 +1,18 @@
 import { Col, Row } from 'antd';
 import { DateTime } from 'luxon';
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { dateFormat } from '../../Pages/Common/configs';
 import './info.view.scss';
+import { dateFormat } from '../../Definitions/Definitions/common.definitions';
+// import { dateFormat } from '../../../Definitions/Definitions/common.definitions';
 
 export interface InfoViewProps {
   data: any;
-  title: any;
-  icon: any;
+  title?: any;
+  icon?: any;
   hiddenColumns?: any;
 }
 
-const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
+export const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
   const { title, data, icon, hiddenColumns } = props;
   return (
     <div className="info-view">
@@ -29,11 +29,28 @@ const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
                   {k}
                 </Col>
                 <Col span={12} className="field-value">
-                  {data[k] instanceof DateTime
-                    ? data[k].toFormat(dateFormat)
-                    : data[k] === '' || !data[k] || data[k] === 'NaN'
-                    ? '-'
-                    : data[k]}
+                  {k.includes('GHG Emissions') ? (
+                    Object.values(data[k])?.length > 0 ? (
+                      Object.entries(data[k]).map(([key, value]) => {
+                        return (
+                          <div className="row">
+                            <div className="key">{key}</div>
+                            <div className="data">{data[k][key]}</div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div>-</div>
+                    )
+                  ) : (
+                    <span>
+                      {data[k] instanceof DateTime
+                        ? data[k].toFormat(dateFormat)
+                        : data[k] === '' || !data[k] || data[k] === 'NaN'
+                        ? '-'
+                        : data[k]}
+                    </span>
+                  )}
                 </Col>
               </Row>
             );
@@ -49,5 +66,3 @@ const InfoView: FC<InfoViewProps> = (props: InfoViewProps) => {
 InfoView.defaultProps = {
   hiddenColumns: [],
 };
-
-export default InfoView;

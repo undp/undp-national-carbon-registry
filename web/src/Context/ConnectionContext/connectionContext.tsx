@@ -1,23 +1,23 @@
 import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import jwt_decode from 'jwt-decode';
 import {
   ConnectionProps,
   ConnectionContextProviderProps,
   Methods,
-} from '../../Definitions/InterfacesAndType/connectionContext.definitions';
+} from '../../Definitions/Definitions/connectionContext.definitions';
+// import { ConnectionContextProviderProps, ConnectionProps, Methods } from '../../Definitions';
 
 const ConnectionContext = createContext<{
   connection?: ConnectionProps;
 }>({});
-import jwt_decode from 'jwt-decode';
-import { useTranslation } from 'react-i18next';
 
 export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   props: ConnectionContextProviderProps
 ) => {
   const [token, setToken] = useState<string>();
-  const { serverURL, children } = props;
-  const { i18n, t } = useTranslation(['common']);
+  const [refreshToken, setRefreshToken] = useState<string>();
+  const { serverURL, t, statServerUrl, children } = props;
 
   useEffect(() => {
     const timer = setInterval(async () => {
@@ -42,10 +42,15 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
         if (token) {
           headers = { authorization: `Bearer ${token.toString()}` };
         } else {
-          localStorage.getItem('token');
-          headers = {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          };
+          if (localStorage.getItem('token')) {
+            headers = {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            };
+          } else {
+            headers = {
+              authorization: `Bearer ${process.env.STORYBOOK_ACCESS_TOKEN}`,
+            };
+          }
         }
         axios({
           method,
@@ -85,9 +90,15 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
           .catch((e: any) => {
             if (e.response) {
               if (e.response.status) {
-                if (e.response.data.message === 'jwt expired') {
-                  localStorage.removeItem('token');
-                  window.location.reload();
+                if (
+                  e.response.data.message === 'jwt expired' ||
+                  e.response.data.message === t('common:organisationDeactivated')
+                ) {
+                  setToken(undefined);
+                  setRefreshToken(undefined);
+                  // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
+                  clearLocalStorageData();
+                  // window.location.reload();
                 }
 
                 reject({
@@ -126,8 +137,8 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     [send]
   );
   const get = useCallback(
-    (path: string, config?: AxiosRequestConfig) => {
-      return send('get', path, undefined, config);
+    (path: string, config?: AxiosRequestConfig, extraUrl?: string) => {
+      return send('get', path, undefined, config, extraUrl);
     },
     [send]
   );
@@ -154,25 +165,73 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     }
   }, []);
 
-  const removeToken = (tkn?: string) => {
+  const updateRefreshToken = useCallback(async (newRefreshToken?: string) => {
+    if (newRefreshToken) {
+      localStorage.setItem('refresh_token', newRefreshToken);
+      setRefreshToken(newRefreshToken);
+    } else {
+      localStorage.setItem('refresh_token', '');
+      setRefreshToken(undefined);
+    }
+  }, []);
+
+  const refreshAccessToken = async () => {
+    const response = await post('national/auth/login/refresh', {
+      refreshToken,
+    });
+    return response;
+  };
+
+  const clearLocalStorageData = () => {
+    localStorage.setItem('token', '');
+    localStorage.setItem('refresh_token', '');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('companyId');
+    localStorage.removeItem('companyRole');
+  };
+
+  const removeToken = async (tkn?: string) => {
     if (tkn) {
       const { exp } = jwt_decode(tkn) as any;
-      if (Date.now() > exp * 1000) {
-        localStorage.setItem('token', '');
-        localStorage.removeItem('userRole');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('companyId');
-        localStorage.removeItem('companyRole');
+      const now = Date.now();
+      const tokenExpireTime = exp * 1000;
+      if (now > tokenExpireTime) {
+        clearLocalStorageData();
       } else {
-        const diff = exp * 1000 - Date.now();
-        setTimeout(() => {
+        const diff = tokenExpireTime - now - 5000;
+        if (diff > 0) {
+          setTimeout(async () => {
+            // eslint-disable-next-line eqeqeq
+            if (refreshToken && refreshToken != '') {
+              const response = await refreshAccessToken();
+              if (response) {
+                if (response.status === 200 || response.status === 201) {
+                  if (response.data?.access_token) {
+                    setToken(response.data?.access_token);
+                  } else {
+                    setToken(undefined);
+                    setRefreshToken(undefined);
+                    clearLocalStorageData();
+                  }
+                } else {
+                  setToken(undefined);
+                  setRefreshToken(undefined);
+                  clearLocalStorageData();
+                }
+              } else {
+                setToken(undefined);
+                setRefreshToken(undefined);
+                clearLocalStorageData();
+              }
+            }
+          }, diff);
+        } else {
+          // If the difference is 0 or negative, clear data immediately
           setToken(undefined);
-          localStorage.setItem('token', '');
-          localStorage.removeItem('userRole');
-          localStorage.removeItem('userId');
-          localStorage.removeItem('companyId');
-          localStorage.removeItem('companyRole');
-        }, diff);
+          setRefreshToken(undefined);
+          clearLocalStorageData();
+        }
         console.log(diff, 'Remaining Token expire time');
       }
     }
@@ -185,7 +244,19 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   return (
     <ConnectionContext.Provider
       value={{
-        connection: { post, put, get, patch, delete: del, updateToken, token, removeToken },
+        connection: {
+          post,
+          put,
+          get,
+          patch,
+          delete: del,
+          updateToken,
+          updateRefreshToken,
+          token,
+          refreshToken,
+          removeToken,
+          statServerUrl,
+        },
       }}
     >
       {children}

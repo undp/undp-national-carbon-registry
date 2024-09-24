@@ -1,18 +1,23 @@
-import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
 import { handler } from "./ledger-replicator/handler";
 import { handler as asyncHandler } from "./async-operations-handler/handler";
 import { handler as importHandler } from "./data-importer/handler";
 import * as setupHandler from "./setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
-import { buildNestApp } from "./shared/server";
+// import { AnalyticsAPIModule, buildNestApp } from "@undp/carbon-services-lib";
 import { join } from "path";
+import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
+import { buildNestApp } from "./server";
 const fs = require("fs");
 
 async function bootstrap() {
   let module;
   let httpPath;
 
-  const modules = process.env.RUN_MODULE.split(",");
+  let modules = ["national-api"];
+  if (process.env.RUN_MODULE) {
+    modules = process.env.RUN_MODULE.split(",");
+  }
+
   for (const moduleName of modules) {
     console.log("Starting module", moduleName);
     switch (moduleName) {
@@ -33,7 +38,7 @@ async function bootstrap() {
         console.log("Module initiated", moduleName);
         continue;
       case "data-importer":
-        await importHandler({ importTypes: "ITMO_SYSTEM" });
+        await importHandler({ importTypes: process.env.DATA_IMPORT_TYPES});
         console.log("Module initiated", moduleName);
         continue;
       default:

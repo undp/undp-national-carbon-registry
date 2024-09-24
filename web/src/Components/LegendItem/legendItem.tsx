@@ -7,7 +7,7 @@ export interface LegendItemItemProps {
   color: string;
 }
 
-const LegendItem: FC<LegendItemItemProps> = (props: LegendItemItemProps) => {
+export const LegendItem: FC<LegendItemItemProps> = (props: LegendItemItemProps) => {
   const { text, color } = props;
 
   return (
@@ -17,5 +17,3 @@ const LegendItem: FC<LegendItemItemProps> = (props: LegendItemItemProps) => {
     </div>
   );
 };
-
-export default LegendItem;

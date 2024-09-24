@@ -4,21 +4,22 @@ import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { Link, useNavigate } from 'react-router-dom';
 import './layout.sider.scss';
 import * as Icon from 'react-bootstrap-icons';
-import {
-  AppstoreOutlined,
-  DashboardOutlined,
-  HomeOutlined,
-  ShopOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { LayoutSiderProps } from '../../Definitions/InterfacesAndType/layout.sider.definitions';
+import { AppstoreOutlined, DashboardOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { Role } from '../../Definitions/Enums/role.enum';
+// import { LayoutSiderProps } from '@undp/carbon-library';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = {
+  key: React.Key;
+  icon?: React.ReactNode;
+  label: React.ReactNode;
+} | null;
 
 function getItem(
   label: React.ReactNode,
@@ -37,20 +38,34 @@ function getItem(
 const LayoutSider = (props: LayoutSiderProps) => {
   const { selectedKey } = props;
   const navigate = useNavigate();
+  const { userInfoState } = useUserContext();
   const [collapsed, setCollapsed] = useState(false);
   const { i18n, t } = useTranslation(['nav']);
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    // getItem(t('nav:nationalAccounting'), 'nationalAccounting', <DashboardOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
+    getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t('nav:companies'), 'companyManagement/viewAll', <ShopOutlined />),
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
-    // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
   ];
 
+  if (
+    userInfoState?.userRole === Role.Root ||
+    (userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+      userInfoState?.userRole === Role.Admin)
+  ) {
+    items.splice(
+      1,
+      0,
+      getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
+    );
+  }
+
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click', e);
     navigate('/' + e.key);
   };
 
@@ -60,10 +75,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
       className="layout-sider-container"
       breakpoint={collapsed ? undefined : 'lg'}
       collapsed={collapsed}
-      // collapsedWidth="70"
-      // onCollapse={(col) => {
-      //   setCollapsed(col);
-      // }}
     >
       <div className="layout-sider-div-container">
         <div
@@ -97,12 +108,25 @@ const LayoutSider = (props: LayoutSiderProps) => {
         <div className="layout-sider-menu-container">
           <Menu
             theme="light"
-            //defaultSelectedKeys={[selectedKey ?? 'dashboard']}
             selectedKeys={[selectedKey ? selectedKey : 'dashboard']}
             mode="inline"
             onClick={onClick}
-            items={items}
-          />
+          >
+            {items.map((item) => (
+              <Menu.Item
+                key={item?.key}
+                icon={item?.icon}
+                className={
+                  item?.key === 'ndcManagement/viewAll' ||
+                  item?.key === 'investmentManagement/viewAll'
+                    ? 'custom-padding-left'
+                    : ''
+                }
+              >
+                <Link to={`/${item?.key}`}>{item?.label}</Link>
+              </Menu.Item>
+            ))}
+          </Menu>
         </div>
       </div>
       <div

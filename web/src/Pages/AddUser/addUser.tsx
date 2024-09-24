@@ -1,9 +1,8 @@
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { AddNewUserComponent } from '@undp/carbon-library';
+// import { AddNewUserComponent } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
+import { AddNewUserComponent } from '../../Components/User/AddNewUser/addNewUserComponent';
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -22,8 +21,6 @@ const AddUser = () => {
       t={t}
       onNavigateToUserManagement={onNavigateToUserManagement}
       onNavigateLogin={onNavigateToLogin}
-      useConnection={useConnection}
-      useUserContext={useUserContext}
       useLocation={useLocation}
       useAbilityContext={useAbilityContext}
       themeColor="#16b1ff"

@@ -31,12 +31,20 @@ ENV REACT_APP_MAPBOXGL_ACCESS_TOKEN $REACT_APP_MAPBOXGL_ACCESS_TOKEN
 ARG REACT_APP_MAP_TYPE
 ENV REACT_APP_MAP_TYPE $REACT_APP_MAP_TYPE
 
+ARG REACT_APP_ENABLE_REGISTRATION
+ENV REACT_APP_ENABLE_REGISTRATION $REACT_APP_ENABLE_REGISTRATION
+
+ARG REACT_APP_GOVERNMENT_MINISTRY
+ENV REACT_APP_GOVERNMENT_MINISTRY $REACT_APP_GOVERNMENT_MINISTRY
+
 # Build the app
 RUN CI=false yarn build
 
 # production environment
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
+COPY ./web/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 COPY ./web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE $PORT

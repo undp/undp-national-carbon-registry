@@ -1,11 +1,12 @@
 import React, { useContext, useState, createContext, useCallback, useEffect } from 'react';
+// import { useConnection } from '../../Context';
+import jwt_decode from 'jwt-decode';
 import {
   UserContextProps,
   UserProps,
-} from '../../Definitions/InterfacesAndType/userInformationContext.definitions';
+} from '../../Definitions/Definitions/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
-import jwt_decode from 'jwt-decode';
-import { useTranslation } from 'react-i18next';
+// import { UserContextProps, UserProps } from '../../Definitions';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},
@@ -17,25 +18,43 @@ export const UserContext = createContext<UserContextProps>({
 
 export const UserInformationContextProvider = ({ children }: React.PropsWithChildren) => {
   const { token } = useConnection();
-  const { i18n, t } = useTranslation(['common']);
+
   const [isTokenExpired, setIsTokenExpired] = useState<boolean>(false);
   const initialUserProps: UserProps = {
-    id: localStorage.getItem('userId') ? (localStorage.getItem('userId') as string) : '',
-    userRole: localStorage.getItem('userRole') ? (localStorage.getItem('userRole') as string) : '',
+    id: localStorage.getItem('userId')
+      ? (localStorage.getItem('userId') as string)
+      : process.env.STORYBOOK_USER_ID
+      ? process.env.STORYBOOK_USER_ID
+      : '',
+    userRole: localStorage.getItem('userRole')
+      ? (localStorage.getItem('userRole') as string)
+      : process.env.STORYBOOK_USER_ROLE
+      ? process.env.STORYBOOK_USER_ROLE
+      : '',
     companyRole: localStorage.getItem('companyRole')
       ? (localStorage.getItem('companyRole') as string)
+      : process.env.STORYBOOK_COMPANY_ROLE
+      ? process.env.STORYBOOK_COMPANY_ROLE
       : '',
     companyId: localStorage.getItem('companyId')
       ? parseInt(localStorage.getItem('companyId') as string)
+      : process.env.STORYBOOK_COMPANY_ID
+      ? parseInt(process.env.STORYBOOK_COMPANY_ID)
       : -1,
     companyLogo: localStorage.getItem('companyLogo')
       ? (localStorage.getItem('companyLogo') as string)
+      : process.env.STORYBOOK_COMPANY_LOGO
+      ? process.env.STORYBOOK_COMPANY_LOGO
       : '',
     companyName: localStorage.getItem('companyName')
       ? (localStorage.getItem('companyName') as string)
+      : process.env.STORYBOOK_COMPANY_NAME
+      ? process.env.STORYBOOK_COMPANY_NAME
       : '',
     companyState: localStorage.getItem('companyState')
       ? parseInt(localStorage.getItem('companyState') as string)
+      : process.env.STORYBOOK_COMPANY_STATE
+      ? parseInt(process.env.STORYBOOK_COMPANY_STATE)
       : 0,
   };
   const [userInfoState, setUserInfoState] = useState<UserProps>(initialUserProps);

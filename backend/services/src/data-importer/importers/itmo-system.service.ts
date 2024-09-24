@@ -1,18 +1,25 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios, { AxiosResponse } from "axios";
-import { ProgrammeService } from "../../shared/programme/programme.service";
-import { CompanyService } from "../../shared/company/company.service";
 import { ImporterInterface } from "../importer.interface";
-import { ProgrammeStage } from "../../shared/enum/programme-status.enum";
-import { CompanyRole } from "../../shared/enum/company.role.enum";
 import { SectoralScope } from "@undp/serial-number-gen";
-import { Sector } from "../../shared/enum/sector.enum";
-import { TypeOfMitigation } from "../../shared/enum/typeofmitigation.enum";
-import { UserService } from "../../shared/user/user.service";
-import { Role } from "../../shared/casl/role.enum";
-import { GHGs } from "../../shared/enum/ghgs.enum";
-import { Programme } from "../../shared/entities/programme.entity";
+import { ProgrammeService } from "../../programme/programme.service";
+import { GHGs } from "../../enum/ghgs.enum";
+import { UserService } from "../../user/user.service";
+import { CompanyService } from "../../company/company.service";
+import { Role } from "../../casl/role.enum";
+import { TypeOfMitigation } from "../../enum/typeofmitigation.enum";
+import { Sector } from "../../enum/sector.enum";
+import { CompanyRole } from "../../enum/company.role.enum";
+import { ProgrammeStage } from "../../enum/programme-status.enum";
+import { CompanyState } from "../../enum/company.state.enum";
+import { ProgrammeLedgerService } from "../../programme-ledger/programme-ledger.service";
+import { EmailTemplates } from "../../email-helper/email.template";
+import { EmailHelperService } from "../../email-helper/email-helper.service";
+import { AuthorizationLetterGen } from "../../util/authorisation.letter.gen";
+import { DataListResponseDto } from "../../dto/data.list.response";
+import { SYSTEM_TYPE } from "../../enum/system.names.enum";
+import { DocumentStatus } from "../../enum/document.status";
 
 function flatten(ary) {
   if (!ary) {
@@ -37,7 +44,10 @@ export class ITMOSystemImporter implements ImporterInterface {
     private configService: ConfigService,
     private companyService: CompanyService,
     private userService: UserService,
-    private programmeService: ProgrammeService
+    private programmeService: ProgrammeService,
+    private programmeLedger: ProgrammeLedgerService,
+    private emailHelperService: EmailHelperService,
+    private authLetter: AuthorizationLetterGen,
   ) {
     this.endpoint = this.configService.get("ITMOSystem.endpoint");
     this.apiKey = this.configService.get("ITMOSystem.apiKey");
@@ -104,7 +114,7 @@ export class ITMOSystemImporter implements ImporterInterface {
           TypeOfMitigation.EE_INDUSTRY,
         ];
     }
-  }
+  }  
 
   async start(type: string): Promise<any> {
     this.authToken = await this.login();
@@ -149,16 +159,23 @@ export class ITMOSystemImporter implements ImporterInterface {
                     phoneNo: "00",
                     company: {
                       taxId: taxId,
+                      paymentId: undefined, //double check this
                       companyId: undefined,
                       name: project.company,
                       email: email,
                       phoneNo: "00",
+                      nameOfMinister:undefined,
+                      sectoralScope:undefined,
+                      govDep:undefined,
+                      ministry:undefined,
                       website: undefined,
                       address: this.configService.get("systemCountryName"),
                       logo: undefined,
                       country: this.configService.get("systemCountry"),
                       companyRole: CompanyRole.PROGRAMME_DEVELOPER,
                       createdTime: undefined,
+                      regions: [],
+                      state: CompanyState.ACTIVE //double check this
                     },
                     password: undefined,
                     companyId: undefined,
@@ -191,20 +208,94 @@ export class ITMOSystemImporter implements ImporterInterface {
                 ),
                 proponentTaxVatId: [taxId],
                 proponentPercentage: [100],
+                article6trade: true,
+                supportingowners:undefined,
+                implementinguser:undefined,
                 creditUnit: this.configService.get("defaultCreditUnit"),
                 programmeProperties: {
                   geographicalLocation: [projectDetails.country.name],
                   greenHouseGasses: [GHGs.CO2],
                 },
                 creditEst: 100,
+                environmentalAssessmentRegistrationNo: projectDetails.environmentalAssessmentRegistrationNo
               };
 
               if (step.files && step.files.length > 0) {
                 pr.programmeProperties["programmeMaterials"] = step.files;
                 // pr.programmeProperties["projectMaterial"] = step.files;
               }
+              await this.programmeService.create(pr, rootUser);
 
-              await this.programmeService.create(pr);
+            } else if(programmeEvents && programmeEvents.length > 0 && programmeEvents[programmeEvents.length - 1].data.currentStage == ProgrammeStage.AWAITING_AUTHORIZATION 
+              && step.name ==="Validation Report" && step.status == "completed"){
+                try{
+                    this.logger.log("ITMO Project "+projectDetails.name+" Approvement initialisation")
+                    const programmedetails = await this.programmeService.findByExternalId(projectDetails.id)
+                    await this.programmeService.itmoProjectApprove(programmedetails);
+                    
+                    if (step.files && step.files.length > 0) {
+                      for (const programmeMaterials of step.files){
+                        const updateprogrammetable = await this.programmeLedger.addDocument(
+                          projectDetails.id,
+                          undefined,
+                          programmeMaterials,
+                          new Date().getTime(),
+                          DocumentStatus.ACCEPTED,
+                          undefined,
+                          undefined,
+                          undefined
+                        )
+                      }
+                    }
+                } catch(error){
+                  this.logger.error("Error in Approving ITMO project",error)
+                }
+
+            } else if(programmeEvents && programmeEvents.length > 0 && programmeEvents[programmeEvents.length - 1].data.currentStage == ProgrammeStage.APPROVED 
+              && step.name ==="Creation of unique Project Identification Number" && step.status == "completed"){
+
+              try {
+                    this.logger.log("ITMO Project "+projectDetails.name+" Authorisation initialisation")
+                    const programmedetails = await this.programmeService.findByExternalId(projectDetails.id)                    
+                    const orgNames:DataListResponseDto  = await this.companyService.queryNames({
+                      size: 10,
+                      page: 1,
+                      filterAnd: [{
+                        key: 'companyId',
+                        operation: 'IN',
+                        value: programmedetails.companyId
+                      }],
+                      filterOr: undefined,
+                      filterBy:undefined,
+                      sort: undefined
+                    }, undefined) ;
+                    let orgData = orgNames.data
+
+                    const authOrg = (await this.companyService.findGovByCountry(this.configService.get("systemCountry")))?.name;
+                    const authLetterUrl = await this.authLetter.generateLetter(
+                      programmedetails.programmeId,
+                      programmedetails.title,
+                      authOrg,
+                      orgData.map(e => e.name),
+                      "designDocUrl",
+                      "methodologyDocUrl"
+                    );
+                    const auth = await this.programmeService.authorizeProgramme({programmeId: programmedetails.programmeId, issueAmount: 0, comment: "ITMO Authorised"}, rootUser, authLetterUrl)
+                    if(this.configService.get('systemType')==SYSTEM_TYPE.CARBON_REGISTRY){
+                      const updateprogrammetable = await this.programmeLedger.addDocument(
+                        projectDetails.id,
+                        undefined,
+                        authLetterUrl,
+                        new Date().getTime(),
+                        DocumentStatus.ACCEPTED,
+                        undefined,
+                        undefined,
+                        undefined
+                      )
+                    }
+                  } catch(error){
+                    this.logger.error("Error in Authorising ITMO project",error)
+                    }
             } else if (
               programmeEvents && programmeEvents.length > 0 &&
               programmeEvents[programmeEvents.length - 1].data.currentStage === ProgrammeStage.AUTHORISED &&
@@ -217,18 +308,18 @@ export class ITMOSystemImporter implements ImporterInterface {
                   }))
               
               this.logger.log(`Issue list values: ${list}`)
-              if (list && list.includes("Upload Final Monitoring Report")) {
-                const resp = await this.programmeService.issueProgrammeCredit(
-                  {
-                    programmeId: programmeEvents[programmeEvents.length - 1].data.programmeId,
-                    issueAmount: 10,
-                    comment: "ITMO system issue",
-                  },
-                  rootUser
-                );
+              // if (list && list.includes("Upload Final Monitoring Report")) {
+              //   const resp = await this.programmeService.issueProgrammeCredit(
+              //     {
+              //       programmeId: programmeEvents[programmeEvents.length - 1].data.programmeId,
+              //       issueAmount: 10,
+              //       comment: "ITMO system issue",
+              //     },
+              //     rootUser
+              //   );
 
-                this.logger.log(`Issue credit response ${resp}`)
-              }
+              //   this.logger.log(`Issue credit response ${resp}`)
+              // }
             }
           }
         }

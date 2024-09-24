@@ -2,10 +2,11 @@
 import { Handler, Context } from "aws-lambda";
 import { Server } from "http";
 import { proxy } from "aws-serverless-express";
-import { bootstrapServer } from "../shared/server";
 import { AnalyticsAPIModule } from "./analytics.api.module";
+import { bootstrapServer } from "../server";
+// import { AnalyticsAPIModule, bootstrapServer } from "@undp/carbon-services-lib";
 
-let cachedServer: Server;
+let cachedServer: Server; 
 
 export const handler: Handler = async (event: any, context: Context) => {
   const httpBase = "/stats";

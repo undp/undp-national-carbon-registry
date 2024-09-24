@@ -14,12 +14,12 @@
 
   .action-btns {
     justify-content: center !important;
-    button:first-child {
-      margin-right: 15px;
+    button {
+      margin-right: 10px;
       margin-left: 10px;
     }
     button:last-child {
-      margin-right: 15px;
+      margin-right: 0px;
     }
   }
 
@@ -198,6 +198,16 @@
   .auth-step {
     color: #16b1ff;
     background-color: rgba(#b9e2f4, 0.5);
+  }
+  
+  .upcom-auth-step {
+    color: #000000;
+    background-color: rgba(#1e1f1f, 0.5);
+  }
+
+  .upcom-issue-step{
+    color: #000000;
+    background-color: rgba(#3A3541, 0.5);
   }
 
   .reject-step {

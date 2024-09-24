@@ -1,27 +1,38 @@
 import { NestFactory } from "@nestjs/core";
-import { Role } from "../shared/casl/role.enum";
-import { UserDto } from "../shared/dto/user.dto";
-import { LedgerDbModule } from "../shared/ledger-db/ledger-db.module";
-import { QLDBLedgerService } from "../shared/ledger-db/qldb-ledger.service";
-import { getLogger } from "../shared/server";
-import { UtilModule } from "../shared/util/util.module";
-import { Country } from "../shared/entities/country.entity";
-import { CountryService } from "../shared/util/country.service";
-import { CreditOverall } from "../shared/entities/credit.overall.entity";
-import { CompanyModule } from "../shared/company/company.module";
-import { OrganisationDto as OrganisationDto } from "../shared/dto/organisation.dto";
-import { CompanyRole } from "../shared/enum/company.role.enum";
-import { CompanyService } from "../shared/company/company.service";
-import { UserModule } from "../shared/user/user.module";
-import { UserService } from "../shared/user/user.service";
-import { TxType } from "../shared/enum/txtype.enum";
-import { LedgerDBInterface } from "../shared/ledger-db/ledger.db.interface";
+// import { UserDto } from "@undp/carbon-services-lib";
+// import { getLogger } from "@undp/carbon-services-lib";
+// import { UtilModule, LocationInterface,LocationModule,LedgerDBInterface,LedgerDbModule,CountryService ,CompanyModule,CompanyService,UserModule,UserService,Role} from "@undp/carbon-services-lib";
+// import { Country } from "@undp/carbon-services-lib";
+// import { CreditOverall } from "@undp/carbon-services-lib";
+// import { OrganisationDto as OrganisationDto } from "@undp/carbon-services-lib";
+// import { CompanyRole, GovDepartment, Ministry} from "@undp/carbon-services-lib";
+// import { TxType } from "@undp/carbon-services-lib";
 import { Handler } from "aws-lambda";
-import { LocationModule } from "../shared/location/location.module";
-import { LocationInterface } from "../shared/location/location.interface";
-import { ProgrammeModule } from "../shared/programme/programme.module";
-import { ProgrammeService } from "../shared/programme/programme.service";
+// import { ProgrammeModule } from "@undp/carbon-services-lib";
+// import { ProgrammeService } from "@undp/carbon-services-lib";
 import { ConfigService } from "@nestjs/config";
+import { Role } from "../casl/role.enum";
+import { CompanyModule } from "../company/company.module";
+import { CompanyService } from "../company/company.service";
+import { OrganisationDto } from "../dto/organisation.dto";
+import { UserDto } from "../dto/user.dto";
+import { Country } from "../entities/country.entity";
+import { CreditOverall } from "../entities/credit.overall.entity";
+import { CompanyRole } from "../enum/company.role.enum";
+import { GovDepartment } from "../enum/govDep.enum";
+import { Ministry } from "../enum/ministry.enum";
+import { TxType } from "../enum/txtype.enum";
+import { LedgerDbModule } from "../ledger-db/ledger-db.module";
+import { LedgerDBInterface } from "../ledger-db/ledger.db.interface";
+import { LocationInterface } from "../location/location.interface";
+import { LocationModule } from "../location/location.module";
+import { ProgrammeModule } from "../programme/programme.module";
+import { ProgrammeService } from "../programme/programme.service";
+import { getLogger } from "../server";
+import { UserModule } from "../user/user.module";
+import { UserService } from "../user/user.service";
+import { CountryService } from "../util/country.service";
+import { UtilModule } from "../util/util.module";
 const fs = require("fs");
 
 export const handler: Handler = async (event) => {
@@ -29,6 +40,14 @@ export const handler: Handler = async (event) => {
 
   if (!event) {
     event = process.env;
+  }
+
+  function mapEnvironmentToEnum<T>(envValue: string, targetEnum: T): T[keyof T] | undefined {
+    const enumValues = Object.values(targetEnum).filter((value) => typeof value === 'string') as string[];
+    if (enumValues.includes(envValue)) {
+      return envValue as T[keyof T];
+    }
+    return undefined;
   }
 
   const userApp = await NestFactory.createApplicationContext(UserModule, {
@@ -66,12 +85,7 @@ export const handler: Handler = async (event) => {
           : fields[5] == "Manager"
           ? Role.Manager
           : Role.ViewOnly;
-      console.log('Inserting user', fields[0],
-      cr,
-      fields[3],
-      fields[1],
-      ur,
-      fields[2])
+
       try {
         await userService.createUserWithPassword(
           fields[0],
@@ -125,17 +139,24 @@ export const handler: Handler = async (event) => {
         const org = await companyService.create({
               taxId: fields[3],
               companyId: undefined,
+              paymentId: undefined,
               name: fields[0],
               email: fields[1],
               phoneNo: fields[2],
+              nameOfMinister:undefined,
+              sectoralScope:undefined,
+              ministry:undefined,
+              govDep:undefined,
               website: undefined,
               address: configService.get("systemCountryName"),
               logo: undefined,
               country: configService.get("systemCountry"),
               companyRole: cr,
               createdTime: undefined,
+              regions: [],
+              state: undefined //double check this
             });
-        console.log('Company created', org)
+
       } catch (e) {
         console.log('Fail to create company', fields[1])
       }
@@ -176,7 +197,7 @@ export const handler: Handler = async (event) => {
     await ledgerModule.insertRecord(creditOverall, "overall");
     await ledgerModule.createTable();
     await ledgerModule.createIndex("programmeId");
-    console.log("QLDB Table created");
+
   } catch (e) {
     console.log("QLDB table does not create", e);
   }
@@ -187,6 +208,9 @@ export const handler: Handler = async (event) => {
     company.name = event["name"];
     company.logo = event["logoBase64"];
     company.companyRole = CompanyRole.GOVERNMENT;
+    company.taxId = `00000${event["systemCountryCode"]}`
+    company.govDep = GovDepartment[event["Department"]];
+    company.ministry = mapEnvironmentToEnum(event["Ministry"], Ministry);
 
     const user = new UserDto();
     user.email = event["rootEmail"];
@@ -194,9 +218,6 @@ export const handler: Handler = async (event) => {
     user.role = Role.Root;
     user.phoneNo = "-";
     user.company = company;
-
-    console.log("Adding company", company);
-    console.log("Adding user", user);
 
     await userService.create(user, -1, CompanyRole.GOVERNMENT);
   } catch (e) {
@@ -225,5 +246,6 @@ export const handler: Handler = async (event) => {
     }
   );
   const locationInterface = locationApp.get(LocationInterface);
-  await locationInterface.init();
+  const regionRawData = fs.readFileSync('regions.csv', 'utf8');
+  await locationInterface.init(regionRawData);
 };

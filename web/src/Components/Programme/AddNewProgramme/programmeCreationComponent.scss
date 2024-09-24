@@ -1,0 +1,379 @@
+@import "../../../Styles/colors.addProgramme.scss";
+@import "../../../Styles/colors.role.scss";
+@import "../../../Styles/variables.scss";
+
+.programme-details-form-container,
+.programme-sought-form-container {
+  width: 100%;
+  .programme-details-form,
+  .programme-sought-form {
+    width: 100%;
+
+    .ant-input-status-error:not(.ant-input-disabled):not(
+        .ant-input-borderless
+      ).ant-input,
+    .ant-input-status-error:not(.ant-input-disabled):not(
+        .ant-input-borderless
+      ).ant-input:hover {
+      border-color: #ff4d4f !important;
+    }
+
+    .ant-picker-large {
+      height: 40px !important;
+      width: 100%;
+    }
+
+    .ant-upload-list-item-name {
+      color: $primary-color;
+    }
+    .steps-actions {
+      display: flex;
+      flex-direction: row-reverse;
+      margin-right: 1rem;
+
+      .action-btn {
+        border: 1px solid $primary-color;
+        color: $primary-color;
+        margin-right: 1rem;
+      }
+      .back-btn {
+        border: 1px solid $border-default-btn;
+        color: $border-default-btn;
+        margin-right: 1rem;
+      }
+      .mg-left-1 {
+        margin-left: 1rem;
+      }
+    }
+    .options-programme {
+      width: 100%;
+      .role-group {
+        .ant-radio-group {
+          width: 50%;
+        }
+        .condition-radio-container {
+          width: 30%;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+        }
+        .ant-radio-button-wrapper::before {
+          background-color: transparent;
+        }
+        .ant-radio-button-wrapper {
+          border: 1px solid $common-form-input-border;
+        }
+
+        .anticon {
+          margin-right: 0.5rem;
+        }
+        .condition-radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+        .role-icons {
+          margin-right: 5px;
+        }
+      }
+    }
+    .row {
+      width: 100%;
+      .org-col {
+        .details-part-three {
+          width: 100%;
+        }
+      }
+
+      .website {
+        .ant-input {
+          margin-left: 0.3rem;
+        }
+        .ant-input-group-addon {
+          border: 1px solid $common-form-input-border;
+        }
+      }
+
+      .design-upload-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        width: 100%;
+
+        .icon-color {
+          color: $primary-color !important;
+        }
+
+        .ant-upload {
+          width: 20%;
+        }
+
+        .ant-upload-list {
+          align-items: center;
+          justify-content: center;
+          width: 75%;
+
+          .ant-upload-list-item {
+            margin-top: 0;
+          }
+        }
+      }
+      .details-part-one {
+        .upload-doc {
+          height: 40px !important;
+        }
+
+        .ant-upload-list-item {
+          border-radius: 5px !important;
+          height: 40px !important;
+        }
+        .add-Document{
+          display: flex ;
+          .ant-form-item{
+            width: 100%;
+          }
+          .addDoc-info{
+            position: absolute;
+            margin-left: 130px;
+            margin-top: 1.1px;
+          }
+        }
+        .space-container {
+          width: 100%;
+
+          .ownership-list-item {
+            display: flex;
+            width: 100%;
+            align-items: center;
+          }
+
+          .ant-space-item {
+            width: 100%;
+
+            .organisation {
+              width: 60%;
+            }
+          }
+
+          .ownership-percent {
+            width: 35%;
+            margin-left: 1rem;
+            .ant-input-number {
+              width: 80%;
+            }
+
+            .ant-form-item-explain-error {
+              width: 250px !important;
+            }
+          }
+        }
+      }
+      .details-part-two {
+        .role-group {
+          .condition-radio-container {
+            width: 48%;
+            text-align: center;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $dark-text-color !important;
+              border-color: $primary-purple;
+              border-radius: 4px;
+              box-shadow: none;
+            }
+          }
+          .ant-radio-button-wrapper::before {
+            background-color: transparent;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+
+          .anticon {
+            margin-right: 0.5rem;
+          }
+          .condition-radio {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $primary-purple;
+              color: #ffffff;
+            }
+          }
+          .role-icons {
+            margin-right: 5px;
+          }
+        }
+        .ant-input-number {
+          width: 50%;
+          margin-left: 0px;
+        }
+      }
+    }
+    .row-org {
+      width: 100%;
+      .org-col {
+        .details-part-three {
+          width: 100%;
+        }
+      }
+    }
+    .selection-details-row {
+      width: 100%;
+      margin-bottom: 1rem;
+      .in-ndc-col,
+      .in-nap-col {
+        width: 100%;
+      }
+
+      .in-ndc-row,
+      .in-nap-row {
+        width: 100%;
+        align-items: center;
+        .included-label {
+          display: flex;
+          flex-direction: row;
+          width: fit-content;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 14px;
+          color: $note-light-text;
+
+          .info-container {
+            display: flex;
+            flex-direction: row;
+            width: 10%;
+            height: 30px;
+            align-items: center;
+            justify-content: flex-end;
+          }
+        }
+        .included-val {
+          width: 100%;
+
+          .yes-no-radio-container {
+            width: max-content;
+            text-align: center;
+            margin-right: 1rem;
+
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $dark-text-color !important;
+              border-color: $primary-purple;
+              box-shadow: none;
+              border-radius: 4px;
+            }
+          }
+          .ant-radio-button-wrapper::before {
+            background-color: transparent;
+            border-radius: 4px;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+            border-radius: 4px;
+            color: $common-input-color;
+          }
+
+          .anticon {
+            margin-right: 0.5rem;
+          }
+          .yes-no-radio {
+            .ant-radio-button-checked {
+              background: $primary-color;
+              color: #ffffff;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.step-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: $steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $steps-title;
+  }
+}
+
+.add-programme-main-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: $primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: $title-sub;
+    }
+  }
+
+  .adding-section {
+    display: flex;
+    flex-direction: column;
+    background-color: $common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+
+    .form-section {
+      display: flex;
+      margin-bottom: 2rem;
+
+      .form-one {
+        width: 100%;
+      }
+      .steps {
+        width: 15%;
+      }
+
+      .steps-content {
+        width: 85%;
+      }
+    }
+
+    .steps-action {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+  }
+}
+
+.ant-upload-list-picture .ant-upload-list-item-error,
+.ant-upload-list-picture-card .ant-upload-list-item-error {
+  height: auto;
+  max-height: 200px;
+}

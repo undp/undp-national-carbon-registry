@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { LedgerReplicatorService } from './qldb-kinesis-replicator.service';
+import { QLDBKinesisReplicatorService } from './qldb-kinesis-replicator.service';
 
 describe('LedgerReplicatorService', () => {
-  let service: LedgerReplicatorService;
+  let service: QLDBKinesisReplicatorService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LedgerReplicatorService],
+      providers: [QLDBKinesisReplicatorService],
     }).compile();
 
-    service = module.get<LedgerReplicatorService>(LedgerReplicatorService);
+    service = module.get<QLDBKinesisReplicatorService>(QLDBKinesisReplicatorService);
   });
 
   it('should be defined', () => {

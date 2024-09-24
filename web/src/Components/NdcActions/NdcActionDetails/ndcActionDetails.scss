@@ -1,0 +1,188 @@
+@import "../../../Styles/variables.scss";
+
+.ndc-action-details-container {
+  Input {
+    height: 40px;
+  }
+
+  .in-nap-col {
+    width: 100%;
+  }
+
+  .included-nap-col {
+    width: 40%;
+    display: flex;
+    .in-nap-row {
+      width: 100%;
+      align-items: center;
+      .included-label {
+        display: flex;
+        flex-direction: row;
+        width: fit-content;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+        color: $note-light-text;
+
+        .info-container {
+          display: flex;
+          flex-direction: row;
+          width: 10%;
+          height: 30px;
+          align-items: center;
+          justify-content: flex-end;
+        }
+      }
+      .included-val {
+        width: 100%;
+
+        .yes-no-radio-container {
+          width: 43%;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+            border-radius: 4px;
+          }
+        }
+        .ant-radio-button-wrapper::before {
+          background-color: transparent;
+          border-radius: 4px;
+        }
+        .ant-radio-button-wrapper {
+          border: 1px solid $common-form-input-border;
+          border-radius: 4px;
+          color: $common-input-color;
+        }
+
+        .anticon {
+          margin-right: 0.5rem;
+        }
+        .yes-no-radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+      }
+    }
+  }
+
+  .row-custom-1 {
+    display: flex;
+    margin-bottom: 2px;
+  }
+
+  .row-custom {
+    display: flex;
+    width: 200px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    .ant-input-number {
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .enablement-type-item {
+    display: flex;
+    width: 100%;
+
+    .ant-form-item-row {
+      display: flex;
+      width: 100%;
+    }
+    .ant-checkbox-wrapper {
+      color: rgba(58, 53, 65, 0.5);
+      font-size: 14px;
+    }
+    .type-checkbox-grp {
+      display: flex;
+      width: 100%;
+
+      .grp-row {
+        display: flex;
+        width: 100%;
+      }
+    }
+  }
+
+  .ant-select-selection-item {
+    color: #949599 !important;
+  }
+
+  .ant-select-dropdown {
+    font-family: $primary-font-family;
+    color: #949599 !important;
+  }
+
+  .ant-select-selector {
+    color: #949599 !important;
+  }
+
+  .ant-select-disabled {
+    .ant-select-arrow {
+      display: none;
+    }
+  }
+
+  .label-heading {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 22px;
+    color: rgba(58, 53, 65, 0.5);
+    margin-bottom: 5px;
+  }
+
+  .steps-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    .mg-left-1 {
+      margin-left: 1rem;
+    }
+  }
+
+  .upload-doc {
+    height: 40px !important;
+    margin-right: 240px;
+  }
+
+  .ant-upload-list-item {
+    border-radius: 5px !important;
+    height: 40px !important;
+  }
+
+  .design-upload-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    width: 100%;
+
+    .icon-color {
+      color: $primary-color !important;
+    }
+
+    .ant-upload {
+      width: 20%;
+    }
+
+    .ant-upload-list {
+      align-items: center;
+      justify-content: center;
+      width: 75%;
+
+      .ant-upload-list-item {
+        margin-top: 0;
+      }
+    }
+  }
+}

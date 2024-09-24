@@ -1,17 +1,19 @@
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Programme } from '../shared/entities/programme.entity';
-import configuration from '../shared/configuration';
-import { TypeOrmConfigService } from '../shared/typeorm.config.service';
 import { QLDBKinesisReplicatorService } from './qldb-kinesis-replicator.service';
-import { Company } from '../shared/entities/company.entity';
 import { LedgerReplicatorInterface } from './replicator-interface.service';
 import { PgSqlReplicatorService } from './pgsql-replicator.service';
 import { ProcessEventService } from './process.event.service';
-import { Counter } from '../shared/entities/counter.entity';
-import { LocationModule } from '../shared/location/location.module';
-import { LedgerType } from '../shared/enum/ledger.type';
+import { Programme } from '../entities/programme.entity';
+import configuration from '../configuration';
+import { TypeOrmConfigService } from '../typeorm.config.service';
+import { Company } from '../entities/company.entity';
+import { Counter } from '../entities/counter.entity';
+import { LocationModule } from '../location/location.module';
+import { LedgerType } from '../enum/ledger.type';
+import { DataImporterModule } from '../data-importer/data-importer.module';
+import { AsyncOperationsModule } from '../async-operations/async-operations.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { LedgerType } from '../shared/enum/ledger.type';
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([Programme, Company, Counter]),
-    LocationModule
+    LocationModule,
+    DataImporterModule,
+    AsyncOperationsModule,
   ],
   providers: [{
     provide: LedgerReplicatorInterface,

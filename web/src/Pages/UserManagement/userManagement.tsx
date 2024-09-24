@@ -1,14 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useAbilityContext } from '../../Casl/Can';
-import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
+// import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { useContext } from 'react';
+import { UserManagementColumns } from '../../Definitions/Enums/user.management.columns.enum';
+import { UserManagementComponent } from '../../Components/User/UserManagement/userManagementComponent';
 
 const UserManagement = () => {
   const navigate = useNavigate();
-  const { userInfoState } = useUserContext();
   const { t } = useTranslation(['company']);
 
   const visibleColumns = [
@@ -34,11 +32,9 @@ const UserManagement = () => {
     <UserManagementComponent
       t={t}
       useAbilityContext={useAbilityContext}
-      useConnection={useConnection}
       visibleColumns={visibleColumns}
       onNavigateToUpdateUser={navigateToUpdateUser}
       onClickAddUser={navigateToAddNewUser}
-      userInfoState={userInfoState}
     ></UserManagementComponent>
   );
 };

@@ -1,19 +1,25 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { ProgrammeController } from "./programme.controller";
-import { AnalyticsAPIService } from "./analytics.api.service";
-import configuration from "../shared/configuration";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { TypeOrmConfigService } from "../shared/typeorm.config.service";
-import { Programme } from "../shared/entities/programme.entity";
-import { ProgrammeTransfer } from "../shared/entities/programme.transfer";
-import { ProgrammeTransferViewEntityQuery } from "../shared/entities/programmeTransfer.view.entity";
-import { ProgrammeLedgerModule } from "../shared/programme-ledger/programme-ledger.module";
-import { CaslModule } from "../shared/casl/casl.module";
-import { AuthModule } from "../shared/auth/auth.module";
-import { UtilModule } from "../shared/util/util.module";
+import { Programme } from "../entities/programme.entity";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
+import { ProgrammeTransferViewEntityQuery } from "../entities/programmeTransfer.view.entity";
 import { AggregateAPIService } from "./aggregate.api.service";
-import { Company } from "../shared/entities/company.entity";
+import { Company } from "../entities/company.entity";
+import configuration from "../configuration";
+import { AuthModule } from "../auth/auth.module";
+import { CaslModule } from "../casl/casl.module";
+import { UtilModule } from "../util/util.module";
+import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
+import { TypeOrmConfigService } from "../typeorm.config.service";
+import { ProgrammeController } from "./programme.controller";
+import { InvestmentView } from "../entities/investment.view.entity";
+import { NDCActionViewEntity } from "../entities/ndc.view.entity";
+import { Emission } from "../entities/emission.entity";
+import { Projection } from "../entities/projection.entity";
+import { EventLog } from "../entities/event.log.entity";
+import { NationalAccountingModule } from "src/analytics-api/national-accounting/national.accounting.module";
+import { NationalAccountingController } from "./national-accounting.controller";
 
 @Module({
   imports: [
@@ -30,14 +36,20 @@ import { Company } from "../shared/entities/company.entity";
       Programme,
       ProgrammeTransfer,
       ProgrammeTransferViewEntityQuery,
-      Company
+      Company,
+      NDCActionViewEntity,
+      InvestmentView,
+      Emission,
+      Projection,
+      EventLog
     ]),
     AuthModule,
     CaslModule,
     UtilModule,
     ProgrammeLedgerModule,
+		NationalAccountingModule
   ],
-  controllers: [ProgrammeController],
-  providers: [AnalyticsAPIService, Logger, AggregateAPIService],
+  controllers: [ProgrammeController, NationalAccountingController],
+  providers: [Logger, AggregateAPIService],
 })
 export class AnalyticsAPIModule {}

@@ -1,12 +1,14 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { TxType } from "../shared/enum/txtype.enum";
 import { Repository } from "typeorm";
-import { Company } from "../shared/entities/company.entity";
-import { Programme } from "../shared/entities/programme.entity";
-import { CreditOverall } from "../shared/entities/credit.overall.entity";
-import { LocationInterface } from "../shared/location/location.interface";
-import { CompanyRole } from "src/shared/enum/company.role.enum";
+import { TxType } from "../enum/txtype.enum";
+import { Company } from "../entities/company.entity";
+import { Programme } from "../entities/programme.entity";
+import { CreditOverall } from "../entities/credit.overall.entity";
+import { LocationInterface } from "../location/location.interface";
+import { CompanyRole } from "../enum/company.role.enum";
+import { AsyncOperationsInterface } from "../async-operations/async-operations.interface";
+import { AsyncActionType } from "../enum/async.action.type.enum";
 
 @Injectable()
 export class ProcessEventService {
@@ -14,6 +16,7 @@ export class ProcessEventService {
     private logger: Logger,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
+    private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
   ) {}
 
@@ -46,13 +49,16 @@ export class ProcessEventService {
               }
               await this.locationService.getCoordinatesForRegion([...address]).then(
                 (response: any) => {
-                  console.log(
-                    "response from forwardGeoCoding function -> ",
-                    response
-                  );
                   programme.geographicalLocationCordintes = [...response];
                 }
               );
+
+              if (programme.article6trade==true) {  
+                await this.asyncOperationsInterface.AddAction({
+                  actionType: AsyncActionType.CADTProgrammeCreate,
+                  actionProps: programme,
+                });
+              }
             } else if (
               programme.txType === TxType.CERTIFY ||
               programme.txType === TxType.REVOKE
@@ -153,9 +159,10 @@ export class ProcessEventService {
             company.secondaryAccountBalance[account]["total"] = overall.credit;
             company.secondaryAccountBalance[account]["count"] += 1;
           } else {
-            company.secondaryAccountBalance = {
-              account: { total: overall.credit, count: 1 },
-            };
+            if(!company.secondaryAccountBalance){
+              company.secondaryAccountBalance={}
+            }
+            company.secondaryAccountBalance[account] ={ total: overall.credit, count: 1 }
           }
 
           updateObj = {
@@ -165,10 +172,7 @@ export class ProcessEventService {
         } else {
           updateObj = {
             creditBalance: overall.credit,
-            programmeCount:
-              company.companyRole === CompanyRole.GOVERNMENT
-                ? null
-                : Number(company.programmeCount) +
+            programmeCount:Number(company.programmeCount) +
                   (overall.txType == TxType.AUTH ? 1 : 0),
             lastUpdateVersion: version,
             creditTxTime: [

@@ -2,21 +2,21 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NationalAPIController } from './national.api.controller';
 import { NationalAPIService } from './national.api.service';
-import configuration from '../shared/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../shared/typeorm.config.service';
-// import { Programme } from './entities/programme.entity';
-import { AuthModule } from '../shared/auth/auth.module';
-import { CaslModule } from '../shared/casl/casl.module';
-import { ProgrammeModule } from '../shared/programme/programme.module';
-import { CompanyModule } from '../shared/company/company.module';
 import { CompanyController } from './company.controller';
-import { UserModule } from '../shared/user/user.module';
 import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
-import { UtilModule } from '../shared/util/util.module';
 import { SettingsController } from './settings.controller';
+import { AuthModule } from 'src/auth/auth.module';
+import { CaslModule } from 'src/casl/casl.module';
+import { CompanyModule } from 'src/company/company.module';
+// import configuration from 'src/configuration';
+import { ProgrammeModule } from 'src/programme/programme.module';
+import { TypeOrmConfigService } from 'src/typeorm.config.service';
+import { UserModule } from 'src/user/user.module';
+import { UtilModule } from 'src/util/util.module';
+import configuration from 'src/configuration';
 
 @Module({
   imports: [
@@ -34,9 +34,16 @@ import { SettingsController } from './settings.controller';
     CaslModule,
     ProgrammeModule,
     CompanyModule,
-    UtilModule
+    UtilModule,
   ],
-  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, SettingsController ],
+  controllers: [ 
+		NationalAPIController, 
+		UserController, 
+		AuthController, 
+		CompanyController, 
+		ProgrammeController, 
+		SettingsController, 
+	 ],
   providers: [
     NationalAPIService, 
     Logger

@@ -8,5 +8,14 @@
     "companyTaxIdExist": "This Company Tax ID already exists",
     "companyUpdateFailed": "Company update failed. Please try again",
     "cantSuspendUrOwn": "Can not suspend your own company",
-    "cantActivateUrOwn": "Can not activate your own company"
+    "cantActivateUrOwn": "Can not activate your own company",
+    "noPendingCompany": "No pending company found",
+    "companyApprovalFailed": "Company approval failed. Please try again",
+    "companyApprovalSuccess": "Successfully approved the company",
+    "companyRejectionFailed": "Company rejection failed. Please try again",
+    "companyRejectionSuccess": "Successfully rejected the company",
+    "nationalSopValue": "National Share of Proceeds",
+    "companyTaxIdCannotUpdate": "Company Tax ID cannot be updated",
+    "wrongMinistryAndGovDep": "Invalid Government Department Selected",
+    "MinistryDepartmentAlreadyExist": "Government Department Already Exist"
 }

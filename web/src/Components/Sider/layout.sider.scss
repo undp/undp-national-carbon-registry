@@ -122,20 +122,34 @@
         background: none;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
+        color: $primary-color !important;
 
         a {
-          color: $primary-color;
+          color: $primary-color !important;
         }
       }
     }
 
     .ant-menu-item {
       height: 44px;
-      padding-left: 1.3rem;
     }
 
     .ant-menu-submenu-title {
       height: 44px;
+    }
+
+    .custom-padding-left {
+      padding-left: 3.0rem !important;
+    }
+  }
+}
+
+.ant-layout-sider-collapsed {
+  
+  .layout-sider-div-container {
+
+    .custom-padding-left {
+      padding-left: 32px !important;
     }
   }
 }

@@ -12,24 +12,32 @@ import {
   Delete,
   Put,
 } from "@nestjs/common";
-import { Action } from "../shared/casl/action.enum";
-import {
-  AppAbility,
-  CaslAbilityFactory,
-} from "../shared/casl/casl-ability.factory";
-import { CheckPolicies } from "../shared/casl/policy.decorator";
-import { PoliciesGuard, PoliciesGuardEx } from "../shared/casl/policy.guard";
-import { User } from "../shared/entities/user.entity";
-import { UserDto } from "../shared/dto/user.dto";
-import { UserService } from "../shared/user/user.service";
+
+// import { DataExportQueryDto, User } from "@undp/carbon-services-lib";
+// import { UserDto } from "@undp/carbon-services-lib";
+// import { UserService,Action ,AppAbility,CaslAbilityFactory,CheckPolicies, PoliciesGuard, PoliciesGuardEx, Role} from "@undp/carbon-services-lib";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { QueryDto } from "../shared/dto/query.dto";
-import { UserUpdateDto } from "../shared/dto/user.update.dto";
-import { PasswordUpdateDto } from "../shared/dto/password.update.dto";
-import { Role } from "../shared/casl/role.enum";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { HelperService } from "../shared/util/helpers.service";
-import { ApiKeyJwtAuthGuard } from "../shared/auth/guards/api-jwt-key.guard";
+import { ApiKeyJwtAuthGuard } from "../auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Action } from "../casl/action.enum";
+import { CaslAbilityFactory } from "../casl/casl-ability.factory";
+import { CheckPolicies } from "../casl/policy.decorator";
+import { PoliciesGuard, PoliciesGuardEx } from "../casl/policy.guard";
+import { Role } from "../casl/role.enum";
+import { DataExportQueryDto } from "../dto/data.export.query.dto";
+import { PasswordUpdateDto } from "../dto/password.update.dto";
+import { QueryDto } from "../dto/query.dto";
+import { UserDto } from "../dto/user.dto";
+import { UserUpdateDto } from "../dto/user.update.dto";
+import { User } from "../entities/user.entity";
+import { UserService } from "../user/user.service";
+import { HelperService } from "../util/helpers.service";
+// import { QueryDto } from "@undp/carbon-services-lib";
+// import { UserUpdateDto } from "@undp/carbon-services-lib";
+// import { PasswordUpdateDto } from "@undp/carbon-services-lib";
+// import { JwtAuthGuard } from "@undp/carbon-services-lib";
+// import { HelperService } from '@undp/carbon-services-lib';
+// import { ApiKeyJwtAuthGuard } from "@undp/carbon-services-lib";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -70,6 +78,23 @@ export class UserController {
     );
   }
 
+  @Post("register")
+  registerUser(@Body() user: UserDto, @Request() req) {
+    if (user.role == Role.Root) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.userService.create(
+      user,
+      null,
+      user.company.companyRole,
+      true
+    );
+  }
+
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, User))
   // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
@@ -103,8 +128,19 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("query")
   queryUser(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.userService.query(query, req.abilityCondition);
+  }
+  
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
+  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
+  @Post('download')
+  async getDownload(@Body()query: DataExportQueryDto, @Request() req) {
+    try {
+      return this.userService.download(query, req.abilityCondition); // Return the filePath as a JSON response
+    } catch (err) {
+      return { error: 'Error generating the CSV file.' };
+    }
   }
 
   @ApiBearerAuth()

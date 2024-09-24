@@ -8,12 +8,15 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Action } from "../shared/casl/action.enum";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
-import { SettingsDto } from "../shared/dto/settings.dto";
-import { ConfigurationSettings } from "../shared/entities/configuration.settings";
-import { ConfigurationSettingsService } from "../shared/util/configurationSettings.service";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Action } from "../casl/action.enum";
+import { PoliciesGuardEx } from "../casl/policy.guard";
+import { SettingsDto } from "../dto/settings.dto";
+import { ConfigurationSettings } from "../entities/configuration.settings";
+import { ConfigurationSettingsService } from "../util/configurationSettings.service";
+// import { JwtAuthGuard ,Action,PoliciesGuardEx,ConfigurationSettingsService} from "@undp/carbon-services-lib";;
+// import { SettingsDto } from "@undp/carbon-services-lib";
+// import { ConfigurationSettings } from "@undp/carbon-services-lib";
 
 @ApiTags("Settings")
 @Controller("Settings")

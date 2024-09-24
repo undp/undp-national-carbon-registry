@@ -11,18 +11,30 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { Company } from "../shared/entities/company.entity";
-import { Action } from "../shared/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
-import { QueryDto } from "../shared/dto/query.dto";
-import { CompanyService } from "../shared/company/company.service";
-import { CaslAbilityFactory } from "../shared/casl/casl-ability.factory";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { OrganisationSuspendDto } from "../shared/dto/organisation.suspend.dto";
-import { FindOrganisationQueryDto } from "../shared/dto/find.organisation.dto";
-import { OrganisationUpdateDto } from "../shared/dto/organisation.update.dto";
-import { CountryService } from "../shared/util/country.service";
-import { HelperService } from "../shared/util/helpers.service";
+import { ApiKeyJwtAuthGuard } from "src/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { Action } from "src/casl/action.enum";
+import { CaslAbilityFactory } from "src/casl/casl-ability.factory";
+import { PoliciesGuardEx } from "src/casl/policy.guard";
+import { CompanyService } from "src/company/company.service";
+import { DataExportQueryDto } from "src/dto/data.export.query.dto";
+import { FindOrganisationQueryDto } from "src/dto/find.organisation.dto";
+import { InvestmentDto } from "src/dto/investment.dto";
+import { OrganisationSuspendDto } from "src/dto/organisation.suspend.dto";
+import { OrganisationUpdateDto } from "src/dto/organisation.update.dto";
+import { QueryDto } from "src/dto/query.dto";
+import { Company } from "src/entities/company.entity";
+import { Investment } from "src/entities/investment.entity";
+import { CountryService } from "src/util/country.service";
+import { HelperService } from "src/util/helpers.service";
+// import { ApiKeyJwtAuthGuard, Company, InvestmentDto, DataExportQueryDto } from "@undp/carbon-services-lib";
+// import { QueryDto } from "@undp/carbon-services-lib";
+// import { OrganisationSuspendDto } from "@undp/carbon-services-lib";
+// import { FindOrganisationQueryDto } from "@undp/carbon-services-lib";
+// import { OrganisationUpdateDto } from "@undp/carbon-services-lib";
+// import { HelperService,CountryService,CompanyService ,JwtAuthGuard,Action,PoliciesGuardEx,CaslAbilityFactory,Investment} from '@undp/carbon-services-lib';
+
+
 
 @ApiTags("Organisation")
 @ApiBearerAuth()
@@ -39,16 +51,25 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
-    return this.companyService.query(query, req.abilityCondition);
+    return this.companyService.query(query, req.abilityCondition, req.user.companyRole);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
   @Post("queryNames")
   queryNames(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.companyService.queryNames(query, req.abilityCondition);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
+  @Post('download')
+  async getDownload(@Body()query: DataExportQueryDto, @Request() req) {
+    try {
+      return this.companyService.download(query, req.abilityCondition, req.user.companyRole); // Return the filePath as a JSON response
+    } catch (err) {
+      return { error: 'Error generating the CSV file.' };
+    }
   }
 
   @ApiBearerAuth()
@@ -102,6 +123,36 @@ export class CompanyController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Approve, Company))
+  @Put("approve")
+  approve(
+    @Query("id") companyId: number,
+    @Body() body: OrganisationSuspendDto,
+    @Request() req
+  ) {
+    return this.companyService.approve(
+      companyId,
+      req.abilityCondition
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Reject, Company))
+  @Put("reject")
+  reject(
+    @Query("id") companyId: number,
+    @Body() body: OrganisationSuspendDto,
+    @Request() req
+  ) {
+    return this.companyService.reject(
+      companyId,
+      req.user,
+      body.remarks,
+      req.abilityCondition
+    );
+  }
+
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company))
   @Post("findByIds")
   async findByCompanyId(
@@ -125,15 +176,32 @@ export class CompanyController {
     return await this.companyService.update(company, req.abilityCondition);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post("countries")
   async getCountries(@Body() query: QueryDto, @Request() req) {
     return await this.countryService.getCountryList(query);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get("countries")
   async getAvailableCountries(@Request() req) {
     return await this.countryService.getAvailableCountries();
   }
+  
+  @Post("regions")
+  async getRegionList(@Body() query: QueryDto, @Request() req) {
+    return await this.countryService.getRegionList(query);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Investment))
+  @Post('addInvestment')
+  async addInvestment(@Body() investment: InvestmentDto, @Request() req) {
+      return this.companyService.addNationalInvestment(investment, req.user);
+  }
+
+  @ApiBearerAuth()
+  @Get("getMinistries")
+  getMinistryUser(@Request() req) {
+    return this.companyService.getMinistries();
+  }
+
 }

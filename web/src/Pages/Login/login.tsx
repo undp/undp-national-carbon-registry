@@ -1,18 +1,19 @@
 import { Button, Col, Form, Input, message, Row, Select, Spin } from 'antd';
 import React, { FC, Suspense, useContext, useEffect, useState } from 'react';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import './login.scss';
 import countryLogo from '../../Assets/Images/logo-slider.png';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { LoginProps } from '../../Definitions/InterfacesAndType/userLogin.definitions';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { AbilityContext } from '../../Casl/Can';
 import { updateUserAbility } from '../../Casl/ability';
 import ForgotPassword from './forgotPassword';
 import ResetPassword from './resetPassword';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { LoginProps } from '../../Definitions/Definitions/userLogin.definitions';
+// import { LoginProps, useConnection, useUserContext } from '@undp/carbon-library';
 
 export interface LoginPageProps {
   forgotPassword?: boolean;
@@ -21,7 +22,7 @@ export interface LoginPageProps {
 
 const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { forgotPassword, resetPassword } = props;
-  const { post, updateToken, removeToken } = useConnection();
+  const { post, updateToken, updateRefreshToken, removeToken } = useConnection();
   const { IsAuthenticated, setUserInfo, isTokenExpired, setIsTokenExpired } = useUserContext();
   const { i18n, t } = useTranslation(['common', 'login']);
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,6 +31,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
+  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -58,6 +60,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
       if (response.status === 200 || response.status === 201) {
         if (showError) setShowError(false);
         updateToken(response.data.access_token);
+        updateRefreshToken(response.data.refresh_token);
         setUserInfo({
           id: response.data.id,
           userRole: response.data.role,
@@ -254,12 +257,19 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                           </div>
                         )}
                       </Form>
-                      {/* <div className="login-register-new-container">
-                  <span className="login-register-new-txt">
-                    {t('login:register-acc')}?&nbsp;&nbsp;
-                    <span className="login-register-new-txt-span">{t('common:signUp')}</span>
-                  </span>
-                </div> */}
+                      {enableRegistration === 'true' && (
+                        <div className="login-register-new-container">
+                          <span className="login-register-new-txt">
+                            {t('login:register-acc')}&nbsp;&nbsp;
+                            <span
+                              className="login-register-new-txt-span"
+                              onClick={() => navigate('/registerCompany')}
+                            >
+                              {t('login:register-here')}
+                            </span>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </Col>
                 </Row>

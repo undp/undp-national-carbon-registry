@@ -1,0 +1,92 @@
+@import './variables.scss';
+
+.common-table-class {
+  .ant-table {
+    border-radius: 1rem;
+    .ant-table-thead {
+      justify-content: center;
+      .ant-table-cell {
+        color: $title-text-color;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-align: center;
+      }
+    }
+    .ant-table-tbody {
+      font-size: 0.8rem;
+      text-align: center;
+      color: $title-text-color;
+    }
+
+    .ant-table-cell {
+      padding: 14px 12px;
+    }
+
+    .ant-table-thead {
+      .ant-table-cell {
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+
+.ant-table-pagination.ant-pagination {
+  margin: 16px 24px;
+}
+
+.ant-select-item-option-content {
+  font-family: $primary-font-family;
+  color: $title-text-color;
+}
+
+.ant-pagination-prev, .ant-pagination-next, .ant-pagination-jump-prev, .ant-pagination-jump-next, .ant-pagination-item {
+  height: 28px;
+  border-radius: 4px;
+  line-height: 26px;
+  font-size: 0.8rem;
+  font-family: $primary-font-family;
+}
+
+
+.ant-pagination-item-active:focus-visible {
+  border-color: $primary-color;
+}
+
+.ant-pagination-options-quick-jumper {
+  font-size: 0.8rem;
+  font-family: $primary-font-family;
+  color: $title-text-color;
+
+  height: 30px;
+  line-height: 30px;
+
+  input {
+    height: 28px;
+    border-radius: 4px;
+    line-height: 26px;
+    color: $title-text-color;
+  }
+}
+
+.ant-pagination-options {
+  .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+    height: 28px;
+    border-radius: 4px;
+    line-height: 26px;
+    font-size: 0.8rem;
+    font-family: $primary-font-family;
+    color: $title-text-color;
+  }
+
+  .ant-select-selection-item {
+    height: 28px;
+    color: $title-text-color;
+    line-height: 26px !important;
+  }
+  .ant-select-dropdown {
+    font-family: $primary-font-family;
+    color: $title-text-color;
+    font-size: 0.8rem;
+  }
+}

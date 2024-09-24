@@ -6,13 +6,33 @@ import {
   InferSubjects,
   MongoAbility,
 } from '@casl/ability';
-import { Company, BaseEntity, ProgrammeTransfer, User } from '@undp/carbon-library';
-import { Programme } from './entities/Programme';
-import { ProgrammeCertify } from './entities/ProgrammeCertify';
-import { Action } from './enums/action.enum';
-import { CompanyRole } from './enums/company.role.enum';
-import { ProgrammeStage } from './enums/programme-status.enum';
-import { Role } from './enums/role.enum';
+import { BaseEntity } from '../Definitions/Entities/baseEntity';
+import { Company } from '../Definitions/Entities/company';
+import { Emission } from '../Definitions/Entities/emission';
+import { ProgrammeEntity } from '../Definitions/Entities/programme';
+import { ProgrammeCertify } from '../Definitions/Entities/programmeCertify';
+import { ProgrammeTransfer } from '../Definitions/Entities/programmeTransfer';
+import { Projection } from '../Definitions/Entities/projection';
+import { User } from '../Definitions/Entities/user';
+import { Action } from '../Definitions/Enums/action.enum';
+import { CompanyRole } from '../Definitions/Enums/company.role.enum';
+import { ProgrammeStageUnified } from '../Definitions/Enums/programmeStage.enum';
+import { Role } from '../Definitions/Enums/role.enum';
+import { CreditAuditLog } from '../Definitions/Entities/creditAuditLog';
+// import {
+//   Company,
+//   BaseEntity,
+//   ProgrammeTransfer,
+//   User,
+//   ProgrammeEntity,
+//   CompanyRole,
+//   Role,
+//   ProgrammeStageUnified,
+//   Action,
+//   ProgrammeCertify,
+//   Emission,
+//   Projection,
+// } from '@undp/carbon-library';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 
@@ -41,7 +61,10 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can([Action.Delete], Company);
       can([Action.Create], Company);
       can(Action.Update, Company, { companyId: { $eq: user.companyId } });
-    } else if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
+    } else if (
+      user.role === Role.Admin &&
+      (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.MINISTRY)
+    ) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
         id: { $eq: user.id },
@@ -52,7 +75,17 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot(Action.Update, Company, ['companyRole']);
       can(Action.Delete, Company);
       can(Action.Create, Company);
+
+      if (user.companyRole === CompanyRole.MINISTRY) {
+        cannot([Action.Update, Action.Delete], User, {
+          companyId: { $ne: user.companyId },
+        });
+      }
     } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
+      if (user.companyRole === CompanyRole.MINISTRY) {
+        can(Action.Create, Company);
+      }
+
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot([Action.Update, Action.Delete, Action.Read], User, {
         companyId: { $ne: user.companyId },
@@ -67,7 +100,10 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot(Action.Update, Company, ['companyRole']);
       cannot(Action.Create, Company);
     } else {
-      if (user.companyRole === CompanyRole.GOVERNMENT) {
+      if (
+        user.companyRole === CompanyRole.GOVERNMENT ||
+        user.companyRole === CompanyRole.MINISTRY
+      ) {
         can(Action.Read, User);
       } else {
         can(Action.Read, User, { companyId: { $eq: user.companyId } });
@@ -77,17 +113,44 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Read, Company);
     }
 
-    if (user.role === Role.Manager && user.companyRole === CompanyRole.GOVERNMENT) {
+    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.MINISTRY) {
+      can(Action.Manage, ProgrammeTransfer);
+      can(Action.Manage, ProgrammeEntity);
       can([Action.Delete], Company);
+    }
+
+    if (
+      user.role === Role.Manager &&
+      (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.MINISTRY)
+    ) {
+      can([Action.Delete], Company);
+    }
+
+    if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
+      can(Action.Approve, Company);
+      can(Action.Reject, Company);
+    }
+
+    if (user.companyRole === CompanyRole.MINISTRY || user.companyRole === CompanyRole.GOVERNMENT) {
+      if (user.role !== Role.ViewOnly) {
+        can(Action.Create, Emission);
+        can(Action.Create, Projection);
+      }
+      can(Action.Read, Emission);
+      can(Action.Read, Projection);
+    } else {
+      can(Action.Read, Emission);
+      can(Action.Read, Projection);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       can(Action.Manage, ProgrammeTransfer);
+      can(Action.Manage, ProgrammeEntity);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.GOVERNMENT) {
       can(Action.Manage, ProgrammeTransfer);
-      can(Action.Manage, Programme);
+      can(Action.Manage, ProgrammeEntity);
     }
 
     if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.CERTIFIER) {
@@ -95,19 +158,24 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     }
 
     if (user.role === Role.Admin && user.companyRole === CompanyRole.MRV) {
-      can([Action.Create, Action.Read], Programme);
+      can([Action.Create, Action.Read], ProgrammeEntity);
     } else if (user.companyRole === CompanyRole.CERTIFIER) {
-      can(Action.Read, Programme, { currentStage: { $in: [ProgrammeStage.AUTHORISED] } });
-      can(Action.Read, Programme, { certifierId: { $elemMatch: { $eq: user.companyId } } });
+      can(Action.Read, ProgrammeEntity, {
+        currentStage: { $in: [ProgrammeStageUnified.Authorised] },
+      });
+      can(Action.Read, ProgrammeEntity, { certifierId: { $elemMatch: { $eq: user.companyId } } });
     } else if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      can(Action.Read, Programme, { currentStage: { $eq: ProgrammeStage.AUTHORISED } });
-      can(Action.Read, Programme, { companyId: { $elemMatch: { $eq: user.companyId } } });
+      can(Action.Read, ProgrammeEntity, {
+        currentStage: { $eq: ProgrammeStageUnified.Authorised },
+      });
+      can(Action.Read, ProgrammeEntity, { companyId: { $elemMatch: { $eq: user.companyId } } });
     }
 
     // cannot(Action.Delete, User, { id: { $eq: user.id } })
     cannot(Action.Update, User, ['companyRole']);
 
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.MINISTRY } });
 
     if (user.role === Role.Admin || user.role === Role.Root) {
       can(Action.Create, User);
@@ -122,6 +190,16 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       cannot(Action.Create, 'all');
       cannot(Action.Delete, 'all');
       cannot(Action.Update, 'all');
+      cannot(Action.Manage, 'all');
+    }
+
+    if (
+      (user.role === Role.Root || user.role === Role.Admin) &&
+      user.companyRole === CompanyRole.GOVERNMENT
+    ) {
+      can(Action.Read, CreditAuditLog);
+    } else {
+      cannot(Action.Read, CreditAuditLog);
     }
   }
 

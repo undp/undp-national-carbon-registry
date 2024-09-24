@@ -15,14 +15,19 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { LoginDto } from "../shared/dto/login.dto";
-import { AuthService } from "../shared/auth/auth.service";
-import { JwtAuthGuard } from "../shared/auth/guards/jwt-auth.guard";
-import { LocalAuthGuard } from "../shared/auth/guards/local-auth.guard";
-import { ForgotPasswordDto } from "../shared/dto/forgotPassword.dto";
-import { PasswordResetDto } from "../shared/dto/passwordReset.dto";
-import { PasswordResetService } from "../shared/util/passwordReset.service";
-import { HelperService } from "../shared/util/helpers.service";
+import { AuthService } from "../auth/auth.service";
+import { ForgotPasswordDto } from "../dto/forgotPassword.dto";
+import { LoginDto } from "../dto/login.dto";
+import { PasswordResetDto } from "../dto/passwordReset.dto";
+import { HelperService } from "../util/helpers.service";
+import { PasswordResetService } from "../util/passwordReset.service";
+import { RefreshLoginDto } from "src/dto/refreshLogin.dto";
+// import { LoginDto } from "@undp/carbon-services-lib";
+// import { AuthService } from "@undp/carbon-services-lib";
+// import { ForgotPasswordDto } from "@undp/carbon-services-lib";
+// import { PasswordResetDto } from "@undp/carbon-services-lib";
+// import { PasswordResetService } from '@undp/carbon-services-lib';
+// import { HelperService } from '@undp/carbon-services-lib';
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -30,30 +35,30 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly passwordResetService: PasswordResetService,
-    private helperService: HelperService,
+    private helperService: HelperService
   ) {}
 
   @Post("login")
   async login(@Body() login: LoginDto, @Request() req) {
-    const user = await this.authService.validateUser(
-      login.username,
-      login.password
-    );
+    const user = await this.authService.validateUser(login.username, login.password);
     if (user != null) {
       global.baseUrl = `${req.protocol}://${req.get("Host")}`;
       return this.authService.login(user);
     }
-    throw new HttpException(this.helperService.formatReqMessagesString(
-      "common.invalidLogin",
-      []
-    ), HttpStatus.UNAUTHORIZED);
+    throw new HttpException(
+      this.helperService.formatReqMessagesString("common.invalidLogin", []),
+      HttpStatus.UNAUTHORIZED
+    );
+  }
+
+  @Post("login/refresh")
+  async refreshLogin(@Body() refreshLogin: RefreshLoginDto, @Request() req) {
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.authService.refreshToken(refreshLogin.refreshToken);
   }
 
   @Post("forgotPassword")
-  async forgotPassword(
-    @Body() forgotPassword: ForgotPasswordDto,
-    @Request() req
-  ) {
+  async forgotPassword(@Body() forgotPassword: ForgotPasswordDto, @Request() req) {
     const email = forgotPassword.email;
     if (email !== null) {
       return this.authService.forgotPassword(email);
@@ -66,18 +71,11 @@ export class AuthController {
     @Body() reset: PasswordResetDto,
     @Request() req
   ) {
-    return this.passwordResetService.resetPassword(
-      reqId,
-      reset,
-      req.abilityCondition
-    );
+    return this.passwordResetService.resetPassword(reqId, reset, req.abilityCondition);
   }
 
   @Put("checkResetRequestId")
   async checkResetRequestId(@Query("requestId") reqId: string, @Request() req) {
-    return this.passwordResetService.checkPasswordResetRequestId(
-      reqId,
-      req.abilityCondition
-    );
+    return this.passwordResetService.checkPasswordResetRequestId(reqId, req.abilityCondition);
   }
 }

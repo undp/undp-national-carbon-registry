@@ -9,14 +9,11 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { StatList } from "../shared/dto/stat.list.dto";
-import { ApiKeyJwtAuthGuard } from "../shared/auth/guards/api-jwt-key.guard";
-import { Action } from "../shared/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/casl/policy.guard";
-import { AnalyticsAPIService } from "./analytics.api.service";
-import { Stat } from "../shared/dto/stat.dto";
-import { ChartStatList } from "../shared/dto/chartStats.list.dto";
-import { Programme } from "../shared/entities/programme.entity";
+import { StatList } from "../dto/stat.list.dto";
+import { ApiKeyJwtAuthGuard } from "../auth/guards/api-jwt-key.guard";
+import { Action } from "../casl/action.enum";
+import { PoliciesGuardEx } from "../casl/policy.guard";
+import { Stat } from "../dto/stat.dto";
 import { AggregateAPIService } from "./aggregate.api.service";
 
 @ApiTags("Programme")
@@ -24,48 +21,9 @@ import { AggregateAPIService } from "./aggregate.api.service";
 @Controller("programme")
 export class ProgrammeController {
   constructor(
-    private analyticsService: AnalyticsAPIService,
     private aggService: AggregateAPIService,
     private readonly logger: Logger
   ) {}
-
-  @ApiBearerAuth()
-  @UseGuards(
-    ApiKeyJwtAuthGuard,
-    PoliciesGuardEx(true, Action.Read, Stat, true, true)
-  )
-  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post("dashboard")
-  async programmesStaticDetails(@Body() query: StatList, @Request() req) {
-    const companyId =
-      req?.user?.companyId !== null ? req?.user?.companyId : null;
-    console.log("user ---- > ", req?.user);
-    return this.analyticsService.programmesStaticDetails(
-      req.abilityCondition,
-      query,
-      companyId
-    );
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(
-    ApiKeyJwtAuthGuard,
-    PoliciesGuardEx(true, Action.Read, Stat, true, true)
-  )
-  // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post("dashboardCharts")
-  async programmesStaticChartDetails(
-    @Body() query: ChartStatList,
-    @Request() req
-  ) {
-    const companyId =
-      req?.user?.companyId !== null ? req?.user?.companyId : null;
-    return this.analyticsService.programmesStaticChartsDetails(
-      req.abilityCondition,
-      query,
-      companyId
-    );
-  }
 
   @ApiBearerAuth()
   @UseGuards(
@@ -83,7 +41,8 @@ export class ProgrammeController {
       req.abilityCondition,
       query,
       companyId,
-      req.user?.companyRole
+      req.user?.companyRole,
+      query.system
     );
   }
 }
