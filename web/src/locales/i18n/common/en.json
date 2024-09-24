@@ -16,6 +16,7 @@
   "loginFailed": "Login failed",
   "networkError": "Network error. Please check your internet connection and try again.",
   "systemError": "Something went wrong. Please try again.",
+  "organisationDeactivated": "This action is unauthorised due to the deactivation of your organisation. You will now be logged out of the system. Log in again to access the system with view-only permissions.",
   "maxSizeVal": "Maximum upload file size is 5MB",
   "approve": "APPROVE",
   "reject": "REJECT"
