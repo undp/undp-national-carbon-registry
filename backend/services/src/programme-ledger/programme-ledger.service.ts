@@ -1277,7 +1277,7 @@ export class ProgrammeLedgerService {
         suspendedCompanies.forEach(async (company) => {
           const index = programme.companyId.indexOf(company.companyId);
           const freezeCredit =
-            this.helperService.halfUpToPrecision((issueAmount * programme.creditOwnerPercentage[index]) / 100);
+            this.helperService.halfUpToPrecision((issueAmount * programme.proponentPercentage[index]) / 100);
           programme.creditFrozen[index] = this.helperService.halfUpToPrecision(programme.creditFrozen[index] + freezeCredit);
           programme.creditChange = freezeCredit;
 
