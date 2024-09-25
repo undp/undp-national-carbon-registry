@@ -78,7 +78,7 @@ export class NDCActionDto {
   @IsNotEmptyObject()
   @ValidateNested()
   @Type(() => CreditCalculationProperties)
-  @IsChildClassValid()
+  // @IsChildClassValid()
   creditCalculationProperties?: CreditCalculationProperties;
 
 

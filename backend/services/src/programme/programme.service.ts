@@ -2329,6 +2329,13 @@ export class ProgrammeService {
       }
     }
 
+    if(!program.companyId.includes(user.companyId)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
+
     const data = instanceToPlain(ndcActionDto);
     const ndcAction: NDCAction = plainToClass(NDCAction, data);
     const programmeId = ndcAction.programmeId;
