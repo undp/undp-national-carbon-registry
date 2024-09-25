@@ -14,7 +14,7 @@ export class SolarProperties {
 
     @ApiProperty({default: "kWh/year/unit", enum: EnergyGenerationUnits})
     @IsEnum(EnergyGenerationUnits, {
-        message: 'Invalid energey generation unit. Supported following values:' + Object.values(EnergyGenerationUnits)
+        message: 'Invalid energy generation unit. Supported following values:' + Object.values(EnergyGenerationUnits)
     })
     @IsNotEmpty()
     energyGenerationUnit: EnergyGenerationUnits;

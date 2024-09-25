@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsPositive } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsPositive } from "class-validator";
 import { CreditCalculationProperties } from "./credit.calculation.properties";
+import { EnergyGenerationUnits } from "../enum/energy.generation.units.enum";
 
 export class SolarWaterPumpOffGridProperties extends CreditCalculationProperties{
     
@@ -10,8 +11,11 @@ export class SolarWaterPumpOffGridProperties extends CreditCalculationProperties
     @IsNumber()
     energyGeneration: number;
 
-    @ApiProperty({default: "kWh/year/unit"})
+    @ApiProperty({default: "kWh/year/unit", enum: EnergyGenerationUnits})
+    @IsEnum(EnergyGenerationUnits, {
+        message: 'Invalid energy generation unit. Supported following values:' + Object.values(EnergyGenerationUnits)
+    })
     @IsNotEmpty()
-    energyGenerationUnit: string;
+    energyGenerationUnit: EnergyGenerationUnits;
 
 }
