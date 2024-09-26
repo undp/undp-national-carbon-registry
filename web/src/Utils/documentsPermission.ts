@@ -1,5 +1,3 @@
-// import { CompanyRole, DocType, DocumentStatus, ProgrammeStageUnified, Role } from "../Definitions";
-
 import { CompanyRole } from '../Definitions/Enums/company.role.enum';
 import { DocumentStatus } from '../Definitions/Enums/document.status';
 import { DocType } from '../Definitions/Enums/document.type';

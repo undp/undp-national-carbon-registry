@@ -3,7 +3,6 @@
 import { Col, Empty, Form, Radio, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { RadioButtonStatus } from '../../Definitions/Enums/commonEnums';
-// import { RadioButtonStatus } from "../../../Definitions";
 
 const SocialEnvironmentalRisk = (props: any) => {
   const { onFormSubmit, SocialEnvironmentalRiskData, viewOnly, translator } = props;

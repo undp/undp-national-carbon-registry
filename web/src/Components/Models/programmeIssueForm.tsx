@@ -5,8 +5,6 @@ import { Alert, Button, Col, Divider, Form, Input, InputNumber, Modal, Row, Spac
 import react, { FC, useState } from 'react';
 import { addCommSep, Programme } from '../../Definitions/Definitions/programme.definitions';
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
-// import React from 'react';
-import { MinusCircleOutlined } from '@ant-design/icons';
 
 export interface ProgrammeIssueFormProps {
   programme: Programme;

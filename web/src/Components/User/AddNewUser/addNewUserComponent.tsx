@@ -20,8 +20,6 @@ import ChangePasswordModel from '../../Models/changePasswordModel';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-// import { Role } from '../../../Definitions';
-// import { useConnection, useUserContext } from '../../../Context';
 
 export const AddNewUserComponent = (props: any) => {
   const {

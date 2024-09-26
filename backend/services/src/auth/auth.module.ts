@@ -32,14 +32,7 @@ import { PasswordReset } from "../entities/userPasswordResetToken.entity";
     CompanyModule,
     AsyncOperationsModule,
   ],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    ApiKeyStrategy,
-    Logger,
-    PasswordReset,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, ApiKeyStrategy, Logger, PasswordReset],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,4 +1,3 @@
-// import { NdcActionManagementComponent } from '@undp/carbon-library';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { NdcActionManagementComponent } from '../../Components/NdcActions/NdcActionManagement/ndcActionManagementComponent';

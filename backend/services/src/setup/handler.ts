@@ -1,15 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-// import { UserDto } from "@undp/carbon-services-lib";
-// import { getLogger } from "@undp/carbon-services-lib";
-// import { UtilModule, LocationInterface,LocationModule,LedgerDBInterface,LedgerDbModule,CountryService ,CompanyModule,CompanyService,UserModule,UserService,Role} from "@undp/carbon-services-lib";
-// import { Country } from "@undp/carbon-services-lib";
-// import { CreditOverall } from "@undp/carbon-services-lib";
-// import { OrganisationDto as OrganisationDto } from "@undp/carbon-services-lib";
-// import { CompanyRole, GovDepartment, Ministry} from "@undp/carbon-services-lib";
-// import { TxType } from "@undp/carbon-services-lib";
 import { Handler } from "aws-lambda";
-// import { ProgrammeModule } from "@undp/carbon-services-lib";
-// import { ProgrammeService } from "@undp/carbon-services-lib";
 import { ConfigService } from "@nestjs/config";
 import { Role } from "../casl/role.enum";
 import { CompanyModule } from "../company/company.module";

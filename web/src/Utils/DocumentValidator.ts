@@ -1,5 +1,3 @@
-// import { DocType } from '../Definitions';
-
 import { DocType } from '../Definitions/Enums/document.type';
 
 const allowedFileTypes = [

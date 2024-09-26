@@ -12,7 +12,6 @@ import {
   Space,
   MenuProps,
 } from 'antd';
-// import type { MenuProps } from 'antd';
 import './dashboard.scss';
 import { BookOutlined, DownloadOutlined, CaretDownOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -33,19 +32,6 @@ import {
   getTotalProgrammesInitialValues,
   getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
-// import {
-//   CompanyRole,
-//   MapSourceData,
-//   MapTypes,
-//   MarkerData,
-//   ProgrammeStageLegend,
-//   ProgrammeStageR,
-//   Sector,
-//   SystemNames,
-//   addCommSep,
-//   addRoundNumber,
-//   getStageEnumVal,
-// } from '../../Definitions';
 import {
   optionDonutPieA,
   optionDonutPieB,
@@ -54,11 +40,8 @@ import {
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
 } from './registryChartOptions';
-// import { StasticCard } from '../Common/StasticCard/stasticCard';
 import { ProgrammeRejectAndTransferComponent } from './programmeRejectAndTransferComponent';
 import { RegistryPieChartsStatComponent } from './registryPieChartStatComponent';
-// import { MapComponent } from '../Common/Maps/mapComponent';
-// import { LegendItem } from '../Common/LegendItem/legendItem';
 import { RegistryBarChartsStatComponent } from './registryBarChartStatsComponent';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -80,7 +63,6 @@ import { LegendItem } from '../LegendItem/legendItem';
 import { MapComponent } from '../Maps/mapComponent';
 import { StasticCard } from '../StatisticsCard/statisticsCard';
 const { RangePicker } = DatePicker;
-// import { useConnection, useUserContext } from '../../Context';
 
 export const RegistryDashboardComponent = (props: any) => {
   const { Chart, t, ButtonGroup, Link, isMultipleDashboardsVisible = false } = props;

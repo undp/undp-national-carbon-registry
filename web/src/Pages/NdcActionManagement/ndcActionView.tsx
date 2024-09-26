@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
-// import { NdcActionViewComponent } from '@undp/carbon-library';
 import Chart from 'react-apexcharts';
 import { NdcActionViewComponent } from '../../Components/NdcActions/NdcView/ndcActionViewComponent';
 

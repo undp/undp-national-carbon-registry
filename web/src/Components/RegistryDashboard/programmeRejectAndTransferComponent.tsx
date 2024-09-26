@@ -7,7 +7,6 @@ import {
   Clipboard2Pulse,
   InfoCircle,
 } from 'react-bootstrap-icons';
-// import React from 'react';
 
 export interface ProgrammeRejectAndTransferCardItemProps {
   totalPrgrammes: number;

@@ -16,7 +16,6 @@ import { addCommSep, Programme } from '../../Definitions/Definitions/programme.d
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-// import { useConnection } from '../../Context';
 
 export interface ProgrammeTransferFormProps {
   programme: Programme;

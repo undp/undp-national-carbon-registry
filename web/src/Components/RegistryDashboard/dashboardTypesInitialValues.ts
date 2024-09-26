@@ -1,5 +1,3 @@
-// import { ProgrammeStageLegend, Sector } from "../../Definitions";
-
 import { ProgrammeStageLegend } from '../../Definitions/Enums/programmeStage.enum';
 import { Sector } from '../../Definitions/Enums/sector.enum';
 

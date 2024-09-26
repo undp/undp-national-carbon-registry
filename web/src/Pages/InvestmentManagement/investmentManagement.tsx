@@ -1,8 +1,3 @@
-// import {
-//   InvestmentManagementComponent,
-//   useSettingsContext,
-//   useUserContext,
-// } from '@undp/carbon-library';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { InvestmentManagementComponent } from '../../Components/Investment/InvestmentManagement/investmentManagementComponent';

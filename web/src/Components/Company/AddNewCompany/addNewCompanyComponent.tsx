@@ -31,13 +31,6 @@ import '../../../Styles/app.scss';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { UserProps } from '../../../Definitions/Definitions/userInformationContext.definitions';
 import validator from 'validator';
-// import {
-//   CarbonSystemType,
-//   SectoralScope,
-//   getBase64,
-//   Ministry,
-//   GovDepartment,
-// } from '../../../Definitions';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
@@ -46,7 +39,6 @@ import { CarbonSystemType } from '../../../Definitions/Enums/carbonSystemType.en
 import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { Ministry } from '../../../Definitions/Enums/ministry.enum';
 import { SectoralScope } from '../../../Definitions/Enums/sectoralScope.enum';
-// import { useConnection, useUserContext } from '../../../Context';
 
 const ministries: any = [
   'Agriculture',

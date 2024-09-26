@@ -10,7 +10,6 @@ import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.def
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import { Role } from '../../Definitions/Enums/role.enum';
-// import { LayoutSiderProps } from '@undp/carbon-library';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -44,7 +43,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    // getItem(t('nav:nationalAccounting'), 'nationalAccounting', <DashboardOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
