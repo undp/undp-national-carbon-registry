@@ -741,7 +741,7 @@ export class CompanyService {
       dto.website = company.website;
       dto.address = company.address;
       dto.country = company.country;
-      dto.companyRole = company.companyRole;
+      dto.companyRole = this.helperService.formatReqMessagesString("companyExport." + company.companyRole, []);
       dto.state = orgStateKey;
       dto.creditBalance = company.creditBalance;
       dto.secondaryAccountBalanceLocal = secondaryAccountBalanceLocal
@@ -868,6 +868,16 @@ export class CompanyService {
       where: {
         country: countryCode,
         companyRole: CompanyRole.GOVERNMENT,
+      },
+    });
+    return companies && companies.length > 0 ? companies[0] : undefined;
+  }
+
+  async findOrganizationByCountryAndCompanyRole(countryCode: string, companyRole: CompanyRole): Promise<Company | undefined> {
+    const companies = await this.companyRepo.find({
+      where: {
+        country: countryCode,
+        companyRole: companyRole,
       },
     });
     return companies && companies.length > 0 ? companies[0] : undefined;

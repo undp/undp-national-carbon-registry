@@ -7,7 +7,7 @@ import { UserManagementComponent } from '../../Components/User/UserManagement/us
 
 const UserManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['company']);
+  const { t } = useTranslation(['company', 'companyRoles']);
 
   const visibleColumns = [
     UserManagementColumns.logo,

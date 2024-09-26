@@ -6,7 +6,7 @@ import { CompanyProfileComponent } from '../../Components/Company/CompanyProfile
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['companyProfile', 'companyDetails']);
+  const { t } = useTranslation(['companyProfile', 'companyDetails', 'companyRoles']);
 
   const onNavigateToCompanyManagement = () => {
     navigate('/companyManagement/viewAll');

@@ -85,9 +85,7 @@ export class UserService {
   ) {}
 
   private async generateApiKey(email) {
-    return Buffer.from(
-      `${email}${API_KEY_SEPARATOR}${await nanoid()}`
-    ).toString("base64");
+    return Buffer.from(`${email}${API_KEY_SEPARATOR}${await nanoid()}`).toString("base64");
   }
 
   async getAdminUserDetails(companyId) {
@@ -112,7 +110,7 @@ export class UserService {
         "companyId",
         "companyRole",
         "name",
-        "isPending"
+        "isPending",
       ],
       where: {
         email: username,
@@ -162,7 +160,7 @@ export class UserService {
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
 
-    userDto.email = userDto.email?.toLowerCase()
+    userDto.email = userDto.email?.toLowerCase();
 
     const { id, ...update } = userDto;
     const user = await this.findById(id);
@@ -180,9 +178,7 @@ export class UserService {
       .where(
         `id = ${id} ${
           abilityCondition
-            ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ")"
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -204,11 +200,7 @@ export class UserService {
     );
   }
 
-  async resetPassword(
-    id: number,
-    passwordResetDto: PasswordUpdateDto,
-    abilityCondition: string
-  ) {
+  async resetPassword(id: number, passwordResetDto: PasswordUpdateDto, abilityCondition: string) {
     this.logger.verbose("User password reset received", id);
 
     const user = await this.userRepo
@@ -216,23 +208,23 @@ export class UserService {
       .where(
         `id = '${id}' ${
           abilityCondition
-            ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
       .addSelect(["User.password"])
       .getOne();
-    
-    passwordResetDto.oldPassword = this.passwordHashService.getPasswordHash(passwordResetDto.oldPassword);
-    passwordResetDto.newPassword = this.passwordHashService.getPasswordHash(passwordResetDto.newPassword);
-    
+
+    passwordResetDto.oldPassword = this.passwordHashService.getPasswordHash(
+      passwordResetDto.oldPassword
+    );
+    passwordResetDto.newPassword = this.passwordHashService.getPasswordHash(
+      passwordResetDto.newPassword
+    );
+
     if (!user || user.password != passwordResetDto.oldPassword) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "user.oldPasswordIncorrect",
-          []
-        ),
+        this.helperService.formatReqMessagesString("user.oldPasswordIncorrect", []),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -278,24 +270,20 @@ export class UserService {
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        "user.passwordUpdateFailed",
-        []
-      ),
+      this.helperService.formatReqMessagesString("user.passwordUpdateFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
   async regenerateApiKey(email, abilityCondition) {
-    email = email?.toLowerCase()
+    email = email?.toLowerCase();
     this.logger.verbose("Regenerated api key received", email);
     const user = await this.userRepo
       .createQueryBuilder()
       .where(
         `email = '${email}' ${
           abilityCondition
-            ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
@@ -352,39 +340,35 @@ export class UserService {
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        "user.passwordUpdateFailed",
-        []
-      ),
+      this.helperService.formatReqMessagesString("user.passwordUpdateFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
-  async approveUser(
-    company: Company
-  ) {
+  async approveUser(company: Company) {
     this.logger.verbose("User approve request received for company", company.companyId);
 
     const generatedPassword = this.helperService.generateRandomPassword();
     const hostAddress = this.configService.get("host");
     let users;
-    try{
+    try {
       users = await this.getPendingOrganisationAdminUsers(company.companyId);
-  
+
       for (const user of users) {
         const result = await this.userRepo
-        .update(
-          {
-            id: user.user_id,
-          },
-          {
-            isPending: false,
-            password: this.passwordHashService.getPasswordHash(generatedPassword),
-          }
-        ).catch((err: any) => {
-          this.logger.error(err);
-          return err;
-        });
+          .update(
+            {
+              id: user.user_id,
+            },
+            {
+              isPending: false,
+              password: this.passwordHashService.getPasswordHash(generatedPassword),
+            }
+          )
+          .catch((err: any) => {
+            this.logger.error(err);
+            return err;
+          });
         if (result.affected > 0) {
           const templateData = {
             name: user.user_name,
@@ -395,7 +379,7 @@ export class UserService {
             email: user.user_email,
             address: this.configService.get("email.adresss"),
             liveChat: this.configService.get("liveChat"),
-            helpDoc: hostAddress +`/help`,
+            helpDoc: hostAddress + `/help`,
           };
           const action: AsyncAction = {
             actionType: AsyncActionType.Email,
@@ -431,7 +415,7 @@ export class UserService {
           organisationDto.logo = company.logo;
           organisationDto.companyRole = company.companyRole;
           organisationDto.regions = company.regions;
-          if(company.website && company.website.trim().length>0){
+          if (company.website && company.website.trim().length > 0) {
             organisationDto.website = company.website;
           }
           userDto.company = organisationDto;
@@ -441,26 +425,19 @@ export class UserService {
               actionType: AsyncActionType.RegistryCompanyCreate,
               actionProps: userDto,
             };
-            await this.asyncOperationsInterface.AddAction(
-              registryCompanyCreateAction
-            );
+            await this.asyncOperationsInterface.AddAction(registryCompanyCreateAction);
           }
         }
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.approvalFailed",
-            []
-          ),
+          this.helperService.formatReqMessagesString("user.approvalFailed", []),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
-
       }
       return users;
     } catch (err) {
       this.logger.error(err);
       return err;
     }
-
   }
 
   async createUserWithPassword(
@@ -475,26 +452,24 @@ export class UserService {
   ) {
     let company: Company;
     if (companyRole != CompanyRole.GOVERNMENT && companyRole !== CompanyRole.MINISTRY) {
-      if (!taxId || taxId === '') {
-        throw new HttpException(
-          "Tax id cannot be empty:" + email,
-          HttpStatus.BAD_REQUEST
-        );
+      if (!taxId || taxId === "") {
+        throw new HttpException("Tax id cannot be empty:" + email, HttpStatus.BAD_REQUEST);
       }
       company = await this.companyService.findByTaxId(taxId);
     } else {
-      if(companyRole === CompanyRole.GOVERNMENT) {
-        company = await this.companyService.findGovByCountry(this.configService.get("systemCountry"))
-      } else if(companyRole === CompanyRole.MINISTRY) {
-        company = await this.companyService.findMinByCountry(this.configService.get("systemCountry"))
+      if (companyRole === CompanyRole.GOVERNMENT) {
+        company = await this.companyService.findGovByCountry(
+          this.configService.get("systemCountry")
+        );
+      } else if (companyRole === CompanyRole.MINISTRY) {
+        company = await this.companyService.findMinByCountry(
+          this.configService.get("systemCountry")
+        );
       }
     }
 
     if (!company) {
-      throw new HttpException(
-        "Company does not exist" + email,
-        HttpStatus.BAD_REQUEST
-      );
+      throw new HttpException("Company does not exist" + email, HttpStatus.BAD_REQUEST);
     }
     const user = new User();
     user.email = email;
@@ -512,10 +487,7 @@ export class UserService {
       .createQueryBuilder()
       .insert()
       .values(user)
-      .orUpdate(
-        ["password", "companyId", "companyRole", "name", "role", "phoneNo"],
-        ["email"]
-      )
+      .orUpdate(["password", "companyId", "companyRole", "name", "role", "phoneNo"], ["email"])
       .execute();
   }
 
@@ -525,55 +497,48 @@ export class UserService {
     companyRole: CompanyRole,
     isRegistration?: boolean
   ): Promise<User | DataResponseMessageDto | undefined> {
-
     this.logger.verbose(`User received for validation ${userDto.email} ${companyId}`);
     userDto.email = userDto.email?.toLowerCase();
-    const createdUserDto = {...userDto};
+    const createdUserDto = { ...userDto };
     if (userDto.company) {
-      createdUserDto.company = { ...userDto.company }
-      if (this.configService.get('systemType') !== SYSTEM_TYPE.CARBON_UNIFIED) {
+      createdUserDto.company = { ...userDto.company };
+      if (this.configService.get("systemType") !== SYSTEM_TYPE.CARBON_UNIFIED) {
         const companyExists = await this.companyService.checkCompanyExistOnOtherSystem({
           taxId: createdUserDto.company?.taxId,
           paymentId: createdUserDto.company?.paymentId,
-          email: createdUserDto.company?.email
-        })
+          email: createdUserDto.company?.email,
+        });
         if (companyExists) {
-          this.handleDuplicateCompanyError(createdUserDto.company, companyExists)
+          this.handleDuplicateCompanyError(createdUserDto.company, companyExists);
         }
       }
     }
-    
+
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "user.createExistingUser",
-          []
-        ),
+        this.helperService.formatReqMessagesString("user.createExistingUser", []),
         HttpStatus.BAD_REQUEST
       );
     }
-    if(this.configService.get('systemType') !== SYSTEM_TYPE.CARBON_UNIFIED){
+    if (this.configService.get("systemType") !== SYSTEM_TYPE.CARBON_UNIFIED) {
       const userExists = await this.checkUserExistOnOtherSystem(userDto.email);
       if (userExists) {
         let errorMessage = "user.createExistingUser";
-        if (this.configService.get('systemType') == SYSTEM_TYPE.CARBON_TRANSPARENCY) {
+        if (this.configService.get("systemType") == SYSTEM_TYPE.CARBON_TRANSPARENCY) {
           errorMessage = "user.createExistingUserInRegistry";
-        } else if (this.configService.get('systemType') == SYSTEM_TYPE.CARBON_REGISTRY) {
+        } else if (this.configService.get("systemType") == SYSTEM_TYPE.CARBON_REGISTRY) {
           errorMessage = "user.createExistingUserInTransparency";
         }
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            errorMessage,
-            []
-          ),
+          this.helperService.formatReqMessagesString(errorMessage, []),
           HttpStatus.BAD_REQUEST
         );
       }
     }
 
     return await this.create(userDto, companyId, companyRole, isRegistration);
-  };
+  }
 
   async create(
     userDto: UserDto,
@@ -584,34 +549,52 @@ export class UserService {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
     const isRegistrationValue = isRegistration || false; // Use false as the default value
     userDto.email = userDto.email?.toLowerCase();
-    const createdUserDto = {...userDto};
-    if(userDto.company){
-      createdUserDto.company={...userDto.company}
+    const createdUserDto = { ...userDto };
+    if (userDto.company) {
+      createdUserDto.company = { ...userDto.company };
     }
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "user.createExistingUser",
-          []
-        ),
+        this.helperService.formatReqMessagesString("user.createExistingUser", []),
         HttpStatus.BAD_REQUEST
       );
     }
 
     let { company, ...userFields } = userDto;
-    if (
-      !company &&
-      userDto.companyId &&
-      companyRole === CompanyRole.GOVERNMENT
-    ) {
-      const adminUserdetails = await this.getAdminUserDetails(
-        userDto.companyId
-      );
+    if (!company && userDto.companyId && companyRole === CompanyRole.GOVERNMENT) {
+      const adminUserdetails = await this.getAdminUserDetails(userDto.companyId);
       if (adminUserdetails?.length > 0) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
+        );
+      }
+    }
+    if (company.companyRole == CompanyRole.CLIMATE_FUND) {
+      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+        company.country,
+        CompanyRole.CLIMATE_FUND
+      );
+      if (companyCF) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.cfUserAlreadyExist", [company.country]),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+    }
+
+    if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
+      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+        company.country,
+        CompanyRole.EXECUTIVE_COMMITTEE
+      );
+      if (companyCF) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("user.exComUserAlreadyExist", [
+            company.country,
+          ]),
+          HttpStatus.BAD_REQUEST
         );
       }
     }
@@ -621,56 +604,47 @@ export class UserService {
         company.companyRole == CompanyRole.GOVERNMENT
       ) {
         const ministrykey =
-          Object.keys(Ministry)[
-            Object.values(Ministry).indexOf(company.ministry as Ministry)
-          ];
+          Object.keys(Ministry)[Object.values(Ministry).indexOf(company.ministry as Ministry)];
         if (
           (company.companyRole == CompanyRole.MINISTRY ||
             company.companyRole == CompanyRole.GOVERNMENT) &&
           !ministryOrgs[ministrykey].includes(
             Object.keys(GovDepartment)[
-              Object.values(GovDepartment).indexOf(
-                company.govDep as GovDepartment,
-              )
-            ],
+              Object.values(GovDepartment).indexOf(company.govDep as GovDepartment)
+            ]
           )
         ) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              'user.wrongMinistryAndGovDep',
-              [],
-            ),
-            HttpStatus.BAD_REQUEST,
+            this.helperService.formatReqMessagesString("user.wrongMinistryAndGovDep", []),
+            HttpStatus.BAD_REQUEST
           );
         }
       }
-      if (companyRole != CompanyRole.GOVERNMENT && companyRole != CompanyRole.API && companyRole !== CompanyRole.MINISTRY && !isRegistrationValue) {
+      if (
+        companyRole != CompanyRole.GOVERNMENT &&
+        companyRole != CompanyRole.API &&
+        companyRole !== CompanyRole.MINISTRY &&
+        companyRole !== CompanyRole.CLIMATE_FUND &&
+        companyRole !== CompanyRole.EXECUTIVE_COMMITTEE &&
+        !isRegistrationValue
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
         );
       }
-      if (
-        userFields.role &&
-        ![Role.Admin, Role.Root].includes(userFields.role)
-      ) {
+      if (userFields.role && ![Role.Admin, Role.Root].includes(userFields.role)) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.companyCreateUserShouldbeAdmin",
-            []
-          ),
+          this.helperService.formatReqMessagesString("user.companyCreateUserShouldbeAdmin", []),
           HttpStatus.BAD_REQUEST
         );
       } else if (!userFields.role) {
         userFields.role = Role.Admin;
       }
 
-      if(company.companyRole === CompanyRole.MINISTRY && companyRole === CompanyRole.MINISTRY) {
+      if (company.companyRole === CompanyRole.MINISTRY && companyRole === CompanyRole.MINISTRY) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.userUnAUth",
-            []
-          ),
+          this.helperService.formatReqMessagesString("user.userUnAUth", []),
           HttpStatus.FORBIDDEN
         );
       }
@@ -680,61 +654,59 @@ export class UserService {
       }
 
       if (company.companyRole == CompanyRole.GOVERNMENT) {
-        const companyGov = await this.companyService.findGovByCountry(
-          company.country
-        );
+        const companyGov = await this.companyService.findGovByCountry(company.country);
         if (companyGov) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.governmentUserAlreadyExist",
-              [company.country]
-            ),
+            this.helperService.formatReqMessagesString("user.governmentUserAlreadyExist", [
+              company.country,
+            ]),
             HttpStatus.BAD_REQUEST
           );
         }
       }
 
       if (company.companyRole == CompanyRole.MINISTRY) {
-        
-        company.taxId = "00000"+this.configService.get("systemCountry")+"-"+company.ministry+"-"+company.govDep
-        const ministry = await this.companyService.findMinistryByDepartment(
-          company.govDep
-        );
-        if ((company.companyRole == CompanyRole.MINISTRY || company.companyRole == CompanyRole.GOVERNMENT) && ministry && ministry.ministry==company.ministry && ministry.govDep==company.govDep) {
+        company.taxId =
+          "00000" +
+          this.configService.get("systemCountry") +
+          "-" +
+          company.ministry +
+          "-" +
+          company.govDep;
+        const ministry = await this.companyService.findMinistryByDepartment(company.govDep);
+        if (
+          (company.companyRole == CompanyRole.MINISTRY ||
+            company.companyRole == CompanyRole.GOVERNMENT) &&
+          ministry &&
+          ministry.ministry == company.ministry &&
+          ministry.govDep == company.govDep
+        ) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.MinistryDepartmentAlreadyExist",
-              []
-            ),
+            this.helperService.formatReqMessagesString("user.MinistryDepartmentAlreadyExist", []),
             HttpStatus.BAD_REQUEST
           );
         }
       }
 
-      const duplicateCompany = await this.companyService.checkForCompanyDuplicates(company.email, company.taxId, company.paymentId);
+      const duplicateCompany = await this.companyService.checkForCompanyDuplicates(
+        company.email,
+        company.taxId,
+        company.paymentId
+      );
       if (duplicateCompany) {
         if (duplicateCompany.email === company.email) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.orgEmailExist",
-              []
-            ),
+            this.helperService.formatReqMessagesString("user.orgEmailExist", []),
             HttpStatus.BAD_REQUEST
           );
         } else if (duplicateCompany.taxId === company.taxId) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.taxIdExistAlready",
-              []
-            ),
+            this.helperService.formatReqMessagesString("user.taxIdExistAlready", []),
             HttpStatus.BAD_REQUEST
           );
         } else if (duplicateCompany.paymentId === company.paymentId) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.paymentIdExistAlready",
-              []
-            ),
+            this.helperService.formatReqMessagesString("user.paymentIdExistAlready", []),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -761,10 +733,7 @@ export class UserService {
       const company = await this.companyService.findByCompanyId(u.companyId);
       if (!company) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.addUserToUnRegisteredCompany",
-            []
-          ),
+          this.helperService.formatReqMessagesString("user.addUserToUnRegisteredCompany", []),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -803,10 +772,7 @@ export class UserService {
           }
         } else {
           throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.companyUpdateFailed",
-              []
-            ),
+            this.helperService.formatReqMessagesString("user.companyUpdateFailed", []),
             HttpStatus.INTERNAL_SERVER_ERROR
           );
         }
@@ -848,12 +814,12 @@ export class UserService {
         await this.asyncOperationsInterface.AddAction(action);
       }
 
-      if(company.regions){
+      if (company.regions) {
         company.geographicalLocationCordintes = await this.locationService
-        .getCoordinatesForRegion(company.regions)
-        .then((response: any) => {
-          return  [...response];
-        });
+          .getCoordinatesForRegion(company.regions)
+          .then((response: any) => {
+            return [...response];
+          });
       }
     }
 
@@ -868,15 +834,17 @@ export class UserService {
           home: hostAddress,
           organisationName: company.name,
           systemName: this.configService.get("systemName"),
-          organisationRole: company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+          organisationRole:
+            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
               ? "Programme Developer"
               : company.companyRole,
-          organisationPageLink:
-            hostAddress +
-            `/companyManagement/viewAll`,
-        }, undefined, undefined, undefined, undefined
+          organisationPageLink: hostAddress + `/companyManagement/viewAll`,
+        },
+        undefined,
+        undefined,
+        undefined,
+        undefined
       );
-
     } else {
       const templateData = {
         name: u.name,
@@ -887,9 +855,9 @@ export class UserService {
         email: u.email,
         address: this.configService.get("email.adresss"),
         liveChat: this.configService.get("liveChat"),
-        helpDoc: hostAddress +`/help`,
+        helpDoc: hostAddress + `/help`,
       };
-  
+
       const action: AsyncAction = {
         actionType: AsyncActionType.Email,
         actionProps: {
@@ -909,14 +877,17 @@ export class UserService {
       };
       await this.asyncOperationsInterface.AddAction(action);
 
-      if (company && companyRole !== CompanyRole.API && userFields.role !== Role.Root && company.companyRole !== CompanyRole.API) {
+      if (
+        company &&
+        companyRole !== CompanyRole.API &&
+        userFields.role !== Role.Root &&
+        company.companyRole !== CompanyRole.API
+      ) {
         const registryCompanyCreateAction: AsyncAction = {
           actionType: AsyncActionType.RegistryCompanyCreate,
           actionProps: createdUserDto,
         };
-        await this.asyncOperationsInterface.AddAction(
-          registryCompanyCreateAction
-        );
+        await this.asyncOperationsInterface.AddAction(registryCompanyCreateAction);
       }
     }
 
@@ -925,9 +896,7 @@ export class UserService {
     const usr = await this.entityManger
       .transaction(async (em) => {
         if (company) {
-          const c: Company = await em.save<Company>(
-            plainToClass(Company, company)
-          );
+          const c: Company = await em.save<Company>(plainToClass(Company, company));
           u.companyId = c.companyId;
           u.companyRole = company.companyRole;
         }
@@ -942,28 +911,19 @@ export class UserService {
                 throw new HttpException(
                   `${
                     err.driverError.table == "company"
-                      ? this.helperService.formatReqMessagesString(
-                          "user.orgEmailExist",
-                          []
-                        )
+                      ? this.helperService.formatReqMessagesString("user.orgEmailExist", [])
                       : "Email already exist"
                   }`,
                   HttpStatus.BAD_REQUEST
                 );
               } else if (err.driverError.detail.includes("taxId")) {
                 throw new HttpException(
-                  this.helperService.formatReqMessagesString(
-                    "user.taxIdExistAlready",
-                    []
-                  ),
+                  this.helperService.formatReqMessagesString("user.taxIdExistAlready", []),
                   HttpStatus.BAD_REQUEST
                 );
               } else if (err.driverError.detail.includes("paymentId")) {
                 throw new HttpException(
-                  this.helperService.formatReqMessagesString(
-                    "user.paymentIdExistAlready",
-                    []
-                  ),
+                  this.helperService.formatReqMessagesString("user.paymentIdExistAlready", []),
                   HttpStatus.BAD_REQUEST
                 );
               }
@@ -987,9 +947,8 @@ export class UserService {
   }
 
   async query(query: QueryDto, abilityCondition: string): Promise<any> {
-    
     if (query.filterAnd) {
-      if (!query.filterAnd.some(filter => filter.key === "isPending")) {
+      if (!query.filterAnd.some((filter) => filter.key === "isPending")) {
         query.filterAnd.push({
           key: "isPending",
           operation: "=",
@@ -1005,25 +964,17 @@ export class UserService {
       });
       query.filterAnd = filterAnd;
     }
-    
+
     const resp = await this.userRepo
       .createQueryBuilder("user")
       .where(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQLWithTable(
-            '"user"',
-            abilityCondition
-          ),
+          this.helperService.parseMongoQueryToSQLWithTable('"user"', abilityCondition),
           '"user"'
         )
       )
-      .leftJoinAndMapOne(
-        "user.company",
-        Company,
-        "company",
-        "company.companyId = user.companyId"
-      )
+      .leftJoinAndMapOne("user.company", Company, "company", "company.companyId = user.companyId")
       .orderBy(
         query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"`,
         query?.sort?.order ? query?.sort?.order : "DESC"
@@ -1038,11 +989,7 @@ export class UserService {
     );
   }
 
-  async download(
-    queryData: DataExportQueryDto,
-    abilityCondition: string
-  ) {
-
+  async download(queryData: DataExportQueryDto, abilityCondition: string) {
     const queryDto = new QueryDto();
     queryDto.filterAnd = queryData.filterAnd;
     queryDto.filterOr = queryData.filterOr;
@@ -1050,17 +997,16 @@ export class UserService {
 
     if (queryDto.filterAnd) {
       queryDto.filterAnd.push({
-          key: "companyRole",
-          operation: "!=",
-          value: 'API',
-        });
-      
+        key: "companyRole",
+        operation: "!=",
+        value: "API",
+      });
     } else {
       const filterAnd: FilterEntry[] = [];
       filterAnd.push({
         key: "companyRole",
         operation: "!=",
-        value: 'API',
+        value: "API",
       });
       queryDto.filterAnd = filterAnd;
     }
@@ -1070,49 +1016,35 @@ export class UserService {
       .where(
         this.helperService.generateWhereSQL(
           queryDto,
-          this.helperService.parseMongoQueryToSQLWithTable(
-            '"user"',
-            abilityCondition
-          ),
+          this.helperService.parseMongoQueryToSQLWithTable('"user"', abilityCondition),
           '"user"'
         )
       )
-      .leftJoinAndMapOne(
-        "user.company",
-      Company,
-      "company",
-      "company.companyId = user.companyId")
+      .leftJoinAndMapOne("user.company", Company, "company", "company.companyId = user.companyId")
       .orderBy(
         queryDto?.sort?.key ? `"user"."${queryDto?.sort?.key}"` : `"user"."id"`,
         queryDto?.sort?.order ? queryDto?.sort?.order : "DESC"
       )
       .getMany();
-      
+
     if (resp.length > 0) {
-      const prepData = this.prepareUserDataForExport(resp)
+      const prepData = this.prepareUserDataForExport(resp);
 
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
       for (const key of titleKeys) {
-        headers.push(
-          this.helperService.formatReqMessagesString(
-            "userExport." + key,
-            []
-          )
-        )
+        headers.push(this.helperService.formatReqMessagesString("userExport." + key, []));
       }
 
-      const path = await this.dataExportService.generateCsv(prepData, headers, this.helperService.formatReqMessagesString(
-        "userExport.users",
-        []
-      ));
+      const path = await this.dataExportService.generateCsv(
+        prepData,
+        headers,
+        this.helperService.formatReqMessagesString("userExport.users", [])
+      );
       return path;
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        "userExport.nothingToExport",
-        []
-      ),
+      this.helperService.formatReqMessagesString("userExport.nothingToExport", []),
       HttpStatus.BAD_REQUEST
     );
   }
@@ -1130,7 +1062,7 @@ export class UserService {
       dto.phoneNo = user.phoneNo;
       dto.companyId = user.companyId;
       dto.companyName = user.company?.name;
-      dto.companyRole = user.companyRole;
+      dto.companyRole = this.helperService.formatReqMessagesString("userExport." + user.companyRole, []);
       dto.createdTime = this.helperService.formatTimestamp(user.createdTime);
       dto.isPending = user.isPending;
       exportData.push(dto);
@@ -1140,18 +1072,13 @@ export class UserService {
   }
 
   async delete(userId: number, ability: string): Promise<BasicResponseDto> {
-    this.logger.verbose(
-      this.helperService.formatReqMessagesString("user.noUserFound", []),
-      userId
-    );
+    this.logger.verbose(this.helperService.formatReqMessagesString("user.noUserFound", []), userId);
 
     const result = await this.userRepo
       .createQueryBuilder()
       .where(
         `id = '${userId}' ${
-          ability
-            ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})`
-            : ""
+          ability ? ` AND (${this.helperService.parseMongoQueryToSQL(ability)})` : ""
         }`
       )
       .getMany();
@@ -1170,16 +1097,11 @@ export class UserService {
     } else if (result[0].role == Role.Admin) {
       const admins = await this.userRepo
         .createQueryBuilder()
-        .where(
-          `"companyId" = '${result[0].companyId}' and role = '${Role.Admin}'`
-        )
+        .where(`"companyId" = '${result[0].companyId}' and role = '${Role.Admin}'`)
         .getMany();
       if (admins.length <= 1) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "user.deleteOneAdminWhenOnlyOneAdmin",
-            []
-          ),
+          this.helperService.formatReqMessagesString("user.deleteOneAdminWhenOnlyOneAdmin", []),
           HttpStatus.FORBIDDEN
         );
       }
@@ -1249,7 +1171,7 @@ export class UserService {
     const result = await this.userRepo
       .createQueryBuilder("user")
       .where("user.role= :admin", {
-        admin: Role.Admin
+        admin: Role.Admin,
       })
       .andWhere("user.companyId= :companyId", { companyId: organisationId })
       .andWhere("user.isPending= true")
@@ -1260,9 +1182,9 @@ export class UserService {
 
   private async checkUserExistOnOtherSystem(userEmail: string) {
     const resp = await this.httpUtilService.sendHttp("/national/user/exists", {
-      "email": userEmail
+      email: userEmail,
     });
-    if (typeof resp === 'boolean') {
+    if (typeof resp === "boolean") {
       return resp;
     } else {
       return resp.data;
@@ -1284,16 +1206,13 @@ export class UserService {
       errorMessage = "user.createExistingCompanyWithEmailIn";
     }
 
-    if (this.configService.get('systemType') == SYSTEM_TYPE.CARBON_TRANSPARENCY) {
+    if (this.configService.get("systemType") == SYSTEM_TYPE.CARBON_TRANSPARENCY) {
       errorMessage = `${errorMessage}Registry`;
-    } else if (this.configService.get('systemType') == SYSTEM_TYPE.CARBON_REGISTRY) {
+    } else if (this.configService.get("systemType") == SYSTEM_TYPE.CARBON_REGISTRY) {
       errorMessage = `${errorMessage}Transparency`;
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        errorMessage,
-        []
-      ),
+      this.helperService.formatReqMessagesString(errorMessage, []),
       HttpStatus.BAD_REQUEST
     );
   }

@@ -55,6 +55,7 @@ import { useConnection } from '../../../Context/ConnectionContext/connectionCont
 import { RoleIcon } from '../../IconComponents/RoleIcon/role.icon';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { OrganisationStatus } from '../../OrganisationStatus/organisationStatus';
+import CompanyRoleIcon from '../../IconComponents/CompanyRoleIcon/companyRoleIcon';
 
 const { Search } = Input;
 
@@ -103,24 +104,7 @@ export const CompanyManagementComponent = (props: any) => {
   };
 
   const getCompanyRoleComponent = (item: string) => {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {item === CompanyRole.GOVERNMENT ? (
-          <RoleIcon icon={<BankOutlined />} bg={GovBGColor} color={GovColor} />
-        ) : item === CompanyRole.CERTIFIER ? (
-          <RoleIcon icon={<SafetyOutlined />} bg={CertBGColor} color={CertColor} />
-        ) : item === CompanyRole.MINISTRY ? (
-          <RoleIcon icon={<AuditOutlined />} bg={MinBGColor} color={MinColor} />
-        ) : (
-          <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
-        )}
-        {item === CompanyRole.PROGRAMME_DEVELOPER ? (
-          <div>{t('company:developer')}</div>
-        ) : (
-          <div>{item}</div>
-        )}
-      </div>
-    );
+    return <CompanyRoleIcon t={t} role={item} />;
   };
 
   const getCompanyStateComponent = (item: string) => {

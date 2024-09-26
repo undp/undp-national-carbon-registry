@@ -13,9 +13,9 @@
     "unsupportedFormat": "Unsupported file format!",
     "maxUploadSize": "Maximum upload file size is 5MB!",
     "role": "Role",
-    "certifier": "Certifier",
-    "programmeDeveleper": "Developer",
-    "min": "Ministry",
+    "Certifier": "Certifier (VVB)",
+    "ProgrammeDeveloper": "Project Participant",
+    "Ministry": "Ministry",
     "ministerName": "Name of the Minister",
     "sectoralScope": "Sectoral Scope",
     "viewer": "Viewer",
@@ -45,6 +45,5 @@
     "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
     "allmincreated":"All ministries have been implemented",
     "govdepnotexist": "Department not exist in Selected Ministry",
-    "govdep": "Department",
-    "ministry": "Ministry"
+    "govdep": "Department"
 }
