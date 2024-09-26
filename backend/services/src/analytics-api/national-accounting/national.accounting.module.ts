@@ -9,17 +9,12 @@ import { UtilModule } from "src/util/util.module";
 import { CreditAuditLogViewEntity } from "src/entities/creditAuditLog.view.entity";
 
 @Module({
-	imports: [
-		CaslModule,
-		TypeOrmModule.forFeature([
-			Programme,
-			CreditAuditLog,
-			CreditAuditLogViewEntity,
-			User
-		]),
-		UtilModule
-	],
-	providers: [NationalAccountingService],
-	exports: [NationalAccountingService],
+  imports: [
+    CaslModule,
+    TypeOrmModule.forFeature([Programme, CreditAuditLog, CreditAuditLogViewEntity, User]),
+    UtilModule,
+  ],
+  providers: [NationalAccountingService],
+  exports: [NationalAccountingService],
 })
-export class NationalAccountingModule { }
+export class NationalAccountingModule {}

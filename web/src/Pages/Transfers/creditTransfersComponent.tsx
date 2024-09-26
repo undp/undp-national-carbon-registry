@@ -26,19 +26,6 @@ import * as Icon from 'react-bootstrap-icons';
 import { TooltipColor } from '../../Styles/role.color.constants';
 import { CircleFlag } from 'react-circle-flags';
 import { PauseCircle, PlayCircle } from 'react-bootstrap-icons';
-// import {
-//   CompanyRole,
-//   ConfigurationSettingsType,
-//   CreditTransferStage,
-//   ProgrammeTransfer,
-//   Role,
-//   addCommSepRound,
-//   addSpaces,
-//   getCompanyBgColor,
-//   getStageTransferEnumVal,
-//   getTransferStageTagType,
-// } from '../../Definitions';
-// import { ProfileIcon } from '../Common/ProfileIcon/profile.icon';
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { CreditTransferStage } from '../../Definitions/Enums/creditTransferStage.enum';
@@ -57,8 +44,6 @@ import { Role } from '../../Definitions/Enums/role.enum';
 import { ProfileIcon } from '../../Components/IconComponents/ProfileIcon/profile.icon';
 import { ConfigurationSettingsType } from '../../Definitions/Definitions/settings.definitions';
 import { TransferActionModel } from '../../Components/Models/transferActionModel';
-// import { TransferActionModel } from '../Common/Models/transferActionModel';
-// import { useConnection, useUserContext, useSettingsContext } from '../../Context';
 
 type CompanyInfo = {
   name: string;

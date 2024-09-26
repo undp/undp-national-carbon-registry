@@ -1,10 +1,8 @@
 import React, { FC } from 'react';
 import './statisticsCard.scss';
 import { Skeleton, Tooltip } from 'antd';
-// import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { ClockHistory, BoxArrowRight, Diamond, Gem, InfoCircle } from 'react-bootstrap-icons';
 import { addCommSep } from '../../Definitions/Definitions/programme.definitions';
-// import { toolTipTextGen } from '../../../Definitions/Definitions/dashboard.definitions';
 
 export interface StatisticsCardItemProps {
   value: number;

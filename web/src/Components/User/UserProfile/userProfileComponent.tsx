@@ -7,15 +7,6 @@ import { useUserContext } from '../../../Context/UserInformationContext/userInfo
 import LanguageSelection from '../../LanguageSelection/languageSelection';
 import { UserRoleIcon } from '../../IconComponents/UserRoleIcon/userRoleIcon';
 import { CompanyDetailsComponent } from '../../Company/CompanyDetails/companyDetailsComponent';
-// import { UserRoleIcon } from '../../Common/UserRoleIcon/userRoleIcon';
-// import CompanyRoleIcon from '../../Common/CompanyRoleIcon/companyRoleIcon';
-// import LanguageSelection from '../../Common/LanguageSelection/languageSelection';
-// import React from 'react';
-// import { SectoralScope, addCommSep } from '../../../Definitions';
-// import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-// import { useConnection, useUserContext } from '../../../Context';
-// import { CompanyDetailsComponent } from '../../Company/CompanyDetails/companyDetailsComponent';
-// import { GovDepartment } from '../../../Definitions';
 
 export const UserProfileComponent = (props: any) => {
   const { t, i18n, onNavigateUpdateUser, onNavigateLogin } = props;

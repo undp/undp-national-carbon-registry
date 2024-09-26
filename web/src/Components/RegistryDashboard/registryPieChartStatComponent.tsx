@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { DatePicker, Skeleton, Tooltip } from 'antd';
 import { InfoCircle } from 'react-bootstrap-icons';
 import { StatsCardsTypes } from '../../Definitions/Enums/statsCards.type.enum';
-// import { StatsCardsTypes } from '../../Definitions';
 
 export interface PieChartStatsProps {
   id: string;

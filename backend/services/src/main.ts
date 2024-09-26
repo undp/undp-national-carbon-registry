@@ -3,7 +3,6 @@ import { handler as asyncHandler } from "./async-operations-handler/handler";
 import { handler as importHandler } from "./data-importer/handler";
 import * as setupHandler from "./setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
-// import { AnalyticsAPIModule, buildNestApp } from "@undp/carbon-services-lib";
 import { join } from "path";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
 import { buildNestApp } from "./server";

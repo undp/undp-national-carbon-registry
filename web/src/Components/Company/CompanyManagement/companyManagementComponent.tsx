@@ -29,7 +29,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import './companyManagementComponent.scss';
 import '../../../Styles/common.table.scss';
-// import { RoleIcon } from '../../Common/RoleIcon/role.icon';
 import {
   CertBGColor,
   CertColor,
@@ -45,11 +44,7 @@ import { CompanyTableDataType } from '../../../Definitions/Definitions/companyMa
 import { Action } from '../../../Definitions/Enums/action.enum';
 import { Company } from '../../../Definitions/Entities/company';
 import { CompanyManagementColumns } from '../../../Definitions/Enums/company.management.columns.enum';
-// import { ProfileIcon } from '../../Common/ProfileIcon/profile.icon';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-// import { CompanyState } from '../../../Definitions';
-// import { OrganisationStatus } from '../../Common/OrganisationStatus/organisationStatus';
-// import { useConnection } from '../../../Context';
 import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { RoleIcon } from '../../IconComponents/RoleIcon/role.icon';

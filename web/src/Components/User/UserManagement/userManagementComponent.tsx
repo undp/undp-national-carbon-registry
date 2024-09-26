@@ -68,7 +68,6 @@ import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-// import { useConnection, useUserContext } from '../../../Context';
 
 const { Search } = Input;
 

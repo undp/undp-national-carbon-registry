@@ -1,14 +1,8 @@
 import {
   Controller,
-  Get,
   Post,
-  UseGuards,
   Request,
-  Logger,
   Body,
-  ValidationPipe,
-  UnauthorizedException,
-  Req,
   Put,
   Query,
   HttpException,
@@ -22,12 +16,6 @@ import { PasswordResetDto } from "../dto/passwordReset.dto";
 import { HelperService } from "../util/helpers.service";
 import { PasswordResetService } from "../util/passwordReset.service";
 import { RefreshLoginDto } from "src/dto/refreshLogin.dto";
-// import { LoginDto } from "@undp/carbon-services-lib";
-// import { AuthService } from "@undp/carbon-services-lib";
-// import { ForgotPasswordDto } from "@undp/carbon-services-lib";
-// import { PasswordResetDto } from "@undp/carbon-services-lib";
-// import { PasswordResetService } from '@undp/carbon-services-lib';
-// import { HelperService } from '@undp/carbon-services-lib';
 
 @ApiTags("Auth")
 @Controller("auth")

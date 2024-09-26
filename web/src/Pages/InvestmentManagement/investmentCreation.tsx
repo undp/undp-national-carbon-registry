@@ -1,4 +1,3 @@
-// import { InvestmentCreationComponent } from '@undp/carbon-library';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { InvestmentCreationComponent } from '../../Components/Investment/AddNewInvestment/investmentCreationComponent';

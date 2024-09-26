@@ -20,7 +20,6 @@ import {
   Tooltip,
   message,
 } from 'antd';
-// import type { RadioChangeEvent } from 'antd';
 import '../investmentComponent.scss';
 import {
   ProgrammeT,
@@ -29,7 +28,6 @@ import {
 } from '../../../Definitions/Definitions/programme.definitions';
 import { Instrument } from '../../../Definitions/Enums/instrument.enum';
 import { Loading } from '../../Loading/loading';
-// import React from 'react';
 import {
   InvestmentCreationType,
   InvestmentLevel,
@@ -39,12 +37,7 @@ import {
 } from '../../../Definitions/Enums/investment.enum';
 import { ESGType } from '../../../Definitions/Enums/eSGType.enum';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-// import { useConnection, useUserContext } from '../../../Context';
-// import TextArea from 'antd/lib/input/TextArea';
-// import { ProgrammeStageUnified, Role } from '../../../Definitions';
-// import { TooltipColor } from '../../../Styles';
 import moment from 'moment';
-// import FormItem from 'antd/es/form/FormItem';
 import { GuaranteePayback, InsurancePayback } from '../../../Definitions/Enums/payback.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';

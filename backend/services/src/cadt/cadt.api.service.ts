@@ -6,8 +6,6 @@ import { CompanyService } from '../company/company.service';
 import { ProgrammeStage } from '../enum/programme-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NDCAction } from '../entities/ndc.action.entity';
-import { TypeOfMitigation } from '../enum/typeofmitigation.enum';
 import { TxType } from '../enum/txtype.enum';
 import { Sector } from '../enum/sector.enum';
 import { ProgrammeTransfer } from '../entities/programme.transfer';

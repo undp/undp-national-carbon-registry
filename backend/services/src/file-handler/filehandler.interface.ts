@@ -1,10 +1,4 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { CompanyService } from "../company/company.service";
-import { Company } from "../entities/company.entity";
-import { Programme } from "../entities/programme.entity";
-import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
-import { UserService } from "../user/user.service";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export abstract class FileHandlerInterface {
