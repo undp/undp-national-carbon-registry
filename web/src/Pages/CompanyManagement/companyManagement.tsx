@@ -7,7 +7,7 @@ import { CompanyManagementComponent } from '../../Components/Company/CompanyMana
 
 const CompanyManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['company', 'companyProfile']);
+  const { t } = useTranslation(['company', 'companyProfile', 'companyRoles']);
 
   const visibleColumns = [
     CompanyManagementColumns.logo,

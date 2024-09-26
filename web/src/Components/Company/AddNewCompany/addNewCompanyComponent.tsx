@@ -31,13 +31,6 @@ import '../../../Styles/app.scss';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { UserProps } from '../../../Definitions/Definitions/userInformationContext.definitions';
 import validator from 'validator';
-// import {
-//   CarbonSystemType,
-//   SectoralScope,
-//   getBase64,
-//   Ministry,
-//   GovDepartment,
-// } from '../../../Definitions';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
@@ -46,7 +39,6 @@ import { CarbonSystemType } from '../../../Definitions/Enums/carbonSystemType.en
 import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { Ministry } from '../../../Definitions/Enums/ministry.enum';
 import { SectoralScope } from '../../../Definitions/Enums/sectoralScope.enum';
-// import { useConnection, useUserContext } from '../../../Context';
 
 const ministries: any = [
   'Agriculture',
@@ -789,13 +781,13 @@ export const AddNewCompanyComponent = (props: any) => {
                     companyRole === CompanyRole.GOVERNMENT) && (
                     <div className="space-container" style={{ width: '100%' }}>
                       <Form.Item
-                        label={t('addCompany:ministry')}
+                        label={t('addCompany:Ministry')}
                         name="ministry"
                         initialValue={state?.record?.ministry}
                         rules={[
                           {
                             required: true,
-                            message: `${t('addCompany:ministry')} ${t('isRequired')}`,
+                            message: `${t('addCompany:Ministry')} ${t('isRequired')}`,
                           },
                         ]}
                       >
@@ -1061,9 +1053,10 @@ export const AddNewCompanyComponent = (props: any) => {
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
-                            {companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                            {/* {companyRole === CompanyRole.PROGRAMME_DEVELOPER
                               ? 'Developer'
-                              : companyRole}
+                              : companyRole} */}
+                            {t('addCompany:' + companyRole)}
                           </Radio.Button>
                         </div>
                       ) : (
@@ -1081,7 +1074,7 @@ export const AddNewCompanyComponent = (props: any) => {
                             <Tooltip placement="top" title={t('addCompany:viewerToolTip')}>
                               <Radio.Button className="certifier" value="Certifier">
                                 <SafetyOutlined className="role-icons" />
-                                {t('addCompany:certifier')}
+                                {t('addCompany:Certifier')}
                               </Radio.Button>
                             </Tooltip>
                           </div>
@@ -1102,7 +1095,7 @@ export const AddNewCompanyComponent = (props: any) => {
                             >
                               <Radio.Button className="dev" value="ProgrammeDeveloper">
                                 <ExperimentOutlined className="role-icons" />
-                                {t('addCompany:programmeDeveleper')}
+                                {t('addCompany:ProgrammeDeveloper')}
                               </Radio.Button>
                             </Tooltip>
                           </div>
@@ -1112,14 +1105,14 @@ export const AddNewCompanyComponent = (props: any) => {
                                 <Tooltip placement="top" title={t('addCompany:ministryToolTip')}>
                                   <Radio.Button className="minister" value="Ministry">
                                     <AuditOutlined className="role-icons" />
-                                    {t('addCompany:min')}
+                                    {t('addCompany:Ministry')}
                                   </Radio.Button>
                                 </Tooltip>
                               ) : (
                                 <Tooltip placement="top" title={t('addCompany:allmincreated')}>
                                   <Radio.Button className="minister" value="Ministry" disabled>
                                     <AuditOutlined className="role-icons" />
-                                    {t('addCompany:min')}
+                                    {t('addCompany:Ministry')}
                                   </Radio.Button>
                                 </Tooltip>
                               )}
