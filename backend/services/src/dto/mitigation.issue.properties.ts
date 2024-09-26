@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { IsNotEmpty, IsNumber, IsPositive, IsString, Min } from "class-validator";
 
 export class mitigationIssueProperties{
     @ApiProperty()
@@ -10,6 +10,6 @@ export class mitigationIssueProperties{
     @ApiProperty()
     @IsNumber()
     @IsNotEmpty()
-    @Min(0)
+    @IsPositive()
     issueCredit: number;
 }

@@ -2328,6 +2328,15 @@ export class ProgrammeService {
         );
       }
     }
+    
+    const programmeOwnedCompanyIds = program.companyId.map(x => parseInt(x.toString()));
+    
+    if(!programmeOwnedCompanyIds.includes(user.companyId)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
 
     const data = instanceToPlain(ndcActionDto);
     const ndcAction: NDCAction = plainToClass(NDCAction, data);
