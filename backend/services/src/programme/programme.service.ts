@@ -2328,6 +2328,15 @@ export class ProgrammeService {
         );
       }
     }
+    
+    const programmeOwnedCompanyIds = program.companyId.map(x => parseInt(x.toString()));
+    
+    if(!programmeOwnedCompanyIds.includes(user.companyId)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
 
     const data = instanceToPlain(ndcActionDto);
     const ndcAction: NDCAction = plainToClass(NDCAction, data);
@@ -6318,23 +6327,23 @@ export class ProgrammeService {
       (company) => company.state == CompanyState.SUSPENDED
     );
 
-    if (receiver.state == CompanyState.SUSPENDED) {
-      const updated = await this.programmeLedger.freezeIssuedCredit(
-        programme.programmeId,
-        programme.creditIssued,
-        "##",
-        suspendedCompanies
-      );
+    // if (receiver.state == CompanyState.SUSPENDED) {
+    //   const updated = await this.programmeLedger.freezeIssuedCredit(
+    //     programme.programmeId,
+    //     programme.creditIssued,
+    //     "##",
+    //     suspendedCompanies
+    //   );
 
-      if (!updated) {
-        return new BasicResponseDto(
-          HttpStatus.BAD_REQUEST,
-          this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
-            programme.programmeId,
-          ])
-        );
-      }
-    }
+    //   if (!updated) {
+    //     return new BasicResponseDto(
+    //       HttpStatus.BAD_REQUEST,
+    //       this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
+    //         programme.programmeId,
+    //       ])
+    //     );
+    //   }
+    // }
 
     return transferResult;
   }
