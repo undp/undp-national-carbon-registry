@@ -4,7 +4,7 @@ import { UserProfileComponent } from '../../Components/User/UserProfile/userProf
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['userProfile', 'companyDetails']);
+  const { t, i18n } = useTranslation(['userProfile', 'companyDetails', 'companyRoles']);
 
   const onNavigateUpdateUser = (organisationDetails: any, userDetails: any) => {
     navigate('/userManagement/updateUser', {

@@ -214,6 +214,46 @@ export const handler: Handler = async (event) => {
     console.log(`User ${event["rootEmail"]} failed to create`, e);
   }
 
+  try {
+    const climateFundOrg = new OrganisationDto();
+    climateFundOrg.country = event["systemCountryCode"];
+    climateFundOrg.name = event["climateFundName"];
+    climateFundOrg.logo = event["logoBase64"];
+    climateFundOrg.companyRole = CompanyRole.CLIMATE_FUND;
+    climateFundOrg.taxId = `00001${event["systemCountryCode"]}`
+
+    const cfUser = new UserDto();
+    cfUser.email = event["cfAdminEmail"];
+    cfUser.name = "Climate Fund Admin";
+    cfUser.role = Role.Admin;
+    cfUser.phoneNo = "-";
+    cfUser.company = climateFundOrg;
+
+    await userService.create(cfUser, -1, CompanyRole.CLIMATE_FUND);
+  } catch (e) {
+    console.log(`User ${event["cfAdminEmail"]} failed to create`, e);
+  }
+
+  try {
+    const exComOrg = new OrganisationDto();
+    exComOrg.country = event["systemCountryCode"];
+    exComOrg.name = event["exComName"];
+    exComOrg.logo = event["logoBase64"];
+    exComOrg.companyRole = CompanyRole.EXECUTIVE_COMMITTEE;
+    exComOrg.taxId = `00002${event["systemCountryCode"]}`
+
+    const exComUser = new UserDto();
+    exComUser.email = event["exComAdminEmail"];
+    exComUser.name = "Executive Committee Admin";
+    exComUser.role = Role.Admin;
+    exComUser.phoneNo = "-";
+    exComUser.company = exComOrg;
+
+    await userService.create(exComUser, -1, CompanyRole.EXECUTIVE_COMMITTEE);
+  } catch (e) {
+    console.log(`User ${event["exComAdminEmail"]} failed to create`, e);
+  }
+
   const countryData = fs.readFileSync("countries.json", "utf8");
   const jsonCountryData = JSON.parse(countryData);
   const utils = await NestFactory.createApplicationContext(UtilModule);

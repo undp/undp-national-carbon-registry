@@ -6326,23 +6326,23 @@ export class ProgrammeService {
       (company) => company.state == CompanyState.SUSPENDED
     );
 
-    if (receiver.state == CompanyState.SUSPENDED) {
-      const updated = await this.programmeLedger.freezeIssuedCredit(
-        programme.programmeId,
-        programme.creditIssued,
-        "##",
-        suspendedCompanies
-      );
+    // if (receiver.state == CompanyState.SUSPENDED) {
+    //   const updated = await this.programmeLedger.freezeIssuedCredit(
+    //     programme.programmeId,
+    //     programme.creditIssued,
+    //     "##",
+    //     suspendedCompanies
+    //   );
 
-      if (!updated) {
-        return new BasicResponseDto(
-          HttpStatus.BAD_REQUEST,
-          this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
-            programme.programmeId,
-          ])
-        );
-      }
-    }
+    //   if (!updated) {
+    //     return new BasicResponseDto(
+    //       HttpStatus.BAD_REQUEST,
+    //       this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
+    //         programme.programmeId,
+    //       ])
+    //     );
+    //   }
+    // }
 
     return transferResult;
   }

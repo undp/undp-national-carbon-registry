@@ -34,12 +34,16 @@ services:
       DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
-      Minister: ''
+      cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
+      exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
+      Ministery: ''
       Department : ''
-      systemCountryCode: "NG"
-      systemCountryName: "CountryX"
-      systemContinentName: "CountryX"
+      systemCountryCode: "SL"
+      systemCountryName: "Sri Lanka"
+      systemContinentName: "Sri Lanka"
       name: "Antactic Region"
+      climateFundName: "Sri Lanka Climate Fund"
+      exComName: "Executive Committee"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
       DISABLE_LOW_PRIORITY_EMAIL: "true"

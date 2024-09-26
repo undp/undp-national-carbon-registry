@@ -68,6 +68,7 @@ import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
+import CompanyRoleIcon from '../../IconComponents/CompanyRoleIcon/companyRoleIcon';
 
 const { Search } = Input;
 
@@ -138,25 +139,12 @@ export const UserManagementComponent = (props: any) => {
   };
 
   const getCompanyRoleComponent = (item: UserTableDataType) => {
-    const role = item?.company?.companyRole
+    const companyRole = item?.company?.companyRole
       ? item?.company?.companyRole
       : item?.companyRole
       ? item?.companyRole
-      : null;
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {role === CompanyRole.GOVERNMENT ? (
-          <RoleIcon icon={<BankOutlined />} bg={GovBGColor} color={GovColor} />
-        ) : role === CompanyRole.CERTIFIER ? (
-          <RoleIcon icon={<SafetyOutlined />} bg={CertBGColor} color={CertColor} />
-        ) : role === CompanyRole.MINISTRY ? (
-          <RoleIcon icon={<AuditOutlined />} bg={MinBGColor} color={MinColor} />
-        ) : (
-          <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
-        )}
-        {role === CompanyRole.PROGRAMME_DEVELOPER ? <div>{'Developer'}</div> : <div>{role}</div>}
-      </div>
-    );
+      : 'undefined';
+    return <CompanyRoleIcon t={t} role={companyRole} />;
   };
 
   const deleteUser = async (record: UserTableDataType) => {
@@ -613,11 +601,11 @@ export const UserManagementComponent = (props: any) => {
           <div className="filter-title">{t('user:filterByCompanyRole')}</div>
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
-              <Radio value="All">All</Radio>
-              <Radio value="Government">Government</Radio>
-              <Radio value="Ministry">Ministry</Radio>
-              <Radio value="ProgrammeDeveloper">Developer</Radio>
-              <Radio value="Certifier">Certifier</Radio>
+              <Radio value="All">{t('user:all')}</Radio>
+              <Radio value="Government">{t('user:gov')}</Radio>
+              <Radio value="Ministry">{t('user:min')}</Radio>
+              <Radio value="ProgrammeDeveloper">{t('user:developer')}</Radio>
+              <Radio value="Certifier">{t('user:certifier')}</Radio>
             </Space>
           </Radio.Group>
         </div>

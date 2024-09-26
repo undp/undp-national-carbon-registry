@@ -92,7 +92,7 @@ export const CompanyDetailsComponent = (props: any) => {
               {t('companyDetails:companyRole')}
             </Col>
             <Col span={12} className="field-value">
-              <CompanyRoleIcon role={companyDetails.companyRole} />
+              <CompanyRoleIcon t={t} role={companyDetails.companyRole} />
             </Col>
           </Row>
           {companyDetails?.companyRole === CompanyRole.MINISTRY && (

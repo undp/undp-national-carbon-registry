@@ -19,6 +19,12 @@ export const DevColor = '#FFA070';
 export const MinBGColor = 'rgba(198, 144, 251, 0.12)';
 export const MinColor = '#9155fd';
 
+export const CFBGColor = 'rgba(0, 153, 0, 0.12)';
+export const CFColor = '#009900';
+
+export const ECBGColor = 'rgba(153, 153, 153, 0.12)';
+export const ECColor = '#000000';
+
 export const CertBGColor = 'rgba(128, 255, 0, 0.12)';
 export const CertColor = '#519E4F';
 

@@ -1,5 +1,5 @@
 {
-  "developer": "Developer",
+  "developer": "Project Participant",
   "name": "ORGANISATION NAME",
   "taxId": "TAX ID",
   "filterByOrgType": "Filter by Organisation Type",
@@ -14,7 +14,7 @@
   "getCompanyError": "Error in getting company",
   "filterByCompany": "Filter by Organisation Type",
   "gov": "Government",
-  "certifier": "Certifier",
+  "certifier": "Certifier (VVB)",
   "all": "All",
   "searchMail": "Search by email",
   "searchName": "Search by name",
