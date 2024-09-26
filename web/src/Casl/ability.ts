@@ -19,20 +19,6 @@ import { CompanyRole } from '../Definitions/Enums/company.role.enum';
 import { ProgrammeStageUnified } from '../Definitions/Enums/programmeStage.enum';
 import { Role } from '../Definitions/Enums/role.enum';
 import { CreditAuditLog } from '../Definitions/Entities/creditAuditLog';
-// import {
-//   Company,
-//   BaseEntity,
-//   ProgrammeTransfer,
-//   User,
-//   ProgrammeEntity,
-//   CompanyRole,
-//   Role,
-//   ProgrammeStageUnified,
-//   Action,
-//   ProgrammeCertify,
-//   Emission,
-//   Projection,
-// } from '@undp/carbon-library';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 

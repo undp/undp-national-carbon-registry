@@ -9,7 +9,6 @@ import Safeguards from './safeguards';
 import Environmental from './environmental';
 import Economic from './economic';
 import Social from './social';
-// import { RadioButtonStatus } from '../../../Definitions';
 import SocialEnvironmentalRisk from './socialEnvironmentalRisk';
 import { RadioButtonStatus } from '../../Definitions/Enums/commonEnums';
 

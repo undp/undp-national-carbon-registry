@@ -6,7 +6,7 @@ import {
   InferSubjects,
   MongoAbility,
 } from "@casl/ability";
-import { Injectable, ForbiddenException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { User } from "../entities/user.entity";
 import { Action } from "./action.enum";
 import { Role } from "./role.enum";
@@ -16,7 +16,6 @@ import { ProgrammeStage } from "../enum/programme-status.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { Company } from "../entities/company.entity";
 import { Stat } from "../dto/stat.dto";
-import { StatType } from "../enum/stat.type.enum";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeCertify } from "../dto/programme.certify";
 import { TransferStatus } from "../enum/transform.status.enum";

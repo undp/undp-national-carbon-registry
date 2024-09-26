@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Empty, Form, Input, InputNumber, Radio, Row } from 'antd';
 import { FormElementType, RadioButtonStatus } from '../../Definitions/Enums/commonEnums';
-// import { FormElementType, RadioButtonStatus } from '../../../Definitions';
 
 const Social = (props: any) => {
   const { onFormSubmit, socialViewData, viewOnly, translator } = props;

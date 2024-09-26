@@ -1,7 +1,6 @@
 import { Col, Empty, Form, Radio, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { RadioButtonStatus } from '../../Definitions/Enums/commonEnums';
-// import { RadioButtonStatus } from '../../../Definitions';
 
 const Economic = (props: any) => {
   const { onFormSubmit, economicViewData, viewOnly, translator } = props;

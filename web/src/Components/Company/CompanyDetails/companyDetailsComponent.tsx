@@ -1,14 +1,7 @@
 import { BankOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Card, Skeleton, Row } from 'antd';
 import React from 'react';
-// import {
-//   CompanyRole,
-//   addCommSep,
-//   CarbonSystemType,
-//   SectoralScope,
-//   GovDepartment,
-// } from '../../../Definitions';
-// import CompanyRoleIcon from '../../Common/CompanyRoleIcon/companyRoleIcon';
+
 import './companyDetailsComponent.scss';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { CarbonSystemType } from '../../../Definitions/Enums/carbonSystemType.enum';

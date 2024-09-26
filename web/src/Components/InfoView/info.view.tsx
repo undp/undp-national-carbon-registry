@@ -3,7 +3,6 @@ import { DateTime } from 'luxon';
 import React, { FC } from 'react';
 import './info.view.scss';
 import { dateFormat } from '../../Definitions/Definitions/common.definitions';
-// import { dateFormat } from '../../../Definitions/Definitions/common.definitions';
 
 export interface InfoViewProps {
   data: any;

@@ -1,5 +1,4 @@
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
-// import React from 'react';
 import { FC, useState } from 'react';
 
 export interface InvestmentActionModelProps {

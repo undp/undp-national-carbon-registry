@@ -13,7 +13,6 @@ import ResetPassword from './resetPassword';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LoginProps } from '../../Definitions/Definitions/userLogin.definitions';
-// import { LoginProps, useConnection, useUserContext } from '@undp/carbon-library';
 
 export interface LoginPageProps {
   forgotPassword?: boolean;

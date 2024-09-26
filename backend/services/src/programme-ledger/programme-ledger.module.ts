@@ -1,6 +1,5 @@
 import { Module, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CompanyModule } from '../company/company.module';
 import { CaslModule } from '../casl/casl.module';
 import { ConstantEntity } from '../entities/constants.entity';
 import { Programme } from '../entities/programme.entity';
