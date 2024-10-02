@@ -48,24 +48,24 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services
-          IMAGE_TAG: unified
+          ECR_REPOSITORY: carbon-services-sl
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
         run: |
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy development docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_UNIFIED }}
-          HOSTNAME: ${{secrets.HOST_IP_UNIFIED }}
-          USER_NAME: ec2-user
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            repos/carbon-registry/backend_deploy.sh '
+      # - name: Deploy development docker image to Amazon EC2
+      #   if: github.ref == 'refs/heads/develop'
+      #   env:
+      #     PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_UNIFIED }}
+      #     HOSTNAME: ${{secrets.HOST_IP_UNIFIED }}
+      #     USER_NAME: ec2-user
+      #   run: |
+      #     echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+      #     ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+      #       repos/carbon-registry/backend_deploy.sh '
 
   production_deploy:
     if: github.ref == 'refs/heads/main'
@@ -100,21 +100,21 @@ jobs:
         id: build-image-prod
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services
-          IMAGE_TAG: main
+          ECR_REPOSITORY: carbon-services-sl
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
         run: |
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy production docker image to Amazon EC2
-        if: github.ref == 'refs/heads/main'
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_DEMO }}
-          HOSTNAME: ${{secrets.HOST_IP_DEMO }}
-          USER_NAME: ec2-user
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            repos/carbon-registry/backend_deploy.sh '
+      # - name: Deploy production docker image to Amazon EC2
+      #   if: github.ref == 'refs/heads/main'
+      #   env:
+      #     PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_DEMO }}
+      #     HOSTNAME: ${{secrets.HOST_IP_DEMO }}
+      #     USER_NAME: ec2-user
+      #   run: |
+      #     echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+      #     ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+      #       repos/carbon-registry/backend_deploy.sh '
