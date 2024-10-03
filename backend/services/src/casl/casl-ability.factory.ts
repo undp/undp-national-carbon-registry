@@ -290,6 +290,15 @@ export class CaslAbilityFactory {
 			cannot(Action.Read, CreditAuditLog);
 			cannot(Action.Read, CreditAuditLogViewEntity);
 		}
+
+    if (user.companyRole === CompanyRole.CLIMATE_FUND) {
+      can(Action.Read, User);
+
+      if (user.role == Role.Admin) {
+        can(Action.Create, Company);
+      }
+    }
+
     
     return build({
       detectSubjectType: (item) =>

@@ -19,20 +19,6 @@ import { CompanyRole } from '../Definitions/Enums/company.role.enum';
 import { ProgrammeStageUnified } from '../Definitions/Enums/programmeStage.enum';
 import { Role } from '../Definitions/Enums/role.enum';
 import { CreditAuditLog } from '../Definitions/Entities/creditAuditLog';
-// import {
-//   Company,
-//   BaseEntity,
-//   ProgrammeTransfer,
-//   User,
-//   ProgrammeEntity,
-//   CompanyRole,
-//   Role,
-//   ProgrammeStageUnified,
-//   Action,
-//   ProgrammeCertify,
-//   Emission,
-//   Projection,
-// } from '@undp/carbon-library';
 
 type Subjects = InferSubjects<typeof BaseEntity> | 'all';
 
@@ -200,6 +186,14 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Read, CreditAuditLog);
     } else {
       cannot(Action.Read, CreditAuditLog);
+    }
+
+    if (user.companyRole === CompanyRole.CLIMATE_FUND) {
+      can(Action.Read, User);
+
+      if (user.role === Role.Admin) {
+        can(Action.Create, Company);
+      }
     }
   }
 

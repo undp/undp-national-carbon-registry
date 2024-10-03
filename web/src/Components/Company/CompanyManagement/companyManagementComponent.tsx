@@ -423,6 +423,8 @@ export const CompanyManagementComponent = (props: any) => {
               <Radio value="Government">{t('company:gov')}</Radio>
               <Radio value="Ministry">{t('company:min')}</Radio>
               <Radio value="ProgrammeDeveloper">{t('company:developer')}</Radio>
+              <Radio value="ClimateFund">{t('company:ClimateFund')}</Radio>
+              <Radio value="ExecutiveCommittee">{t('company:ExecutiveCommittee')}</Radio>
               <Radio value="Certifier">{t('company:certifier')}</Radio>
             </Space>
           </Radio.Group>

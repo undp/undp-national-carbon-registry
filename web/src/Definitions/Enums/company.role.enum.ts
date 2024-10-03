@@ -16,4 +16,6 @@ export enum CompanyRole {
   GOVERNMENT = 'Government',
   MINISTRY = 'Ministry',
   API = 'API',
+  CLIMATE_FUND = 'ClimateFund',
+  EXECUTIVE_COMMITTEE = 'ExecutiveCommittee',
 }

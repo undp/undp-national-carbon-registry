@@ -1053,31 +1053,30 @@ export const AddNewCompanyComponent = (props: any) => {
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
-                            {/* {companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                              ? 'Developer'
-                              : companyRole} */}
                             {t('addCompany:' + companyRole)}
                           </Radio.Button>
                         </div>
                       ) : (
                         <>
-                          <div
-                            className="certifier-radio-container"
-                            style={
-                              userInfoState?.companyRole === CompanyRole.MINISTRY
-                                ? {
-                                    width: '45%',
-                                  }
-                                : {}
-                            }
-                          >
-                            <Tooltip placement="top" title={t('addCompany:viewerToolTip')}>
-                              <Radio.Button className="certifier" value="Certifier">
-                                <SafetyOutlined className="role-icons" />
-                                {t('addCompany:Certifier')}
-                              </Radio.Button>
-                            </Tooltip>
-                          </div>
+                          {userInfoState?.companyRole !== CompanyRole.CLIMATE_FUND && (
+                            <div
+                              className="certifier-radio-container"
+                              style={
+                                userInfoState?.companyRole === CompanyRole.MINISTRY
+                                  ? {
+                                      width: '45%',
+                                    }
+                                  : {}
+                              }
+                            >
+                              <Tooltip placement="top" title={t('addCompany:viewerToolTip')}>
+                                <Radio.Button className="certifier" value="Certifier">
+                                  <SafetyOutlined className="role-icons" />
+                                  {t('addCompany:Certifier')}
+                                </Radio.Button>
+                              </Tooltip>
+                            </div>
+                          )}
                           <div
                             className="dev-radio-container"
                             style={
@@ -1099,25 +1098,27 @@ export const AddNewCompanyComponent = (props: any) => {
                               </Radio.Button>
                             </Tooltip>
                           </div>
-                          {userInfoState?.companyRole !== CompanyRole.MINISTRY && !isGuest && (
-                            <div className="minister-radio-container">
-                              {ministryDropdown.length > 0 ? (
-                                <Tooltip placement="top" title={t('addCompany:ministryToolTip')}>
-                                  <Radio.Button className="minister" value="Ministry">
-                                    <AuditOutlined className="role-icons" />
-                                    {t('addCompany:Ministry')}
-                                  </Radio.Button>
-                                </Tooltip>
-                              ) : (
-                                <Tooltip placement="top" title={t('addCompany:allmincreated')}>
-                                  <Radio.Button className="minister" value="Ministry" disabled>
-                                    <AuditOutlined className="role-icons" />
-                                    {t('addCompany:Ministry')}
-                                  </Radio.Button>
-                                </Tooltip>
-                              )}
-                            </div>
-                          )}
+                          {userInfoState?.companyRole !== CompanyRole.MINISTRY &&
+                            userInfoState?.companyRole !== CompanyRole.CLIMATE_FUND &&
+                            !isGuest && (
+                              <div className="minister-radio-container">
+                                {ministryDropdown.length > 0 ? (
+                                  <Tooltip placement="top" title={t('addCompany:ministryToolTip')}>
+                                    <Radio.Button className="minister" value="Ministry">
+                                      <AuditOutlined className="role-icons" />
+                                      {t('addCompany:Ministry')}
+                                    </Radio.Button>
+                                  </Tooltip>
+                                ) : (
+                                  <Tooltip placement="top" title={t('addCompany:allmincreated')}>
+                                    <Radio.Button className="minister" value="Ministry" disabled>
+                                      <AuditOutlined className="role-icons" />
+                                      {t('addCompany:Ministry')}
+                                    </Radio.Button>
+                                  </Tooltip>
+                                )}
+                              </div>
+                            )}
                         </>
                       )}
                     </Radio.Group>
