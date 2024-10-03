@@ -9,6 +9,7 @@ import { VerifyVerificationReportDto } from "src/dto/verify.verification.report.
 import { VerificationReportDto } from "src/dto/verification.report.dto";
 import { CreditIssuanceCertificateDto } from "src/dto/credit.issuance.certificate.dto";
 import { IssueCreditsDto } from "src/dto/issue.credits.dto";
+import { RejectVerificationReportDto } from "src/dto/reject.verification.report.dto";
 
 @ApiTags("Verification")
 @ApiBearerAuth()
@@ -72,6 +73,18 @@ export class VerificationController {
   ) {
     return this.verificationService.verifyVerificationReport(
       verifyVerificationReportDto,
+      req.user
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("rejectVerificationReport")
+  rejectVerificationReport(
+    @Body() rejectVerificationReportDto: RejectVerificationReportDto,
+    @Request() req
+  ) {
+    return this.verificationService.rejectVerificationReport(
+      rejectVerificationReportDto,
       req.user
     );
   }
