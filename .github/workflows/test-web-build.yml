@@ -51,5 +51,5 @@ jobs:
           # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           # echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           echo "::set-output name=mapbox::$MAPBOX_TOKEN"
-          echo "===================================="
+          echo "====================================>"
           echo "$MAPBOX_TOKEN"
