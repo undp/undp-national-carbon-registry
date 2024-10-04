@@ -8,15 +8,17 @@ import { UserController } from './user.controller';
 import { AuthController } from './auth.controller';
 import { ProgrammeController } from './programme.controller';
 import { SettingsController } from './settings.controller';
-import { AuthModule } from 'src/auth/auth.module';
-import { CaslModule } from 'src/casl/casl.module';
-import { CompanyModule } from 'src/company/company.module';
-// import configuration from 'src/configuration';
-import { ProgrammeModule } from 'src/programme/programme.module';
-import { TypeOrmConfigService } from 'src/typeorm.config.service';
-import { UserModule } from 'src/user/user.module';
-import { UtilModule } from 'src/util/util.module';
-import configuration from 'src/configuration';
+import { AuthModule } from '../auth/auth.module';
+import { CaslModule } from '../casl/casl.module';
+import { CompanyModule } from '../company/company.module';
+// import configuration from '../configuration';
+import { ProgrammeModule } from '../programme/programme.module';
+import { TypeOrmConfigService } from '../typeorm.config.service';
+import { UserModule } from '../user/user.module';
+import { UtilModule } from '../util/util.module';
+import configuration from '../configuration';
+import { LocationModule } from '../location/location.module';
+import { LocationController } from './location.controller';
 
 @Module({
   imports: [
@@ -35,6 +37,7 @@ import configuration from 'src/configuration';
     ProgrammeModule,
     CompanyModule,
     UtilModule,
+    LocationModule
   ],
   controllers: [ 
 		NationalAPIController, 
@@ -42,7 +45,8 @@ import configuration from 'src/configuration';
 		AuthController, 
 		CompanyController, 
 		ProgrammeController, 
-		SettingsController, 
+		SettingsController,
+    LocationController 
 	 ],
   providers: [
     NationalAPIService, 

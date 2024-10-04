@@ -22,8 +22,10 @@ import PhoneInput, {
 import {
   AuditOutlined,
   BankOutlined,
+  CopyrightOutlined,
   ExperimentOutlined,
   SafetyOutlined,
+  TeamOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
 import './addNewCompanyComponent.scss';
@@ -344,7 +346,7 @@ export const AddNewCompanyComponent = (props: any) => {
   const getRegionList = async () => {
     setLoadingList(true);
     try {
-      const response = await post('national/organisation/regions', {
+      const response = await post('national/location/province', {
         page: 1,
         size: 100,
         filterAnd: [
@@ -356,7 +358,7 @@ export const AddNewCompanyComponent = (props: any) => {
         ],
       });
       if (response.data) {
-        const regionNames = response.data.map((item: any) => item.regionName);
+        const regionNames = response.data.map((item: any) => item.provinceName);
         const uniqueRegionNames: any = Array.from(new Set(regionNames));
         setRegionsList([t('national'), ...uniqueRegionNames]);
       }
@@ -453,7 +455,7 @@ export const AddNewCompanyComponent = (props: any) => {
     if (values.includes(t('national'))) {
       const buyerCountryValues = regionsList;
       const newBuyerValues = buyerCountryValues?.filter((item: any) => item !== t('national'));
-      formOne.setFieldValue('regions', [...newBuyerValues]);
+      formOne.setFieldValue('provinces', [...newBuyerValues]);
     }
   };
 
@@ -537,8 +539,10 @@ export const AddNewCompanyComponent = (props: any) => {
           name: formOneValues.name,
           email: formOneValues.email,
           phoneNo: formOneValues.phoneNo,
+          faxNo: formOneValues.faxNo,
           address: formOneValues.address,
-          regions: formOneValues.regions,
+          provinces: formOneValues.provinces,
+          // regions: formOneValues.regions,
           companyRole: state?.record?.companyRole,
         };
       } else {
@@ -547,6 +551,7 @@ export const AddNewCompanyComponent = (props: any) => {
           name: formOneValues.name,
           email: formOneValues.email,
           phoneNo: formOneValues.phoneNo,
+          faxNo: formOneValues.faxNo,
           address: formOneValues.address,
           companyRole: state?.record?.companyRole,
         };
@@ -640,6 +645,10 @@ export const AddNewCompanyComponent = (props: any) => {
         ? 'dev'
         : companyRole === CompanyRole.MINISTRY
         ? 'minister'
+        : companyRole === CompanyRole.CLIMATE_FUND
+        ? 'climate-fund'
+        : companyRole === CompanyRole.EXECUTIVE_COMMITTEE
+        ? 'executive-committee'
         : 'gov';
     return (
       <div className="company-details-form-container">
@@ -1050,6 +1059,10 @@ export const AddNewCompanyComponent = (props: any) => {
                               <ExperimentOutlined className="role-icons" />
                             ) : companyRole === CompanyRole.MINISTRY ? (
                               <AuditOutlined className="role-icons" />
+                            ) : companyRole === CompanyRole.CLIMATE_FUND ? (
+                              <CopyrightOutlined className="role-icons" />
+                            ) : companyRole === CompanyRole.EXECUTIVE_COMMITTEE ? (
+                              <TeamOutlined className="role-icons" />
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
@@ -1242,15 +1255,65 @@ export const AddNewCompanyComponent = (props: any) => {
                       countries={countries}
                     />
                   </Form.Item>
+                  <Form.Item
+                    name="faxNo"
+                    label={t('addCompany:faxNo')}
+                    initialValue={state?.record?.faxNo}
+                    rules={[
+                      {
+                        required: false,
+                        message: '',
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          // if (
+                          //   String(value).trim() === '' ||
+                          //   String(value).trim() === undefined ||
+                          //   value === null ||
+                          //   value === undefined
+                          // ) {
+                          //   throw new Error(`${t('addCompany:phoneNo')} ${t('isRequired')}`);
+                          // } else
+                          if (
+                            String(value).trim() !== '' &&
+                            String(value).trim() !== undefined &&
+                            value !== null &&
+                            value !== undefined
+                          ) {
+                            const faxNo = formatPhoneNumber(String(value));
+                            if (String(value).trim() !== '') {
+                              if (faxNo === null || faxNo === '' || faxNo === undefined) {
+                                throw new Error(`${t('addCompany:faxNo')} ${t('isRequired')}`);
+                              } else {
+                                if (!isPossiblePhoneNumber(String(value))) {
+                                  throw new Error(`${t('addCompany:faxNo')} ${t('isInvalid')}`);
+                                }
+                              }
+                            }
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <PhoneInput
+                      placeholder={t('addCompany:faxNo')}
+                      international
+                      value={formatPhoneNumberIntl(contactNoInput)}
+                      defaultCountry="LK"
+                      countryCallingCodeEditable={false}
+                      onChange={(v) => {}}
+                      countries={countries}
+                    />
+                  </Form.Item>
                   {regionField && (
                     <Form.Item
-                      label={t('addCompany:region')}
-                      name="regions"
-                      initialValue={state?.record?.regions}
+                      label={t('addCompany:province')}
+                      name="provinces"
+                      initialValue={state?.record?.provinces}
                       rules={[
                         {
                           required: true,
-                          message: `${t('addCompany:region')} ${t('isRequired')}`,
+                          message: `${t('addCompany:province')} ${t('isRequired')}`,
                         },
                       ]}
                     >

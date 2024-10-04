@@ -5,6 +5,7 @@ import { Region } from "../entities/region.entity";
 import { LocationInterface } from "./location.interface";
 import axios from "axios";
 import { ConfigService } from "@nestjs/config";
+import { LocationDataType } from "src/enum/locationDataType.enum";
 
 @Injectable()
 export class OpenStreetLocationService implements LocationInterface {
@@ -14,9 +15,11 @@ export class OpenStreetLocationService implements LocationInterface {
     @InjectRepository(Region) private regionRepo: Repository<Region>
   ) {}
 
-  public async init(data: any): Promise<void> {
+  public async init(data: any, locationDataType: LocationDataType): Promise<void> {
     this.logger.log('open street init')
-    return await this.retrieveData();
+    if (locationDataType === LocationDataType.REGION) {
+      return await this.retrieveData();
+    }
   }
 
   public async retrieveData() {

@@ -33,6 +33,7 @@ import { UserModule } from "../user/user.module";
 import { UserService } from "../user/user.service";
 import { CountryService } from "../util/country.service";
 import { UtilModule } from "../util/util.module";
+import { LocationDataType } from "../enum/locationDataType.enum";
 const fs = require("fs");
 
 export const handler: Handler = async (event) => {
@@ -153,6 +154,7 @@ export const handler: Handler = async (event) => {
               country: configService.get("systemCountry"),
               companyRole: cr,
               createdTime: undefined,
+              provinces: [],
               regions: [],
               state: undefined //double check this
             });
@@ -287,5 +289,13 @@ export const handler: Handler = async (event) => {
   );
   const locationInterface = locationApp.get(LocationInterface);
   const regionRawData = fs.readFileSync('regions.csv', 'utf8');
-  await locationInterface.init(regionRawData);
+  await locationInterface.init(regionRawData, LocationDataType.REGION);
+  const provinceRawData = fs.readFileSync('provinces.csv', 'utf8');
+  await locationInterface.init(provinceRawData, LocationDataType.PROVINCE);
+  const districtRawData = fs.readFileSync('districts.csv', 'utf8');
+  await locationInterface.init(districtRawData, LocationDataType.DISTRICT);
+  const divisionRawData = fs.readFileSync('dsDivisions.csv', 'utf8');
+  await locationInterface.init(divisionRawData, LocationDataType.DIVISION);
+  const cityRawData = fs.readFileSync('cities.csv', 'utf8');
+  await locationInterface.init(cityRawData, LocationDataType.CITY);
 };

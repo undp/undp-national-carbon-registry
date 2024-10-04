@@ -415,6 +415,7 @@ export class UserService {
           organisationDto.logo = company.logo;
           organisationDto.companyRole = company.companyRole;
           organisationDto.regions = company.regions;
+          organisationDto.provinces = company.provinces;
           if (company.website && company.website.trim().length > 0) {
             organisationDto.website = company.website;
           }

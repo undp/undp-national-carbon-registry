@@ -27,6 +27,9 @@ export class Company implements EntitySubject {
   phoneNo: string;
 
   @Column({ nullable: true })
+  faxNo: string;
+
+  @Column({ nullable: true })
   website: string;
 
   @Column({ nullable: true })
@@ -85,6 +88,9 @@ export class Company implements EntitySubject {
     nullable: true,
   })
   geographicalLocationCordintes: any;
+
+  @Column("varchar", { array: true, nullable: true })
+  provinces: string[];
 
   @Column("varchar", { array: true, nullable: true })
   regions: string[];

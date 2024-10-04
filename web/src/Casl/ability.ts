@@ -162,6 +162,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.MINISTRY } });
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.CLIMATE_FUND } });
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE } });
 
     if (user.role === Role.Admin || user.role === Role.Root) {
       can(Action.Create, User);

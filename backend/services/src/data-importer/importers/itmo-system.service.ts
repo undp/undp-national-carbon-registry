@@ -175,6 +175,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       companyRole: CompanyRole.PROGRAMME_DEVELOPER,
                       createdTime: undefined,
                       regions: [],
+                      provinces: [],
                       state: CompanyState.ACTIVE //double check this
                     },
                     password: undefined,
