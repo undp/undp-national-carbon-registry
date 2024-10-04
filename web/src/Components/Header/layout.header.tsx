@@ -7,7 +7,6 @@ import thumbnail from '../../Assets/Images/thumbnail.png';
 import { HeaderProps } from '../../Definitions/Definitions/layout.header';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-// import { HeaderProps, useConnection, useUserContext } from '@undp/carbon-library';
 
 const LayoutHeader = (props: HeaderProps) => {
   const navigate = useNavigate();

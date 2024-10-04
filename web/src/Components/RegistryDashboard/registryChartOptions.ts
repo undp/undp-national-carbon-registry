@@ -1,5 +1,3 @@
-// import { addCommSepRound } from '../../Definitions';
-
 import { addCommSepRound } from '../../Definitions/Definitions/programme.definitions';
 
 export const totalProgrammesOptions: any = {

@@ -6,7 +6,6 @@ import {
   ConnectionContextProviderProps,
   Methods,
 } from '../../Definitions/Definitions/connectionContext.definitions';
-// import { ConnectionContextProviderProps, ConnectionProps, Methods } from '../../Definitions';
 
 const ConnectionContext = createContext<{
   connection?: ConnectionProps;

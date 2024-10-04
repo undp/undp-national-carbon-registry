@@ -20,9 +20,6 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RadioButtonStatus, titleList } from '../../Definitions/Enums/commonEnums';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
-// import { RadioButtonStatus, getBase64, titleList } from '../../../Definitions';
-// import { isValidateFileType } from '../../../Utils/DocumentValidator';
-// import { useConnection } from '../../../Context';
 
 const Assessment = (props: any) => {
   const { onFormSubmit, assessmentViewData, viewOnly, translator } = props;

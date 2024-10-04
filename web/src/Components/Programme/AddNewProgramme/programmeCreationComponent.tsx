@@ -20,14 +20,6 @@ import './programmeCreationComponent.scss';
 import { InfoCircle } from 'react-bootstrap-icons';
 import moment from 'moment';
 import { RcFile } from 'antd/lib/upload';
-// import {
-//   CompanyRole,
-//   DocType,
-//   Sector,
-//   SectoralScope,
-//   addCommSepRound,
-//   GovDepartment,
-// } from '../../../Definitions';
 
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
@@ -40,7 +32,6 @@ import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { MapComponent } from '../../Maps/mapComponent';
 import { MapSourceData } from '../../../Definitions/Definitions/mapComponent.definitions';
-// import { useConnection, useUserContext } from '../../../Context';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 

@@ -22,8 +22,6 @@ import { InvestmentView } from "../entities/investment.view.entity";
 import { ProgrammeDocumentViewEntity } from "../entities/document.view.entity";
 import { NDCAction } from "../entities/ndc.action.entity";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
-import { AuthorizationLetterGen } from "../util/authorisation.letter.gen";
-import { CadtModule } from "../cadt/cadt.module";
 import { NdcDetailsPeriod } from "../entities/ndc.details.period.entity";
 import { NdcDetailsAction } from "../entities/ndc.details.action.entity";
 import { EventLog } from "../entities/event.log.entity";

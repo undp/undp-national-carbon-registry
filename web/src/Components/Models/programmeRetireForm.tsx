@@ -19,8 +19,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { CompanyState } from '../../Definitions/Enums/company.state.enum';
 import { addCommSep, Programme } from '../../Definitions/Definitions/programme.definitions';
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
-// import { useConnection } from '../../../Context';
-// import { CompanyRole } from '../../../Definitions';
 import { InfoCircle } from 'react-bootstrap-icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';

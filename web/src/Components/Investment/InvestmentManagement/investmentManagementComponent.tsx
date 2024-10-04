@@ -36,15 +36,12 @@ import {
   InvestmentStatus,
   getStatusTagType,
 } from '../../../Definitions/Enums/investment.enum';
-// import InvestmentActionModel from '../../Common/Investment/investmentActionModel';
 import {
   addCommSepRound,
   addSpaces,
   getCompanyBgColor,
 } from '../../../Definitions/Definitions/programme.definitions';
 import { ProgrammeTransfer } from '../../../Definitions/Entities/programmeTransfer';
-// import { RoleIcon } from '../../RoleIcon/role.icon';
-// import { ProfileIcon } from '../../Common/ProfileIcon/profile.icon';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
@@ -53,8 +50,6 @@ import { useSettingsContext } from '../../../Context/SettingsContext/settingsCon
 import { RoleIcon } from '../../IconComponents/RoleIcon/role.icon';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import InvestmentActionModel from '../../Models/investmentActionModel';
-// import { PlusOutlined } from '@ant-design/icons';
-// import { useConnection, useUserContext, useSettingsContext } from '../../../Context';
 
 type PopupInfo = {
   title: string;

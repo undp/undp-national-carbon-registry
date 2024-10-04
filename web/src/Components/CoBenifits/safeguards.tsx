@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Empty, Form, Radio, Row } from 'antd';
 import { FormElementType, RadioButtonStatus2 } from '../../Definitions/Enums/commonEnums';
-// import { FormElementType, RadioButtonStatus2 } from '../../../Definitions';
 
 const Safeguards = (props: any) => {
   const { onFormSubmit, safeGuardViewData, viewOnly, translator } = props;

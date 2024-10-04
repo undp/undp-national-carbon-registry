@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { UserProfileComponent } from '../../Components/User/UserProfile/userProfileComponent';
-// import { UserProfileComponent } from '@undp/carbon-library';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();

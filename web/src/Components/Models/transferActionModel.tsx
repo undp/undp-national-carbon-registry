@@ -12,8 +12,6 @@ import {
   Tooltip,
 } from 'antd';
 import { FC, useState } from 'react';
-// import { ProgrammeTransfer, RetireType, addCommSep } from '../../Definitions';
-// import React from 'react';
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { InfoCircle } from 'react-bootstrap-icons';
 import { ProgrammeTransfer } from '../../Definitions/Entities/programmeTransfer';

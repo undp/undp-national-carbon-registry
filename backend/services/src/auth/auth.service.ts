@@ -10,8 +10,6 @@ import { HelperService } from "../util/helpers.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { ConfigService } from "@nestjs/config";
 import { BasicResponseDto } from "../dto/basic.response.dto";
-import { Repository } from "typeorm";
-import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "../util/passwordReset.service";
 import {
   AsyncAction,

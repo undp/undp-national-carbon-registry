@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
 import { CompanyManagementColumns } from '../../Definitions/Enums/company.management.columns.enum';
 import { CompanyManagementComponent } from '../../Components/Company/CompanyManagement/companyManagementComponent';
-// import { CompanyManagementComponent, CompanyManagementColumns } from '@undp/carbon-library';
 
 const CompanyManagement = () => {
   const navigate = useNavigate();

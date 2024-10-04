@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { userForgotPasswordProps } from '../../Definitions/Definitions/userForgotPassword.definitions';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-// import { userForgotPasswordProps, useConnection } from '@undp/carbon-library';
 
 const ForgotPassword = () => {
   const { post } = useConnection();

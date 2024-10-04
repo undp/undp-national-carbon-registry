@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-// import { AddNewUserComponent } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
 import { AddNewUserComponent } from '../../Components/User/AddNewUser/addNewUserComponent';
 

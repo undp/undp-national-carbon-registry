@@ -11,13 +11,6 @@ import {
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
-// import {
-//   CompanyRole,
-//   DocType,
-//   DocumentStatus,
-//   ProgrammeStageUnified,
-//   Role,
-// } from '../../../Definitions';
 import { RejectDocumentationConfirmationModel } from '../Models/rejectDocumenConfirmationModel';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -28,9 +21,6 @@ import { Role } from '../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-// import { isValidateFileType } from '../../../Utils/DocumentValidator';
-// import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermission';
-// import { useConnection, useUserContext } from '../../../Context';
 
 export interface ProgrammeDocumentsProps {
   data: any;

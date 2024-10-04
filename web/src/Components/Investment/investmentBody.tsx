@@ -21,15 +21,6 @@ import {
 } from '../../Definitions/Enums/investment.enum';
 import { addCommSep, addSpaces } from '../../Definitions/Definitions/programme.definitions';
 import { TooltipColor } from '../../Styles/role.color.constants';
-// import { TooltipColor } from '../../../Styles/role.color.constants';
-// import {
-//   InvestmentLevel,
-//   InvestmentStatus,
-//   InvestmentStream,
-//   InvestmentType,
-//   addCommSep,
-//   addSpaces,
-// } from '../../../Definitions';
 
 export interface InvestmentBodyProps {
   data: any;

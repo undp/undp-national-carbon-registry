@@ -413,10 +413,7 @@ export class ProgrammeService {
       const compo = await this.companyService.findByTaxId(taxId);
       if (!compo) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "programme.proponentTaxIdNotInSystem",
-            [],
-          ),
+          this.helperService.formatReqMessagesString("programme.proponentTaxIdNotInSystem", []),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1874,10 +1871,7 @@ export class ProgrammeService {
       const projectCompany = await this.companyService.findByTaxId(taxId);
       if (!projectCompany) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "programme.proponentTaxIdNotInSystem",
-            [],
-          ),
+          this.helperService.formatReqMessagesString("programme.proponentTaxIdNotInSystem", []),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -2327,6 +2321,21 @@ export class ProgrammeService {
           HttpStatus.FORBIDDEN
         );
       }
+    }
+
+    const programmeOwnedCompanyIds = program.companyId.map((x) => parseInt(x.toString()));
+
+    if (
+      !(
+        programmeOwnedCompanyIds.includes(user.companyId) ||
+        (user.companyRole == CompanyRole.GOVERNMENT &&
+          (user.role == Role.Root || user.role == Role.Admin || user.role == Role.Manager))
+      )
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.userUnAUth", []),
+        HttpStatus.FORBIDDEN
+      );
     }
 
     const data = instanceToPlain(ndcActionDto);
@@ -2903,26 +2912,26 @@ export class ProgrammeService {
       dto.coBenefitsPropertiesEconomicFurtherInfoQ1 =
         ndcAction.coBenefitsProperties?.economic?.furtherInfoQ1;
       // coBenefitsProperties:GenderParity
-      dto.coBenefitsPropertiesGenderParityDiscriminationAgainstGirls = ndcAction
-        .coBenefitsProperties?.genderPariy?.descriminationAgainstGirls !== undefined
-        ? ndcAction.coBenefitsProperties.genderPariy.descriminationAgainstGirls
-          ? "YES"
-          : "NO"
-        : undefined;
+      dto.coBenefitsPropertiesGenderParityDiscriminationAgainstGirls =
+        ndcAction.coBenefitsProperties?.genderPariy?.descriminationAgainstGirls !== undefined
+          ? ndcAction.coBenefitsProperties.genderPariy.descriminationAgainstGirls
+            ? "YES"
+            : "NO"
+          : undefined;
 
-      dto.coBenefitsPropertiesGenderParityViolationAgainstGirls = ndcAction.coBenefitsProperties
-        ?.genderPariy?.violationAgainstGirls !== undefined
-        ? ndcAction.coBenefitsProperties.genderPariy.violationAgainstGirls
-          ? "YES"
-          : "NO"
-        : undefined;
+      dto.coBenefitsPropertiesGenderParityViolationAgainstGirls =
+        ndcAction.coBenefitsProperties?.genderPariy?.violationAgainstGirls !== undefined
+          ? ndcAction.coBenefitsProperties.genderPariy.violationAgainstGirls
+            ? "YES"
+            : "NO"
+          : undefined;
 
-      dto.coBenefitsPropertiesGenderParityHarmfulPracticesAgainstGirls = ndcAction
-        .coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls !== undefined
-        ? ndcAction.coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls
-          ? "YES"
-          : "NO"
-        : undefined;
+      dto.coBenefitsPropertiesGenderParityHarmfulPracticesAgainstGirls =
+        ndcAction.coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls !== undefined
+          ? ndcAction.coBenefitsProperties?.genderPariy?.harmfulPracticesAgainstGirls
+            ? "YES"
+            : "NO"
+          : undefined;
 
       dto.coBenefitsPropertiesGenderParityEqualRightsToGirls =
         ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToGirls !== undefined
@@ -2931,12 +2940,12 @@ export class ProgrammeService {
             : "NO"
           : undefined;
 
-      dto.coBenefitsPropertiesGenderParityEqualRightsToHealthToGirls = ndcAction
-        .coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls !== undefined
-        ? ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls
-          ? "YES"
-          : "NO"
-        : undefined;
+      dto.coBenefitsPropertiesGenderParityEqualRightsToHealthToGirls =
+        ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls !== undefined
+          ? ndcAction.coBenefitsProperties?.genderPariy?.equealRightsToHealthToGirls
+            ? "YES"
+            : "NO"
+          : undefined;
 
       dto.coBenefitsPropertiesGenderParityNumberOfWomenEmployed =
         ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenEmpoyed;
@@ -2947,7 +2956,6 @@ export class ProgrammeService {
       dto.coBenefitsPropertiesGenderParityNumberOfWomenProvidedAccessForTech =
         ndcAction.coBenefitsProperties?.genderPariy?.numberOfWomenProvidedAccessForTech;
 
-        
       // coBenefitsProperties:Environmental
       dto.coBenefitsPropertiesEnvironmentalAirQ1 =
         ndcAction.coBenefitsProperties?.environmental?.airQ1;
@@ -6318,23 +6326,23 @@ export class ProgrammeService {
       (company) => company.state == CompanyState.SUSPENDED
     );
 
-    if (receiver.state == CompanyState.SUSPENDED) {
-      const updated = await this.programmeLedger.freezeIssuedCredit(
-        programme.programmeId,
-        programme.creditIssued,
-        "##",
-        suspendedCompanies
-      );
+    // if (receiver.state == CompanyState.SUSPENDED) {
+    //   const updated = await this.programmeLedger.freezeIssuedCredit(
+    //     programme.programmeId,
+    //     programme.creditIssued,
+    //     "##",
+    //     suspendedCompanies
+    //   );
 
-      if (!updated) {
-        return new BasicResponseDto(
-          HttpStatus.BAD_REQUEST,
-          this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
-            programme.programmeId,
-          ])
-        );
-      }
-    }
+    //   if (!updated) {
+    //     return new BasicResponseDto(
+    //       HttpStatus.BAD_REQUEST,
+    //       this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
+    //         programme.programmeId,
+    //       ])
+    //     );
+    //   }
+    // }
 
     return transferResult;
   }
