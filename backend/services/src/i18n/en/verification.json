@@ -1,10 +1,11 @@
 {
-  "uploadMonitoringReportWrongUser":"Only the Project Participant can upload the monitoring report",
-  "rejectMonitoringReportWrongUser":"Only the Project Participant can reject the monitoring report",
-  "verifyMonitoringReportWrongUser":"Only the SLCF can verify the monitoring report",
-  "uploadVerificationReportWrongUser":"Only the SLCF can upload the verification report",
-  "verifyVerificationReportWrongUser":"Only the Executive Board can verify the verification report",
-  "rejectVerificationReportWrongUser":"Only the SLCF can reject the verification report",
-  "creditIssuanceCertificateWrongUser":"Only the Executive Board can provide the credit issuance certificate",
-  "issueCreditsWrongUser":"Only the Executive Board can issue credits"
+  "uploadMonitoringReportWrongUser": "Only the Project Participant can upload the monitoring report",
+  "verifyMonitoringReportWrongUser": "Only the SLCF can verify the monitoring report",
+  "uploadVerificationReportWrongUser": "Only the SLCF can upload the verification report",
+  "verifyVerificationReportWrongUser": "Only the Executive Board can verify the verification report",
+  "creditIssuanceCertificateWrongUser": "Only the Executive Board can provide the credit issuance certificate",
+  "issueCreditsWrongUser": "Only the Executive Board can issue credits",
+  "monitoringReportDoesNotExists": "Moitoring report with the given id does not exists",
+  "verificationReportDoesNotExists": "Verification report with the given id does not exists",
+  "verificationRequestDoesNotExists": "Verification request with the given id does not exists"
 }

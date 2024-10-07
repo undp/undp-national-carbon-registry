@@ -2,14 +2,11 @@ import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { MonitoringReportDto } from "src/dto/monitoring.report.dto";
-import { VerificationService } from "./verification.service";
-import { VerifyMonitoringReportDto } from "src/dto/verify.monitoring.report.dto";
-import { RejectMonitoringReportDto } from "src/dto/reject.monitoring.report.dto";
-import { VerifyVerificationReportDto } from "src/dto/verify.verification.report.dto";
 import { VerificationReportDto } from "src/dto/verification.report.dto";
 import { CreditIssuanceCertificateDto } from "src/dto/credit.issuance.certificate.dto";
 import { IssueCreditsDto } from "src/dto/issue.credits.dto";
-import { RejectVerificationReportDto } from "src/dto/reject.verification.report.dto";
+import { VerifyReportDto } from "src/dto/verify.report.dto";
+import { VerificationService } from "src/verification/verification.service";
 
 @ApiTags("Verification")
 @ApiBearerAuth()
@@ -30,25 +27,13 @@ export class VerificationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post("rejectMonitoringReport")
-  rejectMonitoringReport(
-    @Body() rejectMonitoringReportDto: RejectMonitoringReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.rejectMonitoringReport(
-      rejectMonitoringReportDto,
-      req.user
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Post("verifyMonitoringReport")
   verifyMonitoringReport(
-    @Body() verifyMonitoringReportDto: VerifyMonitoringReportDto,
+    @Body() verifyReportDto: VerifyReportDto,
     @Request() req
   ) {
     return this.verificationService.verifyMonitoringReport(
-      verifyMonitoringReportDto,
+      verifyReportDto,
       req.user
     );
   }
@@ -68,23 +53,11 @@ export class VerificationController {
   @UseGuards(JwtAuthGuard)
   @Post("verifyVerificationReport")
   verifyVerificationReport(
-    @Body() verifyVerificationReportDto: VerifyVerificationReportDto,
+    @Body() verifyReportDto: VerifyReportDto,
     @Request() req
   ) {
     return this.verificationService.verifyVerificationReport(
-      verifyVerificationReportDto,
-      req.user
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post("rejectVerificationReport")
-  rejectVerificationReport(
-    @Body() rejectVerificationReportDto: RejectVerificationReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.rejectVerificationReport(
-      rejectVerificationReportDto,
+      verifyReportDto,
       req.user
     );
   }

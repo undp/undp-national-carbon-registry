@@ -16,8 +16,8 @@ import { TypeOrmConfigService } from "src/typeorm.config.service";
 import { UserModule } from "src/user/user.module";
 import { UtilModule } from "src/util/util.module";
 import { VerificationController } from "./verification/verification.controller";
-import { VerificationService } from "./verification/verification.service";
 import configuration from "src/configuration";
+import { VerificationModule } from "src/verification/verification.module";
 
 @Module({
   imports: [
@@ -34,6 +34,7 @@ import configuration from "src/configuration";
     UserModule,
     CaslModule,
     ProgrammeModule,
+    VerificationModule,
     CompanyModule,
     UtilModule,
   ],
@@ -46,6 +47,6 @@ import configuration from "src/configuration";
     SettingsController,
     VerificationController,
   ],
-  providers: [NationalAPIService, Logger, VerificationService],
+  providers: [NationalAPIService, Logger],
 })
 export class NationalAPIModule {}
