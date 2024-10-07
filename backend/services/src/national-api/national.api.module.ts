@@ -49,8 +49,8 @@ import { LocationController } from "./location.controller";
     ProgrammeController,
     SettingsController,
     LocationController,
+    VerificationController,
   ],
-  providers: [NationalAPIService, Logger],
   providers: [NationalAPIService, Logger],
 })
 export class NationalAPIModule {}
