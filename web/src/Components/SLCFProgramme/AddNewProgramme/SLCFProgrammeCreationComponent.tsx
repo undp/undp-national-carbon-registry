@@ -77,7 +77,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const [current, setCurrent] = useState<number>(0);
 
   const { post } = useConnection();
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : '';
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'Mapbox';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
@@ -118,7 +118,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
           type: 'Feature',
           geometry: {
             type: 'Polygon',
-            coordinates: projectLocation,
+            coordinates: [projectLocation],
           },
           properties: null,
         },
