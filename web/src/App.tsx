@@ -40,6 +40,8 @@ import { UserInformationContextProvider } from './Context/UserInformationContext
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 import { Loading } from './Components/Loading/loading';
 import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
+import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
+import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 
 const App = () => {
   const ability = defineAbility();
@@ -94,6 +96,15 @@ const App = () => {
                     element={<CustomLayout selectedKey="nationalAccounting" />}
                   >
                     <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
+                  </Route>
+                  <Route
+                    path="/programmeManagementSLCF"
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<SLCFProgrammeManagement />} />
+                    <Route path="view/:id" element={<ProgrammeView />} />
+                    <Route path="addProgramme" element={<SLCFAddProgramme />} />
+                    <Route path="addNdcAction" element={<AddNDCAction />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
