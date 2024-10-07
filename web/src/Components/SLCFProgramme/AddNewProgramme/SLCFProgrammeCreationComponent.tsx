@@ -30,6 +30,8 @@ import { DocType } from '../../../Definitions/Enums/document.type';
 import { MapSourceData } from '../../../Definitions/Definitions/mapComponent.definitions';
 import { MapComponent } from '../../Maps/mapComponent';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
+import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 
@@ -37,22 +39,13 @@ const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
   ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
   : 5000000;
 
-const PROVINCES_AND_DISTRICTS: { [key: string]: string[] } = {
-  'Central Province': ['Kandy', 'Matale', 'Nuwara Eliya'],
-  'Eastern Province': ['Ampara', 'Batticaloa', 'Trincomalee'],
-  'North Central Province': ['Anuradhapura', 'Polonnaruwa'],
-  'Nothern Province': ['Jaffna', 'Kilinochchi', 'Mannar', 'Mullaitivu', 'Vavuniya'],
-  'North Western Province': ['Kurunegala', 'Puttalam'],
-  'Sabaragamuwa Province': ['Kegalle', 'Ratnapura'],
-  'Southern Province': ['Galle', 'Hambanthota', 'Matara'],
-  'Uva Province': ['Badulla', 'Monaragala'],
-  'Western Province': ['Colombo', 'Gampaha', 'Kaluthara'],
-};
-
+const PROJECT_GEOGRAPHY_ENUM = {};
 const PROJECT_GEOGRAPHY: { [key: string]: string } = {
   singleLocation: 'Single Location',
   multipleLocations: 'Scattered in multiple locations',
 };
+
+const PROJECT_CATEGORIES_ENUM = {};
 
 const PROJECT_CATEGORIES: { [key: string]: string } = {
   renewableEnergy: 'Renewable Energy',
@@ -60,6 +53,8 @@ const PROJECT_CATEGORIES: { [key: string]: string } = {
   reforestation: 'Reforestation',
   other: 'Other',
 };
+
+const PROJECT_STATUS_ENUM = {};
 
 const PROJECT_STATUS: { [key: string]: string } = {
   proposalStage: 'Proposal Stage',
@@ -84,7 +79,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   const [form] = Form.useForm();
 
-  const [projectLocation, setProjectLocation] = useState<any[]>([]);
+  const [projectLocations, setProjectLocations] = useState<any[][]>();
   const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
@@ -106,55 +101,72 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   };
 
   useEffect(() => {
+    console.log('-------project locations--------', projectLocations);
     setProjectLocationMapCenter(
-      projectLocation?.length > 0 ? getCenter(projectLocation) : [7.4924165, 5.5324032]
+      projectLocations && projectLocations?.length > 0
+        ? getCenter(projectLocations[0])
+        : [7.4924165, 5.5324032]
     );
 
-    const mapSource: MapSourceData = {
-      key: 'projectLocation',
-      data: {
-        type: 'geojson',
+    const tempMapSource: any = [];
+    const tempLocationLayer: any = [];
+    const tempOutlineLayer: any = [];
+    projectLocations?.forEach((location: any, index: number) => {
+      const mapSource: MapSourceData = {
+        key: `projectLocation-${index}`,
         data: {
-          type: 'Feature',
-          geometry: {
-            type: 'Polygon',
-            coordinates: [projectLocation],
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: location,
+            },
+            properties: null,
           },
-          properties: null,
         },
-      },
-    };
+      };
 
-    setProjectLocationMapSource(mapSource);
-
-    setProjectLocationMapLayer({
-      id: 'projectLocation',
-      type: 'fill',
-      source: 'projectLocation',
-      layout: {},
-      paint: {
-        'fill-color': '#0080ff',
-        'fill-opacity': 0.5,
-      },
+      tempMapSource.push(mapSource);
+      tempLocationLayer.push({
+        id: `projectLocationLayer-${index}`,
+        type: 'fill',
+        source: `projectLocation-${index}`,
+        layout: {},
+        paint: {
+          'fill-color': '#0080ff',
+          'fill-opacity': 0.5,
+        },
+      });
+      tempOutlineLayer.push({
+        id: `projectLocationOutline-${index}`,
+        type: 'line',
+        source: `projectLocation-${index}`,
+        layout: {},
+        paint: {
+          'line-color': '#000',
+          'line-width': 1,
+        },
+      });
     });
 
-    setProjectLocationMapOutlineLayer({
-      id: 'projectLocationOutline',
-      type: 'line',
-      source: 'projectLocation',
-      layout: {},
-      paint: {
-        'line-color': '#000',
-        'line-width': 1,
-      },
-    });
-  }, [projectLocation]);
+    setProjectLocationMapSource(tempMapSource);
+    setProjectLocationMapLayer(tempLocationLayer);
+    setProjectLocationMapOutlineLayer(tempOutlineLayer);
+    form.setFieldValue('projectLocation', projectLocations);
+  }, [projectLocations]);
 
   const onPolygonComplete = function (data: any) {
     if (data.features.length > 0) {
       const coordinates = data.features[0].geometry.coordinates[0];
-      form.setFieldValue('projectLocation', coordinates);
-      setProjectLocation(coordinates);
+
+      setProjectLocations((prev) => {
+        if (prev) {
+          return [...prev, [coordinates]];
+        } else {
+          return [[coordinates]];
+        }
+      });
     }
   };
 
@@ -238,19 +250,21 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     }
   };
 
-  const getCities = async (division: string) => {
+  const getCities = async (division?: string) => {
     try {
-      const { data } = await post('national/location/division', {
-        filterAnd: [
-          {
-            key: 'divisionName',
-            operation: '=',
-            value: division,
-          },
-        ],
-      });
+      // const { data } = await post('national/location/city', {
+      //   filterAnd: [
+      //     {
+      //       key: 'divisionName',
+      //       operation: '=',
+      //       value: division,
+      //     },
+      //   ],
+      // });
+      const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
+      setCities(tempCities);
     } catch (error) {
       console.log(error);
     }
@@ -258,6 +272,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   useEffect(() => {
     getProvinces();
+    getCities();
   }, []);
 
   const onProvinceSelect = async (value: any) => {
@@ -271,9 +286,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     getDivisions(value);
   };
 
-  const onDivisionSelect = (value: string) => {
-    getCities(value);
-  };
+  // const onDivisionSelect = (value: string) => {
+  //   getCities(value);
+  // };
 
   const onGeographyOfProjectSelect = (value: string) => {
     console.log('------value geography-----', value, PROJECT_GEOGRAPHY.multipleLocations);
@@ -297,6 +312,52 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   const t = translator.t;
   console.log('-------form value---------', form.getFieldsValue());
+
+  const submitForm = async (values: any) => {
+    console.log('---------values---------', values);
+    const base64Docs: string[] = [];
+
+    if (values?.optionalDocuments.length > 0) {
+      const docs = values.optionalDocuments;
+      for (let i = 0; i < docs.length; i++) {
+        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+        base64Docs.push(temp); // No need for Promise.resolve
+      }
+    }
+
+    const body: any = {
+      title: values?.title,
+      projectCategory: values?.projectCategory,
+      province: values?.province,
+      district: values?.district,
+      dsDivision: values?.dsDivision,
+      city: values?.city,
+      community: 'test',
+      geographicalLocationCoordinates: projectLocations,
+      projectGeography: 'SINGLE',
+      otherProjectCategory: values?.otherCategory,
+      landExtent: (function () {
+        if (values?.landExtent) {
+          const lands = [values?.landExtent];
+          if (values?.landList) {
+            values?.landList.forEach((item: any) => lands.push(item.land));
+          }
+          return lands;
+        }
+        return undefined;
+      })(),
+      proposedProjectCapacity: values?.projectCapacity,
+      speciesPlanted: 'test',
+      projectDescription: 'test',
+      projectStatus: values?.projectStatus,
+      purposeOfCreditDevelopment: values?.creditDevelopmentPurpose,
+      startDate: values?.startTime,
+      additionalDocuments: base64Docs,
+    };
+
+    console.log('body', body);
+  };
+
   return (
     <div className="add-programme-main-container">
       <div className="title-container">
@@ -326,7 +387,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                         layout="vertical"
                         requiredMark={true}
                         form={form}
-                        onFinish={(values: any) => console.log('-----form values-------', values)}
+                        onFinish={submitForm}
                       >
                         <Row className="row" gutter={[40, 16]}>
                           <Col xl={12} md={24}>
@@ -401,14 +462,12 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                               <Form.Item
                                 label={t('addProgramme:dsDivision')}
                                 name="dsDivision"
-                                rules={
-                                  [
-                                    // {
-                                    //   required: true,
-                                    //   message: `${t('addProgramme:dsDivision')} ${t('isRequired')}`,
-                                    // },
-                                  ]
-                                }
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('addProgramme:dsDivision')} ${t('isRequired')}`,
+                                  },
+                                ]}
                               >
                                 <Select
                                   size="large"
@@ -422,19 +481,21 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                               <Form.Item
                                 label={t('addProgramme:city')}
                                 name="city"
-                                rules={
-                                  [
-                                    // {
-                                    //   required: true,
-                                    //   message: `${t('addProgramme:city')} ${t('isRequired')}`,
-                                    // },
-                                  ]
-                                }
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('addProgramme:city')} ${t('isRequired')}`,
+                                  },
+                                ]}
                               >
                                 <Select
                                   size="large"
                                   placeholder={t('addProgramme:cityPlaceholder')}
-                                ></Select>
+                                >
+                                  {cities.map((city: string) => (
+                                    <Select.Option value={city}>{city}</Select.Option>
+                                  ))}
+                                </Select>
                               </Form.Item>
                               <Form.Item
                                 label={t('addProgramme:community')}
@@ -495,7 +556,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                   </Form.Item>
                                 </Col>
 
-                                {projectCategory === 'other' && (
+                                {projectCategory === PROJECT_CATEGORIES.other && (
                                   <Col span={14}>
                                     <Form.Item
                                       label={t('addProgramme:otherCategory')}
@@ -726,20 +787,22 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 />
                               </Form.Item>
 
-                              <Form.Item
-                                label={t('addProgramme:projectCapacity')}
-                                name="projectCapacity"
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: `${t('addProgramme:projectCapacity')} ${t(
-                                      'isRequired'
-                                    )}`,
-                                  },
-                                ]}
-                              >
-                                <Input size="large" />
-                              </Form.Item>
+                              {projectCategory === PROJECT_CATEGORIES.renewableEnergy && (
+                                <Form.Item
+                                  label={t('addProgramme:projectCapacity')}
+                                  name="projectCapacity"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: `${t('addProgramme:projectCapacity')} ${t(
+                                        'isRequired'
+                                      )}`,
+                                    },
+                                  ]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              )}
 
                               <Form.Item
                                 label={t('addProgramme:briefProjectDescription')}
@@ -764,7 +827,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
                               <Form.Item
                                 label={t('addProgramme:documentUpload')}
-                                name="document"
+                                name="optionalDocuments"
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
                                 required={false}
