@@ -98,7 +98,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   };
 
   useEffect(() => {
-    console.log('-------project locations--------', projectLocations);
     setProjectLocationMapCenter(
       projectLocations && projectLocations?.length > 0
         ? getCenter(projectLocations[0])
