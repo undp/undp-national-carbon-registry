@@ -31,6 +31,7 @@ import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { CreditAuditLogViewEntity } from "../entities/creditAuditLog.view.entity";
+import { ProgrammeSl } from "../entities/programmeSl.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -71,10 +72,7 @@ export class CaslAbilityFactory {
           cannot(Action.Delete, Company, { companyRole: { $eq: user.companyRole } });
           cannot(Action.Delete, Company, { companyId: { $eq: user.companyId } });
         }
-      } else if (
-        user.role == Role.Admin &&
-        user.companyRole != CompanyRole.GOVERNMENT
-      ) {
+      } else if (user.role == Role.Admin && user.companyRole != CompanyRole.GOVERNMENT) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
         can(Action.Read, Company);
         can(Action.Update, Company, { companyId: { $eq: user.companyId } });
@@ -89,15 +87,14 @@ export class CaslAbilityFactory {
             can([Action.Delete], Company);
           }
         } else {
-          if(user.companyRole == CompanyRole.MINISTRY) {
+          if (user.companyRole == CompanyRole.MINISTRY) {
             can(Action.Read, User);
             if (user.role === Role.Manager) {
               can([Action.Delete], Company);
               cannot(Action.Delete, Company, { companyRole: { $eq: user.companyRole } });
               cannot(Action.Delete, Company, { companyId: { $eq: user.companyId } });
             }
-          } 
-          else {
+          } else {
             can(Action.Read, User, { companyId: { $eq: user.companyId } });
           }
         }
@@ -109,12 +106,9 @@ export class CaslAbilityFactory {
       can(Action.Read, Company);
       can(Action.Update, User, { id: { $eq: user.id } });
       can(Action.Delete, User, { id: { $eq: user.id } });
-      cannot(
-        Action.Update,
-        User,
-        ["role", "apiKey", "password", "companyRole", "email"],
-        { id: { $eq: user.id } }
-      );
+      cannot(Action.Update, User, ["role", "apiKey", "password", "companyRole", "email"], {
+        id: { $eq: user.id },
+      });
 
       if (user.companyRole == CompanyRole.GOVERNMENT) {
         if (user.role != Role.ViewOnly) {
@@ -143,11 +137,8 @@ export class CaslAbilityFactory {
           can(Action.Read, ProgrammeTransfer);
         }
       }
-      
-      if (
-        user.role != Role.ViewOnly &&
-        user.companyRole != CompanyRole.PROGRAMME_DEVELOPER
-      ) {
+
+      if (user.role != Role.ViewOnly && user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
         can(Action.Manage, ProgrammeCertify);
       }
 
@@ -253,7 +244,7 @@ export class CaslAbilityFactory {
       cannot([Action.Delete], Company, {
         companyRole: { $eq: CompanyRole.GOVERNMENT },
       });
-     
+
       cannot([Action.Delete], Company, {
         companyRole: { $eq: CompanyRole.MINISTRY },
       });
@@ -275,7 +266,11 @@ export class CaslAbilityFactory {
         cannot(Action.Update, Company);
       }
     }
-    if (user.companyRole == CompanyRole.GOVERNMENT || user.companyRole == CompanyRole.CERTIFIER || user.companyRole == CompanyRole.MINISTRY) {
+    if (
+      user.companyRole == CompanyRole.GOVERNMENT ||
+      user.companyRole == CompanyRole.CERTIFIER ||
+      user.companyRole == CompanyRole.MINISTRY
+    ) {
       can([Action.Read], ProgrammeDocument);
     }
 
@@ -291,29 +286,39 @@ export class CaslAbilityFactory {
       can(Action.Read, Projection);
     }
 
-		if (
-			(user.role == Role.Root || user.role == Role.Admin) &&
-			user.companyRole === CompanyRole.GOVERNMENT
-		) {
-			can(Action.Read, CreditAuditLog);
-			can(Action.Read, CreditAuditLogViewEntity);
-		} else {
-			cannot(Action.Read, CreditAuditLog);
-			cannot(Action.Read, CreditAuditLogViewEntity);
-		}
+    if (
+      (user.role == Role.Root || user.role == Role.Admin) &&
+      user.companyRole === CompanyRole.GOVERNMENT
+    ) {
+      can(Action.Read, CreditAuditLog);
+      can(Action.Read, CreditAuditLogViewEntity);
+    } else {
+      cannot(Action.Read, CreditAuditLog);
+      cannot(Action.Read, CreditAuditLogViewEntity);
+    }
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      can(Action.Read, ProgrammeSl);
+      if (user.role == Role.Admin || user.role == Role.Manager) {
+        can(Action.Create, ProgrammeSl);
+      }
+    }
+
+    if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
+      can(Action.Read, ProgrammeSl);
+    }
 
     if (user.companyRole === CompanyRole.CLIMATE_FUND) {
       can(Action.Read, User);
+      can(Action.Read, ProgrammeSl);
 
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
       }
     }
 
-    
     return build({
-      detectSubjectType: (item) =>
-        item.constructor as ExtractSubjectType<Subjects>,
+      detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
     });
   }
 }
