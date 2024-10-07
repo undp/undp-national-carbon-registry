@@ -1,5 +1,4 @@
 import { Logger, Module } from "@nestjs/common";
-import { ProgrammeService } from "./programme.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { ProgrammeTransferViewEntityQuery } from "../entities/programmeTransfer.view.entity";
@@ -15,43 +14,15 @@ import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { CaslModule } from "../casl/casl.module";
-import { ProgrammeDocument } from "../entities/programme.document";
-import { NDCActionViewEntity } from "../entities/ndc.view.entity";
-import { Investment } from "../entities/investment.entity";
-import { InvestmentView } from "../entities/investment.view.entity";
-import { ProgrammeDocumentViewEntity } from "../entities/document.view.entity";
-import { NDCAction } from "../entities/ndc.action.entity";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
-import { NdcDetailsPeriod } from "../entities/ndc.details.period.entity";
-import { NdcDetailsAction } from "../entities/ndc.details.action.entity";
-import { EventLog } from "../entities/event.log.entity";
-import { Region } from "../entities/region.entity";
-import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { ProgrammeSlService } from "./programme-sl.service";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([
-      Programme,
-      ProgrammeTransfer,
-      ConstantEntity,
-      Company,
-      ProgrammeQueryEntity,
-      ProgrammeTransferViewEntityQuery,
-      NDCAction,
-      ProgrammeDocument,
-      NDCActionViewEntity,
-      Investment,
-      InvestmentView,
-      ProgrammeDocumentViewEntity,
-      NdcDetailsPeriod,
-      NdcDetailsAction,
-      EventLog,
-      Region,
-      CreditAuditLog,
-    ]),
+    TypeOrmModule.forFeature([ProgrammeSl]),
     UtilModule,
     CompanyModule,
     UserModule,
@@ -60,7 +31,7 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
     AsyncOperationsModule,
     FileHandlerModule,
   ],
-  providers: [Logger, ProgrammeService],
-  exports: [ProgrammeService],
+  providers: [Logger, ProgrammeSlService],
+  exports: [ProgrammeSlService],
 })
-export class ProgrammeModule {}
+export class ProgrammeSlModule {}

@@ -33,7 +33,9 @@ export const handler: Handler = async (event) => {
   }
 
   function mapEnvironmentToEnum<T>(envValue: string, targetEnum: T): T[keyof T] | undefined {
-    const enumValues = Object.values(targetEnum).filter((value) => typeof value === 'string') as string[];
+    const enumValues = Object.values(targetEnum).filter(
+      (value) => typeof value === "string"
+    ) as string[];
     if (enumValues.includes(envValue)) {
       return envValue as T[keyof T];
     }
@@ -46,7 +48,6 @@ export const handler: Handler = async (event) => {
   const userService = userApp.get(UserService);
 
   if (event.type === "IMPORT_USERS" && event.body) {
-
     const users = event.body.split("\n");
 
     let c = 0;
@@ -59,7 +60,7 @@ export const handler: Handler = async (event) => {
       if (fields.length < 7) {
         continue;
       }
-      fields = fields.map(f => f.trim())
+      fields = fields.map((f) => f.trim());
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
       const cr =
         fields[4] == "Government"
@@ -68,13 +69,9 @@ export const handler: Handler = async (event) => {
           ? CompanyRole.CERTIFIER
           : fields[4] == "API"
           ? CompanyRole.API
-          :CompanyRole.PROGRAMME_DEVELOPER;
+          : CompanyRole.PROGRAMME_DEVELOPER;
       const ur =
-        fields[5] == "admin"
-          ? Role.Admin
-          : fields[5] == "Manager"
-          ? Role.Manager
-          : Role.ViewOnly;
+        fields[5] == "admin" ? Role.Admin : fields[5] == "Manager" ? Role.Manager : Role.ViewOnly;
 
       try {
         await userService.createUserWithPassword(
@@ -85,23 +82,19 @@ export const handler: Handler = async (event) => {
           fields[1],
           ur,
           fields[2],
-          (cr === CompanyRole.API && fields.length > 7) ? fields[7] : undefined
+          cr === CompanyRole.API && fields.length > 7 ? fields[7] : undefined
         );
       } catch (e) {
-        console.log('Fail to create user', fields[1], e)
+        console.log("Fail to create user", fields[1], e);
       }
-     
     }
     return;
   }
 
   if (event.type === "IMPORT_ORG" && event.body) {
-    const companyApp = await NestFactory.createApplicationContext(
-      CompanyModule,
-      {
-        logger: getLogger(CompanyModule),
-      }
-    );
+    const companyApp = await NestFactory.createApplicationContext(CompanyModule, {
+      logger: getLogger(CompanyModule),
+    });
     const companyService = companyApp.get(CompanyService);
     const configService = companyApp.get(ConfigService);
 
@@ -117,9 +110,10 @@ export const handler: Handler = async (event) => {
       if (fields.length < 5) {
         continue;
       }
-      fields = fields.map(f => f.trim())
+      fields = fields.map((f) => f.trim());
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
-      const cr = fields[4] == "Certifier"
+      const cr =
+        fields[4] == "Certifier"
           ? CompanyRole.CERTIFIER
           : fields[4] == "API"
           ? CompanyRole.API
@@ -127,28 +121,27 @@ export const handler: Handler = async (event) => {
 
       try {
         const org = await companyService.create({
-              taxId: fields[3],
-              companyId: undefined,
-              paymentId: undefined,
-              name: fields[0],
-              email: fields[1],
-              phoneNo: fields[2],
-              nameOfMinister:undefined,
-              sectoralScope:undefined,
-              ministry:undefined,
-              govDep:undefined,
-              website: undefined,
-              address: configService.get("systemCountryName"),
-              logo: undefined,
-              country: configService.get("systemCountry"),
-              companyRole: cr,
-              createdTime: undefined,
-              regions: [],
-              state: undefined //double check this
-            });
-
+          taxId: fields[3],
+          companyId: undefined,
+          paymentId: undefined,
+          name: fields[0],
+          email: fields[1],
+          phoneNo: fields[2],
+          nameOfMinister: undefined,
+          sectoralScope: undefined,
+          ministry: undefined,
+          govDep: undefined,
+          website: undefined,
+          address: configService.get("systemCountryName"),
+          logo: undefined,
+          country: configService.get("systemCountry"),
+          companyRole: cr,
+          createdTime: undefined,
+          regions: [],
+          state: undefined, //double check this
+        });
       } catch (e) {
-        console.log('Fail to create company', fields[1])
+        console.log("Fail to create company", fields[1]);
       }
     }
     return;
@@ -174,6 +167,9 @@ export const handler: Handler = async (event) => {
   try {
     const ledgerModule = app.get(LedgerDBInterface);
 
+    await ledgerModule.createTable("programmesl");
+    await ledgerModule.createIndex("txId", "programmesl");
+
     await ledgerModule.createTable("company");
     await ledgerModule.createIndex("txId", "company");
 
@@ -187,7 +183,6 @@ export const handler: Handler = async (event) => {
     await ledgerModule.insertRecord(creditOverall, "overall");
     await ledgerModule.createTable();
     await ledgerModule.createIndex("programmeId");
-
   } catch (e) {
     console.log("QLDB table does not create", e);
   }
@@ -198,7 +193,7 @@ export const handler: Handler = async (event) => {
     company.name = event["name"];
     company.logo = event["logoBase64"];
     company.companyRole = CompanyRole.GOVERNMENT;
-    company.taxId = `00000${event["systemCountryCode"]}`
+    company.taxId = `00000${event["systemCountryCode"]}`;
     company.govDep = GovDepartment[event["Department"]];
     company.ministry = mapEnvironmentToEnum(event["Ministry"], Ministry);
 
@@ -220,7 +215,7 @@ export const handler: Handler = async (event) => {
     climateFundOrg.name = event["climateFundName"];
     climateFundOrg.logo = event["logoBase64"];
     climateFundOrg.companyRole = CompanyRole.CLIMATE_FUND;
-    climateFundOrg.taxId = `00001${event["systemCountryCode"]}`
+    climateFundOrg.taxId = `00001${event["systemCountryCode"]}`;
 
     const cfUser = new UserDto();
     cfUser.email = event["cfAdminEmail"];
@@ -240,7 +235,7 @@ export const handler: Handler = async (event) => {
     exComOrg.name = event["exComName"];
     exComOrg.logo = event["logoBase64"];
     exComOrg.companyRole = CompanyRole.EXECUTIVE_COMMITTEE;
-    exComOrg.taxId = `00002${event["systemCountryCode"]}`
+    exComOrg.taxId = `00002${event["systemCountryCode"]}`;
 
     const exComUser = new UserDto();
     exComUser.email = event["exComAdminEmail"];
@@ -269,13 +264,10 @@ export const handler: Handler = async (event) => {
     }
   });
 
-  const locationApp = await NestFactory.createApplicationContext(
-    LocationModule,
-    {
-      logger: getLogger(UserModule),
-    }
-  );
+  const locationApp = await NestFactory.createApplicationContext(LocationModule, {
+    logger: getLogger(UserModule),
+  });
   const locationInterface = locationApp.get(LocationInterface);
-  const regionRawData = fs.readFileSync('regions.csv', 'utf8');
+  const regionRawData = fs.readFileSync("regions.csv", "utf8");
   await locationInterface.init(regionRawData);
 };
