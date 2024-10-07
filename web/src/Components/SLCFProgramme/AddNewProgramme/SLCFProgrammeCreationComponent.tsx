@@ -201,7 +201,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     try {
       const { data } = await post('national/location/province');
       const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
-      console.log('-------res----------', data, tempProvinces);
       setProvinces(tempProvinces);
     } catch (error) {
       console.log(error);
@@ -210,7 +209,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   const getDistricts = async (provinceName: string) => {
     try {
-      console.log('--getting data value dis');
       const { data } = await post('national/location/district', {
         filterAnd: [
           {
@@ -222,7 +220,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       });
       const tempDistricts = data.map((districtData: any) => districtData.districtName);
       setDistricts(tempDistricts);
-      console.log('--------- value district res--------', data);
     } catch (error) {
       console.log(error);
     }
@@ -273,7 +270,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   }, []);
 
   const onProvinceSelect = async (value: any) => {
-    console.log('------value dis------', value);
     getDistricts(value);
     try {
     } catch (error) {}
@@ -288,7 +284,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   // };
 
   const onGeographyOfProjectSelect = (value: string) => {
-    console.log('------value geography-----', value, PROJECT_GEOGRAPHY.multipleLocations);
     if (value === 'MULTIPLE') {
       setIsMultipleLocations(true);
     } else {
@@ -297,7 +292,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   };
 
   const onProjectCategorySelect = (value: string) => {
-    console.log('------------category-----------', value);
     setProjectCategory(value);
   };
 
@@ -309,10 +303,8 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   };
 
   const t = translator.t;
-  console.log('-------form value---------', form.getFieldsValue());
 
   const submitForm = async (values: any) => {
-    console.log('---------values---------', values);
     const base64Docs: string[] = [];
 
     if (values?.optionalDocuments.length > 0) {
@@ -355,7 +347,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
     try {
       const res = await post('national/programmeSl/create', body);
-      console.log(res);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -366,7 +357,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
         navigate('/programmeManagementSLCF/viewAll');
       }
     } catch (error: any) {
-      console.log(error);
       if (error && error.errors && error.errors.length > 0) {
         error.errors.forEach((err: any) => {
           Object.keys(err).forEach((field) => {
@@ -389,7 +379,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       }
     }
 
-    console.log('body', body);
   };
 
   return (
