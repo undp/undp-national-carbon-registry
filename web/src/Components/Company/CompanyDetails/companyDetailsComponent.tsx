@@ -1,7 +1,5 @@
-import { BankOutlined, UserOutlined } from '@ant-design/icons';
+import { BankOutlined } from '@ant-design/icons';
 import { Col, Card, Skeleton, Row } from 'antd';
-import React from 'react';
-
 import './companyDetailsComponent.scss';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { CarbonSystemType } from '../../../Definitions/Enums/carbonSystemType.enum';
@@ -135,6 +133,14 @@ export const CompanyDetailsComponent = (props: any) => {
           </Row>
           <Row className="field">
             <Col span={12} className="field-key">
+              {t('companyDetails:faxNo')}
+            </Col>
+            <Col span={12} className="field-value">
+              {companyDetails.faxNo ? companyDetails.faxNo : '-'}
+            </Col>
+          </Row>
+          <Row className="field">
+            <Col span={12} className="field-key">
               {t('companyDetails:website')}
             </Col>
             <Col span={12} className="field-value ellipsis-overflow">
@@ -158,10 +164,10 @@ export const CompanyDetailsComponent = (props: any) => {
           {regionField && (
             <Row className="field">
               <Col span={12} className="field-key">
-                {t('companyDetails:region')}
+                {t('companyDetails:province')}
               </Col>
               <Col span={12} className="field-value">
-                {companyDetails.regions ? companyDetails.regions.join(', ') : '-'}
+                {companyDetails.provinces ? companyDetails.provinces.join(', ') : '-'}
               </Col>
             </Row>
           )}

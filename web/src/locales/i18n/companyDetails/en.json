@@ -17,5 +17,7 @@
     "nationalSopValue": "National Share of Proceeds",
     "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
     "govDep": "Department",
-    "ministry": "Ministry"
+    "ministry": "Ministry",
+    "faxNo": "Fax",
+    "province": "Province"
 }

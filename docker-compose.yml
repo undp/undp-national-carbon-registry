@@ -38,7 +38,7 @@ services:
       exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
       Ministery: ''
       Department : ''
-      systemCountryCode: "SL"
+      systemCountryCode: "LK"
       systemCountryName: "Sri Lanka"
       systemContinentName: "Sri Lanka"
       name: "Antactic Region"
@@ -48,7 +48,7 @@ services:
       IS_EMAIL_DISABLED: "true"
       DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
-      LOCATION_SERVICE: OPENSTREET
+      LOCATION_SERVICE: FILE
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"

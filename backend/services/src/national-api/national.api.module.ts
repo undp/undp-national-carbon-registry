@@ -18,6 +18,8 @@ import { UtilModule } from "src/util/util.module";
 import configuration from "src/configuration";
 import { ProgrammeSlModule } from "src/programme-sl/programme-sl.module";
 import { ProgrammeSlController } from "./programmeSl.controller";
+import { LocationModule } from "../location/location.module";
+import { LocationController } from "./location.controller";
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { ProgrammeSlController } from "./programmeSl.controller";
     ProgrammeModule,
     CompanyModule,
     UtilModule,
+    LocationModule,
     ProgrammeSlModule,
   ],
   controllers: [
@@ -45,6 +48,7 @@ import { ProgrammeSlController } from "./programmeSl.controller";
     CompanyController,
     ProgrammeController,
     SettingsController,
+    LocationController,
     ProgrammeSlController,
   ],
   providers: [NationalAPIService, Logger],

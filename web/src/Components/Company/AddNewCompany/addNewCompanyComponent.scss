@@ -120,6 +120,40 @@
               color: $gov-color;
             }
           }
+          .climate-fund-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $cf-color !important;
+              border-color: $cf-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $cf-color;
+            }
+          }
+          .executive-committee-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $ex-color !important;
+              border-color: $ex-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $ex-color;
+            }
+          }
           .observer-radio-container {
             width: 25%;
             .ant-radio-button-wrapper-checked:not(

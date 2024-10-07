@@ -29,8 +29,8 @@ import { NDCActionViewEntity } from "../entities/ndc.view.entity";
 import { ProgrammeDocument } from "../entities/programme.document";
 import { Emission } from "../entities/emission.entity";
 import { Projection } from "../entities/projection.entity";
-import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
-import { CreditAuditLogViewEntity } from "src/entities/creditAuditLog.view.entity";
+import { CreditAuditLog } from "../entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "../entities/creditAuditLog.view.entity";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
@@ -245,6 +245,18 @@ export class CaslAbilityFactory {
         companyRole: { $eq: CompanyRole.GOVERNMENT },
       });
 
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.MINISTRY },
+      });
+
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.CLIMATE_FUND },
+      });
+
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE },
+      });
+
       if (user.companyState === 0) {
         cannot(Action.Create, "all");
         cannot(Action.Delete, Programme);
@@ -289,6 +301,14 @@ export class CaslAbilityFactory {
       can(Action.Read, ProgrammeSl);
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
+      }
+    }
+
+    if (user.companyRole === CompanyRole.CLIMATE_FUND) {
+      can(Action.Read, User);
+
+      if (user.role == Role.Admin) {
+        can(Action.Create, Company);
       }
     }
 
