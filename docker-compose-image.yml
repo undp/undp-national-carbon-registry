@@ -35,17 +35,21 @@ services:
       DB_PASSWORD: "<ANY PASSWORD>"
       RUN_MODULE: national-api
       rootEmail: <ROOT EMAIL>
-      systemCountryCode: "NG"
-      systemCountryName: "CountryX"
-      systemContinentName: "CountryX"
+      cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
+      exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
+      systemCountryCode: "LK"
+      systemCountryName: "Sri Lanka"
+      systemContinentName: "Sri Lanka"
       name: "Antactic Region"
+      climateFundName: "Sri Lanka Climate Fund"
+      exComName: "Executive Committee"
       logoBase64: "sss"
       IS_EMAIL_DISABLED: "true"
-      Minister: ''
+      Ministry: ''
       Department : ''
       DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
-      LOCATION_SERVICE: OPENSTREET
+      LOCATION_SERVICE: FILE
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"

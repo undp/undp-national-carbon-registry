@@ -3,10 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'CARBON-Sprint-*'
       - 'hotfix-*'
-      - 'lib-removed'
       - 'CARBON-*'
+      - 'SLCR-*'
     paths:
       - backend/**
       - web/**
