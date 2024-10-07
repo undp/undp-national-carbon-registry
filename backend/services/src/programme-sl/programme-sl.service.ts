@@ -53,64 +53,6 @@ export class ProgrammeSlService {
     private dataExportService: DataExportService
   ) {}
 
-  private fileExtensionMap = new Map([
-    ["pdf", "pdf"],
-    ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],
-    ["vnd.ms-excel", "xls"],
-    ["vnd.ms-powerpoint", "ppt"],
-    ["vnd.openxmlformats-officedocument.presentationml.presentation", "pptx"],
-    ["msword", "doc"],
-    ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
-    ["csv", "csv"],
-    ["png", "png"],
-    ["jpeg", "jpg"],
-  ]);
-
-  private toSlProgramme(programmeSlDto: ProgrammeSlDto): ProgrammeSl {
-    const data = instanceToPlain(programmeSlDto);
-    return plainToClass(ProgrammeSl, data);
-  }
-
-  getFileExtension = (file: string): string => {
-    let fileType = file.split(";")[0].split("/")[1];
-    fileType = this.fileExtensionMap.get(fileType);
-    return fileType;
-  };
-
-  async uploadDocument(type: DocType, id: string, data: string) {
-    let filetype;
-    try {
-      filetype = this.getFileExtension(data);
-      data = data.split(",")[1];
-      if (filetype == undefined) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    } catch (Exception: any) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    const response: any = await this.fileHandler.uploadFile(
-      `documents/${this.helperService.enumToString(DocType, type)}${
-        id ? "_" + id : ""
-      }.${filetype}`,
-      data
-    );
-    if (response) {
-      return response;
-    } else {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("programme.docUploadFailed", []),
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
     if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
@@ -161,5 +103,63 @@ export class ProgrammeSlService {
     savedProgramme = await this.programmeLedger.createProgrammeSl(programme);
 
     return savedProgramme;
+  }
+
+  private fileExtensionMap = new Map([
+    ["pdf", "pdf"],
+    ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],
+    ["vnd.ms-excel", "xls"],
+    ["vnd.ms-powerpoint", "ppt"],
+    ["vnd.openxmlformats-officedocument.presentationml.presentation", "pptx"],
+    ["msword", "doc"],
+    ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
+    ["csv", "csv"],
+    ["png", "png"],
+    ["jpeg", "jpg"],
+  ]);
+
+  private toSlProgramme(programmeSlDto: ProgrammeSlDto): ProgrammeSl {
+    const data = instanceToPlain(programmeSlDto);
+    return plainToClass(ProgrammeSl, data);
+  }
+
+  private getFileExtension = (file: string): string => {
+    let fileType = file.split(";")[0].split("/")[1];
+    fileType = this.fileExtensionMap.get(fileType);
+    return fileType;
+  };
+
+  private async uploadDocument(type: DocType, id: string, data: string) {
+    let filetype;
+    try {
+      filetype = this.getFileExtension(data);
+      data = data.split(",")[1];
+      if (filetype == undefined) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    } catch (Exception: any) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    const response: any = await this.fileHandler.uploadFile(
+      `documents/${this.helperService.enumToString(DocType, type)}${
+        id ? "_" + id : ""
+      }.${filetype}`,
+      data
+    );
+    if (response) {
+      return response;
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.docUploadFailed", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }
