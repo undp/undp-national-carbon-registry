@@ -378,7 +378,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
         });
       }
     }
-
   };
 
   return (
