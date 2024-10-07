@@ -60,6 +60,14 @@ export class OrganisationDto {
   @IsOptional()
   regions: string[];
   
+  @ApiPropertyOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  @MaxLength(100, { each: true })
+  @IsNotEmpty({ each: true })
+  @IsOptional()
+  provinces: string[];
+  
   @ValidateIf(
     (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )

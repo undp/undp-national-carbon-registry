@@ -108,6 +108,14 @@ export class OrganisationUpdateDto {
   @IsOptional()
   regions: string[];
 
+  @ApiPropertyOptional()
+  @IsArray()
+  @ArrayMinSize(1)
+  @MaxLength(100, { each: true })
+  @IsNotEmpty({ each: true })
+  @IsOptional()
+  provinces: string[];
+
   geographicalLocationCordintes?: any
 
   @ValidateIf(

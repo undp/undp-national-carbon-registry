@@ -3,10 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'CARBON-Sprint-*'
       - 'hotfix-*'
-      - 'lib-removed'
       - 'CARBON-*'
+      - 'SLCR-*'
     paths:
       - web/**
       - backend/**
@@ -41,7 +40,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-web
+          ECR_REPOSITORY: carbon-web-sl
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
         run: |
           # Build a docker container and push it to ECR 

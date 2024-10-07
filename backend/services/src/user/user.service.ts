@@ -415,6 +415,7 @@ export class UserService {
           organisationDto.logo = company.logo;
           organisationDto.companyRole = company.companyRole;
           organisationDto.regions = company.regions;
+          organisationDto.provinces = company.provinces;
           if (company.website && company.website.trim().length > 0) {
             organisationDto.website = company.website;
           }
@@ -571,34 +572,35 @@ export class UserService {
         );
       }
     }
-    if (company.companyRole == CompanyRole.CLIMATE_FUND) {
-      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
-        company.country,
-        CompanyRole.CLIMATE_FUND
-      );
-      if (companyCF) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.cfUserAlreadyExist", [company.country]),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
-
-    if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
-      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
-        company.country,
-        CompanyRole.EXECUTIVE_COMMITTEE
-      );
-      if (companyCF) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.exComUserAlreadyExist", [
-            company.country,
-          ]),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
+    
     if (company) {
+      if (company.companyRole == CompanyRole.CLIMATE_FUND) {
+        const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+          company.country,
+          CompanyRole.CLIMATE_FUND
+        );
+        if (companyCF) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("user.cfUserAlreadyExist", [company.country]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+  
+      if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
+        const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+          company.country,
+          CompanyRole.EXECUTIVE_COMMITTEE
+        );
+        if (companyCF) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("user.exComUserAlreadyExist", [
+              company.country,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
       if (
         company.companyRole == CompanyRole.MINISTRY ||
         company.companyRole == CompanyRole.GOVERNMENT

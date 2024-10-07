@@ -9,6 +9,7 @@ import {
   IsNumber,
   IsOptional,
   IsPositive,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { FilterEntry } from "./filter.entry";
@@ -16,12 +17,14 @@ import { SortEntry } from "./sort.entry";
 import { FilterBy } from "./filter.by";
 
 export class QueryDto {
+  @ValidateIf(o => o.page)
   @IsPositive()
   @IsInt()
   @Type(() => Number)
   @ApiProperty()
   page: number;
 
+  @ValidateIf(o => o.size)
   @IsPositive()
   @IsInt()
   @Type(() => Number)

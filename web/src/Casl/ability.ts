@@ -162,6 +162,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.MINISTRY } });
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.CLIMATE_FUND } });
+    cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE } });
 
     if (user.role === Role.Admin || user.role === Role.Root) {
       can(Action.Create, User);
@@ -186,6 +188,14 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Read, CreditAuditLog);
     } else {
       cannot(Action.Read, CreditAuditLog);
+    }
+
+    if (user.companyRole === CompanyRole.CLIMATE_FUND) {
+      can(Action.Read, User);
+
+      if (user.role === Role.Admin) {
+        can(Action.Create, Company);
+      }
     }
   }
 

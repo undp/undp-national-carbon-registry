@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import { LocationInterface } from "./location.interface";
+import { LocationDataType } from "src/enum/locationDataType.enum";
 
 @Injectable()
 export class MapboxLocationService implements LocationInterface {
@@ -11,7 +12,7 @@ export class MapboxLocationService implements LocationInterface {
     private configService: ConfigService
   ) {}
   
-  public init(data: any): Promise<void> {
+  public init(data: any, locationDataType: LocationDataType): Promise<void> {
     return null;
   }
 
