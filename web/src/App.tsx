@@ -42,6 +42,7 @@ import { Loading } from './Components/Loading/loading';
 import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
 import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
 import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
+import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
 
 const App = () => {
   const ability = defineAbility();
@@ -105,6 +106,7 @@ const App = () => {
                     <Route path="view/:id" element={<ProgrammeView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
+                    <Route path="uploadMonitoringReport" element={<SLCFMonitoringReport />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
