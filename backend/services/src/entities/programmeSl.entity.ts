@@ -10,7 +10,7 @@ import { MitigationProperties } from "../dto/mitigation.properties";
 import { ProjectGeography } from "../enum/projectGeography.enum";
 import { ProjectCategory } from "../enum/projectCategory.enum";
 import { ProjectStatus } from "../enum/projectStatus.enum";
-import { PurposeOfCreditDevelopment } from "../enum/purposeOfCreditDevelopment.enum";
+import { CreditType } from "../enum/creditType.enum";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 
 @Entity()
@@ -90,10 +90,10 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({
     type: "enum",
-    enum: PurposeOfCreditDevelopment,
+    enum: CreditType,
     array: false,
   })
-  purposeOfCreditDevelopment: PurposeOfCreditDevelopment;
+  purposeOfCreditDevelopment: CreditType;
 
   @Column({ type: "bigint" })
   startDate: number;

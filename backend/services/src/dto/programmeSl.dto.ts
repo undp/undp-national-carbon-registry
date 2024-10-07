@@ -30,7 +30,7 @@ import { ProjectCategory } from "../enum/projectCategory.enum";
 import { ProjectGeography } from "src/enum/projectGeography.enum";
 import { ProjectStatus } from "src/enum/projectStatus.enum";
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
-import { PurposeOfCreditDevelopment } from "src/enum/purposeOfCreditDevelopment.enum";
+import { CreditType } from "../enum/creditType.enum";
 
 export class ProgrammeSlDto {
   @ApiProperty()
@@ -134,14 +134,14 @@ export class ProgrammeSlDto {
   })
   projectStatus: ProjectStatus;
 
-  @ApiProperty({ enum: PurposeOfCreditDevelopment })
+  @ApiProperty({ enum: CreditType })
   @IsNotEmpty()
-  @IsEnum(PurposeOfCreditDevelopment, {
+  @IsEnum(CreditType, {
     message:
       "Invalid purpose of credit development. Supported following purpose of credit development:" +
-      Object.values(PurposeOfCreditDevelopment),
+      Object.values(CreditType),
   })
-  purposeOfCreditDevelopment: PurposeOfCreditDevelopment;
+  purposeOfCreditDevelopment: CreditType;
 
   @ApiProperty()
   @IsNotEmpty()
