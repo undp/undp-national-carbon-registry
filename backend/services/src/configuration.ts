@@ -24,26 +24,26 @@ export default () => ({
     userSecret: process.env.USER_JWT_SECRET || "1324",
     refreshTokenSecret: process.env.REFRESH_TOKEN_JWT_SECRET || "9823",
     adminSecret: process.env.ADMIN_JWT_SECRET || "8654",
-    encodePassword: process.env.ENCODE_PASSWORD || false
+    encodePassword: process.env.ENCODE_PASSWORD || false,
   },
   ledger: {
     name: "carbon-registry-" + (process.env.NODE_ENV || "dev"),
     table: "programmes",
     overallTable: "overall",
     companyTable: "company",
+    programmeSlTable: "programmesl",
   },
   email: {
-    source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz", 
+    source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz",
     endpoint:
       process.env.SMTP_ENDPOINT ||
       "vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com",
     username: process.env.SMTP_USERNAME || "AKIAUMXKTXDJIOFY2QXL",
     password: process.env.SMTP_PASSWORD,
     disabled: process.env.IS_EMAIL_DISABLED === "true" ? true : false,
-    disableLowPriorityEmails:
-      process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
+    disableLowPriorityEmails: process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
     getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶",
-    adresss: process.env.HOST_ADDRESS || "Address <br>Region, Country Zipcode"
+    adresss: process.env.HOST_ADDRESS || "Address <br>Region, Country Zipcode",
   },
   s3CommonBucket: {
     name: process.env.S3_COMMON_BUCKET || "carbon-common-dev",
@@ -69,26 +69,29 @@ export default () => ({
     password: process.env.ITMO_PASSWORD,
     enable: process.env.ITMO_ENABLE === "true" ? true : false,
   },
-  CERTIFIER:{
-    image:process.env.CERTIFIER_IMAGE
+  CERTIFIER: {
+    image: process.env.CERTIFIER_IMAGE,
   },
   registry: {
     syncEnable: process.env.SYNC_ENABLE === "true" ? true : false,
-    endpoint: process.env.SYNC_ENDPOINT || 'https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev',
-    apiToken: process.env.SYNC_API_TOKEN
+    endpoint:
+      process.env.SYNC_ENDPOINT || "https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev",
+    apiToken: process.env.SYNC_API_TOKEN,
   },
   docGenerate: {
-    ministerName: process.env.MINISTER_NAME || 'Minister X',
-    ministerNameAndDesignation: process.env.MINISTER_NAME_AND_DESIGNATION || '\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism',
+    ministerName: process.env.MINISTER_NAME || "Minister X",
+    ministerNameAndDesignation:
+      process.env.MINISTER_NAME_AND_DESIGNATION ||
+      "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism",
     ministryName: "Ministry of Environment, Forestry & Tourism",
     countryCapital: process.env.COUNTRY_CAPITAL || "Capital X",
-    contactEmailForQuestions: process.env.CONTACT_EMAIL || "contactus@email.com"
+    contactEmailForQuestions: process.env.CONTACT_EMAIL || "contactus@email.com",
   },
   cadTrust: {
     enable: process.env.CADTRUST_ENABLE === "true" ? true : false,
-    endpoint: process.env.CADTRUST_ENDPOINT || "http://44.212.139.61:31310/"
+    endpoint: process.env.CADTRUST_ENDPOINT || "http://44.212.139.61:31310/",
   },
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",
-  environmentalManagementActHyperlink: process.env.ENVIRONMENTAL_MANAGEMENT_ACT_HYPERLINK  || "",
+  environmentalManagementActHyperlink: process.env.ENVIRONMENTAL_MANAGEMENT_ACT_HYPERLINK || "",
 });

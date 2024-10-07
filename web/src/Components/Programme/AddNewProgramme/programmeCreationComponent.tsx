@@ -106,7 +106,11 @@ export const ProgrammeCreationComponent = (props: any) => {
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
 
+<<<<<<< HEAD
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : '';
+=======
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
+>>>>>>> 372db4d9095dbf012dea8a54e60352131d15e523
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
