@@ -28,7 +28,7 @@ export abstract class LedgerDBInterface {
 
   abstract insertRecord(document: Record<string, any>, tableName?: string): Promise<void>;
 
-  abstract fetchRecords(where: Record<string, any>): Promise<dom.Value[]>;
+  abstract fetchRecords(where: Record<string, any>, tableName?: string): Promise<dom.Value[]>;
 
   abstract fetchHistory(where: Record<string, any>): Promise<dom.Value[]>;
 

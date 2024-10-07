@@ -98,8 +98,8 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ type: "bigint" })
   startDate: number;
 
-  @Column("bigint", { array: true })
-  companyId: number[];
+  @Column({ type: "bigint" })
+  companyId: number;
 
   @Column({
     type: "enum",

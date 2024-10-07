@@ -28,6 +28,7 @@ import { ProgrammeSlDto } from "../dto/programmeSl.dto";
 import { ProgrammeSl } from "src/entities/programmeSl.entity";
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { TxType } from "src/enum/txtype.enum";
+import { EmailTemplates } from "src/email-helper/email.template";
 @Injectable()
 export class ProgrammeSlService {
   constructor(
@@ -63,8 +64,6 @@ export class ProgrammeSlService {
     const programme: ProgrammeSl = this.toSlProgramme(programmeSlDto);
 
     const companyId = user.companyId;
-    const companyIds = [];
-    companyIds.push(companyId);
 
     const projectCompany = await this.companyService.findByCompanyId(companyId);
 
@@ -77,7 +76,7 @@ export class ProgrammeSlService {
 
     programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 3);
     programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
-    programme.companyId = companyIds;
+    programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;
     programme.txTime = new Date().getTime();
     programme.createdTime = programme.txTime;
@@ -98,9 +97,13 @@ export class ProgrammeSlService {
       programme.additionalDocuments = docUrls;
     }
 
-    let savedProgramme: any;
+    let savedProgramme = await this.programmeLedger.createProgrammeSl(programme);
 
-    savedProgramme = await this.programmeLedger.createProgrammeSl(programme);
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.PROGRAMME_SL_CREATE,
+      savedProgramme.programmeId,
+      companyId
+    );
 
     return savedProgramme;
   }

@@ -395,6 +395,21 @@ export class ProgrammeLedgerService {
     return p.length <= 0 ? null : p[0];
   }
 
+  public async getProgrammeSlById(programmeId: string): Promise<ProgrammeSl> {
+    const p = (
+      await this.ledger.fetchRecords(
+        {
+          programmeId: programmeId,
+        },
+        this.ledger.programmeSlTable
+      )
+    ).map((domValue) => {
+      let programme = plainToClass(ProgrammeSl, JSON.parse(JSON.stringify(domValue)));
+      return programme;
+    });
+    return p.length <= 0 ? null : p[0];
+  }
+
   public async getProgrammeHistory(programmeId: string): Promise<ProgrammeHistoryDto[]> {
     return (
       await this.ledger.fetchHistory({

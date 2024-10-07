@@ -143,6 +143,21 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  PROGRAMME_SL_CREATE: {
+    id: "PROGRAMME_SL_CREATE",
+    subject: "New Initial Notification Form Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new initial notification owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_AUTHORISATION: {
     id: "PROGRAMME_AUTHORISATION",
     subject: "Project Authorised",
