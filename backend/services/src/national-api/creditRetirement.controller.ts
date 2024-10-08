@@ -22,7 +22,7 @@ export class CreditRetirementSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Create, CreditRetirementSl, true))
   @Post("create")
-  async getLocationData(
+  async createCreditRetirementRequest(
     @Body() dto: CreditRetirementRequestSlDto,
     @Request() req
   ) {
