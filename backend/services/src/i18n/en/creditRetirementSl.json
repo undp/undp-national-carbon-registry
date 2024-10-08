@@ -1,0 +1,10 @@
+{
+    "cannotRetireForOthers": "Can only make retirement requests for own organisation",
+    "toCompanyIdRequired": "toCompanyId field is required",
+    "programmeNotExist": "Project does not exist with id {}",
+    "programmeNotInCreditIssuedState": "Project is not in credit issued state",
+    "creditTypeMismatch": "Credit type does not match the credit type of the project",
+    "insufficientCredit": "Insufficient project credits",
+    "companyDoesNotExist": "Organisation with id {} does not exist",
+    "insufficientCompanyCredit": "Insufficient organisation credits"
+}

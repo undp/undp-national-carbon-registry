@@ -67,6 +67,13 @@ export class Company implements EntitySubject {
   })
   secondaryAccountBalance: any;
 
+  @Column({
+    type: "jsonb",
+    array: false,
+    nullable: true,
+  })
+  slcfAccountBalance: any;
+
   @Column("bigint", { nullable: true })
   programmeCount: number;
 

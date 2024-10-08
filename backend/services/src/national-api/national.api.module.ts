@@ -8,18 +8,20 @@ import { UserController } from "./user.controller";
 import { AuthController } from "./auth.controller";
 import { ProgrammeController } from "./programme.controller";
 import { SettingsController } from "./settings.controller";
-import { AuthModule } from "src/auth/auth.module";
-import { CaslModule } from "src/casl/casl.module";
-import { CompanyModule } from "src/company/company.module";
-import { ProgrammeModule } from "src/programme/programme.module";
-import { TypeOrmConfigService } from "src/typeorm.config.service";
-import { UserModule } from "src/user/user.module";
-import { UtilModule } from "src/util/util.module";
-import configuration from "src/configuration";
-import { ProgrammeSlModule } from "src/programme-sl/programme-sl.module";
+import { AuthModule } from "../auth/auth.module";
+import { CaslModule } from "../casl/casl.module";
+import { CompanyModule } from "../company/company.module";
+import { ProgrammeModule } from "../programme/programme.module";
+import { TypeOrmConfigService } from "../typeorm.config.service";
+import { UserModule } from "../user/user.module";
+import { UtilModule } from "../util/util.module";
+import configuration from "../configuration";
+import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
 import { ProgrammeSlController } from "./programmeSl.controller";
 import { LocationModule } from "../location/location.module";
 import { LocationController } from "./location.controller";
+import { CreditRetirementSlController } from "./creditRetirement.controller";
+import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { LocationController } from "./location.controller";
     UtilModule,
     LocationModule,
     ProgrammeSlModule,
+    CreditRetirementSlModule
   ],
   controllers: [
     NationalAPIController,
@@ -50,6 +53,7 @@ import { LocationController } from "./location.controller";
     SettingsController,
     LocationController,
     ProgrammeSlController,
+    CreditRetirementSlController
   ],
   providers: [NationalAPIService, Logger],
 })

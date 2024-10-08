@@ -21,6 +21,9 @@ export class ProgrammeSl implements EntitySubject {
   @Column()
   title: string;
 
+  @Column({ nullable: true })
+  serialNo: string;
+
   @Column({
     type: "enum",
     enum: ProjectCategory,
@@ -94,6 +97,18 @@ export class ProgrammeSl implements EntitySubject {
     array: false,
   })
   purposeOfCreditDevelopment: CreditType;
+
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
+  creditBalance: number;
+
+  @Column("real", { nullable: true })
+  creditRetired: number;
+
+  @Column("real", { nullable: true })
+  creditFrozen: number;
+
+  @Column("real", { nullable: true })
+  creditTransferred: number;
 
   @Column({ type: "bigint" })
   startDate: number;
