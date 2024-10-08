@@ -6,5 +6,5 @@
     "creditTypeMismatch": "Credit type does not match the credit type of the project",
     "insufficientCredit": "Insufficient project credits",
     "companyDoesNotExist": "Organisation with id {} does not exist",
-    "insufficientCompanyCredit": "Insufficient organisation credits"
+    "insufficientCompanyCredit": "Organisation with id {} does not have sufficient {} credits"
 }
