@@ -43,7 +43,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    getItem(t('nav:slcfprogrammes'), 'programmeManagementslcf/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),

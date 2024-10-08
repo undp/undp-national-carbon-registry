@@ -99,8 +99,8 @@ const App = () => {
                     <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
                   </Route>
                   <Route
-                    path="/programmeManagementslcf"
-                    element={<CustomLayout selectedKey="programmeManagementslcf/viewAll" />}
+                    path="/programmeManagementSLCF"
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
                     <Route path="viewAll" element={<SLCFProgrammeManagement />} />
                     <Route path="view/:id" element={<ProgrammeView />} />

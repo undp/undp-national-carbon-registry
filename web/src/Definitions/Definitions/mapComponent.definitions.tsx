@@ -24,7 +24,7 @@ export interface MapComponentProps {
   center: number[];
   markers?: MarkerData[];
   zoom: number;
-  mapSource?: MapSourceData;
+  mapSource?: MapSourceData | MapSourceData[];
   onClick?: any;
   showPopupOnClick?: boolean;
   onMouseMove?: any;

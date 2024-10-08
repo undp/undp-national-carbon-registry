@@ -26,17 +26,16 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   public tableName: string;
   public overallTableName: string;
   public companyTableName: string;
+  public programmeSlTable: string;
   public ledgerName: string;
   private dbCon: Pool;
 
-  constructor(
-    private readonly logger: Logger,
-    private readonly configService: ConfigService
-  ) {
+  constructor(private readonly logger: Logger, private readonly configService: ConfigService) {
     this.ledgerName = configService.get<string>("ledger.name");
     this.tableName = configService.get<string>("ledger.table");
     this.overallTableName = configService.get<string>("ledger.overallTable");
     this.companyTableName = configService.get<string>("ledger.companyTable");
+    this.programmeSlTable = configService.get<string>("ledger.programmeSlTable");
 
     let dbc = this.configService.get<any>("database");
 
@@ -94,9 +93,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   }
 
   public async createTable(tableName?: string): Promise<void> {
-    const sql = `CREATE SEQUENCE ${
-      tableName ? tableName : this.tableName
-    }_hash_seq; 
+    const sql = `CREATE SEQUENCE ${tableName ? tableName : this.tableName}_hash_seq; 
         CREATE TABLE IF NOT EXISTS ${tableName ? tableName : this.tableName}
         (
             data jsonb NOT NULL,
@@ -109,18 +106,12 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     await await this.execute([{ sql }]);
   }
 
-  public async createIndex(
-    indexCol: string,
-    tableName?: string
-  ): Promise<void> {
+  public async createIndex(indexCol: string, tableName?: string): Promise<void> {
     return null;
     // await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
   }
 
-  public async insertRecord(
-    document: Record<string, any>,
-    tableName?: string
-  ): Promise<void> {
+  public async insertRecord(document: Record<string, any>, tableName?: string): Promise<void> {
     await this.execute([
       {
         sql: `INSERT INTO "${
@@ -139,40 +130,35 @@ export class PgSqlLedgerService implements LedgerDBInterface {
 
   private getUniqueIndex(tableName: string) {
     if (tableName === this.tableName) {
-      return "data->>'programmeId'"
-    }
-    else {
-      return "data->>'txId'"
+      return "data->>'programmeId'";
+    } else {
+      return "data->>'txId'";
     }
   }
 
-  public async fetchRecords(
-    where: Record<string, any>,
-    tableName?: string
-  ): Promise<dom.Value[]> {
+  public async fetchRecords(where: Record<string, any>, tableName?: string): Promise<dom.Value[]> {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
     // const fieldList = Object.keys(where)
     //   .map((k) => `data->>'${k}'`)
     //   .join(", ");
-    const t = tableName ? tableName : this.tableName
+    const t = tableName ? tableName : this.tableName;
     return (
       await this.execute([
         {
-          sql: `SELECT * from (SELECT DISTINCT ON (${this.getUniqueIndex(t)}) data FROM ${
+          sql: `SELECT * from (SELECT DISTINCT ON (${this.getUniqueIndex(
             t
-          }  order by ${this.getUniqueIndex(t)}, hash desc) x where ${whereClause}`,
+          )}) data FROM ${t}  order by ${this.getUniqueIndex(
+            t
+          )}, hash desc) x where ${whereClause}`,
           params: Object.values(where),
         },
       ])
     )[0]?.rows.map((e) => e.data);
   }
 
-  public async fetchHistory(
-    where: Record<string, any>,
-    tableName?: string
-  ): Promise<dom.Value[]> {
+  public async fetchHistory(where: Record<string, any>, tableName?: string): Promise<dom.Value[]> {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
@@ -203,20 +189,17 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     const table = tableName ? tableName : this.tableName;
     const getQueries = {};
     getQueries[table] = where;
-    const r = await this.getAndUpdateTx(
-      getQueries,
-      (results: Record<string, dom.Value[]>) => {
-        const resTable = results[table];
-        const insertMap = {};
-        for (const obj of resTable) {
-          for (const k in update) {
-            obj[k] = update[k];
-          }
-          insertMap[table] = obj;
+    const r = await this.getAndUpdateTx(getQueries, (results: Record<string, dom.Value[]>) => {
+      const resTable = results[table];
+      const insertMap = {};
+      for (const obj of resTable) {
+        for (const k in update) {
+          obj[k] = update[k];
         }
-        return [{}, {}, insertMap];
+        insertMap[table] = obj;
       }
-    );
+      return [{}, {}, insertMap];
+    });
 
     return r[table];
   }
@@ -230,7 +213,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       } else if (v instanceof ArrayLike) {
         list.push(v.value);
       } else if (v instanceof Array) {
-        list.push(...v)
+        list.push(...v);
       } else {
         list.push(v);
       }
@@ -264,10 +247,12 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                 k = k.replace("data.", "");
               }
               if (getQueries[t][k] instanceof Array) {
-                return `data->>'${k}' in (${getQueries[t][k].map((e) => {
-                  j += 1;
-                  return "$" + j;
-                }).join(', ')})`;
+                return `data->>'${k}' in (${getQueries[t][k]
+                  .map((e) => {
+                    j += 1;
+                    return "$" + j;
+                  })
+                  .join(", ")})`;
               } else if (getQueries[t][k] instanceof ArrayIn) {
                 // j += 1;
                 return `data @> '{"${k}": [${getQueries[t][k].value}]}'`;
@@ -288,12 +273,17 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           //   })
           //   .join(", ");
 
-          let sql = ''
+          let sql = "";
           if (isHistoryQuery) {
-            sql = `SELECT data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(table)}, hash desc`
+            sql = `SELECT data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(
+              table
+            )}, hash desc`;
           } else {
-            sql = `select * from (SELECT ${`DISTINCT ON (${this.getUniqueIndex(table)})`
-            } data FROM ${table} order by ${this.getUniqueIndex(table)}, hash desc) x where ${wc}`
+            sql = `select * from (SELECT ${`DISTINCT ON (${this.getUniqueIndex(
+              table
+            )})`} data FROM ${table} order by ${this.getUniqueIndex(
+              table
+            )}, hash desc) x where ${wc}`;
           }
           getTxElements[t] = {
             sql: sql,
@@ -319,10 +309,12 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             const wc = Object.keys(updateWhere[t])
               .map((k, i) => {
                 if (updateWhere[t][k] instanceof Array) {
-                  return `data->>'${k}' in (${updateWhere[t][k].map((e) => {
-                    j += 1;
-                    return "$" + j;
-                  }).join(', ')})`;
+                  return `data->>'${k}' in (${updateWhere[t][k]
+                    .map((e) => {
+                      j += 1;
+                      return "$" + j;
+                    })
+                    .join(", ")})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
                   // j += 1;
                   return `data @> '{"${k}": [${updateWhere[t][k].value}]}'`;
@@ -338,7 +330,11 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             //   .map((k) => `data->>'${k}'`)
             //   .join(", ");
             updateGetElements[t] = {
-              sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(tableName)}) data FROM ${tableName} order by ${this.getUniqueIndex(tableName)}, hash desc) x where ${wc}`,
+              sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(
+                tableName
+              )}) data FROM ${tableName} order by ${this.getUniqueIndex(
+                tableName
+              )}, hash desc) x where ${wc}`,
               params: this.getValuesList(updateWhere[t]),
             };
           }

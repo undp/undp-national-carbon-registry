@@ -1,6 +1,6 @@
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 import { SectoralScope } from "@undp/serial-number-gen";
-import { Entity, Column, PrimaryColumn } from "typeorm";
+import { Entity, Column, PrimaryColumn, BeforeInsert, BeforeUpdate } from "typeorm";
 import { ProgrammeProperties } from "../dto/programme.properties";
 import { Sector } from "../enum/sector.enum";
 import { TxType } from "../enum/txtype.enum";
@@ -10,7 +10,7 @@ import { MitigationProperties } from "../dto/mitigation.properties";
 import { ProjectGeography } from "../enum/projectGeography.enum";
 import { ProjectCategory } from "../enum/projectCategory.enum";
 import { ProjectStatus } from "../enum/projectStatus.enum";
-import { PurposeOfCreditDevelopment } from "../enum/purposeOfCreditDevelopment.enum";
+import { CreditType } from "../enum/creditType.enum";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 
 @Entity()
@@ -47,20 +47,20 @@ export class ProgrammeSl implements EntitySubject {
   community: string;
 
   @Column({
+    type: "jsonb",
+    array: false,
+  })
+  geographicalLocationCoordinates: [];
+
+  @Column({
     type: "enum",
     enum: ProjectGeography,
     array: false,
   })
   projectGeography: ProjectGeography;
 
-  @Column({
-    type: "jsonb",
-    array: true,
-  })
-  geographicalLocationCoordinates: [];
-
-  @Column({ nullable: true })
-  landExtent?: number;
+  @Column("bigint", { array: true, nullable: true })
+  landExtent?: number[];
 
   @Column({ nullable: true })
   proposedProjectCapacity?: number;
@@ -71,12 +71,8 @@ export class ProgrammeSl implements EntitySubject {
   @Column()
   projectDescription: string;
 
-  @Column({
-    type: "jsonb",
-    array: false,
-    nullable: true,
-  })
-  additionalDocuments?: [];
+  @Column("text", { array: true, nullable: true })
+  additionalDocuments?: string[];
 
   @Column({
     type: "enum",
@@ -94,16 +90,16 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({
     type: "enum",
-    enum: PurposeOfCreditDevelopment,
+    enum: CreditType,
     array: false,
   })
-  purposeOfCreditDevelopment: PurposeOfCreditDevelopment;
+  purposeOfCreditDevelopment: CreditType;
 
   @Column({ type: "bigint" })
   startDate: number;
 
-  @Column("bigint", { array: true })
-  companyId: number[];
+  @Column({ type: "bigint" })
+  companyId: number;
 
   @Column({
     type: "enum",
@@ -121,4 +117,14 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ type: "bigint" })
   updatedTime: number;
+
+  // @BeforeInsert()
+  // async createTime() {
+  //   this.createdTime = new Date().getTime();
+  // }
+
+  // @BeforeUpdate()
+  // async updateTime() {
+  //   this.updatedTime = new Date().getTime();
+  // }
 }

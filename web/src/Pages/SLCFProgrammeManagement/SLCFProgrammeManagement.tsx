@@ -27,7 +27,7 @@ const SLCFProgrammeManagement = () => {
   };
 
   const onClickAddProgramme = () => {
-    navigate('/programmeManagementslcf/addProgramme');
+    navigate('/programmeManagementSLCF/addProgramme');
   };
 
   const onClickAddInvestment = () => {
