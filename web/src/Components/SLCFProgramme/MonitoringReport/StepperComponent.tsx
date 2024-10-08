@@ -9,7 +9,7 @@ import { DataAndParametersStep } from './DataAndParametersStep';
 import { QualificationStep } from './QualificationStep';
 import { AnnexuresStep } from './AnnexuresStep';
 const StepperComponent = (props: any) => {
-  const { useLocation, translator, form } = props;
+  const { useLocation, translator, form, countries } = props;
   const [current, setCurrent] = useState(0);
 
   const next = () => {
@@ -22,7 +22,7 @@ const StepperComponent = (props: any) => {
 
   const steps = [
     {
-      title: 'Project Details',
+      title: '01 Project Details',
       description: (
         <ProjectDetailsStep
           useLocation={useLocation}
@@ -30,11 +30,12 @@ const StepperComponent = (props: any) => {
           current={current}
           form={form}
           next={next}
+          countries={countries}
         />
       ),
     },
     {
-      title: 'Project Activity',
+      title: '02 Project Activity',
       description: (
         <ProjectActivityStep
           useLocation={useLocation}
@@ -43,11 +44,12 @@ const StepperComponent = (props: any) => {
           form={form}
           next={next}
           prev={prev}
+          countries={countries}
         />
       ),
     },
     {
-      title: 'Implementation Status',
+      title: '03 Implementation Status',
       description: (
         <ImplementationStatusStep
           useLocation={useLocation}
@@ -60,7 +62,7 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: 'Safeguards',
+      title: '04 Safeguards',
       description: (
         <SafeguardsStep
           useLocation={useLocation}
@@ -73,7 +75,7 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: 'Data and Parameters',
+      title: '05 Data and Parameters',
       description: (
         <DataAndParametersStep
           useLocation={useLocation}
@@ -86,7 +88,7 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: 'Quantification of GHG Emission Reductions and Removals',
+      title: '06 Quantification of GHG Emission Reductions and Removals',
       description: (
         <QualificationStep
           useLocation={useLocation}
@@ -99,7 +101,7 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: 'Annexures',
+      title: '07 Annexures',
       description: (
         <AnnexuresStep
           useLocation={useLocation}
