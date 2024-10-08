@@ -3,6 +3,7 @@
 **/dist/
 **/.build/
 backend/services/.env.local
+backend/services/.env
 **/yarn-error.log
 **/coverage
 .env.local
