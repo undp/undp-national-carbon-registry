@@ -1,4 +1,4 @@
-version: "3.3"
+# version: "3.3"
 volumes:
   data:
     driver: local
@@ -12,9 +12,10 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
+      POSTGRES_PASSWORD: root
       POSTGRES_USER: root
       PSQL_USERNAME: root
+      PGPORT: 5432
       # POSTGRES_HOST_AUTH_METHOD: trust
       PGDATA: /data/postgres
     volumes:
@@ -29,15 +30,16 @@ services:
     depends_on:
       - db
     environment:
+      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: root
       RUN_MODULE: national-api
-      rootEmail: <ROOT EMAIL>
-      cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
-      exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
-      Ministery: ''
-      Department : ''
+      rootEmail: ravinduf@xeptagon.com
+      cfAdminEmail: ravinduf+cf@xeptagon.com
+      exComAdminEmail: ravinduf+ex@xeptagon.com
+      Ministry: 'Environment'
+      Department : 'National Environmental Standards and Regulations Enforcement Agency'
       systemCountryCode: "LK"
       systemCountryName: "Sri Lanka"
       systemContinentName: "Sri Lanka"
@@ -54,9 +56,9 @@ services:
       DOMAIN_MAP: "true"
       EXPIRES_IN: "7200"
       REFRESH_TOKEN_EXPIRES_IN: "12h"
-      BACKEND_HOST: "http://192.168.1.16:3000"
+      BACKEND_HOST: "http://192.168.1.32:3000"
       CONTACT_EMAIL: countryx@email.com
-      MINISTER_NAME_AND_DESIGNATION : "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
+      MINISTER_NAME_AND_DESIGNATION: "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
@@ -71,9 +73,10 @@ services:
       - db
       - national
     environment:
+      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: root
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
@@ -85,9 +88,10 @@ services:
       - db
       - national
     environment:
+      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "<ANY PASSOWORD>"
+      DB_PASSWORD: root
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
@@ -101,10 +105,10 @@ services:
       ITMO_API_KEY: ""
       ITMO_EMAIL: ""
       ITMO_PASSWORD: ""
-      MRV_ENDPOINT: 'http://192.168.123.20:9000'
+      MRV_ENDPOINT: 'http://192.168.1.32:9000'
       SYNC_ENABLE: false
       MRV_API_TOKEN: ''
-      BACKEND_HOST: "http://192.168.1.16:3000"
+      BACKEND_HOST: "http://192.168.1.32:3000"
     volumes:
       - filestore:/app/backend/services/public
   # async-operations-handler:
@@ -122,22 +126,22 @@ services:
   #     SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
   #     SMTP_PASSWORD: "<ANY PASSOWORD>"
   #     ASYNC_OPERATIONS_TYPE: Database
-  web:
-    build:
-      context: .
-      dockerfile: ./web/Dockerfile
-      args:
-        PORT: 3030
-        REACT_APP_BACKEND: http://localhost:3000
-        REACT_APP_STAT_URL: http://localhost:3100
-        REACT_APP_COUNTRY_NAME: "CountryX"
-        REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment"
-        REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
-        REACT_APP_COUNTRY_CODE: "NG"
-        REACT_APP_MAP_TYPE: "None"
-        REACT_APP_MAPBOXGL_ACCESS_TOKEN: ""
-    ports:
-      - "3030:3030"
-    depends_on:
-      - db
-      - national
+  # web:
+  #   build:
+  #     context: .
+  #     dockerfile: ./web/Dockerfile
+  #     args:
+  #       PORT: 3030
+  #       REACT_APP_BACKEND: http://localhost:3000
+  #       REACT_APP_STAT_URL: http://localhost:3100
+  #       REACT_APP_COUNTRY_NAME: "CountryX"
+  #       REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment"
+  #       REACT_APP_COUNTRY_FLAG_URL: "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+  #       REACT_APP_COUNTRY_CODE: "NG"
+  #       REACT_APP_MAP_TYPE: "None"
+  #       REACT_APP_MAPBOXGL_ACCESS_TOKEN: ""
+  #   ports:
+  #     - "3030:3030"
+  #   depends_on:
+  #     - db
+  #     - national

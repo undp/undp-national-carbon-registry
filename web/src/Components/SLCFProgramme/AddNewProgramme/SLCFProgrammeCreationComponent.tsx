@@ -602,6 +602,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                           style={{ color: 'rgba(58, 53, 65, 0.5)' }}
                                         />
                                       ),
+                                      placement: 'topLeft',
                                     }}
                                     rules={[
                                       {
