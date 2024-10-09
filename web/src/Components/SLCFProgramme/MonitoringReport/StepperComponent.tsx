@@ -8,6 +8,7 @@ import { SafeguardsStep } from './SafeguardsStep';
 import { DataAndParametersStep } from './DataAndParametersStep';
 import { QualificationStep } from './QualificationStep';
 import { AnnexuresStep } from './AnnexuresStep';
+import { useTranslation } from 'react-i18next';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, form, countries } = props;
   const [current, setCurrent] = useState(0);
