@@ -49,17 +49,20 @@
 
   .form-section {
     background-color: #fbfbfb;
-    padding: 20px;
+    padding: 25px 30px;
     border-radius: 16px;
     margin-bottom: 20px;
-
-    
   }
 
   .form-list-actions {
     display: flex;
     flex-direction: row;
-    
+    // align-items: center;
+
+    h4 {
+      margin-top: 6px;
+      margin-right: 20px;
+    }
     button {
       margin-right: 20px;
     }
