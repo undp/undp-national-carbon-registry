@@ -22,6 +22,15 @@ import { LocationModule } from "../location/location.module";
 import { LocationController } from "./location.controller";
 import { CreditRetirementSlController } from "./creditRetirement.controller";
 import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
+import { VerificationController } from "./verification/verification.controller";
+import configuration from "../configuration";
+import { VerificationModule } from "src/verification/verification.module";
+import { LocationModule } from "../location/location.module";
+import { LocationController } from "./location.controller";
+import { ProgrammeSlModule } from "src/programme-sl/programme-sl.module";
+import { ProgrammeSlController } from "./programmeSl.controller";
+import { CreditRetirementSlController } from "./creditRetirement.controller";
+import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
 
 @Module({
   imports: [
@@ -38,6 +47,7 @@ import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetiremen
     UserModule,
     CaslModule,
     ProgrammeModule,
+    VerificationModule,
     CompanyModule,
     UtilModule,
     LocationModule,
@@ -54,6 +64,7 @@ import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetiremen
     LocationController,
     ProgrammeSlController,
     CreditRetirementSlController
+    VerificationController,
   ],
   providers: [NationalAPIService, Logger],
 })
