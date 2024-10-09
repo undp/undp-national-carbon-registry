@@ -15,13 +15,15 @@ import { ProgrammeModule } from "../programme/programme.module";
 import { TypeOrmConfigService } from "../typeorm.config.service";
 import { UserModule } from "../user/user.module";
 import { UtilModule } from "../util/util.module";
-import { VerificationController } from "./verification/verification.controller";
 import configuration from "../configuration";
-import { VerificationModule } from "src/verification/verification.module";
+import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
+import { ProgrammeSlController } from "./programmeSl.controller";
 import { LocationModule } from "../location/location.module";
 import { LocationController } from "./location.controller";
-import { ProgrammeSlModule } from "src/programme-sl/programme-sl.module";
-import { ProgrammeSlController } from "./programmeSl.controller";
+import { CreditRetirementSlController } from "./creditRetirement.controller";
+import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
+import { VerificationController } from "./verification/verification.controller";
+import { VerificationModule } from "src/verification/verification.module";
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { ProgrammeSlController } from "./programmeSl.controller";
     UtilModule,
     LocationModule,
     ProgrammeSlModule,
+    CreditRetirementSlModule
   ],
   controllers: [
     NationalAPIController,
@@ -53,6 +56,7 @@ import { ProgrammeSlController } from "./programmeSl.controller";
     SettingsController,
     LocationController,
     ProgrammeSlController,
+    CreditRetirementSlController,
     VerificationController,
   ],
   providers: [NationalAPIService, Logger],

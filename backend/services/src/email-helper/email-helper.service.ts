@@ -391,14 +391,18 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailToSLCFAdmins(template, programmeId?: string, companyId?: number) {
+  public async sendEmailToSLCFAdmins(
+    template,
+    templateData: any,
+    programmeId?: string,
+    companyId?: number
+  ) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getSLCFAdminAndManagerUsers();
     let programme: ProgrammeSl;
     let companyDetails: Company;
-    let templateData: any;
     if (programmeId) {
       programme = await this.programmeLedger.getProgrammeSlById(programmeId);
     }
@@ -414,6 +418,28 @@ export class EmailHelperService {
           countryName: systemCountryName,
           programmeName: programme.title,
           programmePageLink: hostAddress + `/programmeSlManagement/view/${programmeId}`,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_SL_REQUEST":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          credits: templateData.credits,
+          serialNumber: programme.serialNo,
+          programmePageLink: hostAddress + `/retirementManagement`,
+        };
+        break;
+
+      case "CREDIT_RETIRE_SL_REQUEST":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          credits: templateData.credits,
+          serialNumber: programme.serialNo,
+          programmePageLink: hostAddress + `/retirementManagement`,
         };
         break;
 
