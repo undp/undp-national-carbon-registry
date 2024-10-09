@@ -39,12 +39,12 @@ export const ProjectActivityStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="details-part-one">
                     <Form.Item
-                      label={t('monitoringReport:dpm_planDescription')}
-                      name="dpm_planDescription"
+                      label={t('monitoringReport:pa_monitoringObjective')}
+                      name="pa_monitoringObjective"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:dpm_planDescription')} ${t(
+                          message: `${t('monitoringReport:pa_monitoringObjective')} ${t(
                             'isRequired'
                           )}`,
                         },
@@ -52,7 +52,39 @@ export const ProjectActivityStep = (props: any) => {
                     >
                       <TextArea
                         rows={6}
-                        placeholder={`${t('monitoringReport:dpm_planDescription')}`}
+                        placeholder={`${t('monitoringReport:pa_monitoringObjective')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('monitoringReport:pa_implementation')}
+                      name="pa_implementation"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:pa_implementation')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:pa_implementation')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('monitoringReport:pa_scopeAndType')}
+                      name="pa_scopeAndType"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:pa_scopeAndType')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:pa_scopeAndType')}`}
                         maxLength={6}
                       />
                     </Form.Item>
