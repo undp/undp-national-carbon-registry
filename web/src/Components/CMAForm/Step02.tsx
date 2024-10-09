@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, StepProps } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row, Select, StepProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CustomStepsProps } from './StepProps';
 import {
@@ -14,10 +14,102 @@ import PhoneInput, {
   isPossiblePhoneNumber,
   Country,
 } from 'react-phone-number-input';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
+import moment from 'moment';
 
 const Step02 = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries } = props;
   const [contactNoInput] = useState<any>();
+
+  const { post } = useConnection();
+
+  const [provinces, setProvinces] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<string[]>([]);
+  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
+
+  const getProvinces = async () => {
+    try {
+      const { data } = await post('national/location/province');
+      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      setProvinces(tempProvinces);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDistricts = async (provinceName: string) => {
+    try {
+      const { data } = await post('national/location/district', {
+        filterAnd: [
+          {
+            key: 'provinceName',
+            operation: '=',
+            value: provinceName,
+          },
+        ],
+      });
+      const tempDistricts = data.map((districtData: any) => districtData.districtName);
+      setDistricts(tempDistricts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDivisions = async (districtName: string) => {
+    try {
+      const { data } = await post('national/location/division', {
+        filterAnd: [
+          {
+            key: 'districtName',
+            operation: '=',
+            value: districtName,
+          },
+        ],
+      });
+
+      const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
+      setDsDivisions(tempDivisions);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getCities = async (division?: string) => {
+    try {
+      // const { data } = await post('national/location/city', {
+      //   filterAnd: [
+      //     {
+      //       key: 'divisionName',
+      //       operation: '=',
+      //       value: division,
+      //     },
+      //   ],
+      // });
+      const { data } = await post('national/location/city');
+
+      const tempCities = data.map((cityData: any) => cityData.cityName);
+      setCities(tempCities);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProvinces();
+    getCities();
+  }, []);
+
+  const onProvinceSelect = async (value: any) => {
+    getDistricts(value);
+    try {
+    } catch (error) {}
+  };
+
+  const onDistrictSelect = (value: string) => {
+    getDivisions(value);
+  };
 
   return (
     <>
@@ -31,13 +123,16 @@ const Step02 = (props: CustomStepsProps) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              onChange={(values: any) => {
+                console.log('-------------values changing---------', values);
+              }}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
               }}
             >
               <Form.Item
                 className="full-width-form-item"
-                label={t('CMAForm:projectActivity')}
+                label={`1.1 ${t('CMAForm:projectActivity')}`}
                 tooltip={{
                   title: (
                     <div className="tooltip">
@@ -82,7 +177,7 @@ const Step02 = (props: CustomStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={t('sectoralScopeProjectType')}
+                label={`1.2 ${t('CMAForm:sectoralScopeProjectType')}`}
                 rules={[
                   {
                     required: true,
@@ -95,16 +190,8 @@ const Step02 = (props: CustomStepsProps) => {
                   placeholder="Provide a summary description of the project to enable an understanding of the nature  of the project and its implementation"
                 />
               </Form.Item>
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'}>
-                  {t('CMAForm:cancel')}
-                </Button>
-                <Button type="primary" size={'large'} onClick={next}>
-                  {t('CMAForm:next')}
-                </Button>
-              </Row>
 
-              <h4 className="form-section-title">{t('CMAForm:projectProponent')}</h4>
+              <h4 className="form-section-title">{`1.3 ${t('CMAForm:projectProponent')}`}</h4>
 
               <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
                 <Col xl={12} md={24}>
@@ -181,7 +268,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                     <Form.Item
                       label={t('CMAForm:fax')}
-                      name="telephone"
+                      name="fax"
                       rules={[
                         {
                           required: true,
@@ -288,7 +375,9 @@ const Step02 = (props: CustomStepsProps) => {
               </Row>
 
               <>
-                <h4 className="form-section-title">{t('CMAForm:otherEntitiesInProject')}</h4>
+                <h4 className="form-section-title">{`1.4 ${t(
+                  'CMAForm:otherEntitiesInProject'
+                )}`}</h4>
 
                 <h4>Entity 1</h4>
                 <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
@@ -296,7 +385,7 @@ const Step02 = (props: CustomStepsProps) => {
                     <div className="step-form-right-col">
                       <Form.Item
                         label={t('CMAForm:organizationName')}
-                        name="organizationName"
+                        name="entityOrganizationName"
                         rules={[
                           {
                             required: true,
@@ -309,7 +398,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                       <Form.Item
                         label={t('CMAForm:contactPerson')}
-                        name="contactPerson"
+                        name="entityContactPerson"
                         rules={[
                           {
                             required: true,
@@ -322,7 +411,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                       <Form.Item
                         label={t('CMAForm:roleInTheProject')}
-                        name={'roleInTheProject'}
+                        name={'entityRoleInTheProject'}
                         rules={[
                           {
                             required: true,
@@ -335,11 +424,11 @@ const Step02 = (props: CustomStepsProps) => {
 
                       <Form.Item
                         label={t('CMAForm:telephone')}
-                        name="telephone"
+                        name="entityTelephone"
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
+                            message: ``,
                           },
                           {
                             validator: async (rule: any, value: any) => {
@@ -384,7 +473,7 @@ const Step02 = (props: CustomStepsProps) => {
                   <Col xl={12} md={24}>
                     <Form.Item
                       label={t('CMAForm:email')}
-                      name="email"
+                      name="entityEmail"
                       rules={[
                         {
                           required: true,
@@ -417,7 +506,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                     <Form.Item
                       label={t('CMAForm:title')}
-                      name="title"
+                      name="entityTitle"
                       rules={[
                         {
                           required: true,
@@ -430,7 +519,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                     <Form.Item
                       label={t('CMAForm:address')}
-                      name="address"
+                      name="entityAddress"
                       rules={[
                         {
                           required: true,
@@ -443,7 +532,7 @@ const Step02 = (props: CustomStepsProps) => {
 
                     <Form.Item
                       label={t('CMAForm:fax')}
-                      name="fax"
+                      name="entityFax"
                       rules={[
                         {
                           required: true,
@@ -751,7 +840,473 @@ const Step02 = (props: CustomStepsProps) => {
                 </Form.List>
               </>
 
-              <></>
+              <>
+                <h4 className="form-section-title">{`1.5 ${t(
+                  'CMAForm:locationOfProjectActivity'
+                )}`}</h4>
+
+                <h4>Location 1</h4>
+                <Row
+                  justify={'space-between'}
+                  gutter={[40, 16]}
+                  className="form-section"
+                  style={{ borderRadius: '8px' }}
+                >
+                  <Col xl={12} md={24}>
+                    <Form.Item
+                      label={t('CMAForm:locationOfProjectActivity')}
+                      name="locationOfProjectActivity"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:locationOfProjectActivity')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('CMAForm:province')}
+                      name="province"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:province')} ${t('isRequired')}}`,
+                        },
+                      ]}
+                    >
+                      <Select
+                        size="large"
+                        onChange={onProvinceSelect}
+                        placeholder={t('CMAForm:provincePlaceholder')}
+                      >
+                        {provinces.map((province: string, index: number) => (
+                          <Select.Option value={province}>{province}</Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('CMAForm:district')}
+                      name="district"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:district')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Select
+                        size="large"
+                        placeholder={t('CMAForm:districtPlaceholder')}
+                        onSelect={onDistrictSelect}
+                      >
+                        {districts?.map((district: string, index: number) => (
+                          <Select.Option key={district}>{district}</Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label={t('CMAForm:dsDivision')}
+                      name="dsDivision"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:dsDivision')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Select size="large" placeholder={t('CMAForm:dsDivisionPlaceholder')}>
+                        {dsDivisions.map((division: string) => (
+                          <Select.Option value={division}>{division}</Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label={t('CMAForm:city')}
+                      name="city"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:city')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Select size="large" placeholder={t('CMAForm:cityPlaceholder')}>
+                        {cities.map((city: string) => (
+                          <Select.Option value={city}>{city}</Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      label={t('CMAForm:community')}
+                      name="community"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:community')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`1.7 ${t('CMAForm:projectStartDate')}`}
+                      name="projectStartDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('CMAForm:projectStartDate')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col xl={12} md={24}>
+                    <Form.Item
+                      label={t('CMAForm:setLocation')}
+                      name="location"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:location')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <GetLocationMapComponent form={form} formItemName={'location'} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`1.6 ${t('CMAForm:projectFundings')}`}
+                      name="projectFundings"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('CMAForm:projectFundings')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size={'large'} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`1.8 ${t('CMAForm:projectCommisionDate')}`}
+                      name="projectCommisionDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('CMAForm:projectCommisionDate')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Form.List name="extraLocations">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <>
+                          <div className="form-list-actions">
+                            <h4>location {name + 2}</h4>
+                            <Form.Item>
+                              <Button
+                                // type="dashed"
+                                onClick={() => {
+                                  remove(name);
+                                }}
+                                size="large"
+                                className="addMinusBtn"
+                                // block
+                                icon={<MinusOutlined />}
+                              >
+                                {/* Remove Entity */}
+                              </Button>
+                            </Form.Item>
+                          </div>
+                          <Row
+                            justify={'space-between'}
+                            gutter={[40, 16]}
+                            className="form-section"
+                            style={{ borderRadius: '8px' }}
+                          >
+                            <Col xl={12} md={24}>
+                              <Form.Item
+                                label={t('CMAForm:locationOfProjectActivity')}
+                                name={[name, 'locationOfProjectActivity']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:locationOfProjectActivity')} ${t(
+                                      'isRequired'
+                                    )}`,
+                                  },
+                                ]}
+                              >
+                                <Input size="large" />
+                              </Form.Item>
+
+                              <Form.Item
+                                label={t('CMAForm:province')}
+                                name={[name, 'province']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:province')} ${t('isRequired')}}`,
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  size="large"
+                                  onChange={onProvinceSelect}
+                                  placeholder={t('CMAForm:provincePlaceholder')}
+                                >
+                                  {provinces.map((province: string, index: number) => (
+                                    <Select.Option value={province}>{province}</Select.Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+
+                              <Form.Item
+                                label={t('CMAForm:district')}
+                                name={[name, 'district']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:district')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  size="large"
+                                  placeholder={t('CMAForm:districtPlaceholder')}
+                                  onSelect={onDistrictSelect}
+                                >
+                                  {districts?.map((district: string, index: number) => (
+                                    <Select.Option key={district}>{district}</Select.Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                label={t('CMAForm:dsDivision')}
+                                name={[name, 'dsDivision']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:dsDivision')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  size="large"
+                                  placeholder={t('CMAForm:dsDivisionPlaceholder')}
+                                >
+                                  {dsDivisions.map((division: string) => (
+                                    <Select.Option value={division}>{division}</Select.Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                label={t('CMAForm:city')}
+                                name={[name, 'city']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:city')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <Select size="large" placeholder={t('CMAForm:cityPlaceholder')}>
+                                  {cities.map((city: string) => (
+                                    <Select.Option value={city}>{city}</Select.Option>
+                                  ))}
+                                </Select>
+                              </Form.Item>
+                              <Form.Item
+                                label={t('CMAForm:community')}
+                                name={[name, 'community']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:community')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <Input size="large" />
+                              </Form.Item>
+
+                              <Form.Item
+                                label={`1.7 ${t('CMAForm:projectStartDate')}`}
+                                name={[name, 'projectStartDate']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: '',
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('CMAForm:projectStartDate')} ${t('isRequired')}`
+                                        );
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <DatePicker
+                                  size="large"
+                                  disabledDate={(currentDate: any) =>
+                                    currentDate < moment().startOf('day')
+                                  }
+                                />
+                              </Form.Item>
+                            </Col>
+
+                            <Col xl={12} md={24}>
+                              <Form.Item
+                                label={t('CMAForm:setLocation')}
+                                name={[name, 'location']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:location')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <GetLocationMapComponent
+                                  form={form}
+                                  formItemName={[name, 'location']}
+                                  listName="extraLocations"
+                                />
+                              </Form.Item>
+
+                              <Form.Item
+                                label={`1.6 ${t('CMAForm:projectFundings')}`}
+                                name={[name, 'projectFundings']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('CMAForm:projectFundings')} ${t('isRequired')}`,
+                                  },
+                                ]}
+                              >
+                                <Input size={'large'} />
+                              </Form.Item>
+
+                              <Form.Item
+                                label={`1.8 ${t('CMAForm:projectCommisionDate')}`}
+                                name={[name, 'projectCommisionDate']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: '',
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('CMAForm:projectCommisionDate')} ${t('isRequired')}`
+                                        );
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <DatePicker
+                                  size="large"
+                                  disabledDate={(currentDate: any) =>
+                                    currentDate < moment().startOf('day')
+                                  }
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                        </>
+                      ))}
+                      <div className="form-list-actions">
+                        <Form.Item>
+                          <Button
+                            // type="dashed"
+                            onClick={() => {
+                              add();
+                            }}
+                            size="large"
+                            className="addMinusBtn"
+                            // block
+                            icon={<PlusOutlined />}
+                          >
+                            {/* Add Entity */}
+                          </Button>
+                        </Form.Item>
+                      </div>
+                    </>
+                  )}
+                </Form.List>
+              </>
+              <Row justify={'space-between'} className="step-actions-end">
+                <Button danger size={'large'}>
+                  {t('CMAForm:cancel')}
+                </Button>
+                <Button
+                  type="primary"
+                  size={'large'}
+                  // onClick={next}
+                  htmlType="submit"
+                >
+                  {t('CMAForm:next')}
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>
