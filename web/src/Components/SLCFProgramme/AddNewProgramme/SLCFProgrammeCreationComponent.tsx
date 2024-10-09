@@ -101,7 +101,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     setProjectLocationMapCenter(
       projectLocations && projectLocations?.length > 0
         ? getCenter(projectLocations[0])
-        : [7.4924165, 5.5324032]
+        : [80.7718, 7.8731]
     );
 
     const tempMapSource: any = [];
@@ -171,7 +171,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       <MapComponent
         mapType={mapType}
         center={projectLocationMapCenter}
-        zoom={4}
+        zoom={5}
         height={250}
         style="mapbox://styles/mapbox/light-v11"
         accessToken={accessToken}
@@ -460,6 +460,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                   ))}
                                 </Select>
                               </Form.Item>
+
                               <Form.Item
                                 label={t('addProgramme:district')}
                                 name="district"
