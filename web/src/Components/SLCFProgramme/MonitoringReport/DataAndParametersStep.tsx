@@ -23,13 +23,12 @@ export const DataAndParametersStep = (props: any) => {
   return (
     <>
       {current === 4 && (
-        <div className="programme-details-form-container">
-          <div className="programme-details-form">
+        <div>
+          <div className="step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
-              name="programme-details"
-              className="programme-details-form"
+              className="step-form"
               layout="vertical"
               requiredMark={true}
               form={form}
@@ -38,7 +37,7 @@ export const DataAndParametersStep = (props: any) => {
               <Form.Item label={t('monitoringReport:dp_title')}></Form.Item>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dp_dataParameter')}
                       name="dp_dataParameter"
@@ -146,7 +145,7 @@ export const DataAndParametersStep = (props: any) => {
                 </Col>
 
                 <Col xl={12} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('monitoringReport:dp_dataUnit')}
                       name="dp_dataUnit"
@@ -215,7 +214,7 @@ export const DataAndParametersStep = (props: any) => {
               <Form.Item label={t('monitoringReport:dpm_title')}></Form.Item>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_dataParameter')}
                       name="dpm_dataParameter"
@@ -460,7 +459,7 @@ export const DataAndParametersStep = (props: any) => {
               </Row>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_planDescription')}
                       name="dpm_planDescription"
@@ -482,16 +481,14 @@ export const DataAndParametersStep = (props: any) => {
                   </div>
                 </Col>
               </Row>
-              <Form.Item>
-                <div className="steps-actions">
-                  <Button type="primary" onClick={next}>
-                    Next
-                  </Button>
-                  <Button style={{ margin: '0 8px' }} onClick={prev}>
-                    Back
-                  </Button>
-                </div>
-              </Form.Item>
+              <Row justify={'end'} className="step-actions-end">
+                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                  Back
+                </Button>
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>

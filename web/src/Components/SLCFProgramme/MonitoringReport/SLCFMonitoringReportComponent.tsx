@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Form } from 'antd';
-import './SLCFMonitoringReportComponent.scss';
+import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 

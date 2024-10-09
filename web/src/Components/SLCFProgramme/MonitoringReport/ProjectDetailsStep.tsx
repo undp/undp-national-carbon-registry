@@ -22,13 +22,12 @@ export const ProjectDetailsStep = (props: any) => {
   return (
     <>
       {current === 0 && (
-        <div className="programme-details-form-container">
-          <div className="programme-details-form">
+        <div>
+          <div className="step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
-              name="programme-details"
-              className="programme-details-form"
+              className="step-form"
               layout="vertical"
               requiredMark={true}
               form={form}
@@ -36,7 +35,7 @@ export const ProjectDetailsStep = (props: any) => {
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:pd_projectTitle')}
                       name="pd_projectTitle"
@@ -201,7 +200,7 @@ export const ProjectDetailsStep = (props: any) => {
                 </Col>
 
                 <Col xl={12} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('monitoringReport:pd_version')}
                       name="pd_version"
@@ -392,13 +391,14 @@ export const ProjectDetailsStep = (props: any) => {
                   </div>
                 </Col>
               </Row>
-              <Form.Item>
-                <div className="steps-actions">
-                  <Button type="primary" onClick={next}>
-                    Next
-                  </Button>
-                </div>
-              </Form.Item>
+              <Row justify={'end'} className="step-actions-end">
+                <Button danger size={'large'}>
+                  Cancel
+                </Button>
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>

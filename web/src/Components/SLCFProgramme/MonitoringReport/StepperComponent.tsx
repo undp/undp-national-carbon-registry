@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Steps, Button, Form } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
-import './SLCFMonitoringReportComponent.scss';
+import './MonitoringReport.scss';
 import { ProjectActivityStep } from './ProjectActivityStep';
 import { ImplementationStatusStep } from './ImplementationStatusStep';
 import { SafeguardsStep } from './SafeguardsStep';
@@ -21,9 +21,15 @@ const StepperComponent = (props: any) => {
     setCurrent(current - 1);
   };
 
+  const t = translator.t;
   const steps = [
     {
-      title: '01 Project Details',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">01</div>
+          <div className="title">{t('monitoringReport:title01')}</div>
+        </div>
+      ),
       description: (
         <ProjectDetailsStep
           useLocation={useLocation}
@@ -36,7 +42,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '02 Project Activity',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">02</div>
+          <div className="title">{t('monitoringReport:title02')}</div>
+        </div>
+      ),
       description: (
         <ProjectActivityStep
           useLocation={useLocation}
@@ -50,7 +61,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '03 Implementation Status',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">03</div>
+          <div className="title">{t('monitoringReport:title03')}</div>
+        </div>
+      ),
       description: (
         <ImplementationStatusStep
           useLocation={useLocation}
@@ -63,7 +79,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '04 Safeguards',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">04</div>
+          <div className="title">{t('monitoringReport:title04')}</div>
+        </div>
+      ),
       description: (
         <SafeguardsStep
           useLocation={useLocation}
@@ -76,7 +97,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '05 Data and Parameters',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">05</div>
+          <div className="title">{t('monitoringReport:title05')}</div>
+        </div>
+      ),
       description: (
         <DataAndParametersStep
           useLocation={useLocation}
@@ -89,7 +115,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '06 Quantification of GHG Emission Reductions and Removals',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">06</div>
+          <div className="title">{t('monitoringReport:title06')}</div>
+        </div>
+      ),
       description: (
         <QualificationStep
           useLocation={useLocation}
@@ -102,7 +133,12 @@ const StepperComponent = (props: any) => {
       ),
     },
     {
-      title: '07 Annexures',
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">07</div>
+          <div className="title">{t('monitoringReport:title07')}</div>
+        </div>
+      ),
       description: (
         <AnnexuresStep
           useLocation={useLocation}

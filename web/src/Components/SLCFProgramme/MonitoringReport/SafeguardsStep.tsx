@@ -9,13 +9,12 @@ export const SafeguardsStep = (props: any) => {
   return (
     <>
       {current === 3 && (
-        <div className="programme-details-form-container">
-          <div className="programme-details-form">
+        <div>
+          <div className="step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
-              name="programme-details"
-              className="programme-details-form"
+              className="step-form"
               layout="vertical"
               requiredMark={true}
               form={form}
@@ -23,7 +22,7 @@ export const SafeguardsStep = (props: any) => {
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
-                  <div>
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:s_noNetHarm')}
                       name="s_noNetHarm"
@@ -81,17 +80,14 @@ export const SafeguardsStep = (props: any) => {
                   </div>
                 </Col>
               </Row>
-              <Form.Item>
-                <div className="steps-actions">
-                  <Button type="primary" onClick={next}>
-                    Next
-                  </Button>
-
-                  <Button style={{ margin: '0 8px' }} onClick={prev}>
-                    Back
-                  </Button>
-                </div>
-              </Form.Item>
+              <Row justify={'end'} className="step-actions-end">
+                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                  Back
+                </Button>
+                <Button type="primary" onClick={next}>
+                  Next
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>
