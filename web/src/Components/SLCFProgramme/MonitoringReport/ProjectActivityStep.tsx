@@ -117,18 +117,20 @@ export const ProjectActivityStep = (props: any) => {
                         maxLength={6}
                       />
                     </Form.Item>
-                    <h4 className="form-section-title">{t('CMAForm:projectProponent')}</h4>
+                    <h4 className="form-section-title">{t('monitoringReport:projectProponent')}</h4>
 
                     <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
                       <Col xl={12} md={24}>
                         <div className="step-form-right-col">
                           <Form.Item
-                            label={t('CMAForm:organizationName')}
+                            label={t('monitoringReport:organizationName')}
                             name="organizationName"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:organizationName')} ${t('isRequired')}`,
+                                message: `${t('monitoringReport:organizationName')} ${t(
+                                  'isRequired'
+                                )}`,
                               },
                             ]}
                           >
@@ -136,12 +138,14 @@ export const ProjectActivityStep = (props: any) => {
                           </Form.Item>
 
                           <Form.Item
-                            label={t('CMAForm:contactPerson')}
+                            label={t('monitoringReport:contactPerson')}
                             name="contactPerson"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
+                                message: `${t('monitoringReport:contactPerson')} ${t(
+                                  'isRequired'
+                                )}`,
                               },
                             ]}
                           >
@@ -149,12 +153,12 @@ export const ProjectActivityStep = (props: any) => {
                           </Form.Item>
 
                           <Form.Item
-                            label={t('CMAForm:telephone')}
+                            label={t('monitoringReport:telephone')}
                             name="telephone"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
+                                message: `${t('monitoringReport:telephone')} ${t('isRequired')}`,
                               },
                               {
                                 validator: async (rule: any, value: any) => {
@@ -164,7 +168,9 @@ export const ProjectActivityStep = (props: any) => {
                                     value === null ||
                                     value === undefined
                                   ) {
-                                    throw new Error(`${t('CMAForm:telephone')} ${t('isRequired')}`);
+                                    throw new Error(
+                                      `${t('monitoringReport:telephone')} ${t('isRequired')}`
+                                    );
                                   } else {
                                     const phoneNo = formatPhoneNumber(String(value));
                                     if (String(value).trim() !== '') {
@@ -174,12 +180,12 @@ export const ProjectActivityStep = (props: any) => {
                                         phoneNo === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('CMAForm:telephone')} ${t('isRequired')}`
+                                          `${t('monitoringReport:telephone')} ${t('isRequired')}`
                                         );
                                       } else {
                                         if (!isPossiblePhoneNumber(String(value))) {
                                           throw new Error(
-                                            `${t('CMAForm:telephone')} ${t('isInvalid')}`
+                                            `${t('monitoringReport:telephone')} ${t('isInvalid')}`
                                           );
                                         }
                                       }
@@ -190,7 +196,7 @@ export const ProjectActivityStep = (props: any) => {
                             ]}
                           >
                             <PhoneInput
-                              // placeholder={t('CMAForm:telephone')}
+                              // placeholder={t('monitoringReport:telephone')}
                               international
                               value={formatPhoneNumberIntl(contactNoInput)}
                               defaultCountry="LK"
@@ -201,7 +207,7 @@ export const ProjectActivityStep = (props: any) => {
                           </Form.Item>
 
                           <Form.Item
-                            label={t('CMAForm:fax')}
+                            label={t('monitoringReport:fax')}
                             name="telephone"
                             rules={[
                               {
@@ -216,163 +222,9 @@ export const ProjectActivityStep = (props: any) => {
                                     value === null ||
                                     value === undefined
                                   ) {
-                                    throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                  } else {
-                                    const phoneNo = formatPhoneNumber(String(value));
-                                    if (String(value).trim() !== '') {
-                                      if (
-                                        phoneNo === null ||
-                                        phoneNo === '' ||
-                                        phoneNo === undefined
-                                      ) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                      } else {
-                                        if (!isPossiblePhoneNumber(String(value))) {
-                                          throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                              },
-                            ]}
-                          >
-                            <PhoneInput
-                              // placeholder={t('CMAForm:telephone')}
-                              international
-                              value={formatPhoneNumberIntl(contactNoInput)}
-                              defaultCountry="LK"
-                              countryCallingCodeEditable={false}
-                              onChange={(v) => {}}
-                              countries={countries as Country[]}
-                            />
-                          </Form.Item>
-                        </div>
-                      </Col>
-
-                      <Col xl={12} md={24}>
-                        <Form.Item
-                          label={t('CMAForm:email')}
-                          name="email"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('CMAForm:email')} ${t('isRequired')}`,
-                            },
-                            {
-                              validator: async (rule, value) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
-                                } else {
-                                  const val = value.trim();
-                                  const reg =
-                                    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                                  const matches = val.match(reg) ? val.match(reg) : [];
-                                  if (matches.length === 0) {
-                                    throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
-                                  }
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-
-                        <Form.Item
-                          label={t('CMAForm:title')}
-                          name="title"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('CMAForm:title')} ${t('isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-
-                        <Form.Item
-                          label={t('CMAForm:address')}
-                          name="address"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('CMAForm:address')} ${t('isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <TextArea rows={4} />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-
-                    <h4 className="form-section-title">{t('CMAForm:otherEntitiesInProject')}</h4>
-
-                    <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
-                      <Col xl={12} md={24}>
-                        <div className="step-form-right-col">
-                          <Form.Item
-                            label={t('CMAForm:organizationName')}
-                            name="organizationName"
-                            rules={[
-                              {
-                                required: true,
-                                message: `${t('CMAForm:organizationName')} ${t('isRequired')}`,
-                              },
-                            ]}
-                          >
-                            <Input size="large" />
-                          </Form.Item>
-
-                          <Form.Item
-                            label={t('CMAForm:contactPerson')}
-                            name="contactPerson"
-                            rules={[
-                              {
-                                required: true,
-                                message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
-                              },
-                            ]}
-                          >
-                            <Input size="large" />
-                          </Form.Item>
-
-                          <Form.Item
-                            label={t('CMAForm:roleInTheProject')}
-                            name={'roleInTheProject'}
-                            rules={[
-                              {
-                                required: true,
-                                message: `${t('CMAForm:roleInTheProject')} ${t('isRequired')}`,
-                              },
-                            ]}
-                          >
-                            <TextArea rows={4} />
-                          </Form.Item>
-
-                          <Form.Item
-                            label={t('CMAForm:telephone')}
-                            name="telephone"
-                            rules={[
-                              {
-                                required: true,
-                                message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
-                              },
-                              {
-                                validator: async (rule: any, value: any) => {
-                                  if (
-                                    String(value).trim() === '' ||
-                                    String(value).trim() === undefined ||
-                                    value === null ||
-                                    value === undefined
-                                  ) {
-                                    throw new Error(`${t('CMAForm:telephone')} ${t('isRequired')}`);
+                                    throw new Error(
+                                      `${t('monitoringReport:fax')} ${t('isRequired')}`
+                                    );
                                   } else {
                                     const phoneNo = formatPhoneNumber(String(value));
                                     if (String(value).trim() !== '') {
@@ -382,12 +234,12 @@ export const ProjectActivityStep = (props: any) => {
                                         phoneNo === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('CMAForm:telephone')} ${t('isRequired')}`
+                                          `${t('monitoringReport:fax')} ${t('isRequired')}`
                                         );
                                       } else {
                                         if (!isPossiblePhoneNumber(String(value))) {
                                           throw new Error(
-                                            `${t('CMAForm:telephone')} ${t('isInvalid')}`
+                                            `${t('monitoringReport:fax')} ${t('isInvalid')}`
                                           );
                                         }
                                       }
@@ -398,7 +250,7 @@ export const ProjectActivityStep = (props: any) => {
                             ]}
                           >
                             <PhoneInput
-                              // placeholder={t('CMAForm:telephone')}
+                              // placeholder={t('monitoringReport:telephone')}
                               international
                               value={formatPhoneNumberIntl(contactNoInput)}
                               defaultCountry="LK"
@@ -412,12 +264,12 @@ export const ProjectActivityStep = (props: any) => {
 
                       <Col xl={12} md={24}>
                         <Form.Item
-                          label={t('CMAForm:email')}
+                          label={t('monitoringReport:email')}
                           name="email"
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:email')} ${t('isRequired')}`,
+                              message: `${t('monitoringReport:email')} ${t('isRequired')}`,
                             },
                             {
                               validator: async (rule, value) => {
@@ -445,12 +297,12 @@ export const ProjectActivityStep = (props: any) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('CMAForm:title')}
+                          label={t('monitoringReport:title')}
                           name="title"
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:title')} ${t('isRequired')}`,
+                              message: `${t('monitoringReport:title')} ${t('isRequired')}`,
                             },
                           ]}
                         >
@@ -458,331 +310,656 @@ export const ProjectActivityStep = (props: any) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('CMAForm:address')}
+                          label={t('monitoringReport:address')}
                           name="address"
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:address')} ${t('isRequired')}`,
+                              message: `${t('monitoringReport:address')} ${t('isRequired')}`,
                             },
                           ]}
                         >
                           <TextArea rows={4} />
                         </Form.Item>
-
-                        <Form.Item
-                          label={t('CMAForm:fax')}
-                          name="fax"
-                          rules={[
-                            {
-                              required: true,
-                              message: ``,
-                            },
-                            {
-                              validator: async (rule: any, value: any) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                } else {
-                                  const phoneNo = formatPhoneNumber(String(value));
-                                  if (String(value).trim() !== '') {
-                                    if (
-                                      phoneNo === null ||
-                                      phoneNo === '' ||
-                                      phoneNo === undefined
-                                    ) {
-                                      throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                    } else {
-                                      if (!isPossiblePhoneNumber(String(value))) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <PhoneInput
-                            // placeholder={t('CMAForm:telephone')}
-                            international
-                            value={formatPhoneNumberIntl(contactNoInput)}
-                            defaultCountry="LK"
-                            countryCallingCodeEditable={false}
-                            onChange={(v) => {}}
-                            countries={countries as Country[]}
-                          />
-                        </Form.Item>
                       </Col>
                     </Row>
 
-                    <Form.List name="extraOtherEntities">
-                      {(fields, { add, remove }) => (
-                        <>
-                          {fields.map(({ key, name, ...restField }) => (
-                            <Row
-                              justify={'space-between'}
-                              gutter={[40, 16]}
-                              className="form-section"
+                    <>
+                      <h4 className="form-section-title">
+                        {t('monitoringReport:otherEntitiesInProject')}
+                      </h4>
+
+                      <h4>Entity 1</h4>
+                      <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
+                        <Col xl={12} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item
+                              label={t('monitoringReport:organizationName')}
+                              name="organizationName"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:organizationName')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
                             >
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    label={t('CMAForm:organizationName')}
-                                    name={[name, 'organizationName']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('CMAForm:organizationName')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
+                              <Input size="large" />
+                            </Form.Item>
 
-                                  <Form.Item
-                                    label={t('CMAForm:contactPerson')}
-                                    name={[name, 'contactPerson']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
+                            <Form.Item
+                              label={t('monitoringReport:contactPerson')}
+                              name="contactPerson"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:contactPerson')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
 
-                                  <Form.Item
-                                    label={t('CMAForm:roleInTheProject')}
-                                    name={[name, 'roleInTheProject']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('CMAForm:roleInTheProject')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <TextArea rows={4} />
-                                  </Form.Item>
+                            <Form.Item
+                              label={t('monitoringReport:roleInTheProject')}
+                              name={'roleInTheProject'}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:roleInTheProject')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
+                            >
+                              <TextArea rows={4} />
+                            </Form.Item>
 
-                                  <Form.Item
-                                    label={t('CMAForm:telephone')}
-                                    name={[name, 'telephone']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
-                                      },
-                                      {
-                                        validator: async (rule: any, value: any) => {
-                                          if (
-                                            String(value).trim() === '' ||
-                                            String(value).trim() === undefined ||
-                                            value === null ||
-                                            value === undefined
-                                          ) {
+                            <Form.Item
+                              label={t('monitoringReport:telephone')}
+                              name="telephone"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:telephone')} ${t('isRequired')}`,
+                                },
+                                {
+                                  validator: async (rule: any, value: any) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(
+                                        `${t('monitoringReport:telephone')} ${t('isRequired')}`
+                                      );
+                                    } else {
+                                      const phoneNo = formatPhoneNumber(String(value));
+                                      if (String(value).trim() !== '') {
+                                        if (
+                                          phoneNo === null ||
+                                          phoneNo === '' ||
+                                          phoneNo === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('monitoringReport:telephone')} ${t('isRequired')}`
+                                          );
+                                        } else {
+                                          if (!isPossiblePhoneNumber(String(value))) {
                                             throw new Error(
-                                              `${t('CMAForm:telephone')} ${t('isRequired')}`
+                                              `${t('monitoringReport:telephone')} ${t('isInvalid')}`
                                             );
-                                          } else {
-                                            const phoneNo = formatPhoneNumber(String(value));
-                                            if (String(value).trim() !== '') {
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <PhoneInput
+                                // placeholder={t('monitoringReport:telephone')}
+                                international
+                                value={formatPhoneNumberIntl(contactNoInput)}
+                                defaultCountry="LK"
+                                countryCallingCodeEditable={false}
+                                onChange={(v) => {}}
+                                countries={countries as Country[]}
+                              />
+                            </Form.Item>
+                          </div>
+                        </Col>
+
+                        <Col xl={12} md={24}>
+                          <Form.Item
+                            label={t('monitoringReport:email')}
+                            name="email"
+                            rules={[
+                              {
+                                required: true,
+                                message: `${t('monitoringReport:email')} ${t('isRequired')}`,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
+                                  } else {
+                                    const val = value.trim();
+                                    const reg =
+                                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                                    const matches = val.match(reg) ? val.match(reg) : [];
+                                    if (matches.length === 0) {
+                                      throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                                    }
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <Input size="large" />
+                          </Form.Item>
+
+                          <Form.Item
+                            label={t('monitoringReport:title')}
+                            name="title"
+                            rules={[
+                              {
+                                required: true,
+                                message: `${t('monitoringReport:title')} ${t('isRequired')}`,
+                              },
+                            ]}
+                          >
+                            <Input size="large" />
+                          </Form.Item>
+
+                          <Form.Item
+                            label={t('monitoringReport:address')}
+                            name="address"
+                            rules={[
+                              {
+                                required: true,
+                                message: `${t('monitoringReport:address')} ${t('isRequired')}`,
+                              },
+                            ]}
+                          >
+                            <TextArea rows={4} />
+                          </Form.Item>
+
+                          <Form.Item
+                            label={t('monitoringReport:fax')}
+                            name="fax"
+                            rules={[
+                              {
+                                required: true,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule: any, value: any) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(
+                                      `${t('monitoringReport:fax')} ${t('isRequired')}`
+                                    );
+                                  } else {
+                                    const phoneNo = formatPhoneNumber(String(value));
+                                    if (String(value).trim() !== '') {
+                                      if (
+                                        phoneNo === null ||
+                                        phoneNo === '' ||
+                                        phoneNo === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('monitoringReport:fax')} ${t('isRequired')}`
+                                        );
+                                      } else {
+                                        if (!isPossiblePhoneNumber(String(value))) {
+                                          throw new Error(
+                                            `${t('monitoringReport:fax')} ${t('isInvalid')}`
+                                          );
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <PhoneInput
+                              // placeholder={t('monitoringReport:telephone')}
+                              international
+                              value={formatPhoneNumberIntl(contactNoInput)}
+                              defaultCountry="LK"
+                              countryCallingCodeEditable={false}
+                              onChange={(v) => {}}
+                              countries={countries as Country[]}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+
+                      <Form.List name="extraOtherEntities">
+                        {(fields, { add, remove }) => (
+                          <>
+                            {fields.map(({ key, name, ...restField }) => (
+                              <>
+                                <div className="form-list-actions">
+                                  <h4>Entity {name + 2}</h4>
+                                  <Form.Item>
+                                    <Button
+                                      // type="dashed"
+                                      onClick={() => {
+                                        remove(name);
+                                      }}
+                                      size="large"
+                                      className="addMinusBtn"
+                                      // block
+                                      icon={<MinusOutlined />}
+                                    >
+                                      {/* Remove Entity */}
+                                    </Button>
+                                  </Form.Item>
+                                </div>
+                                <Row
+                                  justify={'space-between'}
+                                  gutter={[40, 16]}
+                                  className="form-section"
+                                >
+                                  <Col xl={12} md={24}>
+                                    <div className="step-form-right-col">
+                                      <Form.Item
+                                        label={t('monitoringReport:organizationName')}
+                                        name={[name, 'organizationName']}
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message: `${t('monitoringReport:organizationName')} ${t(
+                                              'isRequired'
+                                            )}`,
+                                          },
+                                        ]}
+                                      >
+                                        <Input size="large" />
+                                      </Form.Item>
+
+                                      <Form.Item
+                                        label={t('monitoringReport:contactPerson')}
+                                        name={[name, 'contactPerson']}
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message: `${t('monitoringReport:contactPerson')} ${t(
+                                              'isRequired'
+                                            )}`,
+                                          },
+                                        ]}
+                                      >
+                                        <Input size="large" />
+                                      </Form.Item>
+
+                                      <Form.Item
+                                        label={t('monitoringReport:roleInTheProject')}
+                                        name={[name, 'roleInTheProject']}
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message: `${t('monitoringReport:roleInTheProject')} ${t(
+                                              'isRequired'
+                                            )}`,
+                                          },
+                                        ]}
+                                      >
+                                        <TextArea rows={4} />
+                                      </Form.Item>
+
+                                      <Form.Item
+                                        label={t('monitoringReport:telephone')}
+                                        name={[name, 'telephone']}
+                                        rules={[
+                                          {
+                                            required: true,
+                                            message: `${t('monitoringReport:telephone')} ${t(
+                                              'isRequired'
+                                            )}`,
+                                          },
+                                          {
+                                            validator: async (rule: any, value: any) => {
                                               if (
-                                                phoneNo === null ||
-                                                phoneNo === '' ||
-                                                phoneNo === undefined
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('CMAForm:telephone')} ${t('isRequired')}`
+                                                  `${t('monitoringReport:telephone')} ${t(
+                                                    'isRequired'
+                                                  )}`
                                                 );
                                               } else {
-                                                if (!isPossiblePhoneNumber(String(value))) {
+                                                const phoneNo = formatPhoneNumber(String(value));
+                                                if (String(value).trim() !== '') {
+                                                  if (
+                                                    phoneNo === null ||
+                                                    phoneNo === '' ||
+                                                    phoneNo === undefined
+                                                  ) {
+                                                    throw new Error(
+                                                      `${t('monitoringReport:telephone')} ${t(
+                                                        'isRequired'
+                                                      )}`
+                                                    );
+                                                  } else {
+                                                    if (!isPossiblePhoneNumber(String(value))) {
+                                                      throw new Error(
+                                                        `${t('monitoringReport:telephone')} ${t(
+                                                          'isInvalid'
+                                                        )}`
+                                                      );
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            },
+                                          },
+                                        ]}
+                                      >
+                                        <PhoneInput
+                                          // placeholder={t('monitoringReport:telephone')}
+                                          international
+                                          value={formatPhoneNumberIntl(contactNoInput)}
+                                          defaultCountry="LK"
+                                          countryCallingCodeEditable={false}
+                                          onChange={(v) => {}}
+                                          countries={countries as Country[]}
+                                        />
+                                      </Form.Item>
+                                    </div>
+                                  </Col>
+
+                                  <Col xl={12} md={24}>
+                                    <Form.Item
+                                      label={t('monitoringReport:email')}
+                                      name={[name, 'email']}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: `${t('monitoringReport:email')} ${t(
+                                            'isRequired'
+                                          )}`,
+                                        },
+                                        {
+                                          validator: async (rule, value) => {
+                                            if (
+                                              String(value).trim() === '' ||
+                                              String(value).trim() === undefined ||
+                                              value === null ||
+                                              value === undefined
+                                            ) {
+                                              throw new Error(
+                                                `${t('addCompany:email')} ${t('isRequired')}`
+                                              );
+                                            } else {
+                                              const val = value.trim();
+                                              const reg =
+                                                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                                              const matches = val.match(reg) ? val.match(reg) : [];
+                                              if (matches.length === 0) {
+                                                throw new Error(
+                                                  `${t('addCompany:email')} ${t('isInvalid')}`
+                                                );
+                                              }
+                                            }
+                                          },
+                                        },
+                                      ]}
+                                    >
+                                      <Input size="large" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                      label={t('monitoringReport:title')}
+                                      name={[name, 'title']}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: `${t('monitoringReport:title')} ${t(
+                                            'isRequired'
+                                          )}`,
+                                        },
+                                      ]}
+                                    >
+                                      <Input size="large" />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                      label={t('monitoringReport:address')}
+                                      name={[name, 'address']}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: `${t('monitoringReport:address')} ${t(
+                                            'isRequired'
+                                          )}`,
+                                        },
+                                      ]}
+                                    >
+                                      <TextArea rows={4} />
+                                    </Form.Item>
+
+                                    <Form.Item
+                                      label={t('monitoringReport:fax')}
+                                      name={[name, 'fax']}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: ``,
+                                        },
+                                        {
+                                          validator: async (rule: any, value: any) => {
+                                            if (
+                                              String(value).trim() === '' ||
+                                              String(value).trim() === undefined ||
+                                              value === null ||
+                                              value === undefined
+                                            ) {
+                                              throw new Error(
+                                                `${t('monitoringReport:fax')} ${t('isRequired')}`
+                                              );
+                                            } else {
+                                              const phoneNo = formatPhoneNumber(String(value));
+                                              if (String(value).trim() !== '') {
+                                                if (
+                                                  phoneNo === null ||
+                                                  phoneNo === '' ||
+                                                  phoneNo === undefined
+                                                ) {
                                                   throw new Error(
-                                                    `${t('CMAForm:telephone')} ${t('isInvalid')}`
+                                                    `${t('monitoringReport:fax')} ${t(
+                                                      'isRequired'
+                                                    )}`
                                                   );
+                                                } else {
+                                                  if (!isPossiblePhoneNumber(String(value))) {
+                                                    throw new Error(
+                                                      `${t('monitoringReport:fax')} ${t(
+                                                        'isInvalid'
+                                                      )}`
+                                                    );
+                                                  }
                                                 }
                                               }
                                             }
-                                          }
+                                          },
                                         },
-                                      },
-                                    ]}
-                                  >
-                                    <PhoneInput
-                                      // placeholder={t('CMAForm:telephone')}
-                                      international
-                                      value={formatPhoneNumberIntl(contactNoInput)}
-                                      defaultCountry="LK"
-                                      countryCallingCodeEditable={false}
-                                      onChange={(v) => {}}
-                                      countries={countries as Country[]}
-                                    />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-
-                              <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={t('CMAForm:email')}
-                                  name={[name, 'email']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('CMAForm:email')} ${t('isRequired')}`,
-                                    },
-                                    {
-                                      validator: async (rule, value) => {
-                                        if (
-                                          String(value).trim() === '' ||
-                                          String(value).trim() === undefined ||
-                                          value === null ||
-                                          value === undefined
-                                        ) {
-                                          throw new Error(
-                                            `${t('addCompany:email')} ${t('isRequired')}`
-                                          );
-                                        } else {
-                                          const val = value.trim();
-                                          const reg =
-                                            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                                          const matches = val.match(reg) ? val.match(reg) : [];
-                                          if (matches.length === 0) {
-                                            throw new Error(
-                                              `${t('addCompany:email')} ${t('isInvalid')}`
-                                            );
-                                          }
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <Input size="large" />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={t('CMAForm:title')}
-                                  name={[name, 'title']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('CMAForm:title')} ${t('isRequired')}`,
-                                    },
-                                  ]}
-                                >
-                                  <Input size="large" />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={t('CMAForm:address')}
-                                  name={[name, 'address']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('CMAForm:address')} ${t('isRequired')}`,
-                                    },
-                                  ]}
-                                >
-                                  <TextArea rows={4} />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={t('CMAForm:fax')}
-                                  name={[name, 'fax']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: ``,
-                                    },
-                                    {
-                                      validator: async (rule: any, value: any) => {
-                                        if (
-                                          String(value).trim() === '' ||
-                                          String(value).trim() === undefined ||
-                                          value === null ||
-                                          value === undefined
-                                        ) {
-                                          throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                        } else {
-                                          const phoneNo = formatPhoneNumber(String(value));
-                                          if (String(value).trim() !== '') {
-                                            if (
-                                              phoneNo === null ||
-                                              phoneNo === '' ||
-                                              phoneNo === undefined
-                                            ) {
-                                              throw new Error(
-                                                `${t('CMAForm:fax')} ${t('isRequired')}`
-                                              );
-                                            } else {
-                                              if (!isPossiblePhoneNumber(String(value))) {
-                                                throw new Error(
-                                                  `${t('CMAForm:fax')} ${t('isInvalid')}`
-                                                );
-                                              }
-                                            }
-                                          }
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <PhoneInput
-                                    international
-                                    value={formatPhoneNumberIntl(contactNoInput)}
-                                    defaultCountry="LK"
-                                    countryCallingCodeEditable={false}
-                                    onChange={(v) => {}}
-                                    countries={countries as Country[]}
-                                  />
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          ))}
-                          <div className="form-list-actions">
-                            <Form.Item>
-                              <Button
-                                // type="dashed"
-                                onClick={() => {
-                                  add();
-                                }}
-                                size="large"
-                                className="addMinusBtn"
-                                icon={<PlusOutlined />}
-                              >
-                                Add Entity
-                              </Button>
-                            </Form.Item>
-                            {fields.length > 0 && (
+                                      ]}
+                                    >
+                                      <PhoneInput
+                                        // placeholder={t('monitoringReport:telephone')}
+                                        international
+                                        value={formatPhoneNumberIntl(contactNoInput)}
+                                        defaultCountry="LK"
+                                        countryCallingCodeEditable={false}
+                                        onChange={(v) => {}}
+                                        countries={countries as Country[]}
+                                      />
+                                    </Form.Item>
+                                  </Col>
+                                </Row>
+                              </>
+                            ))}
+                            <div className="form-list-actions">
                               <Form.Item>
                                 <Button
                                   // type="dashed"
                                   onClick={() => {
-                                    const lastField = fields.length > 0 ? fields.pop() : undefined;
-                                    if (lastField !== undefined) {
-                                      remove(lastField.name);
-                                    }
+                                    add();
                                   }}
                                   size="large"
                                   className="addMinusBtn"
-                                  icon={<MinusOutlined />}
+                                  // block
+                                  icon={<PlusOutlined />}
                                 >
-                                  Remove Entity
+                                  {/* Add Entity */}
                                 </Button>
                               </Form.Item>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </Form.List>
+                            </div>
+                          </>
+                        )}
+                      </Form.List>
+                    </>
+                  </div>
+                </Col>
+              </Row>
+              <h4 className="form-section-title">
+                {t('monitoringReport:titleAndReferenceOfMethodology')}
+              </h4>
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:title')}
+                      name="title"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:title')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('monitoringReport:methodology')}
+                      name="methodology"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:methodology')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:reference')}
+                      name="reference"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:reference')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:pa_referencePlaceholder')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:participationGhgPrograms')}
+                      name="participationGhgPrograms"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:participationGhgPrograms')} ${t(
+                            'isRequired'
+                          )}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:participationGhgProgramsPlaceholder')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('monitoringReport:otherFormsOfCredit')}
+                      name="otherFormsOfCredit"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:otherFormsOfCredit')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:otherFormsOfCreditPlaceholder')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:sustainableDevelopment')}
+                      name="sustainableDevelopment"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:sustainableDevelopment')} ${t(
+                            'isRequired'
+                          )}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={6}
+                        placeholder={`${t('monitoringReport:sustainableDevelopmentPlaceholder')}`}
+                        maxLength={6}
+                      />
+                    </Form.Item>
                   </div>
                 </Col>
               </Row>
