@@ -12,7 +12,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 export const DataAndParametersStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev } = props;
+  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -33,9 +33,12 @@ export const DataAndParametersStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => console.log('-----form values-------', values)}
+              onFinish={(values: any) => {
+                onValueChange({ dataAndParameters: values });
+                next();
+              }}
             >
-              <Form.Item label={t('monitoringReport:dp_title')}></Form.Item>
+              <h4 className="form-section-title">{t('monitoringReport:dp_title')}</h4>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
@@ -234,7 +237,7 @@ export const DataAndParametersStep = (props: any) => {
                 </Col>
               </Row>
 
-              <Form.Item label={t('monitoringReport:dpm_title')}></Form.Item>
+              <h4 className="form-section-title">{t('monitoringReport:dpm_title')}</h4>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
@@ -547,7 +550,7 @@ export const DataAndParametersStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev}>
                   Back
                 </Button>
-                <Button type="primary" onClick={next}>
+                <Button type="primary" htmlType="submit">
                   Next
                 </Button>
               </Row>

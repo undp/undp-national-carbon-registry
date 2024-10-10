@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Form } from 'antd';
 import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
@@ -9,9 +8,7 @@ export const SLCFMonitoringReportComponent = (props: any) => {
   const { put, get, post } = useConnection();
 
   const { useLocation, onNavigateToProgrammeView, translator } = props;
-  const [current, setCurrent] = useState<number>(0);
 
-  const [form] = Form.useForm();
   const getCountryList = async () => {
     const response = await get('national/organisation/countries');
     if (response.data) {
@@ -35,7 +32,6 @@ export const SLCFMonitoringReportComponent = (props: any) => {
           <StepperComponent
             useLocation={useLocation}
             translator={translator}
-            form={form}
             countries={countries}
           ></StepperComponent>
         </div>

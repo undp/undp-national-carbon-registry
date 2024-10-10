@@ -4,7 +4,7 @@ import { Button, Col, Form, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
 export const SafeguardsStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev } = props;
+  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
 
   const t = translator.t;
   return (
@@ -19,14 +19,17 @@ export const SafeguardsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => console.log('-----form values-------', values)}
+              onFinish={(values: any) => {
+                onValueChange({ safeguards: values });
+                next();
+              }}
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:s_noNetHarm')}
-                      name="s_noNetHarm"
+                      name="noNetHarm"
                       rules={[
                         {
                           required: true,
@@ -43,7 +46,7 @@ export const SafeguardsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:s_stakeholderConsultation')}
-                      name="s_stakeholderConsultation"
+                      name="stakeholderConsultation"
                       tooltip={{
                         title: (
                           <div className="tooltip">
@@ -116,7 +119,7 @@ export const SafeguardsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:s_afoluSpecificSafeguards')}
-                      name="s_afoluSpecificSafeguards"
+                      name="afoluSpecificSafeguards"
                       tooltip={{
                         title: (
                           <div className="tooltip">
@@ -173,7 +176,7 @@ export const SafeguardsStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev}>
                   Back
                 </Button>
-                <Button type="primary" onClick={next}>
+                <Button type="primary" htmlType="submit">
                   Next
                 </Button>
               </Row>

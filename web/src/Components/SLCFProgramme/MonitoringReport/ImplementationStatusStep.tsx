@@ -4,7 +4,7 @@ import { Button, Col, Form, Row } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
 export const ImplementationStatusStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev } = props;
+  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
 
   const t = translator.t;
   return (
@@ -19,14 +19,17 @@ export const ImplementationStatusStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => console.log('-----form values-------', values)}
+              onFinish={(values: any) => {
+                onValueChange({ implementationStatus: values });
+                next();
+              }}
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:is_statusOfPA')}
-                      name="is_statusOfPA"
+                      name="statusOfPA"
                       tooltip={{
                         title: (
                           <div className="tooltip">
@@ -73,7 +76,7 @@ export const ImplementationStatusStep = (props: any) => {
                     <h4 className="form-section-title">{t('monitoringReport:is_deviations')}</h4>
                     <Form.Item
                       label={t('monitoringReport:is_methodologyDeviations')}
-                      name="is_methodologyDeviations"
+                      name="methodologyDeviations"
                       tooltip={{
                         title: (
                           <div className="tooltip">
@@ -112,7 +115,7 @@ export const ImplementationStatusStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:is_descriptionDeviations')}
-                      name="is_descriptionDeviations"
+                      name="descriptionDeviations"
                       rules={[
                         {
                           required: true,
@@ -135,7 +138,7 @@ export const ImplementationStatusStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev}>
                   Back
                 </Button>
-                <Button type="primary" onClick={next}>
+                <Button type="primary" htmlType="submit">
                   Next
                 </Button>
               </Row>
