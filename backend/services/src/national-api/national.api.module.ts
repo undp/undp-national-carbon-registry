@@ -20,6 +20,8 @@ import configuration from "../configuration";
 import { VerificationModule } from "src/verification/verification.module";
 import { LocationModule } from "../location/location.module";
 import { LocationController } from "./location.controller";
+import { ProgrammeSlModule } from "src/programme-sl/programme-sl.module";
+import { ProgrammeSlController } from "./programmeSl.controller";
 
 @Module({
   imports: [
@@ -40,10 +42,7 @@ import { LocationController } from "./location.controller";
     CompanyModule,
     UtilModule,
     LocationModule,
-<<<<<<< HEAD
     ProgrammeSlModule,
-=======
->>>>>>> c3f8152b034c44d6b608d08183b823d128b33116
   ],
   controllers: [
     NationalAPIController,
@@ -53,11 +52,8 @@ import { LocationController } from "./location.controller";
     ProgrammeController,
     SettingsController,
     LocationController,
-<<<<<<< HEAD
     ProgrammeSlController,
-=======
     VerificationController,
->>>>>>> c3f8152b034c44d6b608d08183b823d128b33116
   ],
   providers: [NationalAPIService, Logger],
 })

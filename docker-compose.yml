@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: root
+      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
       POSTGRES_USER: root
       PSQL_USERNAME: root
       PGPORT: 5432
@@ -33,13 +33,13 @@ services:
       PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
-      rootEmail: ravinduf@xeptagon.com
-      cfAdminEmail: ravinduf+cf@xeptagon.com
-      exComAdminEmail: ravinduf+ex@xeptagon.com
-      Ministry: 'Environment'
-      Department : 'National Environmental Standards and Regulations Enforcement Agency'
+      rootEmail: <ROOT EMAIL>
+      cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
+      exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
+      Ministery: ""
+      Department: ""
       systemCountryCode: "LK"
       systemCountryName: "Sri Lanka"
       systemContinentName: "Sri Lanka"
@@ -76,7 +76,7 @@ services:
       PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
@@ -91,7 +91,7 @@ services:
       PGPORT: 5432
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: root
+      DB_PASSWORD: "<ANY PASSOWORD>"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
@@ -105,9 +105,9 @@ services:
       ITMO_API_KEY: ""
       ITMO_EMAIL: ""
       ITMO_PASSWORD: ""
-      MRV_ENDPOINT: 'http://192.168.1.32:9000'
+      MRV_ENDPOINT: "http://192.168.1.32:9000"
       SYNC_ENABLE: false
-      MRV_API_TOKEN: ''
+      MRV_API_TOKEN: ""
       BACKEND_HOST: "http://192.168.1.32:3000"
     volumes:
       - filestore:/app/backend/services/public

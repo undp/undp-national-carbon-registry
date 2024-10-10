@@ -11,7 +11,7 @@ export class DocumentEntity implements EntitySubject {
   @Column()
   programmeId: string;
 
-  @Column()
+  @Column({ nullable: true })
   verificationRequestId: number;
 
   @Column()
