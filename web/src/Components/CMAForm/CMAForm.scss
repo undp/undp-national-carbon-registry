@@ -45,13 +45,61 @@
 
   .form-section-title {
     margin-bottom: 20px;
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
   }
 
+  .list-item-title {
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+
+  .custom-required:after {
+    content: '*';
+    color: rgba(255, 77, 79, 0.8) !important;
+    font-size: 14px;
+    top: 2px;
+    position: relative;
+    left: 3px;
+  }
   .form-section {
     background-color: #fbfbfb;
     padding: 25px 30px;
-    border-radius: 16px;
+    border-radius: 8px;
     margin-bottom: 20px;
+  }
+
+  .form-item-flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .radio-btn-flex-row {
+    display: flex;
+    flex-direction: row;
+    width: 20%;
+  }
+  .crediting-period-title {
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+  .crediting-period-flex-row {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    // align-items: center;
+    p {
+      margin-top: 6px;
+      color: rgba(58, 53, 65, 0.5);
+    }
+
+    .crediting-datepicker {
+      width: 50%;
+    }
+  }
+  .half-width-form-item {
+    width: 40%;
   }
 
   .form-list-actions {
@@ -131,6 +179,10 @@
     font-weight: 600;
     color: $steps-title;
   }
+}
+
+.ant-form-item-tooltip {
+  cursor: default !important;
 }
 
 .ant-tooltip {

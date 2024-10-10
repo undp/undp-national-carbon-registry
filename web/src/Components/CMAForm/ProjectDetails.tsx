@@ -12,7 +12,7 @@ import PhoneInput, {
   isPossiblePhoneNumber,
 } from 'react-phone-number-input';
 
-const StepO1 = (props: CustomStepsProps) => {
+const ProjectDetails = (props: CustomStepsProps) => {
   const { next, form, current, t, countries } = props;
 
   const { get, post } = useConnection();
@@ -257,4 +257,4 @@ const StepO1 = (props: CustomStepsProps) => {
   );
 };
 
-export default StepO1;
+export default ProjectDetails;
