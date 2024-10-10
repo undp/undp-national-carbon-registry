@@ -101,6 +101,7 @@ export class ProgrammeSlService {
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROGRAMME_SL_CREATE,
+      null,
       savedProgramme.programmeId,
       companyId
     );
