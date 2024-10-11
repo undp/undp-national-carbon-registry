@@ -15,7 +15,6 @@ services:
       POSTGRES_PASSWORD: "<ANY PASSOWORD>"
       POSTGRES_USER: root
       PSQL_USERNAME: root
-      PGPORT: 5432
       # POSTGRES_HOST_AUTH_METHOD: trust
       PGDATA: /data/postgres
     volumes:
@@ -30,7 +29,6 @@ services:
     depends_on:
       - db
     environment:
-      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
@@ -73,7 +71,6 @@ services:
       - db
       - national
     environment:
-      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
@@ -88,7 +85,6 @@ services:
       - db
       - national
     environment:
-      PGPORT: 5432
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: "<ANY PASSOWORD>"
