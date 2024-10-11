@@ -9,9 +9,10 @@ import PhoneInput, {
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 export const DataAndParametersStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev } = props;
+  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -23,22 +24,24 @@ export const DataAndParametersStep = (props: any) => {
   return (
     <>
       {current === 4 && (
-        <div className="programme-details-form-container">
-          <div className="programme-details-form">
+        <div>
+          <div className="step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
-              name="programme-details"
-              className="programme-details-form"
+              className="step-form"
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => console.log('-----form values-------', values)}
+              onFinish={(values: any) => {
+                onValueChange({ dataAndParameters: values });
+                next();
+              }}
             >
-              <Form.Item label={t('monitoringReport:dp_title')}></Form.Item>
+              <h4 className="form-section-title">{t('monitoringReport:dp_title')}</h4>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dp_dataParameter')}
                       name="dp_dataParameter"
@@ -63,7 +66,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" placeholder={t('monitoringReport:dp_dataParameter')} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:dp_description')}
@@ -77,7 +80,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dp_description')}`}
+                        placeholder={`${t('monitoringReport:dp_descriptionPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -106,12 +109,29 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input
+                        size="large"
+                        placeholder={t('monitoringReport:dp_valueAppliedPlaceholder')}
+                      />
                     </Form.Item>
 
                     <Form.Item
                       label={t('monitoringReport:dp_purposeOfData')}
                       name="dp_purposeOfData"
+                      tooltip={{
+                        title: (
+                          <div className="tooltip">
+                            <p>Indicate one of the following</p>
+                            <ul>
+                              <li>Calculation of baseline emissions</li>
+                              <li>Calculation of project emissions</li>
+                              <li>Calculation of leakage</li>
+                            </ul>
+                          </div>
+                        ),
+                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
+                        placement: 'topLeft',
+                      }}
                       rules={[
                         {
                           required: true,
@@ -121,7 +141,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dp_purposeOfData')}`}
+                        placeholder={`${t('monitoringReport:dp_purposeOfDataPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -138,7 +158,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dp_comments')}`}
+                        placeholder={`${t('monitoringReport:dp_commentsPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -146,7 +166,7 @@ export const DataAndParametersStep = (props: any) => {
                 </Col>
 
                 <Col xl={12} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('monitoringReport:dp_dataUnit')}
                       name="dp_dataUnit"
@@ -171,7 +191,10 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input
+                        size="large"
+                        placeholder={t('monitoringReport:dp_dataUnitPlaceholder')}
+                      />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:dp_sourceOfData')}
@@ -185,7 +208,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dp_sourceOfData')}`}
+                        placeholder={`${t('monitoringReport:dp_sourceOfDataPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -204,7 +227,9 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={6}
-                        placeholder={`${t('monitoringReport:dp_selectionAndMeasurement')}`}
+                        placeholder={`${t(
+                          'monitoringReport:dp_selectionAndMeasurementPlaceholder'
+                        )}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -212,10 +237,10 @@ export const DataAndParametersStep = (props: any) => {
                 </Col>
               </Row>
 
-              <Form.Item label={t('monitoringReport:dpm_title')}></Form.Item>
+              <h4 className="form-section-title">{t('monitoringReport:dpm_title')}</h4>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_dataParameter')}
                       name="dpm_dataParameter"
@@ -240,7 +265,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" placeholder={t('monitoringReport:dpm_dataParameter')} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:dpm_description')}
@@ -254,7 +279,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_description')}`}
+                        placeholder={`${t('monitoringReport:dpm_descriptionPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -271,7 +296,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={5}
-                        placeholder={`${t('monitoringReport:dpm_mmProcedures')}`}
+                        placeholder={`${t('monitoringReport:dpm_mmProceduresPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -288,7 +313,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_valueApplied')}`}
+                        placeholder={`${t('monitoringReport:dpm_valueAppliedPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -305,7 +330,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_qaQcProcedures')}`}
+                        placeholder={`${t('monitoringReport:dpm_qaQcProceduresPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -322,7 +347,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_comments')}`}
+                        placeholder={`${t('monitoringReport:dpm_commentsPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -355,7 +380,10 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input
+                        size="large"
+                        placeholder={`${t('monitoringReport:dpm_dataUnitPlaceholder')}`}
+                      />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:dpm_sourceOfData')}
@@ -369,7 +397,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_sourceOfData')}`}
+                        placeholder={`${t('monitoringReport:dpm_sourceOfDataPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -388,7 +416,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_monitoringEquipment')}`}
+                        placeholder={`${t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -405,7 +433,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_purposeOfData')}`}
+                        placeholder={`${t('monitoringReport:dpm_purposeOfDataPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -426,7 +454,7 @@ export const DataAndParametersStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:dpm_frequencyOfMonitoring')} ${t(
+                                `${t('monitoringReport:dpm_frequencyOfMonitoringPlaceholder')} ${t(
                                   'isRequired'
                                 )}`
                               );
@@ -451,7 +479,7 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_calculationData')}`}
+                        placeholder={`${t('monitoringReport:dpm_calculationDataPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
@@ -460,10 +488,46 @@ export const DataAndParametersStep = (props: any) => {
               </Row>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_planDescription')}
                       name="dpm_planDescription"
+                      tooltip={{
+                        title: (
+                          <div className="tooltip">
+                            <p>
+                              Describe the process and schedule followed for monitoring the data and
+                              parameters, set out in Section 4.2 (Data and Parameters Monitored)
+                              above, during this monitoring period, include details on the following
+                            </p>
+                            <ul>
+                              <li>
+                                The organizational structure, responsibilities and competencies of
+                                the personnel that carried out the monitoring activities.
+                              </li>
+                              <li>
+                                The methods used for generating/measuring, recording, storing,
+                                aggregating, collating and reporting the data on monitored
+                                parameters.
+                              </li>
+                              <li>
+                                The procedures used for handling any internal auditing performed and
+                                any nonconformities identified.
+                              </li>
+                              <li>
+                                The implementation of sampling approaches, including target
+                                precision levels, sample sizes, sample site locations,
+                                stratification, frequency of measurement and QA/QC procedures. Where
+                                applicable, demonstrate whether the required confidence level or
+                                precision has been met. Where appropriate, include line diagrams to
+                                display the GHG data collection and management system.
+                              </li>
+                            </ul>
+                          </div>
+                        ),
+                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
+                        placement: 'topLeft',
+                      }}
                       rules={[
                         {
                           required: true,
@@ -475,23 +539,21 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={6}
-                        placeholder={`${t('monitoringReport:dpm_planDescription')}`}
+                        placeholder={`${t('monitoringReport:dpm_planDescriptionPlaceholder')}`}
                         maxLength={6}
                       />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
-              <Form.Item>
-                <div className="steps-actions">
-                  <Button type="primary" onClick={next}>
-                    Next
-                  </Button>
-                  <Button style={{ margin: '0 8px' }} onClick={prev}>
-                    Back
-                  </Button>
-                </div>
-              </Form.Item>
+              <Row justify={'end'} className="step-actions-end">
+                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                  Back
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Next
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>
