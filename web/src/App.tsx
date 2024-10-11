@@ -43,6 +43,7 @@ import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAcco
 import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
 import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
+import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 
 const App = () => {
   const ability = defineAbility();
@@ -103,7 +104,7 @@ const App = () => {
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
                     <Route path="viewAll" element={<SLCFProgrammeManagement />} />
-                    <Route path="view/:id" element={<ProgrammeView />} />
+                    <Route path="view/:id" element={<SLCFProjectDetailsView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="uploadMonitoringReport" element={<SLCFMonitoringReport />} />

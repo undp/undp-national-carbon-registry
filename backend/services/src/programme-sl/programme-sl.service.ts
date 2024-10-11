@@ -29,6 +29,8 @@ import { ProgrammeSl } from "src/entities/programmeSl.entity";
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { TxType } from "src/enum/txtype.enum";
 import { EmailTemplates } from "src/email-helper/email.template";
+import { DataListResponseDto } from "src/dto/data.list.response";
+import { Company } from "src/entities/company.entity";
 @Injectable()
 export class ProgrammeSlService {
   constructor(
@@ -51,13 +53,20 @@ export class ProgrammeSlService {
     private letterOfIntentResponseGen: LetterOfIntentResponseGen,
     private letterOfAuthorisationRequestGen: LetterOfAuthorisationRequestGen,
     private letterSustainableDevSupportLetterGen: LetterSustainableDevSupportLetterGen,
-    private dataExportService: DataExportService
+    private dataExportService: DataExportService,
+    private readonly programmeLedgerService: ProgrammeLedgerService
   ) {}
 
-  async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
+  async create(
+    programmeSlDto: ProgrammeSlDto,
+    user: User
+  ): Promise<ProgrammeSl | undefined> {
     if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programmeSl.notProjectParticipant", []),
+        this.helperService.formatReqMessagesString(
+          "programmeSl.notProjectParticipant",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -69,12 +78,18 @@ export class ProgrammeSlService {
 
     if (!projectCompany) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        this.helperService.formatReqMessagesString(
+          "programmeSl.noCompanyExistingInSystem",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
 
-    programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 3);
+    programme.programmeId = await this.counterService.incrementCount(
+      CounterType.PROGRAMME_SL,
+      3
+    );
     programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
     programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;
@@ -97,7 +112,9 @@ export class ProgrammeSlService {
       programme.additionalDocuments = docUrls;
     }
 
-    let savedProgramme = await this.programmeLedger.createProgrammeSl(programme);
+    let savedProgramme = await this.programmeLedger.createProgrammeSl(
+      programme
+    );
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROGRAMME_SL_CREATE,
@@ -109,6 +126,19 @@ export class ProgrammeSlService {
     return savedProgramme;
   }
 
+  async getProjectById(programmeId: string): Promise<any> {
+    let project: ProgrammeSl =
+      await this.programmeLedgerService.getProgrammeSlById(programmeId);
+    const company: Company = await this.companyService.findByCompanyId(
+      project.companyId
+    );
+    let updatedProject = {
+      ...project,
+      company: [company],
+    };
+    console.log(JSON.stringify(updatedProject));
+    return updatedProject;
+  }
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],
     ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],
@@ -140,13 +170,19 @@ export class ProgrammeSlService {
       data = data.split(",")[1];
       if (filetype == undefined) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+          this.helperService.formatReqMessagesString(
+            "programme.invalidDocumentUpload",
+            []
+          ),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     } catch (Exception: any) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+        this.helperService.formatReqMessagesString(
+          "programme.invalidDocumentUpload",
+          []
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -161,7 +197,10 @@ export class ProgrammeSlService {
       return response;
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programme.docUploadFailed", []),
+        this.helperService.formatReqMessagesString(
+          "programme.docUploadFailed",
+          []
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

@@ -317,10 +317,10 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       projectCategory: values?.projectCategory,
-      province: values?.province,
-      district: values?.district,
-      dsDivision: values?.dsDivision,
-      city: values?.city,
+      province: values?.province || 'test',
+      district: values?.district || 'test',
+      dsDivision: values?.dsDivision || 'test',
+      city: values?.city || 'test',
       community: 'test',
       geographicalLocationCoordinates: projectLocations,
       projectGeography: 'SINGLE',
@@ -445,8 +445,8 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 name="province"
                                 rules={[
                                   {
-                                    required: true,
-                                    message: `${t('addProgramme:province')} ${t('isRequired')}}`,
+                                    required: false,
+                                    message: `${t('addProgramme:province')} ${t('isRequired')}`,
                                   },
                                 ]}
                               >
@@ -465,7 +465,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 name="district"
                                 rules={[
                                   {
-                                    required: true,
+                                    required: false,
                                     message: `${t('addProgramme:district')} ${t('isRequired')}`,
                                   },
                                 ]}
@@ -485,7 +485,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 name="dsDivision"
                                 rules={[
                                   {
-                                    required: true,
+                                    required: false,
                                     message: `${t('addProgramme:dsDivision')} ${t('isRequired')}`,
                                   },
                                 ]}
@@ -504,7 +504,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 name="city"
                                 rules={[
                                   {
-                                    required: true,
+                                    required: false,
                                     message: `${t('addProgramme:city')} ${t('isRequired')}`,
                                   },
                                 ]}
