@@ -23,7 +23,7 @@ export class NetGHGEmissionReductions {
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => YearlyGHGEmissionReduction)
-  YearlyGHGEmissionReductions: YearlyGHGEmissionReduction[];
+  yearlyGHGEmissionReductions: YearlyGHGEmissionReduction[];
 
   @ApiProperty()
   @IsNotEmpty()

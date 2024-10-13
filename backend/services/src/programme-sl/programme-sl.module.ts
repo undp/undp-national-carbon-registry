@@ -17,12 +17,13 @@ import { CaslModule } from "../casl/casl.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { ProgrammeSlService } from "./programme-sl.service";
+import { DocumentEntity } from "src/entities/document.entity";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([ProgrammeSl]),
+    TypeOrmModule.forFeature([ProgrammeSl, DocumentEntity]),
     UtilModule,
     CompanyModule,
     UserModule,

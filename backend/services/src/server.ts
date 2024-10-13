@@ -1,16 +1,10 @@
 import { createLogger } from "winston";
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from "nest-winston";
+import { utilities as nestWinstonModuleUtilities, WinstonModule } from "nest-winston";
 import { createServer, proxy } from "aws-serverless-express";
 import { eventContext } from "aws-serverless-express/middleware";
 
 import { AbstractHttpAdapter, NestFactory } from "@nestjs/core";
-import {
-  ExpressAdapter,
-  NestExpressApplication,
-} from "@nestjs/platform-express";
+import { ExpressAdapter, NestExpressApplication } from "@nestjs/platform-express";
 import { Server } from "http";
 import * as winston from "winston";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -24,7 +18,7 @@ import { UtilModule } from "./util/util.module";
 import * as bodyParser from "body-parser";
 
 const express = require("express");
-const fs_promises = require('fs/promises');
+const fs_promises = require("fs/promises");
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
@@ -32,20 +26,14 @@ const fs_promises = require('fs/promises');
 // binaryMimeTypes below
 const binaryMimeTypes: string[] = [];
 
-function setupSwagger(
-  nestApp: INestApplication,
-  name: string,
-  httpBase: String
-): void {
+function setupSwagger(nestApp: INestApplication, name: string, httpBase: String): void {
   const config = new DocumentBuilder()
     .setTitle(`${name.replace("APIModule", " API")}`)
-    .setDescription(
-      `RESTful Web API Documentation.`
-    )
+    .setDescription(`RESTful Web API Documentation.`)
     .setVersion("0.5")
     .addBearerAuth()
     .addApiKey()
-    .addServer(`${process.env.DOMAIN_MAP == 'true' ? "/" : ("/" + process.env.NODE_ENV)}`)
+    .addServer(`${process.env.DOMAIN_MAP == "true" ? "/" : "/" + process.env.NODE_ENV}`)
     .build();
   // ${process.env.NODE_ENV}
   const document = SwaggerModule.createDocument(nestApp, config);
@@ -95,12 +83,12 @@ export async function buildNestApp(
 ): Promise<NestExpressApplication> {
   let options: any = {
     logger: getLogger(module),
-  }
+  };
   if (process.env.SSL_KEY_PATH) {
-    options['httpsOptions'] = {
-      key: (await fs_promises.readFile(process.env.SSL_KEY_PATH)),
-      cert: (await fs_promises.readFile(process.env.SSL_CERT_PATH)),
-    }
+    options["httpsOptions"] = {
+      key: await fs_promises.readFile(process.env.SSL_KEY_PATH),
+      cert: await fs_promises.readFile(process.env.SSL_CERT_PATH),
+    };
   }
   const nestApp = await NestFactory.create<NestExpressApplication>(
     module,
@@ -114,7 +102,7 @@ export async function buildNestApp(
   nestApp.useGlobalPipes(new TrimPipe());
   nestApp.useGlobalPipes(
     new ValidationPipe({
-      exceptionFactory: (errors) => new ValidationException(errors),
+      exceptionFactory: (errors) => new BadRequestException(errors),
     })
   );
   nestApp.useGlobalFilters(new ValidationExceptionFilter());

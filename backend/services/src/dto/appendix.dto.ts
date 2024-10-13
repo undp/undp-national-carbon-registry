@@ -25,5 +25,5 @@ export class Appendix {
   @ApiPropertyOptional()
   @IsOptional()
   @IsArray()
-  additionalDocuments: [];
+  additionalDocuments: string[];
 }

@@ -417,6 +417,15 @@ export class EmailHelperService {
         };
         break;
 
+      case "CMA_CREATE":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/cmaManagement/view/${programmeId}`,
+        };
+        break;
+
       default:
         break;
     }
