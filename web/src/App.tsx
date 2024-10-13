@@ -43,6 +43,9 @@ import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAcco
 import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
 import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
+import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
+import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+
 
 const App = () => {
   const ability = defineAbility();
@@ -98,12 +101,20 @@ const App = () => {
                   >
                     <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
                   </Route>
+
+                  <Route
+                    path=""
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="CMAForm" element={<CMAFormPage />} />
+                  </Route>
+
                   <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
                     <Route path="viewAll" element={<SLCFProgrammeManagement />} />
-                    <Route path="view/:id" element={<ProgrammeView />} />
+                    <Route path="view/:id" element={<SLCFProjectDetailsView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="uploadMonitoringReport" element={<SLCFMonitoringReport />} />

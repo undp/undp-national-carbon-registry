@@ -172,6 +172,46 @@ export interface Programme {
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
 }
+export interface ProgrammeSl {
+  programmeId: string;
+  externalId: string;
+  serialNo: string;
+  title: string;
+  sectoralScope: string;
+  sector: string;
+  countryCodeA2: string;
+  currentStage: ProgrammeStageR | ProgrammeStageMRV | ProgrammeStageUnified;
+  startTime: number;
+  endTime: number;
+  creditChange: number;
+  creditIssued: number;
+  creditEst: number;
+  creditBalance: number;
+  creditTransferred: number[];
+  creditRetired: number[];
+  creditFrozen: number[];
+  constantVersion: string;
+  proponentTaxVatId: string[];
+  companyId: number;
+  proponentPercentage: number[];
+  creditOwnerPercentage: number[];
+  certifierId: any[];
+  certifier: any[];
+  company: any[];
+  creditUnit: string;
+  programmeProperties: ProgrammeProperties;
+  agricultureProperties: any;
+  solarProperties: any;
+  txTime: number;
+  createdTime: number;
+  txRef: string;
+  typeOfMitigation: TypeOfMitigation;
+  geographicalLocationCordintes: any;
+  projectLocation: any;
+  mitigationActions: any;
+  environmentalAssessmentRegistrationNo: any;
+  article6trade: boolean;
+}
 
 export interface ProgrammeR extends Programme {
   currentStage: ProgrammeStageR;
@@ -184,6 +224,13 @@ export interface ProgrammeT extends Programme {
   emissionReductionExpected: number;
   emissionReductionAchieved: number;
   ownership: boolean;
+}
+
+export interface ProgrammeSlU extends ProgrammeSl {
+  currentStage: ProgrammeStageUnified;
+  programmeProperties: ProgrammePropertiesU;
+  emissionReductionExpected: number;
+  emissionReductionAchieved: number;
 }
 
 export interface ProgrammeU extends Programme {
@@ -215,6 +262,38 @@ export const getGeneralFields = (
     buyerCountry: programme.programmeProperties.buyerCountryEligibility
       ? programme.programmeProperties.buyerCountryEligibility
       : '-',
+    environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
+  };
+  if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
+    let prog: any = programme;
+    res.emissionsReductionExpected = prog.emissionReductionExpected;
+    res.emissionsReductionAchieved = prog.emissionReductionAchieved;
+  }
+  return res;
+};
+
+export const getGeneralFieldsSl = (
+  programme: ProgrammeSl | ProgrammeSlU | ProgrammeR | ProgrammeT,
+  system?: CarbonSystemType
+) => {
+  let res: Record<string, any> = {
+    title: programme.title,
+    serialNo: programme.serialNo,
+    currentStatus: programme.currentStage,
+    applicationType: 'Project Developer',
+    sector: programme.sector,
+    sectoralScope:
+      Object.keys(SectoralScope)[
+        Object.values(SectoralScope).indexOf(programme.sectoralScope as SectoralScope)
+      ],
+    // location: programme.programmeProperties.geographicalLocation
+    //   ? programme.programmeProperties.geographicalLocation.join(', ')
+    //   : '-',
+    startDate: DateTime.fromSeconds(Number(programme.startTime)),
+    endDate: DateTime.fromSeconds(Number(programme.endTime)),
+    // buyerCountry: programme.programmeProperties.buyerCountryEligibility
+    //   ? programme.programmeProperties.buyerCountryEligibility
+    //   : '-',
     environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
   };
   if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {

@@ -36,6 +36,9 @@ import { DocumentStatus } from "src/enum/document.status";
 import { DataResponseDto } from "src/dto/data.response.dto";
 import { use } from "passport";
 import { GetDocDto } from "src/dto/getDoc.dto";
+import { DataListResponseDto } from "src/dto/data.list.response";
+import { Company } from "src/entities/company.entity";
+
 @Injectable()
 export class ProgrammeSlService {
   constructor(
@@ -62,7 +65,8 @@ export class ProgrammeSlService {
     @InjectRepository(DocumentEntity)
     private documentRepo: Repository<DocumentEntity>,
     @InjectRepository(ProgrammeSl)
-    private programmeSlRepo: Repository<ProgrammeSl>
+    private programmeSlRepo: Repository<ProgrammeSl>,
+    private readonly programmeLedgerService: ProgrammeLedgerService
   ) {}
 
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
@@ -112,6 +116,7 @@ export class ProgrammeSlService {
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROGRAMME_SL_CREATE,
+      null,
       savedProgramme.programmeId,
       companyId
     );
@@ -236,6 +241,7 @@ export class ProgrammeSlService {
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CMA_CREATE,
+      null,
       cmaDto.programmeId,
       companyId
     );
@@ -257,6 +263,16 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, documents);
   }
 
+  async getProjectById(programmeId: string): Promise<any> {
+    let project: ProgrammeSl = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+    const company: Company = await this.companyService.findByCompanyId(project.companyId);
+    let updatedProject = {
+      ...project,
+      company: [company],
+    };
+    console.log(JSON.stringify(updatedProject));
+    return updatedProject;
+  }
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],
     ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],

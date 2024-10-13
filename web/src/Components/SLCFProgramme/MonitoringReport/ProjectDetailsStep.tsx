@@ -10,36 +10,56 @@ import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 
 export const ProjectDetailsStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries } = props;
+  const { useLocation, translator, current, form, next, countries, onValueChange } = props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
-
+  const reportVersion = process.env.MONITORING_REPORT_VERSION
+    ? process.env.MONITORING_REPORT_VERSION
+    : 'Version 03';
   const t = translator.t;
   return (
     <>
       {current === 0 && (
-        <div className="programme-details-form-container">
-          <div className="programme-details-form">
+        <div>
+          <div className="step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
-              name="programme-details"
-              className="programme-details-form"
+              className="step-form"
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => console.log('-----form values-------', values)}
+              // initialValues={{
+              //   projectTitle: 'p',
+              //   reportID: 'a',
+              //   pages: 'a',
+              //   projectProponents: 'a',
+              //   physicalAddress: 'Palpolawatta Road',
+              //   email: 'amila.uom.cse@gmail.com',
+              //   version: reportVersion,
+              //   reportTitle: 'a',
+              //   dateOfIssue: moment(1728498600, 'X'),
+              //   preparedBy: 'a',
+              //   telephone: '+94778647168',
+              //   website: 'a',
+              // }}
+              onFinish={(values: any) => {
+                console.log('-----values---------', values);
+                values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').unix();
+                onValueChange({ projectDetails: values });
+                next();
+              }}
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <div className="details-part-one">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:pd_projectTitle')}
-                      name="pd_projectTitle"
+                      name="projectTitle"
                       rules={[
                         {
                           required: true,
@@ -65,7 +85,7 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:pd_reportID')}
-                      name="pd_reportID"
+                      name="reportID"
                       rules={[
                         {
                           required: true,
@@ -92,7 +112,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_pages')}
-                      name="pd_pages"
+                      name="pages"
                       rules={[
                         {
                           required: true,
@@ -119,7 +139,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_projectProponents')}
-                      name="pd_projectProponents"
+                      name="projectProponents"
                       rules={[
                         {
                           required: true,
@@ -146,7 +166,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_physicalAddress')}
-                      name="pd_physicalAddress"
+                      name="physicalAddress"
                       rules={[
                         {
                           required: true,
@@ -173,7 +193,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_email')}
-                      name="pd_email"
+                      name="email"
                       rules={[
                         {
                           required: true,
@@ -201,10 +221,10 @@ export const ProjectDetailsStep = (props: any) => {
                 </Col>
 
                 <Col xl={12} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('monitoringReport:pd_version')}
-                      name="pd_version"
+                      name="version"
                       rules={[
                         {
                           required: true,
@@ -231,7 +251,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_reportTitle')}
-                      name="pd_reportTitle"
+                      name="reportTitle"
                       rules={[
                         {
                           required: true,
@@ -257,7 +277,7 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:pd_dateOfIssue')}
-                      name="pd_dateOfIssue"
+                      name="dateOfIssue"
                       rules={[
                         {
                           required: true,
@@ -287,7 +307,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_preparedBy')}
-                      name="pd_preparedBy"
+                      name="preparedBy"
                       rules={[
                         {
                           required: true,
@@ -365,7 +385,7 @@ export const ProjectDetailsStep = (props: any) => {
 
                     <Form.Item
                       label={t('monitoringReport:pd_website')}
-                      name="pd_website"
+                      name="website"
                       rules={[
                         {
                           required: true,
@@ -392,13 +412,14 @@ export const ProjectDetailsStep = (props: any) => {
                   </div>
                 </Col>
               </Row>
-              <Form.Item>
-                <div className="steps-actions">
-                  <Button type="primary" onClick={next}>
-                    Next
-                  </Button>
-                </div>
-              </Form.Item>
+              <Row justify={'end'} className="step-actions-end">
+                <Button danger size={'large'}>
+                  Cancel
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Next
+                </Button>
+              </Row>
             </Form>
           </div>
         </div>
