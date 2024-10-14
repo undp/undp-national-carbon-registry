@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: "root"
+      POSTGRES_PASSWORD: "<ANY PASSOWORD>"
       POSTGRES_USER: root
       PSQL_USERNAME: root
       # POSTGRES_HOST_AUTH_METHOD: trust
@@ -31,14 +31,14 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "root"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_MODULE: national-api
-      rootEmail: amilad@xeptagon.com
-      cfAdminEmail: amilad+cf@xeptagon.com
-      exComAdminEmail: amilad+ex@xeptagon.com
-      Ministry: "Environment"
-      Department: "National Environmental Standards and Regulations Enforcement Agency"
-      systemCountryCode: "SL"
+      rootEmail: <ROOT EMAIL>
+      cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
+      exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
+      Ministery: ""
+      Department: ""
+      systemCountryCode: "LK"
       systemCountryName: "Sri Lanka"
       systemContinentName: "Sri Lanka"
       name: "Antactic Region"
@@ -48,7 +48,7 @@ services:
       IS_EMAIL_DISABLED: "true"
       DISABLE_LOW_PRIORITY_EMAIL: "true"
       EMAILPREFIX: ""
-      LOCATION_SERVICE: OPENSTREET
+      LOCATION_SERVICE: FILE
       ASYNC_OPERATIONS_TYPE: Database
       HOST: "http://localhost:3030"
       DOMAIN_MAP: "true"
@@ -73,7 +73,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "root"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       RUN_PORT: 3100
       RUN_MODULE: analytics-api
       DOMAIN_MAP: "true"
@@ -87,7 +87,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: "root"
+      DB_PASSWORD: "<ANY PASSOWORD>"
       # ,data-importer
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
