@@ -30,7 +30,7 @@ export const QualificationStep = (props: any) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                values.emissionReductionsRemovalsList.unshift({
+                values?.emissionReductionsRemovalsList?.unshift({
                   startDate: values.startDate,
                   endDate: values.endDate,
                   baselineEmissions: values.baselineEmissions,
