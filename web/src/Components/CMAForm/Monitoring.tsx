@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, StepProps } from 'antd';
+import { Button, Col, Form, Input, Row, Select, StepProps } from 'antd';
 import React from 'react';
 import { CustomStepsProps } from './StepProps';
 import TextArea from 'antd/lib/input/TextArea';
@@ -13,7 +13,7 @@ import {
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 const Monitoring = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, projectCategory } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -182,7 +182,23 @@ const Monitoring = (props: CustomStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" placeholder={`${t('CMAForm:purposePlaceholder')}`} />
+                          {/* <Input size="large" placeholder={`${t('CMAForm:purposePlaceholder')}`} /> */}
+                          <Select size="large">
+                            {projectCategory === 'RENEWABLE_ENERGY' && (
+                              <Select.Option value="Determination of baseline scenario">
+                                Determination of baseline scenario
+                              </Select.Option>
+                            )}
+                            <Select.Option value="Calculation of baseline emissions">
+                              Calculation of baseline emissions
+                            </Select.Option>
+                            <Select.Option value="Calculation of project emissions">
+                              Calculation of project emissions
+                            </Select.Option>
+                            <Select.Option value="Calculation of leakage">
+                              Calculation of leakage
+                            </Select.Option>
+                          </Select>
                         </Form.Item>
                       </div>
                     </Col>
@@ -508,7 +524,7 @@ const Monitoring = (props: CustomStepsProps) => {
                   // onClick={next}
                   htmlType="submit"
                 >
-                  {t('CMAForm:nextP')}
+                  {t('CMAForm:next')}
                 </Button>
               </Row>
             </Form>

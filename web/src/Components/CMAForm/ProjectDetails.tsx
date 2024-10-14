@@ -97,6 +97,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                     >
                       <DatePicker
                         size="large"
+                        disabled
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                       />
                     </Form.Item>

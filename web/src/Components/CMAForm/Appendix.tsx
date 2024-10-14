@@ -10,7 +10,7 @@ import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 
 const Step08 = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, submitForm } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -29,7 +29,6 @@ const Step08 = (props: CustomStepsProps) => {
       annexures: values?.additionalComments,
       additionalDocuments: await (async function () {
         const base64Docs: string[] = [];
-
         if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
           const docs = values.appendixDocuments;
           for (let i = 0; i < docs.length; i++) {
@@ -37,11 +36,14 @@ const Step08 = (props: CustomStepsProps) => {
             base64Docs.push(temp); // No need for Promise.resolve
           }
         }
-
         return base64Docs;
       })(),
     };
-    handleValuesUpdate({ applicationOfMethodology: tempValues });
+
+    if (submitForm) {
+      submitForm(tempValues);
+    }
+    // handleValuesUpdate({ appendix: tempValues });
   };
   return (
     <>
@@ -57,6 +59,10 @@ const Step08 = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 onFinish(values);
+
+                // if (submitForm) {
+                //   setTimeout(() => submitForm(), 1000);
+                // }
                 // if (next) {
                 //   next()
                 // }
@@ -73,7 +79,7 @@ const Step08 = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:additionalCommentsPlaceholder')}`} />
+                <TextArea rows={4} />
               </Form.Item>
               <Form.Item
                 label={t('CMAForm:uploadDocs')}
@@ -123,12 +129,7 @@ const Step08 = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} htmlType="submit">
                   {t('CMAForm:submit')}
                 </Button>
               </Row>

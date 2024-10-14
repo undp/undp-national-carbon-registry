@@ -60,9 +60,9 @@ const PROJECT_STATUS: { [key: string]: string } = {
   INSTALLATION_STAGE: 'Installation',
 };
 
-const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
-  TRACK_1: 'Track 1 - for trading',
-  TRACK_2: 'Track 2 - for internal offsetting',
+export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
+  TRACK_1: 'Track 1',
+  TRACK_2: 'Track 2',
 };
 export const SLCFProgrammeCreationComponent = (props: any) => {
   const { useLocation, onNavigateToProgrammeView, translator } = props;
@@ -306,7 +306,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
 
-    if (values?.optionalDocuments.length > 0) {
+    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;
       for (let i = 0; i < docs.length; i++) {
         const temp = await getBase64(docs[i]?.originFileObj as RcFile);
