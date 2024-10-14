@@ -30,6 +30,10 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 onFinish(values);
+                if (next) {
+                  next()
+                }
+
               }}
             >
               <Form.Item
@@ -72,8 +76,8 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:next')}
                 </Button>

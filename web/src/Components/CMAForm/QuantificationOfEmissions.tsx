@@ -13,7 +13,7 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   netEmissionReductions: 'avgNetEmissionReductions',
 };
 const QuantificationOfEmissions = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
 
   useEffect(() => {
     form.setFieldValue('totalCreditingYears', 1);
@@ -103,6 +103,62 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     form.setFieldValue('totalCreditingYears', totalCreditingYears);
     // calculateAvgAnnualERs();
   };
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues = {
+      baselineEmissions: values?.baselineEmissions,
+      projectEmissions: values?.projectEmissions,
+      leakage: values?.leakage,
+      netGHGEmissionReductions: (function () {
+        const tempGHG: any = {
+          description: values?.netGHGEmissionReductionsAndRemovals,
+        };
+
+        const tempYearlyReductions: any = [];
+
+        const firstReduction = {
+          startDate: moment(values?.emissionsPeriodStart).startOf('month').unix(),
+          endDate: moment(values?.emissionsPeriodEnd).endOf('month').unix(),
+          baselineEmissionReductions: Number(values?.baselineEmissionReductions),
+          projectEmissionReductions: Number(values?.projectEmissionReductions),
+          leakageEmissionReductions: Number(values?.leakageEmissionReductions),
+          netEmissionReductions: Number(values?.netEmissionReductions),
+        };
+
+        tempYearlyReductions.push(firstReduction);
+
+        if (values?.extraEmissionReductions) {
+          values.extraEmissionReductions.forEach((item: any) => {
+            const tempObj = {
+              startDate: moment(item?.emissionsPeriodStart).startOf('month').unix(),
+              endDate: moment(item?.emissionsPeriodEnd).endOf('month').unix(),
+              baselineEmissionReductions: Number(item?.baselineEmissionReductions),
+              projectEmissionReductions: Number(item?.projectEmissionReductions),
+              leakageEmissionReductions: Number(item?.leakageEmissionReductions),
+              netEmissionReductions: Number(item?.netEmissionReductions),
+            };
+
+            tempYearlyReductions.push(tempObj);
+          });
+        }
+        tempGHG.yearlyGHGEmissionReductions = tempYearlyReductions;
+        tempGHG.totalBaselineEmissionReductions = Number(values?.totalBaselineEmissionReductions);
+        tempGHG.totalLeakageEmissionReductions = Number(values?.totalLeakageEmissionReductions);
+        tempGHG.totalNetEmissionReductions = Number(values?.totalNetEmissionReductions);
+        tempGHG.avgBaselineEmissionReductions = Number(values?.avgBaselineEmissionReductions);
+        tempGHG.avgProjectEmissionReductions = Number(values?.avgProjectEmissionReductions);
+        tempGHG.avgLeakageEmissionReductions = Number(values?.avgLeakageEmissionReductions);
+        tempGHG.avgNetEmissionReductions = Number(values?.avgNetEmissionReductions);
+
+        return tempGHG;
+      })(),
+    };
+
+    console.log('----------tempValues-----------', tempValues);
+    handleValuesUpdate({ quantificationOfGHG: tempValues });
+  };
+
   return (
     <>
       {current === 6 && (
@@ -116,7 +172,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next()
+                }
               }}
             >
               <Form.Item
@@ -1005,8 +1064,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:next')}
                 </Button>

@@ -5,7 +5,40 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const EligibilityCriteria = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues = {
+      generalCriteria411ProjectActivity: values?.generalCriteria411ProjectActivity,
+      generalCriteria411IsAgreed: values?.generalCriteria411IsAgreed,
+      generalCriteria412ProjectActivity: values?.generalCriteria412ProjectActivity,
+      generalCriteria412IsAgreed: values?.generalCriteria412IsAgreed,
+      generalCriteria413ProjectActivity: values?.generalCriteria413ProjectActivity,
+      generalCriteria413IsAgreed: values?.generalCriteria413IsAgreed,
+      generalCriteria414ProjectActivity: values?.generalCriteria413IsAgreed,
+      generalCriteria414IsAgreed: values?.generalCriteria414IsAgreed,
+      generalCriteria415ProjectActivity: values?.generalCriteria415ProjectActivity,
+      generalCriteria415IsAgreed: values?.generalCriteria415IsAgreed,
+      generalCriteria416ProjectActivity: values?.generalCriteria416ProjectActivity,
+      generalCriteria416IsAgreed: values?.generalCriteria416IsAgreed,
+      bundlingCriteria421ProjectActivity: values?.bundlingCriteria421ProjectActivity,
+      bundlingCriteria421IsAgreed: values?.bundlingCriteria421IsAgreed,
+      bundlingCriteria422ProjectActivity: values?.bundlingCriteria422ProjectActivity,
+      bundlingCriteria422IsAgreed: values?.bundlingCriteria422IsAgreed,
+      bundlingCriteria423ProjectActivity: values?.bundlingCriteria423ProjectActivity,
+      bundlingCriteria423IsAgreed: values?.bundlingCriteria423IsAgreed,
+      bundlingCriteria424ProjectActivity: values?.bundlingCriteria424ProjectActivity,
+      bundlingCriteria424IsAgreed: values?.bundlingCriteria424IsAgreed,
+      bundlingCriteria425ProjectActivity: values?.bundlingCriteria425ProjectActivity,
+      bundlingCriteria425IsAgreed: values?.bundlingCriteria425IsAgreed,
+      bundlingCriteria426ProjectActivity: values?.bundlingCriteria426ProjectActivity,
+      bundlingCriteria426IsAgreed: values?.bundlingCriteria426IsAgreed,
+    };
+
+    console.log('--temp value------', tempValues);
+    handleValuesUpdate({ eligibilityCriteria: tempValues });
+  };
   return (
     <>
       {current === 4 && (
@@ -19,7 +52,10 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next();
+                }
               }}
             >
               <>
@@ -330,8 +366,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -368,8 +404,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -406,8 +442,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -445,8 +481,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -483,8 +519,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -522,8 +558,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large">
-                          <Select.Option>Yes</Select.Option>
-                          <Select.Option>No</Select.Option>
+                          <Select.Option value={true}>Yes</Select.Option>
+                          <Select.Option value={false}>No</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -538,8 +574,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:next')}
                 </Button>

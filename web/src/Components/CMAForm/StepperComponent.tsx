@@ -17,7 +17,7 @@ import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
-  const [current, setCurrent] = useState(6);
+  const [current, setCurrent] = useState(7);
 
   const [values, setValues] = useState({});
 

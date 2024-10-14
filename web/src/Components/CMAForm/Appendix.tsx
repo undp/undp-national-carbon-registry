@@ -6,9 +6,11 @@ import { t } from 'i18next';
 import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../Definitions/Enums/document.type';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
+import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 
 const Step08 = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -21,6 +23,26 @@ const Step08 = (props: CustomStepsProps) => {
     return e?.fileList;
   };
 
+  const onFinish = async (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues = {
+      annexures: values?.additionalComments,
+      additionalDocuments: await (async function () {
+        const base64Docs: string[] = [];
+
+        if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
+          const docs = values.appendixDocuments;
+          for (let i = 0; i < docs.length; i++) {
+            const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+            base64Docs.push(temp); // No need for Promise.resolve
+          }
+        }
+
+        return base64Docs;
+      })(),
+    };
+    handleValuesUpdate({ applicationOfMethodology: tempValues });
+  };
   return (
     <>
       {current === 8 && (
@@ -34,7 +56,10 @@ const Step08 = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
+                // if (next) {
+                //   next()
+                // }
               }}
             >
               <Form.Item
@@ -101,8 +126,8 @@ const Step08 = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:submit')}
                 </Button>

@@ -346,6 +346,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 onFinish(values);
+                if (next) {
+                  next()
+                }
               }}
             >
               <Form.Item

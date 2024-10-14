@@ -7,7 +7,93 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/ico
 import moment from 'moment';
 
 const ApplicationOfMethodology = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues: any = {
+      titleAndReference: values?.titleAndReferenceOfMethodology,
+      applicability: values?.applicabilityOfMethodology,
+      baselineScenario: values?.baselineScenario,
+      additionality: values?.additionality,
+      methodologyDeviations: values?.methodologyDeviations,
+      projectBoundary: (function () {
+        const tempVal: any = {
+          description: values?.projectBoundary,
+        };
+
+        const tempbaseline = [];
+        const firstBaseline = {
+          source: values?.baselineSource,
+          isCO2Included: values?.baselineIsCO2Included,
+          co2Justification: values?.baselineco2Justification,
+          isCH4Included: values?.baselineIsCH4Included,
+          ch4Justification: values?.baselinech4Justification,
+          isN2OIncluded: values?.baselineIsN2OIncluded,
+          n2oJustification: values?.baselinen2oJustification,
+          isOtherIncluded: values?.baselineIsOtherIncluded,
+          otherJustification: values?.baselineotherJustification,
+        };
+
+        tempbaseline.push(firstBaseline);
+
+        if (values?.extraBaseline) {
+          values.extraBaseline.forEach((item: any) => {
+            const tempObj: any = {
+              source: item?.source,
+              isCO2Included: item?.isCO2Included,
+              co2Justification: item?.co2Justification,
+              isCH4Included: item?.isCH4Included,
+              ch4Justification: item?.ch4Justification,
+              isN2OIncluded: item?.isN2OIncluded,
+              n2oJustification: item?.n2oJustification,
+              isOtherIncluded: item?.isOtherIncluded,
+              otherJustification: item?.otherJustification,
+            };
+            tempbaseline.push(tempObj);
+          });
+        }
+
+        const tempProject: any = [];
+        const firstProject = {
+          source: values?.projectSource,
+          isCO2Included: values?.projectIsCO2Included,
+          co2Justification: values?.projectco2Justification,
+          isCH4Included: values?.projectIsCH4Included,
+          ch4Justification: values?.projectch4Justification,
+          isN2OIncluded: values?.projectIsN2OIncluded,
+          n2oJustification: values?.projectn2oJustification,
+          isOtherIncluded: values?.projectIsOtherIncluded,
+          otherJustification: values?.projectotherJustification,
+        };
+        tempProject.push(firstProject);
+        if (values.extraProject) {
+          values.extraProject.forEach((item: any) => {
+            const tempObj: any = {
+              source: item?.source,
+              isCO2Included: item?.isCO2Included,
+              co2Justification: item?.co2Justification,
+              isCH4Included: item?.isCH4Included,
+              ch4Justification: item?.ch4Justification,
+              isN2OIncluded: item?.isN2OIncluded,
+              n2oJustification: item?.n2oJustification,
+              isOtherIncluded: item?.isOtherIncluded,
+              otherJustification: item?.otherJustification,
+            };
+            tempProject.push(tempObj);
+          });
+        }
+
+        tempVal.baseline = tempbaseline;
+        tempVal.project = tempProject;
+
+        return tempVal;
+      })(),
+    };
+
+    console.log('---------tempVal----------', tempValues);
+    handleValuesUpdate({ applicationOfMethodology: tempValues });
+  };
   return (
     <>
       {current === 5 && (
@@ -22,6 +108,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next()
+                }
+
               }}
             >
               <Form.Item

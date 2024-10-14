@@ -17,6 +17,34 @@ const Monitoring = (props: CustomStepsProps) => {
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
+    const tempValues = {
+      dataAndParametersDescription: values?.dataAndParametersAvailable,
+      validationParameters: {
+        parameter: values?.parameter,
+        unit: values?.unit,
+        description: values?.description,
+        source: values?.source,
+        purpose: values?.purpose,
+        valueApplied: values?.valueApplied,
+        justification: values?.justification,
+      },
+      monitoredParameters: {
+        parameter: values?.monitoringParameter,
+        unit: values?.monitoringUnit,
+        description: values?.monitoringDescription,
+        source: values?.monitoringSource,
+        measurementMethods: values?.monitoringMeasurementMethods,
+        frequency: values?.monitoringFrequency,
+        valueApplied: values?.monitoringValueApplied,
+        monitoringEquipment: values?.monitoringEquipment,
+        qaQCProcedures: values?.monitoringQAProcedures,
+        purpose: values?.monitoringPurpose,
+        calculationMethod: values?.monitoringCalculation,
+        comments: values?.monitoringComments,
+      },
+      monitoringPlan: values?.monitoringPlan,
+    };
+    handleValuesUpdate({ monitoring: tempValues });
   };
   return (
     <>
@@ -32,6 +60,10 @@ const Monitoring = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next();
+                }
               }}
             >
               <Form.Item
@@ -378,6 +410,25 @@ const Monitoring = (props: CustomStepsProps) => {
 
                     <Col xl={24} md={24}>
                       <Form.Item
+                        label={t('CMAForm:calculationMethod')}
+                        name="monitoringCalculation"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('CMAForm:calculationMethod')} ${t('isRequired')}`,
+                          },
+                        ]}
+                      >
+                        <TextArea
+                          rows={4}
+                          size="large"
+                          placeholder="Where relevant, provide the calculation method, including  any equations, used to establish the data/parameter."
+                        />
+                      </Form.Item>
+                    </Col>
+
+                    <Col xl={24} md={24}>
+                      <Form.Item
                         label={t('CMAForm:monitoringComments')}
                         name="monitoringComments"
                         rules={[
@@ -387,11 +438,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea
-                          rows={4}
-                          size="large"
-                          placeholder="monitoringCommentsPlaceholder"
-                        />
+                        <TextArea rows={4} size="large" placeholder="Provide any comments" />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -458,8 +505,8 @@ const Monitoring = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:nextP')}
                 </Button>

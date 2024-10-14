@@ -52,9 +52,9 @@ const ProjectDetails = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 onFinish(values);
-                // if (next) {
-                //   next()
-                // }
+                if (next) {
+                  next()
+                }
               }}
             >
               <Row className="row" gutter={[40, 16]}>

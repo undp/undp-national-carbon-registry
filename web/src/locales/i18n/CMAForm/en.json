@@ -137,5 +137,6 @@
   "dataAndParametersMonitored": "Data and Parameters Monitored",
   "monitoringPlan": "Monitoring Plan",
   "generalCriteria": "General Criteria",
-  "bundlingCriteria": "Bundling Criteria"
+  "bundlingCriteria": "Bundling Criteria",
+  "calculationMethod": "Calculation Method"
 }
