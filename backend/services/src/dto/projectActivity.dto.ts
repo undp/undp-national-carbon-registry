@@ -41,7 +41,6 @@ export class ProjectActivity {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @ValidateNested({ each: true })
   @Type(() => ProjectProponent)
   otherEntities: ProjectProponent[];
 
@@ -56,6 +55,11 @@ export class ProjectActivity {
   @IsString()
   projectOwnership: string;
 
+  @ApiProperty({ enum: CreditType })
+  @IsNotEmpty()
+  @IsEnum(CreditType, {
+    message: "Invalid credit type. Supported following credit type:" + Object.values(CreditType),
+  })
   projectTrack: CreditType;
 
   @ApiProperty()
@@ -72,9 +76,8 @@ export class ProjectActivity {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
-  creditingPeriodDescription: number;
+  @IsString()
+  creditingPeriodDescription: string;
 
   @ApiProperty({ enum: ProjectScaleType })
   @IsNotEmpty()
@@ -86,9 +89,9 @@ export class ProjectActivity {
   projectScaleType: ProjectScaleType;
 
   @ApiProperty()
-  @IsNotEmptyObject()
+  @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => LocationOfProjectActivity)
+  @Type(() => EstimatedAnnualGHGEmissions)
   estimatedAnnualGHGEmissions: EstimatedAnnualGHGEmissions[];
 
   @ApiProperty()
@@ -113,6 +116,11 @@ export class ProjectActivity {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsArray()
+  additionalDocuments: string[];
 
   @ApiProperty()
   @IsNotEmpty()

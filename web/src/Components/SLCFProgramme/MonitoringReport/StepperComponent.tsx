@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Steps, Button, Form, message } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
 import './MonitoringReport.scss';
@@ -81,6 +81,37 @@ const StepperComponent = (props: any) => {
   const [qualificationForm] = useForm();
   const [annexuresForm] = useForm();
 
+  const loadProjectDetails = async () => {
+    try {
+      const { data } = await post('national/project/project');
+      const project = data.map((provinceData: any) => provinceData.provinceName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const loadCMAForm = async () => {
+    try {
+      const { data } = await post('national/project/project');
+      const cma = data.map((provinceData: any) => provinceData.provinceName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const loadMonitoringReport = async () => {
+    try {
+      const { data } = await post('national/monitoring/monitoring');
+      const cma = data.map((provinceData: any) => provinceData.provinceName);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    // loadProjectDetails();
+    // loadCMAForm();
+  }, []);
   const steps = [
     {
       title: (

@@ -17,7 +17,9 @@ export const ProjectDetailsStep = (props: any) => {
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
-
+  const reportVersion = process.env.MONITORING_REPORT_VERSION
+    ? process.env.MONITORING_REPORT_VERSION
+    : 'Version 03';
   const t = translator.t;
   return (
     <>
@@ -31,6 +33,20 @@ export const ProjectDetailsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              // initialValues={{
+              //   projectTitle: 'p',
+              //   reportID: 'a',
+              //   pages: 'a',
+              //   projectProponents: 'a',
+              //   physicalAddress: 'Palpolawatta Road',
+              //   email: 'amila.uom.cse@gmail.com',
+              //   version: reportVersion,
+              //   reportTitle: 'a',
+              //   dateOfIssue: moment(1728498600, 'X'),
+              //   preparedBy: 'a',
+              //   telephone: '+94778647168',
+              //   website: 'a',
+              // }}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
                 values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').unix();

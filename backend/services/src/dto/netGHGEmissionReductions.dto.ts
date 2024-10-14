@@ -23,7 +23,7 @@ export class NetGHGEmissionReductions {
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => YearlyGHGEmissionReduction)
-  YearlyGHGEmissionReductions: YearlyGHGEmissionReduction[];
+  yearlyGHGEmissionReductions: YearlyGHGEmissionReduction[];
 
   @ApiProperty()
   @IsNotEmpty()
@@ -48,4 +48,28 @@ export class NetGHGEmissionReductions {
   @IsNumber()
   @IsPositive()
   totalNetEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgBaselineEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgProjectEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgLeakageEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgNetEmissionReductions: number;
 }

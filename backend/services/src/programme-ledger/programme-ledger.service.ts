@@ -21,6 +21,7 @@ import { MitigationProperties } from "../dto/mitigation.properties";
 import { RetireType } from "../enum/retire.type.enum";
 import { GovernmentCreditAccounts } from "../enum/government.credit.accounts.enum";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -96,6 +97,58 @@ export class ProgrammeLedgerService {
     );
 
     return programme;
+  }
+
+  public async updateProgrammeSlProposalStage(
+    programmeId: string,
+    txType: TxType
+  ): Promise<ProgrammeSl> {
+    const getQueries = {};
+    getQueries[this.ledger.programmeSlTable] = {
+      programmeId: programmeId,
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const programmes: ProgrammeSl[] = results[this.ledger.programmeSlTable].map((domValue) => {
+          return plainToClass(ProgrammeSl, JSON.parse(JSON.stringify(domValue)));
+        });
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const programme = programmes[0];
+        const prvTxTime = programme.txTime;
+        programme.txTime = new Date().getTime();
+        programme.txType = txType;
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+
+        if (txType == TxType.CREATE_CMA) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.VALIDATION_PENDING,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        }
+
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+
+    return updatedProgramme;
   }
 
   public async transferProgramme(

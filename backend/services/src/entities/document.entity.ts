@@ -18,6 +18,9 @@ export class DocumentEntity implements EntitySubject {
   userId: number;
 
   @Column()
+  companyId: number;
+
+  @Column()
   version: number;
 
   @Column({
