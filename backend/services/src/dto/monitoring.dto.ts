@@ -31,4 +31,9 @@ export class Monitoring {
   @IsNotEmpty()
   @IsString()
   monitoringPlan: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  dataAndParametersDescription: string;
 }

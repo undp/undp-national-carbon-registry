@@ -158,6 +158,21 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  CMA_CREATE: {
+    id: "CMA_CREATE",
+    subject: "New Carbon Management Assessment Form Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new Carbon Management Assessment Form owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{cmaPageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_AUTHORISATION: {
     id: "PROGRAMME_AUTHORISATION",
     subject: "Project Authorised",

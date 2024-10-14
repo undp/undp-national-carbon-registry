@@ -1,8 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsEmail,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsPositive,
   IsString,
@@ -17,8 +18,7 @@ export class ProjectProponent {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsString()
   email: number;
 
   @ApiProperty()
@@ -37,15 +37,18 @@ export class ProjectProponent {
   @IsPhoneNumber()
   telephone: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  @IsPhoneNumber()
   fax: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @IsEmail()
   address: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  roleInProject: string;
 }

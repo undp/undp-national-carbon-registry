@@ -37,9 +37,4 @@ export class ValidationParameters {
   @IsNotEmpty()
   @IsString()
   justification: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  comments: string;
 }

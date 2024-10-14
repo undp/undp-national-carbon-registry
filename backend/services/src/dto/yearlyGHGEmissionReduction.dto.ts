@@ -17,7 +17,13 @@ export class YearlyGHGEmissionReduction {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  year: number;
+  startDate: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  endDate: number;
 
   @ApiProperty()
   @IsNotEmpty()

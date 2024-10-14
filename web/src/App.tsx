@@ -46,7 +46,6 @@ import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoring
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
 
-
 const App = () => {
   const ability = defineAbility();
   const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
