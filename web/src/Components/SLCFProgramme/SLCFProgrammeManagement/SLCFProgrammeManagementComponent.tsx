@@ -270,41 +270,41 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         return item ? addCommSep(item) : '-';
       },
     },
-    {
-      title: t('programme:certifiers'),
-      dataIndex: 'certifierId',
-      key: ProgrammeManagementColumns.certifierId,
-      align: 'left' as const,
-      sorter: true,
-      render: (item: any, itemObj: any) => {
-        if (item === null) {
-          return '-';
-        }
-        const cMap: any = {};
-        for (const c of itemObj.certifier) {
-          cMap[c.companyId] = c;
-        }
+    // {
+    //   title: t('programme:certifiers'),
+    //   dataIndex: 'certifierId',
+    //   key: ProgrammeManagementColumns.certifierId,
+    //   align: 'left' as const,
+    //   sorter: true,
+    //   render: (item: any, itemObj: any) => {
+    //     if (item === null) {
+    //       return '-';
+    //     }
+    //     const cMap: any = {};
+    //     for (const c of itemObj.certifier) {
+    //       cMap[c.companyId] = c;
+    //     }
 
-        const elements = item.map((id: any) => {
-          const obj = cMap[id];
-          if (!obj) {
-            return;
-          }
-          return (
-            <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
-              <div>
-                <ProfileIcon
-                  icon={obj.logo}
-                  bg={getCompanyBgColor(obj.companyRole)}
-                  name={obj.name}
-                />
-              </div>
-            </Tooltip>
-          );
-        });
-        return <div className="certify-list">{elements}</div>;
-      },
-    },
+    //     const elements = item.map((id: any) => {
+    //       const obj = cMap[id];
+    //       if (!obj) {
+    //         return;
+    //       }
+    //       return (
+    //         <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
+    //           <div>
+    //             <ProfileIcon
+    //               icon={obj.logo}
+    //               bg={getCompanyBgColor(obj.companyRole)}
+    //               name={obj.name}
+    //             />
+    //           </div>
+    //         </Tooltip>
+    //       );
+    //     });
+    //     return <div className="certify-list">{elements}</div>;
+    //   },
+    // },
     {
       title: t('programme:serialNoh'),
       dataIndex: 'serialNo',
@@ -352,15 +352,15 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       });
     }
 
-    if (ministryLevelFilter) {
-      ministrySectoralScope?.map((secScope: any) => {
-        filterOr.push({
-          key: 'sectoralScope',
-          operation: '=',
-          value: secScope,
-        });
-      });
-    }
+    // if (ministryLevelFilter) {
+    //   ministrySectoralScope?.map((secScope: any) => {
+    //     filterOr.push({
+    //       key: 'sectoralScope',
+    //       operation: '=',
+    //       value: secScope,
+    //     });
+    //   });
+    // }
 
     let sort: any;
     if (sortOrder && sortField) {
@@ -377,7 +377,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
     }
 
     try {
-      const response: any = await post('national/programme/query', {
+      const response: any = await post('national/programmeSl/query', {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,

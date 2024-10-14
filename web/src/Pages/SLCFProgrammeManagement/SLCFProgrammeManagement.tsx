@@ -23,7 +23,7 @@ const SLCFProgrammeManagement = () => {
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
-    navigate(`/programmeManagement/view/${record.programmeId}`, { state: { record } });
+    navigate(`/programmeManagementSLCF/view/${record.programmeId}`, { state: { record } });
   };
 
   const onClickAddProgramme = () => {
@@ -31,7 +31,7 @@ const SLCFProgrammeManagement = () => {
   };
 
   const onClickAddInvestment = () => {
-    navigate('/programmeManagement/addInvestment');
+    navigate('/programmeManagementSLCF/addInvestment');
   };
 
   return (

@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  Request,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { Action } from "src/casl/action.enum";
@@ -20,7 +29,9 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Create, ProgrammeSl)
+  )
   @Post("create")
   async addProgramme(@Body() programme: ProgrammeSlDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
@@ -36,7 +47,16 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, ProgrammeSl))
+  @Post("query")
+  async getAll(@Body() query: QueryDto, @Request() req) {
+    return this.programmeService.query(query, req.abilityCondition);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Create, ProgrammeSl)
+  )
   @Post("createCMA")
   async createCMA(@Body() cmaDto: CMADto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;

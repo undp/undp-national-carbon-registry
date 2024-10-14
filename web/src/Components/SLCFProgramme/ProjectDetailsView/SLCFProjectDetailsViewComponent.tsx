@@ -1571,14 +1571,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const pieChartData = getPieChartData(data);
   const percentages: any[] = [];
 
-  const companies: any = {};
-  for (const c of data.company) {
-    companies[c.companyId] = data.company;
-    percentages.push({
-      company: c,
-      percentage: 100,
-    });
-  }
+  percentages.push({
+    company: data.company,
+    percentage: 100,
+  });
 
   percentages.sort((a: any, b: any) => b.percentage - a.percentage);
 
