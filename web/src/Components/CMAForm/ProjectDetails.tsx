@@ -53,7 +53,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
               onFinish={(values: any) => {
                 onFinish(values);
                 if (next) {
-                  next()
+                  next();
                 }
               }}
             >

@@ -110,9 +110,8 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 console.log('-----values---------', values);
                 onFinish(values);
                 if (next) {
-                  next()
+                  next();
                 }
-
               }}
             >
               <Form.Item
