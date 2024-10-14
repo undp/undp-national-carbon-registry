@@ -2,21 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Steps, Button, Form } from 'antd';
 import './CMAForm.scss';
 // import './SLCFMonitoringReportComponent.scss';
-import StepO1 from './Step01';
-import Step02 from './Step02';
-import Step03 from './Step03';
-import Step05 from './Step05';
-import Step06 from './Step06';
-import Step07 from './Step07';
-import Step04 from './Step04';
+
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import EligibilityCriteria from './EligibilityCriteria';
+import ApplicationOfMethodology from './ApplicationOfMethodology';
+import QuantificationOfEmissions from './QuantificationOfEmissions';
+import ProjectDetails from './ProjectDetails';
+import DescriptionOfProjectActivity from './DescriptionOfProjectActivity';
+import EnvironmentImpacts from './EnvironmentImpacts';
+import Monitoring from './Monitoring';
+import Appendix from './Appendix';
+import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(7);
 
-  const [values, setValues] = useState();
+  const [values, setValues] = useState({});
+
+  const handleValuesUpdate = (val: any) => {
+    setValues((prev: any) => ({
+      ...prev,
+      ...val,
+    }));
+  };
 
   const next = () => {
     setCurrent(current + 1);
@@ -57,12 +67,19 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">00</div>
+          {/* <div className="step-count">00</div> */}
           <div className="title">{t('CMAForm:form01Title')}</div>
         </div>
       ),
       description: (
-        <StepO1 next={next} form={form1} current={current} t={t} countries={countries} />
+        <ProjectDetails
+          next={next}
+          form={form1}
+          current={current}
+          t={t}
+          countries={countries}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -73,13 +90,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <Step02
+        <DescriptionOfProjectActivity
           next={next}
           prev={prev}
           form={form2}
           current={current}
           t={t}
           countries={countries}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -90,7 +108,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form03Title')}</div>
         </div>
       ),
-      description: <Step03 next={next} prev={prev} form={form3} current={current} t={t} />,
+      description: (
+        <EnvironmentImpacts
+          next={next}
+          prev={prev}
+          form={form3}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
     {
       title: (
@@ -99,7 +126,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form04Title')}</div>
         </div>
       ),
-      description: <Step04 next={next} prev={prev} form={form4} current={current} t={t} />,
+      description: (
+        <LocalStakeholderConsultation
+          next={next}
+          prev={prev}
+          form={form4}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
     {
       title: (
@@ -108,7 +144,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form05Title')}</div>
         </div>
       ),
-      description: <Step05 next={next} prev={prev} form={form5} current={current} t={t} />,
+      description: (
+        <EligibilityCriteria
+          next={next}
+          prev={prev}
+          form={form5}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
     {
       title: (
@@ -117,7 +162,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form06Title')}</div>
         </div>
       ),
-      description: <Step06 next={next} prev={prev} form={form6} current={current} t={t} />,
+      description: (
+        <ApplicationOfMethodology
+          next={next}
+          prev={prev}
+          form={form6}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
     {
       title: (
@@ -126,7 +180,52 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form07Title')}</div>
         </div>
       ),
-      description: <Step07 next={next} prev={prev} form={form7} current={current} t={t} />,
+      description: (
+        <QuantificationOfEmissions
+          next={next}
+          prev={prev}
+          form={form7}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
+    },
+    {
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">07</div>
+          <div className="title">{t('CMAForm:form08Title')}</div>
+        </div>
+      ),
+      description: (
+        <Monitoring
+          next={next}
+          prev={prev}
+          form={form8}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
+    },
+    {
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">08</div>
+          <div className="title">{t('CMAForm:form09Title')}</div>
+        </div>
+      ),
+      description: (
+        <Appendix
+          next={next}
+          prev={prev}
+          form={form8}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
   ];
 
