@@ -268,7 +268,7 @@ export class ProgrammeSlService {
     const company: Company = await this.companyService.findByCompanyId(project.companyId);
     let updatedProject = {
       ...project,
-      company: [company],
+      company: company,
     };
     console.log(JSON.stringify(updatedProject));
     return updatedProject;
