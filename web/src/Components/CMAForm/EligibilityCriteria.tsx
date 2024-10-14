@@ -16,7 +16,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
       generalCriteria412IsAgreed: values?.generalCriteria412IsAgreed,
       generalCriteria413ProjectActivity: values?.generalCriteria413ProjectActivity,
       generalCriteria413IsAgreed: values?.generalCriteria413IsAgreed,
-      generalCriteria414ProjectActivity: values?.generalCriteria413IsAgreed,
+      generalCriteria414ProjectActivity: values?.generalCriteria414ProjectActivity,
       generalCriteria414IsAgreed: values?.generalCriteria414IsAgreed,
       generalCriteria415ProjectActivity: values?.generalCriteria415ProjectActivity,
       generalCriteria415IsAgreed: values?.generalCriteria415IsAgreed,

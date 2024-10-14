@@ -144,6 +144,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
         }
         tempGHG.yearlyGHGEmissionReductions = tempYearlyReductions;
         tempGHG.totalBaselineEmissionReductions = Number(values?.totalBaselineEmissionReductions);
+        tempGHG.totalProjectEmissionReductions = Number(values?.totalProjectEmissionReductions);
         tempGHG.totalLeakageEmissionReductions = Number(values?.totalLeakageEmissionReductions);
         tempGHG.totalNetEmissionReductions = Number(values?.totalNetEmissionReductions);
         tempGHG.avgBaselineEmissionReductions = Number(values?.avgBaselineEmissionReductions);

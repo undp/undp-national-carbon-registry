@@ -23,6 +23,7 @@ import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { Telephone } from 'react-bootstrap-icons';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
 
 const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate } = props;
@@ -238,10 +239,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
             return base64Docs;
           })(),
           projectFundings: values?.projectFundings,
-          startDate: moment(values?.projectStartDate),
-          commissioningDate: moment(values?.projectCommisionDate),
+          startDate: moment(values?.projectStartDate).startOf('day').unix(),
+          commissioningDate: moment(values?.projectCommisionDate).startOf('day').unix(),
         };
-
+        tempList.push(firstObj);
         if (values?.extraLocations) {
           values?.extraLocations.forEach(async (item: any) => {
             const tempObj = {
@@ -272,13 +273,13 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
             tempList.push(tempObj);
           });
-          return tempList;
         }
+        return tempList;
       })(),
       projectOwnership: values?.projectOwnership,
-      projectTrack: values?.projectTrack,
+      projectTrack: form.getFieldValue('projectTrack'),
       creditingPeriodStartDate: moment(values?.creditingPeriodStartDate).startOf('day').unix(),
-      credititingPeriodEndDate: moment(values?.creditingPeriodEndDate).startOf('day').unix(),
+      creditingPeriodEndDate: moment(values?.creditingPeriodEndDate).startOf('day').unix(),
       creditingPeriodDescription: values?.creditingPeriodDescription,
       projectScaleType: values?.projectScale,
       estimatedAnnualGHGEmissions: (function () {
@@ -310,7 +311,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       additionalDocuments: await (async function () {
         const base64Docs: string[] = [];
 
-        if (values?.optionalProjectActivityDocuments.length > 0) {
+        if (
+          values?.optionalProjectActivityDocuments &&
+          values?.optionalProjectActivityDocuments.length > 0
+        ) {
           const docs = values.optionalProjectActivityDocuments;
           for (let i = 0; i < docs.length; i++) {
             const temp = await getBase64(docs[i]?.originFileObj as RcFile);
@@ -329,7 +333,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       commerciallySensitiveInfo: values?.commerciallySensitiveInformation,
     };
 
-    const tempObj = {};
+    console.log('---------tempVals-----------', tempValues);
     handleValuesUpdate({ projectActivity: tempValues });
   };
   return (
@@ -1659,21 +1663,32 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                   <div className="form-item-flex-row">
                     <div className="half-width-form-item">
-                      <Form.Item
+                      {/* <Form.Item
                         label={`1.10 ${t('CMAForm:projectTrack')}`}
                         name="projectTrack"
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:projectOwnership')} ${t('isRequired')}`,
+                            message: `${t('CMAForm:projectTrack')} ${t('isRequired')}`,
                           },
                         ]}
-                      >
-                        <Input size="large" />
-                      </Form.Item>
+                      > */}
+                      <Input
+                        size="large"
+                        disabled
+                        value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
+                      />
+                      {/* </Form.Item> */}
                     </div>
 
-                    <div></div>
+                    <div>
+                      {form.getFieldValue('projectTrack') === 'TRACK_2' && (
+                        <>
+                          *Issued carbon credits from project will only be used for internal
+                          offsetting of emissions
+                        </>
+                      )}
+                    </div>
                   </div>
                 </Col>
 

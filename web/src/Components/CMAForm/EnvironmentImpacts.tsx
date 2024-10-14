@@ -11,7 +11,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
     console.log('-----values---------', values);
     const tempValues = {
       analysis: values?.analysisEnvironmentalImpacts,
-      assessment: values?.environmentalImpactAssessmentvalues,
+      assessment: values?.environmentalImpactAssessment,
     };
 
     handleValuesUpdate({ environmentImpacts: tempValues });

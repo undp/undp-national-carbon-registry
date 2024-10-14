@@ -60,9 +60,9 @@ const PROJECT_STATUS: { [key: string]: string } = {
   INSTALLATION_STAGE: 'Installation',
 };
 
-const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
-  TRACK_1: 'Track 1 - for trading',
-  TRACK_2: 'Track 2 - for internal offsetting',
+export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
+  TRACK_1: 'Track 1',
+  TRACK_2: 'Track 2',
 };
 export const SLCFProgrammeCreationComponent = (props: any) => {
   const { useLocation, onNavigateToProgrammeView, translator } = props;
