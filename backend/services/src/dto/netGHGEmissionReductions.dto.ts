@@ -48,4 +48,28 @@ export class NetGHGEmissionReductions {
   @IsNumber()
   @IsPositive()
   totalNetEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgBaselineEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgProjectEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgLeakageEmissionReductions: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  avgNetEmissionReductions: number;
 }

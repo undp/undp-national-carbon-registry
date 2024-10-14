@@ -46,4 +46,9 @@ export class ProjectProponent {
   @IsNotEmpty()
   @IsString()
   address: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  roleInProject: string;
 }
