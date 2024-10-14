@@ -130,6 +130,10 @@ export const ProjectActivityStep = (props: any) => {
               requiredMark={true}
               form={form}
               initialValues={{}}
+              onFinish={(values: any) => {
+                console.log('-----values---------', values);
+                next();
+              }}
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
