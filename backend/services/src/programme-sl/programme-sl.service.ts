@@ -294,7 +294,7 @@ export class ProgrammeSlService {
     const limit = query.size || 10;
     const offset = skip || 0;
     const sortKey = query?.sort?.key
-      ? `programme_sl.${query.sort.key}`
+      ? `programme_sl."${query.sort.key}"`
       : `"programme_sl"."createdTime"`;
     const sortOrder = query?.sort?.order || "DESC";
 
@@ -306,10 +306,7 @@ export class ProgrammeSlService {
       ),
       "programme_sl"
     );
-    console.log("$$$$");
-    console.log(whereConditions);
     whereConditions = whereConditions ? `WHERE ${whereConditions}` : "";
-    console.log(whereConditions);
     const rawQuery = `
   SELECT 
     programme_sl.*, 
