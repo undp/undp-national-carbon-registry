@@ -51,9 +51,11 @@ import {
   getFinancialFields,
   getGeneralFields,
   getGeneralFieldsSl,
+  getProgrammeStatus,
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
+  getStatusEnumVal,
   ProgrammeSlU,
   ProgrammeU,
   sumArray,
@@ -78,7 +80,10 @@ import {
 import { addNdcDesc, TimelineBody } from '../../TimelineBody/timelineBody';
 import { RetireType } from '../../../Definitions/Enums/retireType.enum';
 import { CreditTransferStage } from '../../../Definitions/Enums/creditTransferStage.enum';
-import { ProgrammeStageUnified } from '../../../Definitions/Enums/programmeStage.enum';
+import {
+  ProgrammeStageUnified,
+  ProgrammeStatus,
+} from '../../../Definitions/Enums/programmeStage.enum';
 import { TxType } from '../../../Definitions/Enums/TxType.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
@@ -108,7 +113,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { t, i18n } = useTranslation(['view']);
+  const { t, i18n } = useTranslation(['projectDetailsView']);
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
@@ -280,7 +285,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       const elArr = investmentHisData?.map((investmentData: any, index: any) => {
         const element = {
           status: 'process',
-          title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
+          title: t('projectDetailsView:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
           subTitle: '',
           description: <InvestmentBody data={investmentData} translator={i18n} />,
           icon: (
@@ -308,47 +313,56 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const drawMap = () => {
     setTimeout(async () => {
-      if (data?.projectLocation && data.projectLocation.length > 0) {
-        setProjectLocationMapCenter(getCenter(data.projectLocation));
-        const mapSource: MapSourceData = {
-          key: 'projectLocation',
-          data: {
-            type: 'geojson',
+      if (
+        data?.geographicalLocationCoordinates &&
+        data.geographicalLocationCoordinates.length > 0
+      ) {
+        setProjectLocationMapCenter([80.7718, 7.8731]);
+        const tempMapSource: any = [];
+        const tempLocationLayer: any = [];
+        const tempOutlineLayer: any = [];
+        data?.geographicalLocationCoordinates?.forEach((location: any, index: number) => {
+          const mapSource: MapSourceData = {
+            key: `projectLocation-${index}`,
             data: {
-              type: 'Feature',
-              geometry: {
-                type: 'Polygon',
-                // These coordinates outline Maine.
-                coordinates: [data.projectLocation],
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                geometry: {
+                  type: 'Polygon',
+                  coordinates: location,
+                },
+                properties: null,
               },
-              properties: null,
             },
-          },
-        };
+          };
 
-        setProjectLocationMapSource(mapSource);
-
-        setProjectLocationMapLayer({
-          id: 'projectLocation',
-          type: 'fill',
-          source: 'projectLocation',
-          layout: {},
-          paint: {
-            'fill-color': '#0080ff',
-            'fill-opacity': 0.5,
-          },
+          tempMapSource.push(mapSource);
+          tempLocationLayer.push({
+            id: `projectLocationLayer-${index}`,
+            type: 'fill',
+            source: `projectLocation-${index}`,
+            layout: {},
+            paint: {
+              'fill-color': '#0080ff',
+              'fill-opacity': 0.5,
+            },
+          });
+          tempOutlineLayer.push({
+            id: `projectLocationOutline-${index}`,
+            type: 'line',
+            source: `projectLocation-${index}`,
+            layout: {},
+            paint: {
+              'line-color': '#000',
+              'line-width': 1,
+            },
+          });
         });
 
-        setProjectLocationMapOutlineLayer({
-          id: 'projectLocationOutline',
-          type: 'line',
-          source: 'projectLocation',
-          layout: {},
-          paint: {
-            'line-color': '#000',
-            'line-width': 1,
-          },
-        });
+        setProjectLocationMapSource(tempMapSource);
+        setProjectLocationMapLayer(tempLocationLayer);
+        setProjectLocationMapOutlineLayer(tempOutlineLayer);
       }
     }, 1000);
   };
@@ -392,7 +406,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const getProgrammeById = async (programmeId: string) => {
     try {
       const response: any = await post('national/programmeSl/getProjectById', {
-        programmeId: '001',
+        programmeId: id,
       });
       if (response) {
         setData(response.data);
@@ -438,11 +452,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       if (!transfer.isRetirement) {
         d = {
           status: 'process',
-          title: t('view:tlInitTitle'),
+          title: t('projectDetailsView:tlInitTitle'),
           subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlInitDesc', [
+              text={formatString('projectDetailsView:tlInitDesc', [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
                 transfer.sender[0]?.name,
@@ -463,11 +477,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       } else {
         d = {
           status: 'process',
-          title: t('view:tlRetInit'),
+          title: t('projectDetailsView:tlRetInit'),
           subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlRetInitDesc', [
+              text={formatString('projectDetailsView:tlRetInitDesc', [
                 addCommSep(
                   transfer.creditAmount
                     ? transfer.retirementType === RetireType.CROSS_BORDER
@@ -489,7 +503,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   ? 'legal action'
                   : 'other',
                 transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
-                  ? formatString('view:t1RetInitOmgeDesc', [
+                  ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
                       addCommSep(
                         transfer.creditAmount
                           ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
@@ -520,12 +534,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       ) {
         const dx: any = {
           status: 'process',
-          title: t(transfer.isRetirement ? 'view:tlRetRejectTitle' : 'view:tlRejectTitle'),
+          title: t(
+            transfer.isRetirement
+              ? 'projectDetailsView:tlRetRejectTitle'
+              : 'projectDetailsView:tlRejectTitle'
+          ),
           subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
               text={formatString(
-                transfer.isRetirement ? 'view:tlTxRetRejectDesc' : 'view:tlTxRejectDesc',
+                transfer.isRetirement
+                  ? 'projectDetailsView:tlTxRetRejectDesc'
+                  : 'projectDetailsView:tlTxRejectDesc',
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -557,16 +577,20 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
         const dx: any = {
           status: 'process',
-          title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
+          title: t(
+            transfer.isRetirement
+              ? 'projectDetailsView:tlRetCancelTitle'
+              : 'projectDetailsView:tlTxCancelTitle'
+          ),
           subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
               text={formatString(
                 systemCancel
-                  ? 'view:tlTxCancelSystemDesc'
+                  ? 'projectDetailsView:tlTxCancelSystemDesc'
                   : lowCreditSystemCancel
-                  ? 'view:tlTxLowCreditCancelSystemDesc'
-                  : 'view:tlTxCancelDesc',
+                  ? 'projectDetailsView:tlTxLowCreditCancelSystemDesc'
+                  : 'projectDetailsView:tlTxCancelDesc',
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -603,10 +627,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   function updatePendingTimeLineForNdc(currentHistory: any) {
     const monitoringElIndex = currentHistory.findIndex(
-      (item: any) => item.title === t('view:monitoringEl')
+      (item: any) => item.title === t('projectDetailsView:monitoringEl')
     );
     const verificationElIndex = currentHistory.findIndex(
-      (item: any) => item.title === t('view:verificationEl')
+      (item: any) => item.title === t('projectDetailsView:verificationEl')
     );
 
     if (
@@ -616,8 +640,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       if (monitoringElIndex === -1) {
         const monitoringEl = {
           status: 'process',
-          title: t('view:monitoringEl'),
-          subTitle: t('view:tlPending'),
+          title: t('projectDetailsView:monitoringEl'),
+          subTitle: t('projectDetailsView:tlPending'),
           icon: (
             <span className="step-icon upcom-issue-step">
               <Icon.Binoculars />
@@ -627,8 +651,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
         if (
           currentHistory.length > 0 &&
-          currentHistory[0].title === t('view:tlIssue') &&
-          currentHistory[0].subTitle === t('view:tlPending')
+          currentHistory[0].title === t('projectDetailsView:tlIssue') &&
+          currentHistory[0].subTitle === t('projectDetailsView:tlPending')
         ) {
           currentHistory.splice(1, 0, monitoringEl);
         } else {
@@ -648,8 +672,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       if (verificationElIndex === -1) {
         const verificationEl = {
           status: 'process',
-          title: t('view:verificationEl'),
-          subTitle: t('view:tlPending'),
+          title: t('projectDetailsView:verificationEl'),
+          subTitle: t('projectDetailsView:tlPending'),
           icon: (
             <span className="step-icon upcom-issue-step">
               <Icon.Flag />
@@ -659,8 +683,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
         if (
           currentHistory.length > 0 &&
-          currentHistory[0].title === t('view:tlIssue') &&
-          currentHistory[0].subTitle === t('view:tlPending')
+          currentHistory[0].title === t('projectDetailsView:tlIssue') &&
+          currentHistory[0].subTitle === t('projectDetailsView:tlPending')
         ) {
           currentHistory.splice(1, 0, verificationEl);
         } else {
@@ -707,9 +731,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       const activityList: any[] = [];
       for (const activity of response.data) {
         let programmecreateindex: any;
-        const createIndex = activityList.findIndex((item) => item.title === t('view:tlCreate'));
+        const createIndex = activityList.findIndex(
+          (item) => item.title === t('projectDetailsView:tlCreate')
+        );
         const upcomCreditIndex = activityList.findIndex(
-          (item) => item.subTitle === t('view:tlPending')
+          (item) => item.subTitle === t('projectDetailsView:tlPending')
         );
         const upcomAuthorisationIndex = activityList.findIndex(
           (item) => item.title === 'Authorisation'
@@ -732,9 +758,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           }
           el = {
             status: 'process',
-            title: t('view:tlCreate'),
+            title: t('projectDetailsView:tlCreate'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} t={t} />,
+            description: (
+              <TimelineBody text={formatString('projectDetailsView:tlCreateDesc', [])} t={t} />
+            ),
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -743,7 +771,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           };
           newEl = {
             status: 'process',
-            title: t('view:tlAuthorisation'),
+            title: t('projectDetailsView:tlAuthorisation'),
             subTitle: upcomingAuthorisation,
             icon: (
               <span className="step-icon upcom-auth-step">
@@ -754,11 +782,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.AUTH) {
           el = {
             status: 'process',
-            title: t('view:tlAuth'),
+            title: t('projectDetailsView:tlAuth'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlAuthDesc', [
+                text={formatString('projectDetailsView:tlAuthDesc', [
                   addCommSep(activity.data.creditEst),
                   creditUnit,
                   DateTime.fromMillis(activity.data.endTime * 1000).toFormat(dateFormat),
@@ -782,12 +810,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
             status: 'process',
-            title: t('view:tlIssue'),
+            title: t('projectDetailsView:tlIssue'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
                 text={formatString(
-                  'view:tlIssueDesc',
+                  'projectDetailsView:tlIssueDesc',
                   getTxRefValues(activity.data.txRef, 4)
                     ? [
                         addNdcDesc({
@@ -816,11 +844,13 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.REJECT) {
           el = {
             status: 'process',
-            title: t('view:tlReject'),
+            title: t('projectDetailsView:tlReject'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRejectDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString('projectDetailsView:tlRejectDesc', [
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -841,11 +871,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
             status: 'process',
-            title: t('view:tlTransfer'),
+            title: t('projectDetailsView:tlTransfer'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlTransferDesc', [
+                text={formatString('projectDetailsView:tlTransferDesc', [
                   addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 6),
@@ -871,11 +901,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           }
           el = {
             status: 'process',
-            title: t('view:tlRevoke'),
+            title: t('projectDetailsView:tlRevoke'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRevokeDesc', [
+                text={formatString('projectDetailsView:tlRevokeDesc', [
                   revokeComp !== undefined ? `due to the deactivation of ${revokeComp}` : '',
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
@@ -893,11 +923,13 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
             status: 'process',
-            title: t('view:tlCertify'),
+            title: t('projectDetailsView:tlCertify'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlCertifyDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString('projectDetailsView:tlCertifyDesc', [
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -919,11 +951,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           const crossCountry = tx ? tx.toCompanyMeta?.countryName : undefined;
           el = {
             status: 'process',
-            title: t('view:tlRetire'),
+            title: t('projectDetailsView:tlRetire'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlRetireDesc', [
+                text={formatString('projectDetailsView:tlRetireDesc', [
                   addCommSep(
                     tx?.retirementType === RetireType.CROSS_BORDER
                       ? activity.data.creditChange -
@@ -946,7 +978,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   getRetirementTypeString(tx?.retirementType)?.toLowerCase(),
                   tx?.retirementType === RetireType.CROSS_BORDER &&
                   getTxRefValues(activity.data.txRef, 10)
-                    ? formatString('view:t1RetInitOmgeDesc', [
+                    ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
                         addCommSep(
                           (
                             (Number(getTxRefValues(activity.data.txRef, 10)) *
@@ -972,14 +1004,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.FREEZE) {
           let text;
           if (getTxRefValues(activity.data.txRef, 1)) {
-            text = formatString('view:tlFrozenDesc', [
+            text = formatString('projectDetailsView:tlFrozenDesc', [
               addCommSep(activity.data.creditChange),
               creditUnit,
               getTxRefValues(activity.data.txRef, 4),
               getTxRefValues(activity.data.txRef, 1),
             ]);
           } else {
-            text = formatString('view:tlFrozenDescWithoutUser', [
+            text = formatString('projectDetailsView:tlFrozenDescWithoutUser', [
               addCommSep(activity.data.creditChange),
               creditUnit,
               getTxRefValues(activity.data.txRef, 4),
@@ -987,7 +1019,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           }
           el = {
             status: 'process',
-            title: t('view:tlFrozen'),
+            title: t('projectDetailsView:tlFrozen'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
@@ -1006,11 +1038,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.UNFREEZE) {
           el = {
             status: 'process',
-            title: t('view:tlUnFrozen'),
+            title: t('projectDetailsView:tlUnFrozen'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlUnFrozenDesc', [
+                text={formatString('projectDetailsView:tlUnFrozenDesc', [
                   addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
@@ -1030,11 +1062,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (activity.data.txType === TxType.OWNERSHIP_UPDATE) {
           el = {
             status: 'process',
-            title: t('view:tlOwnership'),
+            title: t('projectDetailsView:tlOwnership'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlOwnershipDesc', [
+                text={formatString('projectDetailsView:tlOwnershipDesc', [
                   getTxRefValues(activity.data.txRef, 1),
                   getTxRefValues(activity.data.txRef, 4) + '%',
                 ])}
@@ -1054,8 +1086,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         ) {
           creditEl = {
             status: 'process',
-            title: t('view:tlIssue'),
-            subTitle: t('view:tlPending'),
+            title: t('projectDetailsView:tlIssue'),
+            subTitle: t('projectDetailsView:tlPending'),
             icon: (
               <span className="step-icon upcom-issue-step">
                 <Icon.Award />
@@ -1100,7 +1132,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       setProgrammeHistoryLoaded(true);
       setLoadingHistory(false);
       setCertTimes(certifiedTime);
-      genCerts(state.record, certifiedTime);
+      // genCerts(state.record, certifiedTime);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -1273,16 +1305,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             type: 'success',
             content:
               action === 'Reject'
-                ? t('view:successReject')
+                ? t('projectDetailsView:successReject')
                 : action === 'Authorise'
-                ? t('view:successAuth')
+                ? t('projectDetailsView:successAuth')
                 : action === 'Issue'
                 ? 'Successfully issued'
                 : action === 'Certify'
                 ? 'The programme has been certified successfully '
                 : action === 'Revoke'
-                ? t('view:successRevokeCertifcate')
-                : t('view:successRetire'),
+                ? t('projectDetailsView:successRevokeCertifcate')
+                : t('projectDetailsView:successRetire'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
@@ -1325,7 +1357,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         data?.article6trade === undefined ||
         (data?.article6trade === false && k !== 'carbonPriceUSDPerTon')
       ) {
-        const text = t('view:' + k);
+        const text = t('projectDetailsView:' + k);
         if (v instanceof UnitField) {
           info[text + ` (${v.unit})`] = v.value;
         } else {
@@ -1374,16 +1406,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   useEffect(() => {
-    if (state && state.record) {
-      setLoadingAll(false);
-      setData(state.record);
+    // if (state && state.record) {
+    //   setLoadingAll(false);
+    //   setData(state.record);
+    // } else {
+    if (id) {
+      getProgrammeById(id);
     } else {
-      if (id) {
-        getProgrammeById(id);
-      } else {
-        navigate('/programmeManagement/viewAll', { replace: true });
-      }
+      navigate('/programmeManagement/viewAll', { replace: true });
     }
+    // }
 
     if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
       getUserDetails();
@@ -1566,7 +1598,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <div className="text-center programme-name">{ele.company.name}</div>
           <div className="progress-bar">
             <div>
-              <div className="float-left">{t('view:ownership')}</div>
+              <div className="float-left">{t('projectDetailsView:ownership')}</div>
               <div className="float-right">{ele.percentage}%</div>
             </div>
             <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
@@ -1597,7 +1629,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               navigate('/investmentManagement/addInvestment', { state: { record: data } });
             }}
           >
-            {t('view:addInvestment')}
+            {t('projectDetailsView:addInvestment')}
           </Button>
         );
         actionBtns.push(
@@ -1606,7 +1638,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             color={TooltipColor}
             key={TooltipColor}
           >
-            <Button disabled>{t('view:addAction')}</Button>
+            <Button disabled>{t('projectDetailsView:addAction')}</Button>
           </Tooltip>
         );
         if (
@@ -1616,7 +1648,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
-              {t('view:addAction')}
+              {t('projectDetailsView:addAction')}
             </Button>
           );
         }
@@ -1634,16 +1666,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             onClick={() => {
               setActionInfo({
                 action: 'Reject',
-                text: t('view:popupText'),
+                text: t('projectDetailsView:popupText'),
                 type: 'danger',
-                title: `${t('view:rejectTitle')} - ${data.title}?`,
+                title: `${t('projectDetailsView:rejectTitle')} - ${data.title}?`,
                 remark: true,
                 icon: <Icon.ClipboardX />,
               });
               showModal();
             }}
           >
-            {t('view:reject')}
+            {t('projectDetailsView:reject')}
           </Button>
         );
         actionBtns
@@ -1653,8 +1685,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           //   onClick={() => {
           //     setActionInfo({
           //       action: 'Authorise',
-          //       text: t('view:popupText'),
-          //       title: `${t('view:authTitle')} - ${data.title}?`,
+          //       text: t('projectDetailsView:popupText'),
+          //       title: `${t('projectDetailsView:authTitle')} - ${data.title}?`,
           //       type: 'primary',
           //       remark: false,
           //       icon: <Icon.ClipboardCheck />,
@@ -1662,17 +1694,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           //         <ProgrammeIssueForm
           //           enableIssue={false}
           //           programme={data}
-          //           subText={t('view:popupText')}
+          //           subText={t('projectDetailsView:popupText')}
           //           onCancel={() => {
           //             setOpenModal(false);
           //             setComment(undefined);
           //           }}
-          //           actionBtnText={t('view:authorise')}
+          //           actionBtnText={t('projectDetailsView:authorise')}
           //           onFinish={(body: any) =>
           //             onPopupAction(
           //               body,
           //               'authorize',
-          //               t('view:successAuth'),
+          //               t('projectDetailsView:successAuth'),
           //               put,
           //               updateProgrammeData
           //             )
@@ -1684,7 +1716,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           //     showModal();
           //   }}
           // >
-          //   {t('view:authorise')}
+          //   {t('projectDetailsView:authorise')}
           // </Button>
           ();
       }
@@ -1704,8 +1736,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             //   onClick={() => {
             //     setActionInfo({
             //       action: 'Issue',
-            //       text: t('view:popupText'),
-            //       title: `${t('view:issueTitle')} - ${data.title}?`,
+            //       text: t('projectDetailsView:popupText'),
+            //       title: `${t('projectDetailsView:issueTitle')} - ${data.title}?`,
             //       type: 'primary',
             //       remark: false,
             //       icon: <Icon.Award />,
@@ -1713,17 +1745,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             //         <ProgrammeIssueForm
             //           enableIssue={true}
             //           programme={data}
-            //           subText={t('view:popupText')}
+            //           subText={t('projectDetailsView:popupText')}
             //           onCancel={() => {
             //             setOpenModal(false);
             //             setComment(undefined);
             //           }}
-            //           actionBtnText={t('view:issue')}
+            //           actionBtnText={t('projectDetailsView:issue')}
             //           onFinish={(body: any) =>
             //             onPopupAction(
             //               body,
             //               'issue',
-            //               t('view:successIssue'),
+            //               t('projectDetailsView:successIssue'),
             //               put,
             //               updateProgrammeData
             //             )
@@ -1736,7 +1768,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             //     showModal();
             //   }}
             // >
-            //   {t('view:issue')}
+            //   {t('projectDetailsView:issue')}
             // </Button>
             ();
         }
@@ -1757,7 +1789,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     //           showModal();
     //         }}
     //       >
-    //         {t('view:retire')}
+    //         {t('projectDetailsView:retire')}
     //       </Button>
     //     );
     //   } else {
@@ -1773,7 +1805,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     //       showModal();
     //     }}
     //   >
-    //     {t('view:Transfer')}
+    //     {t('projectDetailsView:Transfer')}
     //   </Button>
     // );
     // }
@@ -1793,7 +1825,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             setActionInfo({
               action: 'Certify',
               text: ``,
-              title: `${t('view:certifyTitle')} - ${data.title}?`,
+              title: `${t('projectDetailsView:certifyTitle')} - ${data.title}?`,
               type: 'success',
               remark: false,
               icon: <ShieldCheck />,
@@ -1801,7 +1833,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             showModal();
           }}
         >
-          {t('view:certify')}
+          {t('projectDetailsView:certify')}
         </Button>
       );
     }
@@ -1822,7 +1854,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         //   onClick={() => {
         //     setActionInfo({
         //       action: 'Revoke',
-        //       title: `${t('view:revokeTitle')} - ${data.title}?`,
+        //       title: `${t('projectDetailsView:revokeTitle')} - ${data.title}?`,
         //       text: ``,
         //       type: 'danger',
         //       remark: true,
@@ -1830,17 +1862,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         //       contentComp: (
         //         <ProgrammeRevokeForm
         //           programme={data}
-        //           subText={t('view:popupText')}
+        //           subText={t('projectDetailsView:popupText')}
         //           onCancel={() => {
         //             setOpenModal(false);
         //             setComment(undefined);
         //           }}
-        //           actionBtnText={t('view:revoke')}
+        //           actionBtnText={t('projectDetailsView:revoke')}
         //           onFinish={(body: any) =>
         //             onPopupAction(
         //               body,
         //               'revoke',
-        //               t('view:successRevokeCertifcate'),
+        //               t('projectDetailsView:successRevokeCertifcate'),
         //               put,
         //               updateProgrammeData
         //             )
@@ -1856,7 +1888,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         //     showModal();
         //   }}
         // >
-        //   {t('view:revoke')}
+        //   {t('projectDetailsView:revoke')}
         // </Button>
         ();
     }
@@ -1870,11 +1902,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       data?.article6trade === undefined ||
       (data?.article6trade === false && k !== 'serialNo')
     ) {
-      const text = t('view:' + k);
-      if (k === 'currentStatus') {
+      const text = t('projectDetailsView:' + k);
+      if (k === 'projectStatus') {
         generalInfo[text] = (
-          <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
-            {getStageEnumVal(v as string)}
+          <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
+            {getStatusEnumVal(v as string)}
           </Tag>
         );
       } else if (k === 'sector') {
@@ -1900,8 +1932,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     <div className="content-container programme-view">
       <div className="title-bar">
         <div>
-          <div className="body-title">{t('view:details')}</div>
-          <div className="body-sub-title">{t('view:desc')}</div>
+          <div className="body-title">{t('projectDetailsView:details')}</div>
+          <div className="body-sub-title">{t('projectDetailsView:desc')}</div>
         </div>
         <div className="flex-display action-btns">
           {userInfoState?.userRole !== 'ViewOnly' &&
@@ -1922,7 +1954,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                       </span>
                     }
                   </span>
-                  <span className="title-text">{t('view:programmeOwner')}</span>
+                  <span className="title-text">{t('projectDetailsView:programmeOwner')}</span>
                 </div>
                 <div className="centered-card">{elements}</div>
               </div>
@@ -1932,7 +1964,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<BlockOutlined />}</span>
-                    <span className="title-text">{t('view:credits')}</span>
+                    <span className="title-text">{t('projectDetailsView:credits')}</span>
                   </div>
                   <div className="map-content">
                     <Chart
@@ -2029,8 +2061,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                       onClick={() => {
                                         setActionInfo({
                                           action: 'Retire',
-                                          text: t('view:popupText'),
-                                          title: t('view:retireTitle'),
+                                          text: t('projectDetailsView:popupText'),
+                                          title: t('projectDetailsView:retireTitle'),
                                           type: 'primary',
                                           remark: true,
                                           icon: <Icon.Save />,
@@ -2047,7 +2079,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                                 setOpenModal(false);
                                                 setComment(undefined);
                                               }}
-                                              actionBtnText={t('view:retire')}
+                                              actionBtnText={t('projectDetailsView:retire')}
                                               onFinish={(body: any) =>
                                                 onPopupAction(
                                                   body,
@@ -2055,8 +2087,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                                   (response: any) =>
                                                     getSuccessMsg(
                                                       response,
-                                                      t('view:successRetireInit'),
-                                                      t('view:successRetire')
+                                                      t('projectDetailsView:successRetireInit'),
+                                                      t('projectDetailsView:successRetire')
                                                     ),
                                                   put,
                                                   updateCreditInfo
@@ -2069,7 +2101,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                         showModal();
                                       }}
                                     >
-                                      {t('view:retire')}
+                                      {t('projectDetailsView:retire')}
                                     </Button>
                                     <Button
                                       type="primary"
@@ -2077,22 +2109,22 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                         setActionInfo({
                                           action: 'Send',
                                           text: '',
-                                          title: t('view:sendCreditTitle'),
+                                          title: t('projectDetailsView:sendCreditTitle'),
                                           type: 'primary',
                                           remark: true,
                                           icon: <Icon.BoxArrowRight />,
                                           contentComp: (
                                             <ProgrammeTransferForm
                                               companyRole={userInfoState!.companyRole}
-                                              receiverLabelText={t('view:to')}
+                                              receiverLabelText={t('projectDetailsView:to')}
                                               userCompanyId={userInfoState?.companyId}
                                               programme={data}
-                                              subText={t('view:popupText')}
+                                              subText={t('projectDetailsView:popupText')}
                                               onCancel={() => {
                                                 setOpenModal(false);
                                                 setComment(undefined);
                                               }}
-                                              actionBtnText={t('view:send')}
+                                              actionBtnText={t('projectDetailsView:send')}
                                               onFinish={(body: any) =>
                                                 onPopupAction(
                                                   body,
@@ -2100,8 +2132,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                                   (response: any) =>
                                                     getSuccessMsg(
                                                       response,
-                                                      t('view:successSendInit'),
-                                                      t('view:successSend')
+                                                      t('projectDetailsView:successSendInit'),
+                                                      t('projectDetailsView:successSend')
                                                     ),
                                                   post,
                                                   updateCreditInfo
@@ -2115,7 +2147,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                         showModal();
                                       }}
                                     >
-                                      {t('view:send')}
+                                      {t('projectDetailsView:send')}
                                     </Button>
                                   </span>
                                 )}
@@ -2132,7 +2164,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                       setActionInfo({
                                         action: 'Request',
                                         text: '',
-                                        title: t('view:transferTitle'),
+                                        title: t('projectDetailsView:transferTitle'),
                                         type: 'primary',
                                         remark: true,
                                         icon: <Icon.BoxArrowInRight />,
@@ -2140,24 +2172,24 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                           <ProgrammeTransferForm
                                             companyRole={userInfoState!.companyRole}
                                             userCompanyId={userInfoState?.companyId}
-                                            receiverLabelText={t('view:by')}
+                                            receiverLabelText={t('projectDetailsView:by')}
                                             disableToCompany={true}
                                             toCompanyDefault={{
                                               label: userInfoState?.companyName,
                                               value: userInfoState?.companyId,
                                             }}
                                             programme={data}
-                                            subText={t('view:popupText')}
+                                            subText={t('projectDetailsView:popupText')}
                                             onCancel={() => {
                                               setOpenModal(false);
                                               setComment(undefined);
                                             }}
-                                            actionBtnText={t('view:request')}
+                                            actionBtnText={t('projectDetailsView:request')}
                                             onFinish={(body: any) =>
                                               onPopupAction(
                                                 body,
                                                 'transferRequest',
-                                                t('view:successRequest'),
+                                                t('projectDetailsView:successRequest'),
                                                 post,
                                                 updateCreditInfo
                                               )
@@ -2169,7 +2201,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                       showModal();
                                     }}
                                   >
-                                    {t('view:transfer')}
+                                    {t('projectDetailsView:transfer')}
                                   </Button>
                                 )} */}
                               </div>
@@ -2188,7 +2220,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   <div className="title">
                     <span className="title-icon">{<BlockOutlined />}</span>
                     <span className="title-text">
-                      {formatString('view:emissionsReductions', [])}
+                      {formatString('projectDetailsView:emissionsReductions', [])}
                     </span>
                   </div>
                   <div className="map-content">
@@ -2286,7 +2318,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   <div className="info-view only-head">
                     <div className="title">
                       <span className="title-icon">{<Icon.Grid />}</span>
-                      <span className="title-text">{t('view:programmeMaterial')}</span>
+                      <span className="title-text">
+                        {t('projectDetailsView:programmeMaterial')}
+                      </span>
                       <div>{getFileContent(data?.programmeProperties?.programmeMaterials)}</div>
                     </div>
                   </div>
@@ -2298,7 +2332,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   <div className="info-view">
                     <div className="title">
                       <span className="title-icon">{<Icon.FileEarmarkText />}</span>
-                      <span className="title-text">{t('view:projectMaterial')}</span>
+                      <span className="title-text">{t('projectDetailsView:projectMaterial')}</span>
                       <div>{getFileContent(data.programmeProperties.projectMaterial)}</div>
                     </div>
                   </div>
@@ -2308,7 +2342,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               <div>
                 {/* <InfoView
                   data={mapArrayToi18n(getFinancialFields(data))}
-                  title={t('view:financial')}
+                  title={t('projectDetailsView:financial')}
                   icon={
                     <span className="b-icon">
                       <Icon.Cash />
@@ -2321,7 +2355,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               <div>
                 {/* <ProgrammeDocuments
                   data={documentsData}
-                  title={t('view:programmeDocs')}
+                  title={t('projectDetailsView:programmeDocs')}
                   icon={<QrcodeOutlined />}
                   programmeId={data?.programmeId}
                   programmeOwnerId={programmeOwnerId}
@@ -2342,24 +2376,28 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Col md={24} lg={14}>
             <Card className="card-container">
               <div>
-                <InfoView data={generalInfo} title={t('view:general')} icon={<BulbOutlined />} />
+                <InfoView
+                  data={generalInfo}
+                  title={t('projectDetailsView:general')}
+                  icon={<BulbOutlined />}
+                />
               </div>
             </Card>
-            {data.projectLocation &&
-            data.projectLocation.length > 0 &&
+            {data.geographicalLocationCoordinates &&
+            data.geographicalLocationCoordinates.length > 0 &&
             mapType !== MapTypes.None ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<Icon.PinMap />}</span>
-                    <span className="title-text">{t('view:projectLocation')}</span>
+                    <span className="title-text">{t('projectDetailsView:projectLocation')}</span>
                   </div>
                   <div className="map-content">
                     <MapComponent
                       mapType={mapType}
                       center={projectLocationMapCenter}
-                      zoom={4}
-                      height={250}
+                      zoom={6}
+                      height={300}
                       style="mapbox://styles/mapbox/light-v11"
                       accessToken={accessToken}
                       mapSource={projectLocationMapSource}
@@ -2377,7 +2415,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<SafetyOutlined />}</span>
-                    <span className="title-text">{t('view:certification')}</span>
+                    <span className="title-text">{t('projectDetailsView:certification')}</span>
                   </div>
                   <div className="cert-content">{certs}</div>
                 </div>
@@ -2390,7 +2428,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<ClockCircleOutlined />}</span>
-                    <span className="title-text">{t('view:investment')}</span>
+                    <span className="title-text">{t('projectDetailsView:investment')}</span>
                   </div>
                   <div className="content">
                     {loadingInvestment ? (
@@ -2407,7 +2445,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<ExperimentOutlined />}</span>
-                    <span className="title-text">{t('view:ndcActions')}</span>
+                    <span className="title-text">{t('projectDetailsView:ndcActions')}</span>
                   </div>
                   <div className="content">
                     {loadingNDC ? (
@@ -2423,7 +2461,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               <div className="info-view">
                 <div className="title">
                   <span className="title-icon">{<ClockCircleOutlined />}</span>
-                  <span className="title-text">{t('view:timeline')}</span>
+                  <span className="title-text">{t('projectDetailsView:timeline')}</span>
                 </div>
                 <div className="content">
                   {loadingHistory ? (
@@ -2468,7 +2506,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             <Form layout="vertical">
               <Form.Item
                 className="mg-bottom-0"
-                label={t('view:remarks')}
+                label={t('projectDetailsView:remarks')}
                 name="remarks"
                 required={actionInfo.remark}
               >
@@ -2487,7 +2525,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     setComment(undefined);
                   }}
                 >
-                  {t('view:cancel')}
+                  {t('projectDetailsView:cancel')}
                 </Button>
                 <Button
                   disabled={actionInfo.remark && (!comment || comment.trim() === '')}

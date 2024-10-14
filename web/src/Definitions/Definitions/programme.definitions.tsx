@@ -23,6 +23,14 @@ export const getStageEnumVal = (value: string) => {
   return Object.values(ProgrammeStageUnified)[index];
 };
 
+export const getStatusEnumVal = (value: string) => {
+  const index = Object.keys(ProgrammeStatus).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProgrammeStatus)[index];
+};
+
 export const getCreditStageVal = (value: string) => {
   const index = Object.keys(CreditTransferStage).indexOf(value);
   if (index < 0) {
@@ -55,6 +63,18 @@ export const getStageTagType = (stage: ProgrammeStageR | ProgrammeStageUnified) 
     case ProgrammeStageR.Authorised:
       return 'processing';
     case ProgrammeStageR.Approved:
+      return 'purple';
+    default:
+      return 'default';
+  }
+};
+export const getProgrammeStatus = (stage: ProgrammeStatus) => {
+  switch (getStageEnumVal(stage)) {
+    case ProgrammeStatus.CONSTRUCTION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.INSTALLATION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.PROCUREMENT_STAGE:
       return 'purple';
     default:
       return 'default';
@@ -236,6 +256,7 @@ export interface ProgrammeSlU extends ProgrammeSl {
   programmeProperties: ProgrammePropertiesU;
   emissionReductionExpected: number;
   emissionReductionAchieved: number;
+  geographicalLocationCoordinates: any[];
 }
 
 export interface ProgrammeU extends Programme {
@@ -294,11 +315,7 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
   };
-  // if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
-  //   let prog: any = programme;
-  //   res.emissionsReductionExpected = prog.emissionReductionExpected;
-  //   res.emissionsReductionAchieved = prog.emissionReductionAchieved;
-  // }
+
   return res;
 };
 
