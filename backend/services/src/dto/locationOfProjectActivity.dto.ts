@@ -52,8 +52,8 @@ export class LocationOfProjectActivity {
 
   @ApiPropertyOptional()
   @IsOptional()
-  @IsString()
-  additionalDocuments: string;
+  @IsArray()
+  additionalDocuments: string[];
 
   @ApiProperty()
   @IsNotEmpty()
