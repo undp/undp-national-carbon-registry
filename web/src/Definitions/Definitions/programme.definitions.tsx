@@ -6,6 +6,8 @@ import {
   ProgrammeStageR,
   ProgrammeStageMRV,
   ProgrammeStageUnified,
+  ProgrammeStatus,
+  ProgrammeCategory,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -180,16 +182,19 @@ export interface ProgrammeSl {
   sectoralScope: string;
   sector: string;
   countryCodeA2: string;
+  projectStatus: ProgrammeStatus;
+  projectCategory: ProgrammeCategory;
+  purposeOfCreditDevelopment: string;
   currentStage: ProgrammeStageR | ProgrammeStageMRV | ProgrammeStageUnified;
-  startTime: number;
+  startDate: number;
   endTime: number;
   creditChange: number;
   creditIssued: number;
   creditEst: number;
   creditBalance: number;
-  creditTransferred: number[];
-  creditRetired: number[];
-  creditFrozen: number[];
+  creditRetired: number;
+  creditFrozen: number;
+  creditTransferred: number;
   constantVersion: string;
   proponentTaxVatId: string[];
   companyId: number;
@@ -272,35 +277,28 @@ export const getGeneralFields = (
   return res;
 };
 
-export const getGeneralFieldsSl = (
-  programme: ProgrammeSl | ProgrammeSlU | ProgrammeR | ProgrammeT,
-  system?: CarbonSystemType
-) => {
+export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
     serialNo: programme.serialNo,
-    currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
-    sector: programme.sector,
-    sectoralScope:
-      Object.keys(SectoralScope)[
-        Object.values(SectoralScope).indexOf(programme.sectoralScope as SectoralScope)
-      ],
-    // location: programme.programmeProperties.geographicalLocation
-    //   ? programme.programmeProperties.geographicalLocation.join(', ')
-    //   : '-',
-    startDate: DateTime.fromSeconds(Number(programme.startTime)),
-    endDate: DateTime.fromSeconds(Number(programme.endTime)),
-    // buyerCountry: programme.programmeProperties.buyerCountryEligibility
-    //   ? programme.programmeProperties.buyerCountryEligibility
-    //   : '-',
+    projectStatus: programme.projectStatus,
+    projectCategory: programme.projectCategory,
+    startDate: DateTime.fromSeconds(Number(programme.startDate)),
+    purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
+    creditReceived:
+      programme.creditBalance +
+      programme.creditFrozen +
+      programme.creditRetired +
+      programme.creditTransferred,
+    creditRetired: programme.creditRetired,
+    creditBalance: programme.creditBalance,
   };
-  if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
-    let prog: any = programme;
-    res.emissionsReductionExpected = prog.emissionReductionExpected;
-    res.emissionsReductionAchieved = prog.emissionReductionAchieved;
-  }
+  // if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
+  //   let prog: any = programme;
+  //   res.emissionsReductionExpected = prog.emissionReductionExpected;
+  //   res.emissionsReductionAchieved = prog.emissionReductionAchieved;
+  // }
   return res;
 };
 

@@ -217,21 +217,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const getPieChartData = (d: ProgrammeSlU) => {
-    const frozen = d.creditFrozen
-      ? Number(d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0).toFixed(2))
-      : 0;
+    const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
     const dt = [
       Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
       Number(
-        (
-          numIsExist(d.creditIssued) -
-          sumArray(d.creditTransferred) -
-          sumArray(d.creditRetired) -
-          frozen
-        ).toFixed(2)
+        (numIsExist(d.creditIssued) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)
       ),
-      Number(sumArray(d.creditTransferred).toFixed(2)),
-      Number(sumArray(d.creditRetired).toFixed(2)),
+      Number(d.creditTransferred),
+      Number(d.creditRetired),
       frozen,
     ];
     return dt;
@@ -2019,14 +2012,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                       userInfoState?.companyRole !== 'Certifier' && (
                         <div className="flex-display action-btns">
                           {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
-                            data.creditBalance -
-                              (data.creditFrozen
-                                ? data.creditFrozen.reduce(
-                                    (a, b) => numIsExist(a) + numIsExist(b),
-                                    0
-                                  )
-                                : 0) >
-                              0 &&
+                            data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
                             !isTransferFrozen && (
                               <div>
                                 {/* {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
