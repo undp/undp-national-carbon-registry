@@ -167,21 +167,25 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       dataIndex: 'company',
       key: ProgrammeManagementColumns.company,
       align: 'left' as const,
-      render: (item: any, itemObj: any) => {
-        const elements = item.map((obj: any) => {
-          return (
-            <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
+      render: (item: any) => {
+        // const elements = item.map((obj: any) => {
+        // return (
+        return (
+          <div className="org-list">
+            <Tooltip title={item.companyName} color={TooltipColor} key={TooltipColor}>
               <div>
                 <ProfileIcon
-                  icon={obj.logo}
-                  bg={getCompanyBgColor(obj.companyRole)}
-                  name={obj.name}
+                  icon={item.logo}
+                  bg={getCompanyBgColor(item.companyRole)}
+                  name={item.name}
                 />
               </div>
             </Tooltip>
-          );
-        });
-        return <div className="org-list">{elements}</div>;
+          </div>
+        );
+        // );
+        // });
+        // return <div className="org-list">{elements}</div>;
       },
     },
     {

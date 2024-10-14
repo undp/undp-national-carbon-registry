@@ -291,49 +291,86 @@ export class ProgrammeSlService {
     abilityCondition: string
   ): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
-    let resp = await this.programmeSlRepo
-      .createQueryBuilder("programme_sl")
-      .where(
-        this.helperService.generateWhereSQL(
-          query,
-          this.helperService.parseMongoQueryToSQLWithTable(
-            "programme_sl",
-            abilityCondition
-          ),
-          "programme_sl"
-        )
-      )
-      .orderBy(
-        query?.sort?.key &&
-          `"programme_sl".${this.helperService.generateSortCol(
-            query?.sort?.key
-          )}`,
-        query?.sort?.order,
-        query?.sort?.nullFirst !== undefined
-          ? query?.sort?.nullFirst === true
-            ? "NULLS FIRST"
-            : "NULLS LAST"
-          : undefined
-      )
-      .offset(skip)
-      .limit(query.size)
-      .getManyAndCount();
+    const limit = query.size || 10;
+    const offset = skip || 0;
+    const sortKey = query?.sort?.key
+      ? `programme_sl.${query.sort.key}`
+      : `"programme_sl"."createdTime"`;
+    const sortOrder = query?.sort?.order || "DESC";
 
-    // if (resp.length > 0) {
-    //   resp[0] = resp[0].map((e) => {
-    //     e.certifier =
-    //       e.certifier.length > 0 && e.certifier[0] === null ? [] : e.certifier;
-    //     e.company =
-    //       e.company.length > 0 && e.company[0] === null ? [] : e.company;
-    //     return e;
-    //   });
-    // }
+    let whereConditions = this.helperService.generateWhereSQL(
+      query,
+      this.helperService.parseMongoQueryToSQLWithTable(
+        "programme_sl",
+        abilityCondition
+      ),
+      "programme_sl"
+    );
+    console.log("$$$$");
+    console.log(whereConditions);
+    whereConditions = whereConditions ? `WHERE ${whereConditions}` : "";
+    console.log(whereConditions);
+    const rawQuery = `
+  SELECT 
+    programme_sl.*, 
+    c.*
+  FROM 
+    programme_sl
+  INNER JOIN 
+    company c 
+  ON 
+    "programme_sl"."companyId" = c."companyId"
+
+    ${whereConditions}
+  ORDER BY 
+    ${sortKey} ${sortOrder}
+  LIMIT ${limit}
+  OFFSET ${offset};
+`;
+    console.log(rawQuery);
+    const resp = await this.programmeSlRepo.query(rawQuery);
+    console.log(resp);
 
     return new DataListResponseDto(
       resp.length > 0 ? resp[0] : undefined,
       resp.length > 1 ? resp[1] : undefined
     );
   }
+  // async query(
+  //   query: QueryDto,
+  //   abilityCondition: string
+  // ): Promise<DataListResponseDto> {
+  //   const skip = query.size * query.page - query.size;
+  //   let resp = await this.programmeSlRepo
+  //     .createQueryBuilder("programme_sl")
+  //     .innerJoinAndSelect(
+  //       "company",
+  //       "c",
+  //       "programme_sl.companyId = c.companyId"
+  //     )
+  //     .where(this.helperService.generateWhereSQL(query, null))
+  //     .orderBy(
+  //       query?.sort?.key &&
+  //         `"programme_sl".${this.helperService.generateSortCol(
+  //           query?.sort?.key
+  //         )}`,
+  //       query?.sort?.order,
+  //       query?.sort?.nullFirst !== undefined
+  //         ? query?.sort?.nullFirst === true
+  //           ? "NULLS FIRST"
+  //           : "NULLS LAST"
+  //         : undefined
+  //     )
+  //     .offset(skip)
+  //     .limit(query.size)
+  //     .getManyAndCount();
+  //   console.log(resp[0]);
+
+  //   return new DataListResponseDto(
+  //     resp.length > 0 ? resp[0] : undefined,
+  //     resp.length > 1 ? resp[1] : undefined
+  //   );
+  // }
   async getProjectById(programmeId: string): Promise<any> {
     let project: ProgrammeSl =
       await this.programmeLedgerService.getProgrammeSlById(programmeId);
