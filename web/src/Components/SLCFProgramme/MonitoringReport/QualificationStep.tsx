@@ -30,7 +30,7 @@ export const QualificationStep = (props: any) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                values.emissionReductionsRemovalsList.unshift({
+                values?.emissionReductionsRemovalsList?.unshift({
                   startDate: values.startDate,
                   endDate: values.endDate,
                   baselineEmissions: values.baselineEmissions,
@@ -44,7 +44,7 @@ export const QualificationStep = (props: any) => {
                 delete values.projectEmissions;
                 delete values.leakageEmissions;
                 delete values.ghgEmissions;
-                values.emissionReductionsRemovalsList.forEach((val: any) => {
+                values?.emissionReductionsRemovalsList?.forEach((val: any) => {
                   val.startDate = moment(values?.startDate).startOf('day').unix();
                   val.endDate = moment(values?.endDate).startOf('day').unix();
                 });

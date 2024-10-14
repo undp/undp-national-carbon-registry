@@ -131,7 +131,7 @@ export const ProjectActivityStep = (props: any) => {
               form={form}
               initialValues={{}}
               onFinish={(values: any) => {
-                values.projectProponentsList.unshift({
+                values?.projectProponentsList?.unshift({
                   organizationName: values.organizationName,
                   email: values.email,
                   telephone: values.telephone,
@@ -151,7 +151,7 @@ export const ProjectActivityStep = (props: any) => {
                 delete values.roleInTheProject;
                 delete values.fax;
 
-                values.projectActivityLocationsList.unshift({
+                values?.projectActivityLocationsList?.unshift({
                   locationOfProjectActivity: values.locationOfProjectActivity,
                   province: values.province,
                   district: values.district,
@@ -173,7 +173,7 @@ export const ProjectActivityStep = (props: any) => {
                 delete values.projectCommisionDate;
                 delete values.projectStartDate;
 
-                values.projectActivityLocationsList.forEach((val: any) => {
+                values?.projectActivityLocationsList?.forEach((val: any) => {
                   val.projectCommisionDate = moment(values?.projectCommisionDate)
                     .startOf('day')
                     .unix();
