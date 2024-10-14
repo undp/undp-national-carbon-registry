@@ -5,7 +5,17 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const EnvironmentImpacts = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues = {
+      analysis: values?.analysisEnvironmentalImpacts,
+      assessment: values?.environmentalImpactAssessmentvalues,
+    };
+
+    handleValuesUpdate({ environmentImpacts: tempValues });
+  };
   return (
     <>
       {current === 2 && (
@@ -19,7 +29,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
               }}
             >
               <Form.Item

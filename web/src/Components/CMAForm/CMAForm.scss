@@ -45,6 +45,7 @@
 
   .form-section-title {
     margin-bottom: 20px;
+    margin-top: 30px;
     color: rgba(58, 53, 65, 0.5);
     font-weight: 400;
   }
@@ -54,6 +55,11 @@
     font-weight: 400;
   }
 
+  .annualGHGEmissions {
+    .ant-input-number-input {
+      text-align: left;
+    }
+  }
   .custom-required:after {
     content: '*';
     color: rgba(255, 77, 79, 0.8) !important;
@@ -61,6 +67,163 @@
     top: 2px;
     position: relative;
     left: 3px;
+  }
+
+  .gases-included-container {
+    .table {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      flex-wrap: wrap;
+      height: fit-content;
+      align-items: center;
+      background-color: #f3f3f3;
+      // background-color: #F3F3F3;
+    }
+
+    .sidebar-header {
+      width: 30px;
+      rotate: -90deg;
+      background-color: #f3f3f3;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+    .data-side {
+      width: calc(100% - 30px);
+      background-color: white;
+      border-bottom: #e4e3e3 2px solid;
+      padding-bottom: 10px;
+
+      .add-padding-top {
+        padding-top: 20px;
+      }
+    }
+    .header-row {
+      display: flex;
+      flex-direction: row;
+      // justify-content: space-between;
+      background-color: #f3f3f3;
+      padding: 10px 0;
+      gap: 20px;
+      width: calc(100% - 60px);
+      margin-bottom: 10px;
+    }
+
+    .data-row-wrapper {
+      width: 100%;
+      background-color: white;
+    }
+    .data-row {
+      width: calc(100% - 60px);
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      // justify-content: space-between;
+
+      .data-col {
+        padding: 10px;
+
+        .add-margin {
+          margin-top: 35px;
+        }
+      }
+
+      .gases-col {
+        display: flex;
+      }
+    }
+
+    .col1 {
+      width: 15%;
+      padding: 0px 10px;
+    }
+
+    .col2 {
+      width: 10%;
+      padding: 0px 10px;
+    }
+
+    .col3 {
+      width: 10%;
+      padding: 0px 10px;
+    }
+
+    .col4 {
+      width: 30%;
+      padding: 0px 10px;
+    }
+  }
+  .eligibility-table-form {
+    .header {
+      background-color: #f9fafc;
+      text-align: center;
+      padding: 20px 0;
+      font-weight: 600px;
+    }
+
+    .col-1 {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .data-row {
+      padding: 15px 0;
+    }
+    .col-2 {
+      // text-align: left;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      // padding: 15px 0;
+    }
+  }
+
+  .estimated-emmissions-table-form {
+    margin-top: 30px;
+    .header {
+      padding: 20px 0px;
+      // text-align: left;
+      font-weight: 600;
+      font-size: 15px;
+      color: #28282899;
+
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+      }
+    }
+
+    .col1 {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      p {
+        margin-top: 8px;
+        color: rgba(58, 53, 65, 0.5);
+      }
+    }
+
+    .total-cols {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+    }
+    .datepicker {
+      width: 46%;
+
+      .ant-picker-large .ant-picker-input > input {
+        font-size: 13px;
+      }
+    }
   }
   .form-section {
     background-color: #fbfbfb;
@@ -189,7 +352,6 @@
   // width: 900px !important;
   .ant-tooltip-content {
     width: 600px !important;
-    // padding: 10px;
     li {
       list-style-position: inside;
       list-style: disc;

@@ -5,7 +5,18 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const LocalStakeholderConsultation = (props: CustomStepsProps) => {
-  const { next, prev, form, current } = props;
+  const { next, prev, form, current, handleValuesUpdate } = props;
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+    const tempValues = {
+      stakeholderConsultationProcess: values?.stakeHolderConsultationProcess,
+      summaryOfComments: values?.summaryOfCommentsRecieved,
+      considerationOfComments: values?.considerationOfCommentsRecieved,
+    };
+
+    handleValuesUpdate({ localStakeholderConsultation: tempValues });
+  };
   return (
     <>
       {current === 3 && (
@@ -19,7 +30,10 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next();
+                }
               }}
             >
               <Form.Item
@@ -127,8 +141,8 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('CMAForm:next')}
                 </Button>

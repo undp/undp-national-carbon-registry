@@ -17,12 +17,15 @@ import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(6);
 
-  const [values, setValues] = useState();
+  const [values, setValues] = useState({});
 
-  const handleValuesChange = (val: any) => {
-    setValues(val);
+  const handleValuesUpdate = (val: any) => {
+    setValues((prev: any) => ({
+      ...prev,
+      ...val,
+    }));
   };
 
   const next = () => {
@@ -64,12 +67,19 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">00</div>
+          {/* <div className="step-count">00</div> */}
           <div className="title">{t('CMAForm:form01Title')}</div>
         </div>
       ),
       description: (
-        <ProjectDetails next={next} form={form1} current={current} t={t} countries={countries} />
+        <ProjectDetails
+          next={next}
+          form={form1}
+          current={current}
+          t={t}
+          countries={countries}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -87,6 +97,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           countries={countries}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -98,7 +109,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <EnvironmentImpacts next={next} prev={prev} form={form3} current={current} t={t} />
+        <EnvironmentImpacts
+          next={next}
+          prev={prev}
+          form={form3}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -115,6 +133,7 @@ const StepperComponent = (props: any) => {
           form={form4}
           current={current}
           t={t}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -126,7 +145,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <EligibilityCriteria next={next} prev={prev} form={form5} current={current} t={t} />
+        <EligibilityCriteria
+          next={next}
+          prev={prev}
+          form={form5}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -137,7 +163,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ApplicationOfMethodology next={next} prev={prev} form={form6} current={current} t={t} />
+        <ApplicationOfMethodology
+          next={next}
+          prev={prev}
+          form={form6}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -148,7 +181,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <QuantificationOfEmissions next={next} prev={prev} form={form7} current={current} t={t} />
+        <QuantificationOfEmissions
+          next={next}
+          prev={prev}
+          form={form7}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
       ),
     },
     {
@@ -158,7 +198,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form08Title')}</div>
         </div>
       ),
-      description: <Monitoring next={next} prev={prev} form={form8} current={current} t={t} />,
+      description: (
+        <Monitoring
+          next={next}
+          prev={prev}
+          form={form8}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
     {
       title: (
@@ -167,7 +216,16 @@ const StepperComponent = (props: any) => {
           <div className="title">{t('CMAForm:form09Title')}</div>
         </div>
       ),
-      description: <Appendix next={next} prev={prev} form={form8} current={current} t={t} />,
+      description: (
+        <Appendix
+          next={next}
+          prev={prev}
+          form={form8}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
     },
   ];
 
