@@ -131,7 +131,55 @@ export const ProjectActivityStep = (props: any) => {
               form={form}
               initialValues={{}}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                values.projectProponentsList.unshift({
+                  organizationName: values.organizationName,
+                  email: values.email,
+                  telephone: values.telephone,
+                  address: values.address,
+                  designation: values.designation,
+                  contactPerson: values.contactPerson,
+                  roleInTheProject: values.roleInTheProject,
+                  fax: values.fax,
+                });
+
+                delete values.organizationName;
+                delete values.email;
+                delete values.telephone;
+                delete values.address;
+                delete values.designation;
+                delete values.contactPerson;
+                delete values.roleInTheProject;
+                delete values.fax;
+
+                values.projectActivityLocationsList.unshift({
+                  locationOfProjectActivity: values.locationOfProjectActivity,
+                  province: values.province,
+                  district: values.district,
+                  dsDivision: values.dsDivision,
+                  city: values.city,
+                  community: values.community,
+                  projectFundings: values.projectFundings,
+                  projectCommisionDate: values.projectCommisionDate,
+                  projectStartDate: values.projectStartDate,
+                });
+
+                delete values.locationOfProjectActivity;
+                delete values.province;
+                delete values.district;
+                delete values.dsDivision;
+                delete values.city;
+                delete values.community;
+                delete values.projectFundings;
+                delete values.projectCommisionDate;
+                delete values.projectStartDate;
+
+                values.projectActivityLocationsList.forEach((val: any) => {
+                  val.projectCommisionDate = moment(values?.projectCommisionDate)
+                    .startOf('day')
+                    .unix();
+                  val.projectStartDate = moment(values?.projectStartDate).startOf('day').unix();
+                });
+                onValueChange({ projectActivity: values });
                 next();
               }}
             >
