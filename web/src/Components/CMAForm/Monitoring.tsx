@@ -524,7 +524,7 @@ const Monitoring = (props: CustomStepsProps) => {
                   // onClick={next}
                   htmlType="submit"
                 >
-                  {t('CMAForm:nextP')}
+                  {t('CMAForm:next')}
                 </Button>
               </Row>
             </Form>

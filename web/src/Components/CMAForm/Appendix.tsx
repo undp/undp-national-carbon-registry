@@ -29,7 +29,6 @@ const Step08 = (props: CustomStepsProps) => {
       annexures: values?.additionalComments,
       additionalDocuments: await (async function () {
         const base64Docs: string[] = [];
-
         if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
           const docs = values.appendixDocuments;
           for (let i = 0; i < docs.length; i++) {
@@ -37,11 +36,14 @@ const Step08 = (props: CustomStepsProps) => {
             base64Docs.push(temp); // No need for Promise.resolve
           }
         }
-
         return base64Docs;
       })(),
     };
-    handleValuesUpdate({ appendix: tempValues });
+
+    if (submitForm) {
+      submitForm(tempValues);
+    }
+    // handleValuesUpdate({ appendix: tempValues });
   };
   return (
     <>
@@ -58,10 +60,9 @@ const Step08 = (props: CustomStepsProps) => {
               onFinish={(values: any) => {
                 onFinish(values);
 
-                if (submitForm) {
-                  // setTimeout(() => submitForm(), 30);
-                  submitForm();
-                }
+                // if (submitForm) {
+                //   setTimeout(() => submitForm(), 1000);
+                // }
                 // if (next) {
                 //   next()
                 // }
@@ -78,7 +79,7 @@ const Step08 = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:additionalCommentsPlaceholder')}`} />
+                <TextArea rows={4} />
               </Form.Item>
               <Form.Item
                 label={t('CMAForm:uploadDocs')}
@@ -128,12 +129,7 @@ const Step08 = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} htmlType="submit">
                   {t('CMAForm:submit')}
                 </Button>
               </Row>

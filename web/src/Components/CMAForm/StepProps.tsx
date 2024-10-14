@@ -9,6 +9,6 @@ export interface CustomStepsProps {
   countries?: string[]
   t: any,
   handleValuesUpdate: (val: any) => void,
-  submitForm?: () => void,
+  submitForm?: (appendixVals: any) => void,
   projectCategory?: string,
 }

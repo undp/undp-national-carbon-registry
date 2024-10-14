@@ -28,23 +28,23 @@ module.exports = {
         },
       },
     },
-    {
-      plugin: {
-        overrideWebpackConfig: ({ webpackConfig }) => {
-          webpackConfig.optimization.minimizer.push(new TerserPlugin({ parallel: true }));
-          // Define the paths for source and destination
-          const localeSrcDir = path.resolve(__dirname, 'src/locales');
-          const localeDestDir = path.resolve(__dirname, 'public/locales');
+    // {
+    //   plugin: {
+    //     overrideWebpackConfig: ({ webpackConfig }) => {
+    //       webpackConfig.optimization.minimizer.push(new TerserPlugin({ parallel: true }));
+    //       // Define the paths for source and destination
+    //       const localeSrcDir = path.resolve(__dirname, 'src/locales');
+    //       const localeDestDir = path.resolve(__dirname, 'public/locales');
 
-          // Ensure the destination directory exists, then copy the files
-          if (fs.existsSync(localeSrcDir)) {
-            fs.ensureDirSync(localeDestDir);
-            fs.copySync(localeSrcDir, localeDestDir);
-          }
-          return webpackConfig;
-        }
-      }
-    }
+    //       // Ensure the destination directory exists, then copy the files
+    //       if (fs.existsSync(localeSrcDir)) {
+    //         fs.ensureDirSync(localeDestDir);
+    //         fs.copySync(localeSrcDir, localeDestDir);
+    //       }
+    //       return webpackConfig;
+    //     }
+    //   }
+    // }
   ]
   
 };

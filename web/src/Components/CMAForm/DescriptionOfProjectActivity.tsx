@@ -189,7 +189,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           email: values?.entityEmail,
           title: values?.entityTitle,
           contactPerson: values?.entityContactPerson,
-          // role: values?.entityRoleInTheProject,
+          role: values?.entityRoleInTheProject,
           telephone: values?.entityTelephone,
           fax: values?.entityFax,
           address: values?.entityAddress,
@@ -1663,6 +1663,11 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                   <div className="form-item-flex-row">
                     <div className="half-width-form-item">
+                      <Input
+                        size="large"
+                        disabled
+                        value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
+                      />
                       {/* <Form.Item
                         label={`1.10 ${t('CMAForm:projectTrack')}`}
                         name="projectTrack"
@@ -1673,15 +1678,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       > */}
-                      <Input
-                        size="large"
-                        disabled
-                        value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
-                      />
                       {/* </Form.Item> */}
                     </div>
 
-                    <div>
+                    <div style={{ fontSize: '12px', marginLeft: '8px' }}>
                       {form.getFieldValue('projectTrack') === 'TRACK_2' && (
                         <>
                           *Issued carbon credits from project will only be used for internal

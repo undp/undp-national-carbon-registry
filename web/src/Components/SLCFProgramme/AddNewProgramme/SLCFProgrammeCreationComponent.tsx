@@ -306,7 +306,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
 
-    if (values?.optionalDocuments.length > 0) {
+    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;
       for (let i = 0; i < docs.length; i++) {
         const temp = await getBase64(docs[i]?.originFileObj as RcFile);

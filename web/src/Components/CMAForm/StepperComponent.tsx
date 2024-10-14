@@ -15,10 +15,12 @@ import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
   const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
 
   const [values, setValues] = useState({
     programmeId: '001',
@@ -84,8 +86,9 @@ const StepperComponent = (props: any) => {
       setProjectCategory(data?.projectCategory);
       form2.setFieldsValue({
         projectTrack: data?.purposeOfCreditDevelopment,
+        // projectTrack: 'TRACK_2',
         organizationName: data?.company?.name,
-        email: data?.company?.name,
+        email: data?.company?.email,
         telephone: data?.company?.phoneNo,
         address: data?.company?.address,
         fax: data?.company?.faxNo,
@@ -100,32 +103,34 @@ const StepperComponent = (props: any) => {
     }
   };
 
-  const submitForm = async () => {
-    console.log('------------final values--------------', values);
+  const submitForm = async (appendixVals: any) => {
+    const tempValues = {
+      ...values,
+      content: {
+        ...values.content,
+        appendix: appendixVals,
+      },
+    };
+    console.log('------------final values--------------', tempValues);
     try {
-      const res = await post('national/programmeSl/createCMA', values);
+      const res = await post('national/programmeSl/createCMA', tempValues);
       console.log(res);
-    } catch (error: any) {
-      if (error && error.errors && error.errors.length > 0) {
-        error.errors.forEach((err: any) => {
-          Object.keys(err).forEach((field) => {
-            console.log(`Error in ${field}: ${err[field].join(', ')}`);
-            message.open({
-              type: 'error',
-              content: err[field].join(', '),
-              duration: 4,
-              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-            });
-          });
-        });
-      } else {
+      if (res?.response?.data?.statusCode === 200) {
         message.open({
-          type: 'error',
-          content: error?.message,
+          type: 'success',
+          content: 'CMA form has been submitted successfully',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
+        // navigate('/programmeManagementSLCF/viewAll');
       }
+    } catch (error: any) {
+      message.open({
+        type: 'error',
+        content: 'Something went wrong',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
     }
   };
   const getCountryList = async () => {
