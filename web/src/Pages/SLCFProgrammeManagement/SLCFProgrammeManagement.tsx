@@ -2,24 +2,24 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
 import { ProgrammeManagementColumns } from '../../Definitions/Enums/programme.management.columns.enum';
+import { ProgrammeManagementSlColumns } from '../../Definitions/Enums/programme.management.sl.columns.enum';
 import { SLCFProgrammeManagementComponent } from '../../Components/SLCFProgramme/SLCFProgrammeManagement/SLCFProgrammeManagementComponent';
 
 const SLCFProgrammeManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'programme']);
+  const { t } = useTranslation(['common', 'projectList']);
 
   const visibleColumns = [
-    ProgrammeManagementColumns.title,
-    ProgrammeManagementColumns.company,
-    ProgrammeManagementColumns.sector,
-    ProgrammeManagementColumns.currentStage,
-    ProgrammeManagementColumns.creditBalance,
-    ProgrammeManagementColumns.creditTransferred,
-    ProgrammeManagementColumns.certifierId,
-    ProgrammeManagementColumns.serialNo,
-    ProgrammeManagementColumns.emissionReductionExpected,
-    ProgrammeManagementColumns.emissionReductionAchievedandCreditIssued,
-    ProgrammeManagementColumns.action,
+    ProgrammeManagementSlColumns.title,
+    ProgrammeManagementSlColumns.company,
+    ProgrammeManagementSlColumns.projectCategory,
+    ProgrammeManagementSlColumns.projectStatus,
+    ProgrammeManagementSlColumns.creditBalance,
+    ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
+    ProgrammeManagementSlColumns.creditRetired,
+    ProgrammeManagementSlColumns.certifierId,
+    ProgrammeManagementSlColumns.serialNo,
+    ProgrammeManagementSlColumns.action,
   ];
 
   const onNavigateToProgrammeView = (record: any) => {

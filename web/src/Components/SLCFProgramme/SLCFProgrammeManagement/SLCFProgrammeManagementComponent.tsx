@@ -29,14 +29,18 @@ import {
   sumArray,
 } from '../../../Definitions/Definitions/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { ProgrammeManagementColumns } from '../../../Definitions/Enums/programme.management.columns.enum';
+import { ProgrammeManagementSlColumns } from '../../../Definitions/Enums/programme.management.sl.columns.enum';
 import { Action } from '../../../Definitions/Enums/action.enum';
 import { DownloadOutlined, PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { ProgrammeStageMRV, ProgrammeStageR } from '../../../Definitions/Enums/programmeStage.enum';
+import {
+  ProgrammeStageMRV,
+  ProgrammeStageR,
+  ProgrammeStatus,
+} from '../../../Definitions/Enums/programmeStage.enum';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
 
@@ -70,10 +74,8 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
   const ability = useAbilityContext();
   const [dataQuery, setDataQuery] = useState<any>();
 
-  const stageObject = enableAddProgramme ? ProgrammeStageMRV : ProgrammeStageR;
-
-  const statusOptions = Object.keys(stageObject).map((k, index) => ({
-    label: Object.values(stageObject)[index],
+  const statusOptions = Object.keys(ProgrammeStatus).map((k, index) => ({
+    label: Object.values(ProgrammeStatus)[index],
     value: k,
   }));
 
@@ -97,16 +99,9 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       setTotalProgramme(0);
       return;
     }
-    // setFilter([
-    //   {
-    //     key: 'currentStage',
-    //     operation: 'in',
-    //     value: checkedValues,
-    //   },
-    // ]);
 
     setStatusFilter({
-      key: 'currentStage',
+      key: 'projectStatus',
       operation: 'in',
       value: checkedValues,
     });
@@ -127,7 +122,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         size="small"
         dataSource={[
           {
-            text: t('programme:view'),
+            text: t('projectList:view'),
             icon: <Icon.InfoCircle />,
             click: () => {
               onNavigateToProgrammeView(record);
@@ -146,9 +141,9 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
 
   const columns = [
     {
-      title: t('programme:title'),
+      title: t('projectList:title'),
       dataIndex: 'title',
-      key: ProgrammeManagementColumns.title,
+      key: ProgrammeManagementSlColumns.title,
       sorter: true,
       align: 'left' as const,
       render: (item: any) => {
@@ -163,163 +158,88 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       },
     },
     {
-      title: t('common:company'),
+      title: t('projectList:orgName'),
       dataIndex: 'company',
-      key: ProgrammeManagementColumns.company,
+      key: ProgrammeManagementSlColumns.company,
       align: 'left' as const,
       render: (item: any) => {
-        // const elements = item.map((obj: any) => {
-        // return (
-        return (
-          <div className="org-list">
-            <Tooltip title={item.companyName} color={TooltipColor} key={TooltipColor}>
-              <div>
-                <ProfileIcon
-                  icon={item.logo}
-                  bg={getCompanyBgColor(item.companyRole)}
-                  name={item.name}
-                />
-              </div>
-            </Tooltip>
-          </div>
+        const elements = (
+          <Tooltip title={item.name} color={TooltipColor} key={TooltipColor}>
+            <div>
+              <ProfileIcon
+                icon={item.logo}
+                bg={getCompanyBgColor(item.companyRole)}
+                name={item.name}
+              />
+            </div>
+          </Tooltip>
         );
-        // );
-        // });
-        // return <div className="org-list">{elements}</div>;
+        return <div className="org-list">{elements}</div>;
       },
     },
     {
-      title: t('programme:sector'),
-      dataIndex: 'sector',
+      title: t('projectList:projectCategory'),
+      dataIndex: 'projectCategory',
       sorter: true,
-      key: ProgrammeManagementColumns.sector,
+      key: ProgrammeManagementSlColumns.projectCategory,
       align: 'left' as const,
+      render: (item: any) => {
+        return <span>{item}</span>;
+      },
     },
     {
-      title: t('programme:status'),
-      dataIndex: 'currentStage',
-      key: ProgrammeManagementColumns.currentStage,
+      title: t('projectList:status'),
+      dataIndex: 'projectStatus',
+      key: ProgrammeManagementSlColumns.projectStatus,
       sorter: true,
       align: 'center' as const,
       render: (item: any) => {
-        return (
-          <Tag className="clickable" color={getStageTagTypeMRV(item)}>
-            {getStageEnumVal(item)}
-          </Tag>
-        );
-      },
-      onCell: (record: any, rowIndex: any) => {
-        return {
-          onClick: (ev: any) => {
-            setSelectedStatus([record.currentStage]);
-            onStatusQuery([record.currentStage]);
-          },
-        };
+        return <span>{item}</span>;
       },
     },
-    {
-      title: t('programme:issued'),
-      dataIndex: 'creditIssued',
-      key: ProgrammeManagementColumns.creditIssued,
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(Number(item)) : '-';
-      },
-    },
-    {
-      title: t('programme:balance'),
-      dataIndex: 'creditBalance',
-      key: ProgrammeManagementColumns.creditBalance,
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(Number(item)) : '-';
-      },
-    },
-    {
-      title: t('programme:transferred'),
-      dataIndex: 'creditTransferred',
-      key: ProgrammeManagementColumns.creditTransferred,
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(sumArray(item)) : '-';
-      },
-    },
-    {
-      title: t('programme:emissionsReductionExpected'),
-      dataIndex: 'emissionReductionExpected',
-      key: ProgrammeManagementColumns.emissionReductionExpected,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(item) : '-';
-      },
-    },
-    {
-      title: t('programme:emissionsReductionAchieved'),
-      dataIndex: 'emissionReductionAchieved',
-      key: ProgrammeManagementColumns.emissionReductionAchieved,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(item) : '-';
-      },
-    },
-    {
-      title: t('programme:emissionReductionAchievedandCreditIssued'),
-      dataIndex: 'emissionReductionAchieved',
-      key: ProgrammeManagementColumns.emissionReductionAchievedandCreditIssued,
-      align: 'right' as const,
-      render: (item: any) => {
-        return item ? addCommSep(item) : '-';
-      },
-    },
-    // {
-    //   title: t('programme:certifiers'),
-    //   dataIndex: 'certifierId',
-    //   key: ProgrammeManagementColumns.certifierId,
-    //   align: 'left' as const,
-    //   sorter: true,
-    //   render: (item: any, itemObj: any) => {
-    //     if (item === null) {
-    //       return '-';
-    //     }
-    //     const cMap: any = {};
-    //     for (const c of itemObj.certifier) {
-    //       cMap[c.companyId] = c;
-    //     }
 
-    //     const elements = item.map((id: any) => {
-    //       const obj = cMap[id];
-    //       if (!obj) {
-    //         return;
-    //       }
-    //       return (
-    //         <Tooltip title={obj.name} color={TooltipColor} key={TooltipColor}>
-    //           <div>
-    //             <ProfileIcon
-    //               icon={obj.logo}
-    //               bg={getCompanyBgColor(obj.companyRole)}
-    //               name={obj.name}
-    //             />
-    //           </div>
-    //         </Tooltip>
-    //       );
-    //     });
-    //     return <div className="certify-list">{elements}</div>;
-    //   },
-    // },
     {
-      title: t('programme:serialNoh'),
+      title: t('projectList:balance'),
+      dataIndex: 'creditBalance',
+      key: ProgrammeManagementSlColumns.creditBalance,
+      sorter: true,
+      align: 'right' as const,
+      render: (item: any) => {
+        return <span>{item}</span>;
+      },
+    },
+    {
+      title: t('projectList:purposeOfCreditDevelopment'),
+      dataIndex: 'purposeOfCreditDevelopment',
+      key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
+      sorter: true,
+      align: 'right' as const,
+      render: (item: any) => {
+        return <span>{item}</span>;
+      },
+    },
+    {
+      title: t('projectList:creditRetired'),
+      dataIndex: 'creditRetired',
+      key: ProgrammeManagementSlColumns.creditRetired,
+      sorter: true,
+      align: 'right' as const,
+      render: (item: any) => {
+        return <span>{item}</span>;
+      },
+    },
+
+    {
+      title: t('projectList:serialNoh'),
       dataIndex: 'serialNo',
-      key: ProgrammeManagementColumns.serialNo,
+      key: ProgrammeManagementSlColumns.serialNo,
       align: 'left' as const,
     },
     {
       title: t(''),
       width: 6,
       align: 'right' as const,
-      key: ProgrammeManagementColumns.action,
+      key: ProgrammeManagementSlColumns.action,
       render: (_: any, record: any) => {
         const menu = actionMenu(record);
         return (
@@ -388,8 +308,8 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
         sort: sort,
       });
-      setTableData(response.data);
-      setTotalProgramme(response.response.data.total);
+      setTableData(response?.data ? response.data : []);
+      setTotalProgramme(response?.data?.total ? response?.data?.total : 0);
       setLoading(false);
       setDataQuery({
         filterAnd: filter,
@@ -510,7 +430,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
     <div className="content-container programme-management">
       <div className="programme-title-bar">
         <div className="title-bar">
-          <div className="body-title">{t('programme:slcfViewProgrammes')}</div>
+          <div className="body-title">{t('projectList:slcfViewProgrammes')}</div>
         </div>
         <div className="actions">
           {ability.can(Action.Manage, ProgrammeEntity) && enableAddProgramme && (
@@ -522,7 +442,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                 icon={<PlusOutlined />}
                 onClick={onClickAddProgramme}
               >
-                {t('programme:addProgramme')}
+                {t('projectList:addProgramme')}
               </Button>
             </div>
           )}
@@ -540,7 +460,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                 checked={checkAll}
                 defaultChecked={true}
               >
-                {t('programme:all')}
+                {t('projectList:all')}
               </Checkbox>
               <Checkbox.Group
                 disabled={loading}
@@ -568,7 +488,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                         v.target.checked
                           ? {
                               key: 'certifierId',
-                              operation: 'ANY',
+                              operation: '=',
                               value: userInfoState?.companyId,
                             }
                           : undefined
@@ -578,7 +498,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                         v.target.checked
                           ? {
                               key: 'companyId',
-                              operation: 'ANY',
+                              operation: '=',
                               value: userInfoState?.companyId,
                             }
                           : undefined
@@ -594,9 +514,8 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
-                  placeholder={`${t('programme:searchByName')}`}
+                  placeholder={`${t('projectList:searchByName')}`}
                   allowClear
-                  // onChange={(e) => setSearchText(e.target.value)}
                   onChange={(e) =>
                     e.target.value === ''
                       ? setSearch(e.target.value)
@@ -606,7 +525,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                   style={{ width: 265 }}
                 />
               </div>
-              <div className="download-data-btn">
+              {/* <div className="download-data-btn">
                 <a onClick={downloadProgrammeData}>
                   <DownloadOutlined
                     style={{
@@ -615,7 +534,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                     }}
                   />
                 </a>
-              </div>
+              </div> */}
             </div>
           </Col>
         </Row>
@@ -623,7 +542,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
           <Col span={24}>
             <div className="programmeManagement-table-container">
               <Table
-                dataSource={tableData}
+                dataSource={tableData.length ? tableData : []}
                 columns={columns}
                 className="common-table-class"
                 loading={loading}
@@ -641,7 +560,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                   emptyText: (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={tableData.length === 0 ? t('programme:noProgrammes') : null}
+                      description={tableData.length === 0 ? t('projectList:noProgrammes') : null}
                     />
                   ),
                 }}

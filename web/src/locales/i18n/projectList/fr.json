@@ -1,0 +1,18 @@
+{
+  "sector": "Secteur",
+  "status": "Statut",
+  "issued": "Crédits Émis",
+  "balance": "Solde de Crédits",
+  "transferred": "Crédits Transférés",
+  "viewProgrammes": "Voir les Programmes",
+  "desc": "Voir les programmes disponibles dans le Registre de Carbone en fonction de vos autorisations",
+  "noProgrammes": "Aucun Programme",
+  "serialNoh": "Numéro de Série",
+  "certifiers": "Certificateurs",
+  "title": "Nom du Programme",
+  "gettingProgrammeError": "Erreur lors de l'obtention du programme",
+  "all": "Tous",
+  "searchByName": "Rechercher par nom de programme",
+  "environmentalImpactAssessment": "Évaluation de l'Impact Environnemental",
+  "noinvestment": "Aucun financement disponible"
+}

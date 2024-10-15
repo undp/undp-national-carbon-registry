@@ -310,7 +310,13 @@ export class ProgrammeSlService {
     const rawQuery = `
   SELECT 
     programme_sl.*, 
-    c.*
+    json_build_object(
+            'companyId', c."companyId",
+            'name', c."name",
+            'companyRole', c."companyRole",
+            'logo', c."logo",
+            'email', c."email"
+          ) as company
   FROM 
     programme_sl
   INNER JOIN 
@@ -324,13 +330,23 @@ export class ProgrammeSlService {
   LIMIT ${limit}
   OFFSET ${offset};
 `;
-    console.log(rawQuery);
     const resp = await this.programmeSlRepo.query(rawQuery);
-    console.log(resp);
+    const totalQuery = `
+    SELECT COUNT(*) 
+    FROM 
+    programme_sl
+  INNER JOIN 
+    company c 
+  ON 
+    "programme_sl"."companyId" = c."companyId"
+    ${whereConditions}
+    `;
 
+    const totalResult = await this.programmeSlRepo.query(totalQuery);
+    const totalCount = parseInt(totalResult[0].count, 10);
     return new DataListResponseDto(
-      resp.length > 0 ? resp[0] : undefined,
-      resp.length > 1 ? resp[1] : undefined
+      resp.length > 0 ? resp : undefined,
+      totalCount
     );
   }
   // async query(

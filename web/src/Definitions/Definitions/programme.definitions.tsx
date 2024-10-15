@@ -306,7 +306,6 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     projectCategory: programme.projectCategory,
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
-    environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
     creditReceived:
       programme.creditBalance +
       programme.creditFrozen +
