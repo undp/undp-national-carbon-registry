@@ -1,4 +1,6 @@
 @import './variables.scss';
+@import './colors.addProgramme.scss';
+@import './colors.role.scss';
 
 body {
   background-color: $background-color;
@@ -69,6 +71,9 @@ body {
   justify-content: space-between;
 }
 
+.condition-radio-container,
+.yes-no-radio-container,
+.radio-container {
 .condition-radio-container,
 .yes-no-radio-container,
 .radio-container {
@@ -820,6 +825,13 @@ body {
   .included-val
   .yes-no-radio-container
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+.programme-details-form-container
+  .programme-details-form
+  .selection-details-row
+  .in-ndc-row
+  .included-val
+  .yes-no-radio-container
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
   border-color: $primary-color !important;
 }
 
@@ -839,3 +851,25 @@ body {
     }
   }
 }
+
+.stepper-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: $steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $steps-title;
+  }
+}
+

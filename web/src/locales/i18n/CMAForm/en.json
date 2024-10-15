@@ -98,7 +98,7 @@
   "methodologyDeviationsPlaceholder": "Describe and justify any methodology deviations. Include evidence to demonstrate the  following:   The deviation will not negatively impact the conservativeness of the quantification  of GHG emission reductions or removals.The deviation relates only to the criteria and procedures for monitoring or  measurement, and does not relate to any other part of the methodology.",
   "projectBoundary": "Project Boundary",
   "baselineEmissions": "Baseline Emissions",
-"baselineEmissionsPlaceholder": "Describe the procedure for quantification of baseline emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values)",
+  "baselineEmissionsPlaceholder": "Describe the procedure for quantification of baseline emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values)",
   "projectEmissions": "Project Emissions",
   "projectEmissionPlaceholder": "Describe the procedure for quantification of project emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values).",
   "leakage": "Leakage",
