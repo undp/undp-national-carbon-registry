@@ -22,26 +22,26 @@ export const formCreatePermission = (userInfoState: any, docType: DocType) => {
     userInfoState?.userRole !== Role.ViewOnly
   ) {
     return true;
-  }
-
-  if (
+  } else if (
     docType === DocType.VALIDATION_AGREEMENT &&
     userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {
     return true;
-  }
-
-  if (
+  } else if (
     docType === DocType.PROPOSAL &&
     userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {
     return true;
-  }
-
-  if (
+  } else if (
     docType === DocType.CMA &&
+    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+    userInfoState?.userRole !== Role.ViewOnly
+  ) {
+    return true;
+  } else if (
+    docType === DocType.MONITORING_REPORT &&
     userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {

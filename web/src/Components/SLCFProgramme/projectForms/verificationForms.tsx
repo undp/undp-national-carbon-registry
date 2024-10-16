@@ -21,6 +21,7 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { formCreatePermission, linkDocVisible } from '../../../Utils/documentsPermissionSl';
+import { useNavigate } from 'react-router-dom';
 
 export interface VerificationFormsProps {
   data: any;
@@ -63,7 +64,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   const [openRejectDocConfirmationModal, setOpenRejectDocConfirmationModal] = useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [rejectDocData, setRejectDocData] = useState<any>({});
-
+  const navigate = useNavigate();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -72,7 +73,9 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     setDocData(data);
   }, [data]);
 
-  const navigateToCostQuotationCreate = () => {};
+  const navigateToMonitoringReportCreate = () => {
+    navigate('/programmeManagementSLCF/monitoringReport');
+  };
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -206,7 +209,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT) &&
+                    !formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
                     t('projectDetailsView:orgNotAuth')
                   }
                   overlayClassName="custom-tooltip"
@@ -214,7 +217,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT)
+                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT)
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -227,8 +230,8 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT) &&
-                      navigateToCostQuotationCreate()
+                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
+                      navigateToMonitoringReportCreate()
                     }
                   />
                 </Tooltip>
@@ -281,7 +284,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     }
                     onClick={() =>
                       formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT) &&
-                      navigateToCostQuotationCreate()
+                      navigateToMonitoringReportCreate()
                     }
                   />
                 </Tooltip>

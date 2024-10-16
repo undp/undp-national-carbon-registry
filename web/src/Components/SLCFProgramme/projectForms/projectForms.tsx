@@ -173,7 +173,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   };
 
   const navigateToCMACreate = () => {
-    navigate('/programmeManagementSLCF/CMAForm');
+    navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`);
   };
 
   return loading ? (
