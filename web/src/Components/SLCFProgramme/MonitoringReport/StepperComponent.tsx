@@ -12,7 +12,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(5);
   const [formValues, setFormValues] = useState({});
   const { post } = useConnection();
   const t = translator.t;

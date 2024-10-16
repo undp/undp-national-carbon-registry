@@ -12,6 +12,8 @@ export type ConnectionContextProviderProps = {
 };
 
 export interface Response<T> {
+  response: any;
+  statusCode?: number;
   data: T;
   statusText: string;
   status?: number;

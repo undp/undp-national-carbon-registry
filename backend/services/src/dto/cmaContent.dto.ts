@@ -1,5 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNotEmptyObject, IsString, ValidateNested } from "class-validator";
+import {
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsString,
+  ValidateNested,
+} from "class-validator";
 import { Type } from "class-transformer";
 import { ProjectDetails } from "./projectDetails.dto";
 import { ProjectActivity } from "./projectActivity.dto";

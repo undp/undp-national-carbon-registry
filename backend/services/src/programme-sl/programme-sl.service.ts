@@ -193,14 +193,21 @@ export class ProgrammeSlService {
     if (cmaDto.content.projectActivity.locationsOfProjectActivity.length > 0) {
       for (const location of cmaDto.content.projectActivity
         .locationsOfProjectActivity) {
-        if (location.additionalDocuments) {
-          const docUrl = await this.uploadDocument(
-            DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-            cmaDto.programmeId,
-            location.additionalDocuments
-          );
+        if (
+          location.additionalDocuments &&
+          location.additionalDocuments.length > 0
+        ) {
+          const docUrls = [];
+          for (const doc of location.additionalDocuments) {
+            const docUrl = await this.uploadDocument(
+              DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+              cmaDto.programmeId,
+              doc
+            );
+            docUrls.push(docUrl);
+          }
 
-          location.additionalDocuments = docUrl;
+          location.additionalDocuments = docUrls;
         }
       }
     }

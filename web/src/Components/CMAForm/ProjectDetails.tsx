@@ -12,12 +12,31 @@ import PhoneInput, {
   isPossiblePhoneNumber,
 } from 'react-phone-number-input';
 
-const StepO1 = (props: CustomStepsProps) => {
-  const { next, form, current, t, countries } = props;
+const ProjectDetails = (props: CustomStepsProps) => {
+  const { next, form, current, t, countries, handleValuesUpdate } = props;
 
   const { get, post } = useConnection();
 
   const [contactNoInput] = useState<any>();
+
+  const onFinish = (values: any) => {
+    console.log('-----values---------', values);
+
+    const tempValues: any = {
+      projectDetails: {
+        title: values?.title,
+        dateOfIssue: moment(values?.dateOfIssue).startOf('day').unix(),
+        projectProponent: values?.projectProponent,
+        preparedBy: values?.preparedBy,
+        telephone: values?.telephone,
+        physicalAddress: values?.physicalAddress,
+        email: values?.email,
+        website: values?.website,
+      },
+    };
+
+    handleValuesUpdate(tempValues);
+  };
 
   return (
     <>
@@ -32,7 +51,10 @@ const StepO1 = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
+                onFinish(values);
+                if (next) {
+                  next();
+                }
               }}
             >
               <Row className="row" gutter={[40, 16]}>
@@ -75,6 +97,7 @@ const StepO1 = (props: CustomStepsProps) => {
                     >
                       <DatePicker
                         size="large"
+                        disabled
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                       />
                     </Form.Item>
@@ -142,7 +165,7 @@ const StepO1 = (props: CustomStepsProps) => {
 
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
-                    <Form.Item
+                    {/* <Form.Item
                       label={t('CMAForm:version')}
                       name="version"
                       rules={[
@@ -153,7 +176,7 @@ const StepO1 = (props: CustomStepsProps) => {
                       ]}
                     >
                       <Input size="large" />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
                       label={t('CMAForm:proponents')}
@@ -245,7 +268,12 @@ const StepO1 = (props: CustomStepsProps) => {
                 <Button danger size={'large'}>
                   {t('CMAForm:cancel')}
                 </Button>
-                <Button type="primary" size={'large'} onClick={next}>
+                <Button
+                  type="primary"
+                  size={'large'}
+                  htmlType="submit"
+                  // onClick={next}
+                >
                   {t('CMAForm:next')}
                 </Button>
               </Row>
@@ -257,4 +285,4 @@ const StepO1 = (props: CustomStepsProps) => {
   );
 };
 
-export default StepO1;
+export default ProjectDetails;
