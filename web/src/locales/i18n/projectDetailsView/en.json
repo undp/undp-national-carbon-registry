@@ -168,5 +168,6 @@
   "monitoringReport": "Monitoring Report",
   "verificationReport": "Verification Report",
   "omgeDesc": "Overall Mitigation in Global Emissins (OMGE)",
-  "orgNotAuth": "Your organisation is not authorised to create or view this document"
+  "orgNotAuthCreate": "Your organisation is not authorised to create this document",
+  "orgNotAuthView": "Your organisation is not authorised to view this document"
 }
