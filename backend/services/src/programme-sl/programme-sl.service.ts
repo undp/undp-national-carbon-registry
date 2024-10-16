@@ -31,14 +31,14 @@ import { TxType } from "../enum/txtype.enum";
 import { EmailTemplates } from "../email-helper/email.template";
 import { CMADto } from "../dto/cma.dto";
 import { DocumentEntity } from "../entities/document.entity";
-import { DocumentTypeEnum } from "src/enum/document.type.enum";
-import { DocumentStatus } from "src/enum/document.status";
-import { DataResponseDto } from "src/dto/data.response.dto";
+import { DocumentTypeEnum } from "../enum/document.type.enum";
+import { DocumentStatus } from "../enum/document.status";
+import { DataResponseDto } from "../dto/data.response.dto";
 import { use } from "passport";
-import { GetDocDto } from "src/dto/getDoc.dto";
-import { DataListResponseDto } from "src/dto/data.list.response";
-import { Company } from "src/entities/company.entity";
-import { QueryDto } from "src/dto/query.dto";
+import { GetDocDto } from "../dto/getDoc.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
+import { Company } from "../entities/company.entity";
+import { QueryDto } from "../dto/query.dto";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -99,10 +99,7 @@ export class ProgrammeSlService {
       );
     }
 
-    programme.programmeId = await this.counterService.incrementCount(
-      CounterType.PROGRAMME_SL,
-      3
-    );
+    programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 4);
     programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
     programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;

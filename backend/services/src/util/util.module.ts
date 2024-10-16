@@ -32,6 +32,9 @@ import { PasswordHashService } from "./passwordHash.service";
 import { LetterSustainableDevSupportLetterGen } from "./letter.sustainable.dev.support";
 import { DataExportService } from "./data.export.service";
 import { HttpUtilService } from "./http.util.service";
+import { TxRefGeneratorService } from "./txRef-generator.service";
+import { SLCFSerialNumberGeneratorService } from "./slcfSerialNumberGenerator.service";
+import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancellationCertificate.gen";
 
 @Module({
   imports: [
@@ -43,17 +46,15 @@ import { HttpUtilService } from "./http.util.service";
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
       imports: undefined,
-    }),FileHandlerModule,
+    }),
+    FileHandlerModule,
     I18nModule.forRoot({
-      fallbackLanguage: 'en',
+      fallbackLanguage: "en",
       loaderOptions: {
-        path: path.join(__dirname, '../i18n/'),
+        path: path.join(__dirname, "../i18n/"),
         watch: true,
       },
-      resolvers: [
-        { use: QueryResolver, options: ['lang'] },
-        AcceptLanguageResolver,
-      ],
+      resolvers: [{ use: QueryResolver, options: ["lang"] }, AcceptLanguageResolver],
     }),
     TypeOrmModule.forFeature([
       Counter,
@@ -85,7 +86,10 @@ import { HttpUtilService } from "./http.util.service";
     PasswordHashService,
     LetterSustainableDevSupportLetterGen,
     DataExportService,
-    HttpUtilService
+    HttpUtilService,
+    TxRefGeneratorService,
+    SLCFSerialNumberGeneratorService,
+    VoluntarilyCancellationCertificateGenerator,
   ],
   exports: [
     CounterService,
@@ -101,7 +105,10 @@ import { HttpUtilService } from "./http.util.service";
     PasswordHashService,
     LetterSustainableDevSupportLetterGen,
     DataExportService,
-    HttpUtilService
+    HttpUtilService,
+    TxRefGeneratorService,
+    SLCFSerialNumberGeneratorService,
+    VoluntarilyCancellationCertificateGenerator,
   ],
 })
 export class UtilModule {}

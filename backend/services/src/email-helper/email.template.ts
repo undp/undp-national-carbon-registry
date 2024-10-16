@@ -696,4 +696,88 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+
+  CREDIT_TRANSFER_SL_REQUEST_APPROVED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_APPROVED",
+    subject: "Credit Transfer Request Approved",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_APPROVED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_APPROVED",
+    subject: "Credit Retirement Request Approved",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_TRANSFER_SL_REQUEST_REJECTED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_REJECTED",
+    subject: "Credit Transfer Request Declined",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_REJECTED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_REJECTED",
+    subject: "Credit Retirement Request Declined",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_TRANSFER_SL_REQUEST_CANCELED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_CANCELED",
+    subject: "Credit Transfer Request Canceled",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has canceled their request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_CANCELED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_CANCELED",
+    subject: "Credit Retirement Request Canceled",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has canceled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
 };

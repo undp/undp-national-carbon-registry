@@ -1,12 +1,12 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { EntitySubject } from "./entity.subject";
 import { RetirementStatusSl } from "../enum/retirementStatusSl.enum";
 import { CreditType } from "../enum/creditType.enum";
 
 @Entity()
 export class CreditRetirementSl implements EntitySubject {
-  @PrimaryGeneratedColumn()
-  requestId: number;
+  @PrimaryColumn()
+  requestId: string;
 
   @Column()
   programmeId: string;
@@ -49,6 +49,9 @@ export class CreditRetirementSl implements EntitySubject {
       array: false
   })
   status: RetirementStatusSl;
+
+  @Column({nullable: true})
+  voluntaryCancelationCertificateUrl: string;
 
   @BeforeInsert()
   async createTime() {

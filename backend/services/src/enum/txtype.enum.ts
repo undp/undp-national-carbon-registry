@@ -16,4 +16,6 @@ export enum TxType {
   ADD_INVESTMENT = "14",
   CREATE_SL = "15",
   CREATE_CMA = "16",
+  TRANSFER_SL = "17",
+  RETIRE_SL = "18",
 }

@@ -303,6 +303,7 @@ export class CaslAbilityFactory {
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
         can(Action.Create, CreditRetirementSl);
+        can(Action.Update, CreditRetirementSl);
       }
     }
 
@@ -313,9 +314,16 @@ export class CaslAbilityFactory {
     if (user.companyRole === CompanyRole.CLIMATE_FUND) {
       can(Action.Read, User);
       can(Action.Read, ProgrammeSl);
+      can(Action.Read, CreditRetirementSl);
 
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
+        can(Action.Update, CreditRetirementSl);
+      }
+
+      if (user.role == Role.Manager) {
+        can(Action.Create, Company);
+        can(Action.Update, CreditRetirementSl);
       }
     }
 

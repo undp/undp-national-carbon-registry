@@ -21,7 +21,11 @@ import { MitigationProperties } from "../dto/mitigation.properties";
 import { RetireType } from "../enum/retire.type.enum";
 import { GovernmentCreditAccounts } from "../enum/government.credit.accounts.enum";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
-import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
+import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
+import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
+import { CreditType } from "../enum/creditType.enum";
+import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts.enum";
+import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -29,7 +33,8 @@ export class ProgrammeLedgerService {
     private readonly logger: Logger,
     @InjectEntityManager() private entityManger: EntityManager,
     private ledger: LedgerDBInterface,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private serialNumberGenerator: SLCFSerialNumberGeneratorService
   ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
@@ -151,6 +156,189 @@ export class ProgrammeLedgerService {
     return updatedProgramme;
   }
 
+  public async approveCreditTransfer(
+    retirementRequest: CreditRetirementSl,
+    slcfCompanyId: number,
+    txRef: string
+  ) {
+    this.logger.log(`Approve Credit Transfer ${JSON.stringify(retirementRequest)}`);
+
+    const txType =
+      retirementRequest.creditType === CreditType.TRACK_1 ? TxType.TRANSFER_SL : TxType.RETIRE_SL;
+    const slcfRetiredAccount = slcfCompanyId + "#" + GovernmentCreditAccounts.LOCAL;
+    const toCompanyId =
+      retirementRequest.creditType === CreditType.TRACK_1
+        ? retirementRequest.toCompanyId
+        : retirementRequest.fromCompanyId;
+    const fromCompanyAccount = retirementRequest.fromCompanyId + "#" + retirementRequest.creditType;
+    const toCompanyAccount = toCompanyId + "#" + OrganisationCreditAccounts.LOCAL;
+
+    const getQueries = {};
+    getQueries[`history(${this.ledger.programmeSlTable})`] = {
+      "data.programmeId": retirementRequest.programmeId,
+      "data.txRef": new ArrayLike("data.txRef", "%#%" + retirementRequest.requestId + "#%"),
+    };
+    getQueries[this.ledger.programmeSlTable] = {
+      programmeId: retirementRequest.programmeId,
+    };
+    getQueries[this.ledger.companyTableName] = {
+      txId: [fromCompanyAccount, toCompanyAccount, slcfRetiredAccount],
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const alreadyProcessed = results[`history(${this.ledger.programmeSlTable})`];
+        if (alreadyProcessed.length > 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.transferRequestALreadyProcessed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const programmes: ProgrammeSl[] = results[this.ledger.programmeSlTable].map((domValue) => {
+          return plainToClass(ProgrammeSl, JSON.parse(JSON.stringify(domValue)));
+        });
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("programme.programmeNotExistWIthId", [
+              retirementRequest.programmeId,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const programme = programmes[0];
+        const prvTxTime = programme.txTime;
+
+        programme.creditBalance = programme.creditBalance - retirementRequest.creditAmount;
+
+        programme.creditChange = retirementRequest.creditAmount;
+        programme.txType = txType;
+        programme.txRef = txRef;
+        programme.txTime = new Date().getTime();
+        programme.creditStartSerialNumber =
+          this.serialNumberGenerator.generateCreditSerialForRetire(
+            programme.creditStartSerialNumber,
+            retirementRequest.creditAmount
+          );
+
+        updatedProgramme = programme;
+        const uPayload = {
+          txTime: programme.txTime,
+          txRef: programme.txRef,
+          txType: programme.txType,
+          creditChange: programme.creditChange,
+          creditBalance: programme.creditBalance,
+          companyId: programme.companyId,
+          creditStartSerialNumber: programme.creditStartSerialNumber,
+        };
+
+        if (retirementRequest.creditType === CreditType.TRACK_1) {
+          programme.creditTransferred =
+            programme.creditTransferred + retirementRequest.creditAmount;
+          uPayload["creditTransferred"] = programme.creditTransferred;
+        } else {
+          programme.creditRetired = programme.creditRetired + retirementRequest.creditAmount;
+          uPayload["creditRetired"] = programme.creditRetired;
+        }
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        updateMap[this.ledger.programmeSlTable] = uPayload;
+        updateWhereMap[this.ledger.programmeSlTable] = {
+          programmeId: programme.programmeId,
+          projectProposalStage: ProjectProposalStage.AUTHORISED.valueOf(),
+          txTime: prvTxTime,
+        };
+
+        let companyCreditBalances = {};
+        const companies = results[this.ledger.companyTableName].map((domValue) => {
+          return plainToClass(CreditOverall, JSON.parse(JSON.stringify(domValue)));
+        });
+        for (const company of companies) {
+          companyCreditBalances[company.txId] = company.credit;
+        }
+
+        // Transfer from fromCompany
+        if (companyCreditBalances[fromCompanyAccount] != undefined) {
+          updateMap[this.ledger.companyTableName + "#" + fromCompanyAccount] = {
+            credit: this.helperService.halfUpToPrecision(
+              companyCreditBalances[fromCompanyAccount] - retirementRequest.creditAmount
+            ),
+            txRef: retirementRequest.requestId + "#" + programme.serialNo,
+            txType: txType,
+          };
+          updateWhereMap[this.ledger.companyTableName + "#" + fromCompanyAccount] = {
+            txId: fromCompanyAccount,
+          };
+        } else {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("company.noCredits", [
+              retirementRequest.programmeId,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        // Transfer to toCompany secondary account
+        if (companyCreditBalances[toCompanyAccount] != undefined) {
+          updateMap[this.ledger.companyTableName + "#" + toCompanyAccount] = {
+            credit: this.helperService.halfUpToPrecision(
+              companyCreditBalances[toCompanyAccount] + retirementRequest.creditAmount
+            ),
+            txRef: retirementRequest.requestId + "#" + programme.serialNo,
+            txType: txType,
+          };
+          updateWhereMap[this.ledger.companyTableName + "#" + toCompanyAccount] = {
+            txId: toCompanyAccount,
+          };
+        } else {
+          insertMap[this.ledger.companyTableName + "#" + toCompanyAccount] = {
+            credit: this.helperService.halfUpToPrecision(retirementRequest.creditAmount),
+            txRef: retirementRequest.requestId + "#" + programme.serialNo,
+            txType: txType,
+            txId: toCompanyAccount,
+          };
+        }
+
+        // Increase SLCF Retirement credits
+        if (companyCreditBalances[slcfRetiredAccount] != undefined) {
+          updateMap[this.ledger.companyTableName + "#" + slcfRetiredAccount] = {
+            credit: this.helperService.halfUpToPrecision(
+              companyCreditBalances[slcfRetiredAccount] + retirementRequest.creditAmount
+            ),
+            txRef: retirementRequest.requestId + "#" + programme.serialNo,
+            txType: txType,
+          };
+          updateWhereMap[this.ledger.companyTableName + "#" + slcfRetiredAccount] = {
+            txId: slcfRetiredAccount,
+          };
+        } else {
+          insertMap[this.ledger.companyTableName + "#" + slcfRetiredAccount] = {
+            credit: this.helperService.halfUpToPrecision(retirementRequest.creditAmount),
+            txRef: retirementRequest.requestId + "#" + programme.serialNo,
+            txType: txType,
+            txId: slcfRetiredAccount,
+          };
+        }
+
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+
+    const affected = resp[this.ledger.programmeSlTable];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    return updatedProgramme;
+  }
+
   public async transferProgramme(
     transfer: ProgrammeTransfer,
     name: string,
@@ -207,12 +395,12 @@ export class ProgrammeLedgerService {
           programme.companyId = intCompanyIds;
           return programme;
         });
-        if (programmes.length <= 0) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
-            HttpStatus.BAD_REQUEST
-          );
-        }
+        // if (programmes.length <= 0) {
+        //   throw new HttpException(
+        //     this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
+        //     HttpStatus.BAD_REQUEST
+        //   );
+        // }
 
         if (programmes.length <= 0) {
           throw new HttpException(

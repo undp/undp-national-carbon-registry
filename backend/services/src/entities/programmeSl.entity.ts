@@ -1,12 +1,7 @@
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
-import { SectoralScope } from "@undp/serial-number-gen";
-import { Entity, Column, PrimaryColumn, BeforeInsert, BeforeUpdate } from "typeorm";
-import { ProgrammeProperties } from "../dto/programme.properties";
-import { Sector } from "../enum/sector.enum";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
-import { ProgrammeStage } from "../enum/programme-status.enum";
 import { EntitySubject } from "./entity.subject";
-import { MitigationProperties } from "../dto/mitigation.properties";
 import { ProjectGeography } from "../enum/projectGeography.enum";
 import { ProjectCategory } from "../enum/projectCategory.enum";
 import { ProjectStatus } from "../enum/projectStatus.enum";
@@ -97,9 +92,18 @@ export class ProgrammeSl implements EntitySubject {
     array: false,
   })
   purposeOfCreditDevelopment: CreditType;
+  
+  @Column({ nullable: true })
+  creditStartSerialNumber?: string;
+
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
+  creditEst: number;
 
   @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditBalance: number;
+
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
+  creditChange: number;
 
   @Column("real", { nullable: true })
   creditRetired: number;
@@ -123,6 +127,9 @@ export class ProgrammeSl implements EntitySubject {
     nullable: true,
   })
   txType: TxType;
+
+  @Column({ nullable: true })
+  txRef: string;
 
   @Column({ type: "bigint" })
   txTime: number;

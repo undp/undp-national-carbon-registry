@@ -10,4 +10,5 @@ export enum CounterType {
   ITMO_SYSTEM = 8,
   PROGRAMME_SL = 9,
   REPLICATE_SEQ_PROGRAMME_SL = 10,
+  RETIREMENT_REQUEST_SL = 11,
 }

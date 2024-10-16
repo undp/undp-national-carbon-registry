@@ -256,6 +256,18 @@ export class EmailHelperService {
         };
         break;
 
+      case "CREDIT_TRANSFER_SL_REQUEST_APPROVED":
+      case "CREDIT_RETIRE_SL_REQUEST_APPROVED":
+      case "CREDIT_TRANSFER_SL_REQUEST_REJECTED":
+      case "CREDIT_RETIRE_SL_REQUEST_REJECTED":
+      case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
+      case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+        templateData = {
+          ...templateData,
+          pageLink: hostAddress + "/retirementManagement",
+        };
+        break;
+
       default:
         break;
     }
@@ -431,6 +443,9 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_SL_REQUEST":
+      case "CREDIT_RETIRE_SL_REQUEST":
+      case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
+      case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
@@ -441,16 +456,16 @@ export class EmailHelperService {
         };
         break;
 
-      case "CREDIT_RETIRE_SL_REQUEST":
-        templateData = {
-          organisationName: companyDetails.name,
-          countryName: systemCountryName,
-          programmeName: programme.title,
-          credits: templateData.credits,
-          serialNumber: programme.serialNo,
-          programmePageLink: hostAddress + `/retirementManagement`,
-        };
-        break;
+      // case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+      //   templateData = {
+      //     organisationName: companyDetails.name,
+      //     countryName: systemCountryName,
+      //     programmeName: programme.title,
+      //     credits: templateData.credits,
+      //     serialNumber: programme.serialNo,
+      //     programmePageLink: hostAddress + `/retirementManagement`,
+      //   };
+      //   break;
 
       default:
         break;
