@@ -158,7 +158,7 @@
   "monitoringEl": "Monitoring",
   "govInternationalAcc": "Government International Account",
   "omgeAcc": "OMGE Account",
-  "costQuatationForm": "Cost Quatation",
+  "costQuotationForm": "Cost Quotation",
   "proposalForm": "Proposal",
   "validationAgreementForm": "Validation Agreement",
   "cmaForm": "Carbon Management Assessment (CMA)",
@@ -167,5 +167,6 @@
   "verificationPhaseForms": "Verification Phase Forms",
   "monitoringReport": "Monitoring Report",
   "verificationReport": "Verification Report",
-  "omgeDesc": "Overall Mitigation in Global Emissins (OMGE)"
+  "omgeDesc": "Overall Mitigation in Global Emissins (OMGE)",
+  "orgNotAuth": "Your organisation is not authorised to create or view this document"
 }
