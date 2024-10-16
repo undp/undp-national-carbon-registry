@@ -47,6 +47,7 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.programmeService.query(query, req.abilityCondition);
