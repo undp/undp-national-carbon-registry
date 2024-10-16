@@ -28,5 +28,19 @@
   "objective": "Objective",
   "scopeAndCriteria": "Scope and Criteria",
   "involvedPartiesAndParticipeant": "Involved Parties and Project Participant",
-  "summaryDescriptionProject": "1.4.Summary Description of the Project*"
+  "summaryDescriptionProject": "1.4.Summary Description of the Project*",
+  "methodAndCriteria": "Method and Criteria",
+  "documentReview": "Document Review",
+  "interviews": "Interviews",
+  "siteInspection": "Site Inspection",
+  "forwardActionRequests": "Forward Action Requests",
+  "resolutionOfFindings": "Resolution of Findings",
+  "safeguards": "Safeguards",
+  "noNetHarm": "No Net Harm",
+  "environmentImpact": "Environmental Impact",
+  "localStakeholderConsultation": "Local Stakeholder Consultation",
+  "aflouSafeGuards": "AFOLU-Specific Safeguards",
+  "publicCommments": "Public Comments",
+  "applicationOfMethodology": "Application of Methodology",
+  "titleAndReference": "Title and Reference"
 }

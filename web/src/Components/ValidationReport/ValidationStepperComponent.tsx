@@ -211,7 +211,7 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">03</div>
-          <div className="title">{t('validationReport:form03Title')}</div>
+          <div className="title">{t('validationReport:form04Title')}</div>
         </div>
       ),
       description: (
@@ -229,7 +229,7 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">04</div>
-          <div className="title">{t('validationReport:form04Title')}</div>
+          <div className="title">{t('validationReport:form05Title')}</div>
         </div>
       ),
       description: (
@@ -247,7 +247,7 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">05</div>
-          <div className="title">{t('validationReport:form05Title')}</div>
+          <div className="title">{t('validationReport:form06Title')}</div>
         </div>
       ),
       description: (
@@ -265,7 +265,7 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">06</div>
-          <div className="title">{t('validationReport:form06Title')}</div>
+          <div className="title">{t('validationReport:form07Title')}</div>
         </div>
       ),
       description: (

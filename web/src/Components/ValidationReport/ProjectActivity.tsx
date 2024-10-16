@@ -1,6 +1,7 @@
 import React from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 
 const ProjectActivity = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
@@ -8,7 +9,7 @@ const ProjectActivity = (props: ValidationStepsProps) => {
     <>
       {current === 1 && (
         <div>
-          <div className="step-form-container">
+          <div className="val-report-step-form-container">
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
@@ -23,103 +24,72 @@ const ProjectActivity = (props: ValidationStepsProps) => {
                 }
               }}
             >
-              {/* <Form.Item
+              <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:stakeHolderConsultationProcess')}`}
-                name="stakeHolderConsultationProcess"
+                label={`1.1 ${t('validationReport:objective')}`}
+                name="objective"
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`,
+                    message: `${t('validationReport:objective')} ${t('isRequired')}`,
                   },
                 ]}
-                tooltip={{
-                  title: (
-                    <div>
-                      <p>
-                        Describe the process for, and the outcomes from, the local stakeholder
-                        consultation conducted prior to validation. Include details on the
-                        following:
-                      </p>
-                      <ul>
-                        <li>
-                          The procedures or methods used for engaging local stakeholders (e.g.,
-                          dates of announcements or meetings, periods during which input was
-                          sought).
-                        </li>
-                        <li>
-                          The procedures or methods used for documenting the outcomes of the local
-                          stakeholder consultation.{' '}
-                        </li>
-                        <li>The mechanism for on-going communication with local stakeholders.</li>
-                        <li>
-                          How due account of all and any input received during the consultation has
-                          been taken. Include details on any updates to the project design or
-                          justify why updates are not appropriate.
-                        </li>
-                      </ul>
-
-                      <p>
-                        For AFOLU projects, also demonstrate how the project has or will communicate
-                        the following:
-                      </p>
-                      <ul>
-                        <li>
-                          The project design and implementation, including the results of
-                          monitoring.
-                        </li>
-                        <li>
-                          The risks, costs and benefits the project may bring to local stakeholders.
-                        </li>
-                        <li>
-                          All relevant laws and regulations covering workers’ rights in the host
-                          country.
-                        </li>
-                        <li>
-                          The process of SLCCS validation and verification and the
-                          validation/verification body’s site visit.
-                        </li>
-                      </ul>
-                    </div>
-                  ),
-                }}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} placeholder="Explain the purpose of the validation." />
               </Form.Item>
 
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:summaryOfCommentsRecieved')}`}
-                name="summaryOfCommentsRecieved"
+                label={`1.2 ${t('validationReport:scopeAndCriteria')}`}
+                name="scopeAndCriteria"
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:summaryOfCommentsRecieved')} ${t('isRequired')}`,
+                    message: `${t('validationReport:scopeAndCriteria')} ${t('isRequired')}`,
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
-                  placeholder={`${t('CMAForm:summaryOfCommentsRecievedPlaceholder')}`}
+                  placeholder="Describe the scope and criteria of the validation."
                 />
               </Form.Item>
 
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:considerationOfCommentsRecieved')}`}
-                name="considerationOfCommentsRecieved"
+                label={`1.3 ${t('validationReport:involvedPartiesAndParticipeant')}`}
+                name="involvedPartiesAndParticipeant"
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:considerationOfCommentsRecieved')}`,
+                    message: `${t('validationReport:involvedPartiesAndParticipeant')}  ${t(
+                      'isRequired'
+                    )}`,
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
-                  placeholder={`${t('CMAForm:considerationOfCommentsRecievedPlaceholder')}`}
+                  placeholder="Indicate the level of assurance of the validation."
                 />
-              </Form.Item> */}
+              </Form.Item>
+
+              <Form.Item
+                className="full-width-form-item"
+                label={`1.4 ${t('validationReport:summaryDescriptionProject')}`}
+                name="summaryDescriptionProject"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('CMAForm:summaryDescriptionProject')} `,
+                  },
+                ]}
+              >
+                <TextArea
+                  rows={4}
+                  placeholder="Provide a summary description of the project (no more than one page)."
+                />
+              </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>
@@ -128,8 +98,8 @@ const ProjectActivity = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
+                  onClick={next}
+                  // htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>
