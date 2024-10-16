@@ -362,6 +362,25 @@ export const getFinancialFields = (programme: ProgrammeU | ProgrammeR | Programm
   };
 };
 
+export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
+  // return {
+  //   estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
+  //   creditEst: addCommSep(programme.creditEst),
+  //   financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
+  //   grantEquivalent: new UnitField(
+  //     'USD',
+  //     addCommSep(programme.programmeProperties.grantEquivalentAmount)
+  //   ),
+  //   carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+  // };
+
+  return {
+    estimatedProgrammeCostLKR: '-',
+    creditEst: '-',
+    grantEquivalentLKR: '-',
+  };
+};
+
 export const getCompanyBgColor = (item: string) => {
   if (item === 'Government') {
     return GovBGColor;

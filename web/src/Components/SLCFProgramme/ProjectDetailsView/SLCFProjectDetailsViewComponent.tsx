@@ -49,6 +49,7 @@ import {
   addCommSep,
   addCommSepRound,
   getFinancialFields,
+  getFinancialFieldsSl,
   getGeneralFields,
   getGeneralFieldsSl,
   getProgrammeStatus,
@@ -101,6 +102,8 @@ import { ProgrammeTransferForm } from '../../Models/programmeTransferForm';
 import { InfoView } from '../../InfoView/info.view';
 import { ProgrammeDocuments } from '../../ProgrammeDocuments/programmeDocuments';
 import { MapComponent } from '../../Maps/mapComponent';
+import { ProjectForms } from '../projectForms/projectForms';
+import { VerificationForms } from '../projectForms/verificationForms';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -221,17 +224,23 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return n ? Number(n) : 0;
   };
 
+  // const getPieChartData = (d: ProgrammeSlU) => {
+  //   const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
+  //   const dt = [
+  //     Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
+  //     Number(
+  //       (numIsExist(d.creditIssued) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)
+  //     ),
+  //     Number(d.creditTransferred),
+  //     Number(d.creditRetired),
+  //     frozen,
+  //   ];
+  //   return dt;
+  // };
+
   const getPieChartData = (d: ProgrammeSlU) => {
     const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
-    const dt = [
-      Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
-      Number(
-        (numIsExist(d.creditIssued) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)
-      ),
-      Number(d.creditTransferred),
-      Number(d.creditRetired),
-      frozen,
-    ];
+    const dt = [12, 12, 12, 12, 52];
     return dt;
   };
 
@@ -1955,238 +1964,138 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
-            {getStageEnumVal(data.currentStage) === ProgrammeStageUnified.Authorised ? (
-              <Card className="card-container">
-                <div className="info-view">
-                  <div className="title">
-                    <span className="title-icon">{<BlockOutlined />}</span>
-                    <span className="title-text">{t('projectDetailsView:credits')}</span>
-                  </div>
-                  <div className="map-content">
-                    <Chart
-                      id={'creditChart'}
-                      options={{
-                        labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
-                        legend: {
-                          position: 'bottom',
-                        },
-                        colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
-                        tooltip: {
-                          fillSeriesColor: false,
-                        },
-                        states: {
-                          normal: {
-                            filter: {
-                              type: 'none',
-                              value: 0,
-                            },
-                          },
-                          hover: {
-                            filter: {
-                              type: 'none',
-                              value: 0,
-                            },
-                          },
-                          active: {
-                            allowMultipleDataPointsSelection: true,
-                            filter: {
-                              type: 'darken',
-                              value: 0.7,
-                            },
+
+            <Card className="card-container">
+              <div className="info-view">
+                <div className="title">
+                  <span className="title-icon">{<BlockOutlined />}</span>
+                  <span className="title-text">{t('projectDetailsView:credits')}</span>
+                </div>
+                <div className="map-content">
+                  <Chart
+                    id={'creditChart'}
+                    options={{
+                      labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
+                      legend: {
+                        position: 'bottom',
+                      },
+                      colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
+                      tooltip: {
+                        fillSeriesColor: false,
+                      },
+                      states: {
+                        normal: {
+                          filter: {
+                            type: 'none',
+                            value: 0,
                           },
                         },
-                        stroke: {
-                          colors: ['#00'],
+                        hover: {
+                          filter: {
+                            type: 'none',
+                            value: 0,
+                          },
                         },
-                        plotOptions: {
-                          pie: {
-                            expandOnClick: false,
-                            donut: {
-                              labels: {
+                        active: {
+                          allowMultipleDataPointsSelection: true,
+                          filter: {
+                            type: 'darken',
+                            value: 0.7,
+                          },
+                        },
+                      },
+                      stroke: {
+                        colors: ['#00'],
+                      },
+                      plotOptions: {
+                        pie: {
+                          expandOnClick: false,
+                          donut: {
+                            labels: {
+                              show: true,
+                              total: {
+                                showAlways: true,
                                 show: true,
-                                total: {
-                                  showAlways: true,
-                                  show: true,
-                                  label: 'Total',
-                                  formatter: () => '' + data.creditEst,
-                                },
+                                label: 'Total',
+                                formatter: () => '' + data.creditEst,
                               },
                             },
                           },
                         },
-                        dataLabels: {
-                          enabled: false,
-                        },
-                        responsive: [
-                          {
-                            breakpoint: 480,
-                            options: {
-                              chart: {
-                                width: '15vw',
-                              },
-                              legend: {
-                                position: 'bottom',
-                              },
+                      },
+                      dataLabels: {
+                        enabled: false,
+                      },
+                      responsive: [
+                        {
+                          breakpoint: 480,
+                          options: {
+                            chart: {
+                              width: '15vw',
+                            },
+                            legend: {
+                              position: 'bottom',
                             },
                           },
-                        ],
-                      }}
-                      series={pieChartData}
-                      type="donut"
-                      width="100%"
-                      fontFamily="inter"
-                    />
-                    {userInfoState?.userRole !== 'ViewOnly' &&
-                      userInfoState?.companyRole !== 'Certifier' && (
-                        <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
-                            data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
-                            !isTransferFrozen && (
-                              <div>
-                                {/* {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                                  ministryLevelPermission) &&
-                                  !isAllOwnersDeactivated) ||
-                                  (data.companyId
-                                    .map((e) => Number(e))
-                                    .includes(userInfoState!.companyId) &&
-                                    userInfoState!.companyState !==
-                                      CompanyState.SUSPENDED.valueOf())) && (
-                                  <span>
-                                    <Button
-                                      danger
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Retire',
-                                          text: t('projectDetailsView:popupText'),
-                                          title: t('projectDetailsView:retireTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.Save />,
-                                          contentComp: (
-                                            <ProgrammeRetireForm
-                                              hideType={
-                                                userInfoState?.companyRole !==
-                                                  CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                              }
-                                              myCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:retire')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'retire',
-                                                  (response: any) =>
-                                                    getSuccessMsg(
-                                                      response,
-                                                      t('projectDetailsView:successRetireInit'),
-                                                      t('projectDetailsView:successRetire')
-                                                    ),
-                                                  put,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:retire')}
-                                    </Button>
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Send',
-                                          text: '',
-                                          title: t('projectDetailsView:sendCreditTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowRight />,
-                                          contentComp: (
-                                            <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              receiverLabelText={t('projectDetailsView:to')}
-                                              userCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              subText={t('projectDetailsView:popupText')}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:send')}
-                                              onFinish={(body: any) =>
-                                                onPopupAction(
-                                                  body,
-                                                  'transferRequest',
-                                                  (response: any) =>
-                                                    getSuccessMsg(
-                                                      response,
-                                                      t('projectDetailsView:successSendInit'),
-                                                      t('projectDetailsView:successSend')
-                                                    ),
-                                                  post,
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                              ministryLevelPermission={ministryLevelPermission}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:send')}
-                                    </Button>
-                                  </span>
-                                )}
-                                {((!isAllOwnersDeactivated &&
+                        },
+                      ],
+                    }}
+                    series={pieChartData}
+                    type="donut"
+                    width="100%"
+                    fontFamily="inter"
+                  />
+                  {/* {userInfoState?.userRole !== 'ViewOnly' &&
+                    userInfoState?.companyRole !== 'Certifier' && (
+                      <div className="flex-display action-btns">
+                        {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
+                          data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
+                          !isTransferFrozen && (
+                            <div>
+                              {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                ministryLevelPermission) &&
+                                !isAllOwnersDeactivated) ||
+                                (data.companyId
+                                  .map((e) => Number(e))
+                                  .includes(userInfoState!.companyId) &&
                                   userInfoState!.companyState !==
-                                    CompanyState.SUSPENDED.valueOf() &&
-                                  !isTransferFrozen &&
-                                  userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
-                                  (userInfoState?.companyRole === CompanyRole.MINISTRY &&
-                                    ministryLevelPermission)) && (
+                                    CompanyState.SUSPENDED.valueOf())) && (
+                                <span>
                                   <Button
-                                    type="primary"
+                                    danger
                                     onClick={() => {
                                       setActionInfo({
-                                        action: 'Request',
-                                        text: '',
-                                        title: t('projectDetailsView:transferTitle'),
+                                        action: 'Retire',
+                                        text: t('projectDetailsView:popupText'),
+                                        title: t('projectDetailsView:retireTitle'),
                                         type: 'primary',
                                         remark: true,
-                                        icon: <Icon.BoxArrowInRight />,
+                                        icon: <Icon.Save />,
                                         contentComp: (
-                                          <ProgrammeTransferForm
-                                            companyRole={userInfoState!.companyRole}
-                                            userCompanyId={userInfoState?.companyId}
-                                            receiverLabelText={t('projectDetailsView:by')}
-                                            disableToCompany={true}
-                                            toCompanyDefault={{
-                                              label: userInfoState?.companyName,
-                                              value: userInfoState?.companyId,
-                                            }}
+                                          <ProgrammeRetireForm
+                                            hideType={
+                                              userInfoState?.companyRole !==
+                                                CompanyRole.GOVERNMENT &&
+                                              userInfoState?.companyRole !== CompanyRole.MINISTRY
+                                            }
+                                            myCompanyId={userInfoState?.companyId}
                                             programme={data}
-                                            subText={t('projectDetailsView:popupText')}
                                             onCancel={() => {
                                               setOpenModal(false);
                                               setComment(undefined);
                                             }}
-                                            actionBtnText={t('projectDetailsView:request')}
+                                            actionBtnText={t('projectDetailsView:retire')}
                                             onFinish={(body: any) =>
                                               onPopupAction(
                                                 body,
-                                                'transferRequest',
-                                                t('projectDetailsView:successRequest'),
-                                                post,
+                                                'retire',
+                                                (response: any) =>
+                                                  getSuccessMsg(
+                                                    response,
+                                                    t('projectDetailsView:successRetireInit'),
+                                                    t('projectDetailsView:successRetire')
+                                                  ),
+                                                put,
                                                 updateCreditInfo
                                               )
                                             }
@@ -2197,117 +2106,116 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                       showModal();
                                     }}
                                   >
-                                    {t('projectDetailsView:transfer')}
+                                    {t('projectDetailsView:retire')}
                                   </Button>
-                                )} */}
-                              </div>
-                            )}
-                        </div>
-                      )}
-                  </div>
+                                  <Button
+                                    type="primary"
+                                    onClick={() => {
+                                      setActionInfo({
+                                        action: 'Send',
+                                        text: '',
+                                        title: t('projectDetailsView:sendCreditTitle'),
+                                        type: 'primary',
+                                        remark: true,
+                                        icon: <Icon.BoxArrowRight />,
+                                        contentComp: (
+                                          <ProgrammeTransferForm
+                                            companyRole={userInfoState!.companyRole}
+                                            receiverLabelText={t('projectDetailsView:to')}
+                                            userCompanyId={userInfoState?.companyId}
+                                            programme={data}
+                                            subText={t('projectDetailsView:popupText')}
+                                            onCancel={() => {
+                                              setOpenModal(false);
+                                              setComment(undefined);
+                                            }}
+                                            actionBtnText={t('projectDetailsView:send')}
+                                            onFinish={(body: any) =>
+                                              onPopupAction(
+                                                body,
+                                                'transferRequest',
+                                                (response: any) =>
+                                                  getSuccessMsg(
+                                                    response,
+                                                    t('projectDetailsView:successSendInit'),
+                                                    t('projectDetailsView:successSend')
+                                                  ),
+                                                post,
+                                                updateCreditInfo
+                                              )
+                                            }
+                                            translator={i18n}
+                                            ministryLevelPermission={ministryLevelPermission}
+                                          />
+                                        ),
+                                      });
+                                      showModal();
+                                    }}
+                                  >
+                                    {t('projectDetailsView:send')}
+                                  </Button>
+                                </span>
+                              )}
+                              {((!isAllOwnersDeactivated &&
+                                userInfoState!.companyState !== CompanyState.SUSPENDED.valueOf() &&
+                                !isTransferFrozen &&
+                                userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
+                                (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                                  ministryLevelPermission)) && (
+                                <Button
+                                  type="primary"
+                                  onClick={() => {
+                                    setActionInfo({
+                                      action: 'Request',
+                                      text: '',
+                                      title: t('projectDetailsView:transferTitle'),
+                                      type: 'primary',
+                                      remark: true,
+                                      icon: <Icon.BoxArrowInRight />,
+                                      contentComp: (
+                                        <ProgrammeTransferForm
+                                          companyRole={userInfoState!.companyRole}
+                                          userCompanyId={userInfoState?.companyId}
+                                          receiverLabelText={t('projectDetailsView:by')}
+                                          disableToCompany={true}
+                                          toCompanyDefault={{
+                                            label: userInfoState?.companyName,
+                                            value: userInfoState?.companyId,
+                                          }}
+                                          programme={data}
+                                          subText={t('projectDetailsView:popupText')}
+                                          onCancel={() => {
+                                            setOpenModal(false);
+                                            setComment(undefined);
+                                          }}
+                                          actionBtnText={t('projectDetailsView:request')}
+                                          onFinish={(body: any) =>
+                                            onPopupAction(
+                                              body,
+                                              'transferRequest',
+                                              t('projectDetailsView:successRequest'),
+                                              post,
+                                              updateCreditInfo
+                                            )
+                                          }
+                                          translator={i18n}
+                                        />
+                                      ),
+                                    });
+                                    showModal();
+                                  }}
+                                >
+                                  {t('projectDetailsView:transfer')}
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                      </div>
+                    )} */}
                 </div>
-              </Card>
-            ) : (
-              <div></div>
-            )}
-            {(emissionsReductionExpected !== 0 || emissionsReductionAchieved !== 0) && (
-              <Card className="card-container">
-                <div className="info-view">
-                  <div className="title">
-                    <span className="title-icon">{<BlockOutlined />}</span>
-                    <span className="title-text">
-                      {formatString('projectDetailsView:emissionsReductions', [])}
-                    </span>
-                  </div>
-                  <div className="map-content">
-                    <Chart
-                      id={'creditChart'}
-                      options={{
-                        labels: ['Achieved', 'Pending'],
-                        legend: {
-                          position: 'bottom',
-                        },
-                        colors: ['#b3b3ff', '#e0e0eb'],
-                        tooltip: {
-                          fillSeriesColor: false,
-                          enabled: true,
-                          y: {
-                            formatter: function (value: any) {
-                              return addCommSepRound(value);
-                            },
-                          },
-                        },
-                        states: {
-                          normal: {
-                            filter: {
-                              type: 'none',
-                              value: 0,
-                            },
-                          },
-                          hover: {
-                            filter: {
-                              type: 'none',
-                              value: 0,
-                            },
-                          },
-                          active: {
-                            allowMultipleDataPointsSelection: true,
-                            filter: {
-                              type: 'darken',
-                              value: 0.7,
-                            },
-                          },
-                        },
-                        stroke: {
-                          colors: ['#00'],
-                        },
-                        plotOptions: {
-                          pie: {
-                            expandOnClick: false,
-                            donut: {
-                              labels: {
-                                show: true,
-                                total: {
-                                  showAlways: true,
-                                  show: true,
-                                  label: 'Expected',
-                                  formatter: () => '' + addCommSep(data?.emissionReductionExpected),
-                                },
-                              },
-                            },
-                          },
-                        },
-                        dataLabels: {
-                          enabled: false,
-                        },
-                        responsive: [
-                          {
-                            breakpoint: 480,
-                            options: {
-                              chart: {
-                                width: '15vw',
-                              },
-                              legend: {
-                                position: 'bottom',
-                              },
-                            },
-                          },
-                        ],
-                      }}
-                      series={[
-                        emissionsReductionAchieved,
-                        Number(
-                          (emissionsReductionExpected - emissionsReductionAchieved).toFixed(2)
-                        ),
-                      ]}
-                      type="donut"
-                      width="100%"
-                      fontFamily="inter"
-                    />
-                  </div>
-                </div>
-              </Card>
-            )}
+              </div>
+            </Card>
+
             {data?.programmeProperties?.programmeMaterials &&
               data?.programmeProperties?.programmeMaterials.length > 0 && (
                 <Card className="card-container">
@@ -2336,22 +2244,22 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               )} */}
             <Card className="card-container">
               <div>
-                {/* <InfoView
-                  data={mapArrayToi18n(getFinancialFields(data))}
+                <InfoView
+                  data={mapArrayToi18n(getFinancialFieldsSl(data))}
                   title={t('projectDetailsView:financial')}
                   icon={
                     <span className="b-icon">
                       <Icon.Cash />
                     </span>
                   }
-                /> */}
+                />
               </div>
             </Card>
             <Card className="card-container">
               <div>
-                {/* <ProgrammeDocuments
+                <ProjectForms
                   data={documentsData}
-                  title={t('projectDetailsView:programmeDocs')}
+                  title={t('projectDetailsView:programmeForms')}
                   icon={<QrcodeOutlined />}
                   programmeId={data?.programmeId}
                   programmeOwnerId={programmeOwnerId}
@@ -2363,9 +2271,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   }}
                   ministryLevelPermission={ministryLevelPermission}
                   translator={i18n}
-                  methodologyDocumentUpdated={methodologyDocumentApproved}
                   programmeStatus={data?.currentStage}
-                /> */}
+                />
               </div>
             </Card>
           </Col>
@@ -2406,71 +2313,24 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             ) : (
               ''
             )}
-            {certs.length > 0 ? (
-              <Card className="card-container">
-                <div className="info-view">
-                  <div className="title">
-                    <span className="title-icon">{<SafetyOutlined />}</span>
-                    <span className="title-text">{t('projectDetailsView:certification')}</span>
-                  </div>
-                  <div className="cert-content">{certs}</div>
-                </div>
-              </Card>
-            ) : (
-              <span></span>
-            )}
-            {investmentHistory?.length > 0 && (
-              <Card className="card-container">
-                <div className="info-view">
-                  <div className="title">
-                    <span className="title-icon">{<ClockCircleOutlined />}</span>
-                    <span className="title-text">{t('projectDetailsView:investment')}</span>
-                  </div>
-                  <div className="content">
-                    {loadingInvestment ? (
-                      <Skeleton />
-                    ) : (
-                      <Steps current={0} direction="vertical" items={investmentHistory} />
-                    )}
-                  </div>
-                </div>
-              </Card>
-            )}
-            {ndcActionHistoryData?.length > 0 && (
-              <Card className="card-container">
-                <div className="info-view">
-                  <div className="title">
-                    <span className="title-icon">{<ExperimentOutlined />}</span>
-                    <span className="title-text">{t('projectDetailsView:ndcActions')}</span>
-                  </div>
-                  <div className="content">
-                    {loadingNDC ? (
-                      <Skeleton />
-                    ) : (
-                      <Steps current={0} direction="vertical" items={ndcActionHistoryData} />
-                    )}
-                  </div>
-                </div>
-              </Card>
-            )}
             <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<ClockCircleOutlined />}</span>
-                  <span className="title-text">{t('projectDetailsView:timeline')}</span>
-                </div>
-                <div className="content">
-                  {loadingHistory ? (
-                    <Skeleton />
-                  ) : (
-                    <Steps
-                      key={activityTimelineKey}
-                      current={0}
-                      direction="vertical"
-                      items={historyData}
-                    />
-                  )}
-                </div>
+              <div>
+                <VerificationForms
+                  data={documentsData}
+                  title={t('projectDetailsView:verificationPhaseForms')}
+                  icon={<QrcodeOutlined />}
+                  programmeId={data?.programmeId}
+                  programmeOwnerId={programmeOwnerId}
+                  getDocumentDetails={() => {
+                    getDocuments(data?.programmeId);
+                  }}
+                  getProgrammeById={() => {
+                    getProgrammeById(data?.programmeId);
+                  }}
+                  ministryLevelPermission={ministryLevelPermission}
+                  translator={i18n}
+                  programmeStatus={data?.currentStage}
+                />
               </div>
             </Card>
           </Col>
