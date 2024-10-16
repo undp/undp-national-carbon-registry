@@ -60,9 +60,9 @@ const PROJECT_STATUS: { [key: string]: string } = {
   INSTALLATION_STAGE: 'Installation',
 };
 
-const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
-  TRACK_1: 'Track 1 - for trading',
-  TRACK_2: 'Track 2 - for internal offsetting',
+export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
+  TRACK_1: 'Track 1',
+  TRACK_2: 'Track 2',
 };
 export const SLCFProgrammeCreationComponent = (props: any) => {
   const { useLocation, onNavigateToProgrammeView, translator } = props;
@@ -101,7 +101,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     setProjectLocationMapCenter(
       projectLocations && projectLocations?.length > 0
         ? getCenter(projectLocations[0])
-        : [7.4924165, 5.5324032]
+        : [80.7718, 7.8731]
     );
 
     const tempMapSource: any = [];
@@ -171,7 +171,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       <MapComponent
         mapType={mapType}
         center={projectLocationMapCenter}
-        zoom={4}
+        zoom={5}
         height={250}
         style="mapbox://styles/mapbox/light-v11"
         accessToken={accessToken}
@@ -306,7 +306,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
 
-    if (values?.optionalDocuments.length > 0) {
+    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;
       for (let i = 0; i < docs.length; i++) {
         const temp = await getBase64(docs[i]?.originFileObj as RcFile);
@@ -317,10 +317,10 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       projectCategory: values?.projectCategory,
-      province: values?.province,
-      district: values?.district,
-      dsDivision: values?.dsDivision,
-      city: values?.city,
+      province: values?.province || 'test',
+      district: values?.district || 'test',
+      dsDivision: values?.dsDivision || 'test',
+      city: values?.city || 'test',
       community: 'test',
       geographicalLocationCoordinates: projectLocations,
       projectGeography: 'SINGLE',
@@ -446,7 +446,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:province')} ${t('isRequired')}}`,
+                                    message: `${t('addProgramme:province')} ${t('isRequired')}`,
                                   },
                                 ]}
                               >
@@ -460,6 +460,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                   ))}
                                 </Select>
                               </Form.Item>
+
                               <Form.Item
                                 label={t('addProgramme:district')}
                                 name="district"
@@ -602,6 +603,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                           style={{ color: 'rgba(58, 53, 65, 0.5)' }}
                                         />
                                       ),
+                                      placement: 'topLeft',
                                     }}
                                     rules={[
                                       {

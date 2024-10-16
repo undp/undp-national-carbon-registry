@@ -30,12 +30,17 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   public ledgerName: string;
   private dbCon: Pool;
 
-  constructor(private readonly logger: Logger, private readonly configService: ConfigService) {
+  constructor(
+    private readonly logger: Logger,
+    private readonly configService: ConfigService
+  ) {
     this.ledgerName = configService.get<string>("ledger.name");
     this.tableName = configService.get<string>("ledger.table");
     this.overallTableName = configService.get<string>("ledger.overallTable");
     this.companyTableName = configService.get<string>("ledger.companyTable");
-    this.programmeSlTable = configService.get<string>("ledger.programmeSlTable");
+    this.programmeSlTable = configService.get<string>(
+      "ledger.programmeSlTable"
+    );
 
     let dbc = this.configService.get<any>("database");
 
@@ -93,7 +98,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   }
 
   public async createTable(tableName?: string): Promise<void> {
-    const sql = `CREATE SEQUENCE ${tableName ? tableName : this.tableName}_hash_seq; 
+    const sql = `CREATE SEQUENCE ${
+      tableName ? tableName : this.tableName
+    }_hash_seq; 
         CREATE TABLE IF NOT EXISTS ${tableName ? tableName : this.tableName}
         (
             data jsonb NOT NULL,
@@ -106,12 +113,18 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     await await this.execute([{ sql }]);
   }
 
-  public async createIndex(indexCol: string, tableName?: string): Promise<void> {
+  public async createIndex(
+    indexCol: string,
+    tableName?: string
+  ): Promise<void> {
     return null;
     // await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
   }
 
-  public async insertRecord(document: Record<string, any>, tableName?: string): Promise<void> {
+  public async insertRecord(
+    document: Record<string, any>,
+    tableName?: string
+  ): Promise<void> {
     await this.execute([
       {
         sql: `INSERT INTO "${
@@ -136,7 +149,10 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     }
   }
 
-  public async fetchRecords(where: Record<string, any>, tableName?: string): Promise<dom.Value[]> {
+  public async fetchRecords(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
@@ -158,7 +174,10 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     )[0]?.rows.map((e) => e.data);
   }
 
-  public async fetchHistory(where: Record<string, any>, tableName?: string): Promise<dom.Value[]> {
+  public async fetchHistory(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
@@ -189,17 +208,20 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     const table = tableName ? tableName : this.tableName;
     const getQueries = {};
     getQueries[table] = where;
-    const r = await this.getAndUpdateTx(getQueries, (results: Record<string, dom.Value[]>) => {
-      const resTable = results[table];
-      const insertMap = {};
-      for (const obj of resTable) {
-        for (const k in update) {
-          obj[k] = update[k];
+    const r = await this.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const resTable = results[table];
+        const insertMap = {};
+        for (const obj of resTable) {
+          for (const k in update) {
+            obj[k] = update[k];
+          }
+          insertMap[table] = obj;
         }
-        insertMap[table] = obj;
+        return [{}, {}, insertMap];
       }
-      return [{}, {}, insertMap];
-    });
+    );
 
     return r[table];
   }

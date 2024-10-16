@@ -28,6 +28,9 @@ import { EventLog } from "../entities/event.log.entity";
 import { Region } from "../entities/region.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { DocumentEntity } from "src/entities/document.entity";
+import { VerificationRequestEntity } from "src/entities/verification.request.entity";
+import { VerificationModule } from "src/verification/verification.module";
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
       EventLog,
       Region,
       CreditAuditLog,
+      ProgrammeSl,
+      DocumentEntity,
+      VerificationRequestEntity,
     ]),
     UtilModule,
     CompanyModule,
@@ -59,6 +65,7 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
     LocationModule,
     AsyncOperationsModule,
     FileHandlerModule,
+    VerificationModule,
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService],

@@ -433,27 +433,14 @@ export class EmailHelperService {
         };
         break;
 
-      // case "CREDIT_TRANSFER_SL_REQUEST":
-      //   templateData = {
-      //     organisationName: companyDetails.name,
-      //     countryName: systemCountryName,
-      //     programmeName: programme.title,
-      //     credits: templateData.credits,
-      //     serialNumber: programme.serialNo,
-      //     programmePageLink: hostAddress + `/retirementManagement`,
-      //   };
-      //   break;
-
-      // case "CREDIT_RETIRE_SL_REQUEST":
-      //   templateData = {
-      //     organisationName: companyDetails.name,
-      //     countryName: systemCountryName,
-      //     programmeName: programme.title,
-      //     credits: templateData.credits,
-      //     serialNumber: programme.serialNo,
-      //     programmePageLink: hostAddress + `/retirementManagement`,
-      //   };
-      //   break;
+      case "CMA_CREATE":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/cmaManagement/view/${programmeId}`,
+        };
+        break;
 
       case "CREDIT_TRANSFER_SL_REQUEST":
       case "CREDIT_RETIRE_SL_REQUEST":
