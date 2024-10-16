@@ -25,10 +25,10 @@ import { LetterOfAuthorisationRequestGen } from "../util/letter.of.authorisation
 import { DataExportService } from "../util/data.export.service";
 import { LetterSustainableDevSupportLetterGen } from "../util/letter.sustainable.dev.support";
 import { ProgrammeSlDto } from "../dto/programmeSl.dto";
-import { ProgrammeSl } from "src/entities/programmeSl.entity";
-import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
-import { TxType } from "src/enum/txtype.enum";
-import { EmailTemplates } from "src/email-helper/email.template";
+import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
+import { TxType } from "../enum/txtype.enum";
+import { EmailTemplates } from "../email-helper/email.template";
 @Injectable()
 export class ProgrammeSlService {
   constructor(
@@ -74,7 +74,7 @@ export class ProgrammeSlService {
       );
     }
 
-    programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 3);
+    programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 4);
     programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
     programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;

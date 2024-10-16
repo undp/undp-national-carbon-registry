@@ -10,6 +10,7 @@ import { CompanyRole } from "../enum/company.role.enum";
 import { AsyncOperationsInterface } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts.enum";
 
 @Injectable()
 export class ProcessEventService {
@@ -151,20 +152,50 @@ export class ProcessEventService {
 
         let updateObj;
         if (account) {
-          if (company.secondaryAccountBalance && company.secondaryAccountBalance[account]) {
-            company.secondaryAccountBalance[account]["total"] = overall.credit;
-            company.secondaryAccountBalance[account]["count"] += 1;
-          } else {
-            if (!company.secondaryAccountBalance) {
-              company.secondaryAccountBalance = {};
+          if (account === OrganisationCreditAccounts.TRACK_1) {
+            if (company.slcfAccountBalance && company.slcfAccountBalance["TRACK_1"]) {
+              company.slcfAccountBalance["TRACK_1"] = overall.credit;
+            } else {
+              if (!company.slcfAccountBalance) {
+                company.slcfAccountBalance = {};
+              }
+              company.slcfAccountBalance["TRACK_1"] = overall.credit;
             }
-            company.secondaryAccountBalance[account] = { total: overall.credit, count: 1 };
-          }
 
-          updateObj = {
-            secondaryAccountBalance: company.secondaryAccountBalance,
-            lastUpdateVersion: version,
-          };
+            updateObj = {
+              slcfAccountBalance: company.slcfAccountBalance,
+              lastUpdateVersion: version,
+            };
+          } else if (account == OrganisationCreditAccounts.TRACK_2) {
+            if (company.slcfAccountBalance && company.slcfAccountBalance["TRACK_2"]) {
+              company.slcfAccountBalance["TRACK_2"] = overall.credit;
+            } else {
+              if (!company.slcfAccountBalance) {
+                company.slcfAccountBalance = {};
+              }
+              company.slcfAccountBalance["TRACK_2"] = overall.credit;
+            }
+
+            updateObj = {
+              slcfAccountBalance: company.slcfAccountBalance,
+              lastUpdateVersion: version,
+            };
+          } else {
+            if (company.secondaryAccountBalance && company.secondaryAccountBalance[account]) {
+              company.secondaryAccountBalance[account]["total"] = overall.credit;
+              company.secondaryAccountBalance[account]["count"] += 1;
+            } else {
+              if (!company.secondaryAccountBalance) {
+                company.secondaryAccountBalance = {};
+              }
+              company.secondaryAccountBalance[account] = { total: overall.credit, count: 1 };
+            }
+
+            updateObj = {
+              secondaryAccountBalance: company.secondaryAccountBalance,
+              lastUpdateVersion: version,
+            };
+          }
         } else {
           updateObj = {
             creditBalance: overall.credit,
@@ -177,6 +208,8 @@ export class ProcessEventService {
               TxType.RETIRE,
               TxType.FREEZE,
               TxType.UNFREEZE,
+              TxType.TRANSFER_SL,
+              TxType.RETIRE_SL,
             ].includes(overall.txType)
               ? txTime
               : undefined,
@@ -202,11 +235,10 @@ export class ProcessEventService {
 
   async processProgrammeSl(programme: ProgrammeSl): Promise<any> {
     this.logger.log(`Processing message ${programme}`);
-    if (programme && programme.txType == TxType.CREATE_SL) {
+    if (programme) {
       const previousProgramme = await this.programmeSlRepo.findOneBy({
         programmeId: programme.programmeId,
       });
-
       if (
         previousProgramme == null ||
         programme.txTime == undefined ||

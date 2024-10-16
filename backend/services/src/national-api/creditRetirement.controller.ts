@@ -1,10 +1,4 @@
-import {
-  Controller,
-  UseGuards,
-  Request,
-  Post,
-  Body,
-} from "@nestjs/common";
+import { Controller, UseGuards, Request, Post, Body } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { CreditRetirementRequestSlDto } from "../dto/creditRetirementRequestSl.dto";
@@ -12,6 +6,7 @@ import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetireme
 import { PoliciesGuardEx } from "../casl/policy.guard";
 import { Action } from "../casl/action.enum";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
+import { CreditRetirementStatusUpdateSlDto } from "../dto/creditRetirementStatusUpdateSl.dto";
 
 @ApiTags("Credit Retire")
 @ApiBearerAuth()
@@ -22,10 +17,17 @@ export class CreditRetirementSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Create, CreditRetirementSl, true))
   @Post("create")
-  async createCreditRetirementRequest(
-    @Body() dto: CreditRetirementRequestSlDto,
+  async createCreditRetirementRequest(@Body() dto: CreditRetirementRequestSlDto, @Request() req) {
+    return await this.retirementService.createCreditRetirementRequest(dto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, CreditRetirementSl, true))
+  @Post("status")
+  async updateCreditRetirementRequestStatus(
+    @Body() dto: CreditRetirementStatusUpdateSlDto,
     @Request() req
   ) {
-    return await this.retirementService.createCreditRetirementRequest(dto, req.user);
+    return await this.retirementService.updateCreditRetirementRequestStatus(dto, req.user);
   }
 }

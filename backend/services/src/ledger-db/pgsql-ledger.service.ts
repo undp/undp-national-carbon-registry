@@ -129,7 +129,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   }
 
   private getUniqueIndex(tableName: string) {
-    if (tableName === this.tableName) {
+    if (tableName === this.tableName || tableName === this.programmeSlTable) {
       return "data->>'programmeId'";
     } else {
       return "data->>'txId'";
