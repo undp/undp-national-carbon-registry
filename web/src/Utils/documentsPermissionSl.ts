@@ -15,62 +15,38 @@ export const linkDocVisible = (docStatus: DocumentStatus) => {
   return visible;
 };
 
-export const uploadDocUserPermission = (
-  userInfoState: any,
-  docType: DocType,
-  programmeOwnerId: number,
-  ministryLevelPermission?: boolean
-) => {
-  let permission = false;
-  if (docType === DocType.DESIGN_DOCUMENT) {
-    if (
-      (userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        (userInfoState?.companyRole === CompanyRole.MINISTRY && ministryLevelPermission)) &&
-      userInfoState?.userRole !== Role.ViewOnly
-    ) {
-      permission = true;
-    } else if (
-      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-      userInfoState?.userRole !== Role.ViewOnly
-    ) {
-      if (programmeOwnerId === userInfoState?.companyId) {
-        permission = true;
-      }
-    }
-  } else if (
-    docType === DocType.METHODOLOGY_DOCUMENT ||
-    docType === DocType.MONITORING_REPORT ||
-    docType === DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+export const formCreatePermission = (userInfoState: any, docType: DocType) => {
+  if (
+    docType === DocType.COST_QUOTATION &&
+    userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+    userInfoState?.userRole !== Role.ViewOnly
   ) {
-    if (
-      (userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        userInfoState?.companyRole === CompanyRole.CERTIFIER ||
-        (userInfoState?.companyRole === CompanyRole.MINISTRY && ministryLevelPermission)) &&
-      userInfoState?.userRole !== Role.ViewOnly
-    ) {
-      permission = true;
-    } else if (
-      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-      userInfoState?.userRole !== Role.ViewOnly
-    ) {
-      if (programmeOwnerId === userInfoState?.companyId) {
-        permission = true;
-      }
-    }
-  } else if (docType === DocType.VERIFICATION_REPORT) {
-    if (
-      (userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        userInfoState?.companyRole === CompanyRole.CERTIFIER ||
-        (userInfoState?.companyRole === CompanyRole.MINISTRY && ministryLevelPermission)) &&
-      userInfoState?.userRole !== Role.ViewOnly
-    ) {
-      permission = true;
-    }
+    return true;
   }
 
-  // eslint-disable-next-line eqeqeq
-  if (userInfoState?.companyState == 0) {
-    permission = false;
+  if (
+    docType === DocType.VALIDATION_AGREEMENT &&
+    userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+    userInfoState?.userRole !== Role.ViewOnly
+  ) {
+    return true;
   }
-  return permission;
+
+  if (
+    docType === DocType.PROPOSAL &&
+    userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+    userInfoState?.userRole !== Role.ViewOnly
+  ) {
+    return true;
+  }
+
+  if (
+    docType === DocType.CMA &&
+    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+    userInfoState?.userRole !== Role.ViewOnly
+  ) {
+    return true;
+  }
+
+  return false;
 };

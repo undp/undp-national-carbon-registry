@@ -104,9 +104,7 @@ const App = () => {
                   <Route
                     path=""
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="CMAForm" element={<CMAFormPage />} />
-                  </Route>
+                  ></Route>
 
                   <Route
                     path="/programmeManagementSLCF"
@@ -117,6 +115,7 @@ const App = () => {
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="uploadMonitoringReport" element={<SLCFMonitoringReport />} />
+                    <Route path="CMAForm" element={<CMAFormPage />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
