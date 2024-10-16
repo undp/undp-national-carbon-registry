@@ -6,6 +6,8 @@ import {
   ProgrammeStageR,
   ProgrammeStageMRV,
   ProgrammeStageUnified,
+  ProgrammeStatus,
+  ProgrammeCategory,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -19,6 +21,14 @@ export const getStageEnumVal = (value: string) => {
     return value;
   }
   return Object.values(ProgrammeStageUnified)[index];
+};
+
+export const getStatusEnumVal = (value: string) => {
+  const index = Object.keys(ProgrammeStatus).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProgrammeStatus)[index];
 };
 
 export const getCreditStageVal = (value: string) => {
@@ -53,6 +63,18 @@ export const getStageTagType = (stage: ProgrammeStageR | ProgrammeStageUnified) 
     case ProgrammeStageR.Authorised:
       return 'processing';
     case ProgrammeStageR.Approved:
+      return 'purple';
+    default:
+      return 'default';
+  }
+};
+export const getProgrammeStatus = (stage: ProgrammeStatus) => {
+  switch (getStageEnumVal(stage)) {
+    case ProgrammeStatus.CONSTRUCTION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.INSTALLATION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.PROCUREMENT_STAGE:
       return 'purple';
     default:
       return 'default';
@@ -180,16 +202,19 @@ export interface ProgrammeSl {
   sectoralScope: string;
   sector: string;
   countryCodeA2: string;
+  projectStatus: ProgrammeStatus;
+  projectCategory: ProgrammeCategory;
+  purposeOfCreditDevelopment: string;
   currentStage: ProgrammeStageR | ProgrammeStageMRV | ProgrammeStageUnified;
-  startTime: number;
+  startDate: number;
   endTime: number;
   creditChange: number;
   creditIssued: number;
   creditEst: number;
   creditBalance: number;
-  creditTransferred: number[];
-  creditRetired: number[];
-  creditFrozen: number[];
+  creditRetired: number;
+  creditFrozen: number;
+  creditTransferred: number;
   constantVersion: string;
   proponentTaxVatId: string[];
   companyId: number;
@@ -197,7 +222,7 @@ export interface ProgrammeSl {
   creditOwnerPercentage: number[];
   certifierId: any[];
   certifier: any[];
-  company: any[];
+  company: any;
   creditUnit: string;
   programmeProperties: ProgrammeProperties;
   agricultureProperties: any;
@@ -231,6 +256,7 @@ export interface ProgrammeSlU extends ProgrammeSl {
   programmeProperties: ProgrammePropertiesU;
   emissionReductionExpected: number;
   emissionReductionAchieved: number;
+  geographicalLocationCoordinates: any[];
 }
 
 export interface ProgrammeU extends Programme {
@@ -272,35 +298,23 @@ export const getGeneralFields = (
   return res;
 };
 
-export const getGeneralFieldsSl = (
-  programme: ProgrammeSl | ProgrammeSlU | ProgrammeR | ProgrammeT,
-  system?: CarbonSystemType
-) => {
+export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
     serialNo: programme.serialNo,
-    currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
-    sector: programme.sector,
-    sectoralScope:
-      Object.keys(SectoralScope)[
-        Object.values(SectoralScope).indexOf(programme.sectoralScope as SectoralScope)
-      ],
-    // location: programme.programmeProperties.geographicalLocation
-    //   ? programme.programmeProperties.geographicalLocation.join(', ')
-    //   : '-',
-    startDate: DateTime.fromSeconds(Number(programme.startTime)),
-    endDate: DateTime.fromSeconds(Number(programme.endTime)),
-    // buyerCountry: programme.programmeProperties.buyerCountryEligibility
-    //   ? programme.programmeProperties.buyerCountryEligibility
-    //   : '-',
-    environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
+    projectStatus: programme.projectStatus,
+    projectCategory: programme.projectCategory,
+    startDate: DateTime.fromSeconds(Number(programme.startDate)),
+    purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
+    creditReceived:
+      programme.creditBalance +
+      programme.creditFrozen +
+      programme.creditRetired +
+      programme.creditTransferred,
+    creditRetired: programme.creditRetired,
+    creditBalance: programme.creditBalance,
   };
-  if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
-    let prog: any = programme;
-    res.emissionsReductionExpected = prog.emissionReductionExpected;
-    res.emissionsReductionAchieved = prog.emissionReductionAchieved;
-  }
+
   return res;
 };
 
@@ -345,6 +359,25 @@ export const getFinancialFields = (programme: ProgrammeU | ProgrammeR | Programm
       addCommSep(programme.programmeProperties.grantEquivalentAmount)
     ),
     carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+  };
+};
+
+export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
+  // return {
+  //   estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
+  //   creditEst: addCommSep(programme.creditEst),
+  //   financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
+  //   grantEquivalent: new UnitField(
+  //     'USD',
+  //     addCommSep(programme.programmeProperties.grantEquivalentAmount)
+  //   ),
+  //   carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+  // };
+
+  return {
+    estimatedProgrammeCostLKR: '-',
+    creditEst: '-',
+    grantEquivalentLKR: '-',
   };
 };
 
