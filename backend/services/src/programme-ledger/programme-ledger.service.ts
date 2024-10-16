@@ -140,7 +140,7 @@ export class ProgrammeLedgerService {
             txTime: programme.txTime,
             txType: programme.txType,
             updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.VALIDATION_PENDING,
+            projectProposalStage: ProjectProposalStage.SUBMITTED_CMA,
           };
           updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
           updateWhereMap[this.ledger.programmeSlTable + "#"] = {
