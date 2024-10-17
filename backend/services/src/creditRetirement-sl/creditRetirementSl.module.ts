@@ -10,12 +10,13 @@ import { CaslModule } from "../casl/casl.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementSlService } from "./creditRetirementSl.service";
+import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([CreditRetirementSl]),
+    TypeOrmModule.forFeature([CreditRetirementSl, CreditRetirementSlView]),
     UtilModule,
     CompanyModule,
     UserModule,

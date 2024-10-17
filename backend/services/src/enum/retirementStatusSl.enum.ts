@@ -2,5 +2,5 @@ export enum RetirementStatusSl {
   PENDING = "Pending",
   APPROVED = "Approved",
   REJECTED = "Rejected",
-  CANCELED = "Canceled",
+  CANCELLED = "Cancelled",
 }

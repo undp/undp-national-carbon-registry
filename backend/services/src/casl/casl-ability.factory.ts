@@ -300,6 +300,13 @@ export class CaslAbilityFactory {
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       can(Action.Read, ProgrammeSl);
+      can(Action.Read, CreditRetirementSl, {
+        toCompanyId: { $eq: user.companyId },
+      });
+      can(Action.Read, CreditRetirementSl, {
+        fromCompanyId: { $eq: user.companyId },
+      });
+      
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
         can(Action.Create, CreditRetirementSl);
