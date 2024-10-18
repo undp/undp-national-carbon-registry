@@ -64,6 +64,12 @@ export const formCreatePermission = (userInfoState: any, docType: DocType) => {
     userInfoState?.userRole !== Role.ViewOnly
   ) {
     return true;
+  } else if (
+    docType === DocType.VALIDATION_REPORT &&
+    userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+    userInfoState?.userRole !== Role.ViewOnly
+  ) {
+    return true;
   }
 
   return false;
@@ -106,12 +112,19 @@ export const formViewPermission = (userInfoState: any, docType: DocType) => {
     return true;
   } else if (
     docType === DocType.MONITORING_REPORT &&
-    userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE
+    (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
     docType === DocType.VERIFICATION_REPORT &&
     userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+  ) {
+    return true;
+  } else if (
+    docType === DocType.VALIDATION_REPORT &&
+    (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
   ) {
     return true;
   }
