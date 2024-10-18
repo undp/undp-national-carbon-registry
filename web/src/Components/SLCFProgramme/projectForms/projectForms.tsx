@@ -38,7 +38,7 @@ export interface ProjectFormProps {
   getProgrammeById: any;
   ministryLevelPermission?: boolean;
   translator: any;
-  programmeStatus?: any;
+  projectProposalStage?: any;
 }
 
 export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
@@ -50,7 +50,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     getDocumentDetails,
     getProgrammeById,
     translator,
-    programmeStatus,
+    projectProposalStage,
   } = props;
 
   const t = translator.t;
@@ -225,15 +225,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.COST_QUOTATION) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.COST_QUOTATION,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.COST_QUOTATION)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.COST_QUOTATION,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -246,8 +253,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.COST_QUOTATION) &&
-                      navigateToCostQuotationView()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.COST_QUOTATION,
+                        projectProposalStage
+                      ) && navigateToCostQuotationView()
                     }
                   />
                 </Tooltip>
@@ -260,15 +270,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.COST_QUOTATION) &&
-                    t('projectDetailsView:orgNotAuthCreate')
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.COST_QUOTATION,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.COST_QUOTATION)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.COST_QUOTATION,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -281,8 +298,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.COST_QUOTATION) &&
-                      navigateToCostQuotationCreate()
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.COST_QUOTATION,
+                        projectProposalStage
+                      ) && navigateToCostQuotationCreate()
                     }
                   />
                 </Tooltip>
@@ -302,7 +322,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.PROPOSAL) &&
+                    !formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
                     t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
@@ -310,7 +330,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.PROPOSAL)
+                      formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -323,7 +343,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.PROPOSAL) &&
+                      formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
                       navigateToProposalView()
                     }
                   />
@@ -337,7 +357,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.PROPOSAL) &&
+                    !formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
                     t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
@@ -345,7 +365,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.PROPOSAL)
+                      formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -358,7 +378,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.PROPOSAL) &&
+                      formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
                       navigateToProposalCreate()
                     }
                   />
@@ -385,15 +405,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.VALIDATION_AGREEMENT) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.VALIDATION_AGREEMENT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.VALIDATION_AGREEMENT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_AGREEMENT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -406,8 +433,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.VALIDATION_AGREEMENT) &&
-                      navigateToValidationAgreementCreate()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_AGREEMENT,
+                        projectProposalStage
+                      ) && navigateToValidationAgreementCreate()
                     }
                   />
                 </Tooltip>
@@ -420,15 +450,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.VALIDATION_AGREEMENT) &&
-                    t('projectDetailsView:orgNotAuthCreate')
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.VALIDATION_AGREEMENT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.VALIDATION_AGREEMENT)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_AGREEMENT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -441,8 +478,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.VALIDATION_AGREEMENT) &&
-                      navigateToValidationAgreementCreate()
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_AGREEMENT,
+                        projectProposalStage
+                      ) && navigateToValidationAgreementCreate()
                     }
                   />
                 </Tooltip>
@@ -468,7 +508,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.CMA) &&
+                    !formViewPermission(userInfoState, DocType.CMA, projectProposalStage) &&
                     t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
@@ -476,7 +516,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.CMA)
+                      formViewPermission(userInfoState, DocType.CMA, projectProposalStage)
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -489,7 +529,8 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.CMA) && navigateToCMAView()
+                      formViewPermission(userInfoState, DocType.CMA, projectProposalStage) &&
+                      navigateToCMAView()
                     }
                   />
                 </Tooltip>
@@ -502,7 +543,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.CMA) &&
+                    !formCreatePermission(userInfoState, DocType.CMA, projectProposalStage) &&
                     t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
@@ -510,7 +551,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.CMA)
+                      formCreatePermission(userInfoState, DocType.CMA, projectProposalStage)
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -523,7 +564,8 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.CMA) && navigateToCMACreate()
+                      formCreatePermission(userInfoState, DocType.CMA, projectProposalStage) &&
+                      navigateToCMACreate()
                     }
                   />
                 </Tooltip>
@@ -549,15 +591,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.VALIDATION_REPORT) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.VALIDATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.VALIDATION_REPORT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -570,8 +619,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.VALIDATION_REPORT) &&
-                      navigateToValidationReportView()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToValidationReportView()
                     }
                   />
                 </Tooltip>
@@ -584,15 +636,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.VALIDATION_REPORT) &&
-                    t('projectDetailsView:orgNotAuthCreate')
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.VALIDATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.VALIDATION_REPORT)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -605,8 +664,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.VALIDATION_REPORT) &&
-                      navigateToValidationReportView()
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToValidationReportView()
                     }
                   />
                 </Tooltip>
@@ -632,15 +694,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.PROJECT_REGISTRATION_CERTIFICATE) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.PROJECT_REGISTRATION_CERTIFICATE)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -653,8 +722,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.PROJECT_REGISTRATION_CERTIFICATE) &&
-                      navigateToProjectRegistrationView()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                        projectProposalStage
+                      ) && navigateToProjectRegistrationView()
                     }
                   />
                 </Tooltip>
@@ -669,7 +741,8 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   title={
                     !formCreatePermission(
                       userInfoState,
-                      DocType.PROJECT_REGISTRATION_CERTIFICATE
+                      DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                      projectProposalStage
                     ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
@@ -677,7 +750,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.PROJECT_REGISTRATION_CERTIFICATE)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -692,7 +769,8 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     onClick={() =>
                       formCreatePermission(
                         userInfoState,
-                        DocType.PROJECT_REGISTRATION_CERTIFICATE
+                        DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                        projectProposalStage
                       ) && navigateToProjectRegistrationCreate()
                     }
                   />
