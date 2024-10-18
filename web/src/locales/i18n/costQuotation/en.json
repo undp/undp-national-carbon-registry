@@ -1,0 +1,24 @@
+{
+  "costQuotation": "Cost Quotation",
+  "quotationNo": "Quotation No.",
+  "serviceCategory": "Service Category",
+  "cost": "Cost",
+  "total": "Total",
+  "dateOfIssue": "Date of Issue",
+  "address": "Address",
+  "signature": "Signature",
+  "isRequired": "is required!",
+  "costQuotationFormSubmittedSuccessfully": "Cost quotation form submitted successfully.",
+  "serviceNo": "No",
+  "serviceCost": "Cost(LKR)",
+  "serviceValidation": "Project Validation & Registration",
+  "serviceVerification": "Verification & Credit Issuance",
+  "vatIsNotApplicable": "*VAT Is Not Applicable",
+  "conditions": "Conditions:",
+  "paymentUpfront":"A. 50% Of The Payment On Up Front",
+  "transport": " B. Client Shall Arrange Transport And Accommodation For Site Visits During Validation & Verification.",
+  "quotationValidation": "C. The Quotation Is Valid For A Period Of 30 Days From The Date Of Quoting. Any Extra Work Other Than That Quoted Above Will Be Charged Accordingly.",
+  "one": "1",
+  "two": "2"
+
+}

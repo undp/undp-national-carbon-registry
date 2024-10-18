@@ -19,5 +19,7 @@
   "organisationDeactivated": "This action is unauthorised due to the deactivation of your organisation. You will now be logged out of the system. Log in again to access the system with view-only permissions.",
   "maxSizeVal": "Maximum upload file size is 5MB",
   "approve": "APPROVE",
-  "reject": "REJECT"
+  "reject": "REJECT",
+  "upload": "Upload",
+  "invalidFileFormat": "Unsupported file format"
 }
