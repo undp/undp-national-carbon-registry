@@ -45,6 +45,7 @@ import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 
 const App = () => {
@@ -116,6 +117,7 @@ const App = () => {
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
+                    <Route path="addCostQuotation" element={<SLCFCostQuotationForm />} />
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
                   </Route>
                   <Route
