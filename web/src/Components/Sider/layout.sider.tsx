@@ -4,7 +4,13 @@ import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { Link, useNavigate } from 'react-router-dom';
 import './layout.sider.scss';
 import * as Icon from 'react-bootstrap-icons';
-import { AppstoreOutlined, DashboardOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  DashboardOutlined,
+  ShopOutlined,
+  SplitCellsOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
@@ -44,6 +50,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
     getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
@@ -117,7 +124,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 icon={item?.icon}
                 className={
                   item?.key === 'ndcManagement/viewAll' ||
-                  item?.key === 'investmentManagement/viewAll'
+                  item?.key === 'investmentManagement/viewAll' ||
+                  item?.key === 'retirementManagement/viewAll'
                     ? 'custom-padding-left'
                     : ''
                 }

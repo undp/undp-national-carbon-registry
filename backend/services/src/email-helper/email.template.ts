@@ -755,11 +755,11 @@ export const EmailTemplates = {
 
   CREDIT_TRANSFER_SL_REQUEST_CANCELED: {
     id: "CREDIT_TRANSFER_SL_REQUEST_CANCELED",
-    subject: "Credit Transfer Request Canceled",
+    subject: "Credit Transfer Request Cancelled",
     html: `
         Hi {{name}}, <br><br>
 
-        {{organisationName}} has canceled their request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        {{organisationName}} has cancelled their request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
 
         Sincerely, <br>
@@ -769,11 +769,11 @@ export const EmailTemplates = {
 
   CREDIT_RETIRE_SL_REQUEST_CANCELED: {
     id: "CREDIT_RETIRE_SL_REQUEST_CANCELED",
-    subject: "Credit Retirement Request Canceled",
+    subject: "Credit Retirement Request Cancelled",
     html: `
         Hi {{name}}, <br><br>
 
-        {{organisationName}} has canceled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        {{organisationName}} has cancelled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
 
         Sincerely, <br>
