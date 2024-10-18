@@ -264,7 +264,7 @@ export class EmailHelperService {
       case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
         templateData = {
           ...templateData,
-          pageLink: hostAddress + "/retirementManagement",
+          pageLink: hostAddress + "/retirementManagement/viewAll",
         };
         break;
 
@@ -452,7 +452,8 @@ export class EmailHelperService {
           programmeName: programme.title,
           credits: templateData.credits,
           serialNumber: programme.serialNo,
-          programmePageLink: hostAddress + `/retirementManagement`,
+          remark: templateData.remark,
+          pageLink: hostAddress + `/retirementManagement/viewAll`,
         };
         break;
 

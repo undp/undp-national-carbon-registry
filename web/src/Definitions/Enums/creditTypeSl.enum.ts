@@ -5,7 +5,7 @@ export enum CreditTypeSl {
 
 export enum CreditTransferSlStage {
   Pending = 'Pending',
-  Approved = 'Accepted',
+  Approved = 'Approved',
   Rejected = 'Rejected',
   Cancelled = 'Cancelled',
 }

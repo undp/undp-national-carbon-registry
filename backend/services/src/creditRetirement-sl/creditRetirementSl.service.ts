@@ -299,16 +299,27 @@ export class CreditRetirementSlService {
           user,
           programme,
           retirementRequest,
-          companyCF
+          companyCF,
+          dto.comment
         );
         break;
 
       case RetirementStatusSl.REJECTED:
-        return await this.rejectCreditRetirementRequest(user, programme, retirementRequest);
+        return await this.rejectCreditRetirementRequest(
+          user,
+          programme,
+          retirementRequest,
+          dto.comment
+        );
         break;
 
       case RetirementStatusSl.CANCELLED:
-        return await this.cancelCreditRetirementRequest(user, programme, retirementRequest);
+        return await this.cancelCreditRetirementRequest(
+          user,
+          programme,
+          retirementRequest,
+          dto.comment
+        );
         break;
 
       default:
@@ -322,11 +333,13 @@ export class CreditRetirementSlService {
     }
   }
 
+  //MARK: Approve Retirement
   async approveCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
     retirementRequest: CreditRetirementSl,
-    climateFundOrg: Company
+    climateFundOrg: Company,
+    remark: string
   ) {
     if (!this.isSLCFAdminOrManager(user)) {
       throw new HttpException(
@@ -415,6 +428,7 @@ export class CreditRetirementSlService {
           programmeName: programme.title,
           credits: retirementRequest.creditAmount,
           serialNumber: programme.serialNo,
+          remark,
         }
       );
     }
@@ -432,7 +446,8 @@ export class CreditRetirementSlService {
   async rejectCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
-    retirementRequest: CreditRetirementSl
+    retirementRequest: CreditRetirementSl,
+    remark: string
   ) {
     if (!this.isSLCFAdminOrManager(user)) {
       throw new HttpException(
@@ -460,6 +475,7 @@ export class CreditRetirementSlService {
           programmeName: programme.title,
           credits: retirementRequest.creditAmount,
           serialNumber: programme.serialNo,
+          remark,
         }
       );
     }
@@ -477,7 +493,8 @@ export class CreditRetirementSlService {
   async cancelCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
-    retirementRequest: CreditRetirementSl
+    retirementRequest: CreditRetirementSl,
+    remark: string
   ) {
     if (!this.isProjectParticipant(user)) {
       throw new HttpException(
@@ -502,6 +519,7 @@ export class CreditRetirementSlService {
           : EmailTemplates.CREDIT_RETIRE_SL_REQUEST_CANCELED,
         {
           credits: retirementRequest.creditAmount,
+          remark,
         },
         programme.programmeId,
         programme.companyId

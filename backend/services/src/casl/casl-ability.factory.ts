@@ -306,7 +306,7 @@ export class CaslAbilityFactory {
       can(Action.Read, CreditRetirementSl, {
         fromCompanyId: { $eq: user.companyId },
       });
-      
+
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
         can(Action.Create, CreditRetirementSl);
@@ -320,16 +320,22 @@ export class CaslAbilityFactory {
 
     if (user.companyRole === CompanyRole.CLIMATE_FUND) {
       can(Action.Read, User);
+
       can(Action.Read, ProgrammeSl);
+      
       can(Action.Read, CreditRetirementSl);
 
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
+        can(Action.Approve, Company);
+        can(Action.Reject, Company);
+
         can(Action.Update, CreditRetirementSl);
       }
 
       if (user.role == Role.Manager) {
         can(Action.Create, Company);
+
         can(Action.Update, CreditRetirementSl);
       }
     }

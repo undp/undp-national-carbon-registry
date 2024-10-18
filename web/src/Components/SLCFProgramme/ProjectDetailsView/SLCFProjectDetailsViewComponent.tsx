@@ -104,6 +104,8 @@ import { ProgrammeDocuments } from '../../ProgrammeDocuments/programmeDocuments'
 import { MapComponent } from '../../Maps/mapComponent';
 import { ProjectForms } from '../projectForms/projectForms';
 import { VerificationForms } from '../projectForms/verificationForms';
+import { CreditType, ProjectProposalStage } from '../../../Definitions/Enums/projectSl.enum';
+import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRequestForm';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -1209,7 +1211,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
-      // response.data.company = data.company;
+      response.data.company = data.company;
       response.data.certifier = data.certifier;
       setData(response.data);
       state.record = response.data;
@@ -1247,6 +1249,35 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       } else {
         error = response.message;
       }
+      await getProgrammeHistory(data?.programmeId as string);
+      return error;
+    } catch (e: any) {
+      error = e.message;
+      return error;
+    }
+  };
+
+  const onCreditRetireTransferAction = async (body: any, successMsg: any, successCB: any) => {
+    body.programmeId = data?.programmeId;
+    let error;
+    try {
+      const response: any = await post(`national/retire/create`, body);
+      if (response.status === 201) {
+        setOpenModal(false);
+        setComment(undefined);
+        error = undefined;
+        const programmeData = getProgrammeById('id');
+        successCB(programmeData);
+        message.open({
+          type: 'success',
+          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
+          duration: 3,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        error = response.message;
+      }
+      // getProgrammeById('id');
       await getProgrammeHistory(data?.programmeId as string);
       return error;
     } catch (e: any) {
@@ -2045,173 +2076,118 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     width="100%"
                     fontFamily="inter"
                   />
-                  {/* {userInfoState?.userRole !== 'ViewOnly' &&
+                  {userInfoState?.userRole !== 'ViewOnly' &&
                     userInfoState?.companyRole !== 'Certifier' && (
                       <div className="flex-display action-btns">
-                        {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
+                        {data.projectProposalStage.toString() === ProjectProposalStage.AUTHORISED &&
                           data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
                           !isTransferFrozen && (
                             <div>
-                              {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-                                ministryLevelPermission) &&
-                                !isAllOwnersDeactivated) ||
-                                (data.companyId
-                                  .map((e) => Number(e))
-                                  .includes(userInfoState!.companyId) &&
+                              {(!isAllOwnersDeactivated ||
+                                (data.companyId === userInfoState!.companyId &&
                                   userInfoState!.companyState !==
                                     CompanyState.SUSPENDED.valueOf())) && (
                                 <span>
-                                  <Button
-                                    danger
-                                    onClick={() => {
-                                      setActionInfo({
-                                        action: 'Retire',
-                                        text: t('projectDetailsView:popupText'),
-                                        title: t('projectDetailsView:retireTitle'),
-                                        type: 'primary',
-                                        remark: true,
-                                        icon: <Icon.Save />,
-                                        contentComp: (
-                                          <ProgrammeRetireForm
-                                            hideType={
-                                              userInfoState?.companyRole !==
-                                                CompanyRole.GOVERNMENT &&
-                                              userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                            }
-                                            myCompanyId={userInfoState?.companyId}
-                                            programme={data}
-                                            onCancel={() => {
-                                              setOpenModal(false);
-                                              setComment(undefined);
-                                            }}
-                                            actionBtnText={t('projectDetailsView:retire')}
-                                            onFinish={(body: any) =>
-                                              onPopupAction(
-                                                body,
-                                                'retire',
-                                                (response: any) =>
-                                                  getSuccessMsg(
-                                                    response,
-                                                    t('projectDetailsView:successRetireInit'),
-                                                    t('projectDetailsView:successRetire')
-                                                  ),
-                                                put,
-                                                updateCreditInfo
-                                              )
-                                            }
-                                            translator={i18n}
-                                          />
-                                        ),
-                                      });
-                                      showModal();
-                                    }}
-                                  >
-                                    {t('projectDetailsView:retire')}
-                                  </Button>
-                                  <Button
-                                    type="primary"
-                                    onClick={() => {
-                                      setActionInfo({
-                                        action: 'Send',
-                                        text: '',
-                                        title: t('projectDetailsView:sendCreditTitle'),
-                                        type: 'primary',
-                                        remark: true,
-                                        icon: <Icon.BoxArrowRight />,
-                                        contentComp: (
-                                          <ProgrammeTransferForm
-                                            companyRole={userInfoState!.companyRole}
-                                            receiverLabelText={t('projectDetailsView:to')}
-                                            userCompanyId={userInfoState?.companyId}
-                                            programme={data}
-                                            subText={t('projectDetailsView:popupText')}
-                                            onCancel={() => {
-                                              setOpenModal(false);
-                                              setComment(undefined);
-                                            }}
-                                            actionBtnText={t('projectDetailsView:send')}
-                                            onFinish={(body: any) =>
-                                              onPopupAction(
-                                                body,
-                                                'transferRequest',
-                                                (response: any) =>
-                                                  getSuccessMsg(
-                                                    response,
-                                                    t('projectDetailsView:successSendInit'),
-                                                    t('projectDetailsView:successSend')
-                                                  ),
-                                                post,
-                                                updateCreditInfo
-                                              )
-                                            }
-                                            translator={i18n}
-                                            ministryLevelPermission={ministryLevelPermission}
-                                          />
-                                        ),
-                                      });
-                                      showModal();
-                                    }}
-                                  >
-                                    {t('projectDetailsView:send')}
-                                  </Button>
+                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_2 && (
+                                    <Button
+                                      danger
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Retire',
+                                          text: t('projectDetailsView:popupText'),
+                                          title: t('projectDetailsView:retireTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.Save />,
+                                          contentComp: (
+                                            <CreditRetirementSlRequestForm
+                                              hideType={
+                                                userInfoState?.companyRole !==
+                                                  CompanyRole.GOVERNMENT &&
+                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
+                                              }
+                                              myCompanyId={userInfoState?.companyId}
+                                              programme={data}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('projectDetailsView:retire')}
+                                              onFinish={(body: any) =>
+                                                onCreditRetireTransferAction(
+                                                  body,
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('projectDetailsView:successRetireInit'),
+                                                      t('projectDetailsView:successRetire')
+                                                    ),
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                              translator={i18n}
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('projectDetailsView:retire')}
+                                    </Button>
+                                  )}
+                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_1 && (
+                                    <Button
+                                      type="primary"
+                                      onClick={() => {
+                                        setActionInfo({
+                                          action: 'Send',
+                                          text: '',
+                                          title: t('projectDetailsView:sendCreditTitle'),
+                                          type: 'primary',
+                                          remark: true,
+                                          icon: <Icon.BoxArrowRight />,
+                                          contentComp: (
+                                            <CreditRetirementSlRequestForm
+                                              hideType={
+                                                userInfoState?.companyRole !==
+                                                  CompanyRole.GOVERNMENT &&
+                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
+                                              }
+                                              myCompanyId={userInfoState?.companyId}
+                                              programme={data}
+                                              onCancel={() => {
+                                                setOpenModal(false);
+                                                setComment(undefined);
+                                              }}
+                                              actionBtnText={t('projectDetailsView:transferSl')}
+                                              onFinish={(body: any) =>
+                                                onCreditRetireTransferAction(
+                                                  body,
+                                                  (response: any) =>
+                                                    getSuccessMsg(
+                                                      response,
+                                                      t('projectDetailsView:successTransferInit'),
+                                                      t('projectDetailsView:successTransfer')
+                                                    ),
+                                                  updateCreditInfo
+                                                )
+                                              }
+                                              translator={i18n}
+                                            />
+                                          ),
+                                        });
+                                        showModal();
+                                      }}
+                                    >
+                                      {t('projectDetailsView:send')}
+                                    </Button>
+                                  )}
                                 </span>
-                              )}
-                              {((!isAllOwnersDeactivated &&
-                                userInfoState!.companyState !== CompanyState.SUSPENDED.valueOf() &&
-                                !isTransferFrozen &&
-                                userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
-                                (userInfoState?.companyRole === CompanyRole.MINISTRY &&
-                                  ministryLevelPermission)) && (
-                                <Button
-                                  type="primary"
-                                  onClick={() => {
-                                    setActionInfo({
-                                      action: 'Request',
-                                      text: '',
-                                      title: t('projectDetailsView:transferTitle'),
-                                      type: 'primary',
-                                      remark: true,
-                                      icon: <Icon.BoxArrowInRight />,
-                                      contentComp: (
-                                        <ProgrammeTransferForm
-                                          companyRole={userInfoState!.companyRole}
-                                          userCompanyId={userInfoState?.companyId}
-                                          receiverLabelText={t('projectDetailsView:by')}
-                                          disableToCompany={true}
-                                          toCompanyDefault={{
-                                            label: userInfoState?.companyName,
-                                            value: userInfoState?.companyId,
-                                          }}
-                                          programme={data}
-                                          subText={t('projectDetailsView:popupText')}
-                                          onCancel={() => {
-                                            setOpenModal(false);
-                                            setComment(undefined);
-                                          }}
-                                          actionBtnText={t('projectDetailsView:request')}
-                                          onFinish={(body: any) =>
-                                            onPopupAction(
-                                              body,
-                                              'transferRequest',
-                                              t('projectDetailsView:successRequest'),
-                                              post,
-                                              updateCreditInfo
-                                            )
-                                          }
-                                          translator={i18n}
-                                        />
-                                      ),
-                                    });
-                                    showModal();
-                                  }}
-                                >
-                                  {t('projectDetailsView:transfer')}
-                                </Button>
                               )}
                             </div>
                           )}
                       </div>
-                    )} */}
+                    )}
                 </div>
               </div>
             </Card>
