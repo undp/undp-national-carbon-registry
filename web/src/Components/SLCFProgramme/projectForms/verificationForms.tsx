@@ -38,7 +38,7 @@ export interface VerificationFormsProps {
   getProgrammeById: any;
   ministryLevelPermission?: boolean;
   translator: any;
-  programmeStatus?: any;
+  projectProposalStage?: any;
 }
 
 export const VerificationForms: FC<VerificationFormsProps> = (props: VerificationFormsProps) => {
@@ -52,7 +52,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     getProgrammeById,
 
     translator,
-    programmeStatus,
+    projectProposalStage,
   } = props;
 
   const t = translator.t;
@@ -224,15 +224,22 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.MONITORING_REPORT) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.MONITORING_REPORT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -245,8 +252,11 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.MONITORING_REPORT) &&
-                      navigateToMonitoringReportView()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportView()
                     }
                   />
                 </Tooltip>
@@ -259,15 +269,22 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
-                    t('projectDetailsView:orgNotAuthCreate')
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -280,8 +297,11 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
-                      navigateToMonitoringReportCreate()
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportCreate()
                     }
                   />
                 </Tooltip>
@@ -301,15 +321,22 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   placement="top"
                   trigger="hover"
                   title={
-                    !formViewPermission(userInfoState, DocType.VERIFICATION_REPORT) &&
-                    t('projectDetailsView:orgNotAuthView')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formViewPermission(userInfoState, DocType.VERIFICATION_REPORT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -322,8 +349,11 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formViewPermission(userInfoState, DocType.VERIFICATION_REPORT) &&
-                      navigateToVerificationReportView()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportView()
                     }
                   />
                 </Tooltip>
@@ -336,15 +366,22 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.VERIFICATION_REPORT) &&
-                    t('projectDetailsView:orgNotAuthCreate')
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
                   }
                   overlayClassName="custom-tooltip"
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.VERIFICATION_REPORT)
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -357,8 +394,11 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.VERIFICATION_REPORT) &&
-                      navigateToVerificationReportCreate()
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportCreate()
                     }
                   />
                 </Tooltip>

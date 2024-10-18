@@ -75,7 +75,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
   const [dataQuery, setDataQuery] = useState<any>();
 
   const statusOptions = Object.keys(ProgrammeStatus).map((k, index) => ({
-    label: Object.values(ProgrammeStatus)[index],
+    label: t(`projectList:${Object.values(ProgrammeStatus)[index]}`),
     value: k,
   }));
 
@@ -194,7 +194,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       sorter: true,
       align: 'center' as const,
       render: (item: any) => {
-        return <span>{item}</span>;
+        return <span>{t(`projectList:${item}`)}</span>;
       },
     },
 
