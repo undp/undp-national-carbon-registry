@@ -84,6 +84,7 @@ import { CreditTransferStage } from '../../../Definitions/Enums/creditTransferSt
 import {
   ProgrammeStageUnified,
   ProgrammeStatus,
+  ProjectProposalStage,
 } from '../../../Definitions/Enums/programmeStage.enum';
 import { TxType } from '../../../Definitions/Enums/TxType.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
@@ -163,7 +164,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
-
+  console.log(JSON.stringify(userInfoState));
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
@@ -224,23 +225,15 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return n ? Number(n) : 0;
   };
 
-  // const getPieChartData = (d: ProgrammeSlU) => {
-  //   const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
-  //   const dt = [
-  //     Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
-  //     Number(
-  //       (numIsExist(d.creditIssued) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)
-  //     ),
-  //     Number(d.creditTransferred),
-  //     Number(d.creditRetired),
-  //     frozen,
-  //   ];
-  //   return dt;
-  // };
-
   const getPieChartData = (d: ProgrammeSlU) => {
     const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
-    const dt = [12, 12, 12, 12, 52];
+    const dt = [
+      Number((numIsExist(d.creditEst) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)),
+      Number(numIsExist(d.creditBalance).toFixed(2)),
+      Number(d.creditTransferred),
+      Number(d.creditRetired),
+      frozen,
+    ];
     return dt;
   };
 
@@ -433,6 +426,36 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingAll(false);
   };
 
+  const rejectNotificationForm = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const approveNotificationForm = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const rejectProposal = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const approveProposal = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const rejectCMA = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const approveCMA = () => {
+    throw new Error('Function not implemented.');
+  };
+  const rejectValidation = () => {
+    throw new Error('Function not implemented.');
+  };
+
+  const approveValidation = () => {
+    throw new Error('Function not implemented.');
+  };
   const addElement = (e: any, time: number, hist: any) => {
     time = Number(time);
     if (!hist[time]) {
@@ -1620,282 +1643,81 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const actionBtns = [];
 
   if (userInfoState?.userRole !== 'ViewOnly') {
-    if (userInfoState && data.currentStage !== ProgrammeStageUnified.Rejected) {
-      if (
-        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-          data?.companyId === userInfoState?.companyId) ||
-        ministryLevelPermission
-      ) {
+    if (userInfoState && data.projectProposalStage === ProjectProposalStage.SUBMITTED_INF) {
+      if (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND) {
         actionBtns.push(
           <Button
             type="primary"
             onClick={() => {
-              navigate('/investmentManagement/addInvestment', { state: { record: data } });
-            }}
-          >
-            {t('projectDetailsView:addInvestment')}
-          </Button>
-        );
-        actionBtns.push(
-          <Tooltip
-            title={'Cannot submit until methodology document is approved.'}
-            color={TooltipColor}
-            key={TooltipColor}
-          >
-            <Button disabled>{t('projectDetailsView:addAction')}</Button>
-          </Tooltip>
-        );
-        if (
-          (data.currentStage as any) === ProgrammeStageUnified.Authorised ||
-          (data.currentStage as any) === ProgrammeStageUnified.Approved
-        ) {
-          actionBtns.pop();
-          actionBtns.push(
-            <Button type="primary" onClick={onClickedAddAction}>
-              {t('projectDetailsView:addAction')}
-            </Button>
-          );
-        }
-      }
-    }
-
-    if (
-      data.currentStage?.toString() === 'Approved' &&
-      (data?.article6trade === true || data?.article6trade === undefined)
-    ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        actionBtns.push(
-          <Button
-            danger
-            onClick={() => {
-              setActionInfo({
-                action: 'Reject',
-                text: t('projectDetailsView:popupText'),
-                type: 'danger',
-                title: `${t('projectDetailsView:rejectTitle')} - ${data.title}?`,
-                remark: true,
-                icon: <Icon.ClipboardX />,
-              });
-              showModal();
+              rejectNotificationForm();
             }}
           >
             {t('projectDetailsView:reject')}
           </Button>
         );
-        actionBtns
-          .push
-          // <Button
-          //   type="primary"
-          //   onClick={() => {
-          //     setActionInfo({
-          //       action: 'Authorise',
-          //       text: t('projectDetailsView:popupText'),
-          //       title: `${t('projectDetailsView:authTitle')} - ${data.title}?`,
-          //       type: 'primary',
-          //       remark: false,
-          //       icon: <Icon.ClipboardCheck />,
-          //       contentComp: (
-          //         <ProgrammeIssueForm
-          //           enableIssue={false}
-          //           programme={data}
-          //           subText={t('projectDetailsView:popupText')}
-          //           onCancel={() => {
-          //             setOpenModal(false);
-          //             setComment(undefined);
-          //           }}
-          //           actionBtnText={t('projectDetailsView:authorise')}
-          //           onFinish={(body: any) =>
-          //             onPopupAction(
-          //               body,
-          //               'authorize',
-          //               t('projectDetailsView:successAuth'),
-          //               put,
-          //               updateProgrammeData
-          //             )
-          //           }
-          //           translator={i18n}
-          //         />
-          //       ),
-          //     });
-          //     showModal();
-          //   }}
-          // >
-          //   {t('projectDetailsView:authorise')}
-          // </Button>
-          ();
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              approveNotificationForm();
+            }}
+          >
+            {t('projectDetailsView:approve')}
+          </Button>
+        );
       }
     } else if (
-      data.currentStage?.toString() === ProgrammeStageUnified.Authorised &&
-      Number(data.creditEst) > Number(data.creditIssued)
+      userInfoState &&
+      data.projectProposalStage === ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT
     ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
-        if (
-          Number(data.creditEst) > Number(data.creditIssued) &&
-          getValidNdcActions(data).length > 0
-        ) {
-          actionBtns
-            .push
-            // <Button
-            //   type="primary"
-            //   onClick={() => {
-            //     setActionInfo({
-            //       action: 'Issue',
-            //       text: t('projectDetailsView:popupText'),
-            //       title: `${t('projectDetailsView:issueTitle')} - ${data.title}?`,
-            //       type: 'primary',
-            //       remark: false,
-            //       icon: <Icon.Award />,
-            //       contentComp: (
-            //         <ProgrammeIssueForm
-            //           enableIssue={true}
-            //           programme={data}
-            //           subText={t('projectDetailsView:popupText')}
-            //           onCancel={() => {
-            //             setOpenModal(false);
-            //             setComment(undefined);
-            //           }}
-            //           actionBtnText={t('projectDetailsView:issue')}
-            //           onFinish={(body: any) =>
-            //             onPopupAction(
-            //               body,
-            //               'issue',
-            //               t('projectDetailsView:successIssue'),
-            //               put,
-            //               updateProgrammeData
-            //             )
-            //           }
-            //           translator={i18n}
-            //           ndcActions={getValidNdcActions(data)}
-            //         />
-            //       ),
-            //     });
-            //     showModal();
-            //   }}
-            // >
-            //   {t('projectDetailsView:issue')}
-            // </Button>
-            ();
-        }
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              rejectProposal();
+            }}
+          >
+            {t('projectDetailsView:reject')}
+          </Button>
+        );
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              approveProposal();
+            }}
+          >
+            {t('projectDetailsView:accept')}
+          </Button>
+        );
       }
-    }
-    //   if (userInfoState && data.companyId.includes(userInfoState?.companyId)) {
-    //     actionBtns.push(
-    //       <Button
-    //         danger
-    //         onClick={() => {
-    //           setActionInfo({
-    //             action: 'Retire',
-    //             text: `You can’t undo this action`,
-    //             type: 'danger',
-    //             remark: true,
-    //             icon: <PoweroffOutlined />,
-    //           });
-    //           showModal();
-    //         }}
-    //       >
-    //         {t('projectDetailsView:retire')}
-    //       </Button>
-    //     );
-    //   } else {
-    // actionBtns.push(
-    //   <Button
-    //     danger
-    //     onClick={() => {
-    //       setActionInfo({
-    //         action: 'Retire',
-    //         text: `You are going to transfer programme ${data.title}`,
-    //         type: 'danger',
-    //       });
-    //       showModal();
-    //     }}
-    //   >
-    //     {t('projectDetailsView:Transfer')}
-    //   </Button>
-    // );
-    // }
-
-    if (
+    } else if (
       userInfoState &&
-      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
-      data.certifier &&
-      userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId) &&
-      data.currentStage.toString() !== ProgrammeStageUnified.Rejected
+      data.projectProposalStage === ProjectProposalStage.VALIDATION_PENDING
     ) {
-      actionBtns.push(
-        <Button
-          type="primary"
-          onClick={() => {
-            setActionInfo({
-              action: 'Certify',
-              text: ``,
-              title: `${t('projectDetailsView:certifyTitle')} - ${data.title}?`,
-              type: 'success',
-              remark: false,
-              icon: <ShieldCheck />,
-            });
-            showModal();
-          }}
-        >
-          {t('projectDetailsView:certify')}
-        </Button>
-      );
-    }
-    if (
-      userInfoState &&
-      userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
-      data.certifier &&
-      data.certifier.length > 0 &&
-      ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
-        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        ministryLevelPermission)
-    ) {
-      actionBtns
-        .push
-        // <Button
-        //   danger
-        //   onClick={() => {
-        //     setActionInfo({
-        //       action: 'Revoke',
-        //       title: `${t('projectDetailsView:revokeTitle')} - ${data.title}?`,
-        //       text: ``,
-        //       type: 'danger',
-        //       remark: true,
-        //       icon: <Icon.ShieldExclamation />,
-        //       contentComp: (
-        //         <ProgrammeRevokeForm
-        //           programme={data}
-        //           subText={t('projectDetailsView:popupText')}
-        //           onCancel={() => {
-        //             setOpenModal(false);
-        //             setComment(undefined);
-        //           }}
-        //           actionBtnText={t('projectDetailsView:revoke')}
-        //           onFinish={(body: any) =>
-        //             onPopupAction(
-        //               body,
-        //               'revoke',
-        //               t('projectDetailsView:successRevokeCertifcate'),
-        //               put,
-        //               updateProgrammeData
-        //             )
-        //           }
-        //           showCertifiers={
-        //             userInfoState.companyRole === CompanyRole.GOVERNMENT ||
-        //             userInfoState.companyRole === CompanyRole.MINISTRY
-        //           }
-        //           translator={i18n}
-        //         />
-        //       ),
-        //     });
-        //     showModal();
-        //   }}
-        // >
-        //   {t('projectDetailsView:revoke')}
-        // </Button>
-        ();
+      if (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              rejectValidation();
+            }}
+          >
+            {t('projectDetailsView:reject')}
+          </Button>
+        );
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              approveValidation();
+            }}
+          >
+            {t('projectDetailsView:approve')}
+          </Button>
+        );
+      }
     }
   }
 
@@ -1911,7 +1733,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       if (k === 'projectStatus') {
         generalInfo[text] = (
           <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
-            {getStatusEnumVal(v as string)}
+            {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
           </Tag>
         );
       } else if (k === 'sector') {
@@ -2017,7 +1839,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                 showAlways: true,
                                 show: true,
                                 label: 'Total',
-                                formatter: () => '' + data.creditEst,
+                                formatter: () => (data.creditEst ? '' + data.creditEst : '0'),
                               },
                             },
                           },
@@ -2271,7 +2093,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   }}
                   ministryLevelPermission={ministryLevelPermission}
                   translator={i18n}
-                  programmeStatus={data?.currentStage}
+                  projectProposalStage={data?.projectProposalStage}
                 />
               </div>
             </Card>
@@ -2329,7 +2151,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   }}
                   ministryLevelPermission={ministryLevelPermission}
                   translator={i18n}
-                  programmeStatus={data?.currentStage}
+                  projectProposalStage={data?.projectProposalStage}
                 />
               </div>
             </Card>

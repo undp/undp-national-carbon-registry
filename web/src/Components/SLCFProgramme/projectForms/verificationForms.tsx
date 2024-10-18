@@ -8,6 +8,7 @@ import {
   FileAddOutlined,
   LikeOutlined,
   BookOutlined,
+  FolderViewOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -20,7 +21,12 @@ import { Role } from '../../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermissionSl';
+import {
+  formCreatePermission,
+  formViewPermission,
+  linkDocVisible,
+} from '../../../Utils/documentsPermissionSl';
+import { useNavigate } from 'react-router-dom';
 
 export interface VerificationFormsProps {
   data: any;
@@ -32,7 +38,7 @@ export interface VerificationFormsProps {
   getProgrammeById: any;
   ministryLevelPermission?: boolean;
   translator: any;
-  programmeStatus?: any;
+  projectProposalStage?: any;
 }
 
 export const VerificationForms: FC<VerificationFormsProps> = (props: VerificationFormsProps) => {
@@ -41,12 +47,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     title,
     icon,
     programmeId,
-    programmeOwnerId,
+
     getDocumentDetails,
     getProgrammeById,
-    ministryLevelPermission,
+
     translator,
-    programmeStatus,
+    projectProposalStage,
   } = props;
 
   const t = translator.t;
@@ -54,108 +60,30 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   const { delete: del, post } = useConnection();
   const fileInputRef: any = useRef(null);
   const fileInputRefMeth: any = useRef(null);
-  const fileInputRefImpactAssessment: any = useRef(null);
+
   const [loading, setLoading] = useState<boolean>(false);
-  const [designDocUrl, setDesignDocUrl] = useState<any>('');
-  const [noObjectionDocUrl, setNoObjectionDocUrl] = useState<any>('');
-  const [authorisationDocUrl, setAuthorisationDocUrl] = useState<any>('');
-  const [methodologyDocUrl, setMethodologyDocUrl] = useState<any>('');
-  const [designDocDate, setDesignDocDate] = useState<any>('');
-  const [noObjectionDate, setNoObjectionDate] = useState<any>('');
-  const [methodologyDate, setMethodologyDate] = useState<any>('');
-  const [authorisationDocDate, setAuthorisationDocDate] = useState<any>('');
+
   const [designDocStatus, setDesignDocStatus] = useState<any>('');
-  const [methodDocStatus, setMethodDocStatus] = useState<any>('');
-  const [designDocId, setDesignDocId] = useState<any>('');
-  const [designDocversion, setDesignDocversion] = useState<any>('');
-  const [methDocId, setMethDocId] = useState<any>('');
-  const [methDocversion, setMethDocversion] = useState<any>('');
+
   const [docData, setDocData] = useState<any[]>([]);
   const [openRejectDocConfirmationModal, setOpenRejectDocConfirmationModal] = useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [rejectDocData, setRejectDocData] = useState<any>({});
-  const [impactAssessmentUrl, setImpactAssessmentUrl] = useState<any>('');
-  const [impactAssessmentDate, setImpactAssessmentDate] = useState<any>('');
-  const [impactAssessmentStatus, setImpactAssessmentStatus] = useState<any>('');
-  const [impactAssessmentId, setImpactAssessmentId] = useState<any>('');
-  const [impactAssessmentversion, setImpactAssessmentversion] = useState<any>('');
+  const navigate = useNavigate();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
-
-  const isProjectRejected = programmeStatus && programmeStatus === ProgrammeStageUnified.Rejected;
-
-  const uploadImpactAssessmentDocUserPermission = uploadDocUserPermission(
-    userInfoState,
-    DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT,
-    programmeOwnerId,
-    ministryLevelPermission
-  );
-
-  const impactAssessmentToolTipTitle =
-    userInfoState?.userRole === Role.ViewOnly
-      ? t('projectDetailsView:notAuthToUploadDoc')
-      : isProjectRejected
-      ? t('projectDetailsView:docUploadProgrammeRejected')
-      : !uploadImpactAssessmentDocUserPermission && t('projectDetailsView:orgNotAuth');
-
-  const handleDesignDocFileUpload = () => {
-    fileInputRef?.current?.click();
-  };
-
-  const handleMethodologyFileUpload = () => {
-    fileInputRefMeth?.current?.click();
-  };
-
-  const handleImpactAssessmentFileUpload = () => {
-    fileInputRefImpactAssessment?.current?.click();
-  };
 
   useEffect(() => {
     setDocData(data);
   }, [data]);
 
-  useEffect(() => {
-    if (docData?.length) {
-      docData?.map((item: any) => {
-        if (item?.url?.includes('DESIGN')) {
-          setDesignDocUrl(item?.url);
-          setDesignDocDate(item?.txTime);
-          setDesignDocStatus(item?.status);
-          setDesignDocId(item?.id);
-          const versionfull = (item?.url).split('_')[(item?.url).split('_').length - 1];
-          const version = versionfull ? versionfull.split('.')[0] : '1';
-          setDesignDocversion(version.startsWith('V') ? version : 'V1');
-        }
-        if (item?.url?.includes('METHODOLOGY')) {
-          setMethodologyDocUrl(item?.url);
-          setMethodologyDate(item?.txTime);
-          setMethodDocStatus(item?.status);
-          setMethDocId(item?.id);
-          const versionfull = (item?.url).split('_')[(item?.url).split('_').length - 1];
-          const version = versionfull ? versionfull.split('.')[0] : '1';
-          setMethDocversion(version.startsWith('V') ? version : 'V1');
-        }
-        if (item?.url?.includes('OBJECTION')) {
-          setNoObjectionDocUrl(item?.url);
-          setNoObjectionDate(item?.txTime);
-        }
-        if (item?.url?.includes('AUTHORISATION')) {
-          setAuthorisationDocUrl(item?.url);
-          setAuthorisationDocDate(item?.txTime);
-        }
-        if (item?.url?.includes('ENVIRONMENTAL_IMPACT_ASSESSMENT')) {
-          setImpactAssessmentUrl(item?.url);
-          setImpactAssessmentDate(item?.txTime);
-          setImpactAssessmentStatus(item?.status);
-          setImpactAssessmentId(item?.id);
-          const versionfull = (item?.url).split('_')[(item?.url).split('_').length - 1];
-          const version = versionfull ? versionfull.split('.')[0] : '1';
-          setImpactAssessmentversion(version.startsWith('V') ? version : 'V1');
-        }
-      });
-    }
-  }, [docData]);
+  const navigateToMonitoringReportCreate = () => {
+    navigate('/programmeManagementSLCF/monitoringReport');
+  };
+  const navigateToMonitoringReportView = () => {
+    navigate('/programmeManagementSLCF/monitoringReport');
+  };
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -266,6 +194,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     userInfoState?.userRole !== Role.ViewOnly;
 
   const designDocPending = designDocStatus === DocumentStatus.PENDING;
+  function navigateToVerificationReportCreate(): void {
+    throw new Error('Function not implemented.');
+  }
+  function navigateToVerificationReportView(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return loading ? (
     <Skeleton />
   ) : (
@@ -279,387 +214,195 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
           <Row className="field" key="Monitoring Report">
             <Col span={18} className="field-key">
               <div className="label-container">
-                <div className={designDocUrl !== '' ? 'label-uploaded' : 'label'}>
-                  {t('projectDetailsView:monitoringReport')}
-                </div>
-                {designDocPending && (designDocActionPermission || ministryLevelPermission) && (
-                  <>
-                    <LikeOutlined
-                      onClick={() => docAction(designDocId, DocumentStatus.ACCEPTED)}
-                      className="common-progress-icon"
-                      style={{ color: '#976ED7', paddingTop: '3px' }}
-                    />
-                    <DislikeOutlined
-                      onClick={() => {
-                        setRejectDocData({ id: designDocId });
-                        setActionInfo({
-                          action: 'Reject',
-                          headerText: `${t('projectDetailsView:rejectDocHeader')}`,
-                          text: `${t('projectDetailsView:rejectDocBody')}`,
-                          type: 'reject',
-                          icon: <DislikeOutlined />,
-                        });
-                        setOpenRejectDocConfirmationModal(true);
-                      }}
-                      className="common-progress-icon margin-left-1"
-                      style={{ color: '#FD6F70', paddingTop: '3px' }}
-                    />
-                  </>
-                )}
-                {designDocStatus === DocumentStatus.ACCEPTED && (
-                  <CheckCircleOutlined
-                    className="common-progress-icon"
-                    style={{ color: '#5DC380', paddingTop: '3px' }}
-                  />
-                )}
-                {designDocStatus === DocumentStatus.REJECTED && (
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="top"
-                    trigger="hover"
-                    title={t('projectDetailsView:rejectTip')}
-                    overlayClassName="custom-tooltip"
-                  >
-                    <ExclamationCircleOutlined
-                      className="common-progress-icon"
-                      style={{ color: '#FD6F70' }}
-                    />
-                  </Tooltip>
-                )}
+                <div className="label">{t('projectDetailsView:monitoringReport')}</div>
               </div>
-              {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )}
             </Col>
-            <Col span={6} className="field-value">
-              {designDocUrl !== '' ? (
-                <div className="link">
-                  {linkDocVisible(designDocStatus) && (
-                    <a href={designDocUrl} target="_blank" rel="noopener noreferrer" download>
-                      <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
-                    </a>
-                  )}
-                  {designDocStatus !== DocumentStatus.ACCEPTED && (
-                    <>
-                      <Tooltip
-                        arrowPointAtCenter
-                        placement="top"
-                        trigger="hover"
-                        title={
-                          userInfoState?.userRole === Role.ViewOnly ||
-                          userInfoState?.companyRole === CompanyRole.CERTIFIER
-                            ? t('projectDetailsView:notAuthToUploadDoc')
-                            : !uploadDocUserPermission(
-                                userInfoState,
-                                DocType.DESIGN_DOCUMENT,
-                                programmeOwnerId,
-                                ministryLevelPermission
-                              ) && t('projectDetailsView:orgNotAuth')
-                        }
-                        overlayClassName="custom-tooltip"
-                      >
-                        <FileAddOutlined
-                          className="common-progress-icon"
-                          style={
-                            uploadDocUserPermission(
-                              userInfoState,
-                              DocType.DESIGN_DOCUMENT,
-                              programmeOwnerId,
-                              ministryLevelPermission
-                            )
-                              ? {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FolderViewOutlined
+                    className="common-progress-icon"
+                    style={
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
                           }
-                          onClick={() =>
-                            uploadDocUserPermission(
-                              userInfoState,
-                              DocType.DESIGN_DOCUMENT,
-                              programmeOwnerId,
-                              ministryLevelPermission
-                            ) && handleDesignDocFileUpload()
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
                           }
-                        />
-                      </Tooltip>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                        onChange={(e: any) => {
-                          const selectedFile = e.target.files[0];
-                          e.target.value = null;
-                          onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="top"
-                    trigger="hover"
-                    title={
-                      userInfoState?.userRole === Role.ViewOnly ||
-                      userInfoState?.companyRole === CompanyRole.CERTIFIER
-                        ? t('projectDetailsView:notAuthToUploadDoc')
-                        : !uploadDocUserPermission(
-                            userInfoState,
-                            DocType.DESIGN_DOCUMENT,
-                            programmeOwnerId,
-                            ministryLevelPermission
-                          ) && t('projectDetailsView:orgNotAuth')
                     }
-                    overlayClassName="custom-tooltip"
-                  >
-                    <FileAddOutlined
-                      className="common-progress-icon"
-                      style={
-                        uploadDocUserPermission(
-                          userInfoState,
-                          DocType.DESIGN_DOCUMENT,
-                          programmeOwnerId,
-                          ministryLevelPermission
-                        )
-                          ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                          : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                      }
-                      onClick={() =>
-                        uploadDocUserPermission(
-                          userInfoState,
-                          DocType.DESIGN_DOCUMENT,
-                          programmeOwnerId,
-                          ministryLevelPermission
-                        ) && handleDesignDocFileUpload()
-                      }
-                    />
-                  </Tooltip>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                    onChange={(e: any) => {
-                      const selectedFile = e.target.files[0];
-                      e.target.value = null;
-                      onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                    }}
+                    onClick={() =>
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportView()
+                    }
                   />
-                </>
-              )}
+                </Tooltip>
+              </>
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FileAddOutlined
+                    className="common-progress-icon"
+                    style={
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={() =>
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportCreate()
+                    }
+                  />
+                </Tooltip>
+              </>
             </Col>
           </Row>
           <Row className="field" key="Verification Report">
             <Col span={18} className="field-key">
               <div className="label-container">
-                <div className={designDocUrl !== '' ? 'label-uploaded' : 'label'}>
-                  {t('projectDetailsView:verificationReport')}
-                </div>
-                {designDocPending && (designDocActionPermission || ministryLevelPermission) && (
-                  <>
-                    <LikeOutlined
-                      onClick={() => docAction(designDocId, DocumentStatus.ACCEPTED)}
-                      className="common-progress-icon"
-                      style={{ color: '#976ED7', paddingTop: '3px' }}
-                    />
-                    <DislikeOutlined
-                      onClick={() => {
-                        setRejectDocData({ id: designDocId });
-                        setActionInfo({
-                          action: 'Reject',
-                          headerText: `${t('projectDetailsView:rejectDocHeader')}`,
-                          text: `${t('projectDetailsView:rejectDocBody')}`,
-                          type: 'reject',
-                          icon: <DislikeOutlined />,
-                        });
-                        setOpenRejectDocConfirmationModal(true);
-                      }}
-                      className="common-progress-icon margin-left-1"
-                      style={{ color: '#FD6F70', paddingTop: '3px' }}
-                    />
-                  </>
-                )}
-                {designDocStatus === DocumentStatus.ACCEPTED && (
-                  <CheckCircleOutlined
-                    className="common-progress-icon"
-                    style={{ color: '#5DC380', paddingTop: '3px' }}
-                  />
-                )}
-                {designDocStatus === DocumentStatus.REJECTED && (
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="top"
-                    trigger="hover"
-                    title={t('projectDetailsView:rejectTip')}
-                    overlayClassName="custom-tooltip"
-                  >
-                    <ExclamationCircleOutlined
-                      className="common-progress-icon"
-                      style={{ color: '#FD6F70' }}
-                    />
-                  </Tooltip>
-                )}
+                <div className="label">{t('projectDetailsView:verificationReport')}</div>
               </div>
-              {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )}
             </Col>
-            <Col span={6} className="field-value">
-              {designDocUrl !== '' ? (
-                <div className="link">
-                  {linkDocVisible(designDocStatus) && (
-                    <a href={designDocUrl} target="_blank" rel="noopener noreferrer" download>
-                      <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
-                    </a>
-                  )}
-                  {designDocStatus !== DocumentStatus.ACCEPTED && (
-                    <>
-                      <Tooltip
-                        arrowPointAtCenter
-                        placement="top"
-                        trigger="hover"
-                        title={
-                          userInfoState?.userRole === Role.ViewOnly ||
-                          userInfoState?.companyRole === CompanyRole.CERTIFIER
-                            ? t('projectDetailsView:notAuthToUploadDoc')
-                            : !uploadDocUserPermission(
-                                userInfoState,
-                                DocType.DESIGN_DOCUMENT,
-                                programmeOwnerId,
-                                ministryLevelPermission
-                              ) && t('projectDetailsView:orgNotAuth')
-                        }
-                        overlayClassName="custom-tooltip"
-                      >
-                        <FileAddOutlined
-                          className="common-progress-icon"
-                          style={
-                            uploadDocUserPermission(
-                              userInfoState,
-                              DocType.DESIGN_DOCUMENT,
-                              programmeOwnerId,
-                              ministryLevelPermission
-                            )
-                              ? {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FolderViewOutlined
+                    className="common-progress-icon"
+                    style={
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
                           }
-                          onClick={() =>
-                            uploadDocUserPermission(
-                              userInfoState,
-                              DocType.DESIGN_DOCUMENT,
-                              programmeOwnerId,
-                              ministryLevelPermission
-                            ) && handleDesignDocFileUpload()
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
                           }
-                        />
-                      </Tooltip>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                        onChange={(e: any) => {
-                          const selectedFile = e.target.files[0];
-                          e.target.value = null;
-                          onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                        }}
-                      />
-                    </>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <Tooltip
-                    arrowPointAtCenter
-                    placement="top"
-                    trigger="hover"
-                    title={
-                      userInfoState?.userRole === Role.ViewOnly ||
-                      userInfoState?.companyRole === CompanyRole.CERTIFIER
-                        ? t('projectDetailsView:notAuthToUploadDoc')
-                        : !uploadDocUserPermission(
-                            userInfoState,
-                            DocType.DESIGN_DOCUMENT,
-                            programmeOwnerId,
-                            ministryLevelPermission
-                          ) && t('projectDetailsView:orgNotAuth')
                     }
-                    overlayClassName="custom-tooltip"
-                  >
-                    <FileAddOutlined
-                      className="common-progress-icon"
-                      style={
-                        uploadDocUserPermission(
-                          userInfoState,
-                          DocType.DESIGN_DOCUMENT,
-                          programmeOwnerId,
-                          ministryLevelPermission
-                        )
-                          ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                          : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                      }
-                      onClick={() =>
-                        uploadDocUserPermission(
-                          userInfoState,
-                          DocType.DESIGN_DOCUMENT,
-                          programmeOwnerId,
-                          ministryLevelPermission
-                        ) && handleDesignDocFileUpload()
-                      }
-                    />
-                  </Tooltip>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                    onChange={(e: any) => {
-                      const selectedFile = e.target.files[0];
-                      e.target.value = null;
-                      onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                    }}
+                    onClick={() =>
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportView()
+                    }
                   />
-                </>
-              )}
+                </Tooltip>
+              </>
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FileAddOutlined
+                    className="common-progress-icon"
+                    style={
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={() =>
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportCreate()
+                    }
+                  />
+                </Tooltip>
+              </>
             </Col>
           </Row>
         </div>

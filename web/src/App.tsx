@@ -46,6 +46,7 @@ import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoring
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
 import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
+import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 
 const App = () => {
   const ability = defineAbility();
@@ -105,9 +106,7 @@ const App = () => {
                   <Route
                     path=""
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="CMAForm" element={<CMAFormPage />} />
-                  </Route>
+                  ></Route>
 
                   <Route
                     path="/programmeManagementSLCF"
@@ -117,8 +116,16 @@ const App = () => {
                     <Route path="view/:id" element={<SLCFProjectDetailsView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
-                    <Route path="uploadMonitoringReport" element={<SLCFMonitoringReport />} />
+                    <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
                     <Route path="addCostQuotation" element={<SLCFCostQuotationForm />} />
+                    <Route path="cmaForm/:id" element={<CMAFormPage />} />
+                  </Route>
+                  <Route
+                    path="/retirementManagement"
+                    element={<CustomLayout selectedKey="retirementManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<SLCFRetirement />} />
+                    {/* <Route path="view" element={<ProgrammeView />} /> */}
                   </Route>
                   <Route
                     path="/programmeManagement"

@@ -15,15 +15,15 @@ import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
-
+  const { id } = useParams();
   const [values, setValues] = useState({
-    programmeId: '001',
+    programmeId: id,
     companyId: undefined,
     content: {},
   });
@@ -60,10 +60,10 @@ const StepperComponent = (props: any) => {
   const [form7] = useForm();
   const [form8] = useForm();
 
-  const getProgrammeDetailsById = async (id: string) => {
+  const getProgrammeDetailsById = async (programId: any) => {
     try {
       const { data } = await post('national/programmeSL/getProjectById', {
-        programmeId: id,
+        programmeId: programId,
       });
 
       const {
@@ -149,7 +149,7 @@ const StepperComponent = (props: any) => {
 
   useEffect(() => {
     getCountryList();
-    getProgrammeDetailsById('001');
+    getProgrammeDetailsById(id);
   }, []);
 
   const steps = [
