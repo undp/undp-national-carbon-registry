@@ -302,6 +302,7 @@ export class CaslAbilityFactory {
       can(Action.Read, ProgrammeSl);
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
+        can(Action.Update, ProgrammeSl);
         can(Action.Create, CreditRetirementSl);
         can(Action.Update, CreditRetirementSl);
       }
@@ -319,11 +320,13 @@ export class CaslAbilityFactory {
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
         can(Action.Update, CreditRetirementSl);
+        can(Action.Update, ProgrammeSl);
       }
 
       if (user.role == Role.Manager) {
         can(Action.Create, Company);
         can(Action.Update, CreditRetirementSl);
+        can(Action.Update, ProgrammeSl);
       }
     }
 

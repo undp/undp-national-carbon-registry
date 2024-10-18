@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-  Request,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { Action } from "src/casl/action.enum";
@@ -20,6 +11,7 @@ import { ProgrammeSlDto } from "../dto/programmeSl.dto";
 import { CMADto } from "src/dto/cma.dto";
 import { GetDocDto } from "src/dto/getDoc.dto";
 import { QueryDto } from "src/dto/query.dto";
+import { CostQuotationDto } from "src/dto/costQuotation.dto";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -29,9 +21,7 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Create, ProgrammeSl)
-  )
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, ProgrammeSl))
   @Post("create")
   async addProgramme(@Body() programme: ProgrammeSlDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
@@ -55,13 +45,20 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Create, ProgrammeSl)
-  )
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("createCMA")
   async createCMA(@Body() cmaDto: CMADto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.createCMA(cmaDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("createCostQuotation")
+  async createCostQuotation(@Body() costQuotationDto: CostQuotationDto, @Request() req) {
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.programmeService.createCostQuotation(costQuotationDto, req.user);
   }
 
   @ApiBearerAuth()

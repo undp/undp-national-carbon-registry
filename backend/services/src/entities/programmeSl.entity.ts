@@ -77,14 +77,14 @@ export class ProgrammeSl implements EntitySubject {
     enum: ProjectStatus,
     array: false,
   })
-  projectStatus: ProjectStatus;
+  projectStatus: ProjectStatus; //this status is maintained for SLCF
 
   @Column({
     type: "enum",
     enum: ProjectProposalStage,
     array: false,
   })
-  projectProposalStage: ProjectProposalStage;
+  projectProposalStage: ProjectProposalStage; //this is for the development purposes to update current proposal stage
 
   @Column({
     type: "enum",
@@ -92,7 +92,7 @@ export class ProgrammeSl implements EntitySubject {
     array: false,
   })
   purposeOfCreditDevelopment: CreditType;
-  
+
   @Column({ nullable: true })
   creditStartSerialNumber?: string;
 
