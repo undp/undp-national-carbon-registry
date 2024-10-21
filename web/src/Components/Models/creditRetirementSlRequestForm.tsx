@@ -22,7 +22,7 @@ import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { InfoCircle } from 'react-bootstrap-icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { CreditType } from '../../Definitions/Enums/projectSl.enum';
+import { CreditType } from '../../Definitions/Enums/programmeStage.enum';
 
 export interface CreditRetirementSlRequestFormProps {
   programme: ProgrammeSl;
