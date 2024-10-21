@@ -77,6 +77,11 @@ export class ValidationAgreementContentDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  witness2Label: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   witness2Signature: string;
 
   @ApiProperty()

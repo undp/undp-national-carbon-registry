@@ -525,7 +525,10 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
   }
 
-  async updateProposalStage(updateProposalStageDto: UpdateProjectProposalStageDto, user: User) {
+  async updateProposalStage(
+    updateProposalStageDto: UpdateProjectProposalStageDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (
       updateProposalStageDto.txType == TxType.APPROVE_INF ||
       updateProposalStageDto.txType == TxType.REJECT_INF ||
@@ -700,6 +703,7 @@ export class ProgrammeSlService {
           throw err;
         });
     }
+    return new DataResponseDto(HttpStatus.OK, updatedProgramme);
   }
 
   async getDocs(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
