@@ -135,63 +135,38 @@ export class ProgrammeLedgerService {
         let insertMap = {};
 
         updatedProgramme = programme;
-        let uPayload;
-        if (txType == TxType.CREATE_CMA) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.SUBMITTED_CMA,
-          };
-        } else if (txType == TxType.APPROVE_INF) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.APPROVED_INF,
-          };
-        } else if (txType == TxType.REJECT_INF) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.REJECTED_INF,
-          };
-        } else if (txType == TxType.CREATE_COST_QUOTATION) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.SUBMITTED_COST_QUOTATION,
-          };
-        } else if (txType == TxType.CREATE_PROJECT_PROPOSAL) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.SUBMITTED_PROPOSAL,
-          };
-        } else if (txType == TxType.CREATE_VALIDATION_AGREEMENT) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
-          };
-        } else if (txType == TxType.APPROVE_PROPOSAL) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.ACCEPTED_PROPOSAL,
-          };
-        } else if (txType == TxType.REJECT_PROPOSAL) {
-          uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.REJECTED_PROPOSAL,
-          };
+        let uPayload = {
+          txTime: programme.txTime,
+          txType: programme.txType,
+          updatedTime: programme.updatedTime,
+        };
+
+        switch (txType) {
+          case TxType.CREATE_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_CMA;
+            break;
+          case TxType.APPROVE_INF:
+            uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_INF;
+            break;
+          case TxType.REJECT_INF:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_INF;
+            break;
+          case TxType.CREATE_COST_QUOTATION:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_COST_QUOTATION;
+            break;
+          case TxType.CREATE_PROJECT_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_PROPOSAL;
+          case TxType.CREATE_VALIDATION_AGREEMENT:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT;
+            break;
+          case TxType.APPROVE_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.ACCEPTED_PROPOSAL;
+            break;
+          case TxType.REJECT_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
+            break;
+          default:
+            break;
         }
 
         updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
