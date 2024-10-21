@@ -481,21 +481,22 @@ export class ProgrammeSlService {
       validationAgreementDto.content.witness2Signature = docUrl;
     }
 
-    if (
-      validationAgreementDto.content.appendix &&
-      validationAgreementDto.content.appendix.length > 0
-    ) {
-      const appendixes = [];
-      for (const appendix of validationAgreementDto.content.appendix) {
-        const docUrl = await this.uploadDocument(
-          DocType.AGREEMENT_APPENDIX,
-          validationAgreementDto.programmeId,
-          appendix.document
-        );
-        appendix.document = docUrl;
-        appendixes.push(appendix);
-      }
-      validationAgreementDto.content.appendix = appendixes;
+    if (validationAgreementDto.content.annexureADoc) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_APPENDIX,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.annexureADoc
+      );
+      validationAgreementDto.content.annexureADoc = docUrl;
+    }
+
+    if (validationAgreementDto.content.annexureBDoc) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_APPENDIX,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.annexureBDoc
+      );
+      validationAgreementDto.content.annexureBDoc = docUrl;
     }
 
     const validationAgreementDoc = new DocumentEntity();
