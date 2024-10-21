@@ -68,7 +68,7 @@ export const AddCostQuotationForm = (props: any) => {
     }
 
     const body: any = {
-      programmeId: '0001', //programmeId
+      programmeId: programmeId,
       content: {
         quotationNo: values?.quotationNo,
         address: values?.address,
@@ -95,7 +95,7 @@ export const AddCostQuotationForm = (props: any) => {
     } catch (error: any) {
       message.open({
         type: 'error',
-        content: 'Something went wrong',
+        content: `${t('costQuotation:somethingWentWrong')}`,
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
