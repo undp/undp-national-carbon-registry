@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import TextArea from 'antd/lib/input/TextArea';
 import { i18n } from 'i18next';
@@ -15,6 +15,7 @@ import validator from 'validator';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
+const { Text } = Typography;
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -111,18 +112,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     form.setFieldsValue(formInitialValues);
   }, []);
 
-  const calculateTotalCost = (value?: any) => {
-    const firstCost = Number(form.getFieldValue('firstCost') || 0);
-    let tempTotalCost = firstCost;
-
-    const extraCosting = form.getFieldValue('extraCosting');
-
-    if (extraCosting !== undefined && extraCosting[0] !== undefined) {
-      extraCosting.forEach((item: any) => {
-        tempTotalCost += item?.cost ? Number(item?.cost) : 0;
+  const calculateTotalCost = () => {
+    let tempTotal = Number(form.getFieldValue('totalCost') || 0);
+    const additionalServices = form.getFieldValue('additionalServices');
+    const costValidation = Number(form.getFieldValue('costValidation') || 0);
+    const costVerification = Number(form.getFieldValue('costVerification') || 0);
+    tempTotal = costValidation + costVerification;
+    if (
+      additionalServices &&
+      additionalServices.length > 0 &&
+      additionalServices[0] !== undefined
+    ) {
+      additionalServices.forEach((item: any) => {
+        if (item && item.cost > 0) {
+          tempTotal += Number(item.cost);
+        }
       });
     }
-    form.setFieldValue('totalCost', Number(tempTotalCost));
+    form.setFieldValue('totalCost', String(tempTotal));
   };
 
   return (
@@ -1678,186 +1685,228 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Costing table start */}
           <div className="costing-table">
-            <Row className="header">
-              <Col md={4} xl={4}>
-                No
+            <Row className="header" justify={'space-between'}>
+              <Col md={2} xl={2}>
+                <Text strong>No</Text>
               </Col>
-              <Col md={8} xl={8}>
-                Service Category
-              </Col>
-              <Col md={6} xl={6}>
-                Cost (LKR)
+              <Col md={10}>
+                <Text strong>Service Category</Text>
               </Col>
               <Col md={4} xl={4}>
+                <Text strong>Cost (LKR)</Text>
+              </Col>
+              <Col md={2} xl={2}>
                 {' '}
               </Col>
             </Row>
-            <Row className="data-rows">
-              <Col md={4} xl={4} className="col-1">
+            <Row align={'middle'} justify={'space-between'} className="data-rows">
+              <Col md={2} xl={2}>
                 1
               </Col>
-              <Col md={8} xl={8} className="col-2">
+              <Col md={10}>
+                <Form.Item name="serviceValidation">
+                  <Input
+                    size="large"
+                    defaultValue={'Project Validation & Registration'}
+                    placeholder={'Verification & Credit Issuance'}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={4} xl={4}>
                 <Form.Item
-                  name="firstServiceCategory"
+                  name="costValidation"
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:isRequired')}`,
+                      message: `Cost ${t('isRequired')}`,
                     },
                   ]}
                 >
-                  <Input />
+                  <Input
+                    type="number"
+                    size="large"
+                    onChange={(val) => {
+                      calculateTotalCost();
+                    }}
+                  />
                 </Form.Item>
               </Col>
-              <Col md={6} xl={6} className="col-3">
-                <Form.Item
-                  name="firstCost"
-                  rules={[
-                    {
-                      required: true,
-                      message: `${t('projectProposal:isRequired')}`,
-                    },
-                    {
-                      validator(rule, value) {
-                        if (!value) {
-                          return Promise.resolve();
-                        }
-
-                        // eslint-disable-next-line no-restricted-globals
-                        if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer!'));
-                        }
-
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <Input onChange={(value) => calculateTotalCost(value)} />
-                </Form.Item>
-              </Col>
-              <Col md={4} xl={4} className="col-4">
+              <Col md={2} xl={2}>
                 {' '}
               </Col>
             </Row>
-            <Form.List name="extraCosting">
+
+            <Row align={'middle'} justify={'space-between'} className="data-rows">
+              <Col md={2} xl={2}>
+                {t('costQuotation:two')}
+              </Col>
+              <Col md={10}>
+                <Form.Item name="serviceVerification">
+                  <Input
+                    size="large"
+                    defaultValue={'Verification & Credit Issuance'}
+                    placeholder={'Verification & Credit Issuance'}
+                    disabled
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={4} xl={4}>
+                <Form.Item
+                  name="costVerification"
+                  rules={[
+                    {
+                      required: true,
+                      message: `Cost ${t('costQuotation:isRequired')}`,
+                    },
+                  ]}
+                >
+                  <Input
+                    type="number"
+                    size="large"
+                    onChange={(val) => {
+                      calculateTotalCost();
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={2} xl={2}>
+                {' '}
+              </Col>
+            </Row>
+            <Form.List name="additionalServices">
               {(fields, { add, remove }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
-                    <Row className="data-rows">
-                      <Col md={4} xl={4} className="col-1">
-                        1
-                      </Col>
-                      <Col md={8} xl={8} className="col-2">
-                        <Form.Item
-                          name={[name, 'ServiceCategory']}
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('projectProposal:isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <Input />
-                        </Form.Item>
-                      </Col>
-                      <Col md={6} xl={6} className="col-3">
-                        <Form.Item
-                          name={[name, 'cost']}
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('projectProposal:isRequired')}`,
-                            },
-                            {
-                              validator(rule, value) {
-                                if (!value) {
-                                  return Promise.resolve();
-                                }
-
-                                // eslint-disable-next-line no-restricted-globals
-                                if (isNaN(value)) {
-                                  return Promise.reject(new Error('Should be an integer!'));
-                                }
-
-                                return Promise.resolve();
+                    <>
+                      <Row align={'middle'} justify={'space-between'} className="data-rows">
+                        <Col md={2} xl={2}>
+                          {name + 3}
+                        </Col>
+                        <Col md={10}>
+                          <Form.Item
+                            name={[name, 'service']}
+                            rules={[
+                              {
+                                required: true,
+                                message: '',
                               },
-                            },
-                          ]}
-                        >
-                          <Input onChange={(value) => calculateTotalCost(value)} />
-                        </Form.Item>
-                      </Col>
-                      <Col md={4} xl={4} className="col-4">
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(
+                                      `${t('costQuotation:serviceCategory')} ${t(
+                                        'costQuotation:isRequired'
+                                      )}`
+                                    );
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <Input size="large" onChange={(val) => {}} />
+                          </Form.Item>
+                        </Col>
+                        <Col md={4} xl={4}>
+                          <Form.Item
+                            name={[name, 'cost']}
+                            rules={[
+                              {
+                                required: true,
+                                message: `${t('costQuotation:cost')} ${t(
+                                  'costQuotation:isRequired'
+                                )}`,
+                              },
+                            ]}
+                          >
+                            <Input
+                              type="number"
+                              size="large"
+                              onChange={(val) => {
+                                calculateTotalCost();
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+
+                        <Col md={2} xl={2}>
+                          <Form.Item>
+                            <Button
+                              onClick={() => {
+                                calculateTotalCost();
+                                remove(name);
+                              }}
+                              size="large"
+                              className="addMinusBtn"
+                              // block
+                              icon={<MinusOutlined />}
+                            >
+                              {/* Add Entity */}
+                            </Button>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </>
+                  ))}
+                  <Row align={'middle'} justify={'space-between'} className="data-rows">
+                    <Col md={2} xl={2}>
+                      <div className="form-list-actions">
                         <Form.Item>
                           <Button
                             onClick={() => {
-                              remove(name);
-                              calculateTotalCost();
+                              add();
                             }}
-                            icon={<MinusOutlined />}
-                          />
+                            size="large"
+                            className="addMinusBtn"
+                            // block
+                            icon={<PlusOutlined />}
+                          ></Button>
                         </Form.Item>
-                      </Col>
-                    </Row>
-                  ))}
-                  <Form.Item>
-                    <Button
-                      onClick={() => {
-                        add();
-                      }}
-                      icon={<PlusOutlined />}
-                    />
-                  </Form.Item>
+                      </div>
+                    </Col>
+                    <Col md={10} xl={10}>
+                      {' '}
+                    </Col>
+                    <Col md={4} xl={4}>
+                      {' '}
+                    </Col>
+                    <Col md={2} xl={2}>
+                      {' '}
+                    </Col>
+                  </Row>
                 </>
               )}
             </Form.List>
 
-            <Row className="total-cost-row">
-              <Col md={4} xl={4} className="col-1">
+            <Row align={'middle'} justify={'space-between'} className="data-rows">
+              <Col md={2} xl={2}>
                 {' '}
               </Col>
-              <Col md={8} xl={8} className="col-2">
-                Total
+              <Col md={10} xl={10}>
+                <p>{t('costQuotation:total')}</p>
               </Col>
-              <Col md={6} xl={6} className="col-3 ">
+              <Col md={4} xl={4}>
                 <Form.Item
-                  name="totalCost"
+                  name={'totalCost'}
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:isRequired')}`,
-                    },
-                    {
-                      validator(rule, value) {
-                        if (!value) {
-                          return Promise.resolve();
-                        }
-
-                        // eslint-disable-next-line no-restricted-globals
-                        if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer!'));
-                        }
-
-                        return Promise.resolve();
-                      },
+                      message: `${t('costQuotation:total')} ${t('costQuotation:isRequired')}`,
                     },
                   ]}
                 >
-                  <Input disabled />
+                  <Input size="large" disabled />
                 </Form.Item>
               </Col>
-              <Col md={4} xl={4} className="col-4">
+              <Col md={2} xl={2}>
                 {' '}
               </Col>
             </Row>
-            <h4 className="description-title">Conditions:</h4>
-            <div className="description">
-              <ul>
-                <li>50% of the payment on up front</li>
-                <li>50% of the payment on completing the Validation and Verification </li>
-              </ul>
-            </div>
           </div>
 
           {/* Costing table end */}
