@@ -94,9 +94,23 @@ export class ValidationAgreementContentDto {
   @IsString()
   witness2Designation: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ValidationAgreementAppendix)
-  appendix?: ValidationAgreementAppendix[];
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  annexureAComment: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  annexureADoc: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  annexureBComment: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  annexureBDoc: string;
 }
