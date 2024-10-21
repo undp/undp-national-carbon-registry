@@ -178,6 +178,31 @@ export class ProjectProposalContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
+  projectCapacityUnit: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  plantFactorUnit: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  avgEnergyOutputUnit: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  gridEmissionFactorUnit: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  emissionReductionUnit: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
   @IsNumber()
   avgCreditGenerationPerAnnum: number;
 

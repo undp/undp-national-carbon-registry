@@ -178,5 +178,7 @@
   "PROPOSAL_STAGE": "Proposal Stage",
   "PROCUREMENT_STAGE": "Procument Stage",
   "CONSTRUCTION_STAGE": "Construction Stage",
-  "INSTALLATION_STAGE": "Installation Stage"
+  "INSTALLATION_STAGE": "Installation Stage",
+  "infApproved": "Initial notification form approved successfully",
+  "somethingWentWrong": "Something went wrong!"
 }
