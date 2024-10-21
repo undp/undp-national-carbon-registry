@@ -156,6 +156,7 @@ export class ProgrammeLedgerService {
             break;
           case TxType.CREATE_PROJECT_PROPOSAL:
             uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_PROPOSAL;
+            break;
           case TxType.CREATE_VALIDATION_AGREEMENT:
             uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT;
             break;
