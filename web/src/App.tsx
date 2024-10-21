@@ -46,6 +46,7 @@ import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoring
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
 import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
+import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
 
 const App = () => {
   const ability = defineAbility();
@@ -107,6 +108,13 @@ const App = () => {
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
                     <Route path="projectProposal" element={<ProjectProposalPage />} />
+                  </Route>
+
+                  <Route
+                    path=""
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="validationAgreement" element={<ValidationAgreementPage />} />
                   </Route>
 
                   <Route

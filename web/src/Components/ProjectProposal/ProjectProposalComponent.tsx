@@ -1976,6 +1976,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           >
             <TextArea rows={4} />
           </Form.Item>
+
+          <Row justify={'end'} className="step-actions-end">
+            <Button type="primary" size={'large'} htmlType="submit">
+              submit
+            </Button>
+          </Row>
         </Form>
       </div>
     </div>
