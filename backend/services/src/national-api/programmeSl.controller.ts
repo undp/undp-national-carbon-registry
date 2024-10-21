@@ -16,6 +16,7 @@ import { TxType } from "src/enum/txtype.enum";
 import { CompanyRole } from "src/enum/company.role.enum";
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
+import { DocumentEntity } from "src/entities/document.entity";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -131,9 +132,17 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocs")
   async getDocs(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getDocs(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getDocLastVersion")
+  async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocs(getDocDto, req.user);
   }
 }
