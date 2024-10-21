@@ -47,6 +47,8 @@ import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectD
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
 import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
 import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
+import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
+import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 
 const App = () => {
   const ability = defineAbility();
@@ -126,7 +128,15 @@ const App = () => {
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
+                    <Route path="addCostQuotation" element={<SLCFCostQuotationForm />} />
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
+                  </Route>
+                  <Route
+                    path="/retirementManagement"
+                    element={<CustomLayout selectedKey="retirementManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<SLCFRetirement />} />
+                    {/* <Route path="view" element={<ProgrammeView />} /> */}
                   </Route>
                   <Route
                     path="/programmeManagement"

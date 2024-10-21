@@ -8,6 +8,7 @@ import {
   ProgrammeStageUnified,
   ProgrammeStatus,
   ProgrammeCategory,
+  ProjectProposalStage,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -206,6 +207,7 @@ export interface ProgrammeSl {
   projectCategory: ProgrammeCategory;
   purposeOfCreditDevelopment: string;
   currentStage: ProgrammeStageR | ProgrammeStageMRV | ProgrammeStageUnified;
+  projectProposalStage: ProjectProposalStage;
   startDate: number;
   endTime: number;
   creditChange: number;
@@ -253,6 +255,7 @@ export interface ProgrammeT extends Programme {
 
 export interface ProgrammeSlU extends ProgrammeSl {
   currentStage: ProgrammeStageUnified;
+  projectProposalStage: ProjectProposalStage;
   programmeProperties: ProgrammePropertiesU;
   emissionReductionExpected: number;
   emissionReductionAchieved: number;
@@ -274,7 +277,7 @@ export const getGeneralFields = (
     title: programme.title,
     serialNo: programme.serialNo,
     currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
+    applicationType: 'Project Participant',
     sector: programme.sector,
     sectoralScope:
       Object.keys(SectoralScope)[

@@ -8,6 +8,7 @@ import {
   FileAddOutlined,
   LikeOutlined,
   BookOutlined,
+  FolderViewOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -20,7 +21,11 @@ import { Role } from '../../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { formCreatePermission, linkDocVisible } from '../../../Utils/documentsPermissionSl';
+import {
+  formCreatePermission,
+  formViewPermission,
+  linkDocVisible,
+} from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
 
 export interface VerificationFormsProps {
@@ -33,7 +38,7 @@ export interface VerificationFormsProps {
   getProgrammeById: any;
   ministryLevelPermission?: boolean;
   translator: any;
-  programmeStatus?: any;
+  projectProposalStage?: any;
 }
 
 export const VerificationForms: FC<VerificationFormsProps> = (props: VerificationFormsProps) => {
@@ -47,7 +52,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     getProgrammeById,
 
     translator,
-    programmeStatus,
+    projectProposalStage,
   } = props;
 
   const t = translator.t;
@@ -74,6 +79,9 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   }, [data]);
 
   const navigateToMonitoringReportCreate = () => {
+    navigate('/programmeManagementSLCF/monitoringReport');
+  };
+  const navigateToMonitoringReportView = () => {
     navigate('/programmeManagementSLCF/monitoringReport');
   };
 
@@ -186,6 +194,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     userInfoState?.userRole !== Role.ViewOnly;
 
   const designDocPending = designDocStatus === DocumentStatus.PENDING;
+  function navigateToVerificationReportCreate(): void {
+    throw new Error('Function not implemented.');
+  }
+  function navigateToVerificationReportView(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return loading ? (
     <Skeleton />
   ) : (
@@ -202,22 +217,29 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                 <div className="label">{t('projectDetailsView:monitoringReport')}</div>
               </div>
             </Col>
-            <Col span={6} className="field-value">
+            <Col span={3} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
-                    t('projectDetailsView:orgNotAuth')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -230,22 +252,59 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.MONITORING_REPORT) &&
-                      navigateToMonitoringReportCreate()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportView()
                     }
                   />
                 </Tooltip>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                  onChange={(e: any) => {
-                    const selectedFile = e.target.files[0];
-                    e.target.value = null;
-                    onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                  }}
-                />
+              </>
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.MONITORING_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FileAddOutlined
+                    className="common-progress-icon"
+                    style={
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={() =>
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.MONITORING_REPORT,
+                        projectProposalStage
+                      ) && navigateToMonitoringReportCreate()
+                    }
+                  />
+                </Tooltip>
               </>
             </Col>
           </Row>
@@ -255,22 +314,29 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                 <div className="label">{t('projectDetailsView:verificationReport')}</div>
               </div>
             </Col>
-            <Col span={6} className="field-value">
+            <Col span={3} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
                   placement="top"
                   trigger="hover"
                   title={
-                    !formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT) &&
-                    t('projectDetailsView:orgNotAuth')
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <FolderViewOutlined
                     className="common-progress-icon"
                     style={
-                      formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT)
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
                         ? {
                             color: '#3F3A47',
                             cursor: 'pointer',
@@ -283,22 +349,59 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                     }
                     onClick={() =>
-                      formCreatePermission(userInfoState, DocType.DESIGN_DOCUMENT) &&
-                      navigateToMonitoringReportCreate()
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportView()
                     }
                   />
                 </Tooltip>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
-                  onChange={(e: any) => {
-                    const selectedFile = e.target.files[0];
-                    e.target.value = null;
-                    onUploadDocument(selectedFile, DocType.DESIGN_DOCUMENT);
-                  }}
-                />
+              </>
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formCreatePermission(
+                      userInfoState,
+                      DocType.VERIFICATION_REPORT,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthCreate')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <FileAddOutlined
+                    className="common-progress-icon"
+                    style={
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={() =>
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VERIFICATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToVerificationReportCreate()
+                    }
+                  />
+                </Tooltip>
               </>
             </Col>
           </Row>

@@ -7,6 +7,7 @@ import { PoliciesGuardEx } from "../casl/policy.guard";
 import { Action } from "../casl/action.enum";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementStatusUpdateSlDto } from "../dto/creditRetirementStatusUpdateSl.dto";
+import { QueryDto } from "../dto/query.dto";
 
 @ApiTags("Credit Retire")
 @ApiBearerAuth()
@@ -29,5 +30,12 @@ export class CreditRetirementSlController {
     @Request() req
   ) {
     return await this.retirementService.updateCreditRetirementRequestStatus(dto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, CreditRetirementSl, true))
+  @Post("query")
+  async queryCreditRetirementRequests(@Body() dto: QueryDto, @Request() req) {
+    return await this.retirementService.queryRetirements(dto, req.abilityCondition, req.user);
   }
 }

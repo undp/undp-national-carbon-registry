@@ -24,6 +24,9 @@ import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { VoluntarilyCancellationCertificateGenerator } from "../util/voluntarilyCancellationCertificate.gen";
+import { QueryDto } from "../dto/query.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
+import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
 
 @Injectable()
 export class CreditRetirementSlService {
@@ -33,6 +36,8 @@ export class CreditRetirementSlService {
     private helperService: HelperService,
     private companyService: CompanyService,
     @InjectRepository(CreditRetirementSl) private retirementRepo: Repository<CreditRetirementSl>,
+    @InjectRepository(CreditRetirementSlView)
+    private retirementViewRepo: Repository<CreditRetirementSlView>,
     private emailHelperService: EmailHelperService,
     private configService: ConfigService,
     private txRefGeneratorService: TxRefGeneratorService,
@@ -192,6 +197,62 @@ export class CreditRetirementSlService {
     return creditRetirementRequest;
   }
 
+  //MARK: Query Retirements
+  async queryRetirements(query: QueryDto, abilityCondition: string, user: User): Promise<any> {
+    let queryBuilder = await this.retirementViewRepo
+      .createQueryBuilder("credit_retirements")
+      .where(
+        this.helperService.generateWhereSQL(
+          query,
+          this.helperService.parseMongoQueryToSQLWithTable("credit_retirements", abilityCondition)
+        )
+      );
+
+    // if (
+    //   query.filterBy !== null &&
+    //   query.filterBy !== undefined &&
+    //   query.filterBy.key === "ministryLevel"
+    // ) {
+    //   queryBuilder = queryBuilder.andWhere(
+    //     "programme_transfer.programmeSectoralScope IN (:...allowedScopes)",
+    //     {
+    //       allowedScopes: query.filterBy.value,
+    //     }
+    //   );
+    // }
+
+    const resp = await queryBuilder
+      .orderBy(
+        query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key),
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
+      .getManyAndCount();
+
+    if (resp && resp.length > 0) {
+      for (const e of resp[0]) {
+        e.toCompany = e.toCompany.length > 0 && e.toCompany[0] === null ? [] : e.toCompany;
+
+        // if (e.toCompanyMeta && e.toCompanyMeta.country) {
+        //   e.toCompanyMeta["countryName"] = await this.countryService.getCountryName(
+        //     e.toCompanyMeta.country
+        //   );
+        // }
+      }
+    }
+
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+  }
+
   //MARK: Update Status
   async updateCreditRetirementRequestStatus(dto: CreditRetirementStatusUpdateSlDto, user: User) {
     const retirementRequest = await this.retirementRepo.findOneBy({
@@ -238,16 +299,27 @@ export class CreditRetirementSlService {
           user,
           programme,
           retirementRequest,
-          companyCF
+          companyCF,
+          dto.comment
         );
         break;
 
       case RetirementStatusSl.REJECTED:
-        return await this.rejectCreditRetirementRequest(user, programme, retirementRequest);
+        return await this.rejectCreditRetirementRequest(
+          user,
+          programme,
+          retirementRequest,
+          dto.comment
+        );
         break;
 
-      case RetirementStatusSl.CANCELED:
-        return await this.cancelCreditRetirementRequest(user, programme, retirementRequest);
+      case RetirementStatusSl.CANCELLED:
+        return await this.cancelCreditRetirementRequest(
+          user,
+          programme,
+          retirementRequest,
+          dto.comment
+        );
         break;
 
       default:
@@ -261,11 +333,13 @@ export class CreditRetirementSlService {
     }
   }
 
+  //MARK: Approve Retirement
   async approveCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
     retirementRequest: CreditRetirementSl,
-    climateFundOrg: Company
+    climateFundOrg: Company,
+    remark: string
   ) {
     if (!this.isSLCFAdminOrManager(user)) {
       throw new HttpException(
@@ -354,6 +428,7 @@ export class CreditRetirementSlService {
           programmeName: programme.title,
           credits: retirementRequest.creditAmount,
           serialNumber: programme.serialNo,
+          remark,
         }
       );
     }
@@ -371,7 +446,8 @@ export class CreditRetirementSlService {
   async rejectCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
-    retirementRequest: CreditRetirementSl
+    retirementRequest: CreditRetirementSl,
+    remark: string
   ) {
     if (!this.isSLCFAdminOrManager(user)) {
       throw new HttpException(
@@ -399,6 +475,7 @@ export class CreditRetirementSlService {
           programmeName: programme.title,
           credits: retirementRequest.creditAmount,
           serialNumber: programme.serialNo,
+          remark,
         }
       );
     }
@@ -416,7 +493,8 @@ export class CreditRetirementSlService {
   async cancelCreditRetirementRequest(
     user: User,
     programme: ProgrammeSl,
-    retirementRequest: CreditRetirementSl
+    retirementRequest: CreditRetirementSl,
+    remark: string
   ) {
     if (!this.isProjectParticipant(user)) {
       throw new HttpException(
@@ -430,7 +508,7 @@ export class CreditRetirementSlService {
         requestId: retirementRequest.requestId,
       },
       {
-        status: RetirementStatusSl.CANCELED,
+        status: RetirementStatusSl.CANCELLED,
       }
     );
 
@@ -441,6 +519,7 @@ export class CreditRetirementSlService {
           : EmailTemplates.CREDIT_RETIRE_SL_REQUEST_CANCELED,
         {
           credits: retirementRequest.creditAmount,
+          remark,
         },
         programme.programmeId,
         programme.companyId
@@ -472,6 +551,7 @@ export class CreditRetirementSlService {
     );
   }
 
+  //MARK: findLatestTxRefByProgrammeId
   async findLatestTxRefByProgrammeId(programmeId: string): Promise<string> {
     // Retrieve all requests for the given programmeId, ordered by createdTime in descending order
     const requests = await this.retirementRepo.find({
@@ -487,6 +567,7 @@ export class CreditRetirementSlService {
     return requests[0].txRef;
   }
 
+  //MARK: formatCustomDate
   formatCustomDate(epoch?) {
     // If an epoch is provided, create a Date object for that epoch; otherwise, use the current date
     const date = epoch ? new Date(parseInt(epoch, 10)) : new Date();

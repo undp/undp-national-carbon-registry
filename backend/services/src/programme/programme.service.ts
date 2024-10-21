@@ -4458,7 +4458,7 @@ export class ProgrammeService {
       dto.externalId = programme.externalId;
       dto.sectoralScope = programmeSectoralScopeKey;
       dto.sector = programme.sector;
-      dto.applicantType = "Programme Developer";
+      dto.applicantType = "Project Participant";
       dto.countryCodeA2 = programme.countryCodeA2;
       dto.currentStage = programme.currentStage;
       dto.programmeOwner = concatenatedNames;

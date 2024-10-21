@@ -99,5 +99,9 @@
   "noinvestment": "No Financings Available",
   "existingInvestmentSource": "Source",
   "noInvestmentData": "No financing information available",
-  "view": "View"
+  "view": "View",
+  "PROPOSAL_STAGE": "Proposal Stage",
+  "PROCUREMENT_STAGE": "Procument Stage",
+  "CONSTRUCTION_STAGE": "Construction Stage",
+  "INSTALLATION_STAGE": "Installation Stage"
 }
