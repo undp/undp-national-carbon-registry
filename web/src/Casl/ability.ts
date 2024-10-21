@@ -195,6 +195,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
       if (user.role === Role.Admin) {
         can(Action.Create, Company);
+        can(Action.Approve, Company);
+        can(Action.Reject, Company);
       }
     }
   }

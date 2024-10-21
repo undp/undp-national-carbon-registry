@@ -15,6 +15,7 @@ import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
 import { SectoralScope } from '../Enums/sectoralScope.enum';
 import { RcFile } from 'rc-upload/lib/interface';
 import { CarbonSystemType } from '../Enums/carbonSystemType.enum';
+import { ProjectProposalStage } from '../Enums/projectSl.enum';
 
 export const getStageEnumVal = (value: string) => {
   const index = Object.keys(ProgrammeStageUnified).indexOf(value);
@@ -222,6 +223,7 @@ export interface ProgrammeSl {
   companyId: number;
   proponentPercentage: number[];
   creditOwnerPercentage: number[];
+  projectProposalStage: ProjectProposalStage;
   certifierId: any[];
   certifier: any[];
   company: any;
@@ -277,7 +279,7 @@ export const getGeneralFields = (
     title: programme.title,
     serialNo: programme.serialNo,
     currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
+    applicationType: 'Project Participant',
     sector: programme.sector,
     sectoralScope:
       Object.keys(SectoralScope)[
