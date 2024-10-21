@@ -136,4 +136,12 @@ export class ProgrammeSlController {
   async getDocs(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocs(getDocDto, req.user);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @Post("getDocLastVersion")
+  async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getDocs(getDocDto, req.user);
+  }
 }

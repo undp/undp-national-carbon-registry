@@ -180,5 +180,8 @@
   "CONSTRUCTION_STAGE": "Construction Stage",
   "INSTALLATION_STAGE": "Installation Stage",
   "infApproved": "Initial notification form approved successfully",
-  "somethingWentWrong": "Something went wrong!"
+  "somethingWentWrong": "Something went wrong!",
+  "infRejected": "Initial notification form rejected successfully",
+  "proposalApproved": "Project proposal form approved successfully",
+  "proposalRejected": "Project proposal form rejected successfully"
 }

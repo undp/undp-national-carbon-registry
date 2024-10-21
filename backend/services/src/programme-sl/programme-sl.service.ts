@@ -729,6 +729,32 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, documents);
   }
 
+  async getDocLastVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const documents = await this.documentRepo.find({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    if (documents && documents.length > 0) {
+      return new DataResponseDto(HttpStatus.OK, documents[0]);
+    }
+    return new DataResponseDto(HttpStatus.OK, null);
+  }
+
   async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
     const limit = query.size || 10;
