@@ -457,14 +457,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const approveNotificationForm = async () => {
     try {
-      const response: any = await post('national/programmeSl/proposal/approve', {
+      const response: any = await post('national/programmeSl/inf/approve', {
         programmeId: id,
       });
       console.log('response ', response);
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
         message.open({
           type: 'success',
-          content: t('projectDetailsView:proposalApproved'),
+          content: t('projectDetailsView:infApproved'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -509,14 +509,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const approveProposal = async () => {
     try {
-      const response: any = await post('national/programmeSl/inf/approve', {
+      const response: any = await post('national/programmeSl/proposal/approve', {
         programmeId: id,
       });
       console.log('response ', response);
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
         message.open({
           type: 'success',
-          content: t('projectDetailsView:infApproved'),
+          content: t('projectDetailsView:proposalApproved'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
