@@ -9,8 +9,6 @@ import {
   IsString,
   ValidateNested,
 } from "class-validator";
-import { Type } from "class-transformer";
-import { ValidationAgreementAppendix } from "./agreementAppendix.dto";
 
 export class ValidationAgreementContentDto {
   @ApiProperty()

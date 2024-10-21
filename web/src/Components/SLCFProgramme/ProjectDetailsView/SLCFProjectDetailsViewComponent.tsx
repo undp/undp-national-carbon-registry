@@ -429,8 +429,30 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingAll(false);
   };
 
-  const rejectNotificationForm = () => {
-    throw new Error('Function not implemented.');
+  const rejectNotificationForm = async () => {
+    try {
+      const response: any = await post('national/programmeSl/inf/reject', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:infRejected'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
   const approveNotificationForm = async () => {
@@ -446,7 +468,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate(`/programmeManagementSLCF/view/${id}`);
         getProgrammeById();
       }
     } catch (error: any) {
@@ -460,12 +481,56 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const rejectProposal = () => {
-    throw new Error('Function not implemented.');
+  const rejectProposal = async () => {
+    try {
+      const response: any = await post('national/programmeSl/proposal/reject', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:proposalRejected'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
-  const approveProposal = () => {
-    throw new Error('Function not implemented.');
+  const approveProposal = async () => {
+    try {
+      const response: any = await post('national/programmeSl/proposal/approve', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:proposalApproved'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
   const rejectCMA = () => {
