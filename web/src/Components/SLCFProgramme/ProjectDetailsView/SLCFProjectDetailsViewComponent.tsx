@@ -82,6 +82,7 @@ import { addNdcDesc, TimelineBody } from '../../TimelineBody/timelineBody';
 import { RetireType } from '../../../Definitions/Enums/retireType.enum';
 import { CreditTransferStage } from '../../../Definitions/Enums/creditTransferStage.enum';
 import {
+  CreditType,
   ProgrammeStageUnified,
   ProgrammeStatus,
   ProjectProposalStage,
@@ -105,7 +106,6 @@ import { ProgrammeDocuments } from '../../ProgrammeDocuments/programmeDocuments'
 import { MapComponent } from '../../Maps/mapComponent';
 import { ProjectForms } from '../projectForms/projectForms';
 import { VerificationForms } from '../projectForms/verificationForms';
-import { CreditType, ProjectProposalStage } from '../../../Definitions/Enums/projectSl.enum';
 import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRequestForm';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
