@@ -117,7 +117,7 @@ const App = () => {
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
-                    <Route path="addCostQuotation" element={<SLCFCostQuotationForm />} />
+                    <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
                   </Route>
                   <Route
