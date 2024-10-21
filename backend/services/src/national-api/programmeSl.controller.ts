@@ -12,6 +12,10 @@ import { CMADto } from "src/dto/cma.dto";
 import { GetDocDto } from "src/dto/getDoc.dto";
 import { QueryDto } from "src/dto/query.dto";
 import { CostQuotationDto } from "src/dto/costQuotation.dto";
+import { TxType } from "src/enum/txtype.enum";
+import { CompanyRole } from "src/enum/company.role.enum";
+import { ProjectProposalDto } from "src/dto/projectProposal.dto";
+import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -24,8 +28,55 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, ProgrammeSl))
   @Post("create")
   async addProgramme(@Body() programme: ProgrammeSlDto, @Request() req) {
-    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.create(programme, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("approveINF")
+  async approveINF(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_INF,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("rejectINF")
+  async rejectINF(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_INF,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("approveProposal")
+  async approveProposal(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_PROPOSAL,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("rejectProposal")
+  async rejectProposal(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_PROPOSAL,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -48,7 +99,6 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("createCMA")
   async createCMA(@Body() cmaDto: CMADto, @Request() req) {
-    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.createCMA(cmaDto, req.user);
   }
 
@@ -57,8 +107,26 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("createCostQuotation")
   async createCostQuotation(@Body() costQuotationDto: CostQuotationDto, @Request() req) {
-    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.createCostQuotation(costQuotationDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("createProjectProposal")
+  async createProjectProposal(@Body() projectProposalDto: ProjectProposalDto, @Request() req) {
+    return this.programmeService.createProjectProposal(projectProposalDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("createValidationAgreement")
+  async createValidationAgreement(
+    @Body() validationAgreementDto: ValidationAgreementDto,
+    @Request() req
+  ) {
+    return this.programmeService.createValidationAgreement(validationAgreementDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -66,7 +134,6 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
   @Post("getDocs")
   async getDocs(@Body() getDocDto: GetDocDto, @Request() req) {
-    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.getDocs(getDocDto, req.user);
   }
 }

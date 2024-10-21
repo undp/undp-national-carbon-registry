@@ -147,6 +147,97 @@ export class ProgrammeLedgerService {
             programmeId: programme.programmeId,
             txTime: prvTxTime,
           };
+        } else if (txType == TxType.APPROVE_INF) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.APPROVED_INF,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.REJECT_INF) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.REJECTED_INF,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.CREATE_COST_QUOTATION) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.SUBMITTED_COST_QUOTATION,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.CREATE_PROJECT_PROPOSAL) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.SUBMITTED_PROPOSAL,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.CREATE_VALIDATION_AGREEMENT) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.APPROVE_PROPOSAL) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.ACCEPTED_PROPOSAL,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
+        } else if (txType == TxType.REJECT_PROPOSAL) {
+          updatedProgramme = programme;
+          const uPayload = {
+            txTime: programme.txTime,
+            txType: programme.txType,
+            updatedTime: programme.updatedTime,
+            projectProposalStage: ProjectProposalStage.REJECTED_PROPOSAL,
+          };
+          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+            programmeId: programme.programmeId,
+            txTime: prvTxTime,
+          };
         }
 
         return [updateMap, updateWhereMap, insertMap];

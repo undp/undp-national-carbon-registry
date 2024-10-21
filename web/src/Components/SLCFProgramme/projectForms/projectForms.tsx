@@ -73,7 +73,9 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     : 5000000;
 
   const navigateToCostQuotationView = () => {};
-  const navigateToCostQuotationCreate = () => {};
+  const navigateToCostQuotationCreate = () => {
+    navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`);
+  };
   const navigateToProposalView = () => {};
   const navigateToProposalCreate = () => {};
 

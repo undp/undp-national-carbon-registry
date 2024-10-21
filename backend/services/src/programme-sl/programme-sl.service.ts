@@ -40,6 +40,9 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { Company } from "../entities/company.entity";
 import { QueryDto } from "../dto/query.dto";
 import { CostQuotationDto } from "src/dto/costQuotation.dto";
+import { UpdateProjectProposalStageDto } from "../dto/updateProjectProposalStage.dto";
+import { ProjectProposalDto } from "src/dto/projectProposal.dto";
+import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -144,6 +147,18 @@ export class ProgrammeSlService {
       );
     }
 
+    const programme = await this.programmeLedgerService.getProgrammeSlById(cmaDto.programmeId);
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.ACCEPTED_PROPOSAL) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
     const companyId = user.companyId;
 
     const projectCompany = await this.companyService.findByCompanyId(companyId);
@@ -212,11 +227,7 @@ export class ProgrammeSlService {
     cmaDoc.userId = user.id;
     cmaDoc.type = DocumentTypeEnum.CMA;
 
-    const lastVersion = await this.getLastDocumentVersion(
-      DocumentTypeEnum.CMA,
-      companyId,
-      cmaDto.programmeId
-    );
+    const lastVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, cmaDto.programmeId);
     cmaDoc.version = lastVersion + 1;
     cmaDoc.status = DocumentStatus.PENDING;
     cmaDoc.createdTime = new Date().getTime();
@@ -262,11 +273,15 @@ export class ProgrammeSlService {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
-        HttpStatus.BAD_REQUEST
+        HttpStatus.UNAUTHORIZED
       );
     }
 
-    const companyId = user.companyId;
+    const programme = await this.programmeLedgerService.getProgrammeSlById(
+      costQuotationDto.programmeId
+    );
+
+    const companyId = programme.companyId;
 
     const projectCompany = await this.companyService.findByCompanyId(companyId);
 
@@ -277,19 +292,15 @@ export class ProgrammeSlService {
       );
     }
 
-    const programme = await this.programmeLedgerService.getProgrammeSlById(
-      costQuotationDto.programmeId
-    );
-
-    // if (programme?.projectProposalStage !== ProjectProposalStage.APPROVED_INF) {
-    //   throw new HttpException(
-    //     this.helperService.formatReqMessagesString(
-    //       "programmeSl.programmeIsNotInSuitableStageToProceed",
-    //       []
-    //     ),
-    //     HttpStatus.BAD_REQUEST
-    //   );
-    // }
+    if (programme?.projectProposalStage !== ProjectProposalStage.APPROVED_INF) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     if (costQuotationDto.content.signature && costQuotationDto.content.signature.length > 0) {
       const docUrls = [];
@@ -313,7 +324,6 @@ export class ProgrammeSlService {
 
     const lastVersion = await this.getLastDocumentVersion(
       DocumentTypeEnum.COST_QUOTATION,
-      companyId,
       costQuotationDto.programmeId
     );
     costQuotationDoc.version = lastVersion + 1;
@@ -323,15 +333,389 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(costQuotationDoc);
 
+    const updateProgrammeSlProposalStage = {
+      programmeId: costQuotationDto.programmeId,
+      txType: TxType.CREATE_COST_QUOTATION,
+    };
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
     return new DataResponseDto(HttpStatus.OK, costQuotationDoc);
   }
 
+  async createProjectProposal(
+    projectProposalDto: ProjectProposalDto,
+    user: User
+  ): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(
+      projectProposalDto.programmeId
+    );
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_COST_QUOTATION) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const projectProposalDoc = new DocumentEntity();
+    projectProposalDoc.content = JSON.stringify(projectProposalDto.content);
+    projectProposalDoc.programmeId = projectProposalDto.programmeId;
+    projectProposalDoc.companyId = companyId;
+    projectProposalDoc.userId = user.id;
+    projectProposalDoc.type = DocumentTypeEnum.PROJECT_PROPOSAL;
+
+    const lastVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.PROJECT_PROPOSAL,
+      projectProposalDto.programmeId
+    );
+    projectProposalDoc.version = lastVersion + 1;
+    projectProposalDoc.status = DocumentStatus.PENDING;
+    projectProposalDoc.createdTime = new Date().getTime();
+    projectProposalDoc.updatedTime = projectProposalDoc.createdTime;
+
+    await this.documentRepo.insert(projectProposalDoc);
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: projectProposalDto.programmeId,
+      txType: TxType.CREATE_PROJECT_PROPOSAL,
+    };
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    return new DataResponseDto(HttpStatus.OK, projectProposalDoc);
+  }
+
+  async createValidationAgreement(
+    validationAgreementDto: ValidationAgreementDto,
+    user: User
+  ): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(
+      validationAgreementDto.programmeId
+    );
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_PROPOSAL) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (validationAgreementDto.content.climateFundSignature) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_CLIMATE_FUND_SIGN,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.climateFundSignature
+      );
+
+      validationAgreementDto.content.climateFundSignature = docUrl;
+    }
+
+    if (validationAgreementDto.content.projectParticipantSignature) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_PARTICIPANT_SIGN,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.projectParticipantSignature
+      );
+
+      validationAgreementDto.content.projectParticipantSignature = docUrl;
+    }
+
+    if (validationAgreementDto.content.witness1Signature) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_WITNESS1_SIGN,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.witness1Signature
+      );
+
+      validationAgreementDto.content.witness1Signature = docUrl;
+    }
+
+    if (validationAgreementDto.content.witness2Signature) {
+      const docUrl = await this.uploadDocument(
+        DocType.AGREEMENT_WITNESS2_SIGN,
+        validationAgreementDto.programmeId,
+        validationAgreementDto.content.witness2Signature
+      );
+
+      validationAgreementDto.content.witness2Signature = docUrl;
+    }
+
+    if (
+      validationAgreementDto.content.appendix &&
+      validationAgreementDto.content.appendix.length > 0
+    ) {
+      const appendixes = [];
+      for (const appendix of validationAgreementDto.content.appendix) {
+        const docUrl = await this.uploadDocument(
+          DocType.AGREEMENT_APPENDIX,
+          validationAgreementDto.programmeId,
+          appendix.document
+        );
+        appendix.document = docUrl;
+        appendixes.push(appendix);
+      }
+      validationAgreementDto.content.appendix = appendixes;
+    }
+
+    const validationAgreementDoc = new DocumentEntity();
+    validationAgreementDoc.content = JSON.stringify(validationAgreementDto.content);
+    validationAgreementDoc.programmeId = validationAgreementDto.programmeId;
+    validationAgreementDoc.companyId = companyId;
+    validationAgreementDoc.userId = user.id;
+    validationAgreementDoc.type = DocumentTypeEnum.VALIDATION_AGREEMENT;
+
+    const lastVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_AGREEMENT,
+      validationAgreementDto.programmeId
+    );
+    validationAgreementDoc.version = lastVersion + 1;
+    validationAgreementDoc.status = DocumentStatus.PENDING;
+    validationAgreementDoc.createdTime = new Date().getTime();
+    validationAgreementDoc.updatedTime = validationAgreementDoc.createdTime;
+
+    await this.documentRepo.insert(validationAgreementDoc);
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: validationAgreementDto.programmeId,
+      txType: TxType.CREATE_VALIDATION_AGREEMENT,
+    };
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
+  }
+
+  async updateProposalStage(updateProposalStageDto: UpdateProjectProposalStageDto, user: User) {
+    if (
+      updateProposalStageDto.txType == TxType.APPROVE_INF ||
+      updateProposalStageDto.txType == TxType.REJECT_INF ||
+      updateProposalStageDto.txType == TxType.CREATE_COST_QUOTATION ||
+      updateProposalStageDto.txType == TxType.CREATE_PROJECT_PROPOSAL ||
+      updateProposalStageDto.txType == TxType.CREATE_VALIDATION_AGREEMENT
+    ) {
+      if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    } else if (
+      updateProposalStageDto.txType == TxType.APPROVE_PROPOSAL ||
+      updateProposalStageDto.txType == TxType.REJECT_PROPOSAL
+    ) {
+      if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    //updating proposal stage in programme
+    const updatedProgramme = await this.programmeLedger.updateProgrammeSlProposalStage(
+      updateProposalStageDto.programmeId,
+      updateProposalStageDto.txType
+    );
+
+    //updating propsal stage of programme_sl entity
+    await this.programmeSlRepo
+      .update(
+        {
+          programmeId: updateProposalStageDto.programmeId,
+        },
+        {
+          projectProposalStage: updatedProgramme.projectProposalStage,
+          txTime: updatedProgramme.txTime,
+          updatedTime: updatedProgramme.updatedTime,
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //updating document status
+    if (updateProposalStageDto.txType == TxType.APPROVE_PROPOSAL) {
+      const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.COST_QUOTATION,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.COST_QUOTATION,
+            version: lastCostQuotationDocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+
+      const lastProposalDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.PROJECT_PROPOSAL,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.PROJECT_PROPOSAL,
+            version: lastProposalDocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+
+      const lastAgreementDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_AGREEMENT,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.VALIDATION_AGREEMENT,
+            version: lastAgreementDocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+    } else if (updateProposalStageDto.txType == TxType.REJECT_PROPOSAL) {
+      const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.COST_QUOTATION,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.COST_QUOTATION,
+            version: lastCostQuotationDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+
+      const lastProposalDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.PROJECT_PROPOSAL,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.PROJECT_PROPOSAL,
+            version: lastProposalDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+
+      const lastAgreementDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_AGREEMENT,
+        updateProposalStageDto.programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: updateProposalStageDto.programmeId,
+            type: DocumentTypeEnum.VALIDATION_AGREEMENT,
+            version: lastAgreementDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+    }
+  }
+
   async getDocs(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
     const documents = await this.documentRepo.find({
       where: {
         programmeId: getDocDto.programmeId,
         type: getDocDto.docType,
-        companyId: user.companyId,
       },
       order: {
         version: "DESC",
@@ -499,12 +883,10 @@ export class ProgrammeSlService {
 
   private async getLastDocumentVersion(
     docType: DocumentTypeEnum,
-    companyId: number,
     programmeId: string
   ): Promise<number> {
     const documents = await this.documentRepo.find({
       where: {
-        companyId: companyId,
         programmeId: programmeId,
         type: docType,
       },
