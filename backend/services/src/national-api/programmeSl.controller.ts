@@ -34,7 +34,7 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("approveINF")
+  @Post("inf/approve")
   async approveINF(@Body("programmeId") programmeId: string, @Request() req) {
     const updateProposalStageDto = {
       programmeId: programmeId,
@@ -46,7 +46,7 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("rejectINF")
+  @Post("inf/reject")
   async rejectINF(@Body("programmeId") programmeId: string, @Request() req) {
     const updateProposalStageDto = {
       programmeId: programmeId,
@@ -58,7 +58,7 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("approveProposal")
+  @Post("proposal/approve")
   async approveProposal(@Body("programmeId") programmeId: string, @Request() req) {
     const updateProposalStageDto = {
       programmeId: programmeId,
@@ -70,7 +70,7 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("rejectProposal")
+  @Post("proposal/reject")
   async rejectProposal(@Body("programmeId") programmeId: string, @Request() req) {
     const updateProposalStageDto = {
       programmeId: programmeId,
