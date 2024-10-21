@@ -21,8 +21,8 @@ import { DataListResponseDto } from "../dto/data.list.response";
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
   @Post(":locationType")
   @HttpCode(200)
   async getLocationData(

@@ -340,6 +340,10 @@ body {
   }
 }
 
+.ant-popover-placement-bottomRight {
+  z-index: 999;
+}
+
 .ant-tag {
   border-radius: 20px;
 }
