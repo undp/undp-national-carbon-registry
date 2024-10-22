@@ -110,21 +110,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     : 5000000;
 
   useEffect(() => {
-    console.log('---------- get view useEffect running ---------');
     const getViewData = async () => {
-      console.log('---------get view data----------');
       if (isView) {
         const res = await post('national/programmeSl/getDocLastVersion', {
           programmeId: id,
           docType: 'validationAgreement',
         });
 
-        console.log('----------get view data------', res);
 
         if (res?.statusText === 'SUCCESS') {
-          console.log('-------- get view data content---------', res?.data[0].content);
           const content = JSON.parse(res?.data[0].content);
-          console.log('--------get view data after content---------', content);
           viewDataMapToFields(content);
         }
       }
