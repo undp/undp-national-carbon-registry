@@ -195,6 +195,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`);
   }
 
+  function navigateToValidationAgreementView(): void {
+    navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`, {
+      state: { isView: true },
+    });
+  }
+
   function navigateToValidationReportView(): void {
     throw new Error('Function not implemented.');
   }
@@ -441,7 +447,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         userInfoState,
                         DocType.VALIDATION_AGREEMENT,
                         projectProposalStage
-                      ) && navigateToValidationAgreementCreate()
+                      ) && navigateToValidationAgreementView()
                     }
                   />
                 </Tooltip>
