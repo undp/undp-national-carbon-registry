@@ -124,22 +124,20 @@
           width: 20%;
 
           .ant-btn {
-            height: 66px;
+            height: 40px;
           }
         }
 
         .ant-upload-list {
-          align-items: center;
-          justify-content: center;
-          width: 75%;
-          height: 50px;
-
+          width: 100%;
+          border-radius: 20px;
+          margin-left: 5px;
           .ant-upload-list-picture-container {
-            margin-bottom: 15px;
-          }
-
-          .ant-upload-list-item {
-            margin-top: 0;
+            .ant-upload-list-item {
+              margin-top: 0px;
+              height: 40px;
+              border-radius: 5px;
+            }
           }
         }
       }

@@ -582,6 +582,10 @@ body {
   margin-bottom: 1rem !important;
 }
 
+.mg-bottom-2 {
+  margin-bottom: 2rem !important;
+}
+
 .transfer-form {
   .popup-credit-input {
     .ant-form-item-explain-error {
@@ -806,4 +810,17 @@ body {
 
 .download-data-btn {
   padding-left: 15px;
+}
+
+.ant-tooltip {
+  // width: 900px !important;
+  
+  max-width: 600px !important;
+  .ant-tooltip-content {
+    // width: 600px !important;
+    li {
+      list-style-position: inside;
+      list-style: disc;
+    }
+  }
 }

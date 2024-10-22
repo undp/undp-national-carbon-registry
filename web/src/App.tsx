@@ -45,6 +45,8 @@ import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
+import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
 import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 
@@ -104,11 +106,6 @@ const App = () => {
                   </Route>
 
                   <Route
-                    path=""
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  ></Route>
-
-                  <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
@@ -118,6 +115,11 @@ const App = () => {
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
                     <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
+                    <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
+                    <Route
+                      path="validationAgreement/:id"
+                      element={<ValidationAgreementPage />}
+                    />{' '}
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
                   </Route>
                   <Route
