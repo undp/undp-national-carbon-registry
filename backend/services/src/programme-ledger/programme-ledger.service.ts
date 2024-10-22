@@ -166,6 +166,12 @@ export class ProgrammeLedgerService {
           case TxType.REJECT_PROPOSAL:
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
             break;
+          case TxType.APPROVE_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
+            break;
+          case TxType.REJECT_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_CMA;
+            break;
           default:
             break;
         }
