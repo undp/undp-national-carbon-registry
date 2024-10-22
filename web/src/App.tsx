@@ -113,7 +113,7 @@ const App = () => {
                     <Route path="view/:id" element={<SLCFProjectDetailsView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
-                    <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
+                    <Route path="monitoringReport/:id" element={<SLCFMonitoringReport />} />
                     <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
                     <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
                     <Route

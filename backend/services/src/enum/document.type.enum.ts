@@ -5,4 +5,6 @@ export enum DocumentTypeEnum {
   COST_QUOTATION = "costQuotation",
   PROJECT_PROPOSAL = "projectProposal",
   VALIDATION_AGREEMENT = "validationAgreement",
+  ENVIRONMENTAL_IMPACT_ASSESSMENT = "environmentalImpactAssesment",
+  VALIDATION_REPORT = "validationReport",
 }

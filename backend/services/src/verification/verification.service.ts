@@ -30,10 +30,7 @@ export class VerificationService {
   issueCredits(issueCreditsDto: IssueCreditsDto, user: User) {
     if (user.companyRole !== CompanyRole.EXECUTIVE_COMMITTEE) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.issueCreditsWrongUser",
-          []
-        ),
+        this.helperService.formatReqMessagesString("verification.issueCreditsWrongUser", []),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -65,13 +62,11 @@ export class VerificationService {
     }
 
     await this.entityManager.transaction(async (em) => {
-      const verificationRequest = await this.verificationRequestRepository.find(
-        {
-          where: {
-            id: verifyReportDto.verificationRequestId,
-          },
-        }
-      );
+      const verificationRequest = await this.verificationRequestRepository.find({
+        where: {
+          id: verifyReportDto.verificationRequestId,
+        },
+      });
       if (verificationRequest) {
         await em.update(
           VerificationRequestEntity,
@@ -109,9 +104,7 @@ export class VerificationService {
             id: verifyReportDto.reportId,
           },
           {
-            status: verifyReportDto.verify
-              ? DocumentStatus.ACCEPTED
-              : DocumentStatus.REJECTED,
+            status: verifyReportDto.verify ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
             updatedTime: new Date().getTime(),
           }
         );
@@ -128,10 +121,7 @@ export class VerificationService {
     });
   }
 
-  async uploadVerificationReport(
-    verificationReportDto: VerificationReportDto,
-    user: User
-  ) {
+  async uploadVerificationReport(verificationReportDto: VerificationReportDto, user: User) {
     if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -164,12 +154,11 @@ export class VerificationService {
     verificationReportDocument.content = verificationReportDto.content;
 
     const savedReport = await this.entityManager.transaction(async (em) => {
-      const verificationRequest =
-        await this.verificationRequestRepository.findOne({
-          where: {
-            programmeId: verificationReportDto.programmeId,
-          },
-        });
+      const verificationRequest = await this.verificationRequestRepository.findOne({
+        where: {
+          programmeId: verificationReportDto.programmeId,
+        },
+      });
       if (verificationRequest) {
         await em.update(
           VerificationRequestEntity,
@@ -182,8 +171,7 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
-        verificationReportDocument.verificationRequestId =
-          verificationRequest.id;
+        verificationReportDocument.verificationRequestId = verificationRequest.id;
       } else {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -212,13 +200,11 @@ export class VerificationService {
     }
 
     await this.entityManager.transaction(async (em) => {
-      const verificationRequest = await this.verificationRequestRepository.find(
-        {
-          where: {
-            id: verifyReportDto.verificationRequestId,
-          },
-        }
-      );
+      const verificationRequest = await this.verificationRequestRepository.find({
+        where: {
+          id: verifyReportDto.verificationRequestId,
+        },
+      });
       if (verificationRequest) {
         await em.update(
           VerificationRequestEntity,
@@ -256,9 +242,7 @@ export class VerificationService {
             id: verifyReportDto.reportId,
           },
           {
-            status: verifyReportDto.verify
-              ? DocumentStatus.ACCEPTED
-              : DocumentStatus.REJECTED,
+            status: verifyReportDto.verify ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
             updatedTime: new Date().getTime(),
           }
         );
@@ -274,10 +258,7 @@ export class VerificationService {
       }
     });
   }
-  async uploadMonitoringReport(
-    monitoringReportDto: MonitoringReportDto,
-    user: User
-  ) {
+  async uploadMonitoringReport(monitoringReportDto: MonitoringReportDto, user: User) {
     if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -299,10 +280,9 @@ export class VerificationService {
     });
     const monitoringReportDocument = new DocumentEntity();
     monitoringReportDocument.userId = user.id;
-    monitoringReportDocument.version = monitoringDocument
-      ? monitoringDocument.version + 1
-      : 1;
+    monitoringReportDocument.version = monitoringDocument ? monitoringDocument.version + 1 : 1;
 
+    monitoringReportDocument.companyId = user.companyId;
     monitoringReportDocument.programmeId = monitoringReportDto.programmeId;
     monitoringReportDocument.status = DocumentStatus.PENDING;
     monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
@@ -333,8 +313,7 @@ export class VerificationService {
         const verificationRequest = new VerificationRequestEntity();
         verificationRequest.programmeId = monitoringReportDto.programmeId;
         verificationRequest.userId = user.id;
-        verificationRequest.status =
-          VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED;
+        verificationRequest.status = VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED;
         verificationRequest.createdTime = new Date().getTime();
         verificationRequest.updatedTime = new Date().getTime();
         const saved = await em.save(verificationRequest);

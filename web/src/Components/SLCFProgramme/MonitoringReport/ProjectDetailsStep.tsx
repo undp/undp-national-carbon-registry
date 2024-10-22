@@ -17,9 +17,7 @@ export const ProjectDetailsStep = (props: any) => {
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
-  const reportVersion = process.env.MONITORING_REPORT_VERSION
-    ? process.env.MONITORING_REPORT_VERSION
-    : 'Version 03';
+
   const t = translator.t;
   return (
     <>
@@ -33,20 +31,6 @@ export const ProjectDetailsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              // initialValues={{
-              //   projectTitle: 'p',
-              //   reportID: 'a',
-              //   pages: 'a',
-              //   projectProponents: 'a',
-              //   physicalAddress: 'Palpolawatta Road',
-              //   email: 'amila.uom.cse@gmail.com',
-              //   version: reportVersion,
-              //   reportTitle: 'a',
-              //   dateOfIssue: moment(1728498600, 'X'),
-              //   preparedBy: 'a',
-              //   telephone: '+94778647168',
-              //   website: 'a',
-              // }}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
                 values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').unix();
@@ -59,7 +43,7 @@ export const ProjectDetailsStep = (props: any) => {
                   <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:pd_projectTitle')}
-                      name="projectTitle"
+                      name="title"
                       rules={[
                         {
                           required: true,
@@ -111,35 +95,8 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:pd_pages')}
-                      name="pages"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_pages')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
                       label={t('monitoringReport:pd_projectProponents')}
-                      name="projectProponents"
+                      name="projectProponent"
                       rules={[
                         {
                           required: true,
@@ -163,9 +120,37 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-
                     <Form.Item
-                      label={t('monitoringReport:pd_physicalAddress')}
+                      label={t('monitoringReport:pd_dateOfIssue')}
+                      name="dateOfIssue"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:pd_dateOfIssue')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('monitoringReport:address')}
                       name="physicalAddress"
                       rules={[
                         {
@@ -190,10 +175,9 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-
                     <Form.Item
-                      label={t('monitoringReport:pd_email')}
-                      name="email"
+                      label={t('monitoringReport:pd_website')}
+                      name="website"
                       rules={[
                         {
                           required: true,
@@ -208,7 +192,7 @@ export const ProjectDetailsStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:pd_email')} ${t('isRequired')}`
+                                `${t('monitoringReport:pd_website')} ${t('isRequired')}`
                               );
                             }
                           },
@@ -274,35 +258,6 @@ export const ProjectDetailsStep = (props: any) => {
                       ]}
                     >
                       <Input size="large" />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:pd_dateOfIssue')}
-                      name="dateOfIssue"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_dateOfIssue')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker
-                        size="large"
-                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                      />
                     </Form.Item>
 
                     <Form.Item
@@ -382,10 +337,9 @@ export const ProjectDetailsStep = (props: any) => {
                         countries={countries}
                       />
                     </Form.Item>
-
                     <Form.Item
-                      label={t('monitoringReport:pd_website')}
-                      name="website"
+                      label={t('monitoringReport:pd_email')}
+                      name="email"
                       rules={[
                         {
                           required: true,
@@ -400,7 +354,7 @@ export const ProjectDetailsStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:pd_website')} ${t('isRequired')}`
+                                `${t('monitoringReport:pd_email')} ${t('isRequired')}`
                               );
                             }
                           },

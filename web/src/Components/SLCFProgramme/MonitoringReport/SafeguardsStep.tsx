@@ -28,7 +28,7 @@ export const SafeguardsStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:s_noNetHarm')}
+                      label={`3.1 ${t('monitoringReport:s_noNetHarm')}`}
                       name="noNetHarm"
                       rules={[
                         {
@@ -37,15 +37,11 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:s_noNetHarmPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:s_stakeholderConsultation')}
+                      label={`3.2 ${t('monitoringReport:s_stakeholderConsultation')}`}
                       name="stakeholderConsultation"
                       tooltip={{
                         title: (
@@ -110,15 +106,11 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:s_stakeholderConsultation')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:s_afoluSpecificSafeguards')}
+                      label={`3.3 ${t('monitoringReport:s_afoluSpecificSafeguards')}`}
                       name="afoluSpecificSafeguards"
                       tooltip={{
                         title: (
@@ -163,11 +155,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:s_afoluSpecificSafeguards')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>

@@ -2,6 +2,10 @@
 @import '../../../Styles/colors.role.scss';
 @import '../../../Styles/variables.scss';
 
+.to-lable {
+  text-align: center;
+  margin-top: 8px;
+}
 .monitoring-form-container {
   display: flex;
   flex-direction: column;
@@ -133,4 +137,14 @@
   }
 }
 
-
+.ant-tooltip {
+  // width: 900px !important;
+  .ant-tooltip-content {
+    width: 600px !important;
+    // padding: 10px;
+    li {
+      list-style-position: inside;
+      list-style: disc;
+    }
+  }
+}

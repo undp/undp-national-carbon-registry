@@ -143,6 +143,6 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocLastVersion")
   async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
-    return this.programmeService.getDocs(getDocDto, req.user);
+    return this.programmeService.getDocLastVersion(getDocDto, req.user);
   }
 }

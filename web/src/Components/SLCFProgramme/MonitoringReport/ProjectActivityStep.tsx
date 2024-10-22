@@ -14,6 +14,8 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from 
 import LocationMapComponent from './LocationMapComponent';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
+import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 export const ProjectActivityStep = (props: any) => {
   const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
 
@@ -84,15 +86,6 @@ export const ProjectActivityStep = (props: any) => {
 
   const getCities = async (division?: string) => {
     try {
-      // const { data } = await post('national/location/city', {
-      //   filterAnd: [
-      //     {
-      //       key: 'divisionName',
-      //       operation: '=',
-      //       value: division,
-      //     },
-      //   ],
-      // });
       const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
@@ -130,7 +123,7 @@ export const ProjectActivityStep = (props: any) => {
               requiredMark={true}
               form={form}
               initialValues={{}}
-              onFinish={(values: any) => {
+              onFinish={async (values: any) => {
                 values?.projectProponentsList?.unshift({
                   organizationName: values.organizationName,
                   email: values.email,
@@ -158,8 +151,7 @@ export const ProjectActivityStep = (props: any) => {
                   dsDivision: values.dsDivision,
                   city: values.city,
                   community: values.community,
-                  projectFundings: values.projectFundings,
-                  projectCommisionDate: values.projectCommisionDate,
+                  optionalDocuments: values.optionalDocuments,
                   projectStartDate: values.projectStartDate,
                 });
 
@@ -169,15 +161,24 @@ export const ProjectActivityStep = (props: any) => {
                 delete values.dsDivision;
                 delete values.city;
                 delete values.community;
-                delete values.projectFundings;
-                delete values.projectCommisionDate;
+
                 delete values.projectStartDate;
 
-                values?.projectActivityLocationsList?.forEach((val: any) => {
-                  val.projectCommisionDate = moment(values?.projectCommisionDate)
-                    .startOf('day')
-                    .unix();
+                values?.projectActivityLocationsList?.forEach(async (val: any) => {
                   val.projectStartDate = moment(values?.projectStartDate).startOf('day').unix();
+                  val.optionalDocuments = await (async function () {
+                    const base64Docs: string[] = [];
+
+                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                      const docs = values.optionalDocuments;
+                      for (let i = 0; i < docs.length; i++) {
+                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                        base64Docs.push(temp);
+                      }
+                    }
+
+                    return base64Docs;
+                  })();
                 });
                 onValueChange({ projectActivity: values });
                 next();
@@ -187,7 +188,7 @@ export const ProjectActivityStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:pa_monitoringObjective')}
+                      label={`1.1 ${t('monitoringReport:pa_monitoringObjective')}`}
                       name="monitoringObjective"
                       rules={[
                         {
@@ -205,7 +206,7 @@ export const ProjectActivityStep = (props: any) => {
                       />
                     </Form.Item>
                     <Form.Item
-                      label={t('monitoringReport:pa_implementation')}
+                      label={`1.2 ${t('monitoringReport:pa_implementation')}`}
                       name="implementation"
                       tooltip={{
                         title: (
@@ -249,7 +250,7 @@ export const ProjectActivityStep = (props: any) => {
                       />
                     </Form.Item>
                     <Form.Item
-                      label={t('monitoringReport:pa_scopeAndType')}
+                      label={`1.3 ${t('monitoringReport:pa_scopeAndType')}`}
                       name="scopeAndType"
                       rules={[
                         {
@@ -264,7 +265,9 @@ export const ProjectActivityStep = (props: any) => {
                         maxLength={6}
                       />
                     </Form.Item>
-                    <h4 className="form-section-title">{t('monitoringReport:projectProponent')}</h4>
+                    <h4 className="form-section-title">{`1.4  ${t(
+                      'monitoringReport:projectProponent'
+                    )}`}</h4>
 
                     <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
                       <Col xl={12} md={24}>
@@ -477,7 +480,7 @@ export const ProjectActivityStep = (props: any) => {
 
                     <>
                       <h4 className="form-section-title">
-                        {t('monitoringReport:otherEntitiesInProject')}
+                        {`1.5  ${t('monitoringReport:otherEntitiesInProject')}`}
                       </h4>
 
                       <h4>Entity 1</h4>
@@ -994,11 +997,182 @@ export const ProjectActivityStep = (props: any) => {
                         )}
                       </Form.List>
                     </>
+
+                    <>
+                      <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
+                        <Col xl={12} md={24}>
+                          <div className="step-form-right-col">
+                            <h4 className="form-section-title">
+                              {`1.6  ${t('monitoringReport:projectCreditingPeriod')}`}
+                            </h4>
+                            <Row>
+                              <Col xl={11} md={24}>
+                                <Form.Item
+                                  name="credutingPeriodFromDate"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: '',
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('monitoringReport:credutingPeriodFromDate')} ${t(
+                                              'isRequired'
+                                            )}`
+                                          );
+                                        }
+                                      },
+                                    },
+                                  ]}
+                                >
+                                  <DatePicker
+                                    size="large"
+                                    disabledDate={(currentDate: any) =>
+                                      currentDate < moment().startOf('day')
+                                    }
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col xl={2} md={24}>
+                                <div className="step-form-right-col">
+                                  <h4 className="to-lable">{t('monitoringReport:to')}</h4>
+                                </div>
+                              </Col>
+                              <Col xl={11} md={24}>
+                                <Form.Item
+                                  name="credutingPeriodToDate"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: '',
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('monitoringReport:credutingPeriodToDate')} ${t(
+                                              'isRequired'
+                                            )}`
+                                          );
+                                        }
+                                      },
+                                    },
+                                  ]}
+                                >
+                                  <DatePicker
+                                    size="large"
+                                    disabledDate={(currentDate: any) =>
+                                      currentDate < moment().startOf('day')
+                                    }
+                                  />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xl={24} md={24}>
+                                <div className="step-form-left-col">
+                                  <Form.Item
+                                    name="creditingPeriodComment"
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          'monitoringReport:creditingPeriodComment'
+                                        )} ${t('isRequired')}`,
+                                      },
+                                    ]}
+                                  >
+                                    <TextArea rows={6} maxLength={6} />
+                                  </Form.Item>
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
+                        </Col>
+                        <Col xl={12} md={24}>
+                          <div className="step-form-right-col">
+                            <h4 className="form-section-title">
+                              {`1.7  ${t('monitoringReport:registrationDateOfTheActivity')}`}
+                            </h4>
+                            <Row>
+                              <Col xl={24} md={24}>
+                                <Form.Item
+                                  name="registrationDateOfTheActivity"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: '',
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t(
+                                              'monitoringReport:registrationDateOfTheActivity'
+                                            )} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
+                                    },
+                                  ]}
+                                >
+                                  <DatePicker
+                                    size="large"
+                                    disabledDate={(currentDate: any) =>
+                                      currentDate < moment().startOf('day')
+                                    }
+                                  />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          </div>
+                          <div className="step-form-right-col">
+                            <h4 className="form-section-title">
+                              {`1.8  ${t('monitoringReport:projectTrackAndCreditUse')}`}
+                            </h4>
+                            <Row>
+                              <Col xl={24} md={24}>
+                                <Form.Item
+                                  name="projectTrackAndCreditUse"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: `${t(
+                                        'monitoringReport:projectTrackAndCreditUse'
+                                      )} ${t('isRequired')}`,
+                                    },
+                                  ]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
                   </div>
                 </Col>
               </Row>
               <>
-                <h4 className="form-section-title">{`1.5 ${t(
+                <h4 className="form-section-title">{`1.9 ${t(
                   'monitoringReport:locationOfProjectActivity'
                 )}`}</h4>
 
@@ -1113,36 +1287,6 @@ export const ProjectActivityStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-
-                    <Form.Item
-                      label={`1.7 ${t('monitoringReport:projectStartDate')}`}
-                      name="projectStartDate"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:projectStartDate')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker
-                        size="large"
-                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                      />
-                    </Form.Item>
                   </Col>
 
                   <Col xl={12} md={24}>
@@ -1157,49 +1301,6 @@ export const ProjectActivityStep = (props: any) => {
                       ]}
                     >
                       <LocationMapComponent form={form} formItemName={'location'} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`1.6 ${t('monitoringReport:projectFundings')}`}
-                      name="projectFundings"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:projectFundings')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size={'large'} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`1.8 ${t('monitoringReport:projectCommisionDate')}`}
-                      name="projectCommisionDate"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:projectCommisionDate')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker
-                        size="large"
-                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                      />
                     </Form.Item>
                   </Col>
                   <Col xl={24} md={24}>
@@ -1245,6 +1346,37 @@ export const ProjectActivityStep = (props: any) => {
                           Upload
                         </Button>
                       </Upload>
+                    </Form.Item>
+                  </Col>
+                  <Col xl={12} md={24}>
+                    <Form.Item
+                      label={`${t('monitoringReport:projectStartDate')}`}
+                      name="projectStartDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:projectStartDate')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1390,40 +1522,6 @@ export const ProjectActivityStep = (props: any) => {
                               >
                                 <Input size="large" />
                               </Form.Item>
-
-                              <Form.Item
-                                label={`1.7 ${t('monitoringReport:projectStartDate')}`}
-                                name={[name, 'projectStartDate']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: '',
-                                  },
-                                  {
-                                    validator: async (rule, value) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(
-                                          `${t('monitoringReport:projectStartDate')} ${t(
-                                            'isRequired'
-                                          )}`
-                                        );
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <DatePicker
-                                  size="large"
-                                  disabledDate={(currentDate: any) =>
-                                    currentDate < moment().startOf('day')
-                                  }
-                                />
-                              </Form.Item>
                             </Col>
 
                             <Col xl={12} md={24}>
@@ -1441,55 +1539,6 @@ export const ProjectActivityStep = (props: any) => {
                                   form={form}
                                   formItemName={[name, 'location']}
                                   listName="projectActivityLocations"
-                                />
-                              </Form.Item>
-
-                              <Form.Item
-                                label={`1.6 ${t('monitoringReport:projectFundings')}`}
-                                name={[name, 'projectFundings']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: `${t('monitoringReport:projectFundings')} ${t(
-                                      'isRequired'
-                                    )}`,
-                                  },
-                                ]}
-                              >
-                                <Input size={'large'} />
-                              </Form.Item>
-
-                              <Form.Item
-                                label={`1.8 ${t('monitoringReport:projectCommisionDate')}`}
-                                name={[name, 'projectCommisionDate']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: '',
-                                  },
-                                  {
-                                    validator: async (rule, value) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(
-                                          `${t('monitoringReport:projectCommisionDate')} ${t(
-                                            'isRequired'
-                                          )}`
-                                        );
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <DatePicker
-                                  size="large"
-                                  disabledDate={(currentDate: any) =>
-                                    currentDate < moment().startOf('day')
-                                  }
                                 />
                               </Form.Item>
                             </Col>
@@ -1542,6 +1591,41 @@ export const ProjectActivityStep = (props: any) => {
                                     Upload
                                   </Button>
                                 </Upload>
+                              </Form.Item>
+                            </Col>
+                            <Col xl={12} md={24}>
+                              <Form.Item
+                                label={`${t('monitoringReport:projectStartDate')}`}
+                                name={[name, 'projectStartDate']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: '',
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('monitoringReport:projectStartDate')} ${t(
+                                            'isRequired'
+                                          )}`
+                                        );
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <DatePicker
+                                  size="large"
+                                  disabledDate={(currentDate: any) =>
+                                    currentDate < moment().startOf('day')
+                                  }
+                                />
                               </Form.Item>
                             </Col>
                           </Row>
@@ -1616,11 +1700,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t('monitoringReport:pa_referencePlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1658,11 +1738,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t('monitoringReport:otherFormsOfCreditPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1680,11 +1756,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t('monitoringReport:sustainableDevelopmentPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
