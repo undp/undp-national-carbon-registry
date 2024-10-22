@@ -98,11 +98,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   };
 
   useEffect(() => {
-    setProjectLocationMapCenter(
-      projectLocations && projectLocations?.length > 0
-        ? getCenter(projectLocations[0])
-        : [80.7718, 7.8731]
-    );
+    setProjectLocationMapCenter([80.7718, 7.8731]);
 
     const tempMapSource: any = [];
     const tempLocationLayer: any = [];
@@ -151,6 +147,8 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     setProjectLocationMapOutlineLayer(tempOutlineLayer);
     form.setFieldValue('projectLocation', projectLocations);
   }, [projectLocations]);
+
+  console.log('project locations', projectLocationMapCenter, projectLocations);
 
   const onPolygonComplete = function (data: any) {
     if (data.features.length > 0) {
@@ -335,7 +333,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
         }
         return undefined;
       })(),
-      proposedProjectCapacity: values?.projectCapacity,
+      proposedProjectCapacity: Number(values?.projectCapacity),
       speciesPlanted: 'test',
       projectDescription: 'test',
       projectStatus: values?.projectStatus,
@@ -582,6 +580,14 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                     <Form.Item
                                       label={t('addProgramme:otherCategory')}
                                       name="otherCategory"
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: `${t('addProgramme:otherCategory')} ${t(
+                                            'isRequired'
+                                          )}`,
+                                        },
+                                      ]}
                                     >
                                       <Input size="large" />
                                     </Form.Item>
@@ -608,7 +614,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                     rules={[
                                       {
                                         required: true,
-                                        message: `${t('addProgramme:landExtent')}`,
+                                        message: `${t('addProgramme:landExtent')} ${t(
+                                          'isRequired'
+                                        )}`,
                                       },
                                       {
                                         validator(rule, value) {
@@ -628,7 +636,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <Input size="large" />
+                                    <Input size="large" addonAfter="ha" />
                                   </Form.Item>
                                   <p>{isMultipleLocations}</p>
                                   {isMultipleLocations && (
@@ -681,7 +689,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                                     },
                                                   ]}
                                                 >
-                                                  <Input size="large" />
+                                                  <Input size="large" addonAfter="ha" />
                                                 </Form.Item>
                                                 <Form.Item>
                                                   <Button
@@ -854,6 +862,20 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                       message: `${t('addProgramme:projectCapacity')} ${t(
                                         'isRequired'
                                       )}`,
+                                    },
+                                    {
+                                      validator(rule, value) {
+                                        if (!value) {
+                                          return Promise.resolve();
+                                        }
+
+                                        // eslint-disable-next-line no-restricted-globals
+                                        if (isNaN(value)) {
+                                          return Promise.reject(new Error('Should be an integer!'));
+                                        }
+
+                                        return Promise.resolve();
+                                      },
                                     },
                                   ]}
                                 >
