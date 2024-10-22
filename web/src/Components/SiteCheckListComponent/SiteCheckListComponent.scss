@@ -1,0 +1,47 @@
+@import '../../Styles/colors.addProgramme.scss';
+@import '../../Styles/colors.role.scss';
+@import '../../Styles/variables.scss';
+
+.site-check-list-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: $primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: $title-sub;
+    }
+  }
+
+  .forms-container {
+    display: flex;
+    flex-direction: column;
+    background-color: $common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem;
+  }
+
+  .stepper-container {
+    display: flex;
+    margin-bottom: 2rem;
+  }
+}
+
+.site-check-list-form {
+  width: 100;
+
+  
+}
