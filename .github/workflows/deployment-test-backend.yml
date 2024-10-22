@@ -1,69 +1,69 @@
-name: Test Backend Deployment
-on:
-  push:
-    branches:
-      - develop
-    paths:
-      - backend/**
-      - .github/workflows/deployment*
-      - docker-compose*
+# name: Test Backend Deployment
+# on:
+#   push:
+#     branches:
+#       - develop
+#     paths:
+#       - backend/**
+#       - .github/workflows/deployment*
+#       - docker-compose*
 
-env:
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_DEFAULT_REGION: us-east-1
+# env:
+#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   AWS_DEFAULT_REGION: us-east-1
 
-jobs:
-  development_deploy:
-    name: Carbon SL Registry Deploy Pre
-    if: github.ref == 'refs/heads/develop'
-    name: deploy_dev
-    runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-'dev'
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 5
-      - name: Check Docker variable changes
-        run: |
-          echo "docker-compose file Change...."
-          git diff HEAD~ -- HEAD -z ./docker-compose*
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push the development image to Amazon ECR
-        if: github.ref == 'refs/heads/develop'
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services-sl
-          IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
-        run: |
-          # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
-          echo "Pushing image to ECR..."
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy development docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
-          HOSTNAME: ${{secrets.HOST_IP_TEST }}
-          USER_NAME: ec2-user
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon-sl/sl_backend_deploy.sh '
+# jobs:
+#   development_deploy:
+#     name: Carbon SL Registry Deploy Pre
+#     if: github.ref == 'refs/heads/develop'
+#     name: deploy_dev
+#     runs-on: ubuntu-latest
+#     concurrency:
+#       group: ${{ github.workflow }}-${{ github.ref }}-'dev'
+#       cancel-in-progress: true
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 5
+#       - name: Check Docker variable changes
+#         run: |
+#           echo "docker-compose file Change...."
+#           git diff HEAD~ -- HEAD -z ./docker-compose*
+#       - name: Use Node.js ${{ matrix.node-version }}
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node-version }}
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+#       - name: Login to Amazon ECR
+#         id: login-ecr
+#         uses: aws-actions/amazon-ecr-login@v1
+#       - name: Build, tag, and push the development image to Amazon ECR
+#         if: github.ref == 'refs/heads/develop'
+#         id: build-image
+#         env:
+#           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#           ECR_REPOSITORY: carbon-services-sl
+#           IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
+#         run: |
+#           # Build a docker container and push it to ECR 
+#           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
+#           echo "Pushing image to ECR..."
+#           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#       - name: Deploy development docker image to Amazon EC2
+#         if: github.ref == 'refs/heads/develop'
+#         env:
+#           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
+#           HOSTNAME: ${{secrets.HOST_IP_TEST }}
+#           USER_NAME: ec2-user
+#         run: |
+#           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+#           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+#             carbon-sl/sl_backend_deploy.sh '
 
