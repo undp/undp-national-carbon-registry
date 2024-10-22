@@ -9,6 +9,12 @@ import { FileLocationService } from "./file.location.service";
 import { LocationInterface } from "./location.interface";
 import { MapboxLocationService } from "./mapbox.location.service";
 import { OpenStreetLocationService } from "./openstreet.location.service";
+import { Province } from "../entities/province.entity";
+import { District } from "../entities/district.entity";
+import { DSDivision } from "../entities/dsDivision.entity";
+import { City } from "../entities/city.entity";
+import { LocationService } from "./location.service";
+import { UtilModule } from "src/util/util.module";
 
 @Module({
   imports: [
@@ -21,7 +27,8 @@ import { OpenStreetLocationService } from "./openstreet.location.service";
       useClass: TypeOrmConfigService,
       imports: undefined,
     }),
-    TypeOrmModule.forFeature([Region]),
+    TypeOrmModule.forFeature([Region, Province, District, DSDivision, City]),
+    UtilModule
   ],
   providers: [
     Logger,
@@ -34,7 +41,8 @@ import { OpenStreetLocationService } from "./openstreet.location.service";
           ? OpenStreetLocationService
           : FileLocationService,
     },
+    LocationService
   ],
-  exports: [LocationInterface],
+  exports: [LocationInterface, LocationService],
 })
 export class LocationModule {}

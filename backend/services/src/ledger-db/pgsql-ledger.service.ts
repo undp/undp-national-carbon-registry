@@ -26,6 +26,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   public tableName: string;
   public overallTableName: string;
   public companyTableName: string;
+  public programmeSlTable: string;
   public ledgerName: string;
   private dbCon: Pool;
 
@@ -37,6 +38,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     this.tableName = configService.get<string>("ledger.table");
     this.overallTableName = configService.get<string>("ledger.overallTable");
     this.companyTableName = configService.get<string>("ledger.companyTable");
+    this.programmeSlTable = configService.get<string>(
+      "ledger.programmeSlTable"
+    );
 
     let dbc = this.configService.get<any>("database");
 
@@ -138,11 +142,10 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   }
 
   private getUniqueIndex(tableName: string) {
-    if (tableName === this.tableName) {
-      return "data->>'programmeId'"
-    }
-    else {
-      return "data->>'txId'"
+    if (tableName === this.tableName || tableName === this.programmeSlTable) {
+      return "data->>'programmeId'";
+    } else {
+      return "data->>'txId'";
     }
   }
 
@@ -156,13 +159,15 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     // const fieldList = Object.keys(where)
     //   .map((k) => `data->>'${k}'`)
     //   .join(", ");
-    const t = tableName ? tableName : this.tableName
+    const t = tableName ? tableName : this.tableName;
     return (
       await this.execute([
         {
-          sql: `SELECT * from (SELECT DISTINCT ON (${this.getUniqueIndex(t)}) data FROM ${
+          sql: `SELECT * from (SELECT DISTINCT ON (${this.getUniqueIndex(
             t
-          }  order by ${this.getUniqueIndex(t)}, hash desc) x where ${whereClause}`,
+          )}) data FROM ${t}  order by ${this.getUniqueIndex(
+            t
+          )}, hash desc) x where ${whereClause}`,
           params: Object.values(where),
         },
       ])
@@ -230,7 +235,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       } else if (v instanceof ArrayLike) {
         list.push(v.value);
       } else if (v instanceof Array) {
-        list.push(...v)
+        list.push(...v);
       } else {
         list.push(v);
       }
@@ -264,10 +269,12 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                 k = k.replace("data.", "");
               }
               if (getQueries[t][k] instanceof Array) {
-                return `data->>'${k}' in (${getQueries[t][k].map((e) => {
-                  j += 1;
-                  return "$" + j;
-                }).join(', ')})`;
+                return `data->>'${k}' in (${getQueries[t][k]
+                  .map((e) => {
+                    j += 1;
+                    return "$" + j;
+                  })
+                  .join(", ")})`;
               } else if (getQueries[t][k] instanceof ArrayIn) {
                 // j += 1;
                 return `data @> '{"${k}": [${getQueries[t][k].value}]}'`;
@@ -288,12 +295,17 @@ export class PgSqlLedgerService implements LedgerDBInterface {
           //   })
           //   .join(", ");
 
-          let sql = ''
+          let sql = "";
           if (isHistoryQuery) {
-            sql = `SELECT data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(table)}, hash desc`
+            sql = `SELECT data FROM ${table} WHERE ${wc} order by ${this.getUniqueIndex(
+              table
+            )}, hash desc`;
           } else {
-            sql = `select * from (SELECT ${`DISTINCT ON (${this.getUniqueIndex(table)})`
-            } data FROM ${table} order by ${this.getUniqueIndex(table)}, hash desc) x where ${wc}`
+            sql = `select * from (SELECT ${`DISTINCT ON (${this.getUniqueIndex(
+              table
+            )})`} data FROM ${table} order by ${this.getUniqueIndex(
+              table
+            )}, hash desc) x where ${wc}`;
           }
           getTxElements[t] = {
             sql: sql,
@@ -319,10 +331,12 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             const wc = Object.keys(updateWhere[t])
               .map((k, i) => {
                 if (updateWhere[t][k] instanceof Array) {
-                  return `data->>'${k}' in (${updateWhere[t][k].map((e) => {
-                    j += 1;
-                    return "$" + j;
-                  }).join(', ')})`;
+                  return `data->>'${k}' in (${updateWhere[t][k]
+                    .map((e) => {
+                      j += 1;
+                      return "$" + j;
+                    })
+                    .join(", ")})`;
                 } else if (updateWhere[t][k] instanceof ArrayIn) {
                   // j += 1;
                   return `data @> '{"${k}": [${updateWhere[t][k].value}]}'`;
@@ -338,7 +352,11 @@ export class PgSqlLedgerService implements LedgerDBInterface {
             //   .map((k) => `data->>'${k}'`)
             //   .join(", ");
             updateGetElements[t] = {
-              sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(tableName)}) data FROM ${tableName} order by ${this.getUniqueIndex(tableName)}, hash desc) x where ${wc}`,
+              sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(
+                tableName
+              )}) data FROM ${tableName} order by ${this.getUniqueIndex(
+                tableName
+              )}, hash desc) x where ${wc}`,
               params: this.getValuesList(updateWhere[t]),
             };
           }

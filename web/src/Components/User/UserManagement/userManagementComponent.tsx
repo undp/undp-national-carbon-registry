@@ -605,6 +605,8 @@ export const UserManagementComponent = (props: any) => {
               <Radio value="Government">{t('user:gov')}</Radio>
               <Radio value="Ministry">{t('user:min')}</Radio>
               <Radio value="ProgrammeDeveloper">{t('user:developer')}</Radio>
+              <Radio value="ClimateFund">{t('user:ClimateFund')}</Radio>
+              <Radio value="ExecutiveCommittee">{t('user:ExecutiveCommittee')}</Radio>
               <Radio value="Certifier">{t('user:certifier')}</Radio>
             </Space>
           </Radio.Group>

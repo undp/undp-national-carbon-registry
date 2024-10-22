@@ -27,6 +27,9 @@ export class Company implements EntitySubject {
   phoneNo: string;
 
   @Column({ nullable: true })
+  faxNo: string;
+
+  @Column({ nullable: true })
   website: string;
 
   @Column({ nullable: true })
@@ -64,6 +67,13 @@ export class Company implements EntitySubject {
   })
   secondaryAccountBalance: any;
 
+  @Column({
+    type: "jsonb",
+    array: false,
+    nullable: true,
+  })
+  slcfAccountBalance: any;
+
   @Column("bigint", { nullable: true })
   programmeCount: number;
 
@@ -85,6 +95,9 @@ export class Company implements EntitySubject {
     nullable: true,
   })
   geographicalLocationCordintes: any;
+
+  @Column("varchar", { array: true, nullable: true })
+  provinces: string[];
 
   @Column("varchar", { array: true, nullable: true })
   regions: string[];

@@ -1,0 +1,9 @@
+{
+  "notProjectParticipant": "Not a project participant",
+  "notAuthorised": "Not Authorised",
+  "noCompanyExistingInSystem": "Project particpant organization is not existing in the system for the logged in user",
+  "programmeExistsWithSameProgrammeId": "Programme exists with same programme ID",
+  "cannotCreateCMAForOtherProjectParticipants": "Cannot create CMA for other project participants",
+  "programmeNotExist": "Programme is not existing with the given Programme ID",
+  "programmeIsNotInSuitableStageToProceed": "Programme is not in a suitable state to proceed"
+}

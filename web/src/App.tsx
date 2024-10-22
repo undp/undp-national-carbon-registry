@@ -40,6 +40,15 @@ import { UserInformationContextProvider } from './Context/UserInformationContext
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 import { Loading } from './Components/Loading/loading';
 import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
+import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
+import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
+import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
+import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
+import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
+import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
+import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
+import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 
 const App = () => {
   const ability = defineAbility();
@@ -94,6 +103,31 @@ const App = () => {
                     element={<CustomLayout selectedKey="nationalAccounting" />}
                   >
                     <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
+                  </Route>
+
+                  <Route
+                    path="/programmeManagementSLCF"
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<SLCFProgrammeManagement />} />
+                    <Route path="view/:id" element={<SLCFProjectDetailsView />} />
+                    <Route path="addProgramme" element={<SLCFAddProgramme />} />
+                    <Route path="addNdcAction" element={<AddNDCAction />} />
+                    <Route path="monitoringReport/:id" element={<SLCFMonitoringReport />} />
+                    <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
+                    <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
+                    <Route
+                      path="validationAgreement/:id"
+                      element={<ValidationAgreementPage />}
+                    />{' '}
+                    <Route path="cmaForm/:id" element={<CMAFormPage />} />
+                  </Route>
+                  <Route
+                    path="/retirementManagement"
+                    element={<CustomLayout selectedKey="retirementManagement/viewAll" />}
+                  >
+                    <Route path="viewAll" element={<SLCFRetirement />} />
+                    {/* <Route path="view" element={<ProgrammeView />} /> */}
                   </Route>
                   <Route
                     path="/programmeManagement"

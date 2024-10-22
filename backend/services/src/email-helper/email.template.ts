@@ -143,6 +143,36 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  PROGRAMME_SL_CREATE: {
+    id: "PROGRAMME_SL_CREATE",
+    subject: "New Initial Notification Form Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new initial notification owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  CMA_CREATE: {
+    id: "CMA_CREATE",
+    subject: "New Carbon Management Assessment Form Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new Carbon Management Assessment Form owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{cmaPageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
   PROGRAMME_AUTHORISATION: {
     id: "PROGRAMME_AUTHORISATION",
     subject: "Project Authorised",
@@ -634,6 +664,121 @@ export const EmailTemplates = {
         Hi <br><br>
 
         Your Organisation has been reactivated by the {{government}}. Your Organisation will be able to perform actions as before and all the users of the Organisation will be reactivated.  <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  CREDIT_TRANSFER_SL_REQUEST: {
+    id: "CREDIT_TRANSFER_SL_REQUEST",
+    subject: "Credit Transfer Request Received",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST: {
+    id: "CREDIT_RETIRE_SL_REQUEST",
+    subject: "Credit Retirement Request Received",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has requested to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_TRANSFER_SL_REQUEST_APPROVED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_APPROVED",
+    subject: "Credit Transfer Request Approved",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_APPROVED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_APPROVED",
+    subject: "Credit Retirement Request Approved",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_TRANSFER_SL_REQUEST_REJECTED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_REJECTED",
+    subject: "Credit Transfer Request Declined",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_REJECTED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_REJECTED",
+    subject: "Credit Retirement Request Declined",
+    html: `
+        Hi {{name}},<br><br>
+
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_TRANSFER_SL_REQUEST_CANCELED: {
+    id: "CREDIT_TRANSFER_SL_REQUEST_CANCELED",
+    subject: "Credit Transfer Request Cancelled",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has cancelled their request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
+        {{remark}}<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CREDIT_RETIRE_SL_REQUEST_CANCELED: {
+    id: "CREDIT_RETIRE_SL_REQUEST_CANCELED",
+    subject: "Credit Retirement Request Cancelled",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{organisationName}} has cancelled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
+        {{remark}}<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team

@@ -1,10 +1,10 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-use-before-define */
-import { BankOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Button, Card, Col, message, Row, Skeleton } from 'antd';
 import { plainToClass } from 'class-transformer';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Action } from '../../../Definitions/Enums/action.enum';
 import { Company } from '../../../Definitions/Entities/company';
 import UserActionConfirmationModel from '../../Models/userActionConfirmationModel';

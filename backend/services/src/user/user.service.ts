@@ -7,18 +7,9 @@ import {
   Logger,
   UseFilters,
 } from "@nestjs/common";
-import {
-  InjectConnection,
-  InjectEntityManager,
-  InjectRepository,
-} from "@nestjs/typeorm";
+import { InjectConnection, InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { UserDto } from "../dto/user.dto";
-import {
-  Connection,
-  EntityManager,
-  QueryFailedError,
-  Repository,
-} from "typeorm";
+import { Connection, EntityManager, QueryFailedError, Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { QueryDto } from "../dto/query.dto";
 import { EmailTemplates } from "../email-helper/email.template";
@@ -56,7 +47,7 @@ import { DataExportService } from "../util/data.export.service";
 import { DataExportQueryDto } from "../dto/data.export.query.dto";
 import { DataExportUserDto } from "../dto/data.export.user.dto";
 import { FilterEntry } from "../dto/filter.entry";
-import { EmailHelperService } from '../email-helper/email-helper.service';
+import { EmailHelperService } from "../email-helper/email-helper.service";
 import { HttpUtilService } from "../util/http.util.service";
 import { SYSTEM_TYPE } from "../enum/system.names.enum";
 import { GovDepartment, ministryOrgs } from "../enum/govDep.enum";
@@ -415,6 +406,7 @@ export class UserService {
           organisationDto.logo = company.logo;
           organisationDto.companyRole = company.companyRole;
           organisationDto.regions = company.regions;
+          organisationDto.provinces = company.provinces;
           if (company.website && company.website.trim().length > 0) {
             organisationDto.website = company.website;
           }
@@ -571,34 +563,37 @@ export class UserService {
         );
       }
     }
-    if (company.companyRole == CompanyRole.CLIMATE_FUND) {
-      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
-        company.country,
-        CompanyRole.CLIMATE_FUND
-      );
-      if (companyCF) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.cfUserAlreadyExist", [company.country]),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
 
-    if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
-      const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
-        company.country,
-        CompanyRole.EXECUTIVE_COMMITTEE
-      );
-      if (companyCF) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.exComUserAlreadyExist", [
-            company.country,
-          ]),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
     if (company) {
+      if (company.companyRole == CompanyRole.CLIMATE_FUND) {
+        const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+          company.country,
+          CompanyRole.CLIMATE_FUND
+        );
+        if (companyCF) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("user.cfUserAlreadyExist", [
+              company.country,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
+        const companyCF = await this.companyService.findOrganizationByCountryAndCompanyRole(
+          company.country,
+          CompanyRole.EXECUTIVE_COMMITTEE
+        );
+        if (companyCF) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("user.exComUserAlreadyExist", [
+              company.country,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
       if (
         company.companyRole == CompanyRole.MINISTRY ||
         company.companyRole == CompanyRole.GOVERNMENT
@@ -1062,7 +1057,10 @@ export class UserService {
       dto.phoneNo = user.phoneNo;
       dto.companyId = user.companyId;
       dto.companyName = user.company?.name;
-      dto.companyRole = this.helperService.formatReqMessagesString("userExport." + user.companyRole, []);
+      dto.companyRole = this.helperService.formatReqMessagesString(
+        "userExport." + user.companyRole,
+        []
+      );
       dto.createdTime = this.helperService.formatTimestamp(user.createdTime);
       dto.isPending = user.isPending;
       exportData.push(dto);
@@ -1129,6 +1127,24 @@ export class UserService {
       })
       .andWhere("user.companyRole= :companyRole", {
         companyRole: CompanyRole.GOVERNMENT,
+      })
+      .select(["user.name", "user.email"])
+      .getRawMany();
+
+    return result;
+
+    //return result.map((item) => {return item.user_email});
+  }
+
+  async getSLCFAdminAndManagerUsers() {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin, :manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyRole= :companyRole", {
+        companyRole: CompanyRole.CLIMATE_FUND,
       })
       .select(["user.name", "user.email"])
       .getRawMany();

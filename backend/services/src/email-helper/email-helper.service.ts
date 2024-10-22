@@ -12,6 +12,7 @@ import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.ser
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
 import { EmailTemplates } from "./email.template";
+import { ProgrammeSl } from "../entities/programmeSl.entity";
 
 @Injectable()
 export class EmailHelperService {
@@ -27,9 +28,7 @@ export class EmailHelperService {
     private asyncOperationsInterface: AsyncOperationsInterface,
     private helperService: HelperService
   ) {
-    this.isEmailDisabled = this.configService.get<boolean>(
-      "email.disableLowPriorityEmails"
-    );
+    this.isEmailDisabled = this.configService.get<boolean>("email.disableLowPriorityEmails");
   }
 
   public async sendEmailToProgrammeOwnerAdmins(
@@ -92,11 +91,10 @@ export class EmailHelperService {
 
       case "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME":
         companyDetails = await this.companyService.findByCompanyId(companyId);
-        const government = await this.companyService.findByCompanyId(
-          governmentId
-        );
+        const government = await this.companyService.findByCompanyId(governmentId);
         if (!programme.creditBalance || !programme.serialNo) {
-          template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME;
+          template =
+            EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME;
         }
         templateData = {
           ...templateData,
@@ -129,9 +127,7 @@ export class EmailHelperService {
   ) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
-    const users = await this.userService.getOrganisationAdminAndManagerUsers(
-      companyId
-    );
+    const users = await this.userService.getOrganisationAdminAndManagerUsers(companyId);
     let companyDetails: Company;
     let inititatorCompanyDetails: Company;
     let programme: Programme;
@@ -139,9 +135,7 @@ export class EmailHelperService {
 
     switch (template.id) {
       case "CREDIT_TRANSFER_GOV":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
@@ -150,9 +144,7 @@ export class EmailHelperService {
 
       case "CREDIT_TRANSFER_CANCELLATION":
         programme = await this.programmeLedger.getProgrammeById(programmeId);
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
@@ -163,9 +155,7 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_ACCEPTED":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         programme = await this.programmeLedger.getProgrammeById(programmeId);
         templateData = {
           ...templateData,
@@ -177,9 +167,7 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_REJECTED":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         programme = await this.programmeLedger.getProgrammeById(programmeId);
         templateData = {
           ...templateData,
@@ -191,9 +179,7 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_GOV_CANCELLATION":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         programme = await this.programmeLedger.getProgrammeById(programmeId);
         templateData = {
           ...templateData,
@@ -205,9 +191,7 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_GOV_ACCEPTED_TO_RECEIVER":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         programme = await this.programmeLedger.getProgrammeById(programmeId);
         templateData = {
           ...templateData,
@@ -219,9 +203,7 @@ export class EmailHelperService {
         break;
 
       case "PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         programme = await this.programmeLedger.getProgrammeById(programmeId);
         if (!programme.creditBalance || !programme.serialNo) {
           template = EmailTemplates.NON_AUTHORIZED_PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_CERT;
@@ -257,12 +239,8 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_SENDER":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
-        inititatorCompanyDetails = await this.companyService.findByCompanyId(
-          initiatorCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
+        inititatorCompanyDetails = await this.companyService.findByCompanyId(initiatorCompanyId);
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
@@ -271,12 +249,22 @@ export class EmailHelperService {
         break;
 
       case "CREDIT_TRANSFER_CANCELLATION_SYS_TO_INITIATOR":
-        companyDetails = await this.companyService.findByCompanyId(
-          receiverCompanyId
-        );
+        companyDetails = await this.companyService.findByCompanyId(receiverCompanyId);
         templateData = {
           ...templateData,
           organisationName: companyDetails.name,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_SL_REQUEST_APPROVED":
+      case "CREDIT_RETIRE_SL_REQUEST_APPROVED":
+      case "CREDIT_TRANSFER_SL_REQUEST_REJECTED":
+      case "CREDIT_RETIRE_SL_REQUEST_REJECTED":
+      case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
+      case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+        templateData = {
+          ...templateData,
+          pageLink: hostAddress + "/retirementManagement/viewAll",
         };
         break;
 
@@ -308,10 +296,10 @@ export class EmailHelperService {
         },
       };
 
-      if(attachments){
+      if (attachments) {
         action.actionProps["attachments"] = attachments;
       }
-      
+
       await this.asyncOperationsInterface.AddAction(action);
     });
   }
@@ -330,8 +318,7 @@ export class EmailHelperService {
     const users = await this.userService.getGovAdminAndManagerUsers();
     let programme: Programme;
     let companyDetails: Company;
-    if (programmeId)
-      programme = await this.programmeLedger.getProgrammeById(programmeId);
+    if (programmeId) programme = await this.programmeLedger.getProgrammeById(programmeId);
 
     switch (template.id) {
       case "ORGANISATION_REGISTRATION":
@@ -408,20 +395,111 @@ export class EmailHelperService {
           ),
         },
       };
-      
-      if(attachments){
+
+      if (attachments) {
         action.actionProps["attachments"] = attachments;
       }
       await this.asyncOperationsInterface.AddAction(action);
     });
   }
 
-  public async sendEmail(
-    sender: string,
+  public async sendEmailToSLCFAdmins(
     template,
     templateData: any,
-    companyId: number
+    programmeId?: string,
+    companyId?: number
   ) {
+    if (this.isEmailDisabled) return;
+    const systemCountryName = this.configService.get("systemCountryName");
+    const hostAddress = this.configService.get("host");
+    const users = await this.userService.getSLCFAdminAndManagerUsers();
+    let programme: ProgrammeSl;
+    let companyDetails: Company;
+    if (programmeId) {
+      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+    }
+
+    if (companyId) {
+      companyDetails = await this.companyService.findByCompanyId(companyId);
+    }
+
+    switch (template.id) {
+      case "PROGRAMME_SL_CREATE":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeSlManagement/view/${programmeId}`,
+        };
+        break;
+
+      case "CMA_CREATE":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/cmaManagement/view/${programmeId}`,
+        };
+        break;
+
+      case "CREDIT_TRANSFER_SL_REQUEST":
+      case "CREDIT_RETIRE_SL_REQUEST":
+      case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
+      case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          credits: templateData.credits,
+          serialNumber: programme.serialNo,
+          remark: templateData.remark,
+          pageLink: hostAddress + `/retirementManagement/viewAll`,
+        };
+        break;
+
+      // case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+      //   templateData = {
+      //     organisationName: companyDetails.name,
+      //     countryName: systemCountryName,
+      //     programmeName: programme.title,
+      //     credits: templateData.credits,
+      //     serialNumber: programme.serialNo,
+      //     programmePageLink: hostAddress + `/retirementManagement`,
+      //   };
+      //   break;
+
+      default:
+        break;
+    }
+
+    users.forEach(async (user: any) => {
+      templateData = {
+        ...templateData,
+        name: user.user_name,
+      };
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+
+      await this.asyncOperationsInterface.AddAction(action);
+    });
+  }
+
+  public async sendEmail(sender: string, template, templateData: any, companyId: number) {
     if (this.isEmailDisabled) return;
     const companyDetails = await this.companyService.findByCompanyId(companyId);
     const systemCountryName = this.configService.get("systemCountryName");

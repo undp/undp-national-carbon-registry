@@ -3,6 +3,7 @@
   "ghgInventory": "GHG Inventory",
   "emissions" : "Emissions",
   "projections" : "Projections",
+  "slcfprogrammes": "SLCF Projects",
   "programmes": "Projects",
   "transfers": "Transfers",
   "companies": "Organisations",
@@ -14,5 +15,6 @@
   "ndcDetails": "NDC Actions",
   "reports": "Reports",
   "support": "Financing",
-  "nationalAccounting": "National Accounting"
+  "nationalAccounting": "National Accounting",
+  "retirements": "Retirements"
 }

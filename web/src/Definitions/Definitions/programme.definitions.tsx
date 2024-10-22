@@ -6,6 +6,9 @@ import {
   ProgrammeStageR,
   ProgrammeStageMRV,
   ProgrammeStageUnified,
+  ProgrammeStatus,
+  ProgrammeCategory,
+  ProjectProposalStage,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -21,6 +24,21 @@ export const getStageEnumVal = (value: string) => {
   return Object.values(ProgrammeStageUnified)[index];
 };
 
+export const getStatusEnumVal = (value: string) => {
+  const index = Object.keys(ProgrammeStatus).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProgrammeStatus)[index];
+};
+
+export const getProjectProposalStageEnumVal = (value: string) => {
+  const index = Object.keys(ProjectProposalStage).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProjectProposalStage)[index];
+};
 export const getCreditStageVal = (value: string) => {
   const index = Object.keys(CreditTransferStage).indexOf(value);
   if (index < 0) {
@@ -54,6 +72,53 @@ export const getStageTagType = (stage: ProgrammeStageR | ProgrammeStageUnified) 
       return 'processing';
     case ProgrammeStageR.Approved:
       return 'purple';
+    default:
+      return 'default';
+  }
+};
+export const getProgrammeStatus = (stage: ProgrammeStatus) => {
+  switch (getStageEnumVal(stage)) {
+    case ProgrammeStatus.CONSTRUCTION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.INSTALLATION_STAGE:
+      return 'processing';
+    case ProgrammeStatus.PROCUREMENT_STAGE:
+      return 'purple';
+    default:
+      return 'default';
+  }
+};
+
+export const getProjectProposalStage = (stage: ProjectProposalStage) => {
+  switch (getProjectProposalStageEnumVal(stage)) {
+    case ProjectProposalStage.SUBMITTED_INF:
+      return 'processing';
+    case ProjectProposalStage.APPROVED_INF:
+      return 'purple';
+    case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
+      return 'processing';
+    case ProjectProposalStage.SUBMITTED_PROPOSAL:
+      return 'processing';
+    case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
+      return 'processing';
+    case ProjectProposalStage.ACCEPTED_PROPOSAL:
+      return 'purple';
+    case ProjectProposalStage.SUBMITTED_CMA:
+      return 'processing';
+    case ProjectProposalStage.VALIDATION_PENDING:
+      return 'processing';
+    case ProjectProposalStage.AUTHORISED:
+      return 'purple';
+    case ProjectProposalStage.REJECTED_VALIDATION:
+      return 'error';
+    case ProjectProposalStage.APPROVED_CMA:
+      return 'purple';
+    case ProjectProposalStage.REJECTED_CMA:
+      return 'error';
+    case ProjectProposalStage.REJECTED_PROPOSAL:
+      return 'error';
+    case ProjectProposalStage.REJECTED_INF:
+      return 'error';
     default:
       return 'default';
   }
@@ -172,6 +237,50 @@ export interface Programme {
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
 }
+export interface ProgrammeSl {
+  programmeId: string;
+  externalId: string;
+  serialNo: string;
+  title: string;
+  sectoralScope: string;
+  sector: string;
+  countryCodeA2: string;
+  projectStatus: ProgrammeStatus;
+  projectCategory: ProgrammeCategory;
+  purposeOfCreditDevelopment: string;
+  currentStage: ProgrammeStageR | ProgrammeStageMRV | ProgrammeStageUnified;
+  projectProposalStage: ProjectProposalStage;
+  startDate: number;
+  endTime: number;
+  creditChange: number;
+  creditIssued: number;
+  creditEst: number;
+  creditBalance: number;
+  creditRetired: number;
+  creditFrozen: number;
+  creditTransferred: number;
+  constantVersion: string;
+  proponentTaxVatId: string[];
+  companyId: number;
+  proponentPercentage: number[];
+  creditOwnerPercentage: number[];
+  certifierId: any[];
+  certifier: any[];
+  company: any;
+  creditUnit: string;
+  programmeProperties: ProgrammeProperties;
+  agricultureProperties: any;
+  solarProperties: any;
+  txTime: number;
+  createdTime: number;
+  txRef: string;
+  typeOfMitigation: TypeOfMitigation;
+  geographicalLocationCordintes: any;
+  projectLocation: any;
+  mitigationActions: any;
+  environmentalAssessmentRegistrationNo: any;
+  article6trade: boolean;
+}
 
 export interface ProgrammeR extends Programme {
   currentStage: ProgrammeStageR;
@@ -184,6 +293,15 @@ export interface ProgrammeT extends Programme {
   emissionReductionExpected: number;
   emissionReductionAchieved: number;
   ownership: boolean;
+}
+
+export interface ProgrammeSlU extends ProgrammeSl {
+  currentStage: ProgrammeStageUnified;
+  projectProposalStage: ProjectProposalStage;
+  programmeProperties: ProgrammePropertiesU;
+  emissionReductionExpected: number;
+  emissionReductionAchieved: number;
+  geographicalLocationCoordinates: any[];
 }
 
 export interface ProgrammeU extends Programme {
@@ -201,7 +319,7 @@ export const getGeneralFields = (
     title: programme.title,
     serialNo: programme.serialNo,
     currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
+    applicationType: 'Project Participant',
     sector: programme.sector,
     sectoralScope:
       Object.keys(SectoralScope)[
@@ -222,6 +340,27 @@ export const getGeneralFields = (
     res.emissionsReductionExpected = prog.emissionReductionExpected;
     res.emissionsReductionAchieved = prog.emissionReductionAchieved;
   }
+  return res;
+};
+
+export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
+  let res: Record<string, any> = {
+    title: programme.title,
+    serialNo: programme.serialNo,
+    projectProposalStage: programme.projectProposalStage,
+    projectStatus: programme.projectStatus,
+    projectCategory: programme.projectCategory,
+    startDate: DateTime.fromSeconds(Number(programme.startDate)),
+    purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
+    creditReceived:
+      programme.creditBalance +
+      programme.creditFrozen +
+      programme.creditRetired +
+      programme.creditTransferred,
+    creditRetired: programme.creditRetired,
+    creditBalance: programme.creditBalance,
+  };
+
   return res;
 };
 
@@ -269,6 +408,25 @@ export const getFinancialFields = (programme: ProgrammeU | ProgrammeR | Programm
   };
 };
 
+export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
+  // return {
+  //   estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
+  //   creditEst: addCommSep(programme.creditEst),
+  //   financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
+  //   grantEquivalent: new UnitField(
+  //     'USD',
+  //     addCommSep(programme.programmeProperties.grantEquivalentAmount)
+  //   ),
+  //   carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+  // };
+
+  return {
+    estimatedProgrammeCostLKR: '-',
+    creditEst: '-',
+    grantEquivalentLKR: '-',
+  };
+};
+
 export const getCompanyBgColor = (item: string) => {
   if (item === 'Government') {
     return GovBGColor;
@@ -308,3 +466,21 @@ export const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
+// export const base64ToFile = (base64String: string, filename: string): File => {
+//   // Split the Base64 string into metadata and data
+//   const arr = base64String.split(',');
+//   const mime = arr[0].match(/:(.*?);/)[1]; // Extract MIME type
+//   const bstr = atob(arr[1]); // Decode the Base64 string
+//   const n = bstr.length;
+//   const u8arr = new Uint8Array(n);
+
+//   // Convert binary string to Uint8Array
+//   for (let i = 0; i < n; i++) {
+//     u8arr[i] = bstr.charCodeAt(i);
+//   }
+
+//   // Create a Blob and then a File object
+//   const blob = new Blob([u8arr], { type: mime });
+//   return new File([blob], filename, { type: mime });
+// };

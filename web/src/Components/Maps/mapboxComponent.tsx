@@ -31,6 +31,7 @@ export const MapboxComponent = (props: MapComponentProps) => {
 
   mapboxgl.accessToken = accessToken;
 
+  console.log('-------location props---------', layer, mapSource, outlineLayer);
   useEffect(() => {
     if (!mapContainerRef || !mapContainerRef.current || center.length !== 2) {
       return;
@@ -68,7 +69,11 @@ export const MapboxComponent = (props: MapComponentProps) => {
     map.on('load', () => {
       const currentMarkes: any = {};
 
-      if (mapSource) {
+      if (mapSource && Array.isArray(mapSource)) {
+        mapSource.forEach((source: any) => {
+          map.addSource(source.key, source.data);
+        });
+      } else if (mapSource) {
         map.addSource(mapSource.key, mapSource.data);
       }
 
@@ -90,11 +95,19 @@ export const MapboxComponent = (props: MapComponentProps) => {
         });
       }
 
-      if (layer) {
+      if (layer && Array.isArray(layer)) {
+        layer.forEach((item: any) => {
+          map.addLayer(item);
+        });
+      } else if (layer) {
         map.addLayer(layer);
       }
 
-      if (outlineLayer) {
+      if (outlineLayer && Array.isArray(layer)) {
+        outlineLayer.forEach((item: any) => {
+          map.addLayer(item);
+        });
+      } else if (outlineLayer) {
         map.addLayer(outlineLayer);
       }
 
