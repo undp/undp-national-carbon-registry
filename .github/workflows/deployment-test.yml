@@ -1,4 +1,4 @@
-name: Test Frontend Deployment
+name: Carbol SL Test Deployment...
 on:
   push:
     branches:
