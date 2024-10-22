@@ -15,7 +15,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 // import { Form } from 'react-router-dom';
 
 const ProjectDetails = (props: ValidationStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate } = props;
+  const { next, form, current, t, countries, handleValuesUpdate, cmaDetails } = props;
 
   const [contactNoInput] = useState<any>();
   return (
@@ -37,67 +37,18 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                 }
               }}
             >
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      label={t('validationReport:projectTitle')}
-                      name="title"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:title')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('validationReport:reportId')}
-                      name="reportId"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:reportId')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size={'large'} />
-                    </Form.Item>
-                  </div>
-                </Col>
-
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('validationReport:version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:version')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
               <>
                 <div className="form-section mg-top-1">
                   <Row justify={'space-between'} gutter={[40, 16]}>
                     <Col xl={12} md={24}>
                       <div className="step-form-right-col">
                         <Form.Item
-                          label={t('validationReport:reportTitle')}
-                          name="reportTitle"
+                          label={t('validationReport:client')}
+                          name="client"
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:reportTitle')} ${t('isRequired')}`,
+                              message: `${t('validationReport:client')} ${t('isRequired')}`,
                             },
                           ]}
                         >
@@ -105,12 +56,12 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:dateOfIssue')}
-                          name="dateOfIssue"
+                          label={t('validationReport:versionNo')}
+                          name="versionNo"
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:dateOfIssue')} ${t('isRequired')}`,
+                              message: `${t('validationReport:versionNo')} ${t('isRequired')}`,
                             },
                           ]}
                         >
@@ -118,18 +69,57 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:physicalAddress')}
-                          name="physicalAddress"
+                          label={t('validationReport:telephone')}
+                          name="telephone"
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:physicalAddress')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t('validationReport:telephone')} ${t('isRequired')}`,
+                            },
+                            {
+                              validator: async (rule: any, value: any) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(
+                                    `${t('validationReport:telephone')} ${t('isRequired')}`
+                                  );
+                                } else {
+                                  const phoneNo = formatPhoneNumber(String(value));
+                                  if (String(value).trim() !== '') {
+                                    if (
+                                      phoneNo === null ||
+                                      phoneNo === '' ||
+                                      phoneNo === undefined
+                                    ) {
+                                      throw new Error(
+                                        `${t('validationReport:telephone')} ${t('isRequired')}`
+                                      );
+                                    } else {
+                                      if (!isPossiblePhoneNumber(String(value))) {
+                                        throw new Error(
+                                          `${t('validationReport:telephone')} ${t('isInvalid')}`
+                                        );
+                                      }
+                                    }
+                                  }
+                                }
+                              },
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <PhoneInput
+                            // placeholder={t('validationReport:telephone')}
+                            international
+                            value={formatPhoneNumberIntl(contactNoInput)}
+                            defaultCountry="LK"
+                            countryCallingCodeEditable={false}
+                            onChange={(v) => {}}
+                            countries={countries as Country[]}
+                          />
                         </Form.Item>
 
                         <Form.Item
@@ -166,97 +156,52 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         >
                           <Input size="large" />
                         </Form.Item>
-
-                        <Form.Item
-                          label={t('validationReport:approvedBy')}
-                          name="approvedBy"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:approvedBy')} ${t('isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
                       </div>
                     </Col>
 
                     <Col xl={12} md={24}>
                       <Form.Item
-                        label={t('validationReport:client')}
-                        name="client"
+                        label={t('validationReport:dateOfIssue')}
+                        name="dateOfIssue"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:client')} ${t('isRequired')}`,
+                            message: `${t('validationReport:dateOfIssue')} ${t('isRequired')}`,
                           },
                         ]}
                       >
-                        <Input size="large" />
-                      </Form.Item>
-
-                      <Form.Item
-                        label={t('validationReport:preparedBy')}
-                        name="preparedBy"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('validationReport:preparedBy')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      >
-                        <Input size="large" />
-                      </Form.Item>
-
-                      <Form.Item
-                        label={t('validationReport:telephone')}
-                        name="telephone"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('validationReport:telephone')} ${t('isRequired')}`,
-                          },
-                          {
-                            validator: async (rule: any, value: any) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:telephone')} ${t('isRequired')}`
-                                );
-                              } else {
-                                const phoneNo = formatPhoneNumber(String(value));
-                                if (String(value).trim() !== '') {
-                                  if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                                    throw new Error(
-                                      `${t('validationReport:telephone')} ${t('isRequired')}`
-                                    );
-                                  } else {
-                                    if (!isPossiblePhoneNumber(String(value))) {
-                                      throw new Error(
-                                        `${t('validationReport:telephone')} ${t('isInvalid')}`
-                                      );
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <PhoneInput
-                          // placeholder={t('validationReport:telephone')}
-                          international
-                          value={formatPhoneNumberIntl(contactNoInput)}
-                          defaultCountry="LK"
-                          countryCallingCodeEditable={false}
-                          onChange={(v) => {}}
-                          countries={countries as Country[]}
+                        <DatePicker
+                          size="large"
+                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
+                      </Form.Item>
+                      <Form.Item
+                        label={t('validationReport:versionDate')}
+                        name="versionDate"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:versionDate')} ${t('isRequired')}`,
+                          },
+                        ]}
+                      >
+                        <DatePicker
+                          size="large"
+                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        />
+                      </Form.Item>
+
+                      <Form.Item
+                        label={t('validationReport:address')}
+                        name="physicalAddress"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:address')} ${t('isRequired')}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -286,19 +231,6 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                       >
                         <Input size="large" />
                       </Form.Item>
-
-                      <Form.Item
-                        label={t('validationReport:workCarriedBy')}
-                        name="workCarriedBy"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('validationReport:workCarriedBy')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      >
-                        <Input size="large" />
-                      </Form.Item>
                     </Col>
                   </Row>
                 </div>
@@ -306,7 +238,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`1.1 ${t('validationReport:summary')}`}
+                label={`${t('validationReport:summary')}`}
                 tooltip={{
                   title: (
                     <div className="tooltip">
@@ -334,6 +266,66 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               >
                 <TextArea rows={4} />
               </Form.Item>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('validationReport:projectTitle')}
+                      name="title"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('validationReport:title')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('validationReport:workCarryOutBy')}
+                      name="workCarryOutBy"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('validationReport:workCarryOutBy')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('validationReport:reportNo')}
+                      name="reportId"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('validationReport:reportId')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input readOnly size={'large'} />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('validationReport:workApprovedBy')}
+                      name="workApprovedBy"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('validationReport:workApprovedBy')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
               {/* <Form.Item
                 className="full-width-form-item"
                 label={`${t('CMAForm:stakeHolderConsultationProcess')}`}

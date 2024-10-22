@@ -179,3 +179,24 @@
     }
   }
 }
+
+.form-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 20px;                      /* Space between columns */
+  row-gap: 5px;  
+}
+
+.side-by-side-form-item{
+  display: flex;
+  justify-content: space-between;
+}
+
+.technical-project-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 20px;                      /* Space between columns */
+  row-gap: 5px;  
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form } from 'antd';
+import { Row, Button, Form, Col, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 
 const ProjectActivity = (props: ValidationStepsProps) => {
@@ -68,10 +68,71 @@ const ProjectActivity = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea
-                  rows={4}
-                  placeholder="Indicate the level of assurance of the validation."
-                />
+                <div className="form-section mg-top-1">
+                  <Row justify={'space-between'} gutter={[40, 16]}>
+                    <Col xl={24} md={24}>
+                      <div className="step-form-right-col form-grid">
+                        <Form.Item
+                          label={t('validationReport:titleOfTheProjectActivity')}
+                          name="titleOfTheProjectActivity"
+                          rules={[
+                            {
+                              required: true,
+                              message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
+                                'isRequired'
+                              )}`,
+                            },
+                          ]}
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+
+                        <Form.Item
+                          label={t('validationReport:projectParticipants')}
+                          name="projectParticipants"
+                          rules={[
+                            {
+                              required: true,
+                              message: `${t('validationReport:projectParticipants')} ${t(
+                                'isRequired'
+                              )}`,
+                            },
+                          ]}
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+
+                        <Form.Item
+                          label={t('validationReport:hostParty')}
+                          name="hostParty"
+                          rules={[
+                            {
+                              required: true,
+                              message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
+                            },
+                          ]}
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+
+                        <Form.Item
+                          label={t('validationReport:consultantOfTheProject')}
+                          name="consultantOfTheProject"
+                          rules={[
+                            {
+                              required: true,
+                              message: `${t('validationReport:consultantOfTheProject')} ${t(
+                                'isRequired'
+                              )}`,
+                            },
+                          ]}
+                        >
+                          <Input size="large" />
+                        </Form.Item>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
               </Form.Item>
 
               <Form.Item

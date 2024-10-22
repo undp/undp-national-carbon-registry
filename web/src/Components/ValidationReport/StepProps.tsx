@@ -11,4 +11,5 @@ export interface ValidationStepsProps {
   handleValuesUpdate: (val: any) => void;
   submitForm?: (appendixVals: any) => void;
   projectCategory?: string;
+  cmaDetails?: any
 }

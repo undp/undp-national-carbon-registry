@@ -7,7 +7,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProjectDetails from './ProjectDetails';
 import ProjectActivity from './ProjectActivity';
 import Appendix from './Appendix';
@@ -15,11 +15,13 @@ import ValidationProcess from './ValidationProcess';
 import ValidationFindings from './ValidationFindings';
 import ValidationConclusion from './ValidationConclusion';
 import GHGProjectDescription from './GHGProjectDescription';
+import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportGHGDescriptionOfProjectActivity';
 
 const StepperComponent = (props: any) => {
   const { t } = props;
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
+  const { id: programId } = useParams();
 
   const [values, setValues] = useState({
     programmeId: '001',
@@ -59,48 +61,48 @@ const StepperComponent = (props: any) => {
   const [form7] = useForm();
   const [form8] = useForm();
 
-  // const getProgrammeDetailsById = async (id: string) => {
-  //   try {
-  //     const { data } = await post('national/programmeSL/getProjectById', {
-  //       programmeId: id,
-  //     });
+  const getProgrammeDetailsById = async (id: string) => {
+    try {
+      const { data } = await post('national/programmeSL/getProjectById', {
+        programmeId: id,
+      });
 
-  //     const {
-  //       data: { user },
-  //     } = await get('national/User/profile');
-  //     console.log('-----response-------', data, user);
+      const {
+        data: { user },
+      } = await get('national/User/profile');
+      console.log('-----response-------', data, user);
 
-  //     // const dateOfIssue = moment().unix();
-  //     form1.setFieldsValue({
-  //       title: data?.title,
-  //       dateOfIssue: moment(),
-  //       preparedBy: user?.name,
-  //       physicalAddress: data?.company?.address,
-  //       email: data?.company?.email,
-  //       projectProponent: data?.company?.name,
-  //       telephone: data?.company?.phoneNo,
-  //       website: data?.company?.website,
-  //     });
+      // const dateOfIssue = moment().unix();
+      form1.setFieldsValue({
+        title: data?.title,
+        dateOfIssue: moment(),
+        // preparedBy: user?.name,
+        // physicalAddress: data?.company?.address,
+        // email: data?.company?.email,
+        // projectProponent: data?.company?.name,
+        // telephone: data?.company?.phoneNo,
+        // website: data?.company?.website,
+      });
 
-  //     setProjectCategory(data?.projectCategory);
-  //     form2.setFieldsValue({
-  //       projectTrack: data?.purposeOfCreditDevelopment,
-  //       // projectTrack: 'TRACK_2',
-  //       organizationName: data?.company?.name,
-  //       email: data?.company?.email,
-  //       telephone: data?.company?.phoneNo,
-  //       address: data?.company?.address,
-  //       fax: data?.company?.faxNo,
-  //     });
+      setProjectCategory(data?.projectCategory);
+      form2.setFieldsValue({
+        projectTrack: data?.purposeOfCreditDevelopment,
+        // projectTrack: 'TRACK_2',
+        organizationName: data?.company?.name,
+        email: data?.company?.email,
+        telephone: data?.company?.phoneNo,
+        address: data?.company?.address,
+        fax: data?.company?.faxNo,
+      });
 
-  //     setValues((prevVal) => ({
-  //       ...prevVal,
-  //       companyId: data?.company?.companyId,
-  //     }));
-  //   } catch (error) {
-  //     console.log('error');
-  //   }
-  // };
+      setValues((prevVal) => ({
+        ...prevVal,
+        companyId: data?.company?.companyId,
+      }));
+    } catch (error) {
+      console.log('error');
+    }
+  };
 
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
@@ -146,9 +148,52 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  const getCMALastVersion = async (id: string) => {
+    try {
+      const {
+        data: { content },
+      } = await post('national/programmeSL/getDocLastVersion', {
+        programmeId: id,
+        docType: 'cma',
+      });
+
+      const projectContent = JSON.parse(content);
+
+      // const dateOfIssue = moment().unix();
+      form1.setFieldsValue({
+        telephone: projectContent?.projectDetails?.telephone,
+        email: projectContent?.projectDetails?.email,
+        physicalAddress: projectContent?.projectDetails?.physicalAddress,
+        website: projectContent?.projectDetails?.website,
+        reportId: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
+      });
+
+      // setProjectCategory(data?.projectCategory);
+      // form2.setFieldsValue({
+      //   projectTrack: data?.purposeOfCreditDevelopment,
+      //   // projectTrack: 'TRACK_2',
+      //   organizationName: data?.company?.name,
+      //   email: data?.company?.email,
+      //   telephone: data?.company?.phoneNo,
+      //   address: data?.company?.address,
+      //   fax: data?.company?.faxNo,
+      // });
+
+      // setValues((prevVal) => ({
+      //   ...prevVal,
+      //   companyId: data?.company?.companyId,
+      // }));
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
   useEffect(() => {
     getCountryList();
-    // getProgrammeDetailsById('001');
+    if (programId) {
+      getProgrammeDetailsById(programId);
+      getCMALastVersion(programId);
+    }
   }, []);
 
   const steps = [
@@ -197,7 +242,7 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <GHGProjectDescription
+        <ValicationReportGHGDescriptionOfProjectActivity
           next={next}
           prev={prev}
           form={form3}
