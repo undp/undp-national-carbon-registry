@@ -8,7 +8,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -17,7 +17,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
   const t = translator.t;
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const { state } = useLocation();
+  const [isView, setIsView] = useState<boolean>(!!state?.isView);
 
   const [form] = useForm();
 
@@ -32,11 +33,105 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     return e?.fileList;
   };
 
-  const viewForm = () => {};
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const viewDataMapToFields = (val: any) => {
+    const tempInitialValues = {
+      dateOfIssue: val?.dateOfIssue ? moment.unix(val?.dateOfIssue) : undefined,
+      between: val?.climateFundDescription,
+      and: val?.projectParticipantDescription,
+      definitions: val?.definitions,
+      whereas: val?.whereasConditions,
+      settlementFee: val?.settlementFee,
+      SLCFSignature: [
+        {
+          uid: 'slcf_signature',
+          name: 'CLIMATE_FUND_SIGN',
+          status: 'done',
+          url: val?.climateFundSignature,
+        },
+      ],
+      clientSignature: [
+        {
+          uid: 'participant_signature',
+          name: 'PARTICIPANT_SIGN',
+          status: 'done',
+          url: val?.projectParticipantSignature,
+        },
+      ],
+      clientAuthorizedSignatory: val?.projectParticipantSignatory,
+      SLCFWitnessSignature: [
+        {
+          uid: 'witness_1_sign',
+          name: 'WITNESS_1_SIGN',
+          status: 'done',
+          url: val?.witness1Signature,
+        },
+      ],
+      SLCFWitnessName: val?.witness1Name,
+      SLCFWitnessDesignation: val?.witness1Designation,
+      ClientWitness: val?.witness2Label,
+      ClientWitnessSignature: [
+        {
+          uid: 'witness_2_sign',
+          name: 'WITNESS_2_SIGN',
+          status: 'done',
+          url: val?.witness2Signature,
+        },
+      ],
+      clientWitnessName: val?.witness2Name,
+      clientWitnessDesignation: val?.witness2Designation,
+      annexureAadditionalComments: val?.annexureAComment,
+      annexureAadditionalDocs: [
+        {
+          uid: 'appendix_1',
+          name: 'ANNEXURE_A_DOC',
+          status: 'done',
+          url: val?.annexureADoc,
+        },
+      ],
+      annexureBadditionalComments: val?.annexureBComment,
+      annexureBadditionalDocs: [
+        {
+          uid: 'appendix_2',
+          name: 'ANNEXURE_B_DOC',
+          status: 'done',
+          url: val?.annexureBDoc,
+        },
+      ],
+    };
+
+    setLoading(false);
+    form.setFieldsValue(tempInitialValues);
+  };
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
+
+  useEffect(() => {
+    console.log('---------- get view useEffect running ---------');
+    const getViewData = async () => {
+      console.log('---------get view data----------');
+      if (isView) {
+        const res = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: id,
+          docType: 'validationAgreement',
+        });
+
+        console.log('----------get view data------', res);
+
+        if (res?.statusText === 'SUCCESS') {
+          console.log('-------- get view data content---------', res?.data[0].content);
+          const content = JSON.parse(res?.data[0].content);
+          console.log('--------get view data after content---------', content);
+          viewDataMapToFields(content);
+        }
+      }
+    };
+
+    getViewData();
+  }, [form]);
 
   const convertFileToBase64 = async (image: any) => {
     const res = await getBase64(image?.originFileObj as RcFile);
@@ -70,33 +165,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       },
     };
 
-    // const viewDataMapToFields = (val: any) => {
-    //   const tempInitialValues = {
-    //     dateOfIssue: val?.dateOfIssue ? moment.unix(val?.dateOfIssue) : undefined,
-    //     between: val?.climateFundDescription,
-    //     and: val?.projectParticipantDescription,
-    //     definitions: val?.definitions,
-    //     whereas: val?.whereasConditions,
-    //     settlementFee: val?.settlementFee,
-    //     // SLCFSignature: val?.climateFundSignature,
-    //     // clientSignature: val?.projectParticipantSignature,
-    //     clientAuthorizedSignatory: val?.projectParticipantSignatory,
-    //     // SLCFWitnessSignature: val?.witness1Signature,
-    //     SLCFWitnessName: val?.witness1Name,
-    //     SLCFWitnessDesignation: val?.witness1Designation,
-    //     ClientWitness: val?.witness2Label,
-    //     // ClientWitnessSignature: val?.witness2Signature,
-    //     clientWitnessName: val?.witness2Name,
-    //     clientWitnessDesignation: val?.witness2Designation,
-    //     annexureAadditionalComments: val?.annexureAComment,
-    //     annexureAadditionalDocs: val?.annexureADoc,
-    //     annexureBadditionalComments: val?.annexureBComment,
-    //     annexureBadditionalDocs: val?.annexureBDoc,
-    //   };
-
-    //   form.setFieldsValue(tempInitialValues);
-    // };
-
     // useEffect(() => {
     //   form.setFieldValue('SLCFWitness', '');
     // }, []);
@@ -122,6 +190,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       });
     }
   };
+
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
@@ -166,6 +235,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             <DatePicker
               size="large"
               disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+              disabled={isView}
             />
           </Form.Item>
 
@@ -179,7 +249,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={isView} />
           </Form.Item>
 
           <Form.Item
@@ -192,7 +262,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={isView} />
           </Form.Item>
 
           <Form.Item
@@ -205,7 +275,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={isView} />
           </Form.Item>
 
           <Form.Item
@@ -218,7 +288,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={isView} />
           </Form.Item>
 
           {/* section 1 start */}
@@ -322,7 +392,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={isView} />
                 </Form.Item>
                 as validation fee to SLCF.
               </div>
@@ -498,8 +568,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
+                      // defaultFileList={form.getFieldValue('SLCFSignature') || []}
+                      fileList={form.getFieldValue('SLCFSignature') || []}
+                      disabled={isView}
                     >
-                      <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                      <Button
+                        className="upload-doc"
+                        size="large"
+                        icon={<UploadOutlined />}
+                        disabled={isView}
+                      >
                         Upload
                       </Button>
                     </Upload>
@@ -528,7 +606,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={isView} />
                   </Form.Item>
                 </span>
 
@@ -575,8 +653,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
+                      // defaultFileList={form.getFieldValue('clientSignature') || []}
+                      fileList={form.getFieldValue('clientSignature') || []}
+                      disabled={isView}
                     >
-                      <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                      <Button
+                        className="upload-doc"
+                        size="large"
+                        icon={<UploadOutlined />}
+                        disabled={isView}
+                      >
                         Upload
                       </Button>
                     </Upload>
@@ -591,7 +677,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <TextArea rows={5} />
+                    <TextArea rows={5} disabled={isView} />
                   </Form.Item>
                 </span>
               </Col>
@@ -599,16 +685,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
             <Row justify={'space-between'} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
-                <Form.Item
-                  name="SLCFWitness"
-                  label="Witness"
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: `${t('validationAgreement:required')}`,
-                  //   },
-                  // ]}
-                >
+                <Form.Item name="SLCFWitness" label="Witness">
                   <Input
                     defaultValue={'Sri Lanka Climate Fund (PVT) Ltd'}
                     placeholder="Sri Lanka Climate Fund (PVT) Ltd"
@@ -658,8 +735,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
+                      disabled={isView}
+                      // defaultFileList={form.getFieldValue('SLCFWitnessSignature') || []}
+                      fileList={form.getFieldValue('SLCFWitnessSignature') || []}
                     >
-                      <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                      <Button
+                        className="upload-doc"
+                        size="large"
+                        icon={<UploadOutlined />}
+                        disabled={isView}
+                      >
                         Upload
                       </Button>
                     </Upload>
@@ -675,7 +760,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={isView} />
                   </Form.Item>
 
                   <Form.Item
@@ -688,7 +773,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={isView} />
                   </Form.Item>
                 </div>
               </Col>
@@ -703,7 +788,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={isView} />
                 </Form.Item>
 
                 <div>
@@ -748,8 +833,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
+                      disabled={isView}
+                      // defaultFileList={form.getFieldValue('ClientWitnessSignature') || []}
+                      fileList={form.getFieldValue('ClientWitnessSignature') || []}
                     >
-                      <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                      <Button
+                        className="upload-doc"
+                        size="large"
+                        icon={<UploadOutlined />}
+                        disabled={isView}
+                      >
                         Upload
                       </Button>
                     </Upload>
@@ -765,7 +858,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={isView} />
                   </Form.Item>
 
                   <Form.Item
@@ -778,7 +871,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={isView} />
                   </Form.Item>
                 </div>
               </Col>
@@ -796,7 +889,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 },
               ]}
             >
-              <TextArea rows={3} />
+              <TextArea rows={3} disabled={isView} />
             </Form.Item>
 
             <Form.Item
@@ -832,9 +925,17 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 action="/upload.do"
                 listType="picture"
                 multiple={false}
-                // maxCount={1}
+                maxCount={1}
+                disabled={isView}
+                // defaultFileList={form.getFieldValue('annexureAadditionalDocs') || []}
+                fileList={form.getFieldValue('annexureAadditionalDocs') || []}
               >
-                <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                <Button
+                  className="upload-doc"
+                  size="large"
+                  icon={<UploadOutlined />}
+                  disabled={isView}
+                >
                   Upload
                 </Button>
               </Upload>
@@ -852,7 +953,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 },
               ]}
             >
-              <TextArea rows={3} />
+              <TextArea rows={3} disabled={isView} />
             </Form.Item>
             <Form.Item
               name="annexureBadditionalDocs"
@@ -887,9 +988,17 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 action="/upload.do"
                 listType="picture"
                 multiple={false}
-                // maxCount={1}
+                maxCount={1}
+                disabled={isView}
+                // defaultFileList={form.getFieldValue('annexureBadditionalDocs') || []}
+                fileList={form.getFieldValue('annexureBadditionalDocs') || []}
               >
-                <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                <Button
+                  className="upload-doc"
+                  size="large"
+                  icon={<UploadOutlined />}
+                  disabled={isView}
+                >
                   Upload
                 </Button>
               </Upload>
