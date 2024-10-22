@@ -121,7 +121,7 @@ export const AddCostQuotationForm = (props: any) => {
                 form={form}
                 onFinish={submitForm}
               >
-                <Row className="row" gutter={[40, 16]}>
+                <Row className="row" gutter={40} justify={'space-between'}>
                   <Col xl={12} md={24}>
                     <Form.Item
                       label={t('costQuotation:dateOfIssue')}
@@ -433,52 +433,55 @@ export const AddCostQuotationForm = (props: any) => {
                   </Paragraph>
                 </div>
                 {/* Cost Quotation table end */}
-                <Row className="data-rows">
-                  <Col md={24} xl={12}>
-                    <Form.Item
-                      label={t('costQuotation:signature')}
-                      name="signature"
-                      valuePropName="fileList"
-                      getValueFromEvent={normFile}
-                      required={true}
-                      rules={[
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('common:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
+
+                <div className="cost-quotation-signature">
+                  <Row className="data-rows">
+                    <Col md={24} xl={12}>
+                      <Form.Item
+                        label={t('costQuotation:signature')}
+                        name="signature"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        required={true}
+                        rules={[
+                          {
+                            validator: async (rule, file) => {
+                              if (file?.length > 0) {
+                                if (
+                                  !isValidateFileType(
+                                    file[0]?.type,
+                                    DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                  )
+                                ) {
+                                  throw new Error(`${t('common:invalidFileFormat')}`);
+                                } else if (file[0]?.size > maximumImageSize) {
+                                  // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                  throw new Error(`${t('common:maxSizeVal')}`);
+                                }
                               }
-                            }
+                            },
                           },
-                        },
-                      ]}
-                    >
-                      <Upload
-                        accept={'.doc, .docx, .pdf, .png, .jpg'}
-                        beforeUpload={(file: any) => {
-                          return false;
-                        }}
-                        className="design-upload-section"
-                        name="design"
-                        action="/upload.do"
-                        listType="picture"
-                        multiple={false}
+                        ]}
                       >
-                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          {t('common:upload')}
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                </Row>
+                        <Upload
+                          accept={'.doc, .docx, .pdf, .png, .jpg'}
+                          beforeUpload={(file: any) => {
+                            return false;
+                          }}
+                          className="design-upload-section"
+                          name="design"
+                          action="/upload.do"
+                          listType="picture"
+                          multiple={false}
+                        >
+                          <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                            {t('common:upload')}
+                          </Button>
+                        </Upload>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
 
                 <div className="steps-actions">
                   <Button type="primary" htmlType="submit">

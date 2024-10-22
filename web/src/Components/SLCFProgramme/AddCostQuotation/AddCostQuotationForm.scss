@@ -109,7 +109,6 @@
         }
       }
 
-
       .details-part-one {
         .upload-doc {
           height: 40px !important;
@@ -364,9 +363,9 @@
 }
 .costQuotationTable {
   width: 100%;
-  
+
   .header {
-    background-color: #FAFAFA;
+    background-color: #fafafa;
     padding: 10px 20px;
     text-align: left;
     margin-bottom: 10px;
@@ -376,7 +375,7 @@
   }
   .data-rows {
     padding: 10px 20px;
-    border-bottom: 1px solid #0000000F    
+    border-bottom: 1px solid #0000000f;
   }
 
   .addMinusBtn {
@@ -387,36 +386,37 @@
   }
 }
 
-.design-upload-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: start;
-  width: 100%;
-
-  .icon-color {
-    color: $primary-color !important;
-  }
-
-  .ant-upload {
-    width: 20%;
-
-    .ant-btn {
-      height: 66px;
-    }
-  }
-
-  .ant-upload-list {
+.cost-quotation-signature {
+  .design-upload-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
     width: 100%;
-    border-radius: 20px;
-    margin-left: 5px;
-    .ant-upload-list-picture-container{
-      .ant-upload-list-item {
-        margin-top: 0px;
+
+    .icon-color {
+      color: $primary-color !important;
+    }
+
+    .ant-upload {
+      width: 20%;
+
+      .ant-btn {
         height: 40px;
-        border-radius: 5px;
+      }
+    }
+
+    .ant-upload-list {
+      width: 100%;
+      border-radius: 20px;
+      margin-left: 5px;
+      .ant-upload-list-picture-container {
+        .ant-upload-list-item {
+          margin-top: 0px;
+          height: 40px;
+          border-radius: 5px;
+        }
       }
     }
   }
-
 }

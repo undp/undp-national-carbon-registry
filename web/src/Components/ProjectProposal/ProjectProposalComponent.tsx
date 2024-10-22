@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, Row, Typography } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Typography } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import TextArea from 'antd/lib/input/TextArea';
 import { i18n } from 'i18next';
@@ -16,6 +16,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
 const { Text } = Typography;
+import { useNavigate, useParams } from 'react-router-dom';
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -23,6 +24,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   const t = translator.t;
   const [form] = useForm();
 
+  const { id } = useParams();
+
+  const navigate = useNavigate();
   const [countries, setCountries] = useState<[]>([]);
 
   const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
@@ -132,6 +136,174 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     form.setFieldValue('totalCost', String(tempTotal));
   };
 
+  const onFinish = async (values: any) => {
+    console.log('-------------values--------------', values);
+    const tempValues = {
+      programmeId: id || '0001',
+      content: {
+        introduction: values?.introduction,
+        title: values?.projectTitle,
+        proposalNo: values?.proposalNo,
+        dateOfIssue: moment(values?.dateOfIssue).startOf('day').unix(),
+        revNo: values?.revNo,
+        durationOfService: values?.durationOfService,
+        validityPeriodOfProposal: values?.validityPeriod,
+        dateOfRevision: moment(values?.dateOfRevision).startOf('day').unix(),
+        projectProponentName: values?.clientName,
+        projectProponentContactPerson: values?.clientContactPerson,
+        projectProponentMobile: values?.clientMobile,
+        projectProponentEmail: values?.clientEmail,
+        serviceProviderName: values?.serviceProviderName,
+        serviceProviderContactPerson: values?.serviceProviderContactPerson,
+        serviceProviderMobile: values?.serviceProviderMobile,
+        serviceProviderTelephone: values?.serviceProviderTelephone,
+        serviceProviderEmail: values?.servcieProviderEmail,
+        overallProjectBackground: values?.overallProjectBackground,
+        proposalScope: values?.scopeForThisProposal,
+        developProjectConceptResponsible: values?.developProjectConcept,
+        notificationToSLCCSResponsible: values?.notificationSLCSS,
+        prepareCMAResponsible: values?.prepareCMA,
+        submissionOfCMAForValidationResponsible: values?.validationCMA,
+        preparationOfMonitoringReportResponsible: values?.preparationOfMonitoringReport,
+        submissionOfMonitoringReportForVerificationResponsible:
+          values?.submissionOfMonitoringReport,
+        projectCapacityValue: Number(values?.projectCapacityValue),
+        projectCapacityUnit: values?.projectCapacityUnit,
+        plantFactorValue: Number(values?.plantFactorValue),
+        plantFactorUnit: values?.plantFactorUnit,
+        avgEnergyOutputValue: Number(values?.avgEnergyOutputValue),
+        avgEnergyOutputUnit: values?.avgEnergyOutputUnit,
+        gridEmissionFactorValue: Number(values?.gridEmissionFactorValue),
+        gridEmissionFactorUnit: values?.gridEmissionFactorUnit,
+        emissionReductionValue: Number(values?.emissionReductionValue),
+        emissionReductionUnit: values?.emissionReductionUnit,
+        avgCreditGenerationPerAnnum: Number(values?.avgCreditGenerationPerAnnum),
+        projectTimeline: (function () {
+          const activity01 = form.getFieldValue('projectPlanActivity01');
+          const activityStartDate = moment(form.getFieldValue('projectPlanActivity01StartDate'))
+            .startOf('day')
+            .unix();
+          const activityEndDate = moment(form.getFieldValue('projectPlanActivity01EndDate'))
+            .startOf('day')
+            .unix();
+          const firstObj = {
+            activity: activity01,
+            period: [activityStartDate, activityEndDate],
+          };
+          const activityObjs: any[] = [];
+          activityObjs.push(firstObj);
+          const extraProjectPlanActivities = form.getFieldValue('extraProjectPlanActivities');
+          if (
+            extraProjectPlanActivities !== undefined &&
+            extraProjectPlanActivities[0] !== undefined
+          ) {
+            extraProjectPlanActivities.forEach((activity: any) => {
+              const name = activity.projectPlanActivity;
+              const startDate = moment(activity.projectPlanActivityStartDate).startOf('day').unix();
+              const endDate = moment(activity.projectPlanActivity01EndDate).startOf('day').unix();
+
+              const tempObj = {
+                activity: name,
+                period: [startDate, endDate],
+              };
+
+              activityObjs.push(tempObj);
+            });
+
+            return activityObjs;
+          }
+        })(),
+        scopeOfWork: values?.scopeOfWork,
+        teamComposition: values?.teamComposition,
+        teamMembers: (function () {
+          const firstConsultant = values?.firstMemberConsultant;
+          const firstRole = values?.firstMemberRole;
+
+          const firstMember = {
+            consultant: firstConsultant,
+            role: firstRole,
+          };
+
+          const members = [];
+          members.push(firstMember);
+          const extraMembers = values?.extraMembers;
+
+          if (extraMembers !== undefined && extraMembers[0] !== undefined) {
+            extraMembers.forEach((member: any) => {
+              const tempMember = {
+                consultant: member?.memberConsultant,
+                role: member?.memberRole,
+              };
+
+              members.push(tempMember);
+            });
+          }
+
+          return members;
+        })(),
+        costing: values?.costing,
+        costValidation: Number(values?.costValidation),
+        costVerification: Number(values?.costVerification),
+        totalCost: Number(values?.totalCost),
+        additionalServices: (function () {
+          const additionalServices = values?.additionalServices;
+          const tempServices: any[] = [];
+          if (additionalServices !== undefined && additionalServices[0] !== undefined) {
+            additionalServices.forEach((serviceItem: any) => {
+              const tempService = {
+                cost: Number(serviceItem.cost),
+                service: serviceItem.service,
+              };
+              tempServices.push(tempService);
+            });
+          }
+
+          return tempServices;
+        })(),
+        executiveBoardMembers: (function () {
+          const firstBoardMember = values?.firstExecutiveBoardMember;
+
+          const tempBoardMembers = [firstBoardMember];
+
+          const extraBoardMembers = values?.extraExecutiveBoardMembers;
+
+          if (
+            extraBoardMembers !== undefined &&
+            extraBoardMembers.length > 0 &&
+            extraBoardMembers[0] !== undefined
+          ) {
+            extraBoardMembers.forEach((boardMember: any) => {
+              tempBoardMembers.push(boardMember.name);
+            });
+          }
+          return tempBoardMembers;
+        })(),
+        slccsProjectDetails: values?.slcssProjectDetails,
+      },
+    };
+
+    try {
+      const res = await post('national/programmeSl/createProjectProposal', tempValues);
+      console.log('------------res---------', res);
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content: 'Project Proposal submitted successfully',
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate('/programmeManagementSLCF/viewAll');
+      }
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Something went wrong!',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
+  };
+
   return (
     <div className="proposal-form-container">
       <div className="title-container">
@@ -146,6 +318,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           layout="vertical"
           requiredMark={true}
           form={form}
+          onFinish={(values: any) => {
+            onFinish(values);
+          }}
         >
           {/* Introduction start */}
           <Form.Item
@@ -268,12 +443,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   name="dateOfRevision"
                   rules={[
                     {
-                      required: true,
-                      message: `${t('projectProposal:dateOfRevision')} ${t('isRequired')}`,
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:dateOfRevision')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <DatePicker
+                    size="large"
+                    disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                  />
                 </Form.Item>
               </div>
             </Col>
@@ -361,10 +549,6 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   label={t('projectProposal:email')}
                   name="clientEmail"
                   rules={[
-                    {
-                      required: true,
-                      // message: `${t('projectProposal:email')} ${t('isRequired')}`,
-                    },
                     {
                       validator: async (rule, value) => {
                         if (
@@ -458,7 +642,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
                 <Form.Item
                   label={t('projectProposal:email')}
-                  name="email"
+                  name="servcieProviderEmail"
                   rules={[
                     {
                       required: true,
@@ -504,8 +688,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:mobile')}
-                  name="serviceProviderMobile"
+                  label={t('projectProposal:telephone')}
+                  name="serviceProviderTelephone"
                   rules={[
                     {
                       required: true,
@@ -1236,7 +1420,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Col>
                 <Col md={3} xl={3}>
                   <Form.Item
-                    name="emissionReductionValueUnit"
+                    name="emissionReductionUnit"
                     rules={[
                       {
                         required: true,
@@ -1739,7 +1923,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <Row align={'middle'} justify={'space-between'} className="data-rows">
               <Col md={2} xl={2}>
-                {t('costQuotation:two')}
+                2
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceVerification">
@@ -1888,15 +2072,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 {' '}
               </Col>
               <Col md={10} xl={10}>
-                <p>{t('costQuotation:total')}</p>
+                <p>Total</p>
               </Col>
               <Col md={4} xl={4}>
                 <Form.Item
-                  name={'totalCost'}
+                  name="totalCost"
                   rules={[
                     {
                       required: true,
-                      message: `${t('costQuotation:total')} ${t('costQuotation:isRequired')}`,
+                      message: `Total ${t('isRequired')}`,
                     },
                   ]}
                 >
@@ -1947,7 +2131,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       <Row>
                         <Col md={20} xl={10}>
                           <Form.Item
-                            name="firstExecutiveBoardMember"
+                            name="name"
                             rules={[
                               {
                                 required: true,

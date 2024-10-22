@@ -265,79 +265,31 @@
   }
 
   .costing-table {
-    margin-bottom: 16px;
+    width: 100%;
 
-    .description-title {
-      margin-top: 16px;
-      color: #3A3541CC;
-      font-weight: 600;
-    }
-
-    .description {
-      ul {
-        list-style: none;
-        font-weight: 500;
-      }
+    .header {
+      background-color: #fafafa;
+      padding: 10px 20px;
+      text-align: left;
+      margin-bottom: 10px;
     }
     .ant-form-item {
       margin-bottom: 0px !important;
     }
-
-    .header {
-      font-weight: 600;
-      background-color: #fafafa;
-
-      div {
-        padding: 8px;
-      }
-    }
-
     .data-rows {
-      .col-1 {
-        padding: 8px;
-      }
-
-      .col-2 {
-        padding: 8px;
-      }
-
-      .col-3 {
-        padding: 8px;
-      }
-
-      .col-4 {
-        padding: 8px;
-      }
+      padding: 10px 20px;
+      border-bottom: 1px solid #0000000f;
     }
 
-    .total-cost-row {
-      margin-top: 16px;
-
-      .col-1 {
-        padding: 8px;
-      }
-
-      .col-2 {
-        padding: 8px;
-      }
-
-      .col-3 {
-        padding: 8px;
-        // background-color: #f3f3f3;
-
-        .ant-input {
-          border-color: #f3f3f3;
-        }
-      }
-
-      .col-4 {
-        padding: 8px;
-      }
+    .addMinusBtn {
+      margin-left: 0px;
+    }
+    .ant-input-number-input {
+      text-align: left;
     }
   }
 
   .executive-board-members-table {
     width: 50%;
-    
   }
 }

@@ -1,18 +1,29 @@
-import { Button, Col, DatePicker, Form, Input, Row, Upload } from 'antd';
+import { Button, Col, DatePicker, Form, Input, message, Row, Upload } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { i18n } from 'i18next';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './ValidationAgreement.scss';
 import TextArea from 'antd/lib/input/TextArea';
 import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
+import { useParams } from 'react-router-dom';
+import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
+import { RcFile, UploadFile } from 'antd/lib/upload';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
   const t = translator.t;
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
   const [form] = useForm();
+
+  const { id } = useParams();
+
+  const { get, post } = useConnection();
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -21,10 +32,96 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     return e?.fileList;
   };
 
+  const viewForm = () => {};
+
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
+  const convertFileToBase64 = async (image: any) => {
+    const res = await getBase64(image?.originFileObj as RcFile);
+    return res;
+  };
+
+  const onFinish = async (values: any) => {
+    const tempValues = {
+      programmeId: id,
+      content: {
+        dateOfIssue: moment(values?.dateOfIssue).unix(),
+        climateFundDescription: values?.between,
+        projectParticipantDescription: values?.and,
+        definitions: values?.definitions,
+        whereasConditions: values?.whereas,
+        settlementFee: Number(values?.settlementFee),
+        climateFundSignature: await convertFileToBase64(values?.SLCFSignature[0]),
+        projectParticipantSignature: await convertFileToBase64(values?.clientSignature[0]),
+        projectParticipantSignatory: values?.clientAuthorizedSignatory,
+        witness1Signature: await convertFileToBase64(values?.SLCFWitnessSignature[0]),
+        witness1Name: values?.SLCFWitnessName,
+        witness1Designation: values?.SLCFWitnessDesignation,
+        witness2Label: values?.ClientWitness,
+        witness2Signature: await convertFileToBase64(values?.ClientWitnessSignature[0]),
+        witness2Name: values?.clientWitnessName,
+        witness2Designation: values?.clientWitnessDesignation,
+        annexureAComment: values?.annexureAadditionalComments,
+        annexureADoc: await convertFileToBase64(values?.annexureAadditionalDocs[0]),
+        annexureBComment: values?.annexureBadditionalComments,
+        annexureBDoc: await convertFileToBase64(values?.annexureBadditionalDocs[0]),
+      },
+    };
+
+    // const viewDataMapToFields = (val: any) => {
+    //   const tempInitialValues = {
+    //     dateOfIssue: val?.dateOfIssue ? moment.unix(val?.dateOfIssue) : undefined,
+    //     between: val?.climateFundDescription,
+    //     and: val?.projectParticipantDescription,
+    //     definitions: val?.definitions,
+    //     whereas: val?.whereasConditions,
+    //     settlementFee: val?.settlementFee,
+    //     // SLCFSignature: val?.climateFundSignature,
+    //     // clientSignature: val?.projectParticipantSignature,
+    //     clientAuthorizedSignatory: val?.projectParticipantSignatory,
+    //     // SLCFWitnessSignature: val?.witness1Signature,
+    //     SLCFWitnessName: val?.witness1Name,
+    //     SLCFWitnessDesignation: val?.witness1Designation,
+    //     ClientWitness: val?.witness2Label,
+    //     // ClientWitnessSignature: val?.witness2Signature,
+    //     clientWitnessName: val?.witness2Name,
+    //     clientWitnessDesignation: val?.witness2Designation,
+    //     annexureAadditionalComments: val?.annexureAComment,
+    //     annexureAadditionalDocs: val?.annexureADoc,
+    //     annexureBadditionalComments: val?.annexureBComment,
+    //     annexureBadditionalDocs: val?.annexureBDoc,
+    //   };
+
+    //   form.setFieldsValue(tempInitialValues);
+    // };
+
+    // useEffect(() => {
+    //   form.setFieldValue('SLCFWitness', '');
+    // }, []);
+
+    try {
+      const res = await post('national/programmeSl/createValidationAgreement', tempValues);
+
+      console.log('------------res---------', res);
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content: 'Validation agreement submitted successfully',
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      }
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Something went wrong!',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
+  };
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
@@ -41,6 +138,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           form={form}
           onFinish={(values) => {
             console.log('------onFinish----', values);
+            onFinish(values);
           }}
         >
           <Form.Item
@@ -98,7 +196,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           </Form.Item>
 
           <Form.Item
-            name="definiitons"
+            name="definitions"
             label="Definitions"
             rules={[
               {
@@ -198,7 +296,36 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             <h4 className="section-title">3. Settlement of Fees</h4>
             <div className="section-description mg-bottom-1">
               <p>3.1 Verification fee</p>
-              <p className="mg-left-1">Project Proponent shall pay</p>
+              <div className="mg-left-1 settlement-fee">
+                Project Proponent shall pay LKR
+                <Form.Item
+                  name="settlementFee"
+                  className="settlement-fee-input"
+                  rules={[
+                    {
+                      required: true,
+                      message: `${t('projectProposal:required')}`,
+                    },
+                    {
+                      validator(rule, value) {
+                        if (!value) {
+                          return Promise.resolve();
+                        }
+
+                        // eslint-disable-next-line no-restricted-globals
+                        if (isNaN(value)) {
+                          return Promise.reject(new Error('Should be an integer!'));
+                        }
+
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                as validation fee to SLCF.
+              </div>
 
               <p>3.2 Payment Conditions</p>
               <p className="no-margin-p">50% of the payment on upfront </p>
@@ -454,7 +581,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       </Button>
                     </Upload>
                   </Form.Item>
-                  <Form.Item name="clientAuthorized-signatory" className="authorized-signatory">
+                  <Form.Item
+                    name="clientAuthorizedSignatory"
+                    className="authorized-signatory"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('validationAgreement:required')}`,
+                      },
+                    ]}
+                  >
                     <TextArea rows={5} />
                   </Form.Item>
                 </span>
@@ -466,14 +602,18 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 <Form.Item
                   name="SLCFWitness"
                   label="Witness"
-                  rules={[
-                    {
-                      required: true,
-                      message: `${t('validationAgreement:required')}`,
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: `${t('validationAgreement:required')}`,
+                  //   },
+                  // ]}
                 >
-                  <Input placeholder="<The Project participant Name>" />
+                  <Input
+                    defaultValue={'Sri Lanka Climate Fund (PVT) Ltd'}
+                    placeholder="Sri Lanka Climate Fund (PVT) Ltd"
+                    disabled
+                  />
                 </Form.Item>
 
                 <div>
@@ -714,7 +854,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             >
               <TextArea rows={3} />
             </Form.Item>
-
             <Form.Item
               name="annexureBadditionalDocs"
               label="Upload your additional documents here"

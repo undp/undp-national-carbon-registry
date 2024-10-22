@@ -106,20 +106,6 @@ const App = () => {
                   </Route>
 
                   <Route
-                    path=""
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="projectProposal" element={<ProjectProposalPage />} />
-                  </Route>
-
-                  <Route
-                    path=""
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="validationAgreement" element={<ValidationAgreementPage />} />
-                  </Route>
-
-                  <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
@@ -129,6 +115,11 @@ const App = () => {
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport" element={<SLCFMonitoringReport />} />
                     <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
+                    <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
+                    <Route
+                      path="validationAgreement/:id"
+                      element={<ValidationAgreementPage />}
+                    />{' '}
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
                   </Route>
                   <Route
