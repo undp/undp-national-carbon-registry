@@ -106,8 +106,6 @@ jobs:
 
   deploy_backend:
     name: Carbon SL Registry Backend Deploy 
-    if: github.ref == 'refs/heads/develop'
-    name: deploy_dev
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-'dev'
