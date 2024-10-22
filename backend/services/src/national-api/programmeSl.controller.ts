@@ -143,15 +143,6 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocLastVersion")
   async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
-    return this.programmeService.getDocs(getDocDto, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
-  @Post("getLatestDoc")
-  async getLatestDoc(@Body() getDocDto: GetDocDto, @Request() req) {
-    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.programmeService.getDocLastVersion(getDocDto, req.user);
   }
 }
