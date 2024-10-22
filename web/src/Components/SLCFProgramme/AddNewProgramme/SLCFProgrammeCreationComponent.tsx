@@ -148,7 +148,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     form.setFieldValue('projectLocation', projectLocations);
   }, [projectLocations]);
 
-
   const onPolygonComplete = function (data: any) {
     if (data.features.length > 0) {
       const coordinates = data.features[0].geometry.coordinates[0];
