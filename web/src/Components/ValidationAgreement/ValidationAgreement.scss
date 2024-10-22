@@ -153,6 +153,14 @@
 
         .ant-upload-list-picture-container {
           margin-bottom: 15px;
+
+          .ant-upload-list-item-thumbnail {
+            height: auto !important;
+            img {
+              height: none;
+            }
+          }
+
         }
 
         .ant-upload-list-item {
