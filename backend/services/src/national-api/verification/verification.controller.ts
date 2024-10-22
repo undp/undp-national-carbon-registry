@@ -15,51 +15,27 @@ export class VerificationController {
   constructor(private verificationService: VerificationService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post("uploadMonitoringReport")
-  uploadMonitoringReport(
-    @Body() monitoringReportDto: MonitoringReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.uploadMonitoringReport(
-      monitoringReportDto,
-      req.user
-    );
+  @Post("createMonitoringReport")
+  uploadMonitoringReport(@Body() monitoringReportDto: MonitoringReportDto, @Request() req) {
+    return this.verificationService.uploadMonitoringReport(monitoringReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("verifyMonitoringReport")
-  verifyMonitoringReport(
-    @Body() verifyReportDto: VerifyReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.verifyMonitoringReport(
-      verifyReportDto,
-      req.user
-    );
+  verifyMonitoringReport(@Body() verifyReportDto: VerifyReportDto, @Request() req) {
+    return this.verificationService.verifyMonitoringReport(verifyReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("uploadVerificationReport")
-  uploadVerificationReport(
-    @Body() verificationReportDto: VerificationReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.uploadVerificationReport(
-      verificationReportDto,
-      req.user
-    );
+  uploadVerificationReport(@Body() verificationReportDto: VerificationReportDto, @Request() req) {
+    return this.verificationService.uploadVerificationReport(verificationReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("verifyVerificationReport")
-  verifyVerificationReport(
-    @Body() verifyReportDto: VerifyReportDto,
-    @Request() req
-  ) {
-    return this.verificationService.verifyVerificationReport(
-      verifyReportDto,
-      req.user
-    );
+  verifyVerificationReport(@Body() verifyReportDto: VerifyReportDto, @Request() req) {
+    return this.verificationService.verifyVerificationReport(verifyReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)

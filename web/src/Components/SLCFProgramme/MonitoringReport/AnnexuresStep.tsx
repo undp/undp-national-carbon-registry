@@ -4,6 +4,8 @@ import TextArea from 'antd/lib/input/TextArea';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../../Definitions/Enums/document.type';
+import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 export const AnnexuresStep = (props: any) => {
   const { useLocation, translator, current, form, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -28,7 +30,20 @@ export const AnnexuresStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => {
+              onFinish={async (values: any) => {
+                values.optionalDocuments = await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                    const docs = values.optionalDocuments;
+                    for (let i = 0; i < docs.length; i++) {
+                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      base64Docs.push(temp);
+                    }
+                  }
+
+                  return base64Docs;
+                })();
                 onFinish({ annexures: values });
               }}
             >
@@ -36,20 +51,16 @@ export const AnnexuresStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:annexures')}
-                      name="annexures"
+                      label={t('monitoringReport:additionalComments')}
+                      name="additionalComments"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:annexures')} ${t('isRequired')}`,
+                          message: `${t('monitoringReport:additionalComments')} ${t('isRequired')}`,
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t('monitoringReport:annexuresPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:q_documentUpload')}

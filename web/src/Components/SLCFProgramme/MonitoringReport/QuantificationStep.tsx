@@ -5,6 +5,8 @@ import TextArea from 'antd/lib/input/TextArea';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import moment from 'moment';
+import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 export const QualificationStep = (props: any) => {
   const { useLocation, translator, current, form, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -17,6 +19,95 @@ export const QualificationStep = (props: any) => {
     return e?.fileList;
   };
   const t = translator.t;
+
+  const calculateAnnualAverage = () => {
+    const years = form.getFieldValue('yearsTotal');
+
+    const beTotal = form.getFieldValue('baselineEmissionsTotal') || 0;
+    const beAvg = Number(beTotal) / Number(years);
+    form.setFieldValue('baselineEmissionsAverage', beAvg.toFixed(2));
+
+    const peTotal = form.getFieldValue('projectEmissionsTotal') || 0;
+    const peAvg = Number(peTotal) / Number(years);
+    form.setFieldValue('projectEmissionsAverage', peAvg.toFixed(2));
+
+    const leTotal = form.getFieldValue('leakageEmissionsTotal') || 0;
+    const leAvg = Number(leTotal) / Number(years);
+    form.setFieldValue('leakageEmissionsAverage', leAvg.toFixed(2));
+
+    const ghgTotal = form.getFieldValue('ghgEmissionsTotal') || 0;
+    const ghgAvg = Number(ghgTotal) / Number(years);
+    form.setFieldValue('ghgEmissionsAverage', ghgAvg.toFixed(2));
+  };
+
+  const onEmissionsYearChange = () => {
+    const listVals = form.getFieldValue('emissionReductionsRemovalsList');
+    form.setFieldValue('yearsTotal', listVals ? listVals.length + 1 : 1);
+    calculateAnnualAverage();
+  };
+
+  const onBaselineEmissionsChange = () => {
+    const val1 = form.getFieldValue('baselineEmissions') || 0;
+    const listVals = form.getFieldValue('emissionReductionsRemovalsList');
+    let tempTotal = Number(val1);
+    if (listVals?.length) {
+      listVals.forEach((item: any) => {
+        tempTotal =
+          typeof item?.baselineEmissions !== 'undefined'
+            ? Number(item?.baselineEmissions) + tempTotal
+            : tempTotal;
+      });
+    }
+    form.setFieldValue('baselineEmissionsTotal', String(tempTotal));
+    calculateAnnualAverage();
+  };
+
+  const onProjectEmissionsChange = () => {
+    const val1 = form.getFieldValue('projectEmissions') || 0;
+    const listVals = form.getFieldValue('emissionReductionsRemovalsList');
+    let tempTotal = Number(val1);
+    if (listVals?.length) {
+      listVals.forEach((item: any) => {
+        tempTotal =
+          typeof item?.projectEmissions !== 'undefined'
+            ? Number(item?.projectEmissions) + tempTotal
+            : tempTotal;
+      });
+    }
+    form.setFieldValue('projectEmissionsTotal', String(tempTotal));
+    calculateAnnualAverage();
+  };
+
+  const onLeakageEmissionsChange = () => {
+    const val1 = form.getFieldValue('leakageEmissions') || 0;
+    const listVals = form.getFieldValue('emissionReductionsRemovalsList');
+    let tempTotal = Number(val1);
+    if (listVals?.length) {
+      listVals.forEach((item: any) => {
+        tempTotal =
+          typeof item?.leakageEmissions !== 'undefined'
+            ? Number(item?.leakageEmissions) + tempTotal
+            : tempTotal;
+      });
+    }
+    form.setFieldValue('leakageEmissionsTotal', String(tempTotal));
+    calculateAnnualAverage();
+  };
+  const onGhgEmissionsChange = () => {
+    const val1 = form.getFieldValue('ghgEmissions') || 0;
+    const listVals = form.getFieldValue('emissionReductionsRemovalsList');
+    let tempTotal = Number(val1);
+    if (listVals?.length) {
+      listVals.forEach((item: any) => {
+        tempTotal =
+          typeof item?.ghgEmissions !== 'undefined'
+            ? Number(item?.ghgEmissions) + tempTotal
+            : tempTotal;
+      });
+    }
+    form.setFieldValue('ghgEmissionsTotal', String(tempTotal));
+    calculateAnnualAverage();
+  };
   return (
     <>
       {current === 5 && (
@@ -29,7 +120,7 @@ export const QualificationStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => {
+              onFinish={async (values: any) => {
                 values?.emissionReductionsRemovalsList?.unshift({
                   startDate: values.startDate,
                   endDate: values.endDate,
@@ -48,6 +139,19 @@ export const QualificationStep = (props: any) => {
                   val.startDate = moment(values?.startDate).startOf('day').unix();
                   val.endDate = moment(values?.endDate).startOf('day').unix();
                 });
+                values.optionalDocuments = await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                    const docs = values.optionalDocuments;
+                    for (let i = 0; i < docs.length; i++) {
+                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      base64Docs.push(temp);
+                    }
+                  }
+
+                  return base64Docs;
+                })();
                 onValueChange({ qualifications: values });
                 next();
               }}
@@ -56,7 +160,7 @@ export const QualificationStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:q_baselineEmission')}
+                      label={`5.1 ${t('monitoringReport:q_baselineEmission')}`}
                       name="q_baselineEmission"
                       rules={[
                         {
@@ -65,11 +169,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:q_baselineEmissionPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
@@ -117,7 +217,7 @@ export const QualificationStep = (props: any) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:q_projectEmissions')}
+                      label={`5.2 ${t('monitoringReport:q_projectEmissions')}`}
                       name="q_projectEmissions"
                       rules={[
                         {
@@ -126,15 +226,11 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:q_projectEmissionsPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:q_leakage')}
+                      label={`5.3 ${t('monitoringReport:q_leakage')}`}
                       name="q_leakage"
                       rules={[
                         {
@@ -143,18 +239,33 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:q_leakagePlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <>
                       <h4 className="form-section-title">
-                        {t('monitoringReport:q_emissionRedictionAndRemovals')}
+                        {`5.4 ${t('monitoringReport:q_emissionRedictionAndRemovals')}`}
                       </h4>
 
+                      <Row justify={'space-between'} gutter={[40, 16]}>
+                        <Col xl={24} md={24}>
+                          <div className="step-form-left-col">
+                            <Form.Item
+                              name="q_ghgEmission"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t(
+                                    'monitoringReport:q_emissionRedictionAndRemovals'
+                                  )} ${t('isRequired')}`,
+                                },
+                              ]}
+                            >
+                              <TextArea rows={4} maxLength={6} />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                      </Row>
                       <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
                         <Col xl={9} md={24}>
                           <div className="step-form-right-col">
@@ -204,7 +315,7 @@ export const QualificationStep = (props: any) => {
                                       value === undefined
                                     ) {
                                       throw new Error(
-                                        `${t('monitoringReport:selectDate')} ${t('isRequired')}`
+                                        `${t('monitoringReport:startDate')} ${t('isRequired')}`
                                       );
                                     }
                                   },
@@ -222,7 +333,7 @@ export const QualificationStep = (props: any) => {
                         </Col>
                         <Col xl={1} md={24}>
                           <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:to')}</h4>
+                            <h4 className="to-lable">{t('monitoringReport:to')}</h4>
                           </div>
                         </Col>
                         <Col xl={4} md={24}>
@@ -243,7 +354,7 @@ export const QualificationStep = (props: any) => {
                                       value === undefined
                                     ) {
                                       throw new Error(
-                                        `${t('monitoringReport:selectDate')} ${t('isRequired')}`
+                                        `${t('monitoringReport:endDate')} ${t('isRequired')}`
                                       );
                                     }
                                   },
@@ -276,7 +387,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <Input size="large" />
+                              <Input size="large" onChange={(val) => onBaselineEmissionsChange()} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -293,7 +404,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <Input size="large" />
+                              <Input size="large" onChange={(val) => onProjectEmissionsChange()} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -310,7 +421,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <Input size="large" />
+                              <Input size="large" onChange={(val) => onLeakageEmissionsChange()} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -327,7 +438,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <Input size="large" />
+                              <Input size="large" onChange={(val) => onGhgEmissionsChange()} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -345,6 +456,11 @@ export const QualificationStep = (props: any) => {
                                       // type="dashed"
                                       onClick={() => {
                                         remove(name);
+                                        onBaselineEmissionsChange();
+                                        onProjectEmissionsChange();
+                                        onLeakageEmissionsChange();
+                                        onGhgEmissionsChange();
+                                        onEmissionsYearChange();
                                       }}
                                       size="large"
                                       className="addMinusBtn"
@@ -378,7 +494,7 @@ export const QualificationStep = (props: any) => {
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('monitoringReport:selectDate')} ${t(
+                                                  `${t('monitoringReport:startDate')} ${t(
                                                     'isRequired'
                                                   )}`
                                                 );
@@ -419,7 +535,7 @@ export const QualificationStep = (props: any) => {
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('monitoringReport:selectDate')} ${t(
+                                                  `${t('monitoringReport:endDate')} ${t(
                                                     'isRequired'
                                                   )}`
                                                 );
@@ -458,7 +574,10 @@ export const QualificationStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input
+                                          size="large"
+                                          onChange={(val) => onBaselineEmissionsChange()}
+                                        />
                                       </Form.Item>
                                     </div>
                                   </Col>
@@ -475,7 +594,10 @@ export const QualificationStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input
+                                          size="large"
+                                          onChange={(val) => onProjectEmissionsChange()}
+                                        />
                                       </Form.Item>
                                     </div>
                                   </Col>
@@ -492,7 +614,10 @@ export const QualificationStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input
+                                          size="large"
+                                          onChange={(val) => onLeakageEmissionsChange()}
+                                        />
                                       </Form.Item>
                                     </div>
                                   </Col>
@@ -509,7 +634,10 @@ export const QualificationStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input
+                                          size="large"
+                                          onChange={(val) => onGhgEmissionsChange()}
+                                        />
                                       </Form.Item>
                                     </div>
                                   </Col>
@@ -522,6 +650,7 @@ export const QualificationStep = (props: any) => {
                                   // type="dashed"
                                   onClick={() => {
                                     add();
+                                    onEmissionsYearChange();
                                   }}
                                   size="large"
                                   className="addMinusBtn"
@@ -545,34 +674,160 @@ export const QualificationStep = (props: any) => {
                         <Col xl={4} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="baselineEmissionsTotal">
-                              <Input size="large" />
+                              <Input size="large" disabled />
                             </Form.Item>
                           </div>
                         </Col>
                         <Col xl={4} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="projectEmissionsTotal">
-                              <Input size="large" />
+                              <Input size="large" disabled />
                             </Form.Item>
                           </div>
                         </Col>
                         <Col xl={4} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="leakageEmissionsTotal">
-                              <Input size="large" />
+                              <Input size="large" disabled />
                             </Form.Item>
                           </div>
                         </Col>
                         <Col xl={3} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="ghgEmissionsTotal">
-                              <Input size="large" />
+                              <Input size="large" disabled />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row gutter={[16, 16]} className="form-section">
+                        <Col xl={9} md={24}>
+                          <div className="step-form-right-col">
+                            <h4>{t('monitoringReport:totalYears')}</h4>
+                          </div>
+                        </Col>
+                        <Col xl={4} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item name="yearsTotal">
+                              <Input size="large" disabled />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                      </Row>
+
+                      <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
+                        <Col xl={9} md={24}>
+                          <div className="step-form-right-col">
+                            <h4>{t('monitoringReport:annualAverage')}</h4>
+                          </div>
+                        </Col>
+                        <Col xl={4} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item name="baselineEmissionsAverage">
+                              <Input size="large" disabled />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                        <Col xl={4} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item name="projectEmissionsAverage">
+                              <Input size="large" disabled />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                        <Col xl={4} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item name="leakageEmissionsAverage">
+                              <Input size="large" disabled />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                        <Col xl={3} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item name="ghgEmissionsAverage">
+                              <Input size="large" disabled />
                             </Form.Item>
                           </div>
                         </Col>
                       </Row>
                     </>
 
+                    <>
+                      <h4 className="form-section-title">
+                        {`5.5 ${t('monitoringReport:q_comparisonWithCMA')}`}
+                      </h4>
+
+                      <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
+                        <Col xl={6} md={24}>
+                          <div className="step-form-right-col">
+                            <h4>{t('monitoringReport:item')}</h4>
+                          </div>
+                        </Col>
+
+                        <Col xl={6} md={24}>
+                          <div className="step-form-right-col">
+                            <h4>{t('monitoringReport:valueApplied')}</h4>
+                          </div>
+                        </Col>
+
+                        <Col xl={12} md={24}>
+                          <div className="step-form-right-col">
+                            <h4>{t('monitoringReport:actualValues')}</h4>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
+                        <Col xl={6} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item
+                              name="item"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:item')} ${t('isRequired')}`,
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                        <Col xl={6} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item
+                              name="valueApplied"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:valueApplied')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                        <Col xl={12} md={24}>
+                          <div className="step-form-right-col">
+                            <Form.Item
+                              name="actualValues"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('monitoringReport:actualValues')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
+                          </div>
+                        </Col>
+                      </Row>
+                    </>
                     <Form.Item
                       label={t('monitoringReport:q_remarks')}
                       name="q_remarks"
@@ -583,11 +838,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={4}
-                        placeholder={`${t('monitoringReport:q_remarksPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>

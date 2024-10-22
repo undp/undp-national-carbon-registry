@@ -38,7 +38,8 @@ export const DataAndParametersStep = (props: any) => {
                 next();
               }}
             >
-              <h4 className="form-section-title">{t('monitoringReport:dp_title')}</h4>
+              <h4 className="form-section-title">{`4.1 ${t('monitoringReport:dp_title')}`}</h4>
+
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
@@ -66,105 +67,10 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" placeholder={t('monitoringReport:dp_dataParameter')} />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:dp_description')}
-                      name="dp_description"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_description')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dp_descriptionPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dp_valueApplied')}
-                      name="dp_valueApplied"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dp_valueApplied')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input
-                        size="large"
-                        placeholder={t('monitoringReport:dp_valueAppliedPlaceholder')}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dp_purposeOfData')}
-                      name="dp_purposeOfData"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p>Indicate one of the following</p>
-                            <ul>
-                              <li>Calculation of baseline emissions</li>
-                              <li>Calculation of project emissions</li>
-                              <li>Calculation of leakage</li>
-                            </ul>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_purposeOfData')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dp_purposeOfDataPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dp_comments')}
-                      name="dp_comments"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_comments')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dp_commentsPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <Input size="large" />
                     </Form.Item>
                   </div>
                 </Col>
-
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
                     <Form.Item
@@ -191,11 +97,34 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input
-                        size="large"
-                        placeholder={t('monitoringReport:dp_dataUnitPlaceholder')}
-                      />
+                      <Input size="large" />
                     </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dp_description')}
+                      name="dp_description"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dp_description')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={3} maxLength={6} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dp_sourceOfData')}
                       name="dp_sourceOfData"
@@ -206,38 +135,115 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dp_sourceOfDataPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dp_selectionAndMeasurement')}
-                      name="dp_selectionAndMeasurement"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_selectionAndMeasurement')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t(
-                          'monitoringReport:dp_selectionAndMeasurementPlaceholder'
-                        )}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={3} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
 
-              <h4 className="form-section-title">{t('monitoringReport:dpm_title')}</h4>
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dp_justification')}
+                      name="dp_justification"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dp_justification')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={3} maxLength={6} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dp_purposeOfData')}
+                      name="dp_purposeOfData"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:dp_purposeOfData')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('monitoringReport:dp_valueApplied')}
+                      name="dp_valueApplied"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:dp_valueApplied')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dp_comments')}
+                      name="dp_comments"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dp_comments')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={3} maxLength={6} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <h4 className="form-section-title">{`4.2 ${t('monitoringReport:dpm_title')}`}</h4>
+
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
@@ -265,97 +271,13 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" placeholder={t('monitoringReport:dpm_dataParameter')} />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:dpm_description')}
-                      name="dpm_description"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_description')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dpm_descriptionPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dpm_mmProcedures')}
-                      name="dpm_mmProcedures"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_mmProcedures')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={5}
-                        placeholder={`${t('monitoringReport:dpm_mmProceduresPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dpm_valueApplied')}
-                      name="dpm_valueApplied"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_valueApplied')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dpm_valueAppliedPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dpm_qaQcProcedures')}
-                      name="dpm_qaQcProcedures"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_qaQcProcedures')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dpm_qaQcProceduresPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('monitoringReport:dpm_comments')}
-                      name="dpm_comments"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_comments')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dpm_commentsPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <Input size="large" />
                     </Form.Item>
                   </div>
                 </Col>
 
                 <Col xl={12} md={24}>
-                  <div className="details-part-two">
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_dataUnit')}
                       name="dpm_dataUnit"
@@ -380,11 +302,38 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input
-                        size="large"
-                        placeholder={`${t('monitoringReport:dpm_dataUnitPlaceholder')}`}
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dpm_description')}
+                      name="dpm_description"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dpm_description')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={3}
+                        maxLength={6}
+                        placeholder={t('monitoringReport:dpm_descriptionPlaceholder')}
                       />
                     </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_sourceOfData')}
                       name="dpm_sourceOfData"
@@ -397,18 +346,24 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_sourceOfDataPlaceholder')}`}
                         maxLength={6}
+                        placeholder={t('monitoringReport:dpm_sourceOfDataPlaceholder')}
                       />
                     </Form.Item>
+                  </div>
+                </Col>
+              </Row>
 
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:dpm_monitoringEquipment')}
-                      name="dpm_monitoringEquipment"
+                      label={t('monitoringReport:dpm_measurmentMethodsDescription')}
+                      name="dpm_measurmentMethodsDescription"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:dpm_monitoringEquipment')} ${t(
+                          message: `${t('monitoringReport:dpm_measurmentMethodsDescription')} ${t(
                             'isRequired'
                           )}`,
                         },
@@ -416,27 +371,19 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}`}
                         maxLength={6}
+                        placeholder={t(
+                          'monitoringReport:dpm_measurmentMethodsDescriptionPlaceholder'
+                        )}
                       />
                     </Form.Item>
+                  </div>
+                </Col>
+              </Row>
 
-                    <Form.Item
-                      label={t('monitoringReport:dpm_purposeOfData')}
-                      name="dpm_purposeOfData"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_purposeOfData')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        placeholder={`${t('monitoringReport:dpm_purposeOfDataPlaceholder')}`}
-                        maxLength={6}
-                      />
-                    </Form.Item>
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
                     <Form.Item
                       label={t('monitoringReport:dpm_frequencyOfMonitoring')}
                       name="dpm_frequencyOfMonitoring"
@@ -465,13 +412,43 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:dpm_calculationData')}
-                      name="dpm_calculationData"
+                      label={t('monitoringReport:dpm_valueApplied')}
+                      name="dpm_valueApplied"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:dpm_calculationData')} ${t(
+                          message: `${t('monitoringReport:dpm_valueApplied')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={3}
+                        maxLength={6}
+                        placeholder={t('monitoringReport:dpm_valueAppliedPlaceholder')}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dpm_monitoringEquipment')}
+                      name="dpm_monitoringEquipment"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dpm_monitoringEquipment')} ${t(
                             'isRequired'
                           )}`,
                         },
@@ -479,55 +456,124 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        placeholder={`${t('monitoringReport:dpm_calculationDataPlaceholder')}`}
                         maxLength={6}
+                        placeholder={t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}
                       />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
+
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:dpm_planDescription')}
+                      label={t('monitoringReport:dpm_qaQcProcedures')}
+                      name="dpm_qaQcProcedures"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dpm_qaQcProcedures')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={3}
+                        maxLength={6}
+                        placeholder={t('monitoringReport:dpm_qaQcProceduresPlaceholder')}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dpm_purposeOfData')}
+                      name="dpm_purposeOfData"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:dpm_purposeOfData')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dpm_calculationMethod')}
+                      name="dpm_calculationMethod"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dpm_calculationMethod')} ${t(
+                            'isRequired'
+                          )}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={3}
+                        maxLength={6}
+                        placeholder={t('monitoringReport:dpm_calculationMethodPlaceholder')}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('monitoringReport:dpm_comments')}
+                      name="dpm_comments"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('monitoringReport:dpm_comments')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea
+                        rows={3}
+                        maxLength={6}
+                        placeholder={t('monitoringReport:dpm_commentsPlaceholder')}
+                      />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={`4.3 ${t('monitoringReport:dpm_planDescription')}`}
                       name="dpm_planDescription"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p>
-                              Describe the process and schedule followed for monitoring the data and
-                              parameters, set out in Section 4.2 (Data and Parameters Monitored)
-                              above, during this monitoring period, include details on the following
-                            </p>
-                            <ul>
-                              <li>
-                                The organizational structure, responsibilities and competencies of
-                                the personnel that carried out the monitoring activities.
-                              </li>
-                              <li>
-                                The methods used for generating/measuring, recording, storing,
-                                aggregating, collating and reporting the data on monitored
-                                parameters.
-                              </li>
-                              <li>
-                                The procedures used for handling any internal auditing performed and
-                                any nonconformities identified.
-                              </li>
-                              <li>
-                                The implementation of sampling approaches, including target
-                                precision levels, sample sizes, sample site locations,
-                                stratification, frequency of measurement and QA/QC procedures. Where
-                                applicable, demonstrate whether the required confidence level or
-                                precision has been met. Where appropriate, include line diagrams to
-                                display the GHG data collection and management system.
-                              </li>
-                            </ul>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
                       rules={[
                         {
                           required: true,
@@ -537,11 +583,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea
-                        rows={6}
-                        placeholder={`${t('monitoringReport:dpm_planDescriptionPlaceholder')}`}
-                        maxLength={6}
-                      />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
