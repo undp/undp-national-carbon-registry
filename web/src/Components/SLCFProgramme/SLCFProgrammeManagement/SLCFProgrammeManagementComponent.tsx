@@ -23,6 +23,8 @@ import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import {
   addCommSep,
   getCompanyBgColor,
+  getProjectProposalStage,
+  getProjectProposalStageEnumVal,
   getStageEnumVal,
   getStageTagType,
   getStageTagTypeMRV,
@@ -40,6 +42,7 @@ import {
   ProgrammeStageMRV,
   ProgrammeStageR,
   ProgrammeStatus,
+  ProjectProposalStage,
 } from '../../../Definitions/Enums/programmeStage.enum';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
@@ -197,7 +200,21 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         return <span>{t(`projectList:${item}`)}</span>;
       },
     },
-
+    {
+      title: t('projectList:proposalStage'),
+      dataIndex: 'projectProposalStage',
+      key: ProgrammeManagementSlColumns.projectProposalStage,
+      sorter: true,
+      align: 'center' as const,
+      render: (item: any) => {
+        // return <span>{t(`projectList:${item}`)}</span>;
+        return (
+          <Tag color={getProjectProposalStage(item as ProjectProposalStage)}>
+            {t(`projectList:${getProjectProposalStageEnumVal(item as string)}`)}
+          </Tag>
+        );
+      },
+    },
     {
       title: t('projectList:balance'),
       dataIndex: 'creditBalance',

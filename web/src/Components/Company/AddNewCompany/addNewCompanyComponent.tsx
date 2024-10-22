@@ -472,6 +472,11 @@ export const AddNewCompanyComponent = (props: any) => {
       } else {
         requestData.phoneNo = undefined;
       }
+      if (requestData.company.faxNo && requestData.company.faxNo.length > 4) {
+        requestData.company.faxNo = formatPhoneNumberIntl(requestData.company.faxNo);
+      } else {
+        requestData.company.faxNo = undefined;
+      }
       requestData.company.phoneNo = formatPhoneNumberIntl(requestData.company.phoneNo);
       if (requestData.company.website) {
         requestData.company.website = 'https://' + requestData.company.website;

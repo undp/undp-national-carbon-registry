@@ -567,7 +567,7 @@ export class CompanyService {
   ): Promise<any> {
     let filterWithCompanyStatesIn: number[];
 
-    if (companyRole === CompanyRole.GOVERNMENT) {
+    if (companyRole === CompanyRole.GOVERNMENT || companyRole === CompanyRole.CLIMATE_FUND) {
       filterWithCompanyStatesIn = [0, 1, 2, 3];
     } else {
       filterWithCompanyStatesIn = [0, 1];
@@ -1024,6 +1024,11 @@ export class CompanyService {
     if (!companyUpdateFields.hasOwnProperty("website")) {
       companyUpdateFields["website"] = "";
     }
+
+    if (!companyUpdateFields.hasOwnProperty("faxNo")) {
+      companyUpdateFields["faxNo"] = "";
+    }
+
     const result = await this.companyRepo
       .update(
         {

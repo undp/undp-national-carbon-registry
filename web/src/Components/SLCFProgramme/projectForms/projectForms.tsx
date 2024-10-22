@@ -73,9 +73,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     : 5000000;
 
   const navigateToCostQuotationView = () => {};
-  const navigateToCostQuotationCreate = () => {};
+  const navigateToCostQuotationCreate = () => {
+    navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`);
+  };
   const navigateToProposalView = () => {};
-  const navigateToProposalCreate = () => {};
+  const navigateToProposalCreate = () => {
+    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
+  };
 
   useEffect(() => {
     setDocData(data);
@@ -188,7 +192,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   };
 
   function navigateToValidationAgreementCreate(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`);
   }
 
   function navigateToValidationReportView(): void {

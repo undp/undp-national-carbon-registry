@@ -32,6 +32,13 @@ export const getStatusEnumVal = (value: string) => {
   return Object.values(ProgrammeStatus)[index];
 };
 
+export const getProjectProposalStageEnumVal = (value: string) => {
+  const index = Object.keys(ProjectProposalStage).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(ProjectProposalStage)[index];
+};
 export const getCreditStageVal = (value: string) => {
   const index = Object.keys(CreditTransferStage).indexOf(value);
   if (index < 0) {
@@ -77,6 +84,41 @@ export const getProgrammeStatus = (stage: ProgrammeStatus) => {
       return 'processing';
     case ProgrammeStatus.PROCUREMENT_STAGE:
       return 'purple';
+    default:
+      return 'default';
+  }
+};
+
+export const getProjectProposalStage = (stage: ProjectProposalStage) => {
+  switch (getProjectProposalStageEnumVal(stage)) {
+    case ProjectProposalStage.SUBMITTED_INF:
+      return 'processing';
+    case ProjectProposalStage.APPROVED_INF:
+      return 'purple';
+    case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
+      return 'processing';
+    case ProjectProposalStage.SUBMITTED_PROPOSAL:
+      return 'processing';
+    case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
+      return 'processing';
+    case ProjectProposalStage.ACCEPTED_PROPOSAL:
+      return 'purple';
+    case ProjectProposalStage.SUBMITTED_CMA:
+      return 'processing';
+    case ProjectProposalStage.VALIDATION_PENDING:
+      return 'processing';
+    case ProjectProposalStage.AUTHORISED:
+      return 'purple';
+    case ProjectProposalStage.REJECTED_VALIDATION:
+      return 'error';
+    case ProjectProposalStage.APPROVED_CMA:
+      return 'purple';
+    case ProjectProposalStage.REJECTED_CMA:
+      return 'error';
+    case ProjectProposalStage.REJECTED_PROPOSAL:
+      return 'error';
+    case ProjectProposalStage.REJECTED_INF:
+      return 'error';
     default:
       return 'default';
   }
@@ -277,7 +319,7 @@ export const getGeneralFields = (
     title: programme.title,
     serialNo: programme.serialNo,
     currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
+    applicationType: 'Project Participant',
     sector: programme.sector,
     sectoralScope:
       Object.keys(SectoralScope)[
@@ -305,6 +347,7 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
   let res: Record<string, any> = {
     title: programme.title,
     serialNo: programme.serialNo,
+    projectProposalStage: programme.projectProposalStage,
     projectStatus: programme.projectStatus,
     projectCategory: programme.projectCategory,
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
@@ -423,3 +466,21 @@ export const getBase64 = (file: RcFile): Promise<string> =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
+// export const base64ToFile = (base64String: string, filename: string): File => {
+//   // Split the Base64 string into metadata and data
+//   const arr = base64String.split(',');
+//   const mime = arr[0].match(/:(.*?);/)[1]; // Extract MIME type
+//   const bstr = atob(arr[1]); // Decode the Base64 string
+//   const n = bstr.length;
+//   const u8arr = new Uint8Array(n);
+
+//   // Convert binary string to Uint8Array
+//   for (let i = 0; i < n; i++) {
+//     u8arr[i] = bstr.charCodeAt(i);
+//   }
+
+//   // Create a Blob and then a File object
+//   const blob = new Blob([u8arr], { type: mime });
+//   return new File([blob], filename, { type: mime });
+// };
