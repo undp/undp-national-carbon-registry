@@ -117,7 +117,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           docType: 'validationAgreement',
         });
 
-
         if (res?.statusText === 'SUCCESS') {
           const content = JSON.parse(res?.data[0].content);
           viewDataMapToFields(content);
