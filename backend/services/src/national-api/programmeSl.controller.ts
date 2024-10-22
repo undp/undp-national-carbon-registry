@@ -152,6 +152,6 @@ export class ProgrammeSlController {
   @Post("getLatestDoc")
   async getLatestDoc(@Body() getDocDto: GetDocDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.programmeService.getLatestDoc(getDocDto, req.user);
+    return this.programmeService.getDocLastVersion(getDocDto, req.user);
   }
 }
