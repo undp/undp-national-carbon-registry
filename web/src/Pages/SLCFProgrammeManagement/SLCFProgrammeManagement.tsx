@@ -13,6 +13,7 @@ const SLCFProgrammeManagement = () => {
     ProgrammeManagementSlColumns.title,
     ProgrammeManagementSlColumns.company,
     ProgrammeManagementSlColumns.projectCategory,
+    ProgrammeManagementSlColumns.projectProposalStage,
     ProgrammeManagementSlColumns.projectStatus,
     ProgrammeManagementSlColumns.creditBalance,
     ProgrammeManagementSlColumns.purposeOfCreditDevelopment,

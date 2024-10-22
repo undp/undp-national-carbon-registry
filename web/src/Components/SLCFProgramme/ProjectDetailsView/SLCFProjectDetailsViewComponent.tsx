@@ -53,6 +53,8 @@ import {
   getGeneralFields,
   getGeneralFieldsSl,
   getProgrammeStatus,
+  getProjectProposalStage,
+  getProjectProposalStageEnumVal,
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
@@ -1854,6 +1856,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         generalInfo[text] = (
           <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
             {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
+          </Tag>
+        );
+      } else if (k === 'projectProposalStage') {
+        generalInfo[text] = (
+          <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>
+            {t(`projectDetailsView:${getProjectProposalStageEnumVal(v as string)}`)}
           </Tag>
         );
       } else if (k === 'sector') {
