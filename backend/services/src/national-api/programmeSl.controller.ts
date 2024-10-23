@@ -17,6 +17,7 @@ import { CompanyRole } from "src/enum/company.role.enum";
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { DocumentEntity } from "src/entities/document.entity";
+import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -58,30 +59,6 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("proposal/approve")
-  async approveProposal(@Body("programmeId") programmeId: string, @Request() req) {
-    const updateProposalStageDto = {
-      programmeId: programmeId,
-      txType: TxType.APPROVE_PROPOSAL,
-    };
-    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("proposal/reject")
-  async rejectProposal(@Body("programmeId") programmeId: string, @Request() req) {
-    const updateProposalStageDto = {
-      programmeId: programmeId,
-      txType: TxType.REJECT_PROPOSAL,
-    };
-    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post("getProjectById")
   async getProjectById(@Body("programmeId") programmeId: string) {
     return this.programmeService.getProjectById(programmeId);
@@ -93,14 +70,6 @@ export class ProgrammeSlController {
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.programmeService.query(query, req.abilityCondition);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
-  @Post("createCMA")
-  async createCMA(@Body() cmaDto: CMADto, @Request() req) {
-    return this.programmeService.createCMA(cmaDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -128,6 +97,58 @@ export class ProgrammeSlController {
     @Request() req
   ) {
     return this.programmeService.createValidationAgreement(validationAgreementDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("proposal/approve")
+  async approveProposal(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_PROPOSAL,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("proposal/reject")
+  async rejectProposal(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_PROPOSAL,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("createCMA")
+  async createCMA(@Body() cmaDto: CMADto, @Request() req) {
+    return this.programmeService.createCMA(cmaDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("cma/approve")
+  async approveCMA(@Body() cmaApproveDto: CMAApproveDto, @Request() req) {
+    return this.programmeService.createSiteVisitChecklist(cmaApproveDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("cma/reject")
+  async rejectCMA(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_CMA,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
   }
 
   @ApiBearerAuth()
