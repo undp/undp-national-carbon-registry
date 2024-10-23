@@ -1706,7 +1706,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input placeholder="5412 tCO2e" />
+                  <Input placeholder="5412 tCO2e" disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -1869,7 +1869,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('CMAForm:required')}`);
+                                      throw new Error(`${t('projectProposal:required')}`);
                                     }
                                   },
                                 },
@@ -2132,12 +2132,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceValidation">
-                  <Input
-                    size="large"
-                    defaultValue={'Project Validation & Registration'}
-                    placeholder={'Verification & Credit Issuance'}
-                    disabled
-                  />
+                  <Input size="large" defaultValue={'Project Validation & Registration'} disabled />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -2171,12 +2166,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceVerification">
-                  <Input
-                    size="large"
-                    defaultValue={'Verification & Credit Issuance'}
-                    placeholder={'Verification & Credit Issuance'}
-                    disabled
-                  />
+                  <Input size="large" defaultValue={'Verification & Credit Issuance'} disabled />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -2185,7 +2175,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Cost ${t('costQuotation:isRequired')}`,
+                      message: `Cost ${t('isRequired')}`,
                     },
                   ]}
                 >
@@ -2371,7 +2361,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:isRequired')}`,
+                        message: `${t('projectProposal:required')}`,
                       },
                     ]}
                   >
