@@ -10,13 +10,15 @@ import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
 import ProjectDetails from './ProjectDetails';
 import ProjectActivity from './ProjectActivity';
-import Appendix from './Appendix';
+import Appendix from './ValidationReportAppendix';
 import ValidationMethodology from './ValidationMethodology';
 import ValidationFindings from './ValidationFindings';
 import ValidationConclusion from './ValidationConclusion';
 import GHGProjectDescription from './GHGProjectDescription';
 import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportGHGDescriptionOfProjectActivity';
 import DataValidationProcess from './DataValidationProcess';
+import ValidationOpinion from './ValidationOpinion';
+import Reference from './Reference';
 
 const StepperComponent = (props: any) => {
   const { t } = props;
@@ -297,7 +299,7 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ValidationConclusion
+        <ValidationOpinion
           next={next}
           prev={prev}
           form={form5}
@@ -312,6 +314,24 @@ const StepperComponent = (props: any) => {
         <div className="stepper-title-container">
           <div className="step-count">06</div>
           <div className="title">{t('validationReport:form07Title')}</div>
+        </div>
+      ),
+      description: (
+        <Reference
+          next={next}
+          prev={prev}
+          form={form6}
+          current={current}
+          t={t}
+          handleValuesUpdate={handleValuesUpdate}
+        />
+      ),
+    },
+    {
+      title: (
+        <div className="stepper-title-container">
+          <div className="step-count">07</div>
+          <div className="title">{t('validationReport:form08Title')}</div>
         </div>
       ),
       description: (

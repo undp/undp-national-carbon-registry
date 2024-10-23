@@ -14,12 +14,13 @@ import {
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import NetEmissionReduction from '../Common/NetEmissonReduction';
 
-enum netEmissionColumnType {
-  TOTAL = 'TOTAL',
-  TOTAL_CREDITING_YEARS = 'TOTAL_CREDITING_YEARS',
-  ANNUAL_AVERAGE = 'ANNUAL_AVERAGE',
-}
+// enum netEmissionColumnType {
+//   TOTAL = 'TOTAL',
+//   TOTAL_CREDITING_YEARS = 'TOTAL_CREDITING_YEARS',
+//   ANNUAL_AVERAGE = 'ANNUAL_AVERAGE',
+// }
 
 const DataValidationProcess = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
@@ -640,10 +641,11 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <Table
+                    {/* <Table
                       dataSource={estimatedNetEmissionDataSourceList}
                       columns={estimatedNetEmissionTableColumns}
-                    ></Table>
+                    ></Table> */}
+                    <NetEmissionReduction form={form} t={t}></NetEmissionReduction>
                   </Form.Item>
                   <Form.Item
                     label={`4.3.7 ${t('validationReport:methodologyDeviations')}`}

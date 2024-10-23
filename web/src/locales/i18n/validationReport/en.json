@@ -252,11 +252,19 @@
   "estimatedNetGhgEmissionReductionsOrRemovals": "Estimated net  GHG emission  reductions or  removals  (tCO2e)",
   "total": "Total",
   "totalNumberOfCreditingYears": "Total number of  crediting years",
-  "annualAverage":"Annual average  over the crediting  period",
+  "annualAverage": "Annual average  over the crediting  period",
   "methodologyDeviations": "Methodology deviations",
   "monitoringPlan": "Monitoring Plan",
   "carbonManagementAssessment": "Carbon Management Assessment",
   "changesOfTheProjectActivity": "Changes of the Project Activity",
   "environmentImpact": "Environment Impact",
-  "commentsOfStakeholders": "Comments of Stakeholders"
+  "commentsOfStakeholders": "Comments of Stakeholders",
+  "validationOpinion": "Validation Opinion",
+  "signature": "Signature",
+  "witness": "Witness",
+  "references": "References",
+  "designation": "Designation",
+  "dateOfSignature": "Date Of Signature",
+  "additionalComments": "Additional Comments",
+  "additionalDocumentUpload": "Upload your additional documents here"
 }
