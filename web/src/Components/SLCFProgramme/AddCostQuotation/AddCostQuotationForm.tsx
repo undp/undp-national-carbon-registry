@@ -545,6 +545,7 @@ export const AddCostQuotationForm = (props: any) => {
                           listType="picture"
                           multiple={false}
                           disabled={disableFields}
+                          fileList={form.getFieldValue('signature') || []}
                         >
                           <Button
                             className="upload-doc"
