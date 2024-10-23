@@ -11,11 +11,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ProjectDetails from './ProjectDetails';
 import ProjectActivity from './ProjectActivity';
 import Appendix from './Appendix';
-import ValidationProcess from './ValidationProcess';
+import ValidationMethodology from './ValidationMethodology';
 import ValidationFindings from './ValidationFindings';
 import ValidationConclusion from './ValidationConclusion';
 import GHGProjectDescription from './GHGProjectDescription';
 import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportGHGDescriptionOfProjectActivity';
+import DataValidationProcess from './DataValidationProcess';
 
 const StepperComponent = (props: any) => {
   const { t } = props;
@@ -260,7 +261,7 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ValidationProcess
+        <ValidationMethodology
           next={next}
           prev={prev}
           form={form3}
@@ -278,7 +279,7 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ValidationFindings
+        <DataValidationProcess
           next={next}
           prev={prev}
           form={form4}
