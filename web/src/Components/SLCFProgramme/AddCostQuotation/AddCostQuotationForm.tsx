@@ -55,6 +55,8 @@ export const AddCostQuotationForm = (props: any) => {
     : 5000000;
 
   const viewDataMapToFields = (vals: any) => {
+    const fileUrlParts = vals?.signature[0].split('/');
+    const fileName = fileUrlParts[fileUrlParts.length - 1];
     const tempInialVals = {
       quotationNo: vals?.quotationNo,
       address: vals?.address,
@@ -65,7 +67,7 @@ export const AddCostQuotationForm = (props: any) => {
       signature: [
         {
           uid: 'cost_quotation',
-          name: 'COST_QUOTATION_SIGN',
+          name: fileName,
           status: 'done',
           url: vals?.signature[0],
         },
@@ -89,6 +91,7 @@ export const AddCostQuotationForm = (props: any) => {
             viewDataMapToFields(content);
           }
         } catch (error) {
+          console.log('error', error);
           message.open({
             type: 'error',
             content: `${t('costQuotation:somethingWentWrong')}`,
