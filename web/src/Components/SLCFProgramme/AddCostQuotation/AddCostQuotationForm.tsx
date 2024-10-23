@@ -6,7 +6,7 @@ import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import TextArea from 'antd/lib/input/TextArea';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocType } from '../../../Definitions/Enums/document.type';
@@ -17,6 +17,12 @@ export const AddCostQuotationForm = (props: any) => {
   const navigate = useNavigate();
   const { post } = useConnection();
 
+  const { state } = useLocation();
+  const [isView, setIsView] = useState<boolean>(!!state?.isView);
+
+  const [disableFields, setDisableFields] = useState<boolean>(false);
+
+  const { id } = useParams();
   const [form] = Form.useForm();
 
   const t = translator.t;
@@ -48,6 +54,57 @@ export const AddCostQuotationForm = (props: any) => {
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
+  const viewDataMapToFields = (vals: any) => {
+    const tempInialVals = {
+      quotationNo: vals?.quotationNo,
+      address: vals?.address,
+      dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+      costValidation: Number(vals?.costValidation),
+      costVerification: Number(vals?.costVerification),
+      totalCost: Number(vals?.totalCost),
+      signature: [
+        {
+          uid: 'cost_quotation',
+          name: 'COST_QUOTATION_SIGN',
+          status: 'done',
+          url: vals?.signature[0],
+        },
+      ],
+    };
+
+    form.setFieldsValue(tempInialVals);
+  };
+
+  useEffect(() => {
+    const getViewData = async () => {
+      if (isView) {
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'costQuotation',
+          });
+
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data[0].content);
+            viewDataMapToFields(content);
+          }
+        } catch (error) {
+          message.open({
+            type: 'error',
+            content: `${t('costQuotation:somethingWentWrong')}`,
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+      }
+    };
+
+    getViewData();
+
+    if (isView) {
+      setDisableFields(true);
+    }
+  }, []);
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
 
@@ -150,6 +207,7 @@ export const AddCostQuotationForm = (props: any) => {
                       <DatePicker
                         size="large"
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        disabled={disableFields}
                       />
                     </Form.Item>
                     <Form.Item
@@ -162,7 +220,11 @@ export const AddCostQuotationForm = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} placeholder={`${t('costQuotation:address')}`} />
+                      <TextArea
+                        rows={4}
+                        placeholder={`${t('costQuotation:address')}`}
+                        disabled={disableFields}
+                      />
                     </Form.Item>
                   </Col>
                   <Col xl={12} md={24}>
@@ -191,7 +253,7 @@ export const AddCostQuotationForm = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
                   </Col>
                   ;
@@ -239,6 +301,7 @@ export const AddCostQuotationForm = (props: any) => {
                         <Input
                           type="number"
                           size="large"
+                          disabled={disableFields}
                           onChange={(val) => {
                             calculateTotalCost();
                           }}
@@ -277,6 +340,7 @@ export const AddCostQuotationForm = (props: any) => {
                         <Input
                           type="number"
                           size="large"
+                          disabled={disableFields}
                           onChange={(val) => {
                             calculateTotalCost();
                           }}
@@ -322,7 +386,11 @@ export const AddCostQuotationForm = (props: any) => {
                                     },
                                   ]}
                                 >
-                                  <Input size="large" onChange={(val) => {}} />
+                                  <Input
+                                    size="large"
+                                    onChange={(val) => {}}
+                                    disabled={disableFields}
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col md={4} xl={4}>
@@ -340,6 +408,7 @@ export const AddCostQuotationForm = (props: any) => {
                                   <Input
                                     type="number"
                                     size="large"
+                                    disabled={disableFields}
                                     onChange={(val) => {
                                       calculateTotalCost();
                                     }}
@@ -354,6 +423,7 @@ export const AddCostQuotationForm = (props: any) => {
                                       calculateTotalCost();
                                       remove(name);
                                     }}
+                                    disabled={disableFields}
                                     size="large"
                                     className="addMinusBtn"
                                     // block
@@ -376,6 +446,7 @@ export const AddCostQuotationForm = (props: any) => {
                                   }}
                                   size="large"
                                   className="addMinusBtn"
+                                  disabled={disableFields}
                                   // block
                                   icon={<PlusOutlined />}
                                 ></Button>
@@ -473,8 +544,14 @@ export const AddCostQuotationForm = (props: any) => {
                           action="/upload.do"
                           listType="picture"
                           multiple={false}
+                          disabled={disableFields}
                         >
-                          <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                          <Button
+                            className="upload-doc"
+                            size="large"
+                            icon={<UploadOutlined />}
+                            disabled={disableFields}
+                          >
                             {t('common:upload')}
                           </Button>
                         </Upload>
