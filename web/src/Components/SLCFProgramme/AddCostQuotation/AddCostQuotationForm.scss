@@ -411,6 +411,14 @@
       border-radius: 20px;
       margin-left: 5px;
       .ant-upload-list-picture-container {
+        margin-bottom: 15px;
+        .ant-upload-list-item-thumbnail {
+          height: auto !important;
+          img {
+            height: auto;
+          }
+        }
+        
         .ant-upload-list-item {
           margin-top: 0px;
           height: 40px;
