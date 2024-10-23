@@ -34,10 +34,21 @@ const ProjectTimeline = (props: IProjectTimelineData) => {
           dataLabels: {
             enabled: true,
             formatter: function (val: [number, number]) {
-              const start = moment(val[0]).format('DD/MM/YYYY');
-              const end = moment(val[1]).format('DD/MM/YYYY');
+              const startDate = new Date(val[0]);
+              const startYear = startDate.getFullYear();
+              const startMonth = String(startDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+              const startDay = String(startDate.getDate()).padStart(2, '0');
 
-              return `${start} - ${end}`;
+              const startDateString = `${startYear}-${startMonth}-${startDay}`;
+
+              const endDate = new Date(val[1]);
+              const endYear = endDate.getFullYear();
+              const endMonth = String(endDate.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+              const endDay = String(endDate.getDate()).padStart(2, '0');
+
+              const endDateString = `${endYear}-${endMonth}-${endDay}`;
+
+              return `${startDateString} - ${endDateString}`;
             },
           },
           xaxis: {
