@@ -87,7 +87,7 @@ export const AddCostQuotationForm = (props: any) => {
           });
 
           if (res?.statusText === 'SUCCESS') {
-            const content = JSON.parse(res?.data[0].content);
+            const content = JSON.parse(res?.data.content);
             viewDataMapToFields(content);
           }
         } catch (error) {
