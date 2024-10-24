@@ -314,8 +314,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           });
 
           if (res?.statusText === 'SUCCESS') {
-            const content = JSON.parse(res?.data[0].content);
-            console.log('-----get data content-------', content);
+            const content = JSON.parse(res?.data.content);
             viewDataMaptoFields(content);
           }
         } catch (error) {
