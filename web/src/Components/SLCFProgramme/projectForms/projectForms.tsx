@@ -72,10 +72,24 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
-  const navigateToCostQuotationView = () => {};
-  const navigateToCostQuotationCreate = () => {};
-  const navigateToProposalView = () => {};
-  const navigateToProposalCreate = () => {};
+  const navigateToCostQuotationView = () => {
+    navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
+
+  const navigateToCostQuotationCreate = () => {
+    navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`);
+  };
+
+  const navigateToProposalView = () => {
+    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
+  const navigateToProposalCreate = () => {
+    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
+  };
 
   useEffect(() => {
     setDocData(data);
@@ -188,7 +202,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   };
 
   function navigateToValidationAgreementCreate(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`);
+  }
+
+  function navigateToValidationAgreementView(): void {
+    navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`, {
+      state: { isView: true },
+    });
   }
 
   function navigateToValidationReportView(): void {
@@ -437,7 +457,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         userInfoState,
                         DocType.VALIDATION_AGREEMENT,
                         projectProposalStage
-                      ) && navigateToValidationAgreementCreate()
+                      ) && navigateToValidationAgreementView()
                     }
                   />
                 </Tooltip>

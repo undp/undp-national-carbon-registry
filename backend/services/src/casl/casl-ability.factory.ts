@@ -33,6 +33,7 @@ import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { CreditAuditLogViewEntity } from "../entities/creditAuditLog.view.entity";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { CreditRetirementSl } from "src/entities/creditRetirementSl.entity";
+import { DocumentEntity } from "../entities/document.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -300,6 +301,7 @@ export class CaslAbilityFactory {
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       can(Action.Read, ProgrammeSl);
+      can(Action.Read, DocumentEntity);
       can(Action.Read, CreditRetirementSl, {
         toCompanyId: { $eq: user.companyId },
       });
@@ -310,6 +312,8 @@ export class CaslAbilityFactory {
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
         can(Action.Update, ProgrammeSl);
+        can(Action.Create, DocumentEntity);
+        can(Action.Update, DocumentEntity);
         can(Action.Create, CreditRetirementSl);
         can(Action.Update, CreditRetirementSl);
       }
@@ -317,29 +321,31 @@ export class CaslAbilityFactory {
 
     if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
       can(Action.Read, ProgrammeSl);
+      can(Action.Read, DocumentEntity);
     }
 
     if (user.companyRole === CompanyRole.CLIMATE_FUND) {
       can(Action.Read, User);
-
       can(Action.Read, ProgrammeSl);
-      
       can(Action.Read, CreditRetirementSl);
+      can(Action.Read, DocumentEntity);
 
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
         can(Action.Approve, Company);
         can(Action.Reject, Company);
-
         can(Action.Update, CreditRetirementSl);
         can(Action.Update, ProgrammeSl);
+        can(Action.Create, DocumentEntity);
+        can(Action.Update, DocumentEntity);
       }
 
       if (user.role == Role.Manager) {
         can(Action.Create, Company);
-
         can(Action.Update, CreditRetirementSl);
         can(Action.Update, ProgrammeSl);
+        can(Action.Create, DocumentEntity);
+        can(Action.Update, DocumentEntity);
       }
     }
 

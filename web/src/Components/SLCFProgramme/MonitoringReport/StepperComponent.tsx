@@ -6,17 +6,24 @@ import { ProjectActivityStep } from './ProjectActivityStep';
 import { ImplementationStatusStep } from './ImplementationStatusStep';
 import { SafeguardsStep } from './SafeguardsStep';
 import { DataAndParametersStep } from './DataAndParametersStep';
-import { QualificationStep } from './QualificationStep';
+import { QualificationStep } from './QuantificationStep';
 import { AnnexuresStep } from './AnnexuresStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
+import { useParams } from 'react-router-dom';
+import moment from 'moment';
+import { version } from 'os';
+import { DocType } from '../../../Definitions/Enums/document.type';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
   const [formValues, setFormValues] = useState({});
-  const { post } = useConnection();
+  const { get, post } = useConnection();
+  const { id } = useParams();
   const t = translator.t;
-
+  const reportVersion = process.env.MONITORING_REPORT_VERSION
+    ? process.env.MONITORING_REPORT_VERSION
+    : 'Version 03';
   const onValueChange = (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -32,7 +39,7 @@ const StepperComponent = (props: any) => {
     }));
     const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: '1' };
     try {
-      const res = await post('national/verification/uploadMonitoringReport', body);
+      const res = await post('national/verification/createMonitoringReport', body);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -81,12 +88,48 @@ const StepperComponent = (props: any) => {
   const [qualificationForm] = useForm();
   const [annexuresForm] = useForm();
 
-  const loadProjectDetails = async () => {
+  const getLatestCMA = async (programId: any) => {
     try {
-      const { data } = await post('national/project/project');
-      const project = data.map((provinceData: any) => provinceData.provinceName);
+      const { data } = await post('national/programmeSl/getLatestDoc', {
+        programmeId: programId,
+        docType: DocType.CMA,
+      });
+
+      const cmaData = JSON.parse(data?.content);
+      const {
+        data: { user },
+      } = await get('national/User/profile');
+      console.log('-----response-------', data, user);
+
+      projectDetailsForm.setFieldsValue({
+        title: cmaData?.projectDetails?.title,
+        projectProponent: cmaData?.projectDetails?.projectProponent,
+        dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
+        version: reportVersion,
+        physicalAddress: cmaData?.projectDetails?.physicalAddress,
+        email: cmaData?.projectDetails?.email,
+        telephone: cmaData?.projectDetails?.telephone,
+        website: cmaData?.projectDetails?.website,
+        preparedBy: cmaData?.projectDetails?.preparedBy,
+      });
+
+      // setProjectCategory(data?.projectCategory);
+      // form2.setFieldsValue({
+      //   projectTrack: data?.purposeOfCreditDevelopment,
+      //   // projectTrack: 'TRACK_2',
+      //   organizationName: data?.company?.name,
+      //   email: data?.company?.email,
+      //   telephone: data?.company?.phoneNo,
+      //   address: data?.company?.address,
+      //   fax: data?.company?.faxNo,
+      // });
+
+      // setValues((prevVal) => ({
+      //   ...prevVal,
+      //   companyId: data?.company?.companyId,
+      // }));
     } catch (error) {
-      console.log(error);
+      console.log('error');
     }
   };
 
@@ -109,6 +152,10 @@ const StepperComponent = (props: any) => {
   };
 
   useEffect(() => {
+    getLatestCMA(id);
+  }, []);
+
+  useEffect(() => {
     // loadProjectDetails();
     // loadCMAForm();
   }, []);
@@ -116,7 +163,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">01</div>
+          {/* <div className="step-count"></div> */}
           <div className="title">{t('monitoringReport:title01')}</div>
         </div>
       ),
@@ -135,7 +182,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">02</div>
+          <div className="step-count">01</div>
           <div className="title">{t('monitoringReport:title02')}</div>
         </div>
       ),
@@ -155,7 +202,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">03</div>
+          <div className="step-count">02</div>
           <div className="title">{t('monitoringReport:title03')}</div>
         </div>
       ),
@@ -174,7 +221,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">04</div>
+          <div className="step-count">03</div>
           <div className="title">{t('monitoringReport:title04')}</div>
         </div>
       ),
@@ -193,7 +240,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">05</div>
+          <div className="step-count">04</div>
           <div className="title">{t('monitoringReport:title05')}</div>
         </div>
       ),
@@ -212,7 +259,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">06</div>
+          <div className="step-count">05</div>
           <div className="title">{t('monitoringReport:title06')}</div>
         </div>
       ),
@@ -231,7 +278,7 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="step-count">07</div>
+          <div className="step-count">06</div>
           <div className="title">{t('monitoringReport:title07')}</div>
         </div>
       ),

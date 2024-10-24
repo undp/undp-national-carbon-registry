@@ -106,7 +106,8 @@ export class ProgrammeLedgerService {
 
   public async updateProgrammeSlProposalStage(
     programmeId: string,
-    txType: TxType
+    txType: TxType,
+    data?: any
   ): Promise<ProgrammeSl> {
     const getQueries = {};
     getQueries[this.ledger.programmeSlTable] = {
@@ -134,20 +135,54 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
         let insertMap = {};
 
-        if (txType == TxType.CREATE_CMA) {
-          updatedProgramme = programme;
-          const uPayload = {
-            txTime: programme.txTime,
-            txType: programme.txType,
-            updatedTime: programme.updatedTime,
-            projectProposalStage: ProjectProposalStage.SUBMITTED_CMA,
-          };
-          updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
-          updateWhereMap[this.ledger.programmeSlTable + "#"] = {
-            programmeId: programme.programmeId,
-            txTime: prvTxTime,
-          };
+        updatedProgramme = programme;
+        let uPayload = {
+          txTime: programme.txTime,
+          txType: programme.txType,
+          updatedTime: programme.updatedTime,
+        };
+
+        switch (txType) {
+          case TxType.CREATE_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_CMA;
+            break;
+          case TxType.APPROVE_INF:
+            uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_INF;
+            break;
+          case TxType.REJECT_INF:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_INF;
+            break;
+          case TxType.CREATE_COST_QUOTATION:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_COST_QUOTATION;
+            break;
+          case TxType.CREATE_PROJECT_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_PROPOSAL;
+            break;
+          case TxType.CREATE_VALIDATION_AGREEMENT:
+            uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT;
+            break;
+          case TxType.APPROVE_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.ACCEPTED_PROPOSAL;
+            break;
+          case TxType.REJECT_PROPOSAL:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
+            break;
+          case TxType.APPROVE_CMA:
+            uPayload["creditEst"] = data?.creditEst;
+            uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
+            break;
+          case TxType.REJECT_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_CMA;
+            break;
+          default:
+            break;
         }
+
+        updateMap[this.ledger.programmeSlTable + "#"] = uPayload;
+        updateWhereMap[this.ledger.programmeSlTable + "#"] = {
+          programmeId: programme.programmeId,
+          txTime: prvTxTime,
+        };
 
         return [updateMap, updateWhereMap, insertMap];
       }

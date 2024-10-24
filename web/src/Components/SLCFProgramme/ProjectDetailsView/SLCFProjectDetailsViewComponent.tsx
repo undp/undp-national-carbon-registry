@@ -53,6 +53,8 @@ import {
   getGeneralFields,
   getGeneralFieldsSl,
   getProgrammeStatus,
+  getProjectProposalStage,
+  getProjectProposalStageEnumVal,
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
@@ -107,6 +109,7 @@ import { MapComponent } from '../../Maps/mapComponent';
 import { ProjectForms } from '../projectForms/projectForms';
 import { VerificationForms } from '../projectForms/verificationForms';
 import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRequestForm';
+import { HttpStatusCode } from 'axios';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -407,7 +410,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setCerts(c);
   };
 
-  const getProgrammeById = async (programmeId: string) => {
+  const getProgrammeById = async () => {
     try {
       const response: any = await post('national/programmeSl/getProjectById', {
         programmeId: id,
@@ -428,20 +431,108 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingAll(false);
   };
 
-  const rejectNotificationForm = () => {
-    throw new Error('Function not implemented.');
+  const rejectNotificationForm = async () => {
+    try {
+      const response: any = await post('national/programmeSl/inf/reject', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:infRejected'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
-  const approveNotificationForm = () => {
-    throw new Error('Function not implemented.');
+  const approveNotificationForm = async () => {
+    try {
+      const response: any = await post('national/programmeSl/inf/approve', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:infApproved'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
-  const rejectProposal = () => {
-    throw new Error('Function not implemented.');
+  const rejectProposal = async () => {
+    try {
+      const response: any = await post('national/programmeSl/proposal/reject', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:proposalRejected'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
-  const approveProposal = () => {
-    throw new Error('Function not implemented.');
+  const approveProposal = async () => {
+    try {
+      const response: any = await post('national/programmeSl/proposal/approve', {
+        programmeId: id,
+      });
+      console.log('response ', response);
+      if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
+        message.open({
+          type: 'success',
+          content: t('projectDetailsView:proposalApproved'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        getProgrammeById();
+      }
+    } catch (error: any) {
+      console.log('Error in getting programme', error);
+      message.open({
+        type: 'error',
+        content: t('projectDetailsView:somethingWentWrong'),
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
   const rejectCMA = () => {
@@ -1289,7 +1380,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         setOpenModal(false);
         setComment(undefined);
         error = undefined;
-        const programmeData = getProgrammeById('id');
+        const programmeData = getProgrammeById();
         successCB(programmeData);
         message.open({
           type: 'success',
@@ -1474,9 +1565,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     //   setData(state.record);
     // } else {
     if (id) {
-      getProgrammeById(id);
+      getProgrammeById();
     } else {
-      navigate('/programmeManagement/viewAll', { replace: true });
+      navigate('/programmeManagementSLCF/viewAll', { replace: true });
     }
     // }
 
@@ -1523,7 +1614,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const methodologyDocumentApproved = () => {
     if (data) {
-      getProgrammeById(data?.programmeId);
+      getProgrammeById();
     }
   };
 
@@ -1765,6 +1856,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         generalInfo[text] = (
           <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
             {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
+          </Tag>
+        );
+      } else if (k === 'projectProposalStage') {
+        generalInfo[text] = (
+          <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>
+            {t(`projectDetailsView:${getProjectProposalStageEnumVal(v as string)}`)}
           </Tag>
         );
       } else if (k === 'sector') {
@@ -2065,7 +2162,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     getDocuments(data?.programmeId);
                   }}
                   getProgrammeById={() => {
-                    getProgrammeById(data?.programmeId);
+                    getProgrammeById();
                   }}
                   ministryLevelPermission={ministryLevelPermission}
                   translator={i18n}
@@ -2123,7 +2220,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     getDocuments(data?.programmeId);
                   }}
                   getProgrammeById={() => {
-                    getProgrammeById(data?.programmeId);
+                    getProgrammeById();
                   }}
                   ministryLevelPermission={ministryLevelPermission}
                   translator={i18n}

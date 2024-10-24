@@ -79,10 +79,10 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   }, [data]);
 
   const navigateToMonitoringReportCreate = () => {
-    navigate('/programmeManagementSLCF/monitoringReport');
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
   };
   const navigateToMonitoringReportView = () => {
-    navigate('/programmeManagementSLCF/monitoringReport');
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
   };
 
   const getBase64 = (file: RcFile): Promise<string> =>

@@ -37,7 +37,7 @@ export const formCreatePermission = (
     return true;
   } else if (
     docType === DocType.PROPOSAL &&
-    projectProposalStage === ProjectProposalStage.APPROVED_INF &&
+    projectProposalStage === ProjectProposalStage.SUBMITTED_COST_QUOTATION &&
     userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {

@@ -103,5 +103,20 @@
   "PROPOSAL_STAGE": "Proposal Stage",
   "PROCUREMENT_STAGE": "Procument Stage",
   "CONSTRUCTION_STAGE": "Construction Stage",
-  "INSTALLATION_STAGE": "Installation Stage"
+  "INSTALLATION_STAGE": "Installation Stage",
+  "proposalStage": "Proposal Stage",
+  "SUBMITTED_INF": "Pending",
+  "APPROVED_INF": "Approved",
+  "REJECTED_INF": "Rejected",
+  "SUBMITTED_COST_QUOTATION": "Proposal Pending",
+  "SUBMITTED_PROPOSAL": "Proposal Pending",
+  "SUBMITTED_VALIDATION_AGREEMENT": "Acceptance Pending",
+  "ACCEPTED_PROPOSAL": "Accepted",
+  "REJECTED_PROPOSAL": "Rejected",
+  "SUBMITTED_CMA": "Processing",
+  "REJECTED_CMA": "Accepted",
+  "APPROVED_CMA": "CMA Approved",
+  "VALIDATION_PENDING": "Validation Pending",
+  "REJECTED_VALIDATION": "CMA Approved",
+  "AUTHORISED": "Authorised"
 }

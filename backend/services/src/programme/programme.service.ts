@@ -4913,9 +4913,9 @@ export class ProgrammeService {
       }
     }
 
-    const transfer = new ProgrammeTransfer();
     const fromCompanyMap = {};
     for (const j in req.fromCompanyIds) {
+      const transfer = new ProgrammeTransfer();
       const fromCompanyId = req.fromCompanyIds[j];
       this.logger.log(
         `Retire request from ${fromCompanyId} to programme owned by ${programme.companyId}`
@@ -5044,8 +5044,10 @@ export class ProgrammeService {
     }
 
     let updateProgramme = undefined;
+    let retiredCreditAmount = 0
     for (const trf of autoApproveTransferList) {
       this.logger.log(`Retire auto approve received ${trf}`);
+      retiredCreditAmount+=trf.creditAmount
       updateProgramme = (
         await this.doTransfer(
           trf,
@@ -5060,10 +5062,10 @@ export class ProgrammeService {
     if (updateProgramme) {
       await this.createCreditAuditLogRecord(
         CreditAuditLogType.CREDIT_RETIRED,
-        transfer.programmeId,
-        transfer.creditAmount,
+        req.programmeId,
+        retiredCreditAmount,
         requester.id,
-        transfer.toCompanyMeta?.country
+        req.toCompanyMeta?.country
       );
       return new DataResponseDto(HttpStatus.OK, updateProgramme);
     }
