@@ -43,5 +43,63 @@
 .site-check-list-form {
   width: 100;
 
-  
+  .ant-picker {
+    width: 100%;
+  }
+
+  .section-title {
+    font-weight: 600;
+    color: #3a3541cc;
+  }
+
+  .projectTrack {
+    width: full;
+    display: flex;
+    flex-direction: row;
+    .ant-form-item {
+      width: 40%;
+    }
+  }
+
+  .checklist-table-form {
+    .header {
+      background-color: #f9fafc;
+      text-align: center;
+      padding: 20px 0;
+      font-weight: 600px;
+    }
+
+    // .col-1 {
+    //   display: flex;
+    //   flex-direction: row;
+    //   align-items: center;
+    //   justify-content: center;
+    //   font-weight: 600;
+    // }
+
+    .data-row {
+      padding: 15px 0;
+    }
+    .col-1 {
+      // text-align: left;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      // padding: 15px 0;
+
+      .text-row {
+        display: flex;
+        flex-direction: row;
+
+        div:first-child {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .stakeholders-section {
+    background-color: #fbfbfb;
+    padding: 20px 16px;
+  }
 }
