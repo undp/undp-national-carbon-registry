@@ -8,6 +8,8 @@ import { CustomStepsProps } from '../CMAForm/StepProps';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { UploadOutlined } from '@ant-design/icons';
+import { ProcessSteps } from './ValidationStepperComponent';
+import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 
 const ValidationReportAppendix = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, submitForm, t } = props;
@@ -24,27 +26,37 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('-----values---------', values);
-    const tempValues = {
-      annexures: values?.additionalComments,
-      additionalDocuments: await (async function () {
-        const base64Docs: string[] = [];
-        if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
-          const docs = values.appendixDocuments;
-          for (let i = 0; i < docs.length; i++) {
-            const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-            base64Docs.push(temp); // No need for Promise.resolve
-          }
-        }
-        return base64Docs;
-      })(),
+    const referencesFormValues: any = {
+      additionalComments: values?.additionalComments,
+      appendixDocuments: await fileUploadValueExtract(values, 'appendixDocuments'),
     };
 
-    if (submitForm) {
-      submitForm(tempValues);
-    }
-    // handleValuesUpdate({ appendix: tempValues });
+    console.log(ProcessSteps.VR_REFERENCE, referencesFormValues);
+    handleValuesUpdate({ [ProcessSteps.VR_REFERENCE]: referencesFormValues });
   };
+
+  // const onFinish = async (values: any) => {
+  //   console.log('-----values---------', values);
+  //   const tempValues = {
+  //     annexures: values?.additionalComments,
+  //     additionalDocuments: await (async function () {
+  //       const base64Docs: string[] = [];
+  //       if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
+  //         const docs = values.appendixDocuments;
+  //         for (let i = 0; i < docs.length; i++) {
+  //           const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+  //           base64Docs.push(temp); // No need for Promise.resolve
+  //         }
+  //       }
+  //       return base64Docs;
+  //     })(),
+  //   };
+
+  //   if (submitForm) {
+  //     submitForm(tempValues);
+  //   }
+  //   // handleValuesUpdate({ appendix: tempValues });
+  // };
   return (
     <>
       {current === 7 && (
@@ -70,19 +82,19 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
             >
               <Form.Item
                 className='className="full-width-form-item'
-                label={`${t('CMAForm:additionalComments')}`}
+                label={`${t('validationReport:additionalComments')}`}
                 name="additionalComments"
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:additionalComments')} ${t('isRequired')}`,
+                    message: `${t('validationReport:additionalComments')} ${t('isRequired')}`,
                   },
                 ]}
               >
                 <TextArea rows={4} />
               </Form.Item>
               <Form.Item
-                label={t('CMAForm:uploadDocs')}
+                label={t('validationReport:uploadDocs')}
                 name="appendixDocuments"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -97,7 +109,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                           )
                         ) {
-                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                          throw new Error(`${t('validationReport:invalidFileFormat')}`);
                         } else if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
                           throw new Error(`${t('common:maxSizeVal')}`);
@@ -127,10 +139,10 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>
-                  {t('CMAForm:prev')}
+                  {t('validationReport:prev')}
                 </Button>
                 <Button type="primary" size={'large'} htmlType="submit">
-                  {t('CMAForm:submit')}
+                  {t('validationReport:submit')}
                 </Button>
               </Row>
             </Form>

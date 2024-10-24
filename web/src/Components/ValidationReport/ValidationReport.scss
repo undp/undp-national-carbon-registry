@@ -200,3 +200,21 @@
   column-gap: 20px;                      /* Space between columns */
   row-gap: 5px;  
 }
+
+.technical-project-description{
+  background-color: #E8E8E8 !important;
+}
+
+.technical-project-grid-title{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
+  row-gap: 1px; 
+}
+
+.technical-project-grid-parameter{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 2 columns with equal width */
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 20px;                      /* Space between columns */
+  row-gap: 5px; 
+}

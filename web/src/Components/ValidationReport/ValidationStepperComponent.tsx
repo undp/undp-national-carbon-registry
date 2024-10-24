@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { Steps } from 'antd';
+import { useEffect, useState } from 'react';
 import './ValidationReport.scss';
 // import './SLCFMonitoringReportComponent.scss';
 
@@ -8,17 +8,25 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 
 import moment from 'moment';
 import { useNavigate, useParams } from 'react-router-dom';
-import ProjectDetails from './ProjectDetails';
-import ProjectActivity from './ProjectActivity';
-import Appendix from './ValidationReportAppendix';
-import ValidationMethodology from './ValidationMethodology';
-import ValidationFindings from './ValidationFindings';
-import ValidationConclusion from './ValidationConclusion';
-import GHGProjectDescription from './GHGProjectDescription';
-import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportGHGDescriptionOfProjectActivity';
 import DataValidationProcess from './DataValidationProcess';
-import ValidationOpinion from './ValidationOpinion';
+import ValidationReportIntroduction from './ValidationReportIntroduction';
+import ProjectDetails from './ProjectDetails';
 import Reference from './Reference';
+import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportGHGDescriptionOfProjectActivity';
+import ValidationMethodology from './ValidationMethodology';
+import ValidationOpinion from './ValidationOpinion';
+import ValidationReportAppendix from './ValidationReportAppendix';
+
+export enum ProcessSteps {
+  VR_PROJECT_DETAILS = 'VR_PROJECT_DETAILS',
+  VR_INTRODUCTION = 'VR_INTRODUCTION',
+  VR_GHG_PROJECT_DESCRIPTION = 'VR_GHG_PROJECT_DESCRIPTION',
+  VR_VALIDATION_METHODOLOGY = 'VR_VALIDATION_METHODOLOGY',
+  VR_VALIDATION_PROCESS = 'VR_VALIDATION_PROCESS',
+  VR_VALIDATION_OPINION = 'VR_VALIDATION_OPINION',
+  VR_REFERENCE = 'VR_REFERENCE',
+  VR_APPENDIX = 'VR_APPENDIX',
+}
 
 const StepperComponent = (props: any) => {
   const { t } = props;
@@ -26,14 +34,23 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { id: programId } = useParams();
 
-  const [values, setValues] = useState({
+  const [existingFormValues, setExistingFormValues] = useState({
     programmeId: '001',
     companyId: undefined,
-    content: {},
+    content: {
+      [ProcessSteps.VR_PROJECT_DETAILS]: {},
+      [ProcessSteps.VR_INTRODUCTION]: {},
+      [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: {},
+      [ProcessSteps.VR_VALIDATION_METHODOLOGY]: {},
+      [ProcessSteps.VR_VALIDATION_PROCESS]: {},
+      [ProcessSteps.VR_VALIDATION_OPINION]: {},
+      [ProcessSteps.VR_REFERENCE]: {},
+      [ProcessSteps.VR_APPENDIX]: {},
+    },
   });
 
   const handleValuesUpdate = (val: any) => {
-    setValues((prevVal: any) => {
+    setExistingFormValues((prevVal: any) => {
       const tempContent = {
         ...prevVal.content,
         ...val,
@@ -75,30 +92,15 @@ const StepperComponent = (props: any) => {
       } = await get('national/User/profile');
       console.log('-----response-------', data, user);
 
-      // const dateOfIssue = moment().unix();
       form1.setFieldsValue({
         title: data?.title,
         dateOfIssue: moment(),
-        // preparedBy: user?.name,
-        // physicalAddress: data?.company?.address,
-        // email: data?.company?.email,
-        // projectProponent: data?.company?.name,
-        // telephone: data?.company?.phoneNo,
-        // website: data?.company?.website,
+        client: data.title,
       });
 
       setProjectCategory(data?.projectCategory);
-      form2.setFieldsValue({
-        projectTrack: data?.purposeOfCreditDevelopment,
-        // projectTrack: 'TRACK_2',
-        organizationName: data?.company?.name,
-        email: data?.company?.email,
-        telephone: data?.company?.phoneNo,
-        address: data?.company?.address,
-        fax: data?.company?.faxNo,
-      });
 
-      setValues((prevVal) => ({
+      setExistingFormValues((prevVal) => ({
         ...prevVal,
         companyId: data?.company?.companyId,
       }));
@@ -107,36 +109,37 @@ const StepperComponent = (props: any) => {
     }
   };
 
-  const submitForm = async (appendixVals: any) => {
-    const tempValues = {
-      ...values,
-      content: {
-        ...values.content,
-        appendix: appendixVals,
-      },
-    };
-    console.log('------------final values--------------', tempValues);
-    try {
-      const res = await post('national/programmeSl/createCMA', tempValues);
-      console.log(res);
-      if (res?.response?.data?.statusCode === 200) {
-        message.open({
-          type: 'success',
-          content: 'CMA form has been submitted successfully',
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-        // navigate('/programmeManagementSLCF/viewAll');
-      }
-    } catch (error: any) {
-      message.open({
-        type: 'error',
-        content: 'Something went wrong',
-        duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    }
-  };
+  // const submitForm = async (appendixVals: any) => {
+  //   const tempValues = {
+  //     ...values,
+  //     content: {
+  //       ...values.content,
+  //       appendix: appendixVals,
+  //     },
+  //   };
+  //   console.log('------------final values--------------', tempValues);
+  //   try {
+  //     const res = await post('national/programmeSl/createCMA', tempValues);
+  //     console.log(res);
+  //     if (res?.response?.data?.statusCode === 200) {
+  //       message.open({
+  //         type: 'success',
+  //         content: 'CMA form has been submitted successfully',
+  //         duration: 4,
+  //         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //       });
+  //       // navigate('/programmeManagementSLCF/viewAll');
+  //     }
+  //   } catch (error: any) {
+  //     message.open({
+  //       type: 'error',
+  //       content: 'Something went wrong',
+  //       duration: 4,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   }
+  // };
+
   const getCountryList = async () => {
     try {
       const response = await get('national/organisation/countries');
@@ -169,6 +172,85 @@ const StepperComponent = (props: any) => {
         physicalAddress: projectContent?.projectDetails?.physicalAddress,
         website: projectContent?.projectDetails?.website,
         reportId: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
+      });
+
+      form2.setFieldsValue({
+        titleOfTheProjectActivity: projectContent?.projectDetails?.title,
+        projectParticipants: projectContent?.projectActivity?.projectProponent?.organizationName,
+      });
+
+      form3.setFieldsValue({
+        creditingPeriod: projectContent?.projectActivity?.totalCreditingYears,
+        locationsOfProjectActivity: projectContent?.projectActivity.locationsOfProjectActivity.map(
+          (location: any) => {
+            return {
+              ...location,
+              technicalProjectDescriptionItems: [
+                {
+                  technicalProjectDescriptionItem: '',
+                  technicalProjectDescriptionLocationParameterValues: [
+                    {
+                      technicalProjectDescriptionParameter: '',
+                      technicalProjectDescriptionValue: '',
+                    },
+                  ],
+                },
+              ],
+            };
+          }
+        ),
+      });
+
+      form4.setFieldsValue({
+        resolutionsOfFindings: [
+          {
+            type: '',
+            findingNo: '',
+            refToCMA: '',
+            actionRequestByTeam: '',
+            summaryOfProjectOwnerResponse: '',
+            validationTeamAssessment: '',
+            conclusion: [],
+          },
+        ],
+      });
+
+      const baseLine = [
+        {
+          type: 'unit',
+          location: t('units'),
+          projectCapacity: '',
+          plantFactor: '',
+          averageEnergyOutput: '',
+          gridEmissionFactor: '',
+          emissionReduction: '',
+        },
+        ...projectContent?.projectActivity.locationsOfProjectActivity.map(
+          (location: any, index: number) => {
+            return {
+              type: 'value',
+              location: location.locationOfProjectActivity,
+              projectCapacity: '',
+              plantFactor: '',
+              averageEnergyOutput: '',
+              gridEmissionFactor: '',
+              emissionReduction: '',
+            };
+          }
+        ),
+      ];
+
+      form5.setFieldsValue({
+        employedTechnology: projectContent?.projectActivity.locationsOfProjectActivity.map(
+          (location: any, index: number) => {
+            return {
+              siteNo: index + 1,
+              location: location.locationOfProjectActivity,
+              capacity: '',
+            };
+          }
+        ),
+        baselineEmission: baseLine,
       });
 
       // setProjectCategory(data?.projectCategory);
@@ -215,6 +297,7 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_PROJECT_DETAILS]}
         />
       ),
     },
@@ -226,7 +309,7 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ProjectActivity
+        <ValidationReportIntroduction
           next={next}
           prev={prev}
           form={form2}
@@ -234,6 +317,7 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_INTRODUCTION]}
         />
       ),
     },
@@ -252,6 +336,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]}
         />
       ),
     },
@@ -266,10 +351,11 @@ const StepperComponent = (props: any) => {
         <ValidationMethodology
           next={next}
           prev={prev}
-          form={form3}
+          form={form4}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_METHODOLOGY]}
         />
       ),
     },
@@ -284,10 +370,11 @@ const StepperComponent = (props: any) => {
         <DataValidationProcess
           next={next}
           prev={prev}
-          form={form4}
+          form={form5}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_PROCESS]}
         />
       ),
     },
@@ -302,10 +389,11 @@ const StepperComponent = (props: any) => {
         <ValidationOpinion
           next={next}
           prev={prev}
-          form={form5}
+          form={form6}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_OPINION]}
         />
       ),
     },
@@ -320,10 +408,11 @@ const StepperComponent = (props: any) => {
         <Reference
           next={next}
           prev={prev}
-          form={form6}
+          form={form7}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_REFERENCE]}
         />
       ),
     },
@@ -335,13 +424,14 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <Appendix
+        <ValidationReportAppendix
           next={next}
           prev={prev}
-          form={form6}
+          form={form7}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          existingFormValues={existingFormValues.content[ProcessSteps.VR_APPENDIX]}
         />
       ),
     },

@@ -5,6 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
 import TextArea from 'antd/lib/input/TextArea';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 const ValidationOpinion = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
@@ -18,6 +19,23 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
       return e;
     }
     return e?.fileList;
+  };
+
+  const onFinish = async (values: any) => {
+    const validationOpinionFormValues: any = {
+      validationOpinion: values?.validationOpinion,
+      firstWitnessDateOfSignature: values?.firstWitnessDateOfSignature,
+      firstWitnessDesignation: values?.firstWitnessDesignation,
+      firstWitnessName: values?.firstWitnessName,
+      firstWitnessSignature: values?.firstWitnessSignature,
+      secondWitnessDesignation: values?.secondWitnessDesignation,
+      secondWitnessName: values?.secondWitnessName,
+      secondWitnessSignature: values?.secondWitnessSignature,
+      secondWitnessSignatureDateOfSignature: values?.secondWitnessSignatureDateOfSignature,
+    };
+
+    console.log(ProcessSteps.VR_VALIDATION_OPINION, validationOpinionFormValues);
+    handleValuesUpdate({ [ProcessSteps.VR_VALIDATION_OPINION]: validationOpinionFormValues });
   };
 
   return (
@@ -42,7 +60,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`${t('validationReport:validationOpinion')}`}
-                name="voValidationOpinion"
+                name="validationOpinion"
                 rules={[
                   {
                     required: true,
@@ -59,7 +77,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
                   <div className="signature-upload">
                     <Form.Item
-                      name="voSignatureW1"
+                      name="firstWitnessSignature"
                       label={t('validationReport:signature')}
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -107,7 +125,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     </Form.Item>
                   </div>
                   <Form.Item
-                    name="voSignatureW1Name"
+                    name="firstWitnessName"
                     label={t('name')}
                     rules={[
                       {
@@ -119,7 +137,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     <Input />
                   </Form.Item>
                   <Form.Item
-                    name="voSignatureW1Designation"
+                    name="firstWitnessDesignation"
                     label={t('designation')}
                     rules={[
                       {
@@ -131,7 +149,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     <Input />
                   </Form.Item>
                   <Form.Item
-                    name="voSignatureW1DateOfSignature"
+                    name="firstWitnessDateOfSignature"
                     label={t('dateOfSignature')}
                     rules={[
                       {
@@ -148,7 +166,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
                   <div className="signature-upload">
                     <Form.Item
-                      name="voSignatureW2"
+                      name="secondWitnessSignature"
                       label={t('validationReport:signature')}
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -196,7 +214,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     </Form.Item>
                   </div>
                   <Form.Item
-                    name="voSignatureW2Name"
+                    name="secondWitnessName"
                     label={t('name')}
                     rules={[
                       {
@@ -208,7 +226,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     <Input />
                   </Form.Item>
                   <Form.Item
-                    name="voSignatureW2Designation"
+                    name="secondWitnessDesignation"
                     label={t('designation')}
                     rules={[
                       {
@@ -220,7 +238,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     <Input />
                   </Form.Item>
                   <Form.Item
-                    name="voSignatureW2DateOfSignature"
+                    name="secondWitnessSignatureDateOfSignature"
                     label={t('dateOfSignature')}
                     rules={[
                       {
@@ -238,7 +256,15 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} onClick={next} htmlType="submit">
+                <Button
+                  type="primary"
+                  size={'large'}
+                  onClick={next}
+                  // onClick={() => {
+                  //   console.log(form.getFieldsValue());
+                  // }}
+                  // htmlType="submit"
+                >
                   {t('validationReport:next')}
                 </Button>
               </Row>

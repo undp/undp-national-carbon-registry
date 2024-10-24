@@ -2,9 +2,20 @@ import React from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 const Reference = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+
+  const onFinish = async (values: any) => {
+    const referencesFormValues: any = {
+      references: values?.references,
+    };
+
+    console.log(ProcessSteps.VR_REFERENCE, referencesFormValues);
+    handleValuesUpdate({ [ProcessSteps.VR_REFERENCE]: referencesFormValues });
+  };
+
   return (
     <>
       {current === 6 && (
@@ -27,7 +38,7 @@ const Reference = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`${t('validationReport:references')}`}
-                name="rReferences"
+                name="references"
                 rules={[
                   {
                     required: true,
@@ -45,8 +56,8 @@ const Reference = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
+                  onClick={next}
+                  // htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>

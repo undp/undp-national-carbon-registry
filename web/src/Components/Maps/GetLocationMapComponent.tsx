@@ -7,10 +7,11 @@ interface CMAMapComponentProps {
   form: FormInstance;
   formItemName: any;
   listName?: string;
+  existingCordinate?: any[];
 }
 
 const GetLocationMapComponent = (props: CMAMapComponentProps) => {
-  const { form, formItemName, listName } = props;
+  const { form, formItemName, listName, existingCordinate } = props;
 
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -32,7 +33,7 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
     return [lat / count, long / count];
   };
 
-  const [projectLocation, setProjectLocation] = useState<any[]>([]);
+  const [projectLocation, setProjectLocation] = useState<any[]>(existingCordinate || []);
   const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();

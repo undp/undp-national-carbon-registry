@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Col, DatePicker, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
@@ -11,13 +11,58 @@ import PhoneInput, {
 } from 'react-phone-number-input';
 import validator from 'validator';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 // import { Form } from 'react-router-dom';
 
 const ProjectDetails = (props: ValidationStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate, cmaDetails } = props;
+  const { next, form, current, t, countries, handleValuesUpdate, cmaDetails, existingFormValues } =
+    props;
 
   const [contactNoInput] = useState<any>();
+
+  useEffect(() => {
+    if (existingFormValues) {
+      form.setFieldsValue({
+        client: existingFormValues.client,
+        dateOfIssue: existingFormValues.dateOfIssue,
+        versionNo: existingFormValues.versionNo,
+        versionDate: existingFormValues.versionDate,
+        physicalAddress: existingFormValues.physicalAddress,
+        telephone: existingFormValues.telephone,
+        email: existingFormValues.email,
+        website: existingFormValues.website,
+        summary: existingFormValues.summary,
+        projectTitle: existingFormValues.summary,
+        workCarryOutBy: existingFormValues.workCarryOutBy,
+        workApprovedBy: existingFormValues.workApprovedBy,
+        reportId: existingFormValues.reportId,
+      });
+    }
+  }, []);
+
+  const onFinish = (values: any) => {
+    const projectDetailsFormValues = {
+      client: values?.client,
+      dateOfIssue: moment(values?.dateOfIssue).valueOf(),
+      versionNo: values?.versionNo,
+      versionDate: moment(values?.versionDate).valueOf(),
+      address: values?.address,
+      telephone: values?.telephone,
+      email: values?.email,
+      website: values?.website,
+      summary: values?.summary,
+      projectTitle: values?.summary,
+      workCarryOutBy: values?.workCarryOutBy,
+      workApprovedBy: values?.workApprovedBy,
+      reportId: values?.reportId,
+    };
+
+    console.log(ProcessSteps.VR_PROJECT_DETAILS, projectDetailsFormValues);
+
+    handleValuesUpdate({ [ProcessSteps.VR_PROJECT_DETAILS]: projectDetailsFormValues });
+  };
+
   return (
     <>
       {current === 0 && (
@@ -31,7 +76,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                // onFinish(values);
+                onFinish(values);
                 if (next) {
                   next();
                 }
@@ -256,7 +301,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
                   placement: 'topLeft',
                 }}
-                name="introduction"
+                name="summary"
                 rules={[
                   {
                     required: true,

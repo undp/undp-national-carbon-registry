@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Col, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import moment from 'moment';
+import { ProcessSteps } from './ValidationStepperComponent';
 
-const ProjectActivity = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+const ValidationReportIntroduction = (props: ValidationStepsProps) => {
+  const { prev, next, form, current, t, countries, handleValuesUpdate, existingFormValues } = props;
+
+  useEffect(() => {
+    if (existingFormValues) {
+      form.setFieldsValue({
+        ...existingFormValues,
+      });
+    }
+  }, []);
+
+  const onFinish = (values: any) => {
+    const introductionFormValues = {
+      objective: values?.objective,
+      scopeAndCriteria: values?.scopeAndCriteria,
+      titleOfTheProjectActivity: values?.titleOfTheProjectActivity,
+      projectParticipants: values?.projectParticipants,
+      hostParty: values?.hostParty,
+      consultantOfTheProject: values?.consultantOfTheProject,
+      summaryDescriptionProject: values?.summaryDescriptionProject,
+    };
+
+    console.log(ProcessSteps.VR_INTRODUCTION, introductionFormValues);
+
+    handleValuesUpdate({ [ProcessSteps.VR_INTRODUCTION]: introductionFormValues });
+  };
+
   return (
     <>
       {current === 1 && (
@@ -18,7 +45,7 @@ const ProjectActivity = (props: ValidationStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                // onFinish(values);
+                onFinish(values);
                 if (next) {
                   next();
                 }
@@ -173,4 +200,4 @@ const ProjectActivity = (props: ValidationStepsProps) => {
   );
 };
 
-export default ProjectActivity;
+export default ValidationReportIntroduction;

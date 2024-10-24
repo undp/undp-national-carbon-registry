@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import {
   Row,
@@ -13,8 +13,9 @@ import {
   DatePicker,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, MinusOutlined } from '@ant-design/icons';
 import NetEmissionReduction from '../Common/NetEmissonReduction';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 // enum netEmissionColumnType {
 //   TOTAL = 'TOTAL',
@@ -23,7 +24,7 @@ import NetEmissionReduction from '../Common/NetEmissonReduction';
 // }
 
 const DataValidationProcess = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, existingFormValues } = props;
 
   const emptyBackgroundInvestigationRow = {
     backgroundInvestigationName: '',
@@ -91,19 +92,35 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
   ];
 
-  const [baselineEmissionDataSource, setBaselineEmissionDataSource] = useState([
-    baselineEmissionDataSourceList,
-  ]);
+  const [baselineEmissionDataSource, setBaselineEmissionDataSource] = useState([]);
 
   const [employedTechnologyDataSource, setEmployedTechnologyDataSource] = useState([
     emptyEmployedTechnologyDataSourceRow,
   ]);
 
-  const [estimatedNetEmissionDataSource, setEstimatedNetEmissionDataSource] = useState([
-    emptyEmployedTechnologyDataSourceRow,
-  ]);
+  const [estimatedNetEmissionDataSource, setEstimatedNetEmissionDataSource] = useState([]);
 
   const requiredRule = [{ required: true, message: t('common:isRequired') }];
+
+  const removeEmployedTechnology = (index: number) => {
+    setEmployedTechnologyDataSource((prevATM) => {
+      const newList = [...prevATM];
+      newList.splice(index, 1);
+      return newList;
+    });
+  };
+
+  const calculateCapacity = () => {
+    const empTechnology = form.getFieldValue('employedTechnology') as any[];
+    const totalCap = empTechnology?.reduce((total, currentVal) => {
+      return total + Number(currentVal.capacity);
+    }, 0);
+    form.setFieldValue('totalCapacity', `${totalCap} kWp`);
+  };
+
+  // useEffect(() => {
+
+  // }, [employedTechnologyDataSource]);
 
   const employedTechnologyTableColumns: TableProps<any>['columns'] = [
     {
@@ -111,7 +128,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       dataIndex: 'employedTechnologySiteNo',
       key: 'employedTechnologySiteNo',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpEmployedTechnology', index, 'siteNo']} rules={requiredRule}>
+        <Form.Item name={['employedTechnology', index, 'siteNo']} rules={requiredRule}>
           <Input size="large" />
         </Form.Item>
       ),
@@ -121,7 +138,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       dataIndex: 'employedTechnologyLocation',
       key: 'employedTechnologyLocation',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpEmployedTechnology', index, 'location']} rules={requiredRule}>
+        <Form.Item name={['employedTechnology', index, 'location']} rules={requiredRule}>
           <Input size="large" />
         </Form.Item>
       ),
@@ -131,10 +148,32 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       dataIndex: 'employedTechnologyCapacity',
       key: 'employedTechnologyCapacity',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpEmployedTechnology', index, 'capacity']} rules={requiredRule}>
-          <Input size="large" />
+        <Form.Item name={['employedTechnology', index, 'capacity']} rules={requiredRule}>
+          <Input size="large" onChange={calculateCapacity} />
         </Form.Item>
       ),
+    },
+    {
+      title: '',
+      dataIndex: 'employedTechnologyRemove',
+      key: 'employedTechnologyRemove',
+      render: (_: any, record: any, index: number) => {
+        return employedTechnologyDataSource.length > 1 ? (
+          <Button
+            // type="dashed"
+            onClick={() => {
+              removeEmployedTechnology(index);
+              calculateCapacity();
+            }}
+            size="middle"
+            className="addMinusBtn"
+            // block
+            icon={<MinusOutlined />}
+          ></Button>
+        ) : (
+          <span></span>
+        );
+      },
     },
   ];
 
@@ -143,18 +182,24 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       title: t('validationReport:no'),
       dataIndex: 'applicabilityNo',
       key: 'applicabilityNo',
+      width: '20px',
     },
     {
       title: t('validationReport:applicabilityCriteria'),
       dataIndex: 'applicabilityCriteria',
       key: 'applicabilityCriteria',
+      width: '300px',
     },
     {
       title: t('validationReport:projectActivity'),
       dataIndex: 'projectActivity',
       key: 'projectActivity',
+      width: '300px',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpApplicability', index, 'projectActivity']} rules={requiredRule}>
+        <Form.Item
+          name={['methodologyCriteriaApplicability', index, 'projectActivity']}
+          rules={requiredRule}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -163,8 +208,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       title: t('validationReport:applicabilityCriteriaMet'),
       dataIndex: 'applicabilityCriteriaMet',
       key: 'applicabilityCriteriaMet',
+      width: '100px',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpApplicability', index, 'CriteriaMet']} rules={requiredRule}>
+        <Form.Item
+          name={['methodologyCriteriaApplicability', index, 'criteriaMet']}
+          rules={requiredRule}
+        >
           <Select>
             <Select.Option value="yes">{t('yes')}</Select.Option>
             <Select.Option value="no">{t('no')}</Select.Option>
@@ -252,66 +301,63 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
   const baselineEmissionTableColumns: TableProps<any>['columns'] = [
     {
       title: '',
-      dataIndex: 'location',
-      key: 'location',
+      dataIndex: 'baselineEmissionLocation',
+      key: 'baselineEmissionLocation',
       render: (_: any, record: any, index: number) =>
         index === 0 ? (
           <p>{t('units')}</p>
         ) : (
-          <Form.Item name={['dvpBaselineEmission', index, 'location']} rules={requiredRule}>
+          <Form.Item name={['baselineEmission', index, 'location']} rules={requiredRule}>
             <Input size="large" disabled />
           </Form.Item>
         ),
     },
     {
       title: t('validationReport:projectCapacity'),
-      dataIndex: 'projectCapacity',
-      key: 'projectCapacity',
+      dataIndex: 'baselineEmissionProjectCapacity',
+      key: 'baselineEmissionProjectCapacity',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpBaselineEmission', index, 'projectCapacity']} rules={requiredRule}>
+        <Form.Item name={['baselineEmission', index, 'projectCapacity']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
         </Form.Item>
       ),
     },
     {
       title: t('validationReport:plantFactor'),
-      dataIndex: 'plantFactor',
-      key: 'plantFactor',
+      dataIndex: 'baselineEmissionPlantFactor',
+      key: 'baselineEmissionPlantFactor',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpBaselineEmission', index, 'plantFactor']} rules={requiredRule}>
+        <Form.Item name={['baselineEmission', index, 'plantFactor']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
         </Form.Item>
       ),
     },
     {
       title: t('validationReport:averageEnergyOutput'),
-      dataIndex: 'averageEnergyOutput',
-      key: 'averageEnergyOutput',
+      dataIndex: 'baselineEmissionAverageEnergyOutput',
+      key: 'baselineEmissionAverageEnergyOutput',
       render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['dvpBaselineEmission', index, 'averageEnergyOutput']}
-          rules={requiredRule}
-        >
+        <Form.Item name={['baselineEmission', index, 'averageEnergyOutput']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
         </Form.Item>
       ),
     },
     {
       title: t('validationReport:gridEmissionFactor'),
-      dataIndex: 'gridEmissionFactor',
-      key: 'gridEmissionFactor',
+      dataIndex: 'baselineEmissionGridEmissionFactor',
+      key: 'baselineEmissionGridEmissionFactor',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpBaselineEmission', index, 'gridEmissionFactor']} rules={requiredRule}>
+        <Form.Item name={['baselineEmission', index, 'gridEmissionFactor']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
         </Form.Item>
       ),
     },
     {
       title: t('validationReport:emissionReduction'),
-      dataIndex: 'emissionReduction',
-      key: 'emissionReduction',
+      dataIndex: 'baselineEmissionEmissionReduction',
+      key: 'baselineEmissionEmissionReduction',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['dvpBaselineEmission', index, 'emissionReduction']} rules={requiredRule}>
+        <Form.Item name={['baselineEmission', index, 'emissionReduction']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
         </Form.Item>
       ),
@@ -384,6 +430,36 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
   ];
 
+  const onFinish = async (values: any) => {
+    const dataValidationProcessFormValues: any = {
+      generalDescription: values?.generalDescription,
+      employedTechnology: values?.employedTechnology,
+      totalCapacityDescription: values?.totalCapacityDescription,
+      projectApprovals: values?.projectApprovals,
+      titleAndReference: values?.titleAndReference,
+      applicability: values?.applicability,
+      methodologyCriteriaApplicability: values?.methodologyCriteriaApplicability,
+      projectBoundary: values?.projectBoundary,
+      baselineIdentification: values?.baselineIdentification,
+      forumulaUsedInEmissionReduction: values?.forumulaUsedInEmissionReduction,
+      calculationOfBaselineEmissionFactor: values?.calculationOfBaselineEmissionFactor,
+      plantFactor: values?.plantFactor,
+      annualEmissionReductionCalculation: values?.annualEmissionReductionCalculation,
+      baselineEmission: values?.baselineEmission,
+      projectEmission: values?.projectEmission,
+      extraEmissionReductions: values?.extraEmissionReductions, //check
+      methodologyDeviations: values?.methodologyDeviations,
+      monitoringPlan: values?.monitoringPlan,
+      carbonManagementAssessment: values?.carbonManagementAssessment,
+      changesOfTheProjectActivity: values?.changesOfTheProjectActivity,
+      environmentImpact: values?.environmentImpact,
+      commentsOfStakeholders: values?.commentsOfStakeholders,
+    };
+
+    console.log(ProcessSteps.VR_VALIDATION_PROCESS, dataValidationProcessFormValues);
+    handleValuesUpdate({ [ProcessSteps.VR_VALIDATION_PROCESS]: dataValidationProcessFormValues });
+  };
+
   return (
     <>
       {current === 4 && (
@@ -409,7 +485,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
               <Col md={24} xl={24}>
                 <Form.Item
                   label={`4.1.1 ${t('validationReport:generalDescription')}`}
-                  name="dfvGeneralDescription"
+                  name="generalDescription"
                   rules={[
                     {
                       required: true,
@@ -421,41 +497,57 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 </Form.Item>
                 <Form.Item
                   label={`4.1.2 ${t('validationReport:employedTechnology')}`}
-                  name="dfvEmployedTechnology"
                   rules={[
                     {
                       required: true,
                       message: `${t('validationReport:employedTechnology')} ${t('isRequired')}`,
                     },
                   ]}
-                ></Form.Item>
+                >
+                  <Row>
+                    <Col span={24}>
+                      <Table
+                        pagination={false}
+                        dataSource={employedTechnologyDataSource}
+                        columns={employedTechnologyTableColumns}
+                      ></Table>
+                    </Col>
+                    <Col
+                      span={24}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        marginTop: 10,
+                      }}
+                    >
+                      <Button
+                        size={'large'}
+                        onClick={() => {
+                          setEmployedTechnologyDataSource((prevATM) => {
+                            return [...prevATM, emptyEmployedTechnologyDataSourceRow];
+                          });
+                        }}
+                      >
+                        {t('validationReport:addRow')}
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form.Item>
               </Col>
 
-              <Table
-                pagination={false}
-                dataSource={employedTechnologyDataSource}
-                columns={employedTechnologyTableColumns}
-              ></Table>
-
-              <Button
-                size={'large'}
-                onClick={() => {
-                  setEmployedTechnologyDataSource((prevATM) => {
-                    return [...prevATM, emptyEmployedTechnologyDataSourceRow];
-                  });
-                }}
-              >
-                {t('validationReport:addRow')}
-              </Button>
               <Row>
-                <Col span={20}>{t('validationReport:totalCapacity')}</Col>
-                <Col span={4}></Col>
+                <Col span={16}>{t('validationReport:totalCapacity')}</Col>
+                <Col span={7}>
+                  <Form.Item name="totalCapacity">
+                    <Input disabled />
+                  </Form.Item>
+                </Col>
               </Row>
 
               <Row gutter={60}>
                 <Col md={24} xl={24}>
                   <Form.Item
-                    name="dfvTotalCapacityDescription"
+                    name="totalCapacityDescription"
                     rules={[
                       {
                         required: true,
@@ -468,7 +560,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
                   <Form.Item
                     label={`4.2 ${t('validationReport:approvals')}`}
-                    name="dfvApprovals"
+                    name="projectApprovals"
                     rules={[
                       {
                         required: true,
@@ -483,7 +575,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   <h4>4.3 {t('validationReport:applicationofMethodology')}</h4>
                   <Form.Item
                     label={`4.3.1 ${t('validationReport:titleandreference')}`}
-                    name="dfvTitleandreference"
+                    name="titleAndReference"
                     rules={[
                       {
                         required: true,
@@ -496,7 +588,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
                   <Form.Item
                     label={`4.3.2 ${t('validationReport:applicability')}`}
-                    name="dfvApplicability"
+                    name="applicability"
                     rules={[
                       {
                         required: true,
@@ -514,7 +606,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
                   <Form.Item
                     label={`4.3.3 ${t('validationReport:projectBoundary')}`}
-                    name="dfvProjectBoundary"
+                    name="projectBoundary"
                     rules={[
                       {
                         required: true,
@@ -526,7 +618,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.3.4 ${t('validationReport:baselineIdentification')}`}
-                    name="dfvBaselineIdentification"
+                    name="baselineIdentification"
                     rules={[
                       {
                         required: true,
@@ -540,7 +632,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.3.5 ${t('validationReport:forumulaUserInEmissionReduction')}`}
-                    name="dfvForumulaUserInEmissionReduction"
+                    name="forumulaUsedInEmissionReduction"
                     rules={[
                       {
                         required: true,
@@ -558,7 +650,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </h4>
                   <Form.Item
                     label={`${t('validationReport:calculationOfBaselineEmissionFactor')}`}
-                    name="dfvCalculationOfBaselineEmissionFactor"
+                    name="calculationOfBaselineEmissionFactor"
                     rules={[
                       {
                         required: true,
@@ -571,9 +663,21 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     <TextArea rows={4} />
                   </Form.Item>
                   {/* TODO: sss */}
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <span>{t('validationReport:gridEmissionFactorEfcmGridY')}</span>
+                    <div style={{ width: '150px' }}>
+                      <Input disabled value={0.72222} />
+                    </div>
+                    <div style={{ width: '150px' }}>
+                      <Input value={'tCO2e/MWh'} disabled />
+                    </div>
+                    <div style={{ width: '190px' }}>
+                      <Input value={'Published by SLSEA (2020)'} disabled />
+                    </div>
+                  </div>
                   <Form.Item
                     label={`${t('validationReport:plantFactor')}`}
-                    name="dfvPlantFactor"
+                    name="plantFactor"
                     rules={[
                       {
                         required: true,
@@ -585,7 +689,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`${t('validationReport:annualEmissionReductionCalculation')}`}
-                    name="dfvAnnualEmissionReductionCalculation"
+                    name="annualEmissionReductionCalculation"
                     rules={[
                       {
                         required: true,
@@ -599,7 +703,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`${t('validationReport:baselineEmission')}`}
-                    name="dfvAnnualEmissionReductionCalculation"
                     rules={[
                       {
                         required: true,
@@ -618,7 +721,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
                   <Form.Item
                     label={`${t('validationReport:projectEmission')}`}
-                    name="dfvProjectEmission"
+                    name="projectEmission"
                     rules={[
                       {
                         required: true,
@@ -631,7 +734,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
                   <Form.Item
                     label={`${t('validationReport:estimatedNetEmissionReduction')}`}
-                    name="dfvEstimatedNetEmissionReduction"
+                    name="estimatedNetEmissionReduction"
                     rules={[
                       {
                         required: true,
@@ -649,7 +752,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.3.7 ${t('validationReport:methodologyDeviations')}`}
-                    name="dfvMethodologyDeviations"
+                    name="methodologyDeviations"
                     rules={[
                       {
                         required: true,
@@ -661,7 +764,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.3.8 ${t('validationReport:monitoringPlan')}`}
-                    name="dfvMonitoringPlan"
+                    name="monitoringPlan"
                     rules={[
                       {
                         required: true,
@@ -673,7 +776,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.4 ${t('validationReport:carbonManagementAssessment')}`}
-                    name="dfvCarbonManagementAssessment"
+                    name="carbonManagementAssessment"
                     rules={[
                       {
                         required: true,
@@ -687,7 +790,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.5 ${t('validationReport:changesOfTheProjectActivity')}`}
-                    name="dfvChangesOfTheProjectActivity"
+                    name="changesOfTheProjectActivity"
                     rules={[
                       {
                         required: true,
@@ -701,7 +804,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.6 ${t('validationReport:environmentImpact')}`}
-                    name="dfvEnvironmentImpact"
+                    name="environmentImpact"
                     rules={[
                       {
                         required: true,
@@ -713,7 +816,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     label={`4.6 ${t('validationReport:commentsOfStakeholders')}`}
-                    name="dfvCommentsOfStakeholders"
+                    name="commentsOfStakeholders"
                     rules={[
                       {
                         required: true,
@@ -732,7 +835,15 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} onClick={next} htmlType="submit">
+                <Button
+                  type="primary"
+                  size={'large'}
+                  // onClick={() => {
+                  //   console.log(form.getFieldsValue());
+                  // }}
+                  onClick={next}
+                  htmlType="submit"
+                >
                   {t('validationReport:next')}
                 </Button>
               </Row>
