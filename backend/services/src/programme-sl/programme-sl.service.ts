@@ -40,6 +40,9 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { Company } from "../entities/company.entity";
 import { QueryDto } from "../dto/query.dto";
 import { CostQuotationDto } from "src/dto/costQuotation.dto";
+import { ProjectRegistrationCertificateGenerator } from "../util/projectRegistrationCertificate.gen";
+import { DateUtilService } from "../util/dateUtil.service";
+import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -68,7 +71,10 @@ export class ProgrammeSlService {
     private documentRepo: Repository<DocumentEntity>,
     @InjectRepository(ProgrammeSl)
     private programmeSlRepo: Repository<ProgrammeSl>,
-    private readonly programmeLedgerService: ProgrammeLedgerService
+    private readonly programmeLedgerService: ProgrammeLedgerService,
+    private projectRegistrationCertificateGenerator: ProjectRegistrationCertificateGenerator,
+    private dateUtilService: DateUtilService,
+    private serialGenerator: SLCFSerialNumberGeneratorService,
   ) {}
 
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
@@ -438,6 +444,37 @@ export class ProgrammeSlService {
     };
     console.log(JSON.stringify(updatedProject));
     return updatedProject;
+  }
+
+  async generateProjectRegistrationCertificate(programmeId: string) {
+
+    const programme = await this.getProjectById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const certificateData = {
+      projectName: programme.title,
+      companyName: programme.company.name,
+      creditType: programme.purposeOfCreditDevelopment,
+      certificateNo: this.serialGenerator.generateProjectRegistrationSerial(programme.programmeId),
+      regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
+      issueDate: this.dateUtilService.formatCustomDate(),
+      sector: programme.projectCategory,
+      estimatedCredits: programme.creditEst
+    };
+
+    const url =
+      await this.projectRegistrationCertificateGenerator.generateProjectRegistrationCertificate(
+        certificateData,
+        programme.programmeId
+      );
+
+      return url;
   }
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],

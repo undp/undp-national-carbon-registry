@@ -5,6 +5,10 @@ import { HelperService } from "./helpers.service";
 export class SLCFSerialNumberGeneratorService {
   constructor(private helperService: HelperService) {}
 
+  generateProjectRegistrationSerial(programmeId: string) {
+    return `SLCCS/REG/${new Date().getFullYear()}/${programmeId}`;
+  }
+
   generateCreditSerialForRetire(previousStartSerial: string, retiredCreditAmount: number) {
     if (!this.matchesCreditFormat(previousStartSerial)) {
       throw new HttpException(

@@ -35,6 +35,8 @@ import { HttpUtilService } from "./http.util.service";
 import { TxRefGeneratorService } from "./txRef-generator.service";
 import { SLCFSerialNumberGeneratorService } from "./slcfSerialNumberGenerator.service";
 import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancellationCertificate.gen";
+import { ProjectRegistrationCertificateGenerator } from "./projectRegistrationCertificate.gen";
+import { DateUtilService } from "./dateUtil.service";
 
 @Module({
   imports: [
@@ -90,6 +92,8 @@ import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancel
     TxRefGeneratorService,
     SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
+    ProjectRegistrationCertificateGenerator,
+    DateUtilService
   ],
   exports: [
     CounterService,
@@ -109,6 +113,8 @@ import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancel
     TxRefGeneratorService,
     SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
+    ProjectRegistrationCertificateGenerator,
+    DateUtilService
   ],
 })
 export class UtilModule {}
