@@ -7,4 +7,5 @@ export enum DocumentTypeEnum {
   VALIDATION_AGREEMENT = "validationAgreement",
   ENVIRONMENTAL_IMPACT_ASSESSMENT = "environmentalImpactAssesment",
   VALIDATION_REPORT = "validationReport",
+  SITE_VISIT_CHECKLIST = "siteVisitChecklist",
 }

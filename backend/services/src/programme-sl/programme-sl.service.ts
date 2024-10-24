@@ -43,6 +43,7 @@ import { CostQuotationDto } from "src/dto/costQuotation.dto";
 import { UpdateProjectProposalStageDto } from "../dto/updateProjectProposalStage.dto";
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
+import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -149,7 +150,12 @@ export class ProgrammeSlService {
 
     const programme = await this.programmeLedgerService.getProgrammeSlById(cmaDto.programmeId);
 
-    if (programme?.projectProposalStage !== ProjectProposalStage.ACCEPTED_PROPOSAL) {
+    if (
+      !(
+        programme?.projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+        programme?.projectProposalStage === ProjectProposalStage.REJECTED_CMA
+      )
+    ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.programmeIsNotInSuitableStageToProceed",
@@ -236,25 +242,12 @@ export class ProgrammeSlService {
     await this.documentRepo.insert(cmaDoc);
 
     //updating proposal stage in programme
-    const updatedProgramme = await this.programmeLedger.updateProgrammeSlProposalStage(
-      cmaDto.programmeId,
-      TxType.CREATE_CMA
-    );
+    const updateProgrammeSlProposalStage = {
+      programmeId: cmaDto.programmeId,
+      txType: TxType.CREATE_CMA,
+    };
 
-    await this.programmeSlRepo
-      .update(
-        {
-          programmeId: cmaDto.programmeId,
-        },
-        {
-          projectProposalStage: updatedProgramme.projectProposalStage,
-          txTime: updatedProgramme.txTime,
-          updatedTime: updatedProgramme.updatedTime,
-        }
-      )
-      .catch((err) => {
-        throw err;
-      });
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CMA_CREATE,
@@ -526,16 +519,118 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
   }
 
+  async createSiteVisitChecklist(
+    cmaAppoveDto: CMAApproveDto,
+    user: User
+  ): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programmeId = cmaAppoveDto.programmeId;
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_CMA) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (cmaAppoveDto.content.validatorSignature) {
+      const docUrl = await this.uploadDocument(
+        DocType.SITE_VISIT_CHECKLIST_VALIDATOR_SIGN,
+        programmeId,
+        cmaAppoveDto.content.validatorSignature
+      );
+
+      cmaAppoveDto.content.validatorSignature = docUrl;
+    }
+
+    const siteVisitChecklistDoc = new DocumentEntity();
+    siteVisitChecklistDoc.content = JSON.stringify(cmaAppoveDto.content);
+    siteVisitChecklistDoc.programmeId = programmeId;
+    siteVisitChecklistDoc.companyId = companyId;
+    siteVisitChecklistDoc.userId = user.id;
+    siteVisitChecklistDoc.type = DocumentTypeEnum.SITE_VISIT_CHECKLIST;
+
+    const lastVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.SITE_VISIT_CHECKLIST,
+      programmeId
+    );
+    siteVisitChecklistDoc.version = lastVersion + 1;
+    siteVisitChecklistDoc.status = DocumentStatus.ACCEPTED;
+    siteVisitChecklistDoc.createdTime = new Date().getTime();
+    siteVisitChecklistDoc.updatedTime = siteVisitChecklistDoc.createdTime;
+
+    await this.documentRepo.insert(siteVisitChecklistDoc);
+
+    const getDoctDto = {
+      programmeId: programmeId,
+      docType: DocumentTypeEnum.CMA,
+    };
+    const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
+    let parsedCMADoc;
+    let data;
+    if (cmaDoc.data && cmaDoc.data.content) {
+      parsedCMADoc = JSON.parse(cmaDoc.data.content);
+    }
+
+    if (
+      parsedCMADoc &&
+      parsedCMADoc.quantificationOfGHG &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+    ) {
+      data = {
+        creditEst: Number(
+          parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+        ),
+      };
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_CMA,
+      data: data,
+    };
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
+  }
+
   async updateProposalStage(
     updateProposalStageDto: UpdateProjectProposalStageDto,
     user: User
   ): Promise<DataResponseDto> {
+    const programmeId = updateProposalStageDto.programmeId;
+    const txType = updateProposalStageDto.txType;
+    const data = updateProposalStageDto.data;
     if (
-      updateProposalStageDto.txType == TxType.APPROVE_INF ||
-      updateProposalStageDto.txType == TxType.REJECT_INF ||
-      updateProposalStageDto.txType == TxType.CREATE_COST_QUOTATION ||
-      updateProposalStageDto.txType == TxType.CREATE_PROJECT_PROPOSAL ||
-      updateProposalStageDto.txType == TxType.CREATE_VALIDATION_AGREEMENT
+      txType == TxType.APPROVE_INF ||
+      txType == TxType.REJECT_INF ||
+      txType == TxType.CREATE_COST_QUOTATION ||
+      txType == TxType.CREATE_PROJECT_PROPOSAL ||
+      txType == TxType.CREATE_VALIDATION_AGREEMENT ||
+      txType == TxType.APPROVE_CMA ||
+      txType == TxType.REJECT_CMA
     ) {
       if (user.companyRole != CompanyRole.CLIMATE_FUND) {
         throw new HttpException(
@@ -543,10 +638,7 @@ export class ProgrammeSlService {
           HttpStatus.UNAUTHORIZED
         );
       }
-    } else if (
-      updateProposalStageDto.txType == TxType.APPROVE_PROPOSAL ||
-      updateProposalStageDto.txType == TxType.REJECT_PROPOSAL
-    ) {
+    } else if (txType == TxType.APPROVE_PROPOSAL || txType == TxType.REJECT_PROPOSAL) {
       if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -556,37 +648,22 @@ export class ProgrammeSlService {
     }
     //updating proposal stage in programme
     const updatedProgramme = await this.programmeLedger.updateProgrammeSlProposalStage(
-      updateProposalStageDto.programmeId,
-      updateProposalStageDto.txType
+      programmeId,
+      txType,
+      data
     );
 
-    //updating propsal stage of programme_sl entity
-    await this.programmeSlRepo
-      .update(
-        {
-          programmeId: updateProposalStageDto.programmeId,
-        },
-        {
-          projectProposalStage: updatedProgramme.projectProposalStage,
-          txTime: updatedProgramme.txTime,
-          updatedTime: updatedProgramme.updatedTime,
-        }
-      )
-      .catch((err) => {
-        throw err;
-      });
-
     //updating document status
-    if (updateProposalStageDto.txType == TxType.APPROVE_PROPOSAL) {
+    if (txType == TxType.APPROVE_PROPOSAL) {
       const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.COST_QUOTATION,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.COST_QUOTATION,
             version: lastCostQuotationDocVersion,
           },
@@ -601,13 +678,13 @@ export class ProgrammeSlService {
 
       const lastProposalDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.PROJECT_PROPOSAL,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.PROJECT_PROPOSAL,
             version: lastProposalDocVersion,
           },
@@ -622,13 +699,13 @@ export class ProgrammeSlService {
 
       const lastAgreementDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.VALIDATION_AGREEMENT,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.VALIDATION_AGREEMENT,
             version: lastAgreementDocVersion,
           },
@@ -640,16 +717,16 @@ export class ProgrammeSlService {
         .catch((err) => {
           throw err;
         });
-    } else if (updateProposalStageDto.txType == TxType.REJECT_PROPOSAL) {
+    } else if (txType == TxType.REJECT_PROPOSAL) {
       const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.COST_QUOTATION,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.COST_QUOTATION,
             version: lastCostQuotationDocVersion,
           },
@@ -664,13 +741,13 @@ export class ProgrammeSlService {
 
       const lastProposalDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.PROJECT_PROPOSAL,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.PROJECT_PROPOSAL,
             version: lastProposalDocVersion,
           },
@@ -685,15 +762,57 @@ export class ProgrammeSlService {
 
       const lastAgreementDocVersion = await this.getLastDocumentVersion(
         DocumentTypeEnum.VALIDATION_AGREEMENT,
-        updateProposalStageDto.programmeId
+        programmeId
       );
 
       await this.documentRepo
         .update(
           {
-            programmeId: updateProposalStageDto.programmeId,
+            programmeId: programmeId,
             type: DocumentTypeEnum.VALIDATION_AGREEMENT,
             version: lastAgreementDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+    } else if (txType == TxType.APPROVE_CMA) {
+      const lastCMADocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.CMA,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.CMA,
+            version: lastCMADocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+    } else if (txType == TxType.REJECT_CMA) {
+      const lastCMADocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.CMA,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.CMA,
+            version: lastCMADocVersion,
           },
           {
             status: DocumentStatus.REJECTED,

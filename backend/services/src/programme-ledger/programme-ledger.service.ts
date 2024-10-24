@@ -106,7 +106,8 @@ export class ProgrammeLedgerService {
 
   public async updateProgrammeSlProposalStage(
     programmeId: string,
-    txType: TxType
+    txType: TxType,
+    data?: any
   ): Promise<ProgrammeSl> {
     const getQueries = {};
     getQueries[this.ledger.programmeSlTable] = {
@@ -165,6 +166,13 @@ export class ProgrammeLedgerService {
             break;
           case TxType.REJECT_PROPOSAL:
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
+            break;
+          case TxType.APPROVE_CMA:
+            uPayload["creditEst"] = data?.creditEst;
+            uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
+            break;
+          case TxType.REJECT_CMA:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_CMA;
             break;
           default:
             break;

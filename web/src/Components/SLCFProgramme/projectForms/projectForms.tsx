@@ -72,11 +72,21 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
-  const navigateToCostQuotationView = () => {};
+  const navigateToCostQuotationView = () => {
+    navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
+
   const navigateToCostQuotationCreate = () => {
     navigate(`/programmeManagementSLCF/addCostQuotation/${programmeId}`);
   };
-  const navigateToProposalView = () => {};
+
+  const navigateToProposalView = () => {
+    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
   const navigateToProposalCreate = () => {
     navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
   };
