@@ -383,29 +383,24 @@ export class CreditRetirementSlService {
       );
     }
 
-    let url = "";
+    const certificateData = {
+      companyName: fromCompany.name,
+      noOfSCERs: retirementRequest.creditAmount,
+      yearVerified: new Date().getFullYear(),
+      transactionReference: retirementRequest.txRef,
+      dateOfTransaction: this.formatCustomDate(retirementRequest.createdTime),
+      startSerialNumber: previousCreditStartSerial,
+      endSerialNumber: endCreditSerial,
+      totalSCERs: retirementRequest.creditAmount,
+      documentDate: this.formatCustomDate(),
+      projectName: programme.title,
+      projectProponent: fromCompany.name,
+    };
 
-    if (retirementRequest.creditType === CreditType.TRACK_2) {
-      const certificateData = {
-        companyName: fromCompany.name,
-        noOfSCERs: retirementRequest.creditAmount,
-        yearVerified: new Date().getFullYear(),
-        transactionReference: retirementRequest.txRef,
-        dateOfTransaction: this.formatCustomDate(retirementRequest.createdTime),
-        startSerialNumber: previousCreditStartSerial,
-        endSerialNumber: endCreditSerial,
-        totalSCERs: retirementRequest.creditAmount,
-        documentDate: this.formatCustomDate(),
-        projectName: programme.title,
-        projectProponent: fromCompany.name,
-      };
-
-      url =
-        await this.voluntarilyCancellationCertificateGenerator.generateVoluntaryCancellationCertificate(
-          certificateData,
-          programme.programmeId
-        );
-    }
+    const url =
+      await this.voluntarilyCancellationCertificateGenerator.generateVoluntaryCancellationCertificate(
+        certificateData
+      );
 
     const updatedRequest = await this.retirementRepo.update(
       {
