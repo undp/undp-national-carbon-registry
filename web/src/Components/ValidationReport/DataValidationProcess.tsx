@@ -49,6 +49,15 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       gridEmissionFactor: '',
       emissionReduction: '',
     },
+    {
+      type: 'unit2',
+      location: t('units'),
+      projectCapacity: '',
+      plantFactor: '',
+      averageEnergyOutput: '',
+      gridEmissionFactor: '',
+      emissionReduction: '',
+    },
   ];
 
   const estimatedNetEmissionDataSourceList = [
@@ -92,7 +101,9 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
   ];
 
-  const [baselineEmissionDataSource, setBaselineEmissionDataSource] = useState([]);
+  const [baselineEmissionDataSource, setBaselineEmissionDataSource] = useState([
+    baselineEmissionDataSourceList,
+  ]);
 
   const [employedTechnologyDataSource, setEmployedTechnologyDataSource] = useState([
     emptyEmployedTechnologyDataSourceRow,
@@ -301,8 +312,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
   const baselineEmissionTableColumns: TableProps<any>['columns'] = [
     {
       title: '',
-      dataIndex: 'baselineEmissionLocation',
-      key: 'baselineEmissionLocation',
+      dataIndex: 'location',
+      key: 'location',
       render: (_: any, record: any, index: number) =>
         index === 0 ? (
           <p>{t('units')}</p>
@@ -314,8 +325,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
     {
       title: t('validationReport:projectCapacity'),
-      dataIndex: 'baselineEmissionProjectCapacity',
-      key: 'baselineEmissionProjectCapacity',
+      dataIndex: 'projectCapacity',
+      key: 'projectCapacity',
       render: (_: any, record: any, index: number) => (
         <Form.Item name={['baselineEmission', index, 'projectCapacity']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
@@ -324,8 +335,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
     {
       title: t('validationReport:plantFactor'),
-      dataIndex: 'baselineEmissionPlantFactor',
-      key: 'baselineEmissionPlantFactor',
+      dataIndex: 'plantFactor',
+      key: 'plantFactor',
       render: (_: any, record: any, index: number) => (
         <Form.Item name={['baselineEmission', index, 'plantFactor']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
@@ -334,8 +345,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
     {
       title: t('validationReport:averageEnergyOutput'),
-      dataIndex: 'baselineEmissionAverageEnergyOutput',
-      key: 'baselineEmissionAverageEnergyOutput',
+      dataIndex: 'averageEnergyOutput',
+      key: 'averageEnergyOutput',
       render: (_: any, record: any, index: number) => (
         <Form.Item name={['baselineEmission', index, 'averageEnergyOutput']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
@@ -344,8 +355,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
     {
       title: t('validationReport:gridEmissionFactor'),
-      dataIndex: 'baselineEmissionGridEmissionFactor',
-      key: 'baselineEmissionGridEmissionFactor',
+      dataIndex: 'gridEmissionFactor',
+      key: 'gridEmissionFactor',
       render: (_: any, record: any, index: number) => (
         <Form.Item name={['baselineEmission', index, 'gridEmissionFactor']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
@@ -354,8 +365,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
     {
       title: t('validationReport:emissionReduction'),
-      dataIndex: 'baselineEmissionEmissionReduction',
-      key: 'baselineEmissionEmissionReduction',
+      dataIndex: 'emissionReduction',
+      key: 'emissionReduction',
       render: (_: any, record: any, index: number) => (
         <Form.Item name={['baselineEmission', index, 'emissionReduction']} rules={requiredRule}>
           <Input size="large" disabled={index === 0 ? true : false} />
@@ -706,18 +717,130 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:annualEmissionReductionCalculation')} ${t(
-                          'isRequired'
-                        )}`,
+                        message: `${t('validationReport:baselineEmission')} ${t('isRequired')}`,
                       },
                     ]}
                   >
-                    <Table
+                    {/* <Table
                       dataSource={baselineEmissionDataSource}
                       columns={baselineEmissionTableColumns}
                       pagination={false}
-                    ></Table>
+                    ></Table> */}
                   </Form.Item>
+                  <div>
+                    <Row className="header" justify={'space-between'}>
+                      <Col md={6} xl={6}></Col>
+                      <Col md={3} xl={3}>
+                        {t('validationReport:projectCapacity')}
+                      </Col>
+                      <Col md={3} xl={3}>
+                        {t('validationReport:plantFactor')}
+                      </Col>
+                      <Col md={3} xl={3}>
+                        {t('validationReport:averageEnergyOutput')}
+                      </Col>
+                      <Col md={3} xl={3}>
+                        {t('validationReport:gridEmissionFactor')}
+                      </Col>
+                      <Col md={3} xl={2}>
+                        {t('validationReport:emissionReduction')}
+                      </Col>
+                    </Row>
+                    {/* <Row justify={'space-between'} align={'middle'}>
+                      <Col md={6} xl={6}>
+                        {t('units')}
+                      </Col>
+                      <Col md={3} xl={3}>
+                        kWp
+                      </Col>
+                      <Col md={3} xl={3}>
+                        %
+                      </Col>
+                      <Col md={3} xl={3}>
+                        MWh/Year
+                      </Col>
+                      <Col md={3} xl={3}>
+                        tCO2/MWh
+                      </Col>
+                      <Col md={2} xl={2}>
+                        tCO2/Year
+                      </Col>
+                    </Row> */}
+                    <Form.List name="baselineEmissions">
+                      {(baselineEmissions, { add, remove }) => (
+                        <>
+                          {baselineEmissions.map(
+                            ({ key, name, fieldKey, ...restField }, index: number) => (
+                              <>
+                                <Row justify={'space-between'} align={'middle'}>
+                                  <Col md={6} xl={6}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'location']}
+                                      fieldKey={[name, 'location']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'projectCapacity']}
+                                      fieldKey={[name, 'projectCapacity']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled={index === 0} />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'plantFactor']}
+                                      fieldKey={[name, 'plantFactor']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled={index === 0} />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'averageEnergyOutput']}
+                                      fieldKey={[name, 'averageEnergyOutput']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled={index === 0} />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'gridEmissionFactor']}
+                                      fieldKey={[name, 'gridEmissionFactor']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled={index === 0} />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3}>
+                                    <Form.Item
+                                      {...restField}
+                                      name={[name, 'emissionReduction']}
+                                      fieldKey={[name, 'emissionReduction']}
+                                      rules={requiredRule}
+                                    >
+                                      <Input disabled={index === 0} />
+                                    </Form.Item>
+                                  </Col>
+                                </Row>
+                              </>
+                            )
+                          )}
+                        </>
+                      )}
+                    </Form.List>
+                  </div>
 
                   <Form.Item
                     label={`${t('validationReport:projectEmission')}`}

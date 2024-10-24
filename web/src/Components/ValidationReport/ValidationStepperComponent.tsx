@@ -30,7 +30,7 @@ export enum ProcessSteps {
 
 const StepperComponent = (props: any) => {
   const { t } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(4);
   const navigate = useNavigate();
   const { id: programId } = useParams();
 
@@ -219,11 +219,11 @@ const StepperComponent = (props: any) => {
         {
           type: 'unit',
           location: t('units'),
-          projectCapacity: '',
-          plantFactor: '',
-          averageEnergyOutput: '',
-          gridEmissionFactor: '',
-          emissionReduction: '',
+          projectCapacity: 'kWp',
+          plantFactor: '%',
+          averageEnergyOutput: 'MWh/Year',
+          gridEmissionFactor: 'tCO2/MWh',
+          emissionReduction: 'tCO2/Yea',
         },
         ...projectContent?.projectActivity.locationsOfProjectActivity.map(
           (location: any, index: number) => {
@@ -250,7 +250,7 @@ const StepperComponent = (props: any) => {
             };
           }
         ),
-        baselineEmission: baseLine,
+        baselineEmissions: baseLine,
       });
 
       // setProjectCategory(data?.projectCategory);

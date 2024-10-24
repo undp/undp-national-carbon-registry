@@ -5,9 +5,9 @@ export const calculateDifference = (startTimestamp: number, endTimestamp: number
   const startDate = new Date(startTimestamp);
   const endDate = new Date(endTimestamp);
 
-  let years = endDate.getFullYear() - startDate.getFullYear();
-  let months = endDate.getMonth() - startDate.getMonth();
-  let days = endDate.getDate() - startDate.getDate();
+  const years = endDate.getFullYear() - startDate.getFullYear();
+  const months = endDate.getMonth() - startDate.getMonth();
+  const days = endDate.getDate() - startDate.getDate();
 
   // if (days < 0) {
   //   months--;
@@ -25,7 +25,7 @@ export const calculateDifference = (startTimestamp: number, endTimestamp: number
 };
 
 export const fileUploadValueExtract = async (formValues: any, key: string) => {
-  return await (async function () {
+  return (async function () {
     const base64Docs: string[] = [];
     if (formValues[key] && formValues[key].length > 0) {
       const docs = formValues[key];
