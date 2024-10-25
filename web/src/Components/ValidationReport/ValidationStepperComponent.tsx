@@ -57,6 +57,11 @@ const StepperComponent = (props: any) => {
       };
       return { ...prevVal, content: tempContent };
     });
+
+    const isFinal = val[ProcessSteps.VR_APPENDIX];
+
+    if (isFinal) {
+    }
   };
 
   const next = () => {
