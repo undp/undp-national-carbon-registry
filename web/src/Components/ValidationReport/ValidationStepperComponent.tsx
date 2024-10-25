@@ -215,31 +215,6 @@ const StepperComponent = (props: any) => {
         ],
       });
 
-      const baseLine = [
-        {
-          type: 'unit',
-          location: t('units'),
-          projectCapacity: 'kWp',
-          plantFactor: '%',
-          averageEnergyOutput: 'MWh/Year',
-          gridEmissionFactor: 'tCO2/MWh',
-          emissionReduction: 'tCO2/Yea',
-        },
-        ...projectContent?.projectActivity.locationsOfProjectActivity.map(
-          (location: any, index: number) => {
-            return {
-              type: 'value',
-              location: location.locationOfProjectActivity,
-              projectCapacity: '',
-              plantFactor: '',
-              averageEnergyOutput: '',
-              gridEmissionFactor: '',
-              emissionReduction: '',
-            };
-          }
-        ),
-      ];
-
       form5.setFieldsValue({
         employedTechnology: projectContent?.projectActivity.locationsOfProjectActivity.map(
           (location: any, index: number) => {
@@ -250,7 +225,40 @@ const StepperComponent = (props: any) => {
             };
           }
         ),
-        baselineEmissions: baseLine,
+        baselineEmissions: [
+          {
+            type: 'unit',
+            location: t('validationReport:units'),
+            projectCapacity: 'kWp',
+            plantFactor: '%',
+            averageEnergyOutput: 'MWh/Year',
+            gridEmissionFactor: 'tCO2/MWh',
+            emissionReduction: 'tCO2/Yea',
+          },
+          ...projectContent?.projectActivity.locationsOfProjectActivity.map(
+            (location: any, index: number) => {
+              return {
+                type: 'value',
+                location: location.locationOfProjectActivity,
+                projectCapacity: '',
+                plantFactor: '',
+                averageEnergyOutput: '',
+                gridEmissionFactor: '',
+                emissionReduction: '',
+              };
+            }
+          ),
+        ],
+        estimatedNetEmissionReduction:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
+            (emissionData: any) => {
+              return {
+                emissionsPeriodStart: moment(emissionData.startDate * 1000),
+                emissionsPeriodEnd: moment(emissionData.endDate * 1000),
+              };
+            }
+          ),
+        totalCreditingYears: projectContent?.projectActivity?.totalCreditingYears,
       });
 
       // setProjectCategory(data?.projectCategory);
@@ -375,6 +383,7 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_PROCESS]}
+          projectCategory={projectCategory}
         />
       ),
     },

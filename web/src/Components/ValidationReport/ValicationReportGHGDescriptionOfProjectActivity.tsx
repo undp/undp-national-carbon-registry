@@ -929,17 +929,19 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                             span={24}
                                             style={{ display: 'flex', justifyContent: 'flex-end' }}
                                           >
-                                            <Button
-                                              // type="dashed"
-                                              onClick={() => {
-                                                // reduceTotalCreditingYears()
-                                                removeItem(itemName);
-                                              }}
-                                              size="middle"
-                                              className="addMinusBtn"
-                                              // block
-                                              icon={<MinusOutlined />}
-                                            ></Button>
+                                            {technicalProjectDescriptionItemList.length > 1 && (
+                                              <Button
+                                                // type="dashed"
+                                                onClick={() => {
+                                                  // reduceTotalCreditingYears()
+                                                  removeItem(itemName);
+                                                }}
+                                                size="middle"
+                                                className="addMinusBtn"
+                                                // block
+                                                icon={<MinusOutlined />}
+                                              ></Button>
+                                            )}
                                           </Col>
                                         </Row>
                                       )

@@ -1,6 +1,8 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
 import moment from 'moment';
+import { ProjectCategory } from '../../enum/slRegistryEnum';
+import { useEffect } from 'react';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -10,7 +12,11 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
 };
 
 const NetEmissionReduction = (props: any) => {
-  const { form, t } = props;
+  const { form, t, existingEmission, projectCategory } = props;
+
+  useEffect(() => {
+    // onPeriodEndChange()
+  }, []);
 
   const calculateNetGHGEmissions = (value: any, index?: number) => {
     let baselineEmissionReductionsVal = 0;
@@ -33,7 +39,7 @@ const NetEmissionReduction = (props: any) => {
       );
       form.setFieldValue('netEmissionReductions', String(netGHGEmissions));
     } else {
-      const listVals = form.getFieldValue('extraEmissionReductions');
+      const listVals = form.getFieldValue('estimatedNetEmissionReduction');
 
       if (listVals[index] !== undefined) {
         baselineEmissionReductionsVal = Number(listVals[index].baselineEmissionReductions || 0);
@@ -47,7 +53,7 @@ const NetEmissionReduction = (props: any) => {
 
         listVals[index].netEmissionReductions = netGHGEmissions;
 
-        form.setFieldValue('extraEmissionReductions', listVals);
+        form.setFieldValue('estimatedNetEmissionReduction', listVals);
       }
     }
   };
@@ -56,32 +62,48 @@ const NetEmissionReduction = (props: any) => {
     const category = 'netEmissionReductions';
     const categoryToAdd = 'totalNetEmissionReductions';
     let tempTotal = Number(form.getFieldValue(category) || 0);
-    const listVals = form.getFieldValue('extraEmissionReductions');
+    const listVals = form.getFieldValue('estimatedNetEmissionReduction');
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
-        if (item[category]) {
+        if (item && item[category]) {
           tempTotal += Number(item[category]);
         }
       });
     }
+
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
-    form.setFieldValue(categoryToAdd, String(tempTotal));
-    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], Math.round(tempTotal / creditingYears));
+    if (creditingYears > 0) {
+      form.setFieldValue(categoryToAdd, String(tempTotal));
+      form.setFieldValue(
+        EMISSION_CATEGORY_AVG_MAP[category],
+        Math.round(tempTotal / creditingYears)
+      );
+    } else {
+      form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
+    }
   };
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
     let tempTotal = Number(form.getFieldValue(category) || 0);
-    const listVals = form.getFieldValue('extraEmissionReductions');
+    const listVals = form.getFieldValue('estimatedNetEmissionReduction');
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
-        if (item[category]) {
+        if (item && item[category]) {
           tempTotal += Number(item[category]);
         }
       });
     }
+
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
-    form.setFieldValue(categoryToAdd, String(tempTotal));
-    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], Math.round(tempTotal / creditingYears));
+    if (creditingYears > 0) {
+      form.setFieldValue(categoryToAdd, String(tempTotal));
+      form.setFieldValue(
+        EMISSION_CATEGORY_AVG_MAP[category],
+        Math.round(tempTotal / creditingYears)
+      );
+    } else {
+      form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
+    }
 
     CalculateNetTotalEmissions();
   };
@@ -116,12 +138,17 @@ const NetEmissionReduction = (props: any) => {
           <Col md={3} xl={3}>
             Estimated net GHG emission reductions or removals (tCO2e)
           </Col>
+          {projectCategory === ProjectCategory.AFOLU && (
+            <Col md={3} xl={3}>
+              Buffer pool allocation
+            </Col>
+          )}
           <Col md={2} xl={2}>
             {' '}
           </Col>
         </Row>
 
-        <Row justify={'space-between'} align={'middle'}>
+        {/* <Row justify={'space-between'} align={'middle'}>
           <Col md={6} xl={6} className="col1">
             <Form.Item
               label={``}
@@ -341,98 +368,100 @@ const NetEmissionReduction = (props: any) => {
           <Col md={2} xl={2}>
             {' '}
           </Col>
-        </Row>
+        </Row> */}
 
-        <Form.List name="extraEmissionReductions">
+        <Form.List name="estimatedNetEmissionReduction">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }) => (
                 <>
                   <Row justify={'space-between'} align={'middle'}>
                     <Col md={6} xl={6} className="col1">
-                      <Form.Item
-                        label={``}
-                        name={[name, 'emissionsPeriodStart']}
-                        className="datepicker"
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(`${t('CMAForm:required')}`);
-                              }
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <Form.Item
+                          label={``}
+                          name={[name, 'emissionsPeriodStart']}
+                          className="datepicker"
+                          rules={[
+                            {
+                              required: true,
+                              message: '',
                             },
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          placeholder="Start Date"
-                          picker="month"
-                          format="YYYY MMM"
-                          // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                        />
-                      </Form.Item>
-                      <p>to</p>
-                      <Form.Item
-                        label={``}
-                        name={[name, 'emissionsPeriodEnd']}
-                        className="datepicker"
-                        rules={[
-                          {
-                            required: true,
-                            message: '',
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(`${t('CMAForm:required')}`);
-                              }
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(`${t('CMAForm:required')}`);
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <DatePicker
+                            size="large"
+                            placeholder="Start Date"
+                            picker="month"
+                            format="YYYY MMM"
+                            // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          />
+                        </Form.Item>
+                        <span style={{ marginBottom: 23 }}>to</span>
+                        <Form.Item
+                          label={``}
+                          name={[name, 'emissionsPeriodEnd']}
+                          className="datepicker"
+                          rules={[
+                            {
+                              required: true,
+                              message: '',
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(`${t('CMAForm:required')}`);
+                                }
 
-                              const startDate = moment(
-                                form.getFieldValue('extraEmissionReductions')[name]
+                                const startDate = moment(
+                                  form.getFieldValue('estimatedNetEmissionReduction')[name]
+                                    .emissionsPeriodStart
+                                ).startOf('month');
+                                const selectedDate = moment(value).endOf('month');
+                                const duration = moment.duration(selectedDate.diff(startDate));
+
+                                const isOneYear = Math.round(duration.asMonths()) === 12;
+
+                                if (!isOneYear) {
+                                  throw new Error('Duration should be a year');
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <DatePicker
+                            size="large"
+                            placeholder="End Date"
+                            picker="month"
+                            format="YYYY MMM"
+                            onChange={(value) => onPeriodEndChange(value, fields.length + 1)}
+                            disabledDate={(currentDate: any) =>
+                              currentDate <
+                              moment(
+                                form.getFieldValue('estimatedNetEmissionReduction')[name]
                                   .emissionsPeriodStart
-                              ).startOf('month');
-                              const selectedDate = moment(value).endOf('month');
-                              const duration = moment.duration(selectedDate.diff(startDate));
-
-                              const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                              if (!isOneYear) {
-                                throw new Error('Duration should be a year');
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          placeholder="End Date"
-                          picker="month"
-                          format="YYYY MMM"
-                          onChange={(value) => onPeriodEndChange(value, fields.length + 1)}
-                          disabledDate={(currentDate: any) =>
-                            currentDate <
-                            moment(
-                              form.getFieldValue('extraEmissionReductions')[name]
-                                .emissionsPeriodStart
-                            ).startOf('month')
-                          }
-                        />
-                      </Form.Item>
+                              ).startOf('month')
+                            }
+                          />
+                        </Form.Item>
+                      </div>
                     </Col>
                     <Col md={3} xl={3}>
                       <Form.Item
@@ -569,6 +598,35 @@ const NetEmissionReduction = (props: any) => {
                         <Input />
                       </Form.Item>
                     </Col>
+                    {projectCategory === ProjectCategory.AFOLU && (
+                      <Col md={3} xl={3}>
+                        <Form.Item
+                          name={[name, 'bufferPoolAllocation']}
+                          rules={[
+                            {
+                              required: true,
+                              message: `${t('CMAForm:required')}`,
+                            },
+                            {
+                              validator(rule, value) {
+                                if (!value) {
+                                  return Promise.resolve();
+                                }
+
+                                // eslint-disable-next-line no-restricted-globals
+                                if (isNaN(value)) {
+                                  return Promise.reject(new Error('Should be an integer'));
+                                }
+
+                                return Promise.resolve();
+                              },
+                            },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Col>
+                    )}
                     <Col md={2} xl={2}>
                       <Form.Item>
                         <Button

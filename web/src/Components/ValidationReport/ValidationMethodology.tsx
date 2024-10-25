@@ -5,6 +5,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
+import { requiredValidationRule } from '../../Utils/validationHelper';
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
@@ -44,8 +45,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     { label: t('validationReport:conclusion4'), value: t('validationReport:conclusion4') },
   ];
 
-  const requiredRule = [{ required: true, message: t('common:isRequired') }];
-
   const removeAppointmentTeamMembers = (index: number) => {
     setAppointmentTeamMembersDataSource((prevATM) => {
       const newList = [...prevATM];
@@ -60,7 +59,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'appointmentTeamMembersName',
       key: 'appointmentTeamMembersName',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['appointmentTeamMembers', index, 'name']} rules={requiredRule}>
+        <Form.Item
+          name={['appointmentTeamMembers', index, 'name']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -73,7 +75,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
         <Form.Item
           name={['appointmentTeamMembers', index, 'company']}
           initialValue={record?.appointmentTeamMembersCompany}
-          rules={requiredRule}
+          rules={[requiredValidationRule(t)]}
         >
           <Input size="large" disabled />
         </Form.Item>
@@ -84,7 +86,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'appointmentTeamMembersFunction',
       key: 'appointmentTeamMembersFunction',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['appointmentTeamMembers', index, 'function']} rules={requiredRule}>
+        <Form.Item
+          name={['appointmentTeamMembers', index, 'function']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Checkbox.Group style={{ display: 'flex' }}>
             <Checkbox value={t('validationReport:tl')}>{t('validationReport:tl')}</Checkbox>
             <Checkbox value={t('validationReport:te')}>{t('validationReport:te')}</Checkbox>
@@ -102,7 +107,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
         <>
           <Form.Item
             name={['appointmentTeamMembers', index, 'taskPerformedDR']}
-            rules={requiredRule}
+            rules={[requiredValidationRule(t)]}
           >
             <Checkbox.Group style={{ display: 'flex' }}>
               <Checkbox value={t('validationReport:dr')}>{t('validationReport:dr')}</Checkbox>
@@ -153,7 +158,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'backgroundInvestigationName',
       key: 'backgroundInvestigationName',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['backgroundInvestigation', index, 'name']} rules={requiredRule}>
+        <Form.Item
+          name={['backgroundInvestigation', index, 'name']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -163,7 +171,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'backgroundInvestigationDesignation',
       key: 'backgroundInvestigationDesignation',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['backgroundInvestigation', index, 'designation']} rules={requiredRule}>
+        <Form.Item
+          name={['backgroundInvestigation', index, 'designation']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -175,7 +186,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       render: (_: any, record: any, index: number) => (
         <Form.Item
           name={['backgroundInvestigation', index, 'organizationEntity']}
-          rules={requiredRule}
+          rules={[requiredValidationRule(t)]}
         >
           <Input size="large" />
         </Form.Item>
@@ -186,7 +197,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'backgroundInvestigationMethodTelephone',
       key: 'backgroundInvestigationMethodTelephone',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['backgroundInvestigation', index, 'method']} rules={requiredRule}>
+        <Form.Item
+          name={['backgroundInvestigation', index, 'method']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -198,7 +212,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       render: (_: any, record: any, index: number) => (
         <Form.Item
           name={['backgroundInvestigation', index, 'mainTopicCovered']}
-          rules={requiredRule}
+          rules={[requiredValidationRule(t)]}
         >
           <TextArea rows={4} />
         </Form.Item>
@@ -255,18 +269,38 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'specificSection',
       key: 'specificSection',
       render: (_: any, record: any, index: number) =>
-        record?.specificSection.map((val: any) => {
-          return <p>{val}</p>;
-        }),
+        record.sectionInput ? (
+          <Form.Item
+            name={['validationCategory', index, 'specificSection']}
+            rules={[requiredValidationRule(t)]}
+          >
+            <Input size="large" />
+          </Form.Item>
+        ) : (
+          record?.specificSection.map((val: any) => {
+            return <p>{val}</p>;
+          })
+        ),
     },
     {
       title: t('validationReport:noOfCars'),
       dataIndex: 'noOfCars',
       key: 'noOfCars',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['validationCategory', index, 'noOfCars']} rules={requiredRule}>
-          <Input size="large" />
-        </Form.Item>
+        <>
+          <Form.Item hidden name={['validationCategory', index, 'categoryId']}>
+            <Input value={record.categoryId} size="large" />
+          </Form.Item>
+          <Form.Item hidden name={['validationCategory', index, 'sectionId']}>
+            <Input value={record.sectionId} size="large" />
+          </Form.Item>
+          <Form.Item
+            name={['validationCategory', index, 'noOfCars']}
+            rules={[requiredValidationRule(t)]}
+          >
+            <Input size="large" />
+          </Form.Item>
+        </>
       ),
     },
     {
@@ -274,7 +308,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'noOfCL',
       key: 'noOfCL',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['validationCategory', index, 'noOfCL']} rules={requiredRule}>
+        <Form.Item
+          name={['validationCategory', index, 'noOfCL']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -284,7 +321,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'noOfFAR',
       key: 'noOfFAR',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={['validationCategory', index, 'noOfFAR']} rules={requiredRule}>
+        <Form.Item
+          name={['validationCategory', index, 'noOfFAR']}
+          rules={[requiredValidationRule(t)]}
+        >
           <Input size="large" />
         </Form.Item>
       ),
@@ -293,6 +333,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
   const deskReviewValidationDataSource = [
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'General Description',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [
         t('validationReport:generalDescription'),
@@ -304,6 +346,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Involved Parties and Project Participants',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:involveParties')],
       noOfCars: '',
@@ -311,6 +355,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Project specification',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:projectSpecification')],
       noOfCars: '',
@@ -318,6 +364,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Start date /Commissioning date',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:startDateCommisionDate')],
       noOfCars: '',
@@ -325,6 +373,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Technical project description',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:technicalProjectDescription')],
       noOfCars: '',
@@ -332,6 +382,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Contribution to sustainable development',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:contributiontoSustainableDevelopment')],
       noOfCars: '',
@@ -339,6 +391,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'General description of project activity',
+      sectionId: 'Technology employed',
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
       specificSection: [t('validationReport:technologyEmployed')],
       noOfCars: '',
@@ -346,6 +400,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Application of the Methodology',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:applicationoftheMethodology')],
       noOfCars: '',
@@ -353,6 +409,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Baseline identification',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:baselineIdentification')],
       noOfCars: '',
@@ -360,6 +418,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Calculation of GHG emission reductions',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [
         t('validationReport:calculationofGHGemissionreductions'),
@@ -373,6 +433,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Additionality determination',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:additionalityDetermination')],
       noOfCars: '',
@@ -380,6 +442,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Monitoring Methodology',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:monitoringMethodology')],
       noOfCars: '',
@@ -387,6 +451,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Monitoring Plan',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:monitoringPlan')],
       noOfCars: '',
@@ -394,6 +460,8 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Project Baseline, Additionality and Monitoring Plan',
+      sectionId: 'Project management planning',
       validationCategory: t('validationReport:projectBaselinePlan'),
       specificSection: [t('validationReport:projectmanagementplanning')],
       noOfCars: '',
@@ -401,27 +469,38 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfFAR: '',
     },
     {
+      categoryId: 'Duration of the Project / Crediting Period',
+      sectionId: 'S1',
       validationCategory: t('validationReport:durationOfProject'),
       specificSection: [],
       noOfCars: '',
       noOfCL: '',
       noOfFAR: '',
+      sectionInput: true,
     },
     {
+      categoryId: 'Environmental impacts',
+      sectionId: 'S1',
       validationCategory: t('validationReport:environmentalimpacts'),
       specificSection: [],
       noOfCars: '',
       noOfCL: '',
       noOfFAR: '',
+      sectionInput: true,
     },
     {
+      categoryId: 'Stakeholder Comments',
+      sectionId: 'S1',
       validationCategory: t('validationReport:stakeholderComments'),
       specificSection: [],
       noOfCars: '',
       noOfCL: '',
       noOfFAR: '',
+      sectionInput: true,
     },
     {
+      categoryId: 'SUM',
+      sectionId: 'S1',
       validationCategory: t('validationReport:SUM'),
       specificSection: [],
       noOfCars: '',
@@ -568,7 +647,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 <Col md={24} xl={24}>
                   <Form.Item
                     label={`2.3 ${t('validationReport:backgroundInvestigationAndFollowups')}`}
-                    rules={requiredRule}
+                    rules={[requiredValidationRule(t)]}
                   >
                     <Row>
                       <Col span={24}>
@@ -706,6 +785,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   <Form.Item
                                     {...resolutionRestField}
                                     label={`${t('validationReport:conclusion')}`}
+                                    rules={[requiredValidationRule(t)]}
                                     name={[resolutionName, 'conclusion']}
                                   >
                                     <Checkbox.Group style={{ width: '100%' }}>

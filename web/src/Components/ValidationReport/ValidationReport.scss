@@ -180,41 +180,62 @@
   }
 }
 
-.form-grid{
+.form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
   grid-template-rows: repeat(2, 1fr);
-  column-gap: 20px;                      /* Space between columns */
-  row-gap: 5px;  
+  column-gap: 20px; /* Space between columns */
+  row-gap: 5px;
 }
 
-.side-by-side-form-item{
+.side-by-side-form-item {
   display: flex;
   justify-content: space-between;
 }
 
-.technical-project-grid{
+.technical-project-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
   grid-template-rows: repeat(2, 1fr);
-  column-gap: 20px;                      /* Space between columns */
-  row-gap: 5px;  
+  column-gap: 20px; /* Space between columns */
+  row-gap: 5px;
 }
 
-.technical-project-description{
-  background-color: #E8E8E8 !important;
+.technical-project-description {
+  background-color: #e8e8e8 !important;
 }
 
-.technical-project-grid-title{
+.technical-project-grid-title {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
-  row-gap: 1px; 
+  row-gap: 1px;
 }
 
-.technical-project-grid-parameter{
+.technical-project-grid-parameter {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 2 columns with equal width */
   grid-template-rows: repeat(2, 1fr);
-  column-gap: 20px;                      /* Space between columns */
-  row-gap: 5px; 
+  column-gap: 20px; /* Space between columns */
+  row-gap: 5px;
+}
+
+.table-header {
+  padding: 20px 0px;
+  // text-align: left;
+  font-weight: 600;
+  font-size: 15px;
+  color: #28282899;
+  background-color: #fbfbfb;
+  margin-bottom: 10px;
+
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .ant-col {
+    text-align: center;
+  }
 }

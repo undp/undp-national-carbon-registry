@@ -13,7 +13,7 @@ import {
   DatePicker,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import NetEmissionReduction from '../Common/NetEmissonReduction';
 import { ProcessSteps } from './ValidationStepperComponent';
 
@@ -24,7 +24,17 @@ import { ProcessSteps } from './ValidationStepperComponent';
 // }
 
 const DataValidationProcess = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, existingFormValues } = props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    existingFormValues,
+    projectCategory,
+  } = props;
 
   const emptyBackgroundInvestigationRow = {
     backgroundInvestigationName: '',
@@ -42,7 +52,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
   const baselineEmissionDataSourceList = [
     {
       type: 'unit',
-      location: t('units'),
+      location: t('validationReport:units'),
       projectCapacity: '',
       plantFactor: '',
       averageEnergyOutput: '',
@@ -191,8 +201,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
   const applicabilityTableColumns: TableProps<any>['columns'] = [
     {
       title: t('validationReport:no'),
-      dataIndex: 'applicabilityNo',
-      key: 'applicabilityNo',
+      dataIndex: 'criteriaNo',
+      key: 'criteriaNo',
       width: '20px',
     },
     {
@@ -207,12 +217,15 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       key: 'projectActivity',
       width: '300px',
       render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['methodologyCriteriaApplicability', index, 'projectActivity']}
-          rules={requiredRule}
-        >
-          <Input size="large" />
-        </Form.Item>
+        <>
+          <Form.Item
+            name={['applicabilityCriteria', index, 'projectActivity']}
+            rules={requiredRule}
+          >
+            <Input size="large" />
+          </Form.Item>
+          <Form.Item hidden name={['applicabilityCriteria', index, 'criteriaNo']}></Form.Item>
+        </>
       ),
     },
     {
@@ -221,14 +234,11 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       key: 'applicabilityCriteriaMet',
       width: '100px',
       render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['methodologyCriteriaApplicability', index, 'criteriaMet']}
-          rules={requiredRule}
-        >
+        <Form.Item name={['applicabilityCriteria', index, 'criteriaMet']} rules={requiredRule}>
           <Select>
-            <Select.Option value="yes">{t('yes')}</Select.Option>
-            <Select.Option value="no">{t('no')}</Select.Option>
-            <Select.Option value="na">{t('notApplicable')}</Select.Option>
+            <Select.Option value="yes">{t('validationReport:yes')}</Select.Option>
+            <Select.Option value="no">{t('validationReport:no')}</Select.Option>
+            <Select.Option value="na">{t('validationReport:notApplicable')}</Select.Option>
           </Select>
         </Form.Item>
       ),
@@ -237,7 +247,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
   const applicabilityTableDataSource = [
     {
-      applicabilityNo: '01',
+      criteriaNo: '01',
       applicabilityCriteria: [
         t('validationReport:criteria1'),
         `(a) ${t('validationReport:criteria1A')}`,
@@ -247,19 +257,19 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '02',
+      criteriaNo: '02',
       applicabilityCriteria: [t('validationReport:criteria2')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '03',
+      criteriaNo: '03',
       applicabilityCriteria: [t('validationReport:criteria3')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '04',
+      criteriaNo: '04',
       applicabilityCriteria: [
         t('validationReport:criteria4'),
         <ul>
@@ -272,37 +282,37 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '05',
+      criteriaNo: '05',
       applicabilityCriteria: [t('validationReport:criteria5')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '06',
+      criteriaNo: '06',
       applicabilityCriteria: [t('validationReport:criteria6')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '07',
+      criteriaNo: '07',
       applicabilityCriteria: [t('validationReport:criteria7')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '08',
+      criteriaNo: '08',
       applicabilityCriteria: [t('validationReport:criteria8')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '09',
+      criteriaNo: '09',
       applicabilityCriteria: [t('validationReport:criteria9')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
     },
     {
-      applicabilityNo: '10',
+      criteriaNo: '10',
       applicabilityCriteria: [t('validationReport:criteria10')],
       projectActivity: '',
       applicabilityCriteriaMet: '',
@@ -441,6 +451,15 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     },
   ];
 
+  const addEmployedTechnologyRow = () => {
+    form.setFieldsValue({
+      employedTechnology: [
+        ...form.getFieldValue('employedTechnology'),
+        { siteNo: '', location: '', capacity: '' },
+      ],
+    });
+  };
+
   const onFinish = async (values: any) => {
     const dataValidationProcessFormValues: any = {
       generalDescription: values?.generalDescription,
@@ -516,44 +535,107 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   ]}
                 >
                   <Row>
-                    <Col span={24}>
-                      <Table
+                    <Col md={22} xl={22}>
+                      {/* <Table
                         pagination={false}
                         dataSource={employedTechnologyDataSource}
                         columns={employedTechnologyTableColumns}
-                      ></Table>
+                      ></Table> */}
+                      <Row className="table-header" justify={'space-between'}>
+                        <Col md={6} xl={6}>
+                          {t('validationReport:siteNo')}
+                        </Col>
+                        <Col md={3} xl={3} className="total-cols">
+                          {t('validationReport:location')}
+                        </Col>
+                        <Col md={3} xl={3}>
+                          {t('validationReport:capacity')}
+                        </Col>
+                      </Row>
+                      <Form.List name="employedTechnology">
+                        {(employedTechnology, { add, remove }) => (
+                          <>
+                            {employedTechnology.map(
+                              ({ key, name, fieldKey, ...restField }, index: number) => (
+                                <>
+                                  <Row justify={'space-between'} align={'middle'}>
+                                    <Col md={6} xl={6} className="col1">
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'siteNo']}
+                                        fieldKey={[name, 'siteNo']}
+                                        rules={requiredRule}
+                                      >
+                                        <Input />
+                                      </Form.Item>
+                                    </Col>
+                                    <Col md={3} xl={3}>
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'location']}
+                                        fieldKey={[name, 'location']}
+                                        rules={requiredRule}
+                                      >
+                                        <Input />
+                                      </Form.Item>
+                                    </Col>
+                                    <Col md={3} xl={3}>
+                                      <Form.Item
+                                        {...restField}
+                                        name={[name, 'capacity']}
+                                        fieldKey={[name, 'capacity']}
+                                        rules={requiredRule}
+                                      >
+                                        <Input onChange={calculateCapacity} />
+                                      </Form.Item>
+                                    </Col>
+                                  </Row>
+                                </>
+                              )
+                            )}
+                          </>
+                        )}
+                      </Form.List>
                     </Col>
                     <Col
-                      span={24}
+                      md={2}
+                      xl={2}
                       style={{
                         display: 'flex',
-                        justifyContent: 'flex-end',
-                        marginTop: 10,
+                        justifyContent: 'center',
+                        alignItems: 'flex-end',
                       }}
                     >
                       <Button
-                        size={'large'}
                         onClick={() => {
-                          setEmployedTechnologyDataSource((prevATM) => {
-                            return [...prevATM, emptyEmployedTechnologyDataSourceRow];
-                          });
+                          addEmployedTechnologyRow();
                         }}
-                      >
-                        {t('validationReport:addRow')}
-                      </Button>
+                        size="large"
+                        className="addMinusBtn"
+                        style={{ marginBottom: 26 }}
+                        icon={<PlusOutlined />}
+                      ></Button>
                     </Col>
+                  </Row>
+                  <Row justify={'space-between'}>
+                    <Col md={22} xl={22}>
+                      <Row style={{ width: '100%' }} justify={'space-between'}>
+                        <Col md={6} xl={6}>
+                          {t('validationReport:totalCapacity')}
+                        </Col>
+                        <Col md={3} xl={3}></Col>
+                        <Col md={3} xl={3}>
+                          <Form.Item name="totalCapacity">
+                            <Input disabled />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+
+                    <Col md={2} xl={2}></Col>
                   </Row>
                 </Form.Item>
               </Col>
-
-              <Row>
-                <Col span={16}>{t('validationReport:totalCapacity')}</Col>
-                <Col span={7}>
-                  <Form.Item name="totalCapacity">
-                    <Input disabled />
-                  </Form.Item>
-                </Col>
-              </Row>
 
               <Row gutter={60}>
                 <Col md={24} xl={24}>
@@ -613,6 +695,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   <Table
                     dataSource={applicabilityTableDataSource}
                     columns={applicabilityTableColumns}
+                    pagination={false}
                   ></Table>
 
                   <Form.Item
@@ -727,7 +810,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       pagination={false}
                     ></Table> */}
                   </Form.Item>
-                  <div>
+                  <div className="estimated-emmissions-table-form">
                     <Row className="header" justify={'space-between'}>
                       <Col md={6} xl={6}></Col>
                       <Col md={3} xl={3}>
@@ -746,26 +829,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         {t('validationReport:emissionReduction')}
                       </Col>
                     </Row>
-                    {/* <Row justify={'space-between'} align={'middle'}>
-                      <Col md={6} xl={6}>
-                        {t('units')}
-                      </Col>
-                      <Col md={3} xl={3}>
-                        kWp
-                      </Col>
-                      <Col md={3} xl={3}>
-                        %
-                      </Col>
-                      <Col md={3} xl={3}>
-                        MWh/Year
-                      </Col>
-                      <Col md={3} xl={3}>
-                        tCO2/MWh
-                      </Col>
-                      <Col md={2} xl={2}>
-                        tCO2/Year
-                      </Col>
-                    </Row> */}
+
                     <Form.List name="baselineEmissions">
                       {(baselineEmissions, { add, remove }) => (
                         <>
@@ -773,7 +837,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                             ({ key, name, fieldKey, ...restField }, index: number) => (
                               <>
                                 <Row justify={'space-between'} align={'middle'}>
-                                  <Col md={6} xl={6}>
+                                  <Col md={6} xl={6} className="col1">
                                     <Form.Item
                                       {...restField}
                                       name={[name, 'location']}
@@ -871,7 +935,11 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       dataSource={estimatedNetEmissionDataSourceList}
                       columns={estimatedNetEmissionTableColumns}
                     ></Table> */}
-                    <NetEmissionReduction form={form} t={t}></NetEmissionReduction>
+                    <NetEmissionReduction
+                      form={form}
+                      t={t}
+                      projectCategory={projectCategory}
+                    ></NetEmissionReduction>
                   </Form.Item>
                   <Form.Item
                     label={`4.3.7 ${t('validationReport:methodologyDeviations')}`}
