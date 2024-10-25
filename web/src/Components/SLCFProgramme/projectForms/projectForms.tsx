@@ -221,7 +221,9 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   }
 
   function navigateToValidationReportView(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
+      state: { isView: true },
+    });
   }
 
   function navigateToProjectRegistrationView(): void {

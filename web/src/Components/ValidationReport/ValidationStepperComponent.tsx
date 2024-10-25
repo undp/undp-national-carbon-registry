@@ -30,7 +30,7 @@ export enum ProcessSteps {
 
 const StepperComponent = (props: any) => {
   const { t } = props;
-  const [current, setCurrent] = useState(4);
+  const [current, setCurrent] = useState(1);
   const navigate = useNavigate();
   const { id: programId } = useParams();
 
