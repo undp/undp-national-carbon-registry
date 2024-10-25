@@ -16,12 +16,18 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
 const { Text } = Typography;
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
 
   const t = translator.t;
+
+  const { state } = useLocation();
+  const [isView, setIsView] = useState<boolean>(!!state?.isView);
+
+  const [disableFields, setDisableFields] = useState<boolean>(false);
+
   const [form] = useForm();
 
   const { id } = useParams();
@@ -31,21 +37,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
 
-  const projectPlanEndTimeChange = (value: any) => {
+  const projectPlanEndTimeChange = (value?: any) => {
     const projectPlanActivity01StartDate = form.getFieldValue('projectPlanActivity01StartDate');
     const projectPlanActivity01EndDate = form.getFieldValue('projectPlanActivity01EndDate');
     const projectPlanActivity01 = form.getFieldValue('projectPlanActivity01');
 
-    console.log(
-      '-----time Vals------',
-      projectPlanActivity01StartDate,
-      projectPlanActivity01EndDate,
-      projectPlanActivity01
-    );
+    // console.log(
+    //   '-----time Vals------',
+    //   projectPlanActivity01StartDate,
+    //   projectPlanActivity01EndDate,
+    //   projectPlanActivity01
+    // );
 
     const tempTimelineData: { x: string; y: [number, number] }[] = [];
 
     if (projectPlanActivity01EndDate && projectPlanActivity01StartDate && projectPlanActivity01) {
+      // console.log(
+      //   '--------time now -------------',
+      //   new Date(projectPlanActivity01StartDate).getTime()
+      // );
       const firstObj: { x: string; y: [number, number] } = {
         x: projectPlanActivity01,
         y: [
@@ -136,6 +146,198 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     form.setFieldValue('totalCost', String(tempTotal));
   };
 
+  const createProjectTimelineOnView = (
+    projectTimeline: { activity: string; period: [number, number] }[]
+  ) => {
+    const timelineObjs: any[] = [];
+    if (projectTimeline !== undefined && projectTimeline.length > 0) {
+      projectTimeline.forEach((timelineItem) => {
+        const startDate = timelineItem.period[0] * 1000; // converting into miliseconds
+        const endDate = timelineItem.period[1] * 1000; // converting into miliseconds
+        const tempObj = {
+          x: timelineItem.activity,
+          y: [startDate, endDate],
+        };
+        timelineObjs.push(tempObj);
+      });
+    }
+
+    setTimelineData(timelineObjs);
+  };
+
+  const viewDataMaptoFields = (vals: any) => {
+    const projectTimeline: { activity: string; period: [number, number] }[] = vals?.projectTimeline;
+    createProjectTimelineOnView(projectTimeline);
+    const firstTimelineObj = projectTimeline.length > 0 ? projectTimeline.shift() : undefined;
+
+    const teamMembers: { consultant: string; role: string }[] = vals?.teamMembers;
+    const firstMember = teamMembers.length > 0 ? teamMembers.shift() : undefined;
+
+    const boardMembers: string[] = vals?.executiveBoardMembers;
+    const firstBoardMember = boardMembers.length > 0 ? boardMembers.shift() : undefined;
+
+    const tempInitialVals = {
+      introduction: vals?.introduction,
+      projectTitle: vals?.title,
+      proposalNo: vals?.proposalNo,
+      dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+      revNo: vals?.revNo,
+      durationOfService: vals?.durationOfService,
+      validityPeriod: vals?.validityPeriodOfProposal,
+      dateOfRevision: vals?.dateOfRevision ? moment.unix(vals?.dateOfRevision) : undefined,
+      clientName: vals?.projectProponentName,
+      clientContactPerson: vals?.projectProponentContactPerson,
+      clientMobile: vals?.projectProponentMobile,
+      clientEmail: vals?.projectProponentEmail,
+      serviceProviderName: vals?.serviceProviderName,
+      serviceProviderContactPerson: vals?.serviceProviderContactPerson,
+      serviceProviderMobile: vals?.serviceProviderMobile,
+      serviceProviderTelephone: vals?.serviceProviderTelephone,
+      servcieProviderEmail: vals?.serviceProviderEmail,
+      overallProjectBackground: vals?.overallProjectBackground,
+      scopeForThisProposal: vals?.proposalScope,
+      developProjectConcept: vals?.developProjectConceptResponsible,
+      notificationSLCSS: vals?.notificationToSLCCSResponsible,
+      prepareCMA: vals?.prepareCMAResponsible,
+      validationCMA: vals?.submissionOfCMAForValidationResponsible,
+      preparationOfMonitoringReport: vals?.preparationOfMonitoringReportResponsible,
+      submissionOfMonitoringReport: vals?.submissionOfMonitoringReportForVerificationResponsible,
+      projectCapacityValue: String(vals?.projectCapacityValue),
+      projectCapacityUnit: vals?.projectCapacityUnit,
+      plantFactorValue: String(vals?.plantFactorValue),
+      plantFactorUnit: vals?.plantFactorUnit,
+      avgEnergyOutputValue: String(vals?.avgEnergyOutputValue),
+      avgEnergyOutputUnit: vals?.avgEnergyOutputUnit,
+      gridEmissionFactorValue: String(vals?.gridEmissionFactorValue),
+      gridEmissionFactorUnit: vals?.gridEmissionFactorUnit,
+      emissionReductionValue: String(vals?.emissionReductionValue),
+      emissionReductionUnit: vals?.emissionReductionUnit,
+      avgCreditGenerationPerAnnum: String(vals?.avgCreditGenerationPerAnnum),
+      projectPlanActivity01:
+        firstTimelineObj && firstTimelineObj?.activity ? firstTimelineObj.activity : undefined,
+      projectPlanActivity01StartDate:
+        firstTimelineObj && firstTimelineObj?.period.length === 2
+          ? moment.unix(firstTimelineObj.period[0])
+          : undefined,
+      projectPlanActivity01EndDate:
+        firstTimelineObj && firstTimelineObj?.period.length === 2
+          ? moment.unix(firstTimelineObj.period[1])
+          : undefined,
+      extraProjectPlanActivities: (function () {
+        const tempPlanActivities: any[] = [];
+        if (projectTimeline && projectTimeline.length > 0) {
+          projectTimeline.forEach((timelineActivity) => {
+            const tempObj = {
+              projectPlanActivity: timelineActivity.activity,
+              projectPlanActivityStartDate:
+                timelineActivity.period.length === 2
+                  ? moment.unix(timelineActivity.period[0])
+                  : undefined,
+              projectPlanActivityEndDate:
+                timelineActivity.period.length === 2
+                  ? moment.unix(timelineActivity.period[1])
+                  : undefined,
+            };
+
+            tempPlanActivities.push(tempObj);
+          });
+        }
+
+        return tempPlanActivities;
+      })(),
+      scopeOfWork: vals?.scopeOfWork,
+      teamComposition: vals?.teamComposition,
+      firstMemberConsultant: firstMember?.consultant,
+      firstMemberRole: firstMember?.role,
+      extraMembers: (function () {
+        const extraMembersObjs: any[] = [];
+        if (teamMembers && teamMembers.length > 0) {
+          teamMembers.forEach((member) => {
+            const tempMember = {
+              memberConsultant: member?.consultant,
+              memberRole: member?.role,
+            };
+
+            extraMembersObjs.push(tempMember);
+          });
+        }
+
+        return extraMembersObjs;
+      })(),
+      costing: vals?.costing,
+      costValidation: String(vals?.costValidation),
+      costVerification: String(vals?.costVerification),
+      totalCost: String(vals?.totalCost),
+      aditionalServices: function () {
+        const servicesObjs: any[] = [];
+        const tempServices: { cost: number; service: string }[] = vals?.addiitonalServices;
+        if (tempServices !== undefined && tempServices.length > 0) {
+          tempServices.forEach((service) => {
+            const tempServiceObj = {
+              cost: service.cost,
+              service: service.service,
+            };
+
+            servicesObjs.push(tempServiceObj);
+          });
+        }
+
+        return servicesObjs;
+      },
+      firstExecutiveBoardMember: firstBoardMember,
+      extraExecutiveBoardMembers: (function () {
+        const tempExtraBoardMembers: any[] = [];
+        if (boardMembers !== undefined && boardMembers.length > 0) {
+          boardMembers.forEach((member) => {
+            const tempMember = {
+              name: member,
+            };
+            tempExtraBoardMembers.push(tempMember);
+          });
+        }
+
+        return tempExtraBoardMembers;
+      })(),
+      slcssProjectDetails: vals?.slccsProjectDetails,
+    };
+
+    form.setFieldsValue(tempInitialVals);
+  };
+
+  useEffect(() => {
+    const getViewData = async () => {
+      if (isView) {
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'projectProposal',
+          });
+
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data.content);
+            viewDataMaptoFields(content);
+          }
+        } catch (error) {
+          console.log('error', error);
+          message.open({
+            type: 'error',
+            content: `Something went wrong!`,
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+      }
+    };
+
+    getViewData();
+
+    if (isView) {
+      setDisableFields(true);
+    }
+
+    // projectPlanEndTimeChange();
+  }, []);
+
   const onFinish = async (values: any) => {
     console.log('-------------values--------------', values);
     const tempValues = {
@@ -179,18 +381,16 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         emissionReductionUnit: values?.emissionReductionUnit,
         avgCreditGenerationPerAnnum: Number(values?.avgCreditGenerationPerAnnum),
         projectTimeline: (function () {
+          const activityObjs: any[] = [];
           const activity01 = form.getFieldValue('projectPlanActivity01');
-          const activityStartDate = moment(form.getFieldValue('projectPlanActivity01StartDate'))
-            .startOf('day')
-            .unix();
-          const activityEndDate = moment(form.getFieldValue('projectPlanActivity01EndDate'))
-            .startOf('day')
-            .unix();
+          const activityStartDate = moment(
+            form.getFieldValue('projectPlanActivity01StartDate')
+          ).unix();
+          const activityEndDate = moment(form.getFieldValue('projectPlanActivity01EndDate')).unix();
           const firstObj = {
             activity: activity01,
             period: [activityStartDate, activityEndDate],
           };
-          const activityObjs: any[] = [];
           activityObjs.push(firstObj);
           const extraProjectPlanActivities = form.getFieldValue('extraProjectPlanActivities');
           if (
@@ -199,8 +399,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           ) {
             extraProjectPlanActivities.forEach((activity: any) => {
               const name = activity.projectPlanActivity;
-              const startDate = moment(activity.projectPlanActivityStartDate).startOf('day').unix();
-              const endDate = moment(activity.projectPlanActivity01EndDate).startOf('day').unix();
+              const startDate = moment(activity.projectPlanActivityStartDate).unix();
+              const endDate = moment(activity.projectPlanActivity01EndDate).unix();
 
               const tempObj = {
                 activity: name,
@@ -209,9 +409,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
               activityObjs.push(tempObj);
             });
-
-            return activityObjs;
           }
+          return activityObjs;
         })(),
         scopeOfWork: values?.scopeOfWork,
         teamComposition: values?.teamComposition,
@@ -284,7 +483,6 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
     try {
       const res = await post('national/programmeSl/createProjectProposal', tempValues);
-      console.log('------------res---------', res);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -334,7 +532,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} placeholder={'Give a brief introduction about the project.'} />
+            <TextArea
+              rows={4}
+              placeholder={'Give a brief introduction about the project.'}
+              disabled={disableFields}
+            />
           </Form.Item>
 
           <Row className="row" gutter={[40, 16]}>
@@ -350,7 +552,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -363,7 +565,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -391,6 +593,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <DatePicker
                     size="large"
                     disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    disabled={disableFields}
                   />
                 </Form.Item>
 
@@ -404,7 +607,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
               </div>
             </Col>
@@ -422,7 +625,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <TextArea rows={5} />
+                  <TextArea rows={5} disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -435,7 +638,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -461,6 +664,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <DatePicker
                     size="large"
                     disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    disabled={disableFields}
                   />
                 </Form.Item>
               </div>
@@ -484,7 +688,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -529,6 +733,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     countryCallingCodeEditable={false}
                     onChange={(v) => {}}
                     countries={countries as Country[]}
+                    disabled={disableFields}
                   />
                 </Form.Item>
               </Col>
@@ -543,7 +748,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
                 <Form.Item
                   label={t('projectProposal:email')}
@@ -571,7 +776,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -594,7 +799,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -638,16 +843,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     countryCallingCodeEditable={false}
                     onChange={(v) => {}}
                     countries={countries as Country[]}
+                    disabled={disableFields}
                   />
                 </Form.Item>
                 <Form.Item
                   label={t('projectProposal:email')}
                   name="servcieProviderEmail"
                   rules={[
-                    {
-                      required: true,
-                      // message: `${t('projectProposal:email')} ${t('isRequired')}`,
-                    },
                     {
                       validator: async (rule, value) => {
                         if (
@@ -670,7 +872,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
               </Col>
               <Col xl={12} md={24}>
@@ -684,7 +886,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -728,6 +930,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     countryCallingCodeEditable={false}
                     onChange={(v) => {}}
                     countries={countries as Country[]}
+                    disabled={disableFields}
                   />
                 </Form.Item>
               </Col>
@@ -750,7 +953,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 },
               ]}
             >
-              <TextArea rows={4} placeholder="Explain the Overall Project Background" />
+              <TextArea
+                rows={4}
+                placeholder="Explain the Overall Project Background"
+                disabled={disableFields}
+              />
             </Form.Item>
           </>
           {/* Overall background end */}
@@ -809,7 +1016,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 },
               ]}
             >
-              <TextArea rows={4} placeholder={'Give a brief introduction about the project.'} />
+              <TextArea
+                rows={4}
+                placeholder={'Give a brief introduction about the project.'}
+                disabled={disableFields}
+              />
             </Form.Item>
           </>
           {/* Scope for this proposal end */}
@@ -838,7 +1049,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -856,7 +1067,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -874,7 +1085,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -892,7 +1103,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -909,6 +1120,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
                 {t('projectProposal:validationSiteVisit')}
+              </Col>
+              <Col md={12} xl={12} className="col-2 data-col">
+                {t('projectProposal:validationTeam')}
+              </Col>
+            </Row>
+
+            <Row className="data-row">
+              <Col md={12} xl={12} className="col-1 data-col">
+                {t('projectProposal:draftValidationReport')}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 {t('projectProposal:validationTeam')}
@@ -944,10 +1164,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:issuesRaisedByEB')}
+                {t('projectProposal:registration')}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t('projectProposal:slccsAdministrator')}
               </Col>
             </Row>
 
@@ -965,7 +1185,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -984,8 +1204,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input />
+                  <Input disabled={disableFields} />
                 </Form.Item>
+              </Col>
+            </Row>
+
+            <Row className="data-row">
+              <Col md={12} xl={12} className="col-1 data-col">
+                {t('projectProposal:verficationSiteVisit')}
+              </Col>
+              <Col md={12} xl={12} className="col-2 data-col">
+                {t('projectProposal:verificationTeam')}
               </Col>
             </Row>
 
@@ -1097,7 +1326,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Estimation of GHG Reduction start */}
           <>
             <h4 className="section-title mg-bottom-1">
-              {t('projectProposal:estimationOfGHGReduction')}
+              5 {t('projectProposal:estimationOfGHGReduction')}
             </h4>
             <p className="section-description">
               Emission reduction resulting from the implementation of this project is as follows
@@ -1179,7 +1408,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={3} xl={3}>
@@ -1192,7 +1421,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8}>
@@ -1238,7 +1467,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={3} xl={3}>
@@ -1251,7 +1480,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8}>
@@ -1297,7 +1526,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={3} xl={3}>
@@ -1310,7 +1539,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8}>
@@ -1356,7 +1585,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={3} xl={3}>
@@ -1369,7 +1598,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8}>
@@ -1415,7 +1644,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={3} xl={3}>
@@ -1428,7 +1657,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8}>
@@ -1476,7 +1705,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input placeholder="5412 tCO2e" />
+                  <Input placeholder="5412 tCO2e" disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -1523,7 +1752,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8} className="col-3">
@@ -1550,7 +1779,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <DatePicker size="large" placeholder="Start Date" picker="date" />
+                    <DatePicker
+                      size="large"
+                      placeholder="Start Date"
+                      picker="date"
+                      disabled={disableFields}
+                    />
                   </Form.Item>
                   <p>to</p>
                   <Form.Item
@@ -1581,9 +1815,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       placeholder="End Date"
                       picker="date"
                       onChange={(value) => projectPlanEndTimeChange(value)}
+                      disabled={disableFields}
                       disabledDate={(currentDate: any) =>
                         currentDate <
-                        moment(form.getFieldValue('projectPlanActivity01')).startOf('month')
+                        moment(form.getFieldValue('projectPlanActivity01StartDate')).endOf('day')
                       }
                     />
                   </Form.Item>
@@ -1612,7 +1847,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 },
                               ]}
                             >
-                              <Input />
+                              <Input disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col md={8} xl={8} className="col-3">
@@ -1633,7 +1868,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('CMAForm:required')}`);
+                                      throw new Error(`${t('projectProposal:required')}`);
                                     }
                                   },
                                 },
@@ -1642,6 +1877,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               <DatePicker
                                 size="large"
                                 placeholder="Start Date"
+                                disabled={disableFields}
                                 picker="date"
                                 // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                               />
@@ -1675,6 +1911,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 placeholder="End Date"
                                 picker="date"
                                 onChange={(value) => projectPlanEndTimeChange(value)}
+                                disabled={disableFields}
                                 disabledDate={(currentDate: any) =>
                                   currentDate <
                                   moment(
@@ -1690,8 +1927,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               <Button
                                 onClick={() => {
                                   remove(name);
+                                  projectPlanEndTimeChange();
                                 }}
                                 icon={<MinusOutlined />}
+                                disabled={disableFields}
                               />
                             </Form.Item>
                           </Col>
@@ -1705,6 +1944,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           add();
                         }}
                         icon={<PlusOutlined />}
+                        disabled={disableFields}
                       />
                     </Form.Item>
                   </>
@@ -1726,7 +1966,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
 
           <Form.Item
@@ -1740,7 +1980,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
 
           {/* Team members table start */}
@@ -1770,7 +2010,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="Name" />
+                    <Input placeholder="Name" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={11} xl={11} className="col-2">
@@ -1783,7 +2023,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input placeholder="Role" />
+                    <Input placeholder="Role" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={2} xl={2}>
@@ -1807,7 +2047,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 },
                               ]}
                             >
-                              <Input placeholder="Name" />
+                              <Input placeholder="Name" disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col md={11} xl={11} className="col-2">
@@ -1820,7 +2060,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 },
                               ]}
                             >
-                              <Input placeholder="Role" />
+                              <Input placeholder="Role" disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col md={2} xl={2}>
@@ -1831,6 +2071,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                   remove(name);
                                 }}
                                 icon={<MinusOutlined />}
+                                disabled={disableFields}
                               />
                             </Form.Item>
                           </Col>
@@ -1841,6 +2082,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Form.Item>
                       <Button
                         className="addBtn"
+                        disabled={disableFields}
                         onClick={() => {
                           add();
                         }}
@@ -1864,7 +2106,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
 
           {/* Costing table start */}
@@ -1889,12 +2131,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceValidation">
-                  <Input
-                    size="large"
-                    defaultValue={'Project Validation & Registration'}
-                    placeholder={'Verification & Credit Issuance'}
-                    disabled
-                  />
+                  <Input size="large" defaultValue={'Project Validation & Registration'} disabled />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -1910,6 +2147,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <Input
                     type="number"
                     size="large"
+                    disabled={disableFields}
                     onChange={(val) => {
                       calculateTotalCost();
                     }}
@@ -1927,12 +2165,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceVerification">
-                  <Input
-                    size="large"
-                    defaultValue={'Verification & Credit Issuance'}
-                    placeholder={'Verification & Credit Issuance'}
-                    disabled
-                  />
+                  <Input size="large" defaultValue={'Verification & Credit Issuance'} disabled />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -1941,13 +2174,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Cost ${t('costQuotation:isRequired')}`,
+                      message: `Cost ${t('isRequired')}`,
                     },
                   ]}
                 >
                   <Input
                     type="number"
                     size="large"
+                    disabled={disableFields}
                     onChange={(val) => {
                       calculateTotalCost();
                     }}
@@ -1993,7 +2227,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               },
                             ]}
                           >
-                            <Input size="large" onChange={(val) => {}} />
+                            <Input size="large" onChange={(val) => {}} disabled={disableFields} />
                           </Form.Item>
                         </Col>
                         <Col md={4} xl={4}>
@@ -2014,6 +2248,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               onChange={(val) => {
                                 calculateTotalCost();
                               }}
+                              disabled={disableFields}
                             />
                           </Form.Item>
                         </Col>
@@ -2029,6 +2264,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               className="addMinusBtn"
                               // block
                               icon={<MinusOutlined />}
+                              disabled={disableFields}
                             >
                               {/* Add Entity */}
                             </Button>
@@ -2047,6 +2283,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             }}
                             size="large"
                             className="addMinusBtn"
+                            disabled={disableFields}
                             // block
                             icon={<PlusOutlined />}
                           ></Button>
@@ -2092,20 +2329,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
           </div>
-
+          <>
+            <h4 style={{ color: '#3A3541CC', fontWeight: '600' }} className="mg-top-1 margin-0">
+              Conditions
+            </h4>
+            <p className="mg-left-1 margin-0">50% Of The Payment On Up Front.</p>
+            <p className="mg-left-1 mg-bottom-1">
+              50% Of The Payment On Completing The Validation And Verification{' '}
+            </p>
+          </>
           {/* Costing table end */}
 
           {/* Executive Board Members start */}
           <>
             <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
-            <p>
+            <p className="capitalize">
               SLCF will validate/verify the project independently, and ensure the avoidance of the
               double counting by the establishment of SLCCS Executive Board and responsible for
               monitoring and regularly evaluating the process and performance, seeking to ensure the
               continuity of SLCCS functions
             </p>
 
-            <p>SLCCS Executive Board Members</p>
+            <p className="capitalize">SLCCS Executive Board Members</p>
 
             <div className="executive-board-members-table">
               <Row>
@@ -2115,11 +2360,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:isRequired')}`,
+                        message: `${t('projectProposal:required')}`,
                       },
                     ]}
                   >
-                    <Input placeholder="Name" />
+                    <Input placeholder="Name" disabled={disableFields} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -2131,7 +2376,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       <Row>
                         <Col md={20} xl={10}>
                           <Form.Item
-                            name="name"
+                            name={[name, 'name']}
                             rules={[
                               {
                                 required: true,
@@ -2139,7 +2384,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               },
                             ]}
                           >
-                            <Input placeholder="Name" />
+                            <Input placeholder="Name" disabled={disableFields} />
                           </Form.Item>
                         </Col>
                         <Col md={2} xl={2}>
@@ -2150,6 +2395,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 remove(name);
                               }}
                               icon={<MinusOutlined />}
+                              disabled={disableFields}
                             />
                           </Form.Item>
                         </Col>
@@ -2162,6 +2408,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           add();
                         }}
                         icon={<PlusOutlined />}
+                        disabled={disableFields}
                       />
                     </Form.Item>
                   </>
@@ -2174,7 +2421,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/*  Introduction to climate fund start */}
           <>
             <h4 className="section-title">11. Introduction to Sri Lanka Climate Fund</h4>
-            <p>
+            <p className="capitalize">
               SLCF is a public-private partnership company established under the companies’ Act No.7
               of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
               trading projects in Sri Lanka. Company provides technical and finance resources to
@@ -2183,11 +2430,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               relating to CDM project development.{' '}
             </p>
 
-            <div className="mg-top-1">Our vision </div>
-            <div>Carbon neutral and climate-resilient blue-green economy in Sri Lanka.</div>
+            <div className="mg-top-1">Our Vision </div>
+            <div className="capitalize">
+              Carbon neutral and climate-resilient blue-green economy in Sri Lanka.
+            </div>
 
             <div className="mg-top-1">Mission</div>
-            <div className="mg-bottom-1">
+            <div className="mg-bottom-1 capitalize">
               To support the nation to achieve a low carbon and climate-resilient blue green
               development
             </div>
@@ -2207,7 +2456,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               },
             ]}
           >
-            <TextArea rows={4} />
+            <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
 
           <Row justify={'end'} className="step-actions-end">

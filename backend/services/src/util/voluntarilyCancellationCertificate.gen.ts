@@ -3,11 +3,25 @@ import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
+export interface VoluntarilyCancellationCertificateData {
+  companyName: string;
+  noOfSCERs: number;
+  yearVerified: number;
+  transactionReference: string;
+  dateOfTransaction: string;
+  startSerialNumber: string;
+  endSerialNumber: string;
+  totalSCERs: number;
+  documentDate: string;
+  projectName: string;
+  projectProponent: string;
+}
+
 @Injectable()
 export class VoluntarilyCancellationCertificateGenerator {
   constructor(private fileHandler: FileHandlerInterface) {}
 
-  async generateVoluntaryCancellationCertificate(data: any, programmeId: string) {
+  async generateVoluntaryCancellationCertificate(data: VoluntarilyCancellationCertificateData) {
     const doc = new PDFDocument({
       margin: 50,
     });
@@ -220,7 +234,7 @@ export class VoluntarilyCancellationCertificateGenerator {
       .font("Helvetica")
       .fontSize(9)
       .text(
-        `${data.projectName} is developed and registered under Sri Lanka Carbon Crediting Scheme by ${data.projectProponent}, a subsidiary of ${data.companyName} in the interest of obtaining carbon credits for internal offsetting.`,
+        `${data.projectName} is developed and registered under Sri Lanka Carbon Crediting Scheme by ${data.projectProponent}, a subsidiary of ${data.projectProponent} in the interest of obtaining carbon credits for internal offsetting.`,
         70,
         680,
         { align: "left" }
