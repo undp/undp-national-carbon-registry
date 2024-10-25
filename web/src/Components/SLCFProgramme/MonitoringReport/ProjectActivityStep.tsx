@@ -202,7 +202,6 @@ export const ProjectActivityStep = (props: any) => {
                       <TextArea
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_monitoringObjectivePlaceholder')}`}
-                        maxLength={6}
                       />
                     </Form.Item>
                     <Form.Item
@@ -246,7 +245,6 @@ export const ProjectActivityStep = (props: any) => {
                       <TextArea
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_implementationPlaceholder')}`}
-                        maxLength={6}
                       />
                     </Form.Item>
                     <Form.Item
@@ -262,7 +260,6 @@ export const ProjectActivityStep = (props: any) => {
                       <TextArea
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_scopeAndTypePlaceholder')}`}
-                        maxLength={6}
                       />
                     </Form.Item>
                     <h4 className="form-section-title">{`1.4  ${t(
@@ -1094,7 +1091,7 @@ export const ProjectActivityStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={6} maxLength={6} />
+                                    <TextArea rows={6} />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -1700,7 +1697,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1721,7 +1718,6 @@ export const ProjectActivityStep = (props: any) => {
                       <TextArea
                         rows={6}
                         placeholder={`${t('monitoringReport:participationGhgProgramsPlaceholder')}`}
-                        maxLength={6}
                       />
                     </Form.Item>
                   </div>
@@ -1738,7 +1734,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1756,7 +1752,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                   </div>
                 </Col>

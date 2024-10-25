@@ -121,7 +121,7 @@ export class VerificationService {
     });
   }
 
-  async uploadVerificationReport(verificationReportDto: VerificationReportDto, user: User) {
+  async createVerificationReport(verificationReportDto: VerificationReportDto, user: User) {
     if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -143,6 +143,7 @@ export class VerificationService {
 
     const verificationReportDocument = new DocumentEntity();
     verificationReportDocument.userId = user.id;
+    verificationReportDocument.companyId = user.companyId;
     verificationReportDocument.version = verificationDocument
       ? verificationDocument.version + 1
       : 1;
@@ -258,7 +259,7 @@ export class VerificationService {
       }
     });
   }
-  async uploadMonitoringReport(monitoringReportDto: MonitoringReportDto, user: User) {
+  async createMonitoringReport(monitoringReportDto: MonitoringReportDto, user: User) {
     if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(

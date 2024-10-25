@@ -6,7 +6,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
-export const AnnexuresStep = (props: any) => {
+export const AppendixStep = (props: any) => {
   const { useLocation, translator, current, form, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -60,7 +60,7 @@ export const AnnexuresStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:q_documentUpload')}

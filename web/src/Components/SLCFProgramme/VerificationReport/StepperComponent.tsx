@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { Steps, message } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
-import './MonitoringReport.scss';
-import { ProjectActivityStep } from './ProjectActivityStep';
-import { ImplementationStatusStep } from './ImplementationStatusStep';
-import { SafeguardsStep } from './SafeguardsStep';
-import { DataAndParametersStep } from './DataAndParametersStep';
-import { QualificationStep } from './QuantificationStep';
-import { AnnexuresStep } from './AnnexuresStep';
+import './VerificationReport.scss';
+import { IntroductionStep } from './InstroductionStep';
+import { MethodologyStep } from './MethodologyStep';
+import { VerificationFindingStep } from './VerificationFindingStep';
+import { VerificationOpinionStep } from './VerificationOpinionStep';
+import { ReferenceStep } from './ReferenceStep';
+import { AppendixStep } from './AppendixStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
-import { version } from 'os';
 import { DocType } from '../../../Definitions/Enums/document.type';
-import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
@@ -22,8 +20,8 @@ const StepperComponent = (props: any) => {
   const { get, post } = useConnection();
   const { id } = useParams();
   const t = translator.t;
-  const reportVersion = process.env.MONITORING_REPORT_VERSION
-    ? process.env.MONITORING_REPORT_VERSION
+  const reportVersion = process.env.VERIFICATION_REPORT_VERSION
+    ? process.env.VERIFICATION_REPORT_VERSION
     : 'Version 03';
   const onValueChange = (newValues: any) => {
     setFormValues((prevValues) => ({
@@ -40,11 +38,11 @@ const StepperComponent = (props: any) => {
     }));
     const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: '1' };
     try {
-      const res = await post('national/verification/createMonitoringReport', body);
+      const res = await post('national/verification/createVerificationReport', body);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
-          content: t('monitoringReport:uploadMonitoringReportSuccess'),
+          content: t('verificationReport:uploadMonitoringReportSuccess'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -82,18 +80,18 @@ const StepperComponent = (props: any) => {
     setCurrent(current - 1);
   };
   const [projectDetailsForm] = useForm();
-  const [projectActivityForm] = useForm();
-  const [implementationStatusForm] = useForm();
-  const [safeguardsForm] = useForm();
-  const [dataAndParametersForm] = useForm();
-  const [qualificationForm] = useForm();
-  const [annexuresForm] = useForm();
+  const [introductionForm] = useForm();
+  const [methodologyForm] = useForm();
+  const [verificationFindingForm] = useForm();
+  const [verificationOpinionForm] = useForm();
+  const [referenceForm] = useForm();
+  const [appendixForm] = useForm();
 
   const getLatestCMA = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
+      const { data } = await post('national/programmeSl/getLatestDoc', {
         programmeId: programId,
-        docType: DocumentTypeEnum.CMA,
+        docType: DocType.CMA,
       });
 
       const cmaData = JSON.parse(data?.content);
@@ -165,7 +163,7 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           {/* <div className="step-count"></div> */}
-          <div className="title">{t('monitoringReport:title01')}</div>
+          <div className="title">{t('verificationReport:title01')}</div>
         </div>
       ),
       description: (
@@ -184,15 +182,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">01</div>
-          <div className="title">{t('monitoringReport:title02')}</div>
+          <div className="title">{t('verificationReport:title02')}</div>
         </div>
       ),
       description: (
-        <ProjectActivityStep
+        <IntroductionStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={projectActivityForm}
+          form={introductionForm}
           next={next}
           prev={prev}
           countries={countries}
@@ -204,15 +202,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">02</div>
-          <div className="title">{t('monitoringReport:title03')}</div>
+          <div className="title">{t('verificationReport:title03')}</div>
         </div>
       ),
       description: (
-        <ImplementationStatusStep
+        <MethodologyStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={implementationStatusForm}
+          form={methodologyForm}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -223,15 +221,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">03</div>
-          <div className="title">{t('monitoringReport:title04')}</div>
+          <div className="title">{t('verificationReport:title04')}</div>
         </div>
       ),
       description: (
-        <SafeguardsStep
+        <VerificationFindingStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={safeguardsForm}
+          form={verificationFindingForm}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -242,15 +240,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">04</div>
-          <div className="title">{t('monitoringReport:title05')}</div>
+          <div className="title">{t('verificationReport:title05')}</div>
         </div>
       ),
       description: (
-        <DataAndParametersStep
+        <VerificationOpinionStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={dataAndParametersForm}
+          form={verificationOpinionForm}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -261,15 +259,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">05</div>
-          <div className="title">{t('monitoringReport:title06')}</div>
+          <div className="title">{t('verificationReport:title06')}</div>
         </div>
       ),
       description: (
-        <QualificationStep
+        <ReferenceStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={qualificationForm}
+          form={referenceForm}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -280,15 +278,15 @@ const StepperComponent = (props: any) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">06</div>
-          <div className="title">{t('monitoringReport:title07')}</div>
+          <div className="title">{t('verificationReport:title07')}</div>
         </div>
       ),
       description: (
-        <AnnexuresStep
+        <AppendixStep
           useLocation={useLocation}
           translator={translator}
           current={current}
-          form={annexuresForm}
+          form={appendixForm}
           prev={prev}
           onFinish={onFinish}
         />

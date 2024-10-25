@@ -7,7 +7,7 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import moment from 'moment';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
-export const QualificationStep = (props: any) => {
+export const ReferenceStep = (props: any) => {
   const { useLocation, translator, current, form, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -169,7 +169,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
@@ -226,7 +226,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <Form.Item
@@ -239,7 +239,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
 
                     <>
@@ -261,7 +261,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} />
+                              <TextArea rows={4} maxLength={6} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -838,7 +838,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} maxLength={6} />
                     </Form.Item>
                   </div>
                 </Col>
