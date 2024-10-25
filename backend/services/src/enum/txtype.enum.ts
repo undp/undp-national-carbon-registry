@@ -27,4 +27,5 @@ export enum TxType {
   REJECT_PROPOSAL = "25",
   APPROVE_CMA = "26",
   REJECT_CMA = "27",
+  ISSUE_SL = "28",
 }

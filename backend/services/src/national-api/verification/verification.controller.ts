@@ -17,7 +17,7 @@ export class VerificationController {
   @UseGuards(JwtAuthGuard)
   @Post("createMonitoringReport")
   uploadMonitoringReport(@Body() monitoringReportDto: MonitoringReportDto, @Request() req) {
-    return this.verificationService.uploadMonitoringReport(monitoringReportDto, req.user);
+    return this.verificationService.createMonitoringReport(monitoringReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -29,7 +29,7 @@ export class VerificationController {
   @UseGuards(JwtAuthGuard)
   @Post("uploadVerificationReport")
   uploadVerificationReport(@Body() verificationReportDto: VerificationReportDto, @Request() req) {
-    return this.verificationService.uploadVerificationReport(verificationReportDto, req.user);
+    return this.verificationService.createVerificationReport(verificationReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -38,21 +38,21 @@ export class VerificationController {
     return this.verificationService.verifyVerificationReport(verifyReportDto, req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post("creditIssuanceCertificate")
-  creditIssuanceCertificate(
-    @Body() creditIssuanceCertificateDto: CreditIssuanceCertificateDto,
-    @Request() req
-  ) {
-    return this.verificationService.creditIssuanceCertificate(
-      creditIssuanceCertificateDto,
-      req.user
-    );
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post("creditIssuanceCertificate")
+  // creditIssuanceCertificate(
+  //   @Body() creditIssuanceCertificateDto: CreditIssuanceCertificateDto,
+  //   @Request() req
+  // ) {
+  //   return this.verificationService.creditIssuanceCertificate(
+  //     creditIssuanceCertificateDto,
+  //     req.user
+  //   );
+  // }
 
-  @UseGuards(JwtAuthGuard)
-  @Post("issueCredits")
-  issueCredits(@Body() issueCreditsDto: IssueCreditsDto, @Request() req) {
-    return this.verificationService.issueCredits(issueCreditsDto, req.user);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post("issueCredits")
+  // issueCredits(@Body() issueCreditsDto: IssueCreditsDto, @Request() req) {
+  //   return this.verificationService.issueCredits(issueCreditsDto, req.user);
+  // }
 }
