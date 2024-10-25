@@ -174,6 +174,15 @@ export class ProgrammeLedgerService {
           case TxType.REJECT_CMA:
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_CMA;
             break;
+          case TxType.CREATE_VALIDATION_REPORT:
+            uPayload["projectProposalStage"] = ProjectProposalStage.VALIDATION_PENDING;
+            break;
+          case TxType.APPROVE_VALIDATION:
+            uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
+            break;
+          case TxType.REJECT_VALIDATION:
+            uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_VALIDATION;
+            break;
           default:
             break;
         }
