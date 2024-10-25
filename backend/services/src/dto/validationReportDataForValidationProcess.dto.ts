@@ -16,7 +16,7 @@ import {
 } from "class-validator";
 import { ValidationReportEmployedTechnology } from "./validationReportEmployedTechnology.dto";
 import { ValidationReportLocationWiseBaselineEmission } from "./validationReportLocationWiseBaselineEmission.dto";
-import { ValidationReportNetEmissionReductions } from "./ValidationReportNetEmissionReductions.dto";
+import { ValidationReportNetEmissionReductions } from "./validationReportNetEmissionReductions.dto";
 
 export class ValidationReportDataForValidationProcess {
   @ApiProperty()
