@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row, Upload } from 'antd';
 import PhoneInput, {
   formatPhoneNumber,
   formatPhoneNumberIntl,
@@ -9,11 +9,23 @@ import PhoneInput, {
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { isValidateFileType } from '../../../Utils/DocumentValidator';
+import { DocType } from '../../../Definitions/Enums/document.type';
+import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
 
 export const VerificationOpinionStep = (props: any) => {
   const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
-
+  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+    : 5000000;
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -33,19 +45,136 @@ export const VerificationOpinionStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              onFinish={(values: any) => {
-                onValueChange({ dataAndParameters: values });
+              onFinish={async (values: any) => {
+                values.signature1 = await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (values?.signature1 && values?.signature1.length > 0) {
+                    const docs = values.signature1;
+                    for (let i = 0; i < docs.length; i++) {
+                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      base64Docs.push(temp);
+                    }
+                  }
+
+                  return base64Docs;
+                })();
+                values.signature2 = await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (values?.signature2 && values?.signature2.length > 0) {
+                    const docs = values.signature2;
+                    for (let i = 0; i < docs.length; i++) {
+                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      base64Docs.push(temp);
+                    }
+                  }
+
+                  return base64Docs;
+                })();
+                onValueChange({ verificationOpinion: values });
                 next();
               }}
             >
-              <h4 className="form-section-title">{`4.1 ${t('monitoringReport:dp_title')}`}</h4>
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={`${t('verificationReport:verificationOpinion')}`}
+                      name="verificationOpinion"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('verificationReport:verificationOpinion')} ${t(
+                            'isRequired'
+                          )}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={6} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
 
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:dp_dataParameter')}
-                      name="dp_dataParameter"
+                      label={t('verificationReport:signature')}
+                      name="signature1"
+                      valuePropName="fileList"
+                      getValueFromEvent={normFile}
+                      required={false}
+                      rules={[
+                        {
+                          validator: async (rule, file) => {
+                            if (file?.length > 0) {
+                              if (
+                                !isValidateFileType(
+                                  file[0]?.type,
+                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                )
+                              ) {
+                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
+                              } else if (file[0]?.size > maximumImageSize) {
+                                // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                throw new Error(`${t('common:maxSizeVal')}`);
+                              }
+                            } else {
+                              throw new Error(
+                                `${t('verificationReport:signature')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Upload
+                        accept=".doc, .docx, .pdf, .png, .jpg"
+                        beforeUpload={(file: any) => {
+                          return false;
+                        }}
+                        className="design-upload-section"
+                        name="design"
+                        action="/upload.do"
+                        listType="picture"
+                        multiple={false}
+                        // maxCount={1}
+                      >
+                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                          Upload
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+                    <Form.Item
+                      label={t('verificationReport:name')}
+                      name="name1"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(`${t('verificationReport:name')} ${t('isRequired')}`);
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:designation')}
+                      name="designation1"
                       rules={[
                         {
                           required: true,
@@ -60,7 +189,7 @@ export const VerificationOpinionStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:dp_dataParameter')} ${t('isRequired')}`
+                                `${t('verificationReport:designation')} ${t('isRequired')}`
                               );
                             }
                           },
@@ -68,14 +197,115 @@ export const VerificationOpinionStep = (props: any) => {
                       ]}
                     >
                       <Input size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      label={t('verificationReport:dateOfSignature')}
+                      name="dateOfSignature1"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:dateOfSignature')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
                     </Form.Item>
                   </div>
                 </Col>
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
                     <Form.Item
-                      label={t('monitoringReport:dp_dataUnit')}
-                      name="dp_dataUnit"
+                      label={t('verificationReport:signature')}
+                      name="signature2"
+                      valuePropName="fileList"
+                      getValueFromEvent={normFile}
+                      required={true}
+                      rules={[
+                        {
+                          validator: async (rule, file) => {
+                            if (file?.length > 0) {
+                              if (
+                                !isValidateFileType(
+                                  file[0]?.type,
+                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                )
+                              ) {
+                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
+                              } else if (file[0]?.size > maximumImageSize) {
+                                // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                throw new Error(`${t('common:maxSizeVal')}`);
+                              }
+                            } else {
+                              throw new Error(
+                                `${t('verificationReport:signature')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Upload
+                        accept=".doc, .docx, .pdf, .png, .jpg"
+                        beforeUpload={(file: any) => {
+                          return false;
+                        }}
+                        className="design-upload-section"
+                        name="design"
+                        action="/upload.do"
+                        listType="picture"
+                        multiple={false}
+                        // maxCount={1}
+                      >
+                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                          Upload
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+                    <Form.Item
+                      label={t('verificationReport:name')}
+                      name="name2"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(`${t('verificationReport:name')} ${t('isRequired')}`);
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:designation')}
+                      name="designation2"
                       rules={[
                         {
                           required: true,
@@ -90,7 +320,7 @@ export const VerificationOpinionStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:dp_dataUnit')} ${t('isRequired')}`
+                                `${t('verificationReport:designation')} ${t('isRequired')}`
                               );
                             }
                           },
@@ -99,73 +329,9 @@ export const VerificationOpinionStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:dp_description')}
-                      name="dp_description"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_description')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={3} maxLength={6} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dp_sourceOfData')}
-                      name="dp_sourceOfData"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_sourceOfData')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={3} maxLength={6} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dp_justification')}
-                      name="dp_justification"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_justification')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={3} maxLength={6} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dp_purposeOfData')}
-                      name="dp_purposeOfData"
+                      label={t('verificationReport:dateOfSignature')}
+                      name="dateOfSignature2"
                       rules={[
                         {
                           required: true,
@@ -180,414 +346,22 @@ export const VerificationOpinionStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:dp_purposeOfData')} ${t('isRequired')}`
+                                `${t('verificationReport:dateOfSignature')} ${t('isRequired')}`
                               );
                             }
                           },
                         },
                       ]}
                     >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={12} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      label={t('monitoringReport:dp_valueApplied')}
-                      name="dp_valueApplied"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dp_valueApplied')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dp_comments')}
-                      name="dp_comments"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dp_comments')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={3} maxLength={6} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <h4 className="form-section-title">{`4.2 ${t('monitoringReport:dpm_title')}`}</h4>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_dataParameter')}
-                      name="dpm_dataParameter"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dpm_dataParameter')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_dataUnit')}
-                      name="dpm_dataUnit"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dpm_dataUnit')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_description')}
-                      name="dpm_description"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_description')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_descriptionPlaceholder')}
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                       />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_sourceOfData')}
-                      name="dpm_sourceOfData"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_sourceOfData')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_sourceOfDataPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_measurmentMethodsDescription')}
-                      name="dpm_measurmentMethodsDescription"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_measurmentMethodsDescription')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t(
-                          'monitoringReport:dpm_measurmentMethodsDescriptionPlaceholder'
-                        )}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_frequencyOfMonitoring')}
-                      name="dpm_frequencyOfMonitoring"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dpm_frequencyOfMonitoringPlaceholder')} ${t(
-                                  'isRequired'
-                                )}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_valueApplied')}
-                      name="dpm_valueApplied"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_valueApplied')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_valueAppliedPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_monitoringEquipment')}
-                      name="dpm_monitoringEquipment"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_monitoringEquipment')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_qaQcProcedures')}
-                      name="dpm_qaQcProcedures"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_qaQcProcedures')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_qaQcProceduresPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_purposeOfData')}
-                      name="dpm_purposeOfData"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:dpm_purposeOfData')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_calculationMethod')}
-                      name="dpm_calculationMethod"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_calculationMethod')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_calculationMethodPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('monitoringReport:dpm_comments')}
-                      name="dpm_comments"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_comments')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea
-                        rows={3}
-                        maxLength={6}
-                        placeholder={t('monitoringReport:dpm_commentsPlaceholder')}
-                      />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={`4.3 ${t('monitoringReport:dpm_planDescription')}`}
-                      name="dpm_planDescription"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:dpm_planDescription')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} maxLength={6} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev}>
                   Back

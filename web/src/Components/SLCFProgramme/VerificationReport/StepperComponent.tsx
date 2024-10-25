@@ -71,6 +71,13 @@ const StepperComponent = (props: any) => {
       }
     }
   };
+  const [projectDetailsForm] = useForm();
+  const [introductionForm] = useForm();
+  const [methodologyForm] = useForm();
+  const [verificationFindingForm] = useForm();
+  const [verificationOpinionForm] = useForm();
+  const [referenceForm] = useForm();
+  const [appendixForm] = useForm();
 
   const next = () => {
     setCurrent(current + 1);
@@ -79,13 +86,6 @@ const StepperComponent = (props: any) => {
   const prev = () => {
     setCurrent(current - 1);
   };
-  const [projectDetailsForm] = useForm();
-  const [introductionForm] = useForm();
-  const [methodologyForm] = useForm();
-  const [verificationFindingForm] = useForm();
-  const [verificationOpinionForm] = useForm();
-  const [referenceForm] = useForm();
-  const [appendixForm] = useForm();
 
   const getLatestCMA = async (programId: any) => {
     try {
@@ -112,21 +112,32 @@ const StepperComponent = (props: any) => {
         preparedBy: cmaData?.projectDetails?.preparedBy,
       });
 
-      // setProjectCategory(data?.projectCategory);
-      // form2.setFieldsValue({
-      //   projectTrack: data?.purposeOfCreditDevelopment,
-      //   // projectTrack: 'TRACK_2',
-      //   organizationName: data?.company?.name,
-      //   email: data?.company?.email,
-      //   telephone: data?.company?.phoneNo,
-      //   address: data?.company?.address,
-      //   fax: data?.company?.faxNo,
-      // });
-
-      // setValues((prevVal) => ({
-      //   ...prevVal,
-      //   companyId: data?.company?.companyId,
-      // }));
+      verificationFindingForm.setFieldsValue({
+        siteLocations: [
+          {
+            siteLocation: '',
+            commissioningDate: '',
+          },
+        ],
+        complianceList: [
+          {
+            dataParameter: '',
+            sourceOfData: '',
+            reportedValue: '',
+          },
+        ],
+        resolutionOfFindings: [
+          {
+            type: [],
+            findingNo: '',
+            refToMR: '',
+            description: '',
+            summary: '',
+            assesment: '',
+            conclusion: [],
+          },
+        ],
+      });
     } catch (error) {
       console.log('error');
     }
