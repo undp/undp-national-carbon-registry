@@ -50,6 +50,7 @@ import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationA
 import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 import VerificationReport from './Pages/SLCFProgrammeManagement/VerificationReport';
+import SiteVisitCheckListPage from './Pages/SiteVisitCheckListPage/SiteVisitCheckListPage';
 
 const App = () => {
   const ability = defineAbility();
@@ -104,6 +105,13 @@ const App = () => {
                     element={<CustomLayout selectedKey="nationalAccounting" />}
                   >
                     <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
+                  </Route>
+
+                  <Route
+                    path=""
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="siteCheckList" element={<SiteVisitCheckListPage />} />
                   </Route>
 
                   <Route

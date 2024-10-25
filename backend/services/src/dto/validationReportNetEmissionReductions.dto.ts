@@ -6,24 +6,20 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   ValidateNested,
 } from "class-validator";
 import { GHGSource } from "./ghgSource.dto";
-import { YearlyGHGEmissionReduction } from "./yearlyGHGEmissionReduction.dto";
+import { ValidationReportYearlyGHGEmissionReduction } from "./ValidationReportYearlyGHGEmissionReduction.dto";
 
-export class NetGHGEmissionReductions {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  description: string;
-
+export class ValidationReportNetEmissionReductions {
   @ApiProperty()
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => YearlyGHGEmissionReduction)
-  yearlyGHGEmissionReductions: YearlyGHGEmissionReduction[];
+  @Type(() => ValidationReportYearlyGHGEmissionReduction)
+  yearlyGHGEmissionReductions: ValidationReportYearlyGHGEmissionReduction[];
 
   @ApiProperty()
   @IsNotEmpty()
@@ -48,6 +44,12 @@ export class NetGHGEmissionReductions {
   @IsNumber()
   @IsPositive()
   totalNetEmissionReductions: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  totalBufferPoolAllocations?: number;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -78,4 +80,10 @@ export class NetGHGEmissionReductions {
   @IsNumber()
   @IsPositive()
   avgNetEmissionReductions: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  avgBufferPoolAllocations?: number;
 }

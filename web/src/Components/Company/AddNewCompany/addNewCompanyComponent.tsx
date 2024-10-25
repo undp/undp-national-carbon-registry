@@ -536,6 +536,12 @@ export const AddNewCompanyComponent = (props: any) => {
     const formOneValues = formOne.getFieldsValue();
     formOneValues.phoneNo = formatPhoneNumberIntl(formOneValues.phoneNo);
 
+    if (formOneValues.faxNo && formOneValues.faxNo.length > 4) {
+      formOneValues.faxNo = formatPhoneNumberIntl(formOneValues.faxNo);
+    } else {
+      formOneValues.faxNo = undefined;
+    }
+
     try {
       let values: any = {};
       if (regionField) {
