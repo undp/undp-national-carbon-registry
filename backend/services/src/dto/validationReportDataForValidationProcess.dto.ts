@@ -14,10 +14,6 @@ import {
   IsUrl,
   ValidateNested,
 } from "class-validator";
-import { ValidationReportTeamMember } from "./validationReportTeamMember.dto";
-import { ValidationReportFollowupInterview } from "./validationReportFollowupInterview.dto";
-import { ValidationReportTypeOfFinding } from "src/enum/validationReportTypeOfFinding.enum";
-import { ValidationReportFinding } from "./validationReportFinding.dto";
 import { ValidationReportEmployedTechnology } from "./validationReportEmployedTechnology.dto";
 import { ValidationReportLocationWiseBaselineEmission } from "./validationReportLocationWiseBaselineEmission.dto";
 import { ValidationReportNetEmissionReductions } from "./ValidationReportNetEmissionReductions.dto";
