@@ -79,7 +79,7 @@ export class ProgrammeSlService {
     private readonly programmeLedgerService: ProgrammeLedgerService,
     private projectRegistrationCertificateGenerator: ProjectRegistrationCertificateGenerator,
     private dateUtilService: DateUtilService,
-    private serialGenerator: SLCFSerialNumberGeneratorService,
+    private serialGenerator: SLCFSerialNumberGeneratorService
   ) {}
 
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
@@ -771,10 +771,18 @@ export class ProgrammeSlService {
       );
     }
 
+    const serialNo = await this.serialGenerator.generateProjectRegistrationSerial(programmeId);
+    const registrationCertificateUrl = await this.generateProjectRegistrationCertificate(
+      programmeId
+    );
+
     const updateProgrammeSlProposalStage = {
       programmeId: programmeId,
-      txType: TxType.APPROVE_PROPOSAL,
-      // data: data,
+      txType: TxType.APPROVE_VALIDATION,
+      data: {
+        serialNo: serialNo,
+        registrationCertificateUrl: registrationCertificateUrl,
+      },
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
@@ -997,7 +1005,47 @@ export class ProgrammeSlService {
           throw err;
         });
     } else if (txType == TxType.APPROVE_VALIDATION) {
+      const lastValidationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_REPORT,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.VALIDATION_REPORT,
+            version: lastValidationDocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
     } else if (txType == TxType.REJECT_VALIDATION) {
+      const lastValidationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_REPORT,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.VALIDATION_REPORT,
+            version: lastValidationDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
     }
     return new DataResponseDto(HttpStatus.OK, updatedProgramme);
   }
@@ -1151,7 +1199,6 @@ export class ProgrammeSlService {
   }
 
   async generateProjectRegistrationCertificate(programmeId: string) {
-
     const programme = await this.getProjectById(programmeId);
 
     if (!programme) {
@@ -1169,7 +1216,7 @@ export class ProgrammeSlService {
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
       sector: programme.projectCategory,
-      estimatedCredits: programme.creditEst
+      estimatedCredits: programme.creditEst,
     };
 
     const url =
@@ -1178,7 +1225,7 @@ export class ProgrammeSlService {
         programme.programmeId
       );
 
-      return url;
+    return url;
   }
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],

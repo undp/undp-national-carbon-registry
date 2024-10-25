@@ -178,6 +178,8 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.VALIDATION_PENDING;
             break;
           case TxType.APPROVE_VALIDATION:
+            uPayload["serialNo"] = data?.serialNo;
+            uPayload["registrationCertificateUrl"] = data?.registrationCertificateUrl;
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             break;
           case TxType.REJECT_VALIDATION:

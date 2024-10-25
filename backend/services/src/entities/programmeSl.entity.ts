@@ -17,7 +17,7 @@ export class ProgrammeSl implements EntitySubject {
   title: string;
 
   @Column({ nullable: true })
-  serialNo: string;
+  serialNo?: string;
 
   @Column({
     type: "enum",
@@ -119,6 +119,9 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ type: "bigint" })
   companyId: number;
+
+  @Column({ nullable: true })
+  registrationCertificateUrl?: string;
 
   @Column({
     type: "enum",
