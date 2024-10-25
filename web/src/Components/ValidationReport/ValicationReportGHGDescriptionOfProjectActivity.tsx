@@ -150,51 +150,63 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const projectScopeList = [
     {
-      id: 'eneryIndustry',
+      id: 'isProjectScopeEnergyIndustries',
       label: t('validationReport:energyIndustry'),
     },
     {
-      id: 'entergyDistribution',
+      id: 'isProjectScopeEnergyDistribution',
       label: t('validationReport:entergyDistribution'),
     },
     {
-      id: 'energyDemand',
+      id: 'isProjectScopeEnergyDemand',
       label: t('validationReport:energyDemand'),
     },
     {
-      id: 'manufacturingIndustry',
+      id: 'isProjectScopeManufacturingIndustries',
       label: t('validationReport:manufacturingIndustry'),
     },
     {
-      id: 'chemicalIndustry',
+      id: 'isProjectScopeChemicalIndustries',
+      label: t('validationReport:chemicalIndustries'),
+    },
+    {
+      id: 'isProjectScopeChemicalIndustry',
       label: t('validationReport:chemicalIndustry'),
     },
     {
-      id: 'construction',
+      id: 'isProjectScopeConstruction',
       label: t('validationReport:construction'),
     },
     {
-      id: 'miningMineralProduction',
+      id: 'isProjectScopeTransport',
+      label: t('validationReport:transport'),
+    },
+    {
+      id: 'isProjectScopeMining',
       label: t('validationReport:miningMineralProduction'),
     },
     {
-      id: 'fugitiveEmissionsFromProduction',
+      id: 'isProjectScopeFugitiveEmissionsFromFuel',
       label: t('validationReport:fugitiveEmissionsFromProduction'),
     },
     {
-      id: 'solventsUse',
+      id: 'isProjectScopeFugitiveEmissionsFromHalocarbons',
+      label: t('validationReport:fugitiveEmissionsHexafluoride'),
+    },
+    {
+      id: 'isProjectScopeSolventsUse',
       label: t('validationReport:solventsUse'),
     },
     {
-      id: 'wasteHandlingDisposal',
+      id: 'isProjectScopeWasteHandling',
       label: t('validationReport:wasteHandlingDisposal'),
     },
     {
-      id: 'afforestationandReforestation',
+      id: 'isProjectScopeAfforestation',
       label: t('validationReport:afforestationandReforestation'),
     },
     {
-      id: 'agriculture',
+      id: 'isProjectScopeAgriculture',
       label: t('validationReport:agriculture'),
     },
   ];
@@ -247,7 +259,22 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
     const ghgDescriptionFormValues: any = {
       projectTitle: values?.projectTitle,
       projectSize: values?.projectSize,
-      projectScopeUNFCC: values?.projectScopeUNFCC,
+
+      isProjectScopeEnergyIndustries: values?.isProjectScopeEnergyIndustries,
+      isProjectScopeEnergyDistribution: values?.isProjectScopeEnergyDistribution,
+      isProjectScopeEnergyDemand: values?.isProjectScopeEnergyDemand,
+      isProjectScopeManufacturingIndustries: values?.isProjectScopeManufacturingIndustries,
+      isProjectScopeChemicalIndustries: values?.isProjectScopeChemicalIndustries,
+      isProjectScopeChemicalIndustry: values?.isProjectScopeChemicalIndustry,
+      isProjectScopeConstruction: values?.isProjectScopeConstruction,
+      isProjectScopeTransport: values?.isProjectScopeTransport,
+      isProjectScopeMining: values?.isProjectScopeMining,
+      isProjectScopeFugitiveEmissionsFromFuel: values?.isProjectScopeFugitiveEmissionsFromFuel,
+      isProjectScopeFugitiveEmissionsFromHalocarbons: values?.isProjectScopeFugitiveEmissionsFromHalocarbons,
+      isProjectScopeSolventsUse: values?.isProjectScopeSolventsUse,
+      isProjectScopeWasteHandling: values?.isProjectScopeWasteHandling,
+      isProjectScopeAfforestation: values?.isProjectScopeAfforestation,
+      isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
       creditingPeriod: values?.creditingPeriod,
@@ -255,6 +282,21 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       locationsOfProjectActivity: values.locationsOfProjectActivity,
       technicalProjectDescriptions: values.technicalProjectDescriptions,
     };
+
+    // startDateCreditingPeriod: '',
+    // locationsOfProjectActivity: [
+    //   {
+    //     locationOfProjectActivity: '',
+    //     province: '',
+    //     district: '',
+    //     dsDivision: '',
+    //     city: '',
+    //     community: '',
+    //     geographicalLocationCoordinates: '',
+    //     additionalDocuments: '',
+    //     technicalProjectDescription: '',
+    //   },
+    // ],
 
     console.log(ProcessSteps.VR_GHG_PROJECT_DESCRIPTION, ghgDescriptionFormValues);
     handleValuesUpdate({ [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues });
@@ -314,101 +356,32 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     ]}
                   >
                     <Radio.Group style={{ justifyContent: 'flex-start' }}>
-                      <Radio value={'smallScale'}>
-                        {t('validationReport:smallScaleBundleProject')}
-                      </Radio>
-                      <Radio value={'largeScale'}>{t('validationReport:largeScale')}</Radio>
+                      <Radio value={'SMALL'}>{t('validationReport:smallScaleBundleProject')}</Radio>
+                      <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>
               </Row>
 
-              {/* <Form.Item
-                className="full-width-form-item"
-                label={`2.1 ${t('validationReport:projectCharacteristics')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
-                      <p>Should include:</p>
-                      <ul>
-                        <li>
-                          A summary description of the technologies/measures to be implemented by
-                          the project.{' '}
-                        </li>
-                        <li>The location of the project.</li>
-                        <li>
-                          An explanation of how the project is expected to generate GHG emission
-                          reductions or removals.{' '}
-                        </li>
-                        <li>
-                          A brief description of the scenario existing prior to the implementation
-                          of the project.
-                        </li>
-                        <li>
-                          An estimate of annual average and total GHG emission reductions and
-                          removals.
-                        </li>
-                      </ul>
-                    </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-                name="introduction"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('validationReport:projectActiviy')} ${t('isRequired')}`,
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`${t('validationReport:projectActivityPlaceholder')}`}
-                />
-              </Form.Item> */}
-
-              {/* <Form.Item
-                className="full-width-form-item"
-                label={`${t('projectScopeUNFCC')}`}
-                name="projectScopeUNFCC"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('validationReport:sectoralScopeProjectType')} ${t('isRequired')}`,
-                  },
-                ]}
-              ></Form.Item> */}
-
               <Row gutter={[8, 16]}>
                 <Col span={6}>{t('validationReport:projectScopeUNFCC')}</Col>
                 <Col span={18}>
-                  <Form.Item
-                    className="full-width-form-item"
-                    // label={`${t('projectScopeUNFCC')}`}
-                    name="projectScopeUNFCC"
-                    // rules={[
-                    //   {
-                    //     required: true,
-                    //     message: `${t('validationReport:sectoralScopeProjectType')} ${t('isRequired')}`,
-                    //   },
-                    // ]}
-                  >
-                    <Checkbox.Group className="full-width-form-item">
-                      {projectScopeList.map((scopeListItem: any, index: number) => {
-                        return (
-                          <Col span={24}>
-                            <div className="side-by-side-form-item">
-                              <span>{`${index + 1} ${scopeListItem.label}`}</span>
-                              <Checkbox value={scopeListItem.id}></Checkbox>
-                            </div>
+                  <Checkbox.Group className="full-width-form-item">
+                    {projectScopeList.map((scopeListItem: any, index: number) => {
+                      return (
+                        <Col span={24}>
+                          <div className="side-by-side-form-item full-width-form-item">
+                            <span>{`${index + 1} ${scopeListItem.label}`}</span>
+                            <Form.Item name={scopeListItem.id}>
+                              <Checkbox></Checkbox>
+                            </Form.Item>
+                          </div>
 
-                            <Divider style={{ margin: 10 }} />
-                          </Col>
-                        );
-                      })}
-                    </Checkbox.Group>
-                  </Form.Item>
+                          <Divider style={{ margin: 10 }} />
+                        </Col>
+                      );
+                    })}
+                  </Checkbox.Group>
                 </Col>
               </Row>
 
@@ -641,7 +614,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                 >
                                   <GetLocationMapComponent
                                     form={form}
-                                    formItemName={[name, 'location']}
+                                    formItemName={[name, 'geographicalLocationCoordinates']}
                                     listName="extraLocations"
                                     existingCordinate={getExistingCordinate(locationIndex)}
                                   />
@@ -651,7 +624,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               <Col xl={24} md={24}>
                                 <Form.Item
                                   label={t('validationReport:uploadImages')}
-                                  name={[name, 'optionalImages']}
+                                  name={[name, 'additionalDocuments']}
                                   valuePropName="fileList"
                                   getValueFromEvent={normFile}
                                   required={false}

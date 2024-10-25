@@ -22,23 +22,23 @@ const ProjectDetails = (props: ValidationStepsProps) => {
   const [contactNoInput] = useState<any>();
 
   useEffect(() => {
-    if (existingFormValues) {
-      form.setFieldsValue({
-        client: existingFormValues.client,
-        dateOfIssue: existingFormValues.dateOfIssue,
-        versionNo: existingFormValues.versionNo,
-        versionDate: existingFormValues.versionDate,
-        physicalAddress: existingFormValues.physicalAddress,
-        telephone: existingFormValues.telephone,
-        email: existingFormValues.email,
-        website: existingFormValues.website,
-        summary: existingFormValues.summary,
-        projectTitle: existingFormValues.summary,
-        workCarryOutBy: existingFormValues.workCarryOutBy,
-        workApprovedBy: existingFormValues.workApprovedBy,
-        reportId: existingFormValues.reportId,
-      });
-    }
+    // if (existingFormValues) {
+    //   form.setFieldsValue({
+    //     client: existingFormValues.client,
+    //     dateOfIssue: existingFormValues.dateOfIssue,
+    //     versionNo: existingFormValues.versionNo,
+    //     versionDate: moment(existingFormValues.versionDate),
+    //     address: existingFormValues.physicalAddress,
+    //     telephone: existingFormValues.telephone,
+    //     email: existingFormValues.email,
+    //     website: existingFormValues.website,
+    //     summary: existingFormValues.summary,
+    //     projectTitle: existingFormValues.summary,
+    //     workCarriedOutBy: existingFormValues.workCarryOutBy,
+    //     workApprovedBy: existingFormValues.workApprovedBy,
+    //     reportId: existingFormValues.reportId,
+    //   });
+    // }
   }, []);
 
   const onFinish = (values: any) => {
@@ -52,10 +52,10 @@ const ProjectDetails = (props: ValidationStepsProps) => {
       email: values?.email,
       website: values?.website,
       summary: values?.summary,
-      projectTitle: values?.summary,
-      workCarryOutBy: values?.workCarryOutBy,
+      projectTitle: values?.projectTitle,
+      workCarriedOutBy: values?.workCarryOutBy,
       workApprovedBy: values?.workApprovedBy,
-      reportId: values?.reportId,
+      reportNo: values?.reportId,
     };
 
     console.log(ProcessSteps.VR_PROJECT_DETAILS, projectDetailsFormValues);
@@ -238,7 +238,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
 
                       <Form.Item
                         label={t('validationReport:address')}
-                        name="physicalAddress"
+                        name="address"
                         rules={[
                           {
                             required: true,
@@ -329,7 +329,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workCarryOutBy')}
-                      name="workCarryOutBy"
+                      name="workCarriedOutBy"
                       rules={[
                         {
                           required: true,

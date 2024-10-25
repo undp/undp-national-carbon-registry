@@ -26,13 +26,13 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const referencesFormValues: any = {
-      additionalComments: values?.additionalComments,
-      appendixDocuments: await fileUploadValueExtract(values, 'appendixDocuments'),
+    const appendixFormValues: any = {
+      comments: values?.additionalComments,
+      additionalDocuments: await fileUploadValueExtract(values, 'additionalDocuments'),
     };
 
-    console.log(ProcessSteps.VR_REFERENCE, referencesFormValues);
-    handleValuesUpdate({ [ProcessSteps.VR_REFERENCE]: referencesFormValues });
+    console.log(ProcessSteps.VR_APPENDIX, appendixFormValues);
+    handleValuesUpdate({ [ProcessSteps.VR_APPENDIX]: appendixFormValues });
   };
 
   // const onFinish = async (values: any) => {
@@ -83,7 +83,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
               <Form.Item
                 className='className="full-width-form-item'
                 label={`${t('validationReport:additionalComments')}`}
-                name="additionalComments"
+                name="comments"
                 rules={[
                   {
                     required: true,
@@ -95,7 +95,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
               </Form.Item>
               <Form.Item
                 label={t('validationReport:uploadDocs')}
-                name="appendixDocuments"
+                name="additionalDocuments"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
                 required={false}

@@ -20,11 +20,11 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
     const introductionFormValues = {
       objective: values?.objective,
       scopeAndCriteria: values?.scopeAndCriteria,
-      titleOfTheProjectActivity: values?.titleOfTheProjectActivity,
-      projectParticipants: values?.projectParticipants,
+      titleOfProjectActivity: values?.titleOfProjectActivity,
+      projectParticipant: values?.projectParticipant,
       hostParty: values?.hostParty,
-      consultantOfTheProject: values?.consultantOfTheProject,
-      summaryDescriptionProject: values?.summaryDescriptionProject,
+      consultant: values?.consultant,
+      summary: values?.summaryDescriptionProject,
     };
 
     console.log(ProcessSteps.VR_INTRODUCTION, introductionFormValues);
@@ -101,7 +101,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                       <div className="step-form-right-col form-grid">
                         <Form.Item
                           label={t('validationReport:titleOfTheProjectActivity')}
-                          name="titleOfTheProjectActivity"
+                          name="titleOfProjectActivity"
                           rules={[
                             {
                               required: true,
@@ -116,7 +116,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
                         <Form.Item
                           label={t('validationReport:projectParticipants')}
-                          name="projectParticipants"
+                          name="projectParticipant"
                           rules={[
                             {
                               required: true,
@@ -144,7 +144,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
                         <Form.Item
                           label={t('validationReport:consultantOfTheProject')}
-                          name="consultantOfTheProject"
+                          name="consultant"
                           rules={[
                             {
                               required: true,
@@ -165,7 +165,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`1.4 ${t('validationReport:summaryDescriptionProject')}`}
-                name="summaryDescriptionProject"
+                name="summary"
                 rules={[
                   {
                     required: true,
