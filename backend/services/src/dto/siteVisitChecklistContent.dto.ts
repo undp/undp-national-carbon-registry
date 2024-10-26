@@ -6,6 +6,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
   IsPositive,
   IsString,
   ValidateNested,
@@ -38,7 +39,8 @@ export class SiteVisitChecklistContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
+  @IsPositive()
+  @IsInt()
   time: string;
 
   @ApiProperty()
@@ -62,8 +64,8 @@ export class SiteVisitChecklistContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  projectCapacity: string;
+  @IsNumber()
+  projectCapacity: number;
 
   @ApiProperty()
   @IsNotEmpty()

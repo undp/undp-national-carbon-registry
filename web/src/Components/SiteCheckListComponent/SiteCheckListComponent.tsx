@@ -1,8 +1,8 @@
-import { Col, DatePicker, Form, Row, Select, TimePicker } from 'antd';
+import { Button, Col, DatePicker, Form, message, Row, Select, TimePicker, Upload } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import Input from 'antd/lib/input/Input';
 import { i18n } from 'i18next';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './SiteCheckListComponent.scss';
 import moment from 'moment';
@@ -14,17 +14,280 @@ import PhoneInput, {
 } from 'react-phone-number-input';
 
 import TextArea from 'antd/lib/input/TextArea';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { isValidateFileType } from '../../Utils/DocumentValidator';
+import { DocType } from '../../Definitions/Enums/document.type';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
+import { RcFile } from 'antd/lib/upload';
+import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
   const { translator } = props;
 
+  const [contactNoInput] = useState<any>();
+
+  const navigate = useNavigate();
+
+  const { id } = useParams();
+
+  const { get, post } = useConnection();
+
+  const getDataToPopulate = async (programmeId: any) => {
+    try {
+      const { data } = await post('national/programmeSL/getProjectById', {
+        programmeId: programmeId,
+      });
+
+      console.log('-----response-------', data);
+
+      const tempValues = {
+        projectName: data?.title,
+        organizationName: data?.company?.name,
+        // projectTrack: data?.purposeOfCreditDevelopment,
+        projectTrack: 'TRACK_2',
+      };
+
+      form.setFieldsValue(tempValues);
+    } catch (error) {
+      console.log('--------error---------', error);
+    }
+  };
+
+  useEffect(() => {
+    getDataToPopulate(id);
+  }, []);
+  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+    : 5000000;
+
+  const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+
+  const [countries, setCountries] = useState<[]>([]);
+
+  const getCountryList = async () => {
+    try {
+      const response = await get('national/organisation/countries');
+      if (response.data) {
+        const alpha2Names = response.data.map((item: any) => {
+          return item.alpha2;
+        });
+        setCountries(alpha2Names);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const { t } = translator;
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
-  const onFinish = (values: any) => {
-    console.log('-------values--------', values);
+  useEffect(() => {
+    getCountryList();
+  }, []);
+
+  const viewDataMapToFields = (vals: any) => {
+    const firstStakeholder =
+      vals?.stakeholderInterviews && vals?.stakeholderInterviews.length > 0
+        ? vals?.stakeholderInterviews.shift()
+        : undefined;
+
+    const tempVals = {
+      projectName: vals?.projectName,
+      organizationName: vals?.organizationName,
+      location: vals?.location,
+      date: moment.unix(vals?.date),
+      time: moment.unix(vals?.time),
+      projectStartDate: moment.unix(vals?.projectStartDate),
+      projectCommissionDate: moment.unix(vals?.projectCommissionDate),
+      projectTrack: vals?.projectTrack,
+      projectCapacity: vals?.projectCapacity,
+      projectFactor: vals?.projectFactor,
+      projectEmission: vals?.projectEmission,
+      leakageEmission: vals?.leakageEmission,
+      eligibility1YesNo: vals?.eligibility1YesNo,
+      eligibility1Comment: vals?.eligibility1Comment,
+      eligibility2YesNo: vals?.eligibility2YesNo,
+      eligibility2Comment: vals?.eligibility2Comment,
+      eligibility3YesNo: vals?.eligibility3YesNo,
+      eligibility3Comment: vals?.eligibility3Comment,
+      eligibility4YesNo: vals?.eligibility4YesNo,
+      eligibility4Comment: vals?.eligibility4Comment,
+      eligibility5YesNo: vals?.eligibility5YesNo,
+      eligibility5Comment: vals?.eligibility5Comment,
+      eligibility6YesNo: vals?.eligibility6YesNo,
+      eligibility6Comment: vals?.eligibility6Comment,
+      doc1FeasibilityStudiesAvailability: vals?.doc1FeasibilityStudiesAvailability,
+      doc1FeasibilityStudiesComment: vals?.doc1FeasibilityStudiesComment,
+      doc2PowerPurchasingAgreementAvailability: vals?.doc2PowerPurchasingAgreementAvailability,
+      doc2PowerPurchasingAgreementComment: vals?.doc2PowerPurchasingAgreementComment,
+      doc3TestingCertificateAvailability: vals?.doc3TestingCertificateAvailability,
+      doc3TestingCertificateComment: vals?.doc3TestingCertificateComment,
+      doc4CalibrationReportsAvailability: vals?.doc4CalibrationReportsAvailability,
+      doc4CalibrationReportsComment: vals?.doc4CalibrationReportsComment,
+      doc5DataManagementAvailability: vals?.doc5DataManagementAvailability,
+      doc5DataManagementComment: vals?.doc5DataManagementComment,
+      doc6MonthlyElectricityRecordsAvailability: vals?.doc6MonthlyElectricityRecordsAvailability,
+      doc6MonthlyElectricityRecordsComment: vals?.doc6MonthlyElectricityRecordsComment,
+      doc7MonthlyElectricityInvoicesAvailability: vals?.doc7MonthlyElectricityInvoicesAvailability,
+      doc7MonthlyElectricityInvoicesComment: vals?.doc7MonthlyElectricityInvoicesComment,
+      doc8TrainingRecordsAvailability: vals?.doc8TrainingRecordsAvailability,
+      doc8TrainingRecordsComment: vals?.doc8TrainingRecordsComment,
+      doc9InternalAuditReportsAvailability: vals?.doc9InternalAuditReportsAvailability,
+      stakeholderName: firstStakeholder?.stakeholderName,
+      contactDetails: firstStakeholder?.stakeholderContactNo,
+      designation: firstStakeholder?.stakeholderDesignation,
+      subjectCovered: firstStakeholder?.subjectCovered,
+      extraStakeholders: (function () {
+        const tempStakeholderObjs: any = [];
+
+        const stakeholderInterviews = vals?.stakeholderInterviews;
+
+        if (stakeholderInterviews && stakeholderInterviews.length > 0) {
+          stakeholderInterviews.forEach((stakeholder: any) => {
+            const tempStakeholder = {
+              stakeholderName: stakeholder?.stakeholderName,
+              contactDetails: stakeholder?.stakeholderContactNo,
+              designation: stakeholder?.stakeholderDesignation,
+              subjectCovered: stakeholder?.subjectCovered,
+            };
+            tempStakeholderObjs.push(tempStakeholder);
+          });
+        }
+
+        return tempStakeholderObjs;
+      })(),
+      validatorName: vals?.valdatiorName,
+      validationDate: moment.unix(vals?.validationDate),
+      validatorDesignation: vals?.validatorDesignation,
+      validatorSignature: vals?.validatorSignature,
+    };
+
+    form.setFieldsValue(tempVals);
+  };
+
+  const convertFileToBase64 = async (image: any) => {
+    const res = await getBase64(image?.originFileObj as RcFile);
+    return res;
+  };
+
+  const onFinish = async (values: any) => {
+    console.log('-------values--------', values?.projectTrack);
+
+    const validatorSignatureBase64 = await convertFileToBase64(values?.validatorSignature[0]);
+
+    const tempValues = {
+      projectName: values?.projectName,
+      organizationName: values?.organizationName,
+      location: values?.location,
+      date: moment(values?.date).startOf('day').unix(),
+      time: moment(values?.time).unix(),
+      projectStartDate: moment(values?.projectStartDate).startOf('day').unix(),
+      projectCommissionDate: moment(values?.projectCommissionDate).startOf('day').unix(),
+      projectTrack: form.getFieldValue('projectTrack'),
+      projectCapacity: Number(values?.projectCapacity),
+      projectFactor: values?.projectFactor,
+      projectEmission: values?.projectEmission,
+      leakageEmission: values?.leakageEmission,
+      eligibility1YesNo: values?.eligibility1YesNo,
+      eligibility1Comment: values?.eligibility1Comment,
+      eligibility2YesNo: values?.eligibility2YesNo,
+      eligibility2Comment: values?.eligibility2Comment,
+      eligibility3YesNo: values?.eligibility3YesNo,
+      eligibility3Comment: values?.eligibility3Comment,
+      eligibility4YesNo: values?.eligibility4YesNo,
+      eligibility4Comment: values?.eligibility4Comment,
+      eligibility5YesNo: values?.eligibility5YesNo,
+      eligibility5Comment: values?.eligibility5Comment,
+      eligibility6YesNo: values?.eligibility6YesNo,
+      eligibility6Comment: values?.eligibility6Comment,
+      doc1FeasibilityStudiesAvailability: values?.doc1FeasibilityStudiesAvailability,
+      doc1FeasibilityStudiesComment: values?.doc1FeasibilityStudiesComment,
+      doc2PowerPurchasingAgreementAvailability: values?.doc2PowerPurchasingAgreementAvailability,
+      doc2PowerPurchasingAgreementComment: values?.doc2PowerPurchasingAgreementComment,
+      doc3TestingCertificateAvailability: values?.doc3TestingCertificateAvailability,
+      doc3TestingCertificateComment: values?.doc3TestingCertificateComment,
+      doc4CalibrationReportsAvailability: values?.doc4CalibrationReportsAvailability,
+      doc4CalibrationReportsComment: values?.doc4CalibrationReportsComment,
+      doc5DataManagementAvailability: values?.doc5DataManagementAvailability,
+      doc5DataManagementComment: values?.doc5DataManagementComment,
+      doc6MonthlyElectricityRecordsAvailability: values?.doc6MonthlyElectricityRecordsAvailability,
+      doc6MonthlyElectricityRecordsComment: values?.doc6MonthlyElectricityRecordsComment,
+      doc7MonthlyElectricityInvoicesAvailability:
+        values?.doc7MonthlyElectricityInvoicesAvailability,
+      doc7MonthlyElectricityInvoicesComment: values?.doc7MonthlyElectricityInvoicesComment,
+      doc8TrainingRecordsAvailability: values?.doc8TrainingRecordsAvailability,
+      doc8TrainingRecordsComment: values?.doc8TrainingRecordsComment,
+      doc9InternalAuditReportsAvailability: values?.doc9InternalAuditReportsAvailability,
+      doc9InternalAuditReportsComment: values?.doc9InternalAuditReportsComment,
+      stakeholderInterviews: (function () {
+        const tempStakeholderObjs: any = [];
+        const firstStakeholder = {
+          stakeholderName: values?.stakeholderName,
+          stakeholderContactNo: values?.contactDetails,
+          stakeholderDesignation: values?.designation,
+          subjectCovered: values?.subjectCovered,
+        };
+        tempStakeholderObjs.push(firstStakeholder);
+
+        const extraStakeholders = values?.extraStakeholders;
+
+        if (
+          extraStakeholders !== undefined &&
+          extraStakeholders.length > 0 &&
+          extraStakeholders[0] !== undefined
+        ) {
+          extraStakeholders.forEach((stakeholder: any) => {
+            const tempStakeholderObj = {
+              stakeholderName: stakeholder?.stakeholderName,
+              stakeholderContactNo: stakeholder?.contactDetails,
+              stakeholderDesignation: stakeholder?.designation,
+              subjectCovered: stakeholder?.subjectCovered,
+            };
+            tempStakeholderObjs.push(tempStakeholderObj);
+          });
+        }
+
+        return tempStakeholderObjs;
+      })(),
+      validatorName: values?.valdatiorName,
+      validationDate: moment(values?.validationDate).startOf('day').unix(),
+      validatorDesignation: values?.validatorDesignation,
+      validatorSignature: validatorSignatureBase64,
+    };
+
+    try {
+      const res = await post('national/programmeSl/cma/approve', {
+        programmeId: id,
+        content: tempValues,
+      });
+
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content: 'CMA Approve sucess',
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate(`/programmeManagementSLCF/view/${id}`);
+      }
+    } catch (error) {
+      console.log(error);
+      message.open({
+        type: 'error',
+        content: 'Something went wrong!',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
   };
 
   return (
@@ -51,11 +314,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `Project Name ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Project Name ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <Input disabled={disableFields} />
+                <Input size="large" disabled />
               </Form.Item>
 
               <Form.Item
@@ -64,11 +339,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `Organization Name ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Organization Name ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <Input disabled={disableFields} />
+                <Input size="large" disabled />
               </Form.Item>
 
               <Form.Item
@@ -77,11 +364,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `Location ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Location ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <Input disabled={disableFields} />
+                <Input size="large" disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -90,15 +389,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `Date ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Date ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <DatePicker
-                  size="large"
-                  disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                  disabled={disableFields}
-                />
+                <DatePicker size="large" disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -107,11 +414,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `Time ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Time ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <TimePicker placeholder="Select Time" disabled={disableFields} />
+                <TimePicker size="large" placeholder="Select Time" disabled={disableFields} />
               </Form.Item>
             </Col>
           </Row>
@@ -128,30 +447,51 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Project Start Date ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Project Start Date ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
-                  <DatePicker
-                    size="large"
-                    disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                    disabled={disableFields}
-                  />
+                  <DatePicker size="large" disabled={disableFields} />
                 </Form.Item>
 
-                <div className="projectTrack">
-                  <Form.Item
-                    label="Project Track"
-                    name="projectTrack"
-                    rules={[
-                      {
-                        required: true,
-                        message: `Project Track ${t('isRequired')}`,
-                      },
-                    ]}
+                <div className="projectTrack mg-bottom-1">
+                  <div>
+                    <p
+                      className="custom-required"
+                      style={{ marginBottom: '8px', color: 'rgba(58, 53, 65, 0.5' }}
+                    >
+                      Project Track
+                    </p>
+                    <Input
+                      size="large"
+                      disabled
+                      value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
+                    />
+                  </div>
+
+                  <div
+                    style={{ fontSize: '12px', marginLeft: '8px', color: 'rgba(58, 53, 65, 0.5' }}
+                    className="mg-top-2"
                   >
-                    <Input disabled />
-                  </Form.Item>
+                    {form.getFieldValue('projectTrack') === 'TRACK_2' && (
+                      <>
+                        *Issued carbon credits from project will only be used for internal
+                        offsetting of emissions.
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <Form.Item
@@ -160,11 +500,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Project Factor ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Project Factor ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -173,11 +525,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Leakage Emission ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Leakage Emission ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
               </Col>
 
@@ -188,15 +552,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Project Commision Date ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Project Commision Date ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
-                  <DatePicker
-                    size="large"
-                    disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                    disabled
-                  />
+                  <DatePicker size="large" />
                 </Form.Item>
 
                 <Form.Item
@@ -205,25 +577,31 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Project Capacity ${t('isRequired')}`,
+                      message: ``,
                     },
                     {
-                      validator(rule, value) {
+                      validator: async (rule, value) => {
                         if (!value) {
-                          return Promise.resolve();
+                        }
+
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Project Capacity ${t('isRequired')}`);
                         }
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer!'));
+                          throw new Error('Should be an integer!');
                         }
-
-                        return Promise.resolve();
                       },
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -232,25 +610,30 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Project Emission ${t('isRequired')}`,
+                      message: ``,
                     },
                     {
-                      validator(rule, value) {
+                      validator: async (rule, value) => {
                         if (!value) {
-                          return Promise.resolve();
+                        }
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Project Emission ${t('isRequired')}`);
                         }
 
-                        // eslint-disable-next-line no-restricted-globals
-                        if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer!'));
-                        }
-
-                        return Promise.resolve();
+                        // // eslint-disable-next-line no-restricted-globals
+                        // if (isNaN(value)) {
+                        //   return Promise.reject(new Error('Should be an integer!'));
+                        // }
                       },
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input size="large" disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -259,7 +642,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
           {/* Eligibility Criteria Start */}
           <>
-            <h4 className="section-title">Eligibility</h4>
+            <h4 className="section-title mg-top-1">Eligibility</h4>
             <div className="checklist-table-form">
               <Row className="header" gutter={24} justify={'space-between'} align={'top'}>
                 <Col md={10} xl={10}>
@@ -290,7 +673,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
                       },
                     ]}
                   >
@@ -307,6 +690,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         required: true,
                         message: `${t('siteVisitCheckList:required')}`,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -328,7 +723,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -344,7 +751,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -370,7 +789,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -386,7 +817,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -411,7 +854,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -427,7 +882,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -452,7 +919,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -468,7 +947,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -495,7 +986,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:required')}`,
+                        message: `${t('siteVisitCheckList:required')}`,
                       },
                     ]}
                   >
@@ -511,7 +1002,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -524,8 +1027,8 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
           {/* Eligibility Criteria End */}
 
           {/* Document Review Start */}
-          <h4 className="section-title">Document Review</h4>
-          <div className="checklist-table-form">
+          <h4 className="section-title mg-top-2">Document Review</h4>
+          <div className="checklist-table-form ">
             <Row className="header" gutter={24} justify={'space-between'} align={'top'}>
               <Col md={10} xl={10}>
                 Document Name
@@ -554,7 +1057,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -570,7 +1085,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -592,7 +1119,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -608,7 +1147,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -630,7 +1181,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -646,7 +1209,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -668,7 +1243,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -684,7 +1271,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -706,7 +1305,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('siteVisitCheckList:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -722,7 +1333,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -744,7 +1367,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -760,7 +1395,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -782,7 +1429,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -798,7 +1457,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -820,7 +1491,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -836,7 +1519,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -858,7 +1553,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -874,7 +1581,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('CMAForm:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -887,8 +1606,8 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
           {/* Interview of the StakeHolders start*/}
           <>
-            <h4 className="section-title">Interview of the Stakeholders</h4>
-
+            <h4 className="section-title mg-top-1">Interview of the Stakeholders</h4>
+            <div className="mg-top-1 mg-bottom-1">Stakeholder 1</div>
             <div className="stakeholders-section">
               <Row gutter={40}>
                 <Col md={12} xl={12}>
@@ -898,11 +1617,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Stakeholder Name ${t('isRequired')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`Stakeholder Name ${t('isRequired')}`);
+                          }
+                        },
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input size="large" disabled={disableFields} />
                   </Form.Item>
 
                   <Form.Item
@@ -911,17 +1642,410 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Contact Details ${t('isRequired')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`Contact Details ${t('isRequired')}`);
+                          } else {
+                            const phoneNo = formatPhoneNumber(String(value));
+                            if (String(value).trim() !== '') {
+                              if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
+                                throw new Error(`Contact Details ${t('isRequired')}`);
+                              } else {
+                                if (!isPossiblePhoneNumber(String(value))) {
+                                  throw new Error(`Contact Details ${t('isInvalid')}`);
+                                }
+                              }
+                            }
+                          }
+                        },
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <PhoneInput
+                      // placeholder={t('projectProposal:phoneNo')}
+                      international
+                      value={formatPhoneNumberIntl(contactNoInput)}
+                      defaultCountry="LK"
+                      countryCallingCodeEditable={false}
+                      onChange={(v) => {}}
+                      countries={countries as Country[]}
+                      disabled={disableFields}
+                    />
+                  </Form.Item>
+                </Col>
+
+                <Col md={12} xl={12}>
+                  <Form.Item
+                    label="Designation"
+                    name="designation"
+                    rules={[
+                      {
+                        required: true,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`Designation ${t('isRequired')}`);
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    label="Subject Covered"
+                    name="subjectCovered"
+                    rules={[
+                      {
+                        required: true,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`Subject Covered ${t('isRequired')}`);
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
                   </Form.Item>
                 </Col>
               </Row>
             </div>
+            <Form.List name="extraStakeholders">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <>
+                      <div className="mg-top-2 stakeholders-title">
+                        <span>Stakeholder {name + 2}</span>
+                        <Form.Item>
+                          <Button
+                            onClick={() => {
+                              remove(name);
+                            }}
+                            icon={<MinusOutlined />}
+                            disabled={disableFields}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="stakeholders-section">
+                        <Row gutter={40}>
+                          <Col md={12} xl={12}>
+                            <Form.Item
+                              label="Stakeholder Name"
+                              name={[name, 'stakeholderName']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `Stakeholder Name ${t('isRequired')}`,
+                                },
+                                {
+                                  validator: async (rule: any, value: any) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(`Stakeholder Name ${t('isRequired')}`);
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input size="large" disabled={disableFields} />
+                            </Form.Item>
+
+                            <Form.Item
+                              label="Contact Details"
+                              name={[name, 'contactDetails']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule: any, value: any) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(`Contact Details ${t('isRequired')}`);
+                                    } else {
+                                      const phoneNo = formatPhoneNumber(String(value));
+                                      if (String(value).trim() !== '') {
+                                        if (
+                                          phoneNo === null ||
+                                          phoneNo === '' ||
+                                          phoneNo === undefined
+                                        ) {
+                                          throw new Error(`Contact Details ${t('isRequired')}`);
+                                        } else {
+                                          if (!isPossiblePhoneNumber(String(value))) {
+                                            throw new Error(`Contact Details ${t('isInvalid')}`);
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <PhoneInput
+                                // placeholder={t('projectProposal:phoneNo')}
+                                international
+                                value={formatPhoneNumberIntl(contactNoInput)}
+                                defaultCountry="LK"
+                                countryCallingCodeEditable={false}
+                                onChange={(v) => {}}
+                                countries={countries as Country[]}
+                                disabled={disableFields}
+                              />
+                            </Form.Item>
+                          </Col>
+
+                          <Col md={12} xl={12}>
+                            <Form.Item
+                              label="Designation"
+                              name={[name, 'designation']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule: any, value: any) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(`Designation ${t('isRequired')}`);
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input size="large" disabled={disableFields} />
+                            </Form.Item>
+
+                            <Form.Item
+                              label="Subject Covered"
+                              name={[name, 'subjectCovered']}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule: any, value: any) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(`Subject Covered ${t('isRequired')}`);
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input size="large" disabled={disableFields} />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </div>
+                    </>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      className="mg-top-1"
+                      onClick={() => {
+                        add();
+                      }}
+                      icon={<PlusOutlined />}
+                      disabled={disableFields}
+                    />
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
           </>
           {/* Interview of the StakeHolders end*/}
+
+          <Row gutter={40} className="validator-info">
+            <Col md={24} xl={12}>
+              <Form.Item
+                label="Validator Name"
+                name="valdatiorName"
+                rules={[
+                  {
+                    required: true,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Validator Name ${t('isRequired')}`);
+                      }
+                    },
+                  },
+                ]}
+              >
+                <Input size="large" disabled={disableFields} />
+              </Form.Item>
+
+              <Form.Item
+                label="Date"
+                name="validationDate"
+                rules={[
+                  {
+                    required: true,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Date ${t('isRequired')}`);
+                      }
+                    },
+                  },
+                ]}
+              >
+                <DatePicker picker="date" size="large" />
+              </Form.Item>
+            </Col>
+
+            <Col md={24} xl={12}>
+              <Form.Item
+                label="Designation"
+                name="validatorDesignation"
+                rules={[
+                  {
+                    required: true,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule: any, value: any) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`Designation ${t('isRequired')}`);
+                      }
+                    },
+                  },
+                ]}
+              >
+                <Input size="large" disabled={disableFields} />
+              </Form.Item>
+
+              <Form.Item
+                name="validatorSignature"
+                label="Signature"
+                valuePropName="fileList"
+                getValueFromEvent={normFile}
+                // required={true}
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('siteVisitCheckList:required')}`,
+                  },
+                  {
+                    validator: async (rule, file) => {
+                      if (file?.length > 0) {
+                        if (
+                          !isValidateFileType(
+                            file[0]?.type,
+                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                          )
+                        ) {
+                          throw new Error(`${t('common:invalidFileFormat')}`);
+                        } else if (file[0]?.size > maximumImageSize) {
+                          // default size format of files would be in bytes -> 1MB = 1000000bytes
+                          throw new Error(`${t('common:maxSizeVal')}`);
+                        }
+                      }
+                    },
+                  },
+                ]}
+              >
+                <Upload
+                  accept=".doc, .docx, .pdf, .png, .jpg"
+                  beforeUpload={(file: any) => {
+                    return false;
+                  }}
+                  className="design-upload-section"
+                  name="design"
+                  action="/upload.do"
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  disabled={disableFields}
+                  // defaultFileList={form.getFieldValue('ClientWitnessSignature') || []}
+                  fileList={form.getFieldValue('ClientWitnessSignature') || []}
+                >
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                    disabled={disableFields}
+                  >
+                    Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row justify={'end'} className="step-actions-end">
+            <Button danger size={'large'}>
+              Cancel
+            </Button>
+            <Button type="primary" size={'large'} htmlType="submit">
+              submit
+            </Button>
+          </Row>
         </Form>
       </div>
     </div>

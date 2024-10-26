@@ -1685,7 +1685,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       {form.getFieldValue('projectTrack') === 'TRACK_2' && (
                         <>
                           *Issued carbon credits from project will only be used for internal
-                          offsetting of emissions
+                          offsetting of emissions.
                         </>
                       )}
                     </div>

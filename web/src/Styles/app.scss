@@ -69,7 +69,9 @@ body {
   justify-content: space-between;
 }
 
-.condition-radio-container, .yes-no-radio-container, .radio-container {
+.condition-radio-container,
+.yes-no-radio-container,
+.radio-container {
   .ant-radio-button-checked {
     background: $primary-color !important;
     color: #ffffff;
@@ -82,10 +84,17 @@ body {
   box-shadow: none;
 }
 
-.dashboard-main-container .stastics-and-charts-container .stastic-card-row .stastic-card-col .stastics-and-pie-card .mrv-total-programme-details .details .value {
+.dashboard-main-container
+  .stastics-and-charts-container
+  .stastic-card-row
+  .stastic-card-col
+  .stastics-and-pie-card
+  .mrv-total-programme-details
+  .details
+  .value {
   color: $primary-purple !important;
 }
-.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after, 
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after,
 .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after {
   background-color: $primary-color !important;
   width: 1.7px !important;
@@ -804,7 +813,13 @@ body {
   background: $primary-color;
 }
 
-.programme-details-form-container .programme-details-form .selection-details-row .in-ndc-row .included-val .yes-no-radio-container .ant-radio-button-wrapper-checked:not( .ant-radio-button-wrapper-disabled ){
+.programme-details-form-container
+  .programme-details-form
+  .selection-details-row
+  .in-ndc-row
+  .included-val
+  .yes-no-radio-container
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
   border-color: $primary-color !important;
 }
 
@@ -814,7 +829,7 @@ body {
 
 .ant-tooltip {
   // width: 900px !important;
-  
+
   max-width: 600px !important;
   .ant-tooltip-content {
     // width: 600px !important;
