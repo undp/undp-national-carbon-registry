@@ -121,7 +121,7 @@
 
   .step-actions {
     &-end {
-      button {
+      button:not(:last-child) {
         margin-right: 10px;
       }
     }

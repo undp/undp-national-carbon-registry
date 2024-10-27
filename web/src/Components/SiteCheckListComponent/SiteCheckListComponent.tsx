@@ -18,7 +18,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
@@ -29,11 +29,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
   const [contactNoInput] = useState<any>();
 
+  const { state } = useLocation();
+  const isView = !!state?.isView;
+
   const navigate = useNavigate();
 
   const { id } = useParams();
 
   const { get, post } = useConnection();
+
+  const naviagetToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
 
   const getDataToPopulate = async (programmeId: any) => {
     try {
@@ -46,8 +53,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       const tempValues = {
         projectName: data?.title,
         organizationName: data?.company?.name,
-        // projectTrack: data?.purposeOfCreditDevelopment,
-        projectTrack: 'TRACK_2',
+        projectTrack: data?.purposeOfCreditDevelopment,
       };
 
       form.setFieldsValue(tempValues);
@@ -56,9 +62,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     }
   };
 
-  useEffect(() => {
-    getDataToPopulate(id);
-  }, []);
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -99,6 +102,11 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       vals?.stakeholderInterviews && vals?.stakeholderInterviews.length > 0
         ? vals?.stakeholderInterviews.shift()
         : undefined;
+
+    const fileUrlParts = vals?.validatorSignature.split('/');
+    const fileName = fileUrlParts[fileUrlParts.length - 1];
+
+    console.log('signature', vals?.validatorSignature, fileName);
 
     const tempVals = {
       projectName: vals?.projectName,
@@ -165,14 +173,48 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
         return tempStakeholderObjs;
       })(),
-      validatorName: vals?.valdatiorName,
+      validatorName: vals?.validatorName,
       validationDate: moment.unix(vals?.validationDate),
       validatorDesignation: vals?.validatorDesignation,
-      validatorSignature: vals?.validatorSignature,
+      validatorSignature: [
+        {
+          uid: 'validation_signature',
+          name: fileName,
+          status: 'done',
+          url: vals?.validatorSignature,
+        },
+      ],
     };
 
     form.setFieldsValue(tempVals);
   };
+
+  useEffect(() => {
+    getDataToPopulate(id);
+    const getViewData = async () => {
+      console.log('-------isView----------', isView);
+      if (isView) {
+        const res = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: id,
+          docType: 'siteVisitChecklist',
+        });
+
+        if (res?.statusText === 'SUCCESS') {
+          const content = JSON.parse(res?.data.content);
+          console.log('------content---------', content);
+          viewDataMapToFields(content);
+        }
+      } else {
+        getDataToPopulate(id);
+      }
+    };
+
+    getViewData();
+
+    if (isView) {
+      setDisableFields(true);
+    }
+  }, []);
 
   const convertFileToBase64 = async (image: any) => {
     const res = await getBase64(image?.originFileObj as RcFile);
@@ -277,7 +319,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigate(`/programmeManagementSLCF/view/${id}`);
+        naviagetToDetailsPage();
       }
     } catch (error) {
       console.log(error);
@@ -568,7 +610,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <DatePicker size="large" />
+                  <DatePicker size="large" disabled={disableFields} />
                 </Form.Item>
 
                 <Form.Item
@@ -1905,7 +1947,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
             <Col md={24} xl={12}>
               <Form.Item
                 label="Validator Name"
-                name="valdatiorName"
+                name="validatorName"
                 rules={[
                   {
                     required: true,
@@ -1950,7 +1992,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   },
                 ]}
               >
-                <DatePicker picker="date" size="large" />
+                <DatePicker picker="date" size="large" disabled={disableFields} />
               </Form.Item>
             </Col>
 
@@ -2039,12 +2081,22 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
           </Row>
 
           <Row justify={'end'} className="step-actions-end">
-            <Button danger size={'large'}>
-              Cancel
-            </Button>
-            <Button type="primary" size={'large'} htmlType="submit">
-              submit
-            </Button>
+            {isView ? (
+              <>
+                <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                  Back
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                  Cancel
+                </Button>
+                <Button type="primary" size={'large'} htmlType="submit">
+                  submit
+                </Button>
+              </>
+            )}
           </Row>
         </Form>
       </div>
