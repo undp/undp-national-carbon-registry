@@ -76,7 +76,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                 //   setTimeout(() => submitForm(), 1000);
                 // }
                 // if (next) {
-                //   next()
+                //   next();
                 // }
               }}
             >

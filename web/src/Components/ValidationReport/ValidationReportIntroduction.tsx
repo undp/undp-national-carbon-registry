@@ -24,7 +24,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
       projectParticipant: values?.projectParticipant,
       hostParty: values?.hostParty,
       consultant: values?.consultant,
-      summary: values?.summaryDescriptionProject,
+      summary: values?.summary,
     };
 
     console.log(ProcessSteps.VR_INTRODUCTION, introductionFormValues);
@@ -186,8 +186,8 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>

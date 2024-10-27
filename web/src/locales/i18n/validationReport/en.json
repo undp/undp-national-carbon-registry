@@ -122,9 +122,9 @@
   "ri": "RI",
   "tr": "TR",
   "tl": "TL",
-  "te": "te",
-  "tm": "tm",
-  "itr": "itr",
+  "te": "TE",
+  "tm": "TM",
+  "itr": "ITR",
   "addFindings": "Add Findings",
   "memberDescription": "TL -Team Leader TE- Technical Expert TM- Team Member ITR- Internal Technical Reviewer  DR- Document Review SV- Site Visit RI- Report Issuance TR- Technical Review",
   "publicReview": "Publication of the Carbon Management Assessment for Public Review",
@@ -272,5 +272,5 @@
   "additionalDocumentUpload": "Upload your additional documents here",
   "addItem": "Add Item",
   "addLocation": "Add Location",
-  "uploadDocs": "Upload your additional documents here"
+  "uploadDocs": "Upload your additional documents here",
 }

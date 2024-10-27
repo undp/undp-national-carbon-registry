@@ -53,9 +53,9 @@ const ProjectDetails = (props: ValidationStepsProps) => {
       website: values?.website,
       summary: values?.summary,
       projectTitle: values?.projectTitle,
-      workCarriedOutBy: values?.workCarryOutBy,
+      workCarriedOutBy: values?.workCarriedOutBy,
       workApprovedBy: values?.workApprovedBy,
-      reportNo: values?.reportId,
+      reportNo: values?.reportNo,
     };
 
     console.log(ProcessSteps.VR_PROJECT_DETAILS, projectDetailsFormValues);
@@ -317,7 +317,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   <div className="step-form-right-col">
                     <Form.Item
                       label={t('validationReport:projectTitle')}
-                      name="title"
+                      name="projectTitle"
                       rules={[
                         {
                           required: true,
@@ -346,7 +346,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   <div className="step-form-left-col">
                     <Form.Item
                       label={t('validationReport:reportNo')}
-                      name="reportId"
+                      name="reportNo"
                       rules={[
                         {
                           required: true,
@@ -480,8 +480,8 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
+                  // onClick={next}
+                  htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>

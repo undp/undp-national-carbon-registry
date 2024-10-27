@@ -1,5 +1,5 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { Button, Col, DatePicker, Form, Input, InputNumber, Row } from 'antd';
 import moment from 'moment';
 import { ProjectCategory } from '../../enum/slRegistryEnum';
 import { useEffect } from 'react';
@@ -9,6 +9,7 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   projectEmissionReductions: 'avgProjectEmissionReductions',
   leakageEmissionReductions: 'avgLeakageEmissionReductions',
   netEmissionReductions: 'avgNetEmissionReductions',
+  bufferPoolAllocation: 'avgBufferPoolAllocations',
 };
 
 const NetEmissionReduction = (props: any) => {
@@ -39,7 +40,7 @@ const NetEmissionReduction = (props: any) => {
       );
       form.setFieldValue('netEmissionReductions', String(netGHGEmissions));
     } else {
-      const listVals = form.getFieldValue('estimatedNetEmissionReduction');
+      const listVals = form.getFieldValue('estimatedNetEmissionReductions');
 
       if (listVals[index] !== undefined) {
         baselineEmissionReductionsVal = Number(listVals[index].baselineEmissionReductions || 0);
@@ -53,7 +54,7 @@ const NetEmissionReduction = (props: any) => {
 
         listVals[index].netEmissionReductions = netGHGEmissions;
 
-        form.setFieldValue('estimatedNetEmissionReduction', listVals);
+        form.setFieldValue('estimatedNetEmissionReductions', listVals);
       }
     }
   };
@@ -62,7 +63,7 @@ const NetEmissionReduction = (props: any) => {
     const category = 'netEmissionReductions';
     const categoryToAdd = 'totalNetEmissionReductions';
     let tempTotal = Number(form.getFieldValue(category) || 0);
-    const listVals = form.getFieldValue('estimatedNetEmissionReduction');
+    const listVals = form.getFieldValue('estimatedNetEmissionReductions');
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
         if (item && item[category]) {
@@ -85,7 +86,7 @@ const NetEmissionReduction = (props: any) => {
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
     let tempTotal = Number(form.getFieldValue(category) || 0);
-    const listVals = form.getFieldValue('estimatedNetEmissionReduction');
+    const listVals = form.getFieldValue('estimatedNetEmissionReductions');
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
         if (item && item[category]) {
@@ -106,6 +107,25 @@ const NetEmissionReduction = (props: any) => {
     }
 
     CalculateNetTotalEmissions();
+  };
+
+  const calculateBufferPool = (value: any, category: string, categoryToAdd: string) => {
+    const listVals = form.getFieldValue('estimatedNetEmissionReductions');
+    const bufferPool = listVals?.reduce((total: number, currentVal: any) => {
+      return total + currentVal.bufferPoolAllocation;
+    }, 0);
+
+    const tempTotal = bufferPool;
+    const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
+    form.setFieldValue(categoryToAdd, bufferPool);
+    if (creditingYears > 0) {
+      form.setFieldValue(
+        EMISSION_CATEGORY_AVG_MAP[category],
+        Math.round(tempTotal / creditingYears)
+      );
+    } else {
+      form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
+    }
   };
 
   const onPeriodEndChange = (value: any, fieldCounts: number) => {
@@ -148,229 +168,7 @@ const NetEmissionReduction = (props: any) => {
           </Col>
         </Row>
 
-        {/* <Row justify={'space-between'} align={'middle'}>
-          <Col md={6} xl={6} className="col1">
-            <Form.Item
-              label={``}
-              name="emissionsPeriodStart"
-              className="datepicker"
-              rules={[
-                {
-                  required: true,
-                  message: '',
-                },
-                {
-                  validator: async (rule, value) => {
-                    if (
-                      String(value).trim() === '' ||
-                      String(value).trim() === undefined ||
-                      value === null ||
-                      value === undefined
-                    ) {
-                      throw new Error(`${t('CMAForm:required')}`);
-                    }
-                  },
-                },
-              ]}
-            >
-              <DatePicker
-                size="large"
-                placeholder="Start Date"
-                picker="month"
-                format="YYYY MMM"
-
-                // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-              />
-            </Form.Item>
-            <p>to</p>
-            <Form.Item
-              label={``}
-              name="emissionsPeriodEnd"
-              className="datepicker"
-              rules={[
-                {
-                  required: true,
-                  message: '',
-                },
-                {
-                  validator: async (rule, value) => {
-                    if (
-                      String(value).trim() === '' ||
-                      String(value).trim() === undefined ||
-                      value === null ||
-                      value === undefined
-                    ) {
-                      throw new Error(`${t('CMAForm:required')}`);
-                    }
-
-                    const startDate = moment(form.getFieldValue('emissionsPeriodStart')).startOf(
-                      'month'
-                    );
-                    const selectedDate = moment(value).endOf('month');
-                    const duration = moment.duration(selectedDate.diff(startDate));
-
-                    const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                    if (!isOneYear) {
-                      throw new Error('Duration should be a year');
-                    }
-                  },
-                },
-              ]}
-            >
-              <DatePicker
-                size="large"
-                placeholder="End Date"
-                picker="month"
-                format="YYYY MMM"
-                onChange={(value) => onPeriodEndChange(value, 1)}
-                disabledDate={(currentDate: any) =>
-                  currentDate < moment(form.getFieldValue('emissionsPeriodStart')).startOf('month')
-                }
-              />
-            </Form.Item>
-          </Col>
-          <Col md={3} xl={3}>
-            <Form.Item
-              name="baselineEmissionReductions"
-              rules={[
-                {
-                  required: true,
-                  message: `${t('CMAForm:required')}`,
-                },
-                {
-                  validator(rule, value) {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
-
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(value)) {
-                      return Promise.reject(new Error('Should be an integer'));
-                    }
-
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <Input
-                onChange={(value) => {
-                  calculateNetGHGEmissions(value);
-                  calculateTotalEmissions(
-                    value,
-                    'baselineEmissionReductions',
-                    'totalBaselineEmissionReductions'
-                  );
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col md={3} xl={3}>
-            <Form.Item
-              name="projectEmissionReductions"
-              rules={[
-                {
-                  required: true,
-                  message: `${t('CMAForm:required')}`,
-                },
-                {
-                  validator(rule, value) {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
-
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(value)) {
-                      return Promise.reject(new Error('Should be an integer'));
-                    }
-
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <Input
-                onChange={(value) => {
-                  calculateNetGHGEmissions(value);
-                  calculateTotalEmissions(
-                    value,
-                    'projectEmissionReductions',
-                    'totalProjectEmissionReductions'
-                  );
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col md={3} xl={3}>
-            <Form.Item
-              name="leakageEmissionReductions"
-              rules={[
-                {
-                  required: true,
-                  message: `${t('CMAForm:required')}`,
-                },
-                {
-                  validator(rule, value) {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
-
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(value)) {
-                      return Promise.reject(new Error('Should be an integer'));
-                    }
-
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <Input
-                onChange={(value) => {
-                  calculateNetGHGEmissions(value);
-                  calculateTotalEmissions(
-                    value,
-                    'leakageEmissionReductions',
-                    'totalLeakageEmissionReductions'
-                  );
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col md={3} xl={3}>
-            <Form.Item
-              name="netEmissionReductions"
-              rules={[
-                {
-                  required: true,
-                  message: `${t('CMAForm:required')}`,
-                },
-                {
-                  validator(rule, value) {
-                    if (!value) {
-                      return Promise.resolve();
-                    }
-
-                    // eslint-disable-next-line no-restricted-globals
-                    if (isNaN(value)) {
-                      return Promise.reject(new Error('Should be an integer'));
-                    }
-
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <Input onChange={(value) => calculateNetGHGEmissions(value)} />
-            </Form.Item>
-          </Col>
-          <Col md={2} xl={2}>
-            {' '}
-          </Col>
-        </Row> */}
-
-        <Form.List name="estimatedNetEmissionReduction">
+        <Form.List name="estimatedNetEmissionReductions">
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, ...restField }) => (
@@ -380,7 +178,7 @@ const NetEmissionReduction = (props: any) => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                         <Form.Item
                           label={``}
-                          name={[name, 'emissionsPeriodStart']}
+                          name={[name, 'startDate']}
                           className="datepicker"
                           rules={[
                             {
@@ -412,7 +210,7 @@ const NetEmissionReduction = (props: any) => {
                         <span style={{ marginBottom: 23 }}>to</span>
                         <Form.Item
                           label={``}
-                          name={[name, 'emissionsPeriodEnd']}
+                          name={[name, 'endDate']}
                           className="datepicker"
                           rules={[
                             {
@@ -431,17 +229,17 @@ const NetEmissionReduction = (props: any) => {
                                 }
 
                                 const startDate = moment(
-                                  form.getFieldValue('estimatedNetEmissionReduction')[name]
-                                    .emissionsPeriodStart
+                                  form.getFieldValue('estimatedNetEmissionReductions')[name]
+                                    .startDate
                                 ).startOf('month');
                                 const selectedDate = moment(value).endOf('month');
                                 const duration = moment.duration(selectedDate.diff(startDate));
 
                                 const isOneYear = Math.round(duration.asMonths()) === 12;
 
-                                if (!isOneYear) {
-                                  throw new Error('Duration should be a year');
-                                }
+                                // if (!isOneYear) {
+                                //   throw new Error('Duration should be a year');
+                                // }
                               },
                             },
                           ]}
@@ -455,7 +253,7 @@ const NetEmissionReduction = (props: any) => {
                             disabledDate={(currentDate: any) =>
                               currentDate <
                               moment(
-                                form.getFieldValue('estimatedNetEmissionReduction')[name]
+                                form.getFieldValue('estimatedNetEmissionReductions')[name]
                                   .emissionsPeriodStart
                               ).startOf('month')
                             }
@@ -466,6 +264,7 @@ const NetEmissionReduction = (props: any) => {
                     <Col md={3} xl={3}>
                       <Form.Item
                         name={[name, 'baselineEmissionReductions']}
+                        className="full-width-form-item"
                         rules={[
                           {
                             required: true,
@@ -487,7 +286,7 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <Input
+                        <InputNumber
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
                             calculateTotalEmissions(
@@ -523,7 +322,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <Input
+                        <InputNumber
+                          className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
                             calculateTotalEmissions(
@@ -559,7 +359,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <Input
+                        <InputNumber
+                          className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
                             calculateTotalEmissions(
@@ -595,7 +396,7 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <Input />
+                        <InputNumber className="full-width-form-item" />
                       </Form.Item>
                     </Col>
                     {projectCategory === ProjectCategory.AFOLU && (
@@ -623,7 +424,16 @@ const NetEmissionReduction = (props: any) => {
                             },
                           ]}
                         >
-                          <Input />
+                          <InputNumber
+                            className="full-width-form-item"
+                            onChange={(value) => {
+                              calculateBufferPool(
+                                value,
+                                'bufferPoolAllocation',
+                                'totalBufferPoolAllocations'
+                              );
+                            }}
+                          />
                         </Form.Item>
                       </Col>
                     )}
@@ -713,7 +523,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -740,7 +550,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -767,7 +577,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -794,9 +604,39 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
+
+          {projectCategory === ProjectCategory.AFOLU && (
+            <Col md={3} xl={3} className="total-cols">
+              <Form.Item
+                name="totalBufferPoolAllocations"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('CMAForm:required')}`,
+                  },
+                  {
+                    validator(rule, value) {
+                      if (!value) {
+                        return Promise.resolve();
+                      }
+
+                      // eslint-disable-next-line no-restricted-globals
+                      if (isNaN(value)) {
+                        return Promise.reject(new Error('Should be an integer'));
+                      }
+
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber className="full-width-form-item" disabled />
+              </Form.Item>
+            </Col>
+          )}
           <Col md={2} xl={2}>
             {' '}
           </Col>
@@ -810,7 +650,7 @@ const NetEmissionReduction = (props: any) => {
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
-              name="totalCreditingYears"
+              name="totalNumberOfCredingYears"
               rules={[
                 {
                   required: true,
@@ -832,7 +672,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3}>
@@ -844,6 +684,11 @@ const NetEmissionReduction = (props: any) => {
           <Col md={3} xl={3}>
             {' '}
           </Col>
+          {projectCategory === ProjectCategory.AFOLU && (
+            <Col md={3} xl={3}>
+              {' '}
+            </Col>
+          )}
           <Col md={2} xl={2}>
             {' '}
           </Col>
@@ -879,7 +724,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -906,7 +751,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <InputNumber disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -963,6 +808,35 @@ const NetEmissionReduction = (props: any) => {
               <Input disabled />
             </Form.Item>
           </Col>
+          {projectCategory === ProjectCategory.AFOLU && (
+            <Col md={3} xl={3} className="total-cols">
+              <Form.Item
+                name="avgBufferPoolAllocations"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('CMAForm:required')}`,
+                  },
+                  {
+                    validator(rule, value) {
+                      if (!value) {
+                        return Promise.resolve();
+                      }
+
+                      // eslint-disable-next-line no-restricted-globals
+                      if (isNaN(value)) {
+                        return Promise.reject(new Error('Should be an integer'));
+                      }
+
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <InputNumber className="full-width-form-item" disabled />
+              </Form.Item>
+            </Col>
+          )}
           <Col md={2} xl={2} className="total-cols">
             {' '}
           </Col>

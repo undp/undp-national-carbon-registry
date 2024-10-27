@@ -1,6 +1,6 @@
 import React from 'react';
 import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Input, Col, Upload } from 'antd';
+import { Row, Button, Form, Input, Col, Upload, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
@@ -26,13 +26,13 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
   const onFinish = async (values: any) => {
     const validationOpinionFormValues: any = {
       opinion: values?.opinion,
-      validator1Signature: await fileUploadValueExtract(values, 'validator1Signature'),
+      validator1Signature: (await fileUploadValueExtract(values, 'validator1Signature'))[0],
       validator1Designation: values?.validator1Designation,
       validator1Name: values?.validator1Name,
       validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
       validator2Designation: values?.validator2Designation,
       validator2Name: values?.validator2Name,
-      validator2Signature: await fileUploadValueExtract(values, 'validator2Signature'),
+      validator2Signature: (await fileUploadValueExtract(values, 'validator2Signature'))[0],
       validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
     };
 
@@ -53,7 +53,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                // onFinish(values);
+                onFinish(values);
                 if (next) {
                   next();
                 }
@@ -75,7 +75,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
               <Row justify={'space-between'} gutter={40} className="mg-top-1">
                 <Col md={24} xl={10}>
-                  <p className="no-margin-p">{t('witness')}</p>
+                  <p className="no-margin-p">{t('validationReport:witness')}</p>
 
                   <div className="signature-upload">
                     <Form.Item
@@ -128,7 +128,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </div>
                   <Form.Item
                     name="validator1Name"
-                    label={t('name')}
+                    label={t('validationReport:name')}
                     rules={[
                       {
                         required: true,
@@ -140,7 +140,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     name="validator1Designation"
-                    label={t('designation')}
+                    label={t('validationReport:designation')}
                     rules={[
                       {
                         required: true,
@@ -152,7 +152,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     name="validator1DateOfSign"
-                    label={t('dateOfSignature')}
+                    label={t('validationReport:dateOfSignature')}
                     rules={[
                       {
                         required: true,
@@ -160,11 +160,14 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <DatePicker
+                      size="large"
+                      disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    />
                   </Form.Item>
                 </Col>
                 <Col md={24} xl={10}>
-                  <p className="no-margin-p">{t('witness')}</p>
+                  <p className="no-margin-p">{t('validationReport:witness')}</p>
 
                   <div className="signature-upload">
                     <Form.Item
@@ -217,7 +220,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </div>
                   <Form.Item
                     name="validator2Name"
-                    label={t('name')}
+                    label={t('validationReport:name')}
                     rules={[
                       {
                         required: true,
@@ -229,7 +232,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     name="validator2Designation"
-                    label={t('designation')}
+                    label={t('validationReport:designation')}
                     rules={[
                       {
                         required: true,
@@ -241,7 +244,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <Form.Item
                     name="validator2DateOfSign"
-                    label={t('dateOfSignature')}
+                    label={t('validationReport:dateOfSignature')}
                     rules={[
                       {
                         required: true,
@@ -249,7 +252,10 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <Input />
+                    <DatePicker
+                      size="large"
+                      disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -261,11 +267,11 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
-                  onClick={next}
+                  // onClick={next}
                   // onClick={() => {
                   //   console.log(form.getFieldsValue());
                   // }}
-                  // htmlType="submit"
+                  htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>

@@ -40,6 +40,7 @@ import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLC
 import { CustomStepsProps } from '../CMAForm/StepProps';
 import { ProcessSteps } from './ValidationStepperComponent';
 import { requiredValidationRule } from '../../Utils/validationHelper';
+import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 
 const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate } = props;
@@ -255,32 +256,67 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
     return null;
   };
 
+  const getLocationDetails = async (values: any) => {
+    const files = await fileUploadValueExtract(values, 'additionalDocuments');
+
+    return values.locationsOfProjectActivity.map((activity: any) => {
+      const technicalProjDesc = activity.technicalProjectDescriptionItems.map(
+        (tecProjDesc: any) => {
+          return {
+            item: tecProjDesc.item,
+            parameterValue: tecProjDesc.parameterValue,
+          };
+        }
+      );
+      return {
+        locationOfProjectActivity: activity.locationOfProjectActivity,
+        province: activity.province,
+        district: activity.district,
+        dsDivision: activity.dsDivision,
+        city: activity.city,
+        community: activity.community,
+        geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
+        additionalDocuments: files,
+        technicalProjectDescription: technicalProjDesc,
+      };
+    });
+  };
+
   const onFinish = async (values: any) => {
+    const projectScopeUNFCC: any = {};
+    const formProjectScopeValues = form.getFieldValue('projectScopeUNFCC');
+
+    projectScopeList.forEach((scopeList) => {
+      projectScopeUNFCC[scopeList.id] = formProjectScopeValues?.some(
+        (val: any) => val === scopeList.id
+      );
+    });
+
     const ghgDescriptionFormValues: any = {
       projectTitle: values?.projectTitle,
       projectSize: values?.projectSize,
-
-      isProjectScopeEnergyIndustries: values?.isProjectScopeEnergyIndustries,
-      isProjectScopeEnergyDistribution: values?.isProjectScopeEnergyDistribution,
-      isProjectScopeEnergyDemand: values?.isProjectScopeEnergyDemand,
-      isProjectScopeManufacturingIndustries: values?.isProjectScopeManufacturingIndustries,
-      isProjectScopeChemicalIndustries: values?.isProjectScopeChemicalIndustries,
-      isProjectScopeChemicalIndustry: values?.isProjectScopeChemicalIndustry,
-      isProjectScopeConstruction: values?.isProjectScopeConstruction,
-      isProjectScopeTransport: values?.isProjectScopeTransport,
-      isProjectScopeMining: values?.isProjectScopeMining,
-      isProjectScopeFugitiveEmissionsFromFuel: values?.isProjectScopeFugitiveEmissionsFromFuel,
-      isProjectScopeFugitiveEmissionsFromHalocarbons: values?.isProjectScopeFugitiveEmissionsFromHalocarbons,
-      isProjectScopeSolventsUse: values?.isProjectScopeSolventsUse,
-      isProjectScopeWasteHandling: values?.isProjectScopeWasteHandling,
-      isProjectScopeAfforestation: values?.isProjectScopeAfforestation,
-      isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
+      ...projectScopeUNFCC,
+      // isProjectScopeEnergyIndustries: values?.isProjectScopeEnergyIndustries,
+      // isProjectScopeEnergyDistribution: values?.isProjectScopeEnergyDistribution,
+      // isProjectScopeEnergyDemand: values?.isProjectScopeEnergyDemand,
+      // isProjectScopeManufacturingIndustries: values?.isProjectScopeManufacturingIndustries,
+      // isProjectScopeChemicalIndustries: values?.isProjectScopeChemicalIndustries,
+      // isProjectScopeChemicalIndustry: values?.isProjectScopeChemicalIndustry,
+      // isProjectScopeConstruction: values?.isProjectScopeConstruction,
+      // isProjectScopeTransport: values?.isProjectScopeTransport,
+      // isProjectScopeMining: values?.isProjectScopeMining,
+      // isProjectScopeFugitiveEmissionsFromFuel: values?.isProjectScopeFugitiveEmissionsFromFuel,
+      // isProjectScopeFugitiveEmissionsFromHalocarbons:
+      //   values?.isProjectScopeFugitiveEmissionsFromHalocarbons,
+      // isProjectScopeSolventsUse: values?.isProjectScopeSolventsUse,
+      // isProjectScopeWasteHandling: values?.isProjectScopeWasteHandling,
+      // isProjectScopeAfforestation: values?.isProjectScopeAfforestation,
+      // isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
       creditingPeriod: values?.creditingPeriod,
-      startDateofCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
-      locationsOfProjectActivity: values.locationsOfProjectActivity,
-      technicalProjectDescriptions: values.technicalProjectDescriptions,
+      locationsOfProjectActivity: await getLocationDetails(values),
+      startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
     };
 
     // startDateCreditingPeriod: '',
@@ -366,22 +402,22 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
               <Row gutter={[8, 16]}>
                 <Col span={6}>{t('validationReport:projectScopeUNFCC')}</Col>
                 <Col span={18}>
-                  <Checkbox.Group className="full-width-form-item">
-                    {projectScopeList.map((scopeListItem: any, index: number) => {
-                      return (
-                        <Col span={24}>
-                          <div className="side-by-side-form-item full-width-form-item">
-                            <span>{`${index + 1} ${scopeListItem.label}`}</span>
-                            <Form.Item name={scopeListItem.id}>
-                              <Checkbox></Checkbox>
-                            </Form.Item>
-                          </div>
+                  <Form.Item name="projectScopeUNFCC">
+                    <Checkbox.Group className="full-width-form-item">
+                      {projectScopeList.map((scopeListItem: any, index: number) => {
+                        return (
+                          <Col span={24}>
+                            <div className="side-by-side-form-item full-width-form-item">
+                              <span>{`${index + 1} ${scopeListItem.label}`}</span>
+                              <Checkbox key={scopeListItem.id} value={scopeListItem.id}></Checkbox>
+                            </div>
 
-                          <Divider style={{ margin: 10 }} />
-                        </Col>
-                      );
-                    })}
-                  </Checkbox.Group>
+                            <Divider style={{ margin: 10 }} />
+                          </Col>
+                        );
+                      })}
+                    </Checkbox.Group>
+                  </Form.Item>
                 </Col>
               </Row>
 
@@ -428,7 +464,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <Form.Item
                   className="full-width-form-item"
                   label={`${t('validationReport:startDateofCreditingPeriod')}`}
-                  name="startDateofCreditingPeriod"
+                  name="startDateCreditingPeriod"
                   rules={[
                     {
                       required: true,
@@ -602,7 +638,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               <Col xl={12} md={24}>
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
-                                  name={[name, 'location']}
+                                  name={[name, 'geographicalLocationCoordinates']}
                                   rules={[
                                     {
                                       required: true,
@@ -785,7 +821,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                             </p>
                                             <Form.Item
                                               {...projectItemRest}
-                                              name={[itemName, 'technicalProjectDescriptionItem']}
+                                              name={[itemName, 'item']}
                                               key={itemKey}
                                               className="full-width-form-item"
                                               rules={[
@@ -808,12 +844,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                               </p>
                                             </div>
                                             <div className="technical-project-grid-parameter">
-                                              <Form.List
-                                                name={[
-                                                  itemName,
-                                                  'technicalProjectDescriptionLocationParameterValues',
-                                                ]}
-                                              >
+                                              <Form.List name={[itemName, 'parameterValue']}>
                                                 {(
                                                   parameterValueList,
                                                   {
@@ -835,10 +866,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                                         <>
                                                           <Form.Item
                                                             {...parameterValueListRestField}
-                                                            name={[
-                                                              parameterValueName,
-                                                              'technicalProjectDescriptionParameter',
-                                                            ]}
+                                                            name={[parameterValueName, 'parameter']}
                                                             key={parameterValueListKey}
                                                             rules={[requiredValidationRule(t)]}
                                                           >
@@ -849,10 +877,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                                           </Form.Item>
                                                           <Form.Item
                                                             {...parameterValueListRestField}
-                                                            name={[
-                                                              parameterValueName,
-                                                              'technicalProjectDescriptionValue',
-                                                            ]}
+                                                            name={[parameterValueName, 'value']}
                                                             key={parameterValueListKey}
                                                             rules={[requiredValidationRule(t)]}
                                                           >
@@ -923,11 +948,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       <Button
                                         onClick={() => {
                                           addItem({
-                                            technicalProjectDescriptionItem: '',
-                                            technicalProjectDescriptionLocationParameterValues: [
+                                            item: '',
+                                            parameterValue: [
                                               {
-                                                technicalProjectDescriptionParameter: '',
-                                                technicalProjectDescriptionValue: '',
+                                                parameter: '',
+                                                value: '',
                                               },
                                             ],
                                           });
@@ -1000,9 +1025,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
                   //   // next()
                   // }}
-                  onClick={next}
+                  // onClick={next}
 
-                  // htmlType="submit"
+                  htmlType="submit"
                 >
                   {t('validationReport:next')}
                 </Button>

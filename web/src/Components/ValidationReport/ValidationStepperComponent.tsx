@@ -1,4 +1,4 @@
-import { Steps } from 'antd';
+import { Steps, message } from 'antd';
 import { useEffect, useState } from 'react';
 import './ValidationReport.scss';
 // import './SLCFMonitoringReportComponent.scss';
@@ -30,9 +30,10 @@ export enum ProcessSteps {
 
 const StepperComponent = (props: any) => {
   const { t } = props;
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
   const { id: programId } = useParams();
+  const { get, post } = useConnection();
 
   const [existingFormValues, setExistingFormValues] = useState({
     programmeId: '001',
@@ -49,277 +50,42 @@ const StepperComponent = (props: any) => {
     },
   });
 
-  const handleValuesUpdate = (val: any) => {
-    setExistingFormValues((prevVal: any) => {
-      const tempContent = {
-        ...prevVal.content,
-        ...val,
-      };
-      return { ...prevVal, content: tempContent };
-    });
+  const submitForm = async (formValues: any) => {
+    const validationData = {
+      programmeId: programId,
+      content: {
+        projectDetails: formValues.content[ProcessSteps.VR_PROJECT_DETAILS],
+        introduction: formValues.content[ProcessSteps.VR_INTRODUCTION],
+        ghgProjectDescription: formValues.content[ProcessSteps.VR_GHG_PROJECT_DESCRIPTION],
+        validationMethodology: formValues.content[ProcessSteps.VR_VALIDATION_METHODOLOGY],
+        dataForValidationProcess: formValues.content[ProcessSteps.VR_VALIDATION_PROCESS],
+        validationOpinion: formValues.content[ProcessSteps.VR_VALIDATION_OPINION],
+        references: formValues.content[ProcessSteps.VR_REFERENCE],
+        appendix: formValues.content[ProcessSteps.VR_APPENDIX],
+      },
+    };
 
-    const isFinal = val[ProcessSteps.VR_APPENDIX];
+    console.log('Validation Data', validationData);
 
-    if (isFinal) {
-      const validationData = {
-        programmeId: '',
-        content: {
-          projectDetails: {
-            client: '',
-            dateOfIssue: '',
-            versionNo: '',
-            versionDate: '',
-            telephone: '',
-            address: '',
-            email: '',
-            website: '',
-            summary: '',
-            projectTitle: '',
-            reportNo: '',
-            workCarriedOutBy: '',
-            workApprovedBy: '',
-          },
-          introduction: {
-            objective: '',
-            scopeAndCriteria: '',
-            titleOfProjectActivity: '',
-            projectParticipant: '',
-            hostParty: '',
-            consultant: '',
-            summary: '',
-          },
-          ghgProjectDescription: {
-            projectTitle: '',
-            projectSize: 'SMALL',
-            isProjectScopeEnergyIndustries: '',
-            isProjectScopeEnergyDistribution: '',
-            isProjectScopeEnergyDemand: '',
-            isProjectScopeManufacturingIndustries: '',
-            isProjectScopeChemicalIndustries: '',
-            isProjectScopeChemicalIndustry: '',
-            isProjectScopeConstruction: '',
-            isProjectScopeTransport: '',
-            isProjectScopeMining: '',
-            isProjectScopeFugitiveEmissionsFromFuel: '',
-            isProjectScopeFugitiveEmissionsFromHalocarbons: '',
-            isProjectScopeSolventsUse: '',
-            isProjectScopeWasteHandling: '',
-            isProjectScopeAfforestation: '',
-            isProjectScopeAgriculture: '',
-            appliedMethodology: '',
-            technicalAreas: '',
-            creditingPeriod: '',
-            startDateCreditingPeriod: '',
-            locationsOfProjectActivity: [
-              {
-                locationOfProjectActivity: '',
-                province: '',
-                district: '',
-                dsDivision: '',
-                city: '',
-                community: '',
-                geographicalLocationCoordinates: '',
-                additionalDocuments: '',
-                technicalProjectDescription: '',
-              },
-            ],
-          },
-          validationMethodology: {
-            teamMembers: [
-              {
-                name: '',
-                function: [],
-                taskPerformed: [],
-              },
-            ],
-            cmaPublicReview: '',
-            onsiteInspection: '',
-            followupInterviews: [
-              {
-                name: '',
-                designation: '',
-                organization: '',
-                method: '',
-                mainTopicsCovered: '',
-              },
-            ],
-            validationReportFinding: [
-              {
-                typeOfFinding: 'CL',
-                findingNo: '',
-                rfToCMA: '',
-                actionRequestsByValidationTeam: '',
-                summaryOfProjectOwnerResponse: '',
-                validationTeamAssessment: '',
-                conclusion: 'CONCLUSION_1',
-              },
-            ],
-            generalDescriptionNoOfCAR: 1,
-            generalDescriptionNoOfCL: 1,
-            generalDescriptionNoOfFAR: 1,
-            involvedPartiesNoOfCAR: 1,
-            involvedPartiesNoOfCL: 1,
-            involvedPartiesNoOfFAR: 1,
-            projectSpecificationNoOfCAR: 1,
-            projectSpecificationNoOfCL: 1,
-            projectSpecificationNoOfFAR: 1,
-            startDateNoOfCAR: 1,
-            startDateNoOfCL: 1,
-            startDateNoOfFAR: 1,
-            technicalProjectDescriptionNoOfCAR: 1,
-            technicalProjectDescriptionNoOfCL: 1,
-            technicalProjectDescriptionNoOfFAR: 1,
-            contributionToSustainableDevelopmentNoOfCAR: 1,
-            contributionToSustainableDevelopmentNoOfCL: 1,
-            contributionToSustainableDevelopmentNoOfFAR: 1,
-            technologyEmployedNoOfCAR: 1,
-            technologyEmployedNoOfCL: 1,
-            technologyEmployedNoOfFAR: 1,
-            applicationOfMethodologyNoOfCAR: 1,
-            applicationOfMethodologyNoOfCL: 1,
-            applicationOfMethodologyNoOfFAR: 1,
-            baselineIdentificationNoOfCAR: 1,
-            baselineIdentificationNoOfCL: 1,
-            baselineIdentificationNoOfFAR: 1,
-            calculationOfGHGEmissionNoOfCAR: 1,
-            calculationOfGHGEmissionNoOfCL: 1,
-            calculationOfGHGEmissionNoOfFAR: 1,
-            additionalityDeterminationNoOfCAR: 1,
-            additionalityDeterminationNoOfCL: 1,
-            additionalityDeterminationNoOfFAR: 1,
-            monitoringMethodologyNoOfCAR: 1,
-            monitoringMethodologyNoOfCL: 1,
-            monitoringMethodologyNoOfFAR: 1,
-            monitoringPlanNoOfCAR: 1,
-            monitoringPlanNoOfFAR: 1,
-            projectManagementPlanningNoOfCAR: 1,
-            projectManagementPlanningNoOfCL: 1,
-            projectManagementPlanningNoOfFAR: 1,
-            durationOfProjectSpecificSection: 1,
-            durationOfProjectNoOfCAR: 1,
-            durationOfProjectNoOfCL: 1,
-            durationOfProjectNoOfFAR: 1,
-            environmentalImpactsSpecificSection: 1,
-            environmentalImpactsNoOfCAR: 1,
-            environmentalImpactsNoOfCL: 1,
-            environmentalImpactsNoOfFAR: 1,
-            stakeholderCommentsSpecificSection: 1,
-            stakeholderCommentsNoOfCAR: 1,
-            stakeholderCommentsNoOfCL: 1,
-            stakeholderCommentsNoOfFAR: 1,
-            sumNoOfCAR: 1,
-            sumNoOfCL: 1,
-            sumNoOfFAR: 1,
-            finalValidation: 1,
-            internalTechnicalReview: 1,
-            finalApproval: 1,
-          },
-          dataForValidationProcess: {
-            generalDescription: '',
-            employedTechnologies: [
-              {
-                siteNo: 12,
-                location: '',
-                capacity: '',
-              },
-            ],
-            totalCapacity: 1,
-            approvals: '',
-            applicationOfMethodologyTitle: '',
-            applicationOfMethodologyApplicability: '',
-            applicabilityCriteria1ProjectActivity: '',
-            isApplicabilityCriteria1Met: '',
-            applicabilityCriteria2ProjectActivity: '',
-            isApplicabilityCriteria2Met: '',
-            applicabilityCriteria3ProjectActivity: '',
-            isApplicabilityCriteria3Met: '',
-            applicabilityCriteria4ProjectActivity: '',
-            isApplicabilityCriteria4Met: '',
-            applicabilityCriteria5ProjectActivity: '',
-            isApplicabilityCriteria5Met: '',
-            applicabilityCriteria6ProjectActivity: '',
-            isApplicabilityCriteria6Met: '',
-            applicabilityCriteria7ProjectActivity: '',
-            isApplicabilityCriteria7Met: '',
-            applicabilityCriteria8ProjectActivity: '',
-            isApplicabilityCriteria8Met: '',
-            applicabilityCriteria9ProjectActivity: '',
-            isApplicabilityCriteria9Met: '',
-            applicabilityCriteria10ProjectActivity: '',
-            isApplicabilityCriteria10Met: '',
-            projectBoundary: '',
-            baselineIdentification: '',
-            formulasUsedToDetermineEmissionReductions: '',
-            calculationOfBaselineEmissionFactor: '',
-            gridEmissionFactorValue: '',
-            gridEmissionFactorUnit: '',
-            plantFactor: '',
-            annualEmissionReductionCalculation: '',
-            baselineEmissions: [
-              {
-                location: '',
-                projectCapacityValue: 1,
-                plantFactorValue: 1,
-                avgEnergyOutputValue: 1,
-                gridEmissionFactorValue: 1,
-                emissionReductionValue: 1,
-              },
-            ],
-            projectEmission: '',
-            leakageEmission: '',
-            estimatedNetEmissionReductions: [
-              {
-                yearlyGHGEmissionReductions: [
-                  {
-                    startDate: 212,
-                    endDate: 212,
-                    baselineEmissionReductions: 212,
-                    projectEmissionReductions: 212,
-                    leakageEmissionReductions: 212,
-                    netEmissionReductions: 212,
-                    bufferPoolAllocation: 212,
-                  },
-                ],
-                totalBaselineEmissionReductions: 1,
-                totalProjectEmissionReductions: 1,
-                totalLeakageEmissionReductions: 1,
-                totalNetEmissionReductions: 1,
-                totalBufferPoolAllocations: 1,
-                totalNumberOfCredingYears: 1,
-                avgBaselineEmissionReductions: 1,
-                avgProjectEmissionReductions: 1,
-                avgLeakageEmissionReductions: 1,
-                avgNetEmissionReductions: 1,
-                avgBufferPoolAllocations: 1,
-              },
-            ],
-            methodologyDeviations: '',
-            monitoringPlan: '',
-            carbonManagementAssessment: '',
-            changesOfProjectActivity: '',
-            environmentImpact: '',
-            commentsOfStakeholders: '',
-          },
-          validationOpinion: {
-            opinion: '',
-            validator1Signature: '',
-            validator1Name: '',
-            validator1Designation: '',
-            validator1DateOfSign: 22222,
-            validator2Signature: '',
-            validator2Name: '',
-            validator2Designation: '',
-            validator2DateOfSign: 2222,
-          },
-          references: {
-            references: '',
-          },
-          appendix: {
-            comments: '',
-            additionalDocuments: [],
-          },
-        },
-      };
+    try {
+      const res = await post('national/programmeSL/validation/create', validationData);
+      console.log(res);
+      if (res?.response?.data?.statusCode === 200) {
+        message.open({
+          type: 'success',
+          content: 'CMA form has been submitted successfully',
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        // navigate('/programmeManagementSLCF/viewAll');
+      }
+    } catch (error: any) {
+      message.open({
+        type: 'error',
+        content: 'Something went wrong',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
     }
   };
 
@@ -333,8 +99,6 @@ const StepperComponent = (props: any) => {
 
   const [countries, setCountries] = useState<[]>([]);
   const [projectCategory, setProjectCategory] = useState<string>('');
-
-  const { get, post } = useConnection();
 
   const [form1] = useForm();
   const [form2] = useForm();
@@ -435,7 +199,7 @@ const StepperComponent = (props: any) => {
         email: projectContent?.projectDetails?.email,
         physicalAddress: projectContent?.projectDetails?.physicalAddress,
         website: projectContent?.projectDetails?.website,
-        reportId: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
+        reportNo: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
       });
 
       form2.setFieldsValue({
@@ -451,11 +215,11 @@ const StepperComponent = (props: any) => {
               ...location,
               technicalProjectDescriptionItems: [
                 {
-                  technicalProjectDescriptionItem: '',
-                  technicalProjectDescriptionLocationParameterValues: [
+                  item: '',
+                  parameterValue: [
                     {
-                      technicalProjectDescriptionParameter: '',
-                      technicalProjectDescriptionValue: '',
+                      parameter: '',
+                      value: '',
                     },
                   ],
                 },
@@ -466,21 +230,29 @@ const StepperComponent = (props: any) => {
       });
 
       form4.setFieldsValue({
-        resolutionsOfFindings: [
+        validationReportFinding: [
           {
-            type: '',
+            typeOfFinding: '',
             findingNo: '',
-            refToCMA: '',
-            actionRequestByTeam: '',
+            rfToCMA: '',
+            actionRequestsByValidationTeam: '',
             summaryOfProjectOwnerResponse: '',
             validationTeamAssessment: '',
             conclusion: [],
           },
         ],
+        teamMembers: [
+          {
+            name: '',
+            company: `${t('validationReport:sriLankaClimateFund')}`,
+            function: '',
+            taskPerformed: '',
+          },
+        ],
       });
 
       form5.setFieldsValue({
-        employedTechnology: projectContent?.projectActivity.locationsOfProjectActivity.map(
+        employedTechnologies: projectContent?.projectActivity.locationsOfProjectActivity.map(
           (location: any, index: number) => {
             return {
               siteNo: index + 1,
@@ -489,26 +261,28 @@ const StepperComponent = (props: any) => {
             };
           }
         ),
+        gridEmissionFactorUnit: 'tCO2e/MWh',
+        gridEmissionFactorValueGlobal: 0.72222,
         baselineEmissions: [
           {
             type: 'unit',
             location: t('validationReport:units'),
-            projectCapacity: 'kWp',
-            plantFactor: '%',
-            averageEnergyOutput: 'MWh/Year',
-            gridEmissionFactor: 'tCO2/MWh',
-            emissionReduction: 'tCO2/Yea',
+            projectCapacityValue: 'kWp',
+            plantFactorValue: '%',
+            avgEnergyOutputValue: 'MWh/Year',
+            gridEmissionFactorValue: 'tCO2/MWh',
+            emissionReductionValue: 'tCO2/Yea',
           },
           ...projectContent?.projectActivity.locationsOfProjectActivity.map(
             (location: any, index: number) => {
               return {
                 type: 'value',
                 location: location.locationOfProjectActivity,
-                projectCapacity: '',
-                plantFactor: '',
-                averageEnergyOutput: '',
-                gridEmissionFactor: '',
-                emissionReduction: '',
+                projectCapacityValue: '',
+                plantFactorValue: '',
+                avgEnergyOutputValue: '',
+                gridEmissionFactorValue: '',
+                emissionReductionValue: '',
               };
             }
           ),
@@ -517,12 +291,12 @@ const StepperComponent = (props: any) => {
           projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
             (emissionData: any) => {
               return {
-                emissionsPeriodStart: moment(emissionData.startDate * 1000),
-                emissionsPeriodEnd: moment(emissionData.endDate * 1000),
+                startDate: moment(emissionData.startDate * 1000),
+                endDate: moment(emissionData.endDate * 1000),
               };
             }
           ),
-        totalCreditingYears: projectContent?.projectActivity?.totalCreditingYears,
+        totalNumberOfCredingYears: projectContent?.projectActivity?.totalCreditingYears,
       });
 
       // setProjectCategory(data?.projectCategory);
@@ -543,6 +317,285 @@ const StepperComponent = (props: any) => {
     } catch (error) {
       console.log('error');
     }
+  };
+
+  const handleValuesUpdate = (val: any) => {
+    setExistingFormValues((prevVal: any) => {
+      const tempContent = {
+        ...prevVal.content,
+        ...val,
+      };
+      return { ...prevVal, content: tempContent };
+    });
+
+    if (current === 7) {
+      const formValues = { ...existingFormValues };
+      formValues.content[ProcessSteps.VR_APPENDIX] = val[ProcessSteps.VR_APPENDIX];
+      submitForm(formValues.content[ProcessSteps.VR_APPENDIX]);
+    }
+
+    const isFinal = val[ProcessSteps.VR_APPENDIX];
+    // {
+    //   projectDetails: {
+    //     client: '',
+    //     dateOfIssue: '',
+    //     versionNo: '',
+    //     versionDate: '',
+    //     telephone: '',
+    //     address: '',
+    //     email: '',
+    //     website: '',
+    //     summary: '',
+    //     projectTitle: '',
+    //     reportNo: '',
+    //     workCarriedOutBy: '',
+    //     workApprovedBy: '',
+    //   },
+    //   introduction: {
+    //     objective: '',
+    //     scopeAndCriteria: '',
+    //     titleOfProjectActivity: '',
+    //     projectParticipant: '',
+    //     hostParty: '',
+    //     consultant: '',
+    //     summary: '',
+    //   },
+    //   ghgProjectDescription: {
+    //     projectTitle: '',
+    //     projectSize: 'SMALL',
+    //     isProjectScopeEnergyIndustries: '',
+    //     isProjectScopeEnergyDistribution: '',
+    //     isProjectScopeEnergyDemand: '',
+    //     isProjectScopeManufacturingIndustries: '',
+    //     isProjectScopeChemicalIndustries: '',
+    //     isProjectScopeChemicalIndustry: '',
+    //     isProjectScopeConstruction: '',
+    //     isProjectScopeTransport: '',
+    //     isProjectScopeMining: '',
+    //     isProjectScopeFugitiveEmissionsFromFuel: '',
+    //     isProjectScopeFugitiveEmissionsFromHalocarbons: '',
+    //     isProjectScopeSolventsUse: '',
+    //     isProjectScopeWasteHandling: '',
+    //     isProjectScopeAfforestation: '',
+    //     isProjectScopeAgriculture: '',
+    //     appliedMethodology: '',
+    //     technicalAreas: '',
+    //     creditingPeriod: '',
+    //     startDateCreditingPeriod: '',
+    //     locationsOfProjectActivity: [
+    //       {
+    //         locationOfProjectActivity: '',
+    //         province: '',
+    //         district: '',
+    //         dsDivision: '',
+    //         city: '',
+    //         community: '',
+    //         geographicalLocationCoordinates: '',
+    //         additionalDocuments: '',
+    //         technicalProjectDescription: [
+    //           {
+    //             item: '',
+    //             parameterValue: [{ parameter: '', value: '' }],
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   },
+    //   validationMethodology: {
+    //     teamMembers: [
+    //       {
+    //         name: '',
+    //         function: [],
+    //         taskPerformed: [],
+    //       },
+    //     ],
+    //     cmaPublicReview: '',
+    //     onsiteInspection: '',
+    //     followupInterviews: [
+    //       {
+    //         name: '',
+    //         designation: '',
+    //         organization: '',
+    //         method: '',
+    //         mainTopicsCovered: '',
+    //       },
+    //     ],
+    //     validationReportFinding: [
+    //       {
+    //         typeOfFinding: 'CL',
+    //         findingNo: '',
+    //         rfToCMA: '',
+    //         actionRequestsByValidationTeam: '',
+    //         summaryOfProjectOwnerResponse: '',
+    //         validationTeamAssessment: '',
+    //         conclusion: 'CONCLUSION_1',
+    //       },
+    //     ],
+    //     generalDescriptionNoOfCAR: 1,
+    //     generalDescriptionNoOfCL: 1,
+    //     generalDescriptionNoOfFAR: 1,
+    //     involvedPartiesNoOfCAR: 1,
+    //     involvedPartiesNoOfCL: 1,
+    //     involvedPartiesNoOfFAR: 1,
+    //     projectSpecificationNoOfCAR: 1,
+    //     projectSpecificationNoOfCL: 1,
+    //     projectSpecificationNoOfFAR: 1,
+    //     startDateNoOfCAR: 1,
+    //     startDateNoOfCL: 1,
+    //     startDateNoOfFAR: 1,
+    //     technicalProjectDescriptionNoOfCAR: 1,
+    //     technicalProjectDescriptionNoOfCL: 1,
+    //     technicalProjectDescriptionNoOfFAR: 1,
+    //     contributionToSustainableDevelopmentNoOfCAR: 1,
+    //     contributionToSustainableDevelopmentNoOfCL: 1,
+    //     contributionToSustainableDevelopmentNoOfFAR: 1,
+    //     technologyEmployedNoOfCAR: 1,
+    //     technologyEmployedNoOfCL: 1,
+    //     technologyEmployedNoOfFAR: 1,
+    //     applicationOfMethodologyNoOfCAR: 1,
+    //     applicationOfMethodologyNoOfCL: 1,
+    //     applicationOfMethodologyNoOfFAR: 1,
+    //     baselineIdentificationNoOfCAR: 1,
+    //     baselineIdentificationNoOfCL: 1,
+    //     baselineIdentificationNoOfFAR: 1,
+    //     calculationOfGHGEmissionNoOfCAR: 1,
+    //     calculationOfGHGEmissionNoOfCL: 1,
+    //     calculationOfGHGEmissionNoOfFAR: 1,
+    //     additionalityDeterminationNoOfCAR: 1,
+    //     additionalityDeterminationNoOfCL: 1,
+    //     additionalityDeterminationNoOfFAR: 1,
+    //     monitoringMethodologyNoOfCAR: 1,
+    //     monitoringMethodologyNoOfCL: 1,
+    //     monitoringMethodologyNoOfFAR: 1,
+    //     monitoringPlanNoOfCAR: 1,
+    //     monitoringPlanNoOfFAR: 1,
+    //     projectManagementPlanningNoOfCAR: 1,
+    //     projectManagementPlanningNoOfCL: 1,
+    //     projectManagementPlanningNoOfFAR: 1,
+    //     durationOfProjectSpecificSection: 1,
+    //     durationOfProjectNoOfCAR: 1,
+    //     durationOfProjectNoOfCL: 1,
+    //     durationOfProjectNoOfFAR: 1,
+    //     environmentalImpactsSpecificSection: 1,
+    //     environmentalImpactsNoOfCAR: 1,
+    //     environmentalImpactsNoOfCL: 1,
+    //     environmentalImpactsNoOfFAR: 1,
+    //     stakeholderCommentsSpecificSection: 1,
+    //     stakeholderCommentsNoOfCAR: 1,
+    //     stakeholderCommentsNoOfCL: 1,
+    //     stakeholderCommentsNoOfFAR: 1,
+    //     sumNoOfCAR: 1,
+    //     sumNoOfCL: 1,
+    //     sumNoOfFAR: 1,
+    //     finalValidation: 1,
+    //     internalTechnicalReview: 1,
+    //     finalApproval: 1,
+    //   },
+    //   dataForValidationProcess: {
+    //     generalDescription: '',
+    //     employedTechnologies: [
+    //       {
+    //         siteNo: 12,
+    //         location: '',
+    //         capacity: '',
+    //       },
+    //     ],
+    //     totalCapacity: 1,
+    //     approvals: '',
+    //     applicationOfMethodologyTitle: '',
+    //     applicationOfMethodologyApplicability: '',
+    //     applicabilityCriteria1ProjectActivity: '',
+    //     isApplicabilityCriteria1Met: '',
+    //     applicabilityCriteria2ProjectActivity: '',
+    //     isApplicabilityCriteria2Met: '',
+    //     applicabilityCriteria3ProjectActivity: '',
+    //     isApplicabilityCriteria3Met: '',
+    //     applicabilityCriteria4ProjectActivity: '',
+    //     isApplicabilityCriteria4Met: '',
+    //     applicabilityCriteria5ProjectActivity: '',
+    //     isApplicabilityCriteria5Met: '',
+    //     applicabilityCriteria6ProjectActivity: '',
+    //     isApplicabilityCriteria6Met: '',
+    //     applicabilityCriteria7ProjectActivity: '',
+    //     isApplicabilityCriteria7Met: '',
+    //     applicabilityCriteria8ProjectActivity: '',
+    //     isApplicabilityCriteria8Met: '',
+    //     applicabilityCriteria9ProjectActivity: '',
+    //     isApplicabilityCriteria9Met: '',
+    //     applicabilityCriteria10ProjectActivity: '',
+    //     isApplicabilityCriteria10Met: '',
+    //     projectBoundary: '',
+    //     baselineIdentification: '',
+    //     formulasUsedToDetermineEmissionReductions: '',
+    //     calculationOfBaselineEmissionFactor: '',
+    //     gridEmissionFactorValue: '',
+    //     gridEmissionFactorUnit: '',
+    //     plantFactor: '',
+    //     annualEmissionReductionCalculation: '',
+    //     baselineEmissions: [
+    //       {
+    //         location: '',
+    //         projectCapacityValue: 1,
+    //         plantFactorValue: 1,
+    //         avgEnergyOutputValue: 1,
+    //         gridEmissionFactorValue: 1,
+    //         emissionReductionValue: 1,
+    //       },
+    //     ],
+    //     projectEmission: '',
+    //     leakageEmission: '',
+    //     estimatedNetEmissionReductions: [
+    //       {
+    //         yearlyGHGEmissionReductions: [
+    //           {
+    //             startDate: 212,
+    //             endDate: 212,
+    //             baselineEmissionReductions: 212,
+    //             projectEmissionReductions: 212,
+    //             leakageEmissionReductions: 212,
+    //             netEmissionReductions: 212,
+    //             bufferPoolAllocation: 212,
+    //           },
+    //         ],
+    //         totalBaselineEmissionReductions: 1,
+    //         totalProjectEmissionReductions: 1,
+    //         totalLeakageEmissionReductions: 1,
+    //         totalNetEmissionReductions: 1,
+    //         totalBufferPoolAllocations: 1,
+    //         totalNumberOfCredingYears: 1,
+    //         avgBaselineEmissionReductions: 1,
+    //         avgProjectEmissionReductions: 1,
+    //         avgLeakageEmissionReductions: 1,
+    //         avgNetEmissionReductions: 1,
+    //         avgBufferPoolAllocations: 1,
+    //       },
+    //     ],
+    //     methodologyDeviations: '',
+    //     monitoringPlan: '',
+    //     carbonManagementAssessment: '',
+    //     changesOfProjectActivity: '',
+    //     environmentImpact: '',
+    //     commentsOfStakeholders: '',
+    //   },
+    //   validationOpinion: {
+    //     opinion: '',
+    //     validator1Signature: '',
+    //     validator1Name: '',
+    //     validator1Designation: '',
+    //     validator1DateOfSign: 22222,
+    //     validator2Signature: '',
+    //     validator2Name: '',
+    //     validator2Designation: '',
+    //     validator2DateOfSign: 2222,
+    //   },
+    //   references: {
+    //     references: '',
+    //   },
+    //   appendix: {
+    //     comments: '',
+    //     additionalDocuments: [],
+    //   },
+    // }
   };
 
   useEffect(() => {
