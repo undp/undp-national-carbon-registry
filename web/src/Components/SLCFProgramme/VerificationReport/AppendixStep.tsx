@@ -6,7 +6,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
-export const AnnexuresStep = (props: any) => {
+export const AppendixStep = (props: any) => {
   const { useLocation, translator, current, form, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -51,19 +51,19 @@ export const AnnexuresStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:additionalComments')}
-                      name="additionalComments"
+                      label={t('verificationReport:annexures')}
+                      name="annexures"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:additionalComments')} ${t('isRequired')}`,
+                          message: `${t('verificationReport:annexures')} ${t('isRequired')}`,
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} maxLength={6} />
                     </Form.Item>
                     <Form.Item
-                      label={t('monitoringReport:q_documentUpload')}
+                      label={t('verificationReport:additionalDocuments')}
                       name="optionalDocuments"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -78,7 +78,7 @@ export const AnnexuresStep = (props: any) => {
                                   DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                 )
                               ) {
-                                throw new Error(`${t('monitoringReport:invalidFileFormat')}`);
+                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
                               } else if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);

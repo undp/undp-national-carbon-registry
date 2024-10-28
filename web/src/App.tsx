@@ -49,6 +49,7 @@ import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage
 import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
 import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
+import VerificationReport from './Pages/SLCFProgrammeManagement/VerificationReport';
 import SiteVisitCheckListPage from './Pages/SiteVisitCheckListPage/SiteVisitCheckListPage';
 
 const App = () => {
@@ -115,6 +116,7 @@ const App = () => {
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport/:id" element={<SLCFMonitoringReport />} />
+                    <Route path="verificationReport/:id" element={<VerificationReport />} />
                     <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
                     <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
                     <Route path="siteVisitCheckList/:id/" element={<SiteVisitCheckListPage />} />

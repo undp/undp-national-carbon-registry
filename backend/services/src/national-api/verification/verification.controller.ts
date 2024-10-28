@@ -16,8 +16,8 @@ export class VerificationController {
 
   @UseGuards(JwtAuthGuard)
   @Post("createMonitoringReport")
-  uploadMonitoringReport(@Body() monitoringReportDto: MonitoringReportDto, @Request() req) {
-    return this.verificationService.uploadMonitoringReport(monitoringReportDto, req.user);
+  createMonitoringReport(@Body() monitoringReportDto: MonitoringReportDto, @Request() req) {
+    return this.verificationService.createMonitoringReport(monitoringReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -27,9 +27,9 @@ export class VerificationController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post("uploadVerificationReport")
-  uploadVerificationReport(@Body() verificationReportDto: VerificationReportDto, @Request() req) {
-    return this.verificationService.uploadVerificationReport(verificationReportDto, req.user);
+  @Post("createVerificationReport")
+  createVerificationReport(@Body() verificationReportDto: VerificationReportDto, @Request() req) {
+    return this.verificationService.createVerificationReport(verificationReportDto, req.user);
   }
 
   @UseGuards(JwtAuthGuard)

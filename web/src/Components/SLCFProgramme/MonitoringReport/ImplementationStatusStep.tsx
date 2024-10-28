@@ -37,7 +37,7 @@ export const ImplementationStatusStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
 
                     <h4 className="form-section-title">{`2.2 ${t(
@@ -55,7 +55,7 @@ export const ImplementationStatusStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
 
                     <Form.Item
@@ -70,7 +70,7 @@ export const ImplementationStatusStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
                   </div>
                 </Col>

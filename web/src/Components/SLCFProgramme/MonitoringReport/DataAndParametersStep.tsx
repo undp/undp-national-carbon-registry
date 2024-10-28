@@ -116,7 +116,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} maxLength={6} />
+                      <TextArea rows={3} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -135,7 +135,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} maxLength={6} />
+                      <TextArea rows={3} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -154,7 +154,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} maxLength={6} />
+                      <TextArea rows={3} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -236,7 +236,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} maxLength={6} />
+                      <TextArea rows={3} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -323,7 +323,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_descriptionPlaceholder')}
                       />
                     </Form.Item>
@@ -346,7 +345,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_sourceOfDataPlaceholder')}
                       />
                     </Form.Item>
@@ -371,7 +369,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t(
                           'monitoringReport:dpm_measurmentMethodsDescriptionPlaceholder'
                         )}
@@ -431,7 +428,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_valueAppliedPlaceholder')}
                       />
                     </Form.Item>
@@ -456,7 +452,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}
                       />
                     </Form.Item>
@@ -479,7 +474,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_qaQcProceduresPlaceholder')}
                       />
                     </Form.Item>
@@ -537,7 +531,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_calculationMethodPlaceholder')}
                       />
                     </Form.Item>
@@ -560,7 +553,6 @@ export const DataAndParametersStep = (props: any) => {
                     >
                       <TextArea
                         rows={3}
-                        maxLength={6}
                         placeholder={t('monitoringReport:dpm_commentsPlaceholder')}
                       />
                     </Form.Item>
@@ -583,7 +575,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                   </div>
                 </Col>

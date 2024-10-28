@@ -1,22 +1,22 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SLCFMonitoringReportComponent } from '../../Components/SLCFProgramme/MonitoringReport/SLCFMonitoringReportComponent';
+import { VerificationReportComponent } from '../../Components/SLCFProgramme/VerificationReport/VerificationReportComponent';
 
-const SLCFMonitoringReport = () => {
+const VerificationReport = () => {
   const navigate = useNavigate();
-  const { i18n } = useTranslation(['common', 'monitoringReport']);
+  const { i18n } = useTranslation(['common', 'verificationReport']);
 
   const onNavigateToProgrammeManagementView = () => {
     navigate('/programmeManagementSLCF/viewAll');
   };
 
   return (
-    <SLCFMonitoringReportComponent
+    <VerificationReportComponent
       translator={i18n}
       useLocation={useLocation}
       onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
-    ></SLCFMonitoringReportComponent>
+    ></VerificationReportComponent>
   );
 };
 
-export default SLCFMonitoringReport;
+export default VerificationReport;
