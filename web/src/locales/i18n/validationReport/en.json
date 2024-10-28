@@ -204,7 +204,6 @@
   "internalTechnicalReview": "Internal Technical Review",
   "finalApproval": "Final approval",
   "projectDetails": "Project Details",
-  "generalDescription": "General Description",
   "employedTechnology": "Employed Technology",
   "capacityKwp": "Capacity (kWp)",
   "siteNo": "Site No",
@@ -272,5 +271,5 @@
   "additionalDocumentUpload": "Upload your additional documents here",
   "addItem": "Add Item",
   "addLocation": "Add Location",
-  "uploadDocs": "Upload your additional documents here",
+  "uploadDocs": "Upload your additional documents here"
 }

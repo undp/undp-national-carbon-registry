@@ -36,7 +36,7 @@ const StepperComponent = (props: any) => {
   const { get, post } = useConnection();
 
   const [existingFormValues, setExistingFormValues] = useState({
-    programmeId: '001',
+    programmeId: programId,
     companyId: undefined,
     content: {
       [ProcessSteps.VR_PROJECT_DETAILS]: {},
@@ -331,7 +331,7 @@ const StepperComponent = (props: any) => {
     if (current === 7) {
       const formValues = { ...existingFormValues };
       formValues.content[ProcessSteps.VR_APPENDIX] = val[ProcessSteps.VR_APPENDIX];
-      submitForm(formValues.content[ProcessSteps.VR_APPENDIX]);
+      submitForm(formValues);
     }
 
     const isFinal = val[ProcessSteps.VR_APPENDIX];

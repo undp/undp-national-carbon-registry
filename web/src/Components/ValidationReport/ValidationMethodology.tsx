@@ -1,6 +1,17 @@
 import React, { useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Col, Input, Checkbox, Table, TableProps, InputNumber } from 'antd';
+import {
+  Row,
+  Button,
+  Form,
+  Col,
+  Input,
+  Checkbox,
+  Table,
+  TableProps,
+  InputNumber,
+  Radio,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
@@ -490,7 +501,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     const validationMethodologyFormValues = {
       teamMembers: values?.teamMembers,
       cmaPublicReview: values?.cmaPublicReview,
-      onsiteInspection: values?.onSiteInspection,
+      onsiteInspection: values?.onsiteInspection,
       followupInterviews: values?.followupInterviews,
       validationReportFinding: values?.validationReportFinding,
 
@@ -764,7 +775,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                         {...resolutionRestField}
                                         name={[resolutionName, 'typeOfFinding']}
                                       >
-                                        <Checkbox.Group options={vmTypeOfFindings} />
+                                        <Radio.Group
+                                          style={{ display: 'flex', justifyContent: 'start' }}
+                                          options={vmTypeOfFindings}
+                                        />
                                       </Form.Item>
                                     </Col>
                                   </Row>
@@ -829,22 +843,22 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     rules={[requiredValidationRule(t)]}
                                     name={[resolutionName, 'conclusion']}
                                   >
-                                    <Checkbox.Group style={{ width: '100%' }}>
+                                    <Radio.Group
+                                      style={{ width: '100%' }}
+                                      className="validation-conclusion"
+                                    >
                                       {vmConlusion.map((value) => {
                                         return (
-                                          <Row>
+                                          <Row style={{ width: '100%' }}>
                                             <Col span={24}>
-                                              <Checkbox
-                                                style={{ width: '100%' }}
-                                                value={value.value}
-                                              >
+                                              <Radio style={{ width: '100%' }} value={value.value}>
                                                 {value.label}
-                                              </Checkbox>
+                                              </Radio>
                                             </Col>
                                           </Row>
                                         );
                                       })}
-                                    </Checkbox.Group>
+                                    </Radio.Group>
                                   </Form.Item>
                                 </Col>
                               </div>

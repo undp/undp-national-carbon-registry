@@ -27,7 +27,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
 
   const onFinish = async (values: any) => {
     const appendixFormValues: any = {
-      comments: values?.additionalComments,
+      comments: values?.comments,
       additionalDocuments: await fileUploadValueExtract(values, 'additionalDocuments'),
     };
 
