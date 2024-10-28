@@ -165,10 +165,16 @@ export class ProjectRegistrationCertificateGenerator {
 
     // Chairman Signature
 
-    doc.image("public/signatures/ceo.jpg", 110, 600, {
-      width: 120,
-      height: 100,
-    });
+    const chairmanSignatureImagePath = "public/signatures/ceo.jpg";
+
+    if (fs.existsSync(chairmanSignatureImagePath)) {
+      doc.image(chairmanSignatureImagePath, 110, 600, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log("Chairmans Signature does not exist in:", chairmanSignatureImagePath);
+    }
 
     doc
       .font("Helvetica")
@@ -189,10 +195,16 @@ export class ProjectRegistrationCertificateGenerator {
 
     // CEO Signature
 
-    doc.image("public/signatures/ceo.jpg", 410, 600, {
-      width: 120,
-      height: 100,
-    });
+    const ceoSignatureImagePath = "public/signatures/ceo.jpg";
+
+    if (fs.existsSync(ceoSignatureImagePath)) {
+      doc.image(ceoSignatureImagePath, 410, 600, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log("CEO Signature does not exist in:", ceoSignatureImagePath);
+    }
 
     doc
       .font("Helvetica")
