@@ -114,7 +114,7 @@
   "ACCEPTED_PROPOSAL": "Accepted",
   "REJECTED_PROPOSAL": "Rejected",
   "SUBMITTED_CMA": "Processing",
-  "REJECTED_CMA": "Accepted",
+  "REJECTED_CMA": "CMA Rejected",
   "APPROVED_CMA": "CMA Approved",
   "VALIDATION_PENDING": "Validation Pending",
   "REJECTED_VALIDATION": "CMA Approved",

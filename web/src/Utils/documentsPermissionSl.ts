@@ -44,14 +44,16 @@ export const formCreatePermission = (
     return true;
   } else if (
     docType === DocType.CMA &&
-    projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL &&
+    (projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.REJECTED_CMA) &&
     userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {
     return true;
   } else if (
     docType === DocType.VALIDATION_REPORT &&
-    projectProposalStage === ProjectProposalStage.APPROVED_CMA &&
+    (projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION) &&
     userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
     userInfoState?.userRole !== Role.ViewOnly
   ) {
