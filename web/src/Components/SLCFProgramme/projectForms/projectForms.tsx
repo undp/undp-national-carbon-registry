@@ -15,7 +15,10 @@ import moment from 'moment';
 import { RejectDocumentationConfirmationModel } from '../../Models/rejectDocumenConfirmationModel';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { ProgrammeStageUnified } from '../../../Definitions/Enums/programmeStage.enum';
+import {
+  ProgrammeStageUnified,
+  ProjectProposalStage,
+} from '../../../Definitions/Enums/programmeStage.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
@@ -222,17 +225,20 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   }
 
   function navigateToValidationReportCreate(): void {
-    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
+      state: {
+        mode:
+          projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION
+            ? FormMode.EDIT
+            : FormMode.CREATE,
+      },
+    });
   }
 
   function navigateToValidationReportView(): void {
     navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
       state: { mode: FormMode.VIEW },
     });
-  }
-
-  function navigateToValidationReportCreate(): void {
-    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`);
   }
 
   function navigateToProjectRegistrationView(): void {
@@ -688,23 +694,23 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
-                    // style={
-                    //   formCreatePermission(
-                    //     userInfoState,
-                    //     DocType.VALIDATION_REPORT,
-                    //     projectProposalStage
-                    //   )
-                    //     ? {
-                    //         color: '#3F3A47',
-                    //         cursor: 'pointer',
-                    //         margin: '0px 0px 1.5px 0px',
-                    //       }
-                    //     : {
-                    //         color: '#cacaca',
-                    //         cursor: 'default',
-                    //         margin: '0px 0px 1.5px 0px',
-                    //       }
-                    // }
+                    style={
+                      formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
                     onClick={() =>
                       formCreatePermission(
                         userInfoState,

@@ -640,7 +640,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               <Col xl={12} md={24}>
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
-                                  name={[name, 'geographicalLocationCoordinatesList']}
+                                  name={[name, 'geographicalLocationCoordinates']}
                                   rules={[
                                     {
                                       required: true,
