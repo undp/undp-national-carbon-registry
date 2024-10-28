@@ -41,7 +41,7 @@ export class SiteVisitChecklistContentDto {
   @IsNotEmpty()
   @IsPositive()
   @IsInt()
-  time: string;
+  time: number;
 
   @ApiProperty()
   @IsNotEmpty()
