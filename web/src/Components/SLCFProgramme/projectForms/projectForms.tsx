@@ -27,6 +27,7 @@ import {
   linkDocVisible,
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export interface ProjectFormProps {
   data: any;
@@ -226,8 +227,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
 
   function navigateToValidationReportView(): void {
     navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
-      state: { isView: true },
+      state: { mode: FormMode.VIEW },
     });
+  }
+
+  function navigateToValidationReportCreate(): void {
+    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`);
   }
 
   function navigateToProjectRegistrationView(): void {
@@ -636,29 +641,30 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
-                    style={
-                      formViewPermission(
-                        userInfoState,
-                        DocType.VALIDATION_REPORT,
-                        projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                    }
+                    // style={
+                    //   formViewPermission(
+                    //     userInfoState,
+                    //     DocType.VALIDATION_REPORT,
+                    //     projectProposalStage
+                    //   )
+                    //     ? {
+                    //         color: '#3F3A47',
+                    //         cursor: 'pointer',
+                    //         margin: '0px 0px 1.5px 0px',
+                    //       }
+                    //     : {
+                    //         color: '#cacaca',
+                    //         cursor: 'default',
+                    //         margin: '0px 0px 1.5px 0px',
+                    //       }
+                    // }
                     onClick={() =>
-                      formViewPermission(
-                        userInfoState,
-                        DocType.VALIDATION_REPORT,
-                        projectProposalStage
-                      ) && navigateToValidationReportView()
+                      // formViewPermission(
+                      //   userInfoState,
+                      //   DocType.VALIDATION_REPORT,
+                      //   projectProposalStage
+                      // ) && navigateToValidationReportView()
+                      navigateToValidationReportView()
                     }
                   />
                 </Tooltip>
@@ -681,23 +687,23 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 >
                   <FileAddOutlined
                     className="common-progress-icon"
-                    style={
-                      formCreatePermission(
-                        userInfoState,
-                        DocType.VALIDATION_REPORT,
-                        projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                    }
+                    // style={
+                    //   formCreatePermission(
+                    //     userInfoState,
+                    //     DocType.VALIDATION_REPORT,
+                    //     projectProposalStage
+                    //   )
+                    //     ? {
+                    //         color: '#3F3A47',
+                    //         cursor: 'pointer',
+                    //         margin: '0px 0px 1.5px 0px',
+                    //       }
+                    //     : {
+                    //         color: '#cacaca',
+                    //         cursor: 'default',
+                    //         margin: '0px 0px 1.5px 0px',
+                    //       }
+                    // }
                     onClick={() =>
                       formCreatePermission(
                         userInfoState,

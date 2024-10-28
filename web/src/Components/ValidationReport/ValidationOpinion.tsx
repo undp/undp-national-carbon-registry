@@ -8,9 +8,10 @@ import TextArea from 'antd/lib/input/TextArea';
 import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationOpinion = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -58,6 +59,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <Form.Item
                 className="full-width-form-item"
@@ -70,7 +72,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
               </Form.Item>
 
               <Row justify={'space-between'} gutter={40} className="mg-top-1">
@@ -92,14 +94,15 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
+                              // if (
+                              //   !isValidateFileType(
+                              //     file[0]?.type,
+                              //     DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                              //   )
+                              // ) {
+                              //   throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              // } else
+                              if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);
                               }
@@ -184,14 +187,15 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
+                              // if (
+                              //   !isValidateFileType(
+                              //     file[0]?.type,
+                              //     DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                              //   )
+                              // ) {
+                              //   throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              // } else
+                              if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);
                               }
@@ -261,12 +265,13 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
               </Row>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
+                  disabled={false}
                   // onClick={next}
                   // onClick={() => {
                   //   console.log(form.getFieldsValue());

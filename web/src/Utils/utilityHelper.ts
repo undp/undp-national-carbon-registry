@@ -24,16 +24,43 @@ export const calculateDifference = (startTimestamp: number, endTimestamp: number
   return { years, months, days };
 };
 
+function getBase64ImageFromUrl(imageUrl: string) {
+  return fetch(imageUrl)
+    .then((response) => response.blob())
+    .then((blob) => {
+      return new Promise<any>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => reject('Error converting to base64');
+        reader.readAsDataURL(blob);
+      });
+    })
+    .catch((err) => {});
+}
+
 export const fileUploadValueExtract = async (formValues: any, key: string) => {
   return (async function () {
     const base64Docs: string[] = [];
     if (formValues[key] && formValues[key].length > 0) {
       const docs = formValues[key];
       for (let i = 0; i < docs.length; i++) {
-        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+        const temp = docs[i]?.url
+          ? await getBase64ImageFromUrl(docs[i]?.url)
+          : await getBase64(docs[i]?.originFileObj as RcFile);
+        // const temp = await getBase64(docs[i]?.originFileObj as RcFile);
         base64Docs.push(temp); // No need for Promise.resolve
       }
     }
     return base64Docs;
   })();
+};
+
+export const extractFilePropertiesFromLink = (link: string) => {
+  const fileName = new URL(link).pathname.split('/').pop();
+  const extension = link.substring(link.lastIndexOf('.'), link.length);
+
+  return {
+    fileName,
+    extension,
+  };
 };

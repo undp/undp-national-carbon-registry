@@ -41,9 +41,10 @@ import { CustomStepsProps } from '../CMAForm/StepProps';
 import { ProcessSteps } from './ValidationStepperComponent';
 import { requiredValidationRule } from '../../Utils/validationHelper';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps) => {
-  const { next, prev, form, current, t, countries, handleValuesUpdate } = props;
+  const { next, prev, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -360,6 +361,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <Row gutter={[8, 16]}>
                 <Col md={12} lg={12}>
@@ -638,7 +640,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               <Col xl={12} md={24}>
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
-                                  name={[name, 'geographicalLocationCoordinates']}
+                                  name={[name, 'geographicalLocationCoordinatesList']}
                                   rules={[
                                     {
                                       required: true,
@@ -651,7 +653,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
-                                    listName="extraLocations"
                                     existingCordinate={getExistingCordinate(locationIndex)}
                                   />
                                 </Form.Item>
@@ -708,93 +709,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   </Upload>
                                 </Form.Item>
                               </Col>
-
-                              {/* <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={`1.6 ${t('validationReport:projectFundings')}`}
-                                  name={[name, 'projectFundings']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:projectFundings')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
-                                >
-                                  <Input size={'large'} />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={`1.8 ${t('validationReport:projectCommisionDate')}`}
-                                  name={[name, 'projectCommisionDate']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: '',
-                                    },
-                                    {
-                                      validator: async (rule, value) => {
-                                        if (
-                                          String(value).trim() === '' ||
-                                          String(value).trim() === undefined ||
-                                          value === null ||
-                                          value === undefined
-                                        ) {
-                                          throw new Error(
-                                            `${t('validationReport:projectCommisionDate')} ${t(
-                                              'isRequired'
-                                            )}`
-                                          );
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <DatePicker
-                                    size="large"
-                                    disabledDate={(currentDate: any) =>
-                                      currentDate < moment().startOf('day')
-                                    }
-                                  />
-                                </Form.Item>
-                              </Col>
-
-                              <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={`1.7 ${t('validationReport:projectStartDate')}`}
-                                  name={[name, 'projectStartDate']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: '',
-                                    },
-                                    {
-                                      validator: async (rule, value) => {
-                                        if (
-                                          String(value).trim() === '' ||
-                                          String(value).trim() === undefined ||
-                                          value === null ||
-                                          value === undefined
-                                        ) {
-                                          throw new Error(
-                                            `${t('validationReport:projectStartDate')} ${t(
-                                              'isRequired'
-                                            )}`
-                                          );
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <DatePicker
-                                    size="large"
-                                    disabledDate={(currentDate: any) =>
-                                      currentDate < moment().startOf('day')
-                                    }
-                                  />
-                                </Form.Item>
-                              </Col> */}
                             </Row>
 
                             <Form.List name={[name, 'technicalProjectDescriptionItems']}>
@@ -803,7 +717,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                 { add: addItem, remove: removeItem }
                               ) => (
                                 <Row gutter={[8, 16]}>
-                                  <Col>
+                                  <Col span={24}>
                                     {technicalProjectDescriptionItemList.map(
                                       ({
                                         key: itemKey,
@@ -842,6 +756,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                               <p style={{ height: 10 }}>
                                                 {t('validationReport:value')}
                                               </p>
+                                              <span></span>
                                             </div>
                                             <div className="technical-project-grid-parameter">
                                               <Form.List name={[itemName, 'parameterValue']}>
@@ -979,11 +894,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               add({
                                 technicalProjectDescriptionItems: [
                                   {
-                                    technicalProjectDescriptionItem: '',
-                                    technicalProjectDescriptionLocationParameterValues: [
+                                    item: '',
+                                    parameterValue: [
                                       {
-                                        technicalProjectDescriptionParameter: '',
-                                        technicalProjectDescriptionValue: '',
+                                        parameter: '',
+                                        value: '',
                                       },
                                     ],
                                   },
@@ -1014,12 +929,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
               </> */}
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
+                  disabled={false}
                   // onClick={() => {
                   //   console.log(form.getFieldsValue());
 

@@ -19,6 +19,7 @@ import NetEmissionReduction from '../Common/NetEmissonReduction';
 import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { ProjectCategory } from '../../enum/slRegistryEnum';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 // enum netEmissionColumnType {
 //   TOTAL = 'TOTAL',
@@ -37,6 +38,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     handleValuesUpdate,
     existingFormValues,
     projectCategory,
+    formMode,
   } = props;
 
   const emptyBackgroundInvestigationRow = {
@@ -663,6 +665,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <h4>4.1 {t('validationReport:projectDetails')}</h4>
 
@@ -677,7 +680,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     },
                   ]}
                 >
-                  <TextArea rows={4} />
+                  <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                 </Form.Item>
                 <Form.Item
                   label={`4.1.2 ${t('validationReport:employedTechnology')}`}
@@ -719,6 +722,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         name={[name, 'siteNo']}
                                         fieldKey={[name, 'siteNo']}
                                         rules={requiredRule}
+                                        className="full-width-form-item"
                                       >
                                         <InputNumber />
                                       </Form.Item>
@@ -729,6 +733,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         name={[name, 'location']}
                                         fieldKey={[name, 'location']}
                                         rules={requiredRule}
+                                        className="full-width-form-item"
                                       >
                                         <Input />
                                       </Form.Item>
@@ -740,7 +745,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         fieldKey={[name, 'capacity']}
                                         rules={requiredRule}
                                       >
-                                        <InputNumber onChange={calculateCapacity} />
+                                        <InputNumber
+                                          className="full-width-form-item"
+                                          onChange={calculateCapacity}
+                                        />
                                       </Form.Item>
                                     </Col>
                                   </Row>
@@ -801,7 +809,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Form.Item
@@ -814,7 +822,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                 </Col>
                 <Col>
@@ -829,7 +837,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Form.Item
@@ -842,7 +850,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Table
@@ -861,7 +869,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.3.4 ${t('validationReport:baselineIdentification')}`}
@@ -875,7 +883,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.3.5 ${t('validationReport:forumulaUserInEmissionReduction')}`}
@@ -889,7 +897,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <h4>
@@ -907,7 +915,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   {/* TODO: sss */}
                   <div style={{ display: 'flex', gap: '10px' }}>
@@ -936,7 +944,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`${t('validationReport:annualEmissionReductionCalculation')}`}
@@ -950,7 +958,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`${t('validationReport:baselineEmission')}`}
@@ -982,7 +990,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       <Col md={3} xl={3}>
                         {t('validationReport:gridEmissionFactor')}
                       </Col>
-                      <Col md={3} xl={2}>
+                      <Col md={3} xl={3}>
                         {t('validationReport:emissionReduction')}
                       </Col>
                     </Row>
@@ -993,7 +1001,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                           {baselineEmissions.map(
                             ({ key, name, fieldKey, ...restField }, index: number) => (
                               <>
-                                <Row justify={'space-between'} align={'middle'}>
+                                <Row justify={'space-between'}>
                                   <Col md={6} xl={6} className="col1">
                                     <Form.Item
                                       {...restField}
@@ -1001,7 +1009,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'location']}
                                       rules={requiredRule}
                                     >
-                                      <Input disabled />
+                                      <Input className="full-width-form-item" disabled />
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1011,7 +1019,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'projectCapacityValue']}
                                       rules={requiredRule}
                                     >
-                                      <InputNumber disabled={index === 0} />
+                                      <InputNumber
+                                        className="full-width-form-item"
+                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1021,7 +1032,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'plantFactorValue']}
                                       rules={requiredRule}
                                     >
-                                      <InputNumber disabled={index === 0} />
+                                      <InputNumber
+                                        className="full-width-form-item"
+                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1031,7 +1045,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'avgEnergyOutputValue']}
                                       rules={requiredRule}
                                     >
-                                      <InputNumber disabled={index === 0} />
+                                      <InputNumber
+                                        className="full-width-form-item"
+                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1041,7 +1058,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'gridEmissionFactorValue']}
                                       rules={requiredRule}
                                     >
-                                      <InputNumber disabled={index === 0} />
+                                      <InputNumber
+                                        className="full-width-form-item"
+                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1051,7 +1071,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'emissionReductionValue']}
                                       rules={requiredRule}
                                     >
-                                      <InputNumber disabled={index === 0} />
+                                      <InputNumber
+                                        className="full-width-form-item"
+                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                      />
                                     </Form.Item>
                                   </Col>
                                 </Row>
@@ -1073,7 +1096,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Form.Item
@@ -1086,20 +1109,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Form.Item
                     label={`${t('validationReport:estimatedNetEmissionReduction')}`}
                     name="estimatedNetEmissionReduction"
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:estimatedNetEmissionReduction')} ${t(
-                          'isRequired'
-                        )}`,
-                      },
-                    ]}
                   >
                     {/* <Table
                       dataSource={estimatedNetEmissionDataSourceList}
@@ -1121,7 +1136,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
                   <Form.Item
@@ -1134,7 +1149,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.4 ${t('validationReport:carbonManagementAssessment')}`}
@@ -1148,7 +1163,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.5 ${t('validationReport:changesOfTheProjectActivity')}`}
@@ -1162,7 +1177,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.6 ${t('validationReport:environmentImpact')}`}
@@ -1174,7 +1189,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                   <Form.Item
                     label={`4.6 ${t('validationReport:commentsOfStakeholders')}`}
@@ -1188,18 +1203,19 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                 </Col>
               </Row>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
+                  disabled={false}
                   // onClick={() => {
                   //   console.log(form.getFieldsValue());
                   // }}

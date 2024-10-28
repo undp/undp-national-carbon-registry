@@ -10,9 +10,10 @@ import { RcFile } from 'antd/lib/upload';
 import { UploadOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationReportAppendix = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, submitForm, t } = props;
+  const { next, prev, form, current, handleValuesUpdate, submitForm, t, formMode } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -79,6 +80,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                 //   next();
                 // }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <Form.Item
                 className='className="full-width-form-item'
@@ -91,7 +93,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
               </Form.Item>
               <Form.Item
                 label={t('validationReport:uploadDocs')}
@@ -138,12 +140,14 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
-                  {t('validationReport:submit')}
-                </Button>
+                {FormMode.VIEW !== formMode && (
+                  <Button type="primary" size={'large'} htmlType="submit" disabled={false}>
+                    {t('validationReport:submit')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>
