@@ -1204,7 +1204,11 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <GetLocationMapComponent form={form} formItemName={'location'} />
+                        <GetLocationMapComponent
+                          form={form}
+                          formItemName={'location'}
+                          existingCordinate={form.getFieldValue('location')}
+                        />
                       </Form.Item>
                     </Col>
 
@@ -1485,6 +1489,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     form={form}
                                     formItemName={[name, 'location']}
                                     listName="extraLocations"
+                                    existingCordinate={
+                                      form?.getFieldValue('extraLocations')[name]?.location
+                                    }
                                   />
                                 </Form.Item>
                               </Col>

@@ -69,9 +69,7 @@ const StepperComponent = (props: any) => {
       const {
         data: { user },
       } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
 
-      // const dateOfIssue = moment().unix();
       form1.setFieldsValue({
         title: data?.title,
         dateOfIssue: moment(),
@@ -86,7 +84,6 @@ const StepperComponent = (props: any) => {
       setProjectCategory(data?.projectCategory);
       form2.setFieldsValue({
         projectTrack: data?.purposeOfCreditDevelopment,
-        // projectTrack: 'TRACK_2',
         organizationName: data?.company?.name,
         email: data?.company?.email,
         telephone: data?.company?.phoneNo,
