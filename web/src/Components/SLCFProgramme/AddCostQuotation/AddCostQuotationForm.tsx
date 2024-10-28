@@ -25,7 +25,7 @@ export const AddCostQuotationForm = (props: any) => {
   const { id } = useParams();
   const [form] = Form.useForm();
 
-  const naviagetToDetailsPage = () => {
+  const navigateToDetailsPage = () => {
     navigate(`/programmeManagementSLCF/view/${id}`);
   };
 
@@ -154,7 +154,7 @@ export const AddCostQuotationForm = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        naviagetToDetailsPage();
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
@@ -571,13 +571,13 @@ export const AddCostQuotationForm = (props: any) => {
                 <Row justify={'end'} className="step-actions-end">
                   {isView ? (
                     <>
-                      <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
                         Back
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
                         Cancel
                       </Button>
                       <Button type="primary" size={'large'} htmlType="submit">

@@ -34,7 +34,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const navigate = useNavigate();
 
-  const naviagetToDetailsPage = () => {
+  const navigateToDetailsPage = () => {
     navigate(`/programmeManagementSLCF/view/${id}`);
   };
   const [countries, setCountries] = useState<[]>([]);
@@ -494,7 +494,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        naviagetToDetailsPage();
+        navigateToDetailsPage();
       }
     } catch (error) {
       message.open({
@@ -2466,13 +2466,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <Row justify={'end'} className="step-actions-end">
             {isView ? (
               <>
-                <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
                   Back
                 </Button>
               </>
             ) : (
               <>
-                <Button danger size={'large'} onClick={naviagetToDetailsPage}>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
                   Cancel
                 </Button>
                 <Button type="primary" size={'large'} htmlType="submit">
