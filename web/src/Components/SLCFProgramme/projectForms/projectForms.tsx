@@ -641,30 +641,31 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 >
                   <FolderViewOutlined
                     className="common-progress-icon"
-                    // style={
-                    //   formViewPermission(
-                    //     userInfoState,
-                    //     DocType.VALIDATION_REPORT,
-                    //     projectProposalStage
-                    //   )
-                    //     ? {
-                    //         color: '#3F3A47',
-                    //         cursor: 'pointer',
-                    //         margin: '0px 0px 1.5px 0px',
-                    //       }
-                    //     : {
-                    //         color: '#cacaca',
-                    //         cursor: 'default',
-                    //         margin: '0px 0px 1.5px 0px',
-                    //       }
-                    // }
-                    onClick={() =>
-                      // formViewPermission(
-                      //   userInfoState,
-                      //   DocType.VALIDATION_REPORT,
-                      //   projectProposalStage
-                      // ) && navigateToValidationReportView()
-                      navigateToValidationReportView()
+                    style={
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={
+                      () =>
+                        formViewPermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        ) && navigateToValidationReportView()
+                      // navigateToValidationReportView()
                     }
                   />
                 </Tooltip>
