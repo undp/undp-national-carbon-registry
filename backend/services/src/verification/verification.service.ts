@@ -19,6 +19,9 @@ import { HelperService } from "src/util/helpers.service";
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { TxRefGeneratorService } from "../util/txRef-generator.service";
 import { EntityManager, Repository } from "typeorm";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { EmailTemplates } from "../email-helper/email.template";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class VerificationService {
@@ -34,7 +37,9 @@ export class VerificationService {
     private creditIssueCertificateGenerator: CreditIssueCertificateGenerator,
     private dateUtilService: DateUtilService,
     private serialGenerator: SLCFSerialNumberGeneratorService,
-    private txRefGen: TxRefGeneratorService
+    private txRefGen: TxRefGeneratorService,
+    private emailHelperService: EmailHelperService,
+    private configService: ConfigService
   ) {}
 
   //MARK: create Monitoring Report
@@ -104,7 +109,7 @@ export class VerificationService {
 
     return new DataResponseDto(HttpStatus.OK, savedReport);
   }
-  
+
   //MARK: Verify Monitoring Report
   async verifyMonitoringReport(verifyReportDto: VerifyReportDto, user: User) {
     if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
@@ -300,6 +305,18 @@ export class VerificationService {
         verificationRequest,
         creditIssueCertificateSerial
       );
+
+      const hostAddress = this.configService.get("host");
+      await this.emailHelperService.sendEmailToOrganisationAdmins(
+        updatedProgramme.companyId,
+        EmailTemplates.CREDIT_ISSUANCE_SL,
+        {
+          programmeName: updatedProgramme.title,
+          credits: verificationRequest.creditAmount,
+          serialNumber: updatedProgramme.serialNo,
+          pageLink: hostAddress + `/programmeManagementSLCF/view/${updatedProgramme.programmeId}`,
+        }
+      );
     }
 
     await this.entityManager.transaction(async (em) => {
@@ -319,32 +336,32 @@ export class VerificationService {
         }
       );
 
-      // const verificationDocument = await this.documentRepository.find({
-      //   where: {
-      //     id: verifyReportDto.reportId,
-      //   },
-      // });
-      // if (verificationDocument) {
-      //   await em.update(
-      //     DocumentEntity,
-      //     {
-      //       id: verifyReportDto.reportId,
-      //     },
-      //     {
-      //       status: verifyReportDto.verify ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
-      //       updatedTime: new Date().getTime(),
-      //     }
-      //   );
-      // } else {
-      //   throw new HttpException(
-      //     this.helperService.formatReqMessagesString(
-      //       "verification.verificationReportDoesNotExists",
-      //       []
-      //     ),
-      //     HttpStatus.BAD_REQUEST
-      //   );
-      //   return;
-      // }
+      const verificationDocument = await this.documentRepository.find({
+        where: {
+          id: verifyReportDto.reportId,
+        },
+      });
+      if (verificationDocument) {
+        await em.update(
+          DocumentEntity,
+          {
+            id: verifyReportDto.reportId,
+          },
+          {
+            status: verifyReportDto.verify ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
+            updatedTime: new Date().getTime(),
+          }
+        );
+      } else {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "verification.verificationReportDoesNotExists",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+        return;
+      }
     });
   }
 

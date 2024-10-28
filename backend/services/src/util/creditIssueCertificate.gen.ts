@@ -87,7 +87,10 @@ export class CreditIssueCertificateGenerator {
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text("Sri Lankan Certified Emission Reductions (SCER)", { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Sri Lankan Certified Emission Reductions (SCER)", { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -125,7 +128,10 @@ export class CreditIssueCertificateGenerator {
 
     doc.moveDown(0.4);
 
-    doc.font("Helvetica").fontSize(12).text("Approved CDM methodology (AMS I.D Version 18.0)", { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Approved CDM methodology (AMS I.D Version 18.0)", { align: "center" });
 
     doc.moveDown(1);
 
@@ -160,7 +166,7 @@ export class CreditIssueCertificateGenerator {
       .text(`Sri Lankan Credit Emission Reductions: ${data.issuedCredits} (tCO2eq)`, 100, doc.y)
       .moveDown(1.5);
 
-      doc
+    doc
       .fontSize(11)
       .font("Helvetica")
       .text("Serial Range ", 180, doc.y, {
@@ -180,14 +186,18 @@ export class CreditIssueCertificateGenerator {
         continued: false,
       })
       .moveDown(1);
-    
 
     // Chairman Signature
+    const chairmanSignatureImagePath = "public/signatures/ceo.jpg";
 
-    doc.image("public/signatures/ceo.jpg", 110, 600, {
-      width: 120,
-      height: 100,
-    });
+    if (fs.existsSync(chairmanSignatureImagePath)) {
+      doc.image(chairmanSignatureImagePath, 110, 600, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log("Chairmans Signature does not exist in:", chairmanSignatureImagePath);
+    }
 
     doc
       .font("Helvetica")
@@ -208,10 +218,17 @@ export class CreditIssueCertificateGenerator {
 
     // CEO Signature
 
-    doc.image("public/signatures/ceo.jpg", 410, 600, {
-      width: 120,
-      height: 100,
-    });
+    // Define image paths
+    const ceoSignatureImagePath = "public/signatures/ceo.jpg";
+
+    if (fs.existsSync(ceoSignatureImagePath)) {
+      doc.image(ceoSignatureImagePath, 410, 600, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log("CEO Signature does not exist in:", ceoSignatureImagePath);
+    }
 
     doc
       .font("Helvetica")

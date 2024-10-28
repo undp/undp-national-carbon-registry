@@ -669,6 +669,21 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+  CREDIT_ISSUANCE_SL: {
+    id: "CREDIT_ISSUANCE",
+    subject: "Credits Issued",
+    html: `
+        Hi {{name}}, <br><br>
+
+        {{programmeName}} of your Organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br><br>
+
+        Click <a href="{{pageLink}}">here</a> for more details of the project.<br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  
   CREDIT_TRANSFER_SL_REQUEST: {
     id: "CREDIT_TRANSFER_SL_REQUEST",
     subject: "Credit Transfer Request Received",
