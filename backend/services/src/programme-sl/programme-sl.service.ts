@@ -1187,6 +1187,8 @@ export class ProgrammeSlService {
   //     resp.length > 1 ? resp[1] : undefined
   //   );
   // }
+
+  // MARK: getProjectById
   async getProjectById(programmeId: string): Promise<any> {
     let project: ProgrammeSl = await this.programmeLedgerService.getProgrammeSlById(programmeId);
     const company: Company = await this.companyService.findByCompanyId(project.companyId);
@@ -1198,6 +1200,7 @@ export class ProgrammeSlService {
     return updatedProject;
   }
 
+  // MARK: gen Reg Certificate
   async generateProjectRegistrationCertificate(programmeId: string) {
     const programme = await this.getProjectById(programmeId);
 

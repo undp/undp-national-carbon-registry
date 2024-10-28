@@ -38,21 +38,21 @@ export class VerificationController {
     return this.verificationService.verifyVerificationReport(verifyReportDto, req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post("creditIssuanceCertificate")
-  creditIssuanceCertificate(
-    @Body() creditIssuanceCertificateDto: CreditIssuanceCertificateDto,
-    @Request() req
-  ) {
-    return this.verificationService.creditIssuanceCertificate(
-      creditIssuanceCertificateDto,
-      req.user
-    );
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post("creditIssuanceCertificate")
+  // creditIssuanceCertificate(
+  //   @Body() creditIssuanceCertificateDto: CreditIssuanceCertificateDto,
+  //   @Request() req
+  // ) {
+  //   return this.verificationService.creditIssuanceCertificate(
+  //     creditIssuanceCertificateDto,
+  //     req.user
+  //   );
+  // }
 
-  @UseGuards(JwtAuthGuard)
-  @Post("issueCredits")
-  issueCredits(@Body() issueCreditsDto: IssueCreditsDto, @Request() req) {
-    return this.verificationService.issueCredits(issueCreditsDto, req.user);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post("issueCredits")
+  // issueCredits(@Body() issueCreditsDto: IssueCreditsDto, @Request() req) {
+  //   return this.verificationService.issueCredits(issueCreditsDto, req.user);
+  // }
 }

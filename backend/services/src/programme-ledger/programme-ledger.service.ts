@@ -26,6 +26,7 @@ import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { CreditType } from "../enum/creditType.enum";
 import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts.enum";
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
+import { VerificationRequestEntity } from "../entities/verification.request.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -201,7 +202,132 @@ export class ProgrammeLedgerService {
 
     return updatedProgramme;
   }
+  //MARK: Issue SLCF Credits 
+  public async issueSlCredits(
+    verificationRequest: VerificationRequestEntity,
+    creditType: CreditType,
+    companyId: number,
+    txRef: string
+  ) {
+    this.logger.log(`Issue SLCF Credits ${JSON.stringify(verificationRequest)}`);
+    const companyAccount = companyId + "#" + creditType;
 
+    const getQueries = {};
+    getQueries[`history(${this.ledger.programmeSlTable})`] = {
+      "data.programmeId": verificationRequest.programmeId,
+      "data.txRef": new ArrayLike("data.txRef", "%#" + verificationRequest.id + "#%"),
+    };
+    getQueries[this.ledger.programmeSlTable] = {
+      programmeId: verificationRequest.programmeId,
+    };
+    getQueries[this.ledger.companyTableName] = {
+      txId: [companyAccount],
+    };
+
+    let updatedProgramme = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const alreadyProcessed = results[`history(${this.ledger.programmeSlTable})`];
+        if (alreadyProcessed.length > 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "programme.issueRequestALreadyProcessed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const programmes: ProgrammeSl[] = results[this.ledger.programmeSlTable].map((domValue) => {
+          return plainToClass(ProgrammeSl, JSON.parse(JSON.stringify(domValue)));
+        });
+        if (programmes.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("programme.programmeNotExistWIthId", [
+              verificationRequest.programmeId,
+            ]),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const programme = programmes[0];
+        const prvTxTime = programme.txTime;
+
+        programme.creditBalance = programme.creditBalance + verificationRequest.creditAmount;
+
+        programme.creditChange = verificationRequest.creditAmount;
+        programme.txType = TxType.ISSUE_SL;
+        programme.txRef = txRef;
+        programme.txTime = new Date().getTime();
+        
+
+        updatedProgramme = programme;
+        const uPayload = {
+          txTime: programme.txTime,
+          txRef: programme.txRef,
+          txType: programme.txType,
+          creditChange: programme.creditChange,
+          creditBalance: programme.creditBalance,
+          companyId: programme.companyId,
+        };
+
+        if (!programme.creditStartSerialNumber) {
+          programme.creditStartSerialNumber = `SLCCS/REG/${programme.programmeId}/1`;
+          uPayload["creditStartSerialNumber"] = programme.creditStartSerialNumber;
+        }
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        updateMap[this.ledger.programmeSlTable] = uPayload;
+        updateWhereMap[this.ledger.programmeSlTable] = {
+          programmeId: programme.programmeId,
+          projectProposalStage: ProjectProposalStage.AUTHORISED.valueOf(),
+          txTime: prvTxTime,
+        };
+
+        let companyCreditBalances = {};
+        const companies = results[this.ledger.companyTableName].map((domValue) => {
+          return plainToClass(CreditOverall, JSON.parse(JSON.stringify(domValue)));
+        });
+        for (const company of companies) {
+          companyCreditBalances[company.txId] = company.credit;
+        }
+
+        // Increase Company credits
+        if (companyCreditBalances[companyAccount] != undefined) {
+          updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
+            credit: this.helperService.halfUpToPrecision(
+              companyCreditBalances[companyAccount] + verificationRequest.creditAmount
+            ),
+            txRef: verificationRequest.id + "#" + programme.serialNo,
+            txType: TxType.ISSUE_SL,
+          };
+          updateWhereMap[this.ledger.companyTableName + "#" + companyAccount] = {
+            txId: companyAccount,
+          };
+        } else {
+          insertMap[this.ledger.companyTableName + "#" + companyAccount] = {
+            credit: this.helperService.halfUpToPrecision(verificationRequest.creditAmount),
+            txRef: verificationRequest.id + "#" + programme.serialNo,
+            txType: TxType.ISSUE_SL,
+            txId: companyAccount,
+          };
+        }
+
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+
+    const affected = resp[this.ledger.programmeSlTable];
+    if (affected && affected.length > 0) {
+      return updatedProgramme;
+    }
+    return updatedProgramme;
+  }
+
+  //MARK: approve SLCF Credit Transfer 
   public async approveCreditTransfer(
     retirementRequest: CreditRetirementSl,
     slcfCompanyId: number,
@@ -268,7 +394,7 @@ export class ProgrammeLedgerService {
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
         programme.creditStartSerialNumber =
-          this.serialNumberGenerator.generateCreditSerialForRetire(
+          this.serialNumberGenerator.calculateCreditSerialNumber(
             programme.creditStartSerialNumber,
             retirementRequest.creditAmount
           );

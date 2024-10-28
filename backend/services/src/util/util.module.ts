@@ -37,6 +37,7 @@ import { SLCFSerialNumberGeneratorService } from "./slcfSerialNumberGenerator.se
 import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancellationCertificate.gen";
 import { ProjectRegistrationCertificateGenerator } from "./projectRegistrationCertificate.gen";
 import { DateUtilService } from "./dateUtil.service";
+import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
 
 @Module({
   imports: [
@@ -93,6 +94,7 @@ import { DateUtilService } from "./dateUtil.service";
     SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
+    CreditIssueCertificateGenerator,
     DateUtilService
   ],
   exports: [
@@ -114,6 +116,7 @@ import { DateUtilService } from "./dateUtil.service";
     SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
+    CreditIssueCertificateGenerator,
     DateUtilService
   ],
 })

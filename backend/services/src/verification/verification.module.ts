@@ -14,6 +14,7 @@ import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { DocumentEntity } from "src/entities/document.entity";
 import { VerificationRequestEntity } from "src/entities/verification.request.entity";
 import { VerificationService } from "./verification.service";
+import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { VerificationService } from "./verification.service";
     LocationModule,
     AsyncOperationsModule,
     FileHandlerModule,
+    ProgrammeSlModule,
   ],
   providers: [Logger, VerificationService],
   exports: [VerificationService],

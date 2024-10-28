@@ -30,4 +30,5 @@ export enum TxType {
   CREATE_VALIDATION_REPORT = "28",
   APPROVE_VALIDATION = "29",
   REJECT_VALIDATION = "30",
+  ISSUE_SL = "31",
 }

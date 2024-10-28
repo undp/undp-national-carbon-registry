@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { Company } from "../entities/company.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { User } from "../entities/user.entity";
+import { VerificationRequestEntity } from "src/entities/verification.request.entity";
+import { ProgrammeSl } from "src/entities/programmeSl.entity";
 
 @Injectable()
 export class TxRefGeneratorService {
@@ -24,6 +26,26 @@ export class TxRefGeneratorService {
       retireRequest.creditType,
       retireRequest.comment,
       retireRequest.creditAmount
+    ];
+    return parts.filter(part => part).join('#');  // Join all parts with '#' ensuring no unwanted spaces or line breaks
+  }
+
+
+  public getCreditIssueApproveRef(
+    user: User,
+    programme: ProgrammeSl,
+    verificationRequest: VerificationRequestEntity
+  ): string {
+    const parts = [
+      user.companyId,
+      user.id,
+      programme.programmeId,  
+      programme.title,       
+      programme.companyId,       
+      verificationRequest.id,
+      programme.purposeOfCreditDevelopment, //credit type
+      // retireRequest.comment,
+      verificationRequest.creditAmount
     ];
     return parts.filter(part => part).join('#');  // Join all parts with '#' ensuring no unwanted spaces or line breaks
   }

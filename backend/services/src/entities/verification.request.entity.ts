@@ -19,6 +19,21 @@ export class VerificationRequestEntity implements EntitySubject {
   })
   status: VerificationRequestStatusEnum;
 
+  @Column()
+  creditAmount: number;
+
+  @Column({ nullable: true })
+  verificationSerialNo: string;
+
+  @Column({ type: "bigint", nullable: true })
+  monitoringStartDate: number;
+
+  @Column({ type: "bigint", nullable: true })
+  monitoringEndDate: number;
+
+  @Column({ nullable: true })
+  creditIssueCertificateUrl: string;
+
   @Column({ type: "bigint" })
   createdTime: number;
 

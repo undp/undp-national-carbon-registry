@@ -120,9 +120,6 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ type: "bigint" })
   companyId: number;
 
-  @Column({ nullable: true })
-  registrationCertificateUrl?: string;
-
   @Column({
     type: "enum",
     enum: TxType,
@@ -136,6 +133,9 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ type: "bigint" })
   txTime: number;
+
+  @Column({ nullable: true })
+  registrationCertificateUrl: string;
 
   @Column({ type: "bigint" })
   createdTime: number;
