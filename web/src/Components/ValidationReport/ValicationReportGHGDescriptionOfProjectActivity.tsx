@@ -654,6 +654,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     existingCordinate={getExistingCordinate(locationIndex)}
+                                    disabled={formMode === FormMode.VIEW}
                                   />
                                 </Form.Item>
                               </Col>
