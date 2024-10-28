@@ -51,6 +51,14 @@
     text-transform: capitalize;
   }
 
+  .step-actions {
+    &-end {
+      button:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+
   .margin-0 {
     margin-bottom: 0 !important;
   }

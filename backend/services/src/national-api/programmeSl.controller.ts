@@ -18,6 +18,7 @@ import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { DocumentEntity } from "src/entities/document.entity";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
+import { ValidationReportDto } from "src/dto/validationReport.dto";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -136,7 +137,7 @@ export class ProgrammeSlController {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("cma/approve")
   async approveCMA(@Body() cmaApproveDto: CMAApproveDto, @Request() req) {
-    return this.programmeService.createSiteVisitChecklist(cmaApproveDto, req.user);
+    return this.programmeService.approveCMA(cmaApproveDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -147,6 +148,34 @@ export class ProgrammeSlController {
     const updateProposalStageDto = {
       programmeId: programmeId,
       txType: TxType.REJECT_CMA,
+    };
+    return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("validation/create")
+  async createValidationReport(@Body() validationReportDto: ValidationReportDto, @Request() req) {
+    return this.programmeService.createValidationReport(validationReportDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("validation/approve")
+  async approveValidation(@Body("programmeId") programmeId: string, @Request() req) {
+    return this.programmeService.approveValidation(programmeId, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
+  @Post("validation/reject")
+  async rejectValidation(@Body("programmeId") programmeId: string, @Request() req) {
+    const updateProposalStageDto = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_VALIDATION,
     };
     return this.programmeService.updateProposalStage(updateProposalStageDto, req.user);
   }

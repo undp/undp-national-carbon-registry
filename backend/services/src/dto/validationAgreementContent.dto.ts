@@ -97,8 +97,8 @@ export class ValidationAgreementContentDto {
   @IsString()
   annexureAComment: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   annexureADoc: string;
 
@@ -107,8 +107,8 @@ export class ValidationAgreementContentDto {
   @IsString()
   annexureBComment: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   annexureBDoc: string;
 }

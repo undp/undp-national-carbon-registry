@@ -37,7 +37,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
 
                     <Form.Item
@@ -106,7 +106,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
 
                     <Form.Item
@@ -155,7 +155,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                   </div>
                 </Col>

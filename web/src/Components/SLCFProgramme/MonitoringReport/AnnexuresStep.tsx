@@ -60,7 +60,7 @@ export const AnnexuresStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:q_documentUpload')}

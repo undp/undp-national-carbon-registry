@@ -53,6 +53,12 @@ export class NetGHGEmissionReductions {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
+  totalNumberOfCredingYears: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
   avgBaselineEmissionReductions: number;
 
   @ApiProperty()

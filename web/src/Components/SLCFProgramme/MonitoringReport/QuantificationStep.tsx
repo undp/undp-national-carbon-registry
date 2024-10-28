@@ -169,7 +169,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
 
                     <Form.Item
@@ -226,7 +226,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
 
                     <Form.Item
@@ -239,7 +239,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
 
                     <>
@@ -261,7 +261,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} maxLength={6} />
+                              <TextArea rows={4} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -838,7 +838,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} maxLength={6} />
+                      <TextArea rows={4} />
                     </Form.Item>
                   </div>
                 </Col>

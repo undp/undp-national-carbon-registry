@@ -9,6 +9,14 @@
   .programme-sought-form {
     width: 100%;
 
+    .step-actions {
+      &-end {
+        button:not(:last-child) {
+          margin-right: 10px;
+        }
+      }
+    }
+
     .landList {
       display: flex;
       flex-direction: row;

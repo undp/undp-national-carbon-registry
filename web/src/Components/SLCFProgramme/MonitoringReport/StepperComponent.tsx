@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import { version } from 'os';
 import { DocType } from '../../../Definitions/Enums/document.type';
+import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
@@ -90,9 +91,9 @@ const StepperComponent = (props: any) => {
 
   const getLatestCMA = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getLatestDoc', {
+      const { data } = await post('national/programmeSl/getDocLastVersion', {
         programmeId: programId,
-        docType: DocType.CMA,
+        docType: DocumentTypeEnum.CMA,
       });
 
       const cmaData = JSON.parse(data?.content);

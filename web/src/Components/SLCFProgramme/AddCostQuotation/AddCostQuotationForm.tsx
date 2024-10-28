@@ -18,12 +18,16 @@ export const AddCostQuotationForm = (props: any) => {
   const { post } = useConnection();
 
   const { state } = useLocation();
-  const [isView, setIsView] = useState<boolean>(!!state?.isView);
+  const isView = !!state?.isView;
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
   const { id } = useParams();
   const [form] = Form.useForm();
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
 
   const t = translator.t;
 
@@ -87,7 +91,7 @@ export const AddCostQuotationForm = (props: any) => {
           });
 
           if (res?.statusText === 'SUCCESS') {
-            const content = JSON.parse(res?.data[0].content);
+            const content = JSON.parse(res?.data.content);
             viewDataMapToFields(content);
           }
         } catch (error) {
@@ -150,7 +154,7 @@ export const AddCostQuotationForm = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
@@ -564,11 +568,24 @@ export const AddCostQuotationForm = (props: any) => {
                   </Row>
                 </div>
 
-                <div className="steps-actions">
-                  <Button type="primary" htmlType="submit">
-                    {t('common:submit')}
-                  </Button>
-                </div>
+                <Row justify={'end'} className="step-actions-end">
+                  {isView ? (
+                    <>
+                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                        Back
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                        Cancel
+                      </Button>
+                      <Button type="primary" size={'large'} htmlType="submit">
+                        submit
+                      </Button>
+                    </>
+                  )}
+                </Row>
               </Form>
             </div>
           </div>

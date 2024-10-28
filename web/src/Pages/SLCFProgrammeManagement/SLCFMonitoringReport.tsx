@@ -7,7 +7,7 @@ const SLCFMonitoringReport = () => {
   const { i18n } = useTranslation(['common', 'monitoringReport']);
 
   const onNavigateToProgrammeManagementView = () => {
-    navigate('/programmeManagement/viewAll');
+    navigate('/programmeManagementSLCF/viewAll');
   };
 
   return (

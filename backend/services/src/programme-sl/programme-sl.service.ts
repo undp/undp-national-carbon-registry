@@ -47,6 +47,7 @@ import { UpdateProjectProposalStageDto } from "../dto/updateProjectProposalStage
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
+import { ValidationReportDto } from "src/dto/validationReport.dto";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -78,7 +79,7 @@ export class ProgrammeSlService {
     private readonly programmeLedgerService: ProgrammeLedgerService,
     private projectRegistrationCertificateGenerator: ProjectRegistrationCertificateGenerator,
     private dateUtilService: DateUtilService,
-    private serialGenerator: SLCFSerialNumberGeneratorService,
+    private serialGenerator: SLCFSerialNumberGeneratorService
   ) {}
 
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
@@ -525,10 +526,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
   }
 
-  async createSiteVisitChecklist(
-    cmaAppoveDto: CMAApproveDto,
-    user: User
-  ): Promise<DataResponseDto> {
+  async approveCMA(cmaAppoveDto: CMAApproveDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -622,6 +620,175 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
   }
 
+  async createValidationReport(
+    validationReportDto: ValidationReportDto,
+    user: User
+  ): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(
+      validationReportDto.programmeId
+    );
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.APPROVED_CMA) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (
+      validationReportDto.content.ghgProjectDescription.locationsOfProjectActivity &&
+      validationReportDto.content.ghgProjectDescription.locationsOfProjectActivity.length > 0
+    ) {
+      for (const location of validationReportDto.content.ghgProjectDescription
+        .locationsOfProjectActivity) {
+        if (location.additionalDocuments && location.additionalDocuments.length > 0) {
+          const docUrls = [];
+          for (const doc of location.additionalDocuments) {
+            const docUrl = await this.uploadDocument(
+              DocType.VALIDATION_REPORT_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+              validationReportDto.programmeId,
+              doc
+            );
+            docUrls.push(docUrl);
+          }
+          location.additionalDocuments = docUrls;
+        }
+      }
+    }
+
+    if (validationReportDto.content.validationOpinion.validator1Signature) {
+      const signUrl = await this.uploadDocument(
+        DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
+        validationReportDto.programmeId,
+        validationReportDto.content.validationOpinion.validator1Signature
+      );
+
+      validationReportDto.content.validationOpinion.validator1Signature = signUrl;
+    }
+
+    if (validationReportDto.content.validationOpinion.validator2Signature) {
+      const signUrl = await this.uploadDocument(
+        DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
+        validationReportDto.programmeId,
+        validationReportDto.content.validationOpinion.validator2Signature
+      );
+
+      validationReportDto.content.validationOpinion.validator2Signature = signUrl;
+    }
+
+    if (
+      validationReportDto.content.appendix.additionalDocuments &&
+      validationReportDto.content.appendix.additionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of validationReportDto.content.appendix.additionalDocuments) {
+        const docUrl = await this.uploadDocument(
+          DocType.VALIDATION_REPORT_APPENDIX_ADDITIONAL_DOCUMENT,
+          validationReportDto.programmeId,
+          doc
+        );
+        docUrls.push(docUrl);
+      }
+      validationReportDto.content.appendix.additionalDocuments = docUrls;
+    }
+
+    const validationReportDoc = new DocumentEntity();
+    validationReportDoc.content = JSON.stringify(validationReportDto.content);
+    validationReportDoc.programmeId = validationReportDto.programmeId;
+    validationReportDoc.companyId = companyId;
+    validationReportDoc.userId = user.id;
+    validationReportDoc.type = DocumentTypeEnum.VALIDATION_REPORT;
+
+    const lastVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_REPORT,
+      validationReportDto.programmeId
+    );
+    validationReportDoc.version = lastVersion + 1;
+    validationReportDoc.status = DocumentStatus.PENDING;
+    validationReportDoc.createdTime = new Date().getTime();
+    validationReportDoc.updatedTime = validationReportDoc.createdTime;
+
+    await this.documentRepo.insert(validationReportDoc);
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: validationReportDto.programmeId,
+      txType: TxType.CREATE_VALIDATION_REPORT,
+    };
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    return new DataResponseDto(HttpStatus.OK, validationReportDoc);
+  }
+
+  async approveValidation(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.VALIDATION_PENDING) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const serialNo = await this.serialGenerator.generateProjectRegistrationSerial(programmeId);
+    const registrationCertificateUrl = await this.generateProjectRegistrationCertificate(
+      programmeId
+    );
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_VALIDATION,
+      data: {
+        serialNo: serialNo,
+        registrationCertificateUrl: registrationCertificateUrl,
+      },
+    };
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    return new DataResponseDto(HttpStatus.OK, response.data);
+  }
+
   async updateProposalStage(
     updateProposalStageDto: UpdateProjectProposalStageDto,
     user: User
@@ -636,7 +803,8 @@ export class ProgrammeSlService {
       txType == TxType.CREATE_PROJECT_PROPOSAL ||
       txType == TxType.CREATE_VALIDATION_AGREEMENT ||
       txType == TxType.APPROVE_CMA ||
-      txType == TxType.REJECT_CMA
+      txType == TxType.REJECT_CMA ||
+      txType == TxType.CREATE_VALIDATION_REPORT
     ) {
       if (user.companyRole != CompanyRole.CLIMATE_FUND) {
         throw new HttpException(
@@ -651,7 +819,15 @@ export class ProgrammeSlService {
           HttpStatus.UNAUTHORIZED
         );
       }
+    } else if (txType == TxType.APPROVE_VALIDATION || txType == TxType.REJECT_VALIDATION) {
+      if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
     }
+
     //updating proposal stage in programme
     const updatedProgramme = await this.programmeLedger.updateProgrammeSlProposalStage(
       programmeId,
@@ -828,6 +1004,48 @@ export class ProgrammeSlService {
         .catch((err) => {
           throw err;
         });
+    } else if (txType == TxType.APPROVE_VALIDATION) {
+      const lastValidationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_REPORT,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.VALIDATION_REPORT,
+            version: lastValidationDocVersion,
+          },
+          {
+            status: DocumentStatus.ACCEPTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
+    } else if (txType == TxType.REJECT_VALIDATION) {
+      const lastValidationDocVersion = await this.getLastDocumentVersion(
+        DocumentTypeEnum.VALIDATION_REPORT,
+        programmeId
+      );
+
+      await this.documentRepo
+        .update(
+          {
+            programmeId: programmeId,
+            type: DocumentTypeEnum.VALIDATION_REPORT,
+            version: lastValidationDocVersion,
+          },
+          {
+            status: DocumentStatus.REJECTED,
+            updatedTime: Date.now(),
+          }
+        )
+        .catch((err) => {
+          throw err;
+        });
     }
     return new DataResponseDto(HttpStatus.OK, updatedProgramme);
   }
@@ -984,7 +1202,6 @@ export class ProgrammeSlService {
 
   // MARK: gen Reg Certificate
   async generateProjectRegistrationCertificate(programmeId: string) {
-
     const programme = await this.getProjectById(programmeId);
 
     if (!programme) {
@@ -1002,7 +1219,7 @@ export class ProgrammeSlService {
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
       sector: programme.projectCategory,
-      estimatedCredits: programme.creditEst
+      estimatedCredits: programme.creditEst,
     };
 
     const url =
@@ -1011,7 +1228,7 @@ export class ProgrammeSlService {
         programme.programmeId
       );
 
-      return url;
+    return url;
   }
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],

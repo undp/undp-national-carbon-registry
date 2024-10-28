@@ -38,6 +38,14 @@
 .agreement-form {
   width: 100%;
 
+  .step-actions {
+    &-end {
+      button:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+  
   .full-width-form-item {
     width: 100%;
   }
@@ -157,7 +165,7 @@
           .ant-upload-list-item-thumbnail {
             height: auto !important;
             img {
-              height: none;
+              height: auto;
             }
           }
 

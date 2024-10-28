@@ -205,6 +205,7 @@ export class VerificationService {
 
     const verificationReportDocument = new DocumentEntity();
     verificationReportDocument.userId = user.id;
+    verificationReportDocument.companyId = user.companyId;
     verificationReportDocument.version = verificationDocument
       ? verificationDocument.version + 1
       : 1;

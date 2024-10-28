@@ -33,6 +33,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
   const [countries, setCountries] = useState<[]>([]);
 
   const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
@@ -314,8 +318,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           });
 
           if (res?.statusText === 'SUCCESS') {
-            const content = JSON.parse(res?.data[0].content);
-            console.log('-----get data content-------', content);
+            const content = JSON.parse(res?.data.content);
             viewDataMaptoFields(content);
           }
         } catch (error) {
@@ -401,7 +404,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             extraProjectPlanActivities.forEach((activity: any) => {
               const name = activity.projectPlanActivity;
               const startDate = moment(activity.projectPlanActivityStartDate).unix();
-              const endDate = moment(activity.projectPlanActivity01EndDate).unix();
+              const endDate = moment(activity.projectPlanActivityEndDate).unix();
 
               const tempObj = {
                 activity: name,
@@ -491,7 +494,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error) {
       message.open({
@@ -2461,9 +2464,22 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </Form.Item>
 
           <Row justify={'end'} className="step-actions-end">
-            <Button type="primary" size={'large'} htmlType="submit">
-              submit
-            </Button>
+            {isView ? (
+              <>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                  Back
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                  Cancel
+                </Button>
+                <Button type="primary" size={'large'} htmlType="submit">
+                  submit
+                </Button>
+              </>
+            )}
           </Row>
         </Form>
       </div>
