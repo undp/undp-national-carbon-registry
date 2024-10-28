@@ -103,6 +103,10 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
       ...values,
@@ -122,7 +126,7 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({

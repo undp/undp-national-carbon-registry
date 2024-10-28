@@ -12,7 +12,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { GHGSource } from "./ghgSource.dto";
-import { ValidationReportYearlyGHGEmissionReduction } from "./ValidationReportYearlyGHGEmissionReduction.dto";
+import { ValidationReportYearlyGHGEmissionReduction } from "./validationReportYearlyGHGEmissionReduction.dto";
 
 export class ValidationReportNetEmissionReductions {
   @ApiProperty()

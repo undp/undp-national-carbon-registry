@@ -97,7 +97,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     });
   };
   const navigateToSiteVisitCheckListCreate = () => {
-    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
+    navigate(`/programmeManagementSLCF/siteVisitCheckList/${programmeId}`);
   };
 
   useEffect(() => {
@@ -218,6 +218,10 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     navigate(`/programmeManagementSLCF/validationAgreement/${programmeId}`, {
       state: { isView: true },
     });
+  }
+
+  function navigateToValidationReportCreate(): void {
+    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`);
   }
 
   function navigateToValidationReportView(): void {
@@ -699,7 +703,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         userInfoState,
                         DocType.VALIDATION_REPORT,
                         projectProposalStage
-                      ) && navigateToValidationReportView()
+                      ) && navigateToValidationReportCreate()
                     }
                   />
                 </Tooltip>
