@@ -45,6 +45,7 @@ import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
 import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
 import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
 import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+import ValidationReportPage from './Pages/ValidationReportPage.tsx/ValidationReportPage';
 import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
 import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
 import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
@@ -108,6 +109,14 @@ const App = () => {
                   </Route>
 
                   <Route
+                    path=""
+                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                  >
+                    <Route path="siteCheckList" element={<SiteVisitCheckListPage />} />
+                    <Route path="validationReport" element={<ValidationReportPage />} />
+                  </Route>
+
+                  <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
@@ -125,6 +134,7 @@ const App = () => {
                       element={<ValidationAgreementPage />}
                     />{' '}
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
+                    <Route path="validationReport/:id" element={<ValidationReportPage />} />
                   </Route>
 
                   <Route

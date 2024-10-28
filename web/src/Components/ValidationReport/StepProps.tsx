@@ -1,7 +1,6 @@
 import { FormInstance } from 'antd';
-import { i18n } from 'i18next';
 
-export interface CustomStepsProps {
+export interface ValidationStepsProps {
   next?: () => void;
   prev?: () => void;
   form: FormInstance;
@@ -11,5 +10,6 @@ export interface CustomStepsProps {
   handleValuesUpdate: (val: any) => void;
   submitForm?: (appendixVals: any) => void;
   projectCategory?: string;
+  cmaDetails?: any;
   existingFormValues?: any;
 }

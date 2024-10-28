@@ -17,6 +17,7 @@ import {
 import { ValidationReportEmployedTechnology } from "./validationReportEmployedTechnology.dto";
 import { ValidationReportLocationWiseBaselineEmission } from "./validationReportLocationWiseBaselineEmission.dto";
 import { ValidationReportNetEmissionReductions } from "./validationReportNetEmissionReductions.dto";
+import { YesNoEnum } from "src/enum/yesNo.enum";
 
 export class ValidationReportDataForValidationProcess {
   @ApiProperty()
@@ -55,100 +56,120 @@ export class ValidationReportDataForValidationProcess {
   @IsString()
   applicabilityCriteria1ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria1Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria1Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria2ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria2Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria2Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria3ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria3Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria3Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria4ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria4Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria4Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria5ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria5Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria5Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria6ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria6Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria6Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria7ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria7Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria7Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria8ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria8Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria8Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria9ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria9Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria9Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   applicabilityCriteria10ProjectActivity: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: YesNoEnum })
   @IsNotEmpty()
-  @IsBoolean()
-  isApplicabilityCriteria10Met: boolean;
+  @IsEnum(YesNoEnum, {
+    message: "Supported following values:" + Object.values(YesNoEnum),
+  })
+  isApplicabilityCriteria10Met: YesNoEnum;
 
   @ApiProperty()
   @IsNotEmpty()
