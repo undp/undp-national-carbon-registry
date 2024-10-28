@@ -47,6 +47,15 @@
     width: 100%;
   }
 
+  .custom-required:after {
+    content: '*';
+    color: rgba(255, 77, 79, 0.8) !important;
+    font-size: 14px;
+    top: 2px;
+    position: relative;
+    left: 3px;
+  }
+
   .section-title {
     font-weight: 600;
     color: #3a3541cc;
@@ -101,5 +110,65 @@
   .stakeholders-section {
     background-color: #fbfbfb;
     padding: 20px 16px;
+  }
+
+  .stakeholders-title {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    // align-items: center;
+  }
+
+  .step-actions {
+    &-end {
+      button:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .validator-info {
+    .design-upload-section {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: start;
+      width: 100%;
+
+      .icon-color {
+        color: $primary-color !important;
+      }
+
+      .ant-upload {
+        width: 20%;
+
+        .ant-btn {
+          height: 40px;
+        }
+      }
+
+      .ant-upload-list {
+        align-items: center;
+        justify-content: center;
+        width: 75%;
+        height: 40px;
+
+        .ant-upload-list-picture-container {
+          margin-bottom: 15px;
+
+          .ant-upload-list-item-thumbnail {
+            height: auto !important;
+            img {
+              height: auto;
+            }
+          }
+        }
+
+        .ant-upload-list-item {
+          margin-top: 0;
+          height: 40px;
+        }
+      }
+    }
   }
 }

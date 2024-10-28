@@ -38,6 +38,14 @@
 .agreement-form {
   width: 100%;
 
+  .step-actions {
+    &-end {
+      button:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+  
   .full-width-form-item {
     width: 100%;
   }

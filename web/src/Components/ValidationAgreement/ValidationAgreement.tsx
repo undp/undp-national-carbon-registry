@@ -8,7 +8,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -33,7 +33,11 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     return e?.fileList;
   };
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
 
   const viewDataMapToFields = (val: any) => {
     const tempInitialValues = {
@@ -101,7 +105,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       ],
     };
 
-    setLoading(false);
     form.setFieldsValue(tempInitialValues);
   };
 
@@ -133,6 +136,36 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   };
 
   const onFinish = async (values: any) => {
+    const climateFundSignature =
+      values?.SLCFSignature && values?.SLCFSignature[0]
+        ? await convertFileToBase64(values?.SLCFSignature[0])
+        : undefined;
+
+    const projectParticipantSignature =
+      values?.clientSignature && values?.clientSignature[0]
+        ? await convertFileToBase64(values?.clientSignature[0])
+        : undefined;
+
+    const witness1Signature =
+      values?.SLCFWitnessSignature && values?.SLCFWitnessSignature[0]
+        ? await convertFileToBase64(values?.clientSignature[0])
+        : undefined;
+
+    const witness2Signature =
+      values?.ClientWitnessSignature && values?.ClientWitnessSignature[0]
+        ? await convertFileToBase64(values?.clientSignature[0])
+        : undefined;
+
+    const annexureADoc =
+      values?.annexureAadditionalDocs && values?.annexureAadditionalDocs[0]
+        ? await convertFileToBase64(values?.annexureAadditionalDocs[0])
+        : undefined;
+
+    const annexureBDoc =
+      values?.annexureBadditionalDocs && values?.annexureBadditionalDocs[0]
+        ? await convertFileToBase64(values?.annexureBadditionalDocs[0])
+        : undefined;
+
     const tempValues = {
       programmeId: id,
       content: {
@@ -142,20 +175,20 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         definitions: values?.definitions,
         whereasConditions: values?.whereas,
         settlementFee: Number(values?.settlementFee),
-        climateFundSignature: await convertFileToBase64(values?.SLCFSignature[0]),
-        projectParticipantSignature: await convertFileToBase64(values?.clientSignature[0]),
+        climateFundSignature,
+        projectParticipantSignature,
         projectParticipantSignatory: values?.clientAuthorizedSignatory,
-        witness1Signature: await convertFileToBase64(values?.SLCFWitnessSignature[0]),
+        witness1Signature,
         witness1Name: values?.SLCFWitnessName,
         witness1Designation: values?.SLCFWitnessDesignation,
         witness2Label: values?.ClientWitness,
-        witness2Signature: await convertFileToBase64(values?.ClientWitnessSignature[0]),
+        witness2Signature,
         witness2Name: values?.clientWitnessName,
         witness2Designation: values?.clientWitnessDesignation,
         annexureAComment: values?.annexureAadditionalComments,
-        annexureADoc: await convertFileToBase64(values?.annexureAadditionalDocs[0]),
+        annexureADoc,
         annexureBComment: values?.annexureBadditionalComments,
-        annexureBDoc: await convertFileToBase64(values?.annexureBadditionalDocs[0]),
+        annexureBDoc,
       },
     };
 
@@ -174,6 +207,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
+        navigateToDetailsPage();
       }
     } catch (error) {
       message.open({
@@ -1001,9 +1035,22 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           {/* Signatures and annexures end */}
 
           <Row justify={'end'} className="step-actions-end">
-            <Button type="primary" size={'large'} htmlType="submit">
-              Submit
-            </Button>
+            {isView ? (
+              <>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                  Back
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                  Cancel
+                </Button>
+                <Button type="primary" size={'large'} htmlType="submit">
+                  submit
+                </Button>
+              </>
+            )}
           </Row>
         </Form>
       </div>

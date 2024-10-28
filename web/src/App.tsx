@@ -107,13 +107,6 @@ const App = () => {
                   </Route>
 
                   <Route
-                    path=""
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="siteCheckList" element={<SiteVisitCheckListPage />} />
-                  </Route>
-
-                  <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
@@ -124,12 +117,14 @@ const App = () => {
                     <Route path="monitoringReport/:id" element={<SLCFMonitoringReport />} />
                     <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
                     <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
+                    <Route path="siteVisitCheckList/:id/" element={<SiteVisitCheckListPage />} />
                     <Route
                       path="validationAgreement/:id"
                       element={<ValidationAgreementPage />}
                     />{' '}
                     <Route path="cmaForm/:id" element={<CMAFormPage />} />
                   </Route>
+
                   <Route
                     path="/retirementManagement"
                     element={<CustomLayout selectedKey="retirementManagement/viewAll" />}

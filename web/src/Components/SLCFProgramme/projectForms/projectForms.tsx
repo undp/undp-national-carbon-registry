@@ -91,6 +91,15 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
   };
 
+  const navigateToSiteVisitCheckListView = () => {
+    navigate(`/programmeManagementSLCF/siteVisitCheckList/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
+  const navigateToSiteVisitCheckListCreate = () => {
+    navigate(`/programmeManagementSLCF/projectProposal/${programmeId}`);
+  };
+
   useEffect(() => {
     setDocData(data);
   }, [data]);
