@@ -577,7 +577,7 @@ export const AddCostQuotationForm = (props: any) => {
                     </>
                   ) : (
                     <>
-                      <Button danger size={'large'}>
+                      <Button danger size={'large'} onClick={naviagetToDetailsPage}>
                         Cancel
                       </Button>
                       <Button type="primary" size={'large'} htmlType="submit">

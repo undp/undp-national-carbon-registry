@@ -300,7 +300,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
         return tempStakeholderObjs;
       })(),
-      validatorName: values?.valdatiorName,
+      validatorName: values?.validatorName,
       validationDate: moment(values?.validationDate).startOf('day').unix(),
       validatorDesignation: values?.validatorDesignation,
       validatorSignature: validatorSignatureBase64,
@@ -315,7 +315,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
-          content: 'CMA Approve sucess',
+          content: 'CMA Approve success',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
