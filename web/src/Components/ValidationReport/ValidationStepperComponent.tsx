@@ -73,7 +73,7 @@ const StepperComponent = (props: any) => {
       if (res?.response?.data?.statusCode === 200) {
         message.open({
           type: 'success',
-          content: 'CMA form has been submitted successfully',
+          content: 'Validation report has been submitted successfully',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
