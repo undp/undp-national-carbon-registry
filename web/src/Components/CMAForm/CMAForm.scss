@@ -306,7 +306,7 @@
   .step-actions {
     &-end {
       button {
-        margin-left: 10px;
+        margin-right: 10px;
       }
     }
   }
@@ -320,6 +320,27 @@
     // .step-form-right-col {
 
     // }
+  }
+}
+
+.stepper-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: $steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $steps-title;
   }
 }
 
