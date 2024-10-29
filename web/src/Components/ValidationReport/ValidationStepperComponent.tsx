@@ -1,5 +1,5 @@
 import { Steps, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ValidationReport.scss';
 // import './SLCFMonitoringReportComponent.scss';
 
@@ -7,7 +7,7 @@ import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
 import moment from 'moment';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import DataValidationProcess from './DataValidationProcess';
 import ValidationReportIntroduction from './ValidationReportIntroduction';
 import ProjectDetails from './ProjectDetails';
@@ -16,6 +16,9 @@ import ValicationReportGHGDescriptionOfProjectActivity from './ValicationReportG
 import ValidationMethodology from './ValidationMethodology';
 import ValidationOpinion from './ValidationOpinion';
 import ValidationReportAppendix from './ValidationReportAppendix';
+import { projectScopeList } from './validationReportHelper';
+import { extractFilePropertiesFromLink } from '../../Utils/utilityHelper';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 export enum ProcessSteps {
   VR_PROJECT_DETAILS = 'VR_PROJECT_DETAILS',
@@ -34,6 +37,10 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { id: programId } = useParams();
   const { get, post } = useConnection();
+  const navigationLocation = useLocation();
+  const scrollSection = useRef({} as any);
+  const { mode } = navigationLocation.state || {};
+  const isEdit = true;
 
   const [existingFormValues, setExistingFormValues] = useState({
     programmeId: programId,
@@ -49,6 +56,19 @@ const StepperComponent = (props: any) => {
       [ProcessSteps.VR_APPENDIX]: {},
     },
   });
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${programId}`);
+  };
+
+  const scrollToDiv = () => {
+    if (scrollSection.current) {
+      scrollSection.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   const submitForm = async (formValues: any) => {
     const validationData = {
@@ -77,7 +97,7 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
@@ -91,6 +111,7 @@ const StepperComponent = (props: any) => {
 
   const next = () => {
     setCurrent(current + 1);
+    scrollToDiv();
   };
 
   const prev = () => {
@@ -287,7 +308,7 @@ const StepperComponent = (props: any) => {
             }
           ),
         ],
-        estimatedNetEmissionReduction:
+        estimatedNetEmissionReductions:
           projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
             (emissionData: any) => {
               return {
@@ -598,18 +619,367 @@ const StepperComponent = (props: any) => {
     // }
   };
 
+  const getValidationReportLastVersion = async (id: string) => {
+    try {
+      const {
+        data: { content },
+      } = await post('national/programmeSL/getDocLastVersion', {
+        programmeId: id,
+        docType: 'validationReport',
+      });
+
+      const validationReportContent = JSON.parse(content);
+      console.log(validationReportContent);
+
+      const projectDetails = validationReportContent.projectDetails;
+      const introductionDetails = validationReportContent.introduction;
+      const ghgProjectDescription = validationReportContent.ghgProjectDescription;
+      const validationMethodology = validationReportContent.validationMethodology;
+      const dataForValidationProcess = validationReportContent.dataForValidationProcess;
+      const validationOpinion = validationReportContent.validationOpinion;
+      const references = validationReportContent.references;
+      const appendix = validationReportContent.appendix;
+
+      // const dateOfIssue = moment().unix();
+      form1.setFieldsValue({
+        client: projectDetails?.client,
+        address: projectDetails?.address,
+        dateOfIssue: moment(projectDetails?.dateOfIssue),
+        email: projectDetails?.email,
+        projectTitle: projectDetails?.projectTitle,
+        reportNo: projectDetails?.reportNo,
+        telephone: projectDetails?.telephone,
+        versionDate: moment(projectDetails?.versionDate),
+        versionNo: projectDetails?.versionNo,
+        website: projectDetails?.website,
+        summary: projectDetails?.summary,
+        workApprovedBy: projectDetails?.workApprovedBy,
+        workCarriedOutBy: projectDetails?.workCarriedOutBy,
+      });
+
+      form2.setFieldsValue({
+        objective: introductionDetails?.objective,
+        scopeAndCriteria: introductionDetails?.scopeAndCriteria,
+        titleOfProjectActivity: introductionDetails?.titleOfProjectActivity,
+        projectParticipant: introductionDetails?.projectParticipant,
+        hostParty: introductionDetails?.hostParty,
+        consultant: introductionDetails?.consultant,
+        summary: introductionDetails?.summary,
+      });
+
+      // const projectLocations = ghgProjectDescription.locationsOfProjectActivity.map(
+      //   (location: any) => {
+      //     return {
+      //       technicalProjectDescriptionItems: location.technicalProjectDescription,
+      //       locationOfProjectActivity: location.locationOfProjectActivity,
+      //       province: location.province,
+      //       district: location.district,
+      //       dsDivision: location.dsDivision,
+      //       city: location.city,
+      //       community: location.community,
+      //       additionalDocuments: location.additionalDocuments,
+      //       geographicalLocationCoordinates: location.geographicalLocationCoordinates[0],
+      //     };
+      //   }
+      // );
+      // console.log('List', projectLocations);
+
+      const projectLocations = ghgProjectDescription.locationsOfProjectActivity.map(
+        (location: any) => {
+          return {
+            technicalProjectDescriptionItems: location.technicalProjectDescription,
+            locationOfProjectActivity: location.locationOfProjectActivity,
+            province: location.province,
+            district: location.district,
+            dsDivision: location.dsDivision,
+            city: location.city,
+            community: location.community,
+            additionalDocuments: location.additionalDocuments,
+            geographicalLocationCoordinates: location.geographicalLocationCoordinates[0][0],
+          };
+        }
+      );
+
+      form3.setFieldsValue({
+        // creditingPeriod: projectContent?.projectActivity?.totalCreditingYears,
+        // locationsOfProjectActivity: projectContent?.projectActivity.locationsOfProjectActivity.map(
+        //   (location: any) => {
+        //     return {
+        //       ...location,
+        //       technicalProjectDescriptionItems: [
+        //         {
+        //           item: '',
+        //           parameterValue: [
+        //             {
+        //               parameter: '',
+        //               value: '',
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     };
+        //   }
+        // ),
+        ...ghgProjectDescription,
+        projectScopeUNFCC: projectScopeList(t)
+          .filter((item: any) => {
+            return ghgProjectDescription[item.id];
+          })
+          .map((pItem: any) => pItem.id),
+        locationsOfProjectActivity: projectLocations,
+        // isProjectScopeEnergyIndustries: ghgProjectDescription.isProjectScopeEnergyIndustries,
+        // isProjectScopeEnergyDistribution: ghgProjectDescription.isProjectScopeEnergyDistribution,
+        // isProjectScopeEnergyDemand: ghgProjectDescription.isProjectScopeEnergyDemand,
+        // isProjectScopeManufacturingIndustries: ghgProjectDescription.isProjectScopeManufacturingIndustries,
+        // isProjectScopeChemicalIndustries: ghgProjectDescription.isProjectScopeChemicalIndustries,
+        // isProjectScopeChemicalIndustry: ghgProjectDescription.isProjectScopeChemicalIndustry,
+        // isProjectScopeConstruction: ghgProjectDescription.isProjectScopeConstruction,
+        // isProjectScopeTransport: ghgProjectDescription.isProjectScopeTransport,
+        // isProjectScopeMining: ghgProjectDescription.isProjectScopeMining,
+        // isProjectScopeFugitiveEmissionsFromFuel: ghgProjectDescription.,
+        // isProjectScopeFugitiveEmissionsFromHalocarbons: ghgProjectDescription,
+        // isProjectScopeSolventsUse: ghgProjectDescription,
+        // isProjectScopeWasteHandling: ghgProjectDescription,
+        // isProjectScopeAfforestation: ghgProjectDescription,
+        // isProjectScopeAgriculture: ghgProjectDescription,
+
+        // projectTitle: ghgProjectDescription.projectTitle,
+        // projectSize: ghgProjectDescription.projectSize,
+        // isProjectScopeEnergyIndustries: ghgProjectDescription.isProjectScopeEnergyIndustries,
+        // isProjectScopeEnergyDistribution: ghgProjectDescription.isProjectScopeEnergyDistribution,
+        // isProjectScopeEnergyDemand: ghgProjectDescription.isProjectScopeEnergyDemand,
+        // isProjectScopeManufacturingIndustries: ghgProjectDescription.isProjectScopeManufacturingIndustries,
+        // isProjectScopeChemicalIndustries: ghgProjectDescription.isProjectScopeChemicalIndustries,
+        // isProjectScopeChemicalIndustry: ghgProjectDescription.isProjectScopeChemicalIndustry,
+        // isProjectScopeConstruction: ghgProjectDescription.isProjectScopeConstruction,
+        // isProjectScopeTransport: ghgProjectDescription.isProjectScopeTransport,
+        // isProjectScopeMining: ghgProjectDescription.isProjectScopeMining,
+        // isProjectScopeFugitiveEmissionsFromFuel: ghgProjectDescription.,
+        // isProjectScopeFugitiveEmissionsFromHalocarbons: ghgProjectDescription,
+        // isProjectScopeSolventsUse: ghgProjectDescription,
+        // isProjectScopeWasteHandling: ghgProjectDescription,
+        // isProjectScopeAfforestation: ghgProjectDescription,
+        // isProjectScopeAgriculture: ghgProjectDescription,
+        // appliedMethodology: 'Quia ut optio conse',
+        // technicalAreas: 'Corrupti ut eum iur',
+        // creditingPeriod: 'Velit quaerat conse',
+        // locationsOfProjectActivity: [
+        //   {
+        //     locationOfProjectActivity: 'Aut quam rerum disti',
+        //     province: 'Central',
+        //     district: 'Kandy',
+        //     dsDivision: 'Abanpola',
+        //     city: 'Colombo',
+        //     community: 'Autem in nulla id et',
+        //     geographicalLocationCoordinates: [
+        //       [
+        //         [
+        //           [80.39625139724865, 7.738554078601368],
+        //           [80.73017497460904, 6.0411073520659215],
+        //           [81.60506563501434, 6.7447755490509],
+        //           [80.39625139724865, 7.738554078601368],
+        //         ],
+        //       ],
+        //     ],
+        //     additionalDocuments: [],
+        //     technicalProjectDescription: [
+        //       {
+        //         item: 'Labore quas voluptas',
+        //         parameterValue: [
+        //           {
+        //             parameter: 'Cupidatat accusantiu',
+        //             value: 'Rerum distinctio Eu',
+        //           },
+        //         ],
+        //       },
+        //     ],
+        //   },
+        // ],
+        startDateCreditingPeriod: moment(ghgProjectDescription.startDateCreditingPeriod),
+      });
+
+      form4.setFieldsValue({
+        ...validationMethodology,
+      });
+
+      const netEmissionReduction = dataForValidationProcess.estimatedNetEmissionReductions[0];
+      form5.setFieldsValue({
+        ...dataForValidationProcess,
+        gridEmissionFactorUnit: 'tCO2e/MWh',
+        gridEmissionFactorValueGlobal: 0.72222,
+        totalCapacity: `${dataForValidationProcess?.totalCapacity}`,
+        baselineEmissions: [
+          {
+            type: 'unit',
+            location: t('validationReport:units'),
+            projectCapacityValue: 'kWp',
+            plantFactorValue: '%',
+            avgEnergyOutputValue: 'MWh/Year',
+            gridEmissionFactorValue: 'tCO2/MWh',
+            emissionReductionValue: 'tCO2/Yea',
+          },
+          ...dataForValidationProcess?.baselineEmissions?.map((emissions: any) => {
+            return {
+              location: emissions.location,
+              projectCapacityValue: emissions.projectCapacityValue,
+              plantFactorValue: emissions.plantFactorValue,
+              avgEnergyOutputValue: emissions.avgEnergyOutputValue,
+              gridEmissionFactorValue: emissions.gridEmissionFactorValue,
+              emissionReductionValue: emissions.emissionReductionValue,
+            };
+          }),
+        ],
+        estimatedNetEmissionReductions: netEmissionReduction.yearlyGHGEmissionReductions.map(
+          (netEmission: any) => {
+            return {
+              ...netEmission,
+              startDate: moment(netEmission.startDate),
+              endDate: moment(netEmission.endDate),
+            };
+          }
+        ),
+        totalBaselineEmissionReductions: Number(
+          netEmissionReduction.totalBaselineEmissionReductions
+        ),
+        totalProjectEmissionReductions: Number(netEmissionReduction.totalProjectEmissionReductions),
+        totalLeakageEmissionReductions: Number(netEmissionReduction.totalLeakageEmissionReductions),
+        totalNetEmissionReductions: Number(netEmissionReduction.totalNetEmissionReductions),
+        totalBufferPoolAllocations: Number(netEmissionReduction.totalBufferPoolAllocations),
+        totalNumberOfCredingYears: Number(netEmissionReduction.totalNumberOfCredingYears),
+        avgBaselineEmissionReductions: Number(netEmissionReduction.avgBaselineEmissionReductions),
+        avgProjectEmissionReductions: Number(netEmissionReduction.avgProjectEmissionReductions),
+        avgLeakageEmissionReductions: Number(netEmissionReduction.avgLeakageEmissionReductions),
+        avgNetEmissionReductions: Number(netEmissionReduction.avgNetEmissionReductions),
+        avgBufferPoolAllocations: Number(netEmissionReduction.avgBufferPoolAllocations),
+        // yearlyGHGEmissionReductions: dataForValidationProcess,
+      });
+
+      form6.setFieldsValue({
+        opinion: validationOpinion?.opinion,
+        validator1Signature: [
+          {
+            uid: '1',
+            name: extractFilePropertiesFromLink(validationOpinion.validator1Signature).fileName,
+            status: 'done',
+            url: `${validationOpinion.validator1Signature}`,
+          },
+        ],
+        validator1Designation: validationOpinion?.validator1Designation,
+        validator1Name: validationOpinion?.validator1Name,
+        validator1DateOfSign: moment(validationOpinion?.validator1DateOfSign),
+        validator2Designation: validationOpinion?.validator2Designation,
+        validator2Name: validationOpinion?.validator2Name,
+        validator2Signature: [
+          {
+            uid: '2',
+            name: extractFilePropertiesFromLink(validationOpinion.validator1Signature).fileName,
+            status: 'done',
+            url: validationOpinion.validator2Signature,
+          },
+        ],
+        validator2DateOfSign: moment(validationOpinion?.validator2DateOfSign),
+      });
+
+      form7.setFieldsValue({
+        references: references?.references,
+      });
+
+      form8.setFieldsValue({
+        comments: appendix?.comments,
+        additionalDocuments: appendix.additionalDocuments.map((document: any, index: number) => {
+          return {
+            uid: index,
+            name: extractFilePropertiesFromLink(document).fileName,
+            status: 'done',
+            url: document,
+          };
+        }),
+      });
+
+      // form5.setFieldsValue({
+      //   employedTechnologies: projectContent?.projectActivity.locationsOfProjectActivity.map(
+      //     (location: any, index: number) => {
+      //       return {
+      //         siteNo: index + 1,
+      //         location: location.locationOfProjectActivity,
+      //         capacity: '',
+      //       };
+      //     }
+      //   ),
+      //   gridEmissionFactorUnit: 'tCO2e/MWh',
+      //   gridEmissionFactorValueGlobal: 0.72222,
+      //   baselineEmissions: [
+      //     {
+      //       type: 'unit',
+      //       location: t('validationReport:units'),
+      //       projectCapacityValue: 'kWp',
+      //       plantFactorValue: '%',
+      //       avgEnergyOutputValue: 'MWh/Year',
+      //       gridEmissionFactorValue: 'tCO2/MWh',
+      //       emissionReductionValue: 'tCO2/Yea',
+      //     },
+      //     ...projectContent?.projectActivity.locationsOfProjectActivity.map(
+      //       (location: any, index: number) => {
+      //         return {
+      //           type: 'value',
+      //           location: location.locationOfProjectActivity,
+      //           projectCapacityValue: '',
+      //           plantFactorValue: '',
+      //           avgEnergyOutputValue: '',
+      //           gridEmissionFactorValue: '',
+      //           emissionReductionValue: '',
+      //         };
+      //       }
+      //     ),
+      //   ],
+      //   estimatedNetEmissionReduction:
+      //     projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
+      //       (emissionData: any) => {
+      //         return {
+      //           startDate: moment(emissionData.startDate * 1000),
+      //           endDate: moment(emissionData.endDate * 1000),
+      //         };
+      //       }
+      //     ),
+      //   totalNumberOfCredingYears: projectContent?.projectActivity?.totalCreditingYears,
+      // });
+
+      // setProjectCategory(data?.projectCategory);
+      // form2.setFieldsValue({
+      //   projectTrack: data?.purposeOfCreditDevelopment,
+      //   // projectTrack: 'TRACK_2',
+      //   organizationName: data?.company?.name,
+      //   email: data?.company?.email,
+      //   telephone: data?.company?.phoneNo,
+      //   address: data?.company?.address,
+      //   fax: data?.company?.faxNo,
+      // });
+
+      // setValues((prevVal) => ({
+      //   ...prevVal,
+      //   companyId: data?.company?.companyId,
+      // }));
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
   useEffect(() => {
     getCountryList();
     if (programId) {
-      getProgrammeDetailsById(programId);
-      getCMALastVersion(programId);
+      if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
+        getValidationReportLastVersion(programId);
+      } else {
+        getProgrammeDetailsById(programId);
+        getCMALastVersion(programId);
+      }
     }
   }, []);
 
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
+        <div ref={scrollSection} className="stepper-title-container project-detail-title">
           {/* <div className="step-count">00</div> */}
           <div className="title">{t('validationReport:form01Title')}</div>
         </div>
@@ -623,6 +993,7 @@ const StepperComponent = (props: any) => {
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_PROJECT_DETAILS]}
+          formMode={mode}
         />
       ),
     },
@@ -643,6 +1014,7 @@ const StepperComponent = (props: any) => {
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_INTRODUCTION]}
+          formMode={mode}
         />
       ),
     },
@@ -662,6 +1034,7 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]}
+          formMode={mode}
         />
       ),
     },
@@ -681,6 +1054,7 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_METHODOLOGY]}
+          formMode={mode}
         />
       ),
     },
@@ -701,6 +1075,7 @@ const StepperComponent = (props: any) => {
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_PROCESS]}
           projectCategory={projectCategory}
+          formMode={mode}
         />
       ),
     },
@@ -720,6 +1095,7 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_OPINION]}
+          formMode={mode}
         />
       ),
     },
@@ -739,6 +1115,7 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_REFERENCE]}
+          formMode={mode}
         />
       ),
     },
@@ -753,11 +1130,12 @@ const StepperComponent = (props: any) => {
         <ValidationReportAppendix
           next={next}
           prev={prev}
-          form={form7}
+          form={form8}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           existingFormValues={existingFormValues.content[ProcessSteps.VR_APPENDIX]}
+          formMode={mode}
         />
       ),
     },

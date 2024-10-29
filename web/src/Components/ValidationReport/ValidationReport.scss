@@ -203,12 +203,13 @@
 
 .technical-project-description {
   background-color: #e8e8e8 !important;
+  width: 100%;
 }
 
 .technical-project-grid-title {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns with equal width */
-  row-gap: 1px;
+  grid-template-columns: repeat(3, 1fr); /* 2 columns with equal width */
+  column-gap: 20px;
 }
 
 .technical-project-grid-parameter {

@@ -3,9 +3,10 @@ import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { ProcessSteps } from './ValidationStepperComponent';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const Reference = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const onFinish = async (values: any) => {
     const referencesFormValues: any = {
@@ -34,6 +35,7 @@ const Reference = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <Form.Item
                 className="full-width-form-item"
@@ -46,17 +48,18 @@ const Reference = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={10} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={10} />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
                   // onClick={next}
+                  disabled={false}
                   htmlType="submit"
                 >
                   {t('validationReport:next')}

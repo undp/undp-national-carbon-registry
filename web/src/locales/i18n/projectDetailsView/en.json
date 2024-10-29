@@ -200,6 +200,6 @@
   "REJECTED_CMA": "CMA Rejected",
   "APPROVED_CMA": "CMA Approved",
   "VALIDATION_PENDING": "Validation Pending",
-  "REJECTED_VALIDATION": "CMA Approved",
+  "REJECTED_VALIDATION": "Validation Rejected",
   "AUTHORISED": "Authorised"
 }

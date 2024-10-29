@@ -4,9 +4,20 @@ import { Row, Button, Form, Col, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import { ProcessSteps } from './ValidationStepperComponent';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationReportIntroduction = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, existingFormValues } = props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    existingFormValues,
+    formMode,
+  } = props;
 
   useEffect(() => {
     if (existingFormValues) {
@@ -50,6 +61,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <Form.Item
                 className="full-width-form-item"
@@ -62,7 +74,11 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder="Explain the purpose of the validation." />
+                <TextArea
+                  disabled={FormMode.VIEW === formMode}
+                  rows={4}
+                  placeholder="Explain the purpose of the validation."
+                />
               </Form.Item>
 
               <Form.Item
@@ -79,6 +95,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder="Describe the scope and criteria of the validation."
+                  disabled={FormMode.VIEW === formMode}
                 />
               </Form.Item>
 
@@ -86,14 +103,6 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 className="full-width-form-item"
                 label={`1.3 ${t('validationReport:involvedPartiesAndParticipeant')}`}
                 name="involvedPartiesAndParticipeant"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('validationReport:involvedPartiesAndParticipeant')}  ${t(
-                      'isRequired'
-                    )}`,
-                  },
-                ]}
               >
                 <div className="form-section mg-top-1">
                   <Row justify={'space-between'} gutter={[40, 16]}>
@@ -176,17 +185,19 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder="Provide a summary description of the project (no more than one page)."
+                  disabled={FormMode.VIEW === formMode}
                 />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
                   // onClick={next}
+                  disabled={false}
                   htmlType="submit"
                 >
                   {t('validationReport:next')}
