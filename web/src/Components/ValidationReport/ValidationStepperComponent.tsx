@@ -1,5 +1,5 @@
 import { Steps, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ValidationReport.scss';
 // import './SLCFMonitoringReportComponent.scss';
 
@@ -38,6 +38,7 @@ const StepperComponent = (props: any) => {
   const { id: programId } = useParams();
   const { get, post } = useConnection();
   const navigationLocation = useLocation();
+  const scrollSection = useRef({} as any);
   const { mode } = navigationLocation.state || {};
   const isEdit = true;
 
@@ -55,6 +56,19 @@ const StepperComponent = (props: any) => {
       [ProcessSteps.VR_APPENDIX]: {},
     },
   });
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${programId}`);
+  };
+
+  const scrollToDiv = () => {
+    if (scrollSection.current) {
+      scrollSection.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   const submitForm = async (formValues: any) => {
     const validationData = {
@@ -83,7 +97,7 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
@@ -97,6 +111,7 @@ const StepperComponent = (props: any) => {
 
   const next = () => {
     setCurrent(current + 1);
+    scrollToDiv();
   };
 
   const prev = () => {
@@ -964,7 +979,7 @@ const StepperComponent = (props: any) => {
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
+        <div ref={scrollSection} className="stepper-title-container project-detail-title">
           {/* <div className="step-count">00</div> */}
           <div className="title">{t('validationReport:form01Title')}</div>
         </div>

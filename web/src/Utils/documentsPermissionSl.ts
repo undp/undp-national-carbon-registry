@@ -218,7 +218,9 @@ export const isShowCreateButton = (
 ) => {
   if (
     docType === DocType.VALIDATION_REPORT &&
-    projectProposalStage !== ProjectProposalStage.REJECTED_VALIDATION
+    projectProposalStage !== ProjectProposalStage.REJECTED_VALIDATION &&
+    projectProposalStage !== ProjectProposalStage.VALIDATION_PENDING &&
+    projectProposalStage !== ProjectProposalStage.AUTHORISED
   ) {
     return true;
   }
@@ -233,7 +235,9 @@ export const isShowEditButton = (
 ) => {
   if (
     docType === DocType.VALIDATION_REPORT &&
-    projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION
+    (projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED)
   ) {
     return true;
   }

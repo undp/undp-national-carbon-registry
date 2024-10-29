@@ -483,22 +483,23 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       }
     );
 
-    return [
-      {
-        totalBaselineEmissionReductions: Number(values.totalBaselineEmissionReductions),
-        totalProjectEmissionReductions: Number(values.totalProjectEmissionReductions),
-        totalLeakageEmissionReductions: Number(values.totalLeakageEmissionReductions),
-        totalNetEmissionReductions: Number(values.totalNetEmissionReductions),
-        totalBufferPoolAllocations: Number(values.totalBufferPoolAllocations),
-        totalNumberOfCredingYears: Number(values.totalNumberOfCredingYears),
-        avgBaselineEmissionReductions: Number(values.avgBaselineEmissionReductions),
-        avgProjectEmissionReductions: Number(values.avgProjectEmissionReductions),
-        avgLeakageEmissionReductions: Number(values.avgLeakageEmissionReductions),
-        avgNetEmissionReductions: Number(values.avgNetEmissionReductions),
-        avgBufferPoolAllocations: Number(values.avgBufferPoolAllocations),
-        yearlyGHGEmissionReductions: yearlyGHGEmissionReductions,
-      },
-    ];
+    const resp: any = {
+      totalBaselineEmissionReductions: Number(values.totalBaselineEmissionReductions),
+      totalProjectEmissionReductions: Number(values.totalProjectEmissionReductions),
+      totalLeakageEmissionReductions: Number(values.totalLeakageEmissionReductions),
+      totalNetEmissionReductions: Number(values.totalNetEmissionReductions),
+      totalBufferPoolAllocations: Number(values.totalBufferPoolAllocations),
+      totalNumberOfCredingYears: Number(values.totalNumberOfCredingYears),
+      avgBaselineEmissionReductions: Number(values.avgBaselineEmissionReductions),
+      avgProjectEmissionReductions: Number(values.avgProjectEmissionReductions),
+      avgLeakageEmissionReductions: Number(values.avgLeakageEmissionReductions),
+      avgNetEmissionReductions: Number(values.avgNetEmissionReductions),
+      yearlyGHGEmissionReductions: yearlyGHGEmissionReductions,
+    };
+    if (projectCategory === ProjectCategory.AFOLU) {
+      resp.avgBufferPoolAllocations = Number(values.avgBufferPoolAllocations);
+    }
+    return [resp];
   };
 
   const onFinish = async (values: any) => {

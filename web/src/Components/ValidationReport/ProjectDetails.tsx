@@ -366,7 +366,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input readOnly size={'large'} />
+                      <Input size={'large'} />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}
