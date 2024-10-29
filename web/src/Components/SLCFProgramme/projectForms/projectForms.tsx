@@ -9,6 +9,7 @@ import {
   LikeOutlined,
   BookOutlined,
   FolderViewOutlined,
+  EditOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -26,7 +27,10 @@ import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import {
   formCreatePermission,
+  formEditPermission,
   formViewPermission,
+  isShowCreateButton,
+  isShowEditButton,
   linkDocVisible,
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
@@ -227,10 +231,15 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   function navigateToValidationReportCreate(): void {
     navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
       state: {
-        mode:
-          projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION
-            ? FormMode.EDIT
-            : FormMode.CREATE,
+        mode: FormMode.CREATE,
+      },
+    });
+  }
+
+  function navigateToValidationReportEdit(): void {
+    navigate(`/programmeManagementSLCF/validationReport/${programmeId}`, {
+      state: {
+        mode: FormMode.EDIT,
       },
     });
   }
@@ -664,64 +673,113 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             margin: '0px 0px 1.5px 0px',
                           }
                     }
-                    onClick={
-                      () =>
-                        formViewPermission(
+                    onClick={() =>
+                      formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      ) && navigateToValidationReportView()
+                    }
+                  />
+                </Tooltip>
+              </>
+            </Col>
+
+            {isShowCreateButton(userInfoState, DocType.VALIDATION_REPORT, projectProposalStage) && (
+              <Col span={3} className="field-value">
+                <>
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="top"
+                    trigger="hover"
+                    title={
+                      !formCreatePermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      ) && t('projectDetailsView:orgNotAuthCreate')
+                    }
+                    overlayClassName="custom-tooltip"
+                  >
+                    <FileAddOutlined
+                      className="common-progress-icon"
+                      style={
+                        formCreatePermission(
                           userInfoState,
                           DocType.VALIDATION_REPORT,
                           projectProposalStage
-                        ) && navigateToValidationReportView()
-                      // navigateToValidationReportView()
-                    }
-                  />
-                </Tooltip>
-              </>
-            </Col>
-            <Col span={3} className="field-value">
-              <>
-                <Tooltip
-                  arrowPointAtCenter
-                  placement="top"
-                  trigger="hover"
-                  title={
-                    !formCreatePermission(
-                      userInfoState,
-                      DocType.VALIDATION_REPORT,
-                      projectProposalStage
-                    ) && t('projectDetailsView:orgNotAuthCreate')
-                  }
-                  overlayClassName="custom-tooltip"
-                >
-                  <FileAddOutlined
-                    className="common-progress-icon"
-                    style={
-                      formCreatePermission(
+                        )
+                          ? {
+                              color: '#3F3A47',
+                              cursor: 'pointer',
+                              margin: '0px 0px 1.5px 0px',
+                            }
+                          : {
+                              color: '#cacaca',
+                              cursor: 'default',
+                              margin: '0px 0px 1.5px 0px',
+                            }
+                      }
+                      onClick={() =>
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        ) && navigateToValidationReportCreate()
+                      }
+                    />
+                  </Tooltip>
+                </>
+              </Col>
+            )}
+
+            {isShowEditButton(userInfoState, DocType.VALIDATION_REPORT, projectProposalStage) && (
+              <Col span={3} className="field-value">
+                <>
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="top"
+                    trigger="hover"
+                    title={
+                      !formEditPermission(
                         userInfoState,
                         DocType.VALIDATION_REPORT,
                         projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
+                      ) && t('projectDetailsView:orgNotAuthCreate')
                     }
-                    onClick={() =>
-                      formCreatePermission(
-                        userInfoState,
-                        DocType.VALIDATION_REPORT,
-                        projectProposalStage
-                      ) && navigateToValidationReportCreate()
-                    }
-                  />
-                </Tooltip>
-              </>
-            </Col>
+                    overlayClassName="custom-tooltip"
+                  >
+                    <EditOutlined
+                      className="common-progress-icon"
+                      style={
+                        formEditPermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        )
+                          ? {
+                              color: '#3F3A47',
+                              cursor: 'pointer',
+                              margin: '0px 0px 1.5px 0px',
+                            }
+                          : {
+                              color: '#cacaca',
+                              cursor: 'default',
+                              margin: '0px 0px 1.5px 0px',
+                            }
+                      }
+                      onClick={() =>
+                        formEditPermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        ) && navigateToValidationReportEdit()
+                      }
+                    />
+                  </Tooltip>
+                </>
+              </Col>
+            )}
           </Row>
           <Row className="field" key="Project Registration Certificate">
             <Col span={18} className="field-key">
