@@ -10,7 +10,7 @@ import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 
 const Step08 = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, submitForm } = props;
+  const { next, prev, form, current, handleValuesUpdate, submitForm, disableFields } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -79,7 +79,7 @@ const Step08 = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
               <Form.Item
                 label={t('CMAForm:uploadDocs')}
@@ -90,6 +90,7 @@ const Step08 = (props: CustomStepsProps) => {
                 rules={[
                   {
                     validator: async (rule, file) => {
+                      if (disableFields) return;
                       if (file?.length > 0) {
                         if (
                           !isValidateFileType(
@@ -117,9 +118,15 @@ const Step08 = (props: CustomStepsProps) => {
                   action="/upload.do"
                   listType="picture"
                   multiple={false}
+                  disabled={disableFields}
                   // maxCount={1}
                 >
-                  <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                    disabled={disableFields}
+                  >
                     Upload
                   </Button>
                 </Upload>

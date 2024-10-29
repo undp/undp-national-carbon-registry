@@ -15,13 +15,36 @@ import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  appendixDataMapToFields,
+  applicationOfMethodologyDataMapToFields,
+  descriptionOfProjectActivityDataMapToFields,
+  eligibilityCriteriaDataMapToFields,
+  environmentImpactsDataMaptoFields,
+  localStakeholderConsultationDataMaptoFields,
+  monitoringDataMapToFields,
+  projectDetailsDataMapToFields,
+  quantificationOfGHGDataMapToFields,
+} from './viewDataMap';
+
+const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
-  const { id } = useParams();
+
+  // const { state } = useLocation();
+  // const isView = !!state?.isView;
+  const { id, isView } = useParams();
+
+  const [disableFields, setDisableFields] = useState<boolean>(false);
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+
   const [values, setValues] = useState({
     programmeId: id,
     companyId: undefined,
@@ -59,8 +82,11 @@ const StepperComponent = (props: any) => {
   const [form6] = useForm();
   const [form7] = useForm();
   const [form8] = useForm();
+  const [form9] = useForm();
 
   const getProgrammeDetailsById = async (programId: any) => {
+    if (isView) return;
+
     try {
       const { data } = await post('national/programmeSL/getProjectById', {
         programmeId: programId,
@@ -100,6 +126,65 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  useEffect(() => {
+    const getViewData = async () => {
+      console.log('view data getting');
+      if (isView) {
+        const res = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: id,
+          docType: 'cma',
+        });
+
+        if (res?.statusText === 'SUCCESS') {
+          const content = JSON.parse(res?.data.content);
+          console.log('view data content', content);
+          const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
+          form1.setFieldsValue(projectDetails);
+          const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
+            content?.projectActivity
+          );
+          console.log('view data description activity', descripitonOfProjectActivity);
+          form2.setFieldsValue(descripitonOfProjectActivity);
+          const environmentImpacts = environmentImpactsDataMaptoFields(content?.environmentImpacts);
+          // console.log('view data environement', environmentImpacts);
+          form3.setFieldsValue(environmentImpacts);
+          const localStakeholderConsultation = localStakeholderConsultationDataMaptoFields(
+            content?.localStakeholderConsultation
+          );
+          console.log('view data local stake holder', localStakeholderConsultation);
+          form4.setFieldsValue(localStakeholderConsultation);
+
+          const eligibilityCriteria = eligibilityCriteriaDataMapToFields(
+            content?.eligibilityCriteria
+          );
+          form5.setFieldsValue(eligibilityCriteria);
+
+          const applicationOfMethodology = applicationOfMethodologyDataMapToFields(
+            content?.applicationOfMethodology
+          );
+          form6.setFieldsValue(applicationOfMethodology);
+
+          const quantificationOfGHG = quantificationOfGHGDataMapToFields(
+            content?.quantificationOfGHG
+          );
+          form7.setFieldsValue(quantificationOfGHG);
+
+          const monitoring = monitoringDataMapToFields(content?.monitoring);
+          form8.setFieldsValue(monitoring);
+
+          const appendix = appendixDataMapToFields(content?.appendix);
+          form9.setFieldsValue(appendix);
+        }
+      }
+    };
+
+    getViewData();
+
+    if (isView) {
+      setDisableFields(true);
+    }
+  }, []);
+
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
       ...values,
@@ -119,7 +204,7 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate('/programmeManagementSLCF/viewAll');
+        navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
@@ -159,12 +244,14 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <ProjectDetails
+          prev={navigateToDetailsPage}
           next={next}
           form={form1}
           current={current}
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -184,6 +271,7 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -202,6 +290,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -220,6 +309,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -238,6 +328,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -256,6 +347,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -274,6 +366,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -293,6 +386,7 @@ const StepperComponent = (props: any) => {
           t={t}
           projectCategory={projectCategory}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -307,11 +401,12 @@ const StepperComponent = (props: any) => {
         <Appendix
           next={next}
           prev={prev}
-          form={form8}
+          form={form9}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           submitForm={submitForm}
+          disableFields={disableFields}
         />
       ),
     },

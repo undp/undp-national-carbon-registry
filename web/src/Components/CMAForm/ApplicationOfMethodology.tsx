@@ -7,7 +7,7 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/ico
 import moment from 'moment';
 
 const ApplicationOfMethodology = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -128,6 +128,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:titleAndReferenceOfMethodologyPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -145,6 +146,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:applicabilityOfMethodologyPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -187,7 +189,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               {/* Gases Included Start */}
@@ -213,7 +215,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input />
+                            <Input disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -238,7 +240,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -252,7 +254,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -266,7 +268,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -280,7 +282,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -296,7 +298,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselinech4Justification"
@@ -307,7 +309,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselinen2oJustification"
@@ -318,7 +320,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselineotherJustification"
@@ -329,7 +331,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                         </div>
                       </div>
@@ -378,7 +380,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -392,7 +394,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -406,7 +408,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -420,7 +422,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -436,7 +438,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'ch4Justification']}
@@ -447,7 +449,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'n2oJustification']}
@@ -458,7 +460,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'otherJustification']}
@@ -469,7 +471,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                     </div>
                                     <div className="col5 data-col">
@@ -484,6 +486,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           className="addMinusBtn"
                                           // block
                                           icon={<MinusOutlined />}
+                                          disabled={disableFields}
                                         >
                                           {/* Add Entity */}
                                         </Button>
@@ -503,6 +506,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 }}
                                 size="middle"
                                 className="addMinusBtn"
+                                disabled={disableFields}
                                 // block
                                 icon={<PlusOutlined />}
                               >
@@ -529,7 +533,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input />
+                            <Input disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -554,7 +558,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -568,7 +572,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -582,7 +586,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -596,7 +600,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -612,7 +616,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectch4Justification"
@@ -623,7 +627,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectn2oJustification"
@@ -634,7 +638,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectotherJustification"
@@ -645,7 +649,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                         </div>
                       </div>
@@ -669,7 +673,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input />
+                                        <Input disabled={disableFields} />
                                       </Form.Item>
                                     </div>
                                     <div className="col2 data-col">
@@ -694,7 +698,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -708,7 +712,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -722,7 +726,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -736,7 +740,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -752,7 +756,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'ch4Justification']}
@@ -763,7 +767,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'n2oJustification']}
@@ -774,7 +778,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'otherJustification']}
@@ -785,7 +789,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                     </div>
                                     <div className="col5 data-col">
@@ -798,6 +802,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           }}
                                           size="middle"
                                           className="addMinusBtn"
+                                          disabled={disableFields}
                                           // block
                                           icon={<MinusOutlined />}
                                         >
@@ -819,6 +824,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 }}
                                 size="middle"
                                 className="addMinusBtn"
+                                disabled={disableFields}
                                 // block
                                 icon={<PlusOutlined />}
                               >
@@ -845,7 +851,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:baselineScenarioPlaceholder')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:baselineScenarioPlaceholder')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <Form.Item
@@ -901,7 +911,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -918,6 +928,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:methodologyDeviationsPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 

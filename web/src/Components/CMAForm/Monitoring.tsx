@@ -13,7 +13,7 @@ import {
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 const Monitoring = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, projectCategory } = props;
+  const { next, prev, form, current, handleValuesUpdate, projectCategory, disableFields } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -77,7 +77,11 @@ const Monitoring = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:dataAndParametersAvailable')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:dataAndParametersAvailable')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <>
@@ -94,7 +98,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -109,7 +113,11 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input placeholder={`${t('CMAForm:unitPlaceholder')}`} size="large" />
+                        <Input
+                          placeholder={`${t('CMAForm:unitPlaceholder')}`}
+                          size="large"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
 
@@ -128,6 +136,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:data_parameterDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -147,6 +156,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:dataSourcePlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -166,6 +176,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:justificationOfChoicePlaceholder')}`}
                           rows={5}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -183,7 +194,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           ]}
                         >
                           {/* <Input size="large" placeholder={`${t('CMAForm:purposePlaceholder')}`} /> */}
-                          <Select size="large">
+                          <Select size="large" disabled={disableFields}>
                             {projectCategory === 'RENEWABLE_ENERGY' && (
                               <Select.Option value="Determination of baseline scenario">
                                 Determination of baseline scenario
@@ -217,6 +228,7 @@ const Monitoring = (props: CustomStepsProps) => {
                         <Input
                           size="large"
                           placeholder={`${t('CMAForm:valueAppliedPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -241,7 +253,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -256,7 +268,11 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input placeholder={`${t('CMAForm:unitPlaceholder')}`} size="large" />
+                        <Input
+                          placeholder={`${t('CMAForm:unitPlaceholder')}`}
+                          size="large"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
 
@@ -275,6 +291,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:data_parameterDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -294,6 +311,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:dataSourcePlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -315,6 +333,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:measuremenMethodDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -334,6 +353,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:monitoringFrequencyPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -353,6 +373,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:valueAppliedPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -372,6 +393,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:monitoringEquipmentPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -391,6 +413,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:monitoringQAProceduresPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -420,7 +443,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={4} size="large" />
+                        <TextArea rows={4} size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -438,6 +461,7 @@ const Monitoring = (props: CustomStepsProps) => {
                         <TextArea
                           rows={4}
                           size="large"
+                          disabled={disableFields}
                           placeholder="Where relevant, provide the calculation method, including  any equations, used to establish the data/parameter."
                         />
                       </Form.Item>
@@ -454,7 +478,12 @@ const Monitoring = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={4} size="large" placeholder="Provide any comments" />
+                        <TextArea
+                          rows={4}
+                          size="large"
+                          placeholder="Provide any comments"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -511,7 +540,7 @@ const Monitoring = (props: CustomStepsProps) => {
                   placement: 'topLeft',
                 }}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">

@@ -5,7 +5,7 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const EligibilityCriteria = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -96,7 +96,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -109,7 +109,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -134,7 +134,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -147,7 +147,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -174,7 +174,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -187,7 +187,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -213,7 +213,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -226,7 +226,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -252,7 +252,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -265,7 +265,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -293,7 +293,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -306,7 +306,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -352,7 +352,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -365,7 +365,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -390,7 +390,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -403,7 +403,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -428,7 +428,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -441,7 +441,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -467,7 +467,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -480,7 +480,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -505,7 +505,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -518,7 +518,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -544,7 +544,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={2} />
+                        <TextArea rows={2} disabled={disableFields} />
                       </Form.Item>
                     </Col>
                     <Col md={4} xl={4}>
@@ -557,7 +557,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large">
+                        <Select size="large" disabled={disableFields}>
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>

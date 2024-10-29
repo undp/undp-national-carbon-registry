@@ -13,10 +13,12 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   netEmissionReductions: 'avgNetEmissionReductions',
 };
 const QuantificationOfEmissions = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   useEffect(() => {
-    form.setFieldValue('totalCreditingYears', 1);
+    if (!!form.getFieldValue('totalCreditingYears')) {
+      form.setFieldValue('totalCreditingYears', 1);
+    }
   }, []);
 
   const calculateNetGHGEmissions = (value: any, index?: number) => {
@@ -191,7 +193,11 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={3} placeholder={`${t('CMAForm:baselineEmissionsPlaceholder')}`} />
+                <TextArea
+                  rows={3}
+                  placeholder={`${t('CMAForm:baselineEmissionsPlaceholder')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <Form.Item
@@ -205,7 +211,11 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:projectEmissionPlaceholder')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:projectEmissionPlaceholder')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <Form.Item
@@ -219,7 +229,11 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:leakagePlaceholder')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:leakagePlaceholder')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <Form.Item
@@ -235,7 +249,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               {/* Estimated Emmissions table start */}
@@ -292,7 +306,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                           placeholder="Start Date"
                           picker="month"
                           format="YYYY MMM"
-
+                          disabled={disableFields}
                           // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
                       </Form.Item>
@@ -338,6 +352,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                           picker="month"
                           format="YYYY MMM"
                           onChange={(value) => onPeriodEndChange(value, 1)}
+                          disabled={disableFields}
                           disabledDate={(currentDate: any) =>
                             currentDate <
                             moment(form.getFieldValue('emissionsPeriodStart')).startOf('month')
@@ -370,6 +385,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
                             calculateTotalEmissions(
@@ -406,6 +422,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
                             calculateTotalEmissions(
@@ -442,6 +459,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
                             calculateTotalEmissions(
@@ -477,7 +495,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(value) => calculateNetGHGEmissions(value)} />
+                        <Input
+                          onChange={(value) => calculateNetGHGEmissions(value)}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
@@ -517,6 +538,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 >
                                   <DatePicker
                                     size="large"
+                                    disabled={disableFields}
                                     placeholder="Start Date"
                                     picker="month"
                                     format="YYYY MMM"
@@ -564,6 +586,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 >
                                   <DatePicker
                                     size="large"
+                                    disabled={disableFields}
                                     placeholder="End Date"
                                     picker="month"
                                     format="YYYY MMM"
@@ -605,6 +628,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
                                       calculateTotalEmissions(
@@ -641,6 +665,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
                                       calculateTotalEmissions(
@@ -677,6 +702,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
                                       calculateTotalEmissions(
@@ -712,7 +738,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col md={2} xl={2}>
@@ -741,8 +767,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                     }}
                                     size="small"
                                     className="addMinusBtn"
-                                    // block
                                     icon={<MinusOutlined />}
+                                    disabled={disableFields}
                                   >
                                     {/* Add Entity */}
                                   </Button>
@@ -763,6 +789,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
+                            disabled={disableFields}
                           >
                             {/* Add Entity */}
                           </Button>

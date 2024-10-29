@@ -5,7 +5,7 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const LocalStakeholderConsultation = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -97,7 +97,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                   ),
                 }}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -114,6 +114,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:summaryOfCommentsRecievedPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -131,6 +132,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:considerationOfCommentsRecievedPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 

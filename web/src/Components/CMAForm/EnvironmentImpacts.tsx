@@ -5,7 +5,7 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const EnvironmentImpacts = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
     console.log('-----values---------', values);
@@ -49,6 +49,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:analysisEnvironmentalImapactsPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -66,6 +67,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:environmentalImpactAssessmentPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
               <Row justify={'end'} className="step-actions-end">

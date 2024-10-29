@@ -25,6 +25,7 @@
   "organizationName": "Organization Name",
   "contactPerson": "Contact Person",
   "title": "Title",
+  "designation": "Designation",
   "address": "Address",
   "otherEntitiesInProject": "Other Entities Involved in the Project",
   "projectActivityLocations": "Project Activity Locations",

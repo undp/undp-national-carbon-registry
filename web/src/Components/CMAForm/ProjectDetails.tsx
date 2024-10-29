@@ -13,7 +13,7 @@ import PhoneInput, {
 } from 'react-phone-number-input';
 
 const ProjectDetails = (props: CustomStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate } = props;
+  const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev } = props;
 
   const { get, post } = useConnection();
 
@@ -70,7 +70,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
 
                     <Form.Item
@@ -112,7 +112,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
 
                     <Form.Item
@@ -125,7 +125,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
 
                     <Form.Item
@@ -158,7 +158,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -188,7 +188,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -233,6 +233,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         countryCallingCodeEditable={false}
                         onChange={(v) => {}}
                         countries={countries as Country[]}
+                        disabled={disableFields}
                       />
                     </Form.Item>
 
@@ -259,13 +260,14 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'}>
+                {/* In this page prev is navigateToDetailPage */}
+                <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:cancel')}
                 </Button>
                 <Button
