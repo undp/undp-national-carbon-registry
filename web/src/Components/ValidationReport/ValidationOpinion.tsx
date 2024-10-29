@@ -25,15 +25,18 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
+    const sig1 = (await fileUploadValueExtract(values, 'validator1Signature'))[0];
+    const sig2 = (await fileUploadValueExtract(values, 'validator2Signature'))[0];
+
     const validationOpinionFormValues: any = {
       opinion: values?.opinion,
-      validator1Signature: (await fileUploadValueExtract(values, 'validator1Signature'))[0],
+      validator1Signature: sig1,
       validator1Designation: values?.validator1Designation,
       validator1Name: values?.validator1Name,
       validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
       validator2Designation: values?.validator2Designation,
       validator2Name: values?.validator2Name,
-      validator2Signature: (await fileUploadValueExtract(values, 'validator2Signature'))[0],
+      validator2Signature: sig2,
       validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
     };
 

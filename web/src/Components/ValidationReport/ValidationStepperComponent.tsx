@@ -807,7 +807,7 @@ const StepperComponent = (props: any) => {
         ...dataForValidationProcess,
         gridEmissionFactorUnit: 'tCO2e/MWh',
         gridEmissionFactorValueGlobal: 0.72222,
-        totalCapacity: `${dataForValidationProcess?.totalCapacity}`,
+        totalCapacity: `${dataForValidationProcess?.totalCapacity} kWh`,
         baselineEmissions: [
           {
             type: 'unit',
