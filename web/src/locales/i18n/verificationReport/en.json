@@ -250,5 +250,6 @@
   "projectCommisionDate": "Project Commisissioning Date",
   "roleInTheProject": "Role in the project",
   "uploadImages": "Optional: Upload your images here",
-  "uploadMonitoringReportSuccess": "Monitoring report submitted successfully"
+  "uploadMonitoringReportSuccess": "Monitoring report submitted successfully",
+  "capacity":"Capacity"
 }

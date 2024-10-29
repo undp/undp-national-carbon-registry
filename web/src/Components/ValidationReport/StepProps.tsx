@@ -1,4 +1,5 @@
 import { FormInstance } from 'antd';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 export interface ValidationStepsProps {
   next?: () => void;
@@ -12,4 +13,5 @@ export interface ValidationStepsProps {
   projectCategory?: string;
   cmaDetails?: any;
   existingFormValues?: any;
+  formMode?: FormMode;
 }

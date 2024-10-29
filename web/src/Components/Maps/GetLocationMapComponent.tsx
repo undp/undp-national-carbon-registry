@@ -8,10 +8,11 @@ interface CMAMapComponentProps {
   formItemName: any;
   listName?: string;
   existingCordinate?: any[];
+  disabled?: boolean;
 }
 
 const GetLocationMapComponent = (props: CMAMapComponentProps) => {
-  const { form, formItemName, listName, existingCordinate } = props;
+  const { form, formItemName, listName, existingCordinate, disabled } = props;
 
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -120,7 +121,7 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
         height={400}
         style="mapbox://styles/mapbox/light-v11"
         accessToken={accessToken}
-        onPolygonComplete={onPolygonComplete}
+        onPolygonComplete={!disabled ? onPolygonComplete : undefined}
         mapSource={projectLocationMapSource}
         layer={projectLocationMapLayer}
         outlineLayer={projectLocationMapOutlineLayer}
