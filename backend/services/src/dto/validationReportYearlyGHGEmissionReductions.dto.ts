@@ -11,7 +11,6 @@ import {
   IsString,
   ValidateNested,
 } from "class-validator";
-import { GHGSource } from "./ghgSource.dto";
 
 export class ValidationReportYearlyGHGEmissionReduction {
   @ApiProperty()

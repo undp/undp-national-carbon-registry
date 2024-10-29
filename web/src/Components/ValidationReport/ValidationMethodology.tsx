@@ -17,9 +17,10 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/ico
 import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { requiredValidationRule } from '../../Utils/validationHelper';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const emptyBackgroundInvestigationRow = {
     backgroundInvestigationName: '',
@@ -216,7 +217,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
           name={['followupInterviews', index, 'mainTopicsCovered']}
           rules={[requiredValidationRule(t)]}
         >
-          <TextArea rows={4} />
+          <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
         </Form.Item>
       ),
     },
@@ -596,6 +597,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <h4>3.1 {t('validationReport:methodandCriteria')}</h4>
               <p>{t('validationReport:methodValidationSteps')}</p>
@@ -661,7 +663,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                 </Col>
 
@@ -692,7 +694,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <TextArea rows={4} />
+                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
                 </Col>
 
@@ -782,28 +784,30 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                       </Form.Item>
                                     </Col>
                                   </Row>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    name={[resolutionName, 'findingNo']}
-                                  >
-                                    <Row>
-                                      <Col md={3}>{t('validationReport:findingNo')}</Col>
-                                      <Col md={12}>
+
+                                  <Row>
+                                    <Col md={3}>{t('validationReport:findingNo')}</Col>
+                                    <Col md={12}>
+                                      <Form.Item
+                                        {...resolutionRestField}
+                                        name={[resolutionName, 'findingNo']}
+                                      >
                                         <Input size="large" />
-                                      </Col>
-                                    </Row>
-                                  </Form.Item>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    name={[resolutionName, 'rfToCMA']}
-                                  >
-                                    <Row>
-                                      <Col md={3}>{t('validationReport:refToCMA')}</Col>
-                                      <Col md={12}>
+                                      </Form.Item>
+                                    </Col>
+                                  </Row>
+
+                                  <Row>
+                                    <Col md={3}>{t('validationReport:refToCMA')}</Col>
+                                    <Col md={12}>
+                                      <Form.Item
+                                        {...resolutionRestField}
+                                        name={[resolutionName, 'rfToCMA']}
+                                      >
                                         <Input size="large" />
-                                      </Col>
-                                    </Row>
-                                  </Form.Item>
+                                      </Form.Item>
+                                    </Col>
+                                  </Row>
                                 </Col>
 
                                 <Col span={24}>
@@ -812,7 +816,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     label={`${t('validationReport:actionRequestByValidationTeam')}`}
                                     name={[resolutionName, 'actionRequestsByValidationTeam']}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
                                 </Col>
 
@@ -822,7 +826,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     label={`${t('validationReport:summaryOfProjectOwnerResponse')}`}
                                     name={[resolutionName, 'summaryOfProjectOwnerResponse']}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
                                 </Col>
 
@@ -832,7 +836,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     label={`${t('validationReport:validationTeamAssessment')}`}
                                     name={[resolutionName, 'validationTeamAssessment']}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
                                 </Col>
 
@@ -906,7 +910,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={6} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={6} />
               </Form.Item>
 
               <Form.Item
@@ -920,7 +924,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={6} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={6} />
               </Form.Item>
 
               <Form.Item
@@ -934,16 +938,17 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={6} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={6} />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
                 <Button
                   type="primary"
                   size={'large'}
+                  disabled={false}
                   // onClick={() => {
                   //   console.log(form.getFieldsValue());
                   // }}
