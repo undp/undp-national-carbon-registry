@@ -5,10 +5,10 @@ import {
   CheckCircleOutlined,
   DislikeOutlined,
   ExclamationCircleOutlined,
-  FileAddOutlined,
+  PlusOutlined,
   LikeOutlined,
   BookOutlined,
-  FolderViewOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -268,7 +268,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -313,7 +313,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(
@@ -362,7 +362,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
@@ -397,7 +397,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
@@ -448,7 +448,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -493,7 +493,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(
@@ -548,7 +548,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(userInfoState, DocType.CMA, projectProposalStage)
@@ -583,7 +583,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(userInfoState, DocType.CMA, projectProposalStage)
@@ -634,7 +634,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -679,7 +679,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(
@@ -737,7 +737,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -782,7 +782,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(

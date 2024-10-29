@@ -333,9 +333,18 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(costQuotationDoc);
 
+    let data;
+
+    if (costQuotationDto.content.totalCost) {
+      data = {
+        estimatedProjectCost: costQuotationDto.content.totalCost,
+      };
+    }
+
     const updateProgrammeSlProposalStage = {
       programmeId: costQuotationDto.programmeId,
       txType: TxType.CREATE_COST_QUOTATION,
+      data: data,
     };
     await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 

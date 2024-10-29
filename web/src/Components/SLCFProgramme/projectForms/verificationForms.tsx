@@ -5,10 +5,10 @@ import {
   CheckCircleOutlined,
   DislikeOutlined,
   ExclamationCircleOutlined,
-  FileAddOutlined,
+  PlusOutlined,
   LikeOutlined,
   BookOutlined,
-  FolderViewOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -232,7 +232,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -277,7 +277,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(
@@ -329,7 +329,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FolderViewOutlined
+                  <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -374,7 +374,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <FileAddOutlined
+                  <PlusOutlined
                     className="common-progress-icon"
                     style={
                       formCreatePermission(

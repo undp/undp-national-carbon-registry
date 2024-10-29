@@ -88,36 +88,76 @@ export const formViewPermission = (
 ) => {
   if (
     docType === DocType.COST_QUOTATION &&
-    projectProposalStage === ProjectProposalStage.SUBMITTED_COST_QUOTATION &&
+    (projectProposalStage === ProjectProposalStage.SUBMITTED_COST_QUOTATION ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT ||
+      projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.REJECTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_CMA ||
+      projectProposalStage === ProjectProposalStage.REJECTED_CMA ||
+      projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
     docType === DocType.PROPOSAL &&
-    projectProposalStage === ProjectProposalStage.SUBMITTED_PROPOSAL &&
+    (projectProposalStage === ProjectProposalStage.SUBMITTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT ||
+      projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.REJECTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_CMA ||
+      projectProposalStage === ProjectProposalStage.REJECTED_CMA ||
+      projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
     docType === DocType.VALIDATION_AGREEMENT &&
-    projectProposalStage === ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT &&
+    (projectProposalStage === ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT ||
+      projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.REJECTED_PROPOSAL ||
+      projectProposalStage === ProjectProposalStage.SUBMITTED_CMA ||
+      projectProposalStage === ProjectProposalStage.REJECTED_CMA ||
+      projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
     docType === DocType.CMA &&
-    projectProposalStage === ProjectProposalStage.SUBMITTED_CMA &&
-    (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
+    (projectProposalStage === ProjectProposalStage.SUBMITTED_CMA ||
+      projectProposalStage === ProjectProposalStage.REJECTED_CMA ||
+      projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
+    (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
     docType === DocType.VALIDATION_REPORT &&
-    projectProposalStage === ProjectProposalStage.VALIDATION_PENDING &&
-    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    (projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
+    (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
   ) {
     return true;
   } else if (
