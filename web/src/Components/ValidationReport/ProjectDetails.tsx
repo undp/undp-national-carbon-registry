@@ -130,7 +130,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:telephone')} ${t('isRequired')}`,
+                              message: '',
                             },
                             {
                               validator: async (rule: any, value: any) => {
@@ -185,7 +185,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              // message: `${t('validationReport:email')} ${t('isRequired')}`,
+                              message: '',
                             },
                             {
                               validator: async (rule, value) => {
@@ -195,7 +195,9 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('validation:email')} ${t('isRequired')}`);
+                                  throw new Error(
+                                    `${t('validationReport:email')} ${t('isRequired')}`
+                                  );
                                 } else {
                                   const val = value.trim();
                                   const reg =
@@ -296,23 +298,23 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`${t('validationReport:summary')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
-                      <p>Provinde a brief summary of the following</p>
-                      <ul>
-                        <li>A brief description of the validation and the project.</li>
-                        <li>The purpose and scope of validation.</li>
-                        <li>The method and criteria used for validation.</li>
-                        <li>The number of findings raised during validation.</li>
-                        <li>Any uncertainties associated with the validation.</li>
-                        <li>Summary of the validation conclusion.</li>
-                      </ul>
-                    </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
+                // tooltip={{
+                //   title: (
+                //     <div className="tooltip">
+                //       <p>Provinde a brief summary of the following</p>
+                //       <ul>
+                //         <li>A brief description of the validation and the project.</li>
+                //         <li>The purpose and scope of validation.</li>
+                //         <li>The method and criteria used for validation.</li>
+                //         <li>The number of findings raised during validation.</li>
+                //         <li>Any uncertainties associated with the validation.</li>
+                //         <li>Summary of the validation conclusion.</li>
+                //       </ul>
+                //     </div>
+                //   ),
+                //   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
+                //   placement: 'topLeft',
+                // }}
                 name="summary"
                 rules={[
                   {
@@ -324,7 +326,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                 <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
               </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
+              <Row className="row" gutter={[40, 8]} justify={'space-between'}>
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
                     <Form.Item
@@ -333,7 +335,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:title')} ${t('isRequired')}`,
+                          message: `${t('validationReport:projectTitle')} ${t('isRequired')}`,
                         },
                       ]}
                     >
@@ -362,7 +364,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:reportId')} ${t('isRequired')}`,
+                          message: `${t('validationReport:reportNo')} ${t('isRequired')}`,
                         },
                       ]}
                     >

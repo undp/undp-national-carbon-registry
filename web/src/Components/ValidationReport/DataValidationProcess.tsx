@@ -463,8 +463,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
   const addEmployedTechnologyRow = () => {
     form.setFieldsValue({
-      employedTechnology: [
-        ...form.getFieldValue('employedTechnology'),
+      employedTechnologies: [
+        ...form.getFieldValue('employedTechnologies'),
         { siteNo: '', location: '', capacity: '' },
       ],
     });
@@ -683,15 +683,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 >
                   <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                 </Form.Item>
-                <Form.Item
-                  label={`4.1.2 ${t('validationReport:employedTechnology')}`}
-                  rules={[
-                    {
-                      required: true,
-                      message: `${t('validationReport:employedTechnology')} ${t('isRequired')}`,
-                    },
-                  ]}
-                >
+                <h4 className="custom-required">{`4.1.2 ${t(
+                  'validationReport:employedTechnology'
+                )}`}</h4>
+                <Form.Item>
                   <Row>
                     <Col md={22} xl={22}>
                       {/* <Table
@@ -700,7 +695,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         columns={employedTechnologyTableColumns}
                       ></Table> */}
                       <Row className="table-header" justify={'space-between'}>
-                        <Col md={6} xl={6}>
+                        <Col md={6} xl={6} style={{ paddingLeft: 10 }}>
                           {t('validationReport:siteNo')}
                         </Col>
                         <Col md={3} xl={3} className="total-cols">
@@ -789,7 +784,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         <Col md={3} xl={3}></Col>
                         <Col md={3} xl={3}>
                           <Form.Item name="totalCapacity">
-                            <Input disabled />
+                            <Input
+                              disabled
+                              // formatter={(value: any) => `${value} kWh`}
+                            />
                           </Form.Item>
                         </Col>
                       </Row>
@@ -1124,7 +1122,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     <NetEmissionReduction
                       form={form}
                       t={t}
-                      projectCategory={ProjectCategory.AFOLU}
+                      projectCategory={projectCategory}
                     ></NetEmissionReduction>
                   </Form.Item>
                   <Form.Item

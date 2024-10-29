@@ -249,6 +249,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       title: t('validationReport:validationCategory'),
       dataIndex: 'validationCategory',
       key: 'validationCategory',
+      className: 'deskReviewCategory',
       onCell: (_, index) => {
         if (index === 0) {
           return { rowSpan: 7 };
@@ -599,7 +600,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               }}
               disabled={FormMode.VIEW === formMode}
             >
-              <h4>3.1 {t('validationReport:methodandCriteria')}</h4>
+              <h4 className="custom-required">3.1 {t('validationReport:methodandCriteria')}</h4>
               <p>{t('validationReport:methodValidationSteps')}</p>
               <ul>
                 <li>{t('validationReport:methodValidationSteps1')}</li>
@@ -615,7 +616,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 <li>{t('validationReport:methodValidationSteps11')}</li>
               </ul>
 
-              <h4>3.1.1 {t('validationReport:appointmentOfTeamMembers')}</h4>
+              <h4 className="custom-required">
+                3.1.1 {t('validationReport:appointmentOfTeamMembers')}
+              </h4>
               <Row>
                 <Col span={24}>
                   <Table
@@ -649,7 +652,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 </Col>
               </Row>
 
-              <p style={{ marginTop: 15 }}>{t('validationReport:memberDescription')}</p>
+              <p style={{ marginTop: 5, marginBottom: 0 }}>
+                {t('validationReport:memberDescription1')}
+              </p>
+              <p style={{ marginTop: 0 }}>{t('validationReport:memberDescription2')}</p>
 
               <Row gutter={60}>
                 <Col md={24} xl={24}>
@@ -668,7 +674,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 </Col>
 
                 <Col md={24} xl={24}>
-                  <Form.Item label={`3.1.2 ${t('validationReport:deskReviewCMA')}`}>
+                  <Form.Item label={`3.1.3 ${t('validationReport:deskReviewCMA')}`}>
                     <p>{t('validationReport:deskReviewDesc')}</p>
                     <ul>
                       <li>{t('validationReport:deskReviewP1')}</li>
@@ -685,7 +691,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
                 <Col md={24} xl={24}>
                   <Form.Item
-                    label={`3.1.2 ${t('validationReport:onSiteInspection')}`}
+                    label={`3.1.4 ${t('validationReport:onSiteInspection')}`}
                     name="onsiteInspection"
                     rules={[
                       {
@@ -700,7 +706,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
                 <Col md={24} xl={24}>
                   <Form.Item
-                    label={`2.3 ${t('validationReport:backgroundInvestigationAndFollowups')}`}
+                    label={`3.1.5 ${t('validationReport:backgroundInvestigationAndFollowups')}`}
                     rules={[requiredValidationRule(t)]}
                   >
                     <Row>
@@ -755,7 +761,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 </Col>
 
                 <Col span={24}>
-                  <h4>3.4 {t('validationReport:resolutionsOfFindings')}</h4>
+                  <h4 className="custom-required">
+                    3.4 {t('validationReport:resolutionsOfFindings')}
+                  </h4>
 
                   <Form.List name="validationReportFinding">
                     {(resolutionOfFindingsList, { add, remove }) => (
@@ -815,6 +823,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     {...resolutionRestField}
                                     label={`${t('validationReport:actionRequestByValidationTeam')}`}
                                     name={[resolutionName, 'actionRequestsByValidationTeam']}
+                                    rules={[requiredValidationRule(t)]}
                                   >
                                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
@@ -825,6 +834,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     {...resolutionRestField}
                                     label={`${t('validationReport:summaryOfProjectOwnerResponse')}`}
                                     name={[resolutionName, 'summaryOfProjectOwnerResponse']}
+                                    rules={[requiredValidationRule(t)]}
                                   >
                                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
@@ -835,6 +845,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     {...resolutionRestField}
                                     label={`${t('validationReport:validationTeamAssessment')}`}
                                     name={[resolutionName, 'validationTeamAssessment']}
+                                    rules={[requiredValidationRule(t)]}
                                   >
                                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                                   </Form.Item>
@@ -880,7 +891,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               className="addMinusBtn"
                               icon={<PlusOutlined />}
                             >
-                              {t('addFindings')}
+                              {t('validationReport:addFindings')}
                             </Button>
                           </Form.Item>
                         </Col>
@@ -900,6 +911,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               ></Table>
 
               <Form.Item
+                style={{ marginTop: 10 }}
                 className="full-width-form-item"
                 label={`3.5 ${t('validationReport:finalValidation')}`}
                 name="finalValidation"
@@ -915,7 +927,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`3.5 ${t('validationReport:internalTechnicalReview')}`}
+                label={`3.6 ${t('validationReport:internalTechnicalReview')}`}
                 name="internalTechnicalReview"
                 rules={[
                   {
@@ -929,7 +941,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`3.5 ${t('validationReport:finalApproval')}`}
+                label={`3.7 ${t('validationReport:finalApproval')}`}
                 name="finalApproval"
                 rules={[
                   {
