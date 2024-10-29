@@ -72,7 +72,7 @@ const NetEmissionReduction = (props: any) => {
       });
     }
 
-    const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
     if (creditingYears > 0) {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
@@ -85,17 +85,21 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
-    let tempTotal = Number(form.getFieldValue(category) || 0);
+    // let tempTotal = Number(form.getFieldValue(category) || 0);
     const listVals = form.getFieldValue('estimatedNetEmissionReductions');
-    if (listVals !== undefined && listVals[0] !== undefined) {
-      listVals.forEach((item: any) => {
-        if (item && item[category]) {
-          tempTotal += Number(item[category]);
-        }
-      });
-    }
+    // if (listVals !== undefined && listVals[0] !== undefined) {
+    //   listVals.forEach((item: any) => {
+    //     if (item && item[category]) {
+    //       tempTotal += Number(item[category]);
+    //     }
+    //   });
+    // }
 
-    const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
+    const tempTotal = listVals?.reduce((total: number, currentVal: any) => {
+      return total + (currentVal[category] || 0);
+    }, 0);
+
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
     if (creditingYears > 0) {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
@@ -116,7 +120,7 @@ const NetEmissionReduction = (props: any) => {
     }, 0);
 
     const tempTotal = bufferPool;
-    const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
     form.setFieldValue(categoryToAdd, bufferPool);
     if (creditingYears > 0) {
       form.setFieldValue(
@@ -129,13 +133,13 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const onPeriodEndChange = (value: any, fieldCounts: number) => {
-    let totalCreditingYears = form.getFieldValue('totalCreditingYears') || 0;
-    if (value && totalCreditingYears < fieldCounts) {
-      totalCreditingYears += 1;
-    } else if (value === null && totalCreditingYears !== 0) {
-      totalCreditingYears -= 1;
-    }
-    form.setFieldValue('totalCreditingYears', totalCreditingYears);
+    // let totalCreditingYears = form.getFieldValue('totalNumberOfCredingYears') || 0;
+    // if (value && totalCreditingYears < fieldCounts) {
+    //   totalCreditingYears += 1;
+    // } else if (value === null && totalCreditingYears !== 0) {
+    //   totalCreditingYears -= 1;
+    // }
+    form.setFieldValue('totalNumberOfCredingYears', fieldCounts);
     // calculateAvgAnnualERs();
   };
 
@@ -249,7 +253,7 @@ const NetEmissionReduction = (props: any) => {
                             placeholder="End Date"
                             picker="month"
                             format="YYYY MMM"
-                            onChange={(value) => onPeriodEndChange(value, fields.length + 1)}
+                            onChange={(value) => onPeriodEndChange(value, fields.length)}
                             disabledDate={(currentDate: any) =>
                               currentDate <
                               moment(
@@ -287,6 +291,7 @@ const NetEmissionReduction = (props: any) => {
                         ]}
                       >
                         <InputNumber
+                          className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
                             calculateTotalEmissions(
@@ -396,7 +401,7 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber className="full-width-form-item" />
+                        <InputNumber disabled className="full-width-form-item" />
                       </Form.Item>
                     </Col>
                     {projectCategory === ProjectCategory.AFOLU && (
@@ -432,6 +437,11 @@ const NetEmissionReduction = (props: any) => {
                                 'bufferPoolAllocation',
                                 'totalBufferPoolAllocations'
                               );
+                              calculateTotalEmissions(
+                                value,
+                                'bufferPoolAllocation',
+                                'totalBufferPoolAllocations'
+                              );
                             }}
                           />
                         </Form.Item>
@@ -444,7 +454,7 @@ const NetEmissionReduction = (props: any) => {
                           onClick={() => {
                             // reduceTotalCreditingYears()
                             remove(name);
-                            onPeriodEndChange(null, fields.length + 1);
+                            onPeriodEndChange(null, fields.length - 1);
                             calculateTotalEmissions(
                               null,
                               'projectEmissionReductions',
@@ -459,6 +469,11 @@ const NetEmissionReduction = (props: any) => {
                               null,
                               'leakageEmissionReductions',
                               'totalLeakageEmissionReductions'
+                            );
+                            calculateTotalEmissions(
+                              null,
+                              'bufferPoolAllocation',
+                              'totalBufferPoolAllocations'
                             );
                           }}
                           size="small"
@@ -724,7 +739,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -751,7 +766,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber disabled />
+              <InputNumber className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -778,7 +793,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <Input className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -805,7 +820,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input disabled />
+              <Input className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           {projectCategory === ProjectCategory.AFOLU && (
