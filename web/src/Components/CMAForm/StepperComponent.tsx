@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Steps, Button, Form, message } from 'antd';
 import './CMAForm.scss';
 // import './SLCFMonitoringReportComponent.scss';
@@ -40,6 +40,17 @@ const StepperComponent = (props: any) => {
   const isEdit = !!state?.isEdit;
   const { id } = useParams();
 
+  const scrollSection = useRef({} as any);
+
+  const scrollToDiv = () => {
+    if (scrollSection.current) {
+      scrollSection.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
   const navigateToDetailsPage = () => {
@@ -64,10 +75,12 @@ const StepperComponent = (props: any) => {
 
   const next = () => {
     setCurrent(current + 1);
+    scrollToDiv();
   };
 
   const prev = () => {
     setCurrent(current - 1);
+    scrollToDiv();
   };
 
   const [countries, setCountries] = useState<[]>([]);
@@ -196,14 +209,16 @@ const StepperComponent = (props: any) => {
         appendix: appendixVals,
       },
     };
-    console.log('------------final values--------------', tempValues);
+
     try {
       const res = await post('national/programmeSl/createCMA', tempValues);
       console.log(res);
       if (res?.response?.data?.statusCode === 200) {
         message.open({
           type: 'success',
-          content: 'CMA form has been submitted successfully',
+          content: isEdit
+            ? 'CMA form has been edited successfully'
+            : 'CMA form has been submitted successfully',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -240,7 +255,7 @@ const StepperComponent = (props: any) => {
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
+        <div ref={scrollSection} className="stepper-title-container">
           {/* <div className="step-count">00</div> */}
           <div className="title">{t('CMAForm:form01Title')}</div>
         </div>

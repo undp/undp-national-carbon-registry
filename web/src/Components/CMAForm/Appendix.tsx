@@ -154,7 +154,7 @@ const Step08 = (props: CustomStepsProps) => {
                   </Button>
                 ) : (
                   <Button type="primary" size={'large'} htmlType={'submit'}>
-                    {t('CMAForm:next')}
+                    {t('CMAForm:submit')}
                   </Button>
                 )}
               </Row>

@@ -38,6 +38,7 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
     vals?.otherEntities && vals?.otherEntities?.length > 0
       ? vals?.otherEntities.shift()
       : undefined;
+
   const firstLocation =
     vals?.locationsOfProjectActivity && vals?.locationsOfProjectActivity?.length > 0
       ? vals?.locationsOfProjectActivity.shift()
@@ -130,7 +131,7 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       ? moment.unix(vals?.creditingPeriodStartDate)
       : undefined,
     creditingPeriodEndDate: vals?.creditingPeriodEndDate
-      ? moment(vals?.creditingPeriodEndDate)
+      ? moment.unix(vals?.creditingPeriodEndDate)
       : undefined,
     creditingPeriodDescription: vals?.creditingPeriodDescription,
     projectScale: vals?.projectScaleType,
@@ -268,8 +269,6 @@ export const quantificationOfGHGDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
 
   const ghgEmissionReductions = vals?.netGHGEmissionReductions;
-
-  console.log('totalNumberOfCredingYears', ghgEmissionReductions?.totalNumberOfCredingYears);
 
   const yearlyReductions = ghgEmissionReductions?.yearlyGHGEmissionReductions;
   const firstYearlyReductions =
