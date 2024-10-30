@@ -244,11 +244,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -289,11 +291,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -341,11 +345,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -386,11 +392,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
