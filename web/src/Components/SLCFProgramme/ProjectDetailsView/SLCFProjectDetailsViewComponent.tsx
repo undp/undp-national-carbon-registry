@@ -48,6 +48,9 @@ import { useUserContext } from '../../../Context/UserInformationContext/userInfo
 import {
   addCommSep,
   addCommSepRound,
+  addSpaces,
+  getCreditTypeName,
+  getCreditTypeTagType,
   getFinancialFields,
   getFinancialFieldsSl,
   getGeneralFields,
@@ -110,6 +113,7 @@ import { ProjectForms } from '../projectForms/projectForms';
 import { VerificationForms } from '../projectForms/verificationForms';
 import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRequestForm';
 import { HttpStatusCode } from 'axios';
+import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -1944,6 +1948,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         generalInfo[text] = (
           <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>
             {t(`projectDetailsView:${getProjectProposalStageEnumVal(v as string)}`)}
+          </Tag>
+        );
+      } else if (k === 'purposeOfCreditDevelopment') {
+        generalInfo[text] = (
+          <Tag className="clickable" color={getCreditTypeTagType(v as CreditTypeSl)}>
+            {addSpaces(getCreditTypeName(v as string))}
           </Tag>
         );
       } else if (k === 'sector') {

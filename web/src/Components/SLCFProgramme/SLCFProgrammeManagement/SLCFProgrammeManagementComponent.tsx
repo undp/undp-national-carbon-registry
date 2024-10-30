@@ -22,7 +22,10 @@ import { TooltipColor } from '../../../Styles/role.color.constants';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import {
   addCommSep,
+  addSpaces,
   getCompanyBgColor,
+  getCreditTypeName,
+  getCreditTypeTagType,
   getProjectProposalStage,
   getProjectProposalStageEnumVal,
   getStageEnumVal,
@@ -46,6 +49,7 @@ import {
 } from '../../../Definitions/Enums/programmeStage.enum';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
+import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 
 const { Search } = Input;
 
@@ -232,7 +236,11 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       sorter: true,
       align: 'right' as const,
       render: (item: any) => {
-        return <span>{item}</span>;
+        return (
+          <Tag className="clickable" color={getCreditTypeTagType(item as CreditTypeSl)}>
+            {addSpaces(getCreditTypeName(item as string))}
+          </Tag>
+        );
       },
     },
     {
