@@ -258,9 +258,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
   };
 
   const getLocationDetails = async (values: any) => {
-    const files = await fileUploadValueExtract(values, 'additionalDocuments');
+    const locationList = [];
 
-    return values.locationsOfProjectActivity.map((activity: any) => {
+    for (let c = 0; c < values.locationsOfProjectActivity.length; c++) {
+      const activity = values.locationsOfProjectActivity[c];
+
       const technicalProjDesc = activity.technicalProjectDescriptionItems.map(
         (tecProjDesc: any) => {
           return {
@@ -269,7 +271,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
           };
         }
       );
-      return {
+      let files: any[] = [];
+
+      if (activity?.additionalDocuments.length > 0) {
+        files = await fileUploadValueExtract(activity, 'additionalDocuments');
+      }
+
+      locationList.push({
         locationOfProjectActivity: activity.locationOfProjectActivity,
         province: activity.province,
         district: activity.district,
@@ -279,8 +287,32 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
         geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
         additionalDocuments: files,
         technicalProjectDescription: technicalProjDesc,
-      };
-    });
+      });
+    }
+
+    return locationList;
+
+    // return values.locationsOfProjectActivity.map((activity: any) => {
+    //   const technicalProjDesc = activity.technicalProjectDescriptionItems.map(
+    //     (tecProjDesc: any) => {
+    //       return {
+    //         item: tecProjDesc.item,
+    //         parameterValue: tecProjDesc.parameterValue,
+    //       };
+    //     }
+    //   );
+    //   return {
+    //     locationOfProjectActivity: activity.locationOfProjectActivity,
+    //     province: activity.province,
+    //     district: activity.district,
+    //     dsDivision: activity.dsDivision,
+    //     city: activity.city,
+    //     community: activity.community,
+    //     geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
+    //     additionalDocuments: files,
+    //     technicalProjectDescription: technicalProjDesc,
+    //   };
+    // });
   };
 
   const onFinish = async (values: any) => {
