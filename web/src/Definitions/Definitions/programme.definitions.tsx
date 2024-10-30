@@ -259,6 +259,7 @@ export interface ProgrammeSl {
   creditRetired: number;
   creditFrozen: number;
   creditTransferred: number;
+  estimatedProjectCost: number;
   constantVersion: string;
   proponentTaxVatId: string[];
   companyId: number;
@@ -421,9 +422,10 @@ export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
   // };
 
   return {
-    estimatedProgrammeCostLKR: '-',
-    creditEst: '-',
-    grantEquivalentLKR: '-',
+    estimatedProgrammeCostLKR: programme.estimatedProjectCost
+      ? programme.estimatedProjectCost
+      : '-',
+    creditEst: programme.creditEst ? programme.creditEst : '-',
   };
 };
 
