@@ -48,6 +48,7 @@ import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
+import { SlProjectCategoryMap } from "../enum/projectCategory.enum";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -1218,7 +1219,7 @@ export class ProgrammeSlService {
       certificateNo: this.serialGenerator.generateProjectRegistrationSerial(programme.programmeId),
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
-      sector: programme.projectCategory,
+      sector: SlProjectCategoryMap[programme.projectCategory],
       estimatedCredits: programme.creditEst,
     };
 

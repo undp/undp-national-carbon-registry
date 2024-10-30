@@ -51,6 +51,7 @@ import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuota
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 import VerificationReport from './Pages/SLCFProgrammeManagement/VerificationReport';
 import SiteVisitCheckListPage from './Pages/SiteVisitCheckListPage/SiteVisitCheckListPage';
+import Settings from './Pages/Settings/settings';
 
 const App = () => {
   const ability = defineAbility();
@@ -191,6 +192,9 @@ const App = () => {
                     element={<CustomLayout selectedKey="companyManagement/viewAll" />}
                   >
                     <Route path="view" element={<CompanyProfile />} />
+                  </Route>
+                  <Route path="/settings" element={<CustomLayout selectedKey="settings" />}>
+                    <Route path="/settings" element={<Settings />} />
                   </Route>
                 </Route>
                 {enableRegistration === 'true' && (
