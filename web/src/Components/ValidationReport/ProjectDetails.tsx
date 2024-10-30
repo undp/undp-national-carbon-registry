@@ -27,29 +27,10 @@ const ProjectDetails = (props: ValidationStepsProps) => {
     cmaDetails,
     existingFormValues,
     formMode,
+    prev,
   } = props;
 
   const [contactNoInput] = useState<any>();
-
-  useEffect(() => {
-    // if (existingFormValues) {
-    //   form.setFieldsValue({
-    //     client: existingFormValues.client,
-    //     dateOfIssue: existingFormValues.dateOfIssue,
-    //     versionNo: existingFormValues.versionNo,
-    //     versionDate: moment(existingFormValues.versionDate),
-    //     address: existingFormValues.physicalAddress,
-    //     telephone: existingFormValues.telephone,
-    //     email: existingFormValues.email,
-    //     website: existingFormValues.website,
-    //     summary: existingFormValues.summary,
-    //     projectTitle: existingFormValues.summary,
-    //     workCarriedOutBy: existingFormValues.workCarryOutBy,
-    //     workApprovedBy: existingFormValues.workApprovedBy,
-    //     reportId: existingFormValues.reportId,
-    //   });
-    // }
-  }, []);
 
   const onFinish = (values: any) => {
     const projectDetailsFormValues = {
@@ -387,12 +368,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               </Row>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button
-                  danger
-                  size={'large'}
-                  disabled={false}
-                  // onClick={prev}
-                >
+                <Button danger size={'large'} disabled={false} onClick={prev}>
                   {t('validationReport:cancel')}
                 </Button>
                 <Button

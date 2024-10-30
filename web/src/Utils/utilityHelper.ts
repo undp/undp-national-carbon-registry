@@ -45,7 +45,7 @@ export const fileUploadValueExtract = async (formValues: any, key: string) => {
       const docs = formValues[key];
       for (let i = 0; i < docs.length; i++) {
         const temp = docs[i]?.url
-          ? await getBase64ImageFromUrl(docs[i]?.url)
+          ? docs[i]?.url
           : await getBase64(docs[i]?.originFileObj as RcFile);
         // const temp = await getBase64(docs[i]?.originFileObj as RcFile);
         base64Docs.push(temp); // No need for Promise.resolve

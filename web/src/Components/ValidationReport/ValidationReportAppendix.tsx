@@ -141,6 +141,11 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                     {t('validationReport:submit')}
                   </Button>
                 )}
+                {FormMode.VIEW === formMode && (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:backtoProjectDetails')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

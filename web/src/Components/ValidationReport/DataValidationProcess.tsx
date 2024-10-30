@@ -20,6 +20,7 @@ import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { ProjectCategory } from '../../enum/slRegistryEnum';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { requiredValidationRule } from '../../Utils/validationHelper';
 
 // enum netEmissionColumnType {
 //   TOTAL = 'TOTAL',
@@ -215,6 +216,13 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       dataIndex: 'applicabilityCriteria',
       key: 'applicabilityCriteria',
       width: '300px',
+      render: (_: any, record: any, index: number) => (
+        <>
+          {record.applicabilityCriteria?.map((sRow: any) => {
+            return <p>{sRow}</p>;
+          })}
+        </>
+      ),
     },
     {
       title: t('validationReport:projectActivity'),
@@ -506,7 +514,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     const dataValidationProcessFormValues: any = {
       generalDescription: values?.generalDescription,
       employedTechnologies: values?.employedTechnologies,
-      totalCapacity: Number(values?.totalCapacity.replace('kWp', '')),
+      totalCapacity: Number(values?.totalCapacity.replace('kWp', '').trim()),
       totalCapacityDescription: values?.totalCapacityDescription,
       approvals: values?.approvals,
       applicationOfMethodologyTitle: values?.applicationOfMethodologyTitle,
@@ -519,7 +527,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       calculationOfBaselineEmissionFactor: values?.calculationOfBaselineEmissionFactor,
       plantFactor: values?.plantFactor,
       annualEmissionReductionCalculation: values?.annualEmissionReductionCalculation,
-      baselineEmissions: values?.baselineEmissions?.slice(1).map((emissions: any) => {
+      baselineEmissions: values?.baselineEmissions?.map((emissions: any) => {
         return {
           location: emissions.location,
           projectCapacityValue: emissions.projectCapacityValue,
@@ -533,18 +541,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       leakageEmission: values?.leakageEmission,
       gridEmissionFactorUnit: values?.gridEmissionFactorUnit,
       gridEmissionFactorValue: Number(values?.gridEmissionFactorValueGlobal),
-      // estimatedNetEmissionReductions: values?.estimatedNetEmissionReduction.map(
-      //   (emissionData: any) => {
-      //     return {
-      //       ...emissionData,
-      //       emissionsPeriodStart: moment(emissionData.emissionsPeriodStart).valueOf(),
-      //       emissionsPeriodEnd: moment(emissionData.emissionsPeriodEnd).valueOf(),
-      //     };
-      //   }
-      // ), //check
-
       estimatedNetEmissionReductions: getEstimatedNetEmissionReduction(values),
-
       applicabilityCriteria1ProjectActivity: values.applicabilityCriteria1ProjectActivity,
       isApplicabilityCriteria1Met: values.isApplicabilityCriteria1Met,
       applicabilityCriteria2ProjectActivity: values.applicabilityCriteria2ProjectActivity,
@@ -566,27 +563,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       applicabilityCriteria10ProjectActivity: values.applicabilityCriteria10ProjectActivity,
       isApplicabilityCriteria10Met: values.isApplicabilityCriteria10Met,
 
-      // "applicabilityCriteria1ProjectActivity":"string",
-      //    "isApplicabilityCriteria1Met":true,
-      //    "applicabilityCriteria2ProjectActivity":"string",
-      //    "isApplicabilityCriteria2Met":true,
-      //    "applicabilityCriteria3ProjectActivity":"string",
-      //    "isApplicabilityCriteria3Met":true,
-      //    "applicabilityCriteria4ProjectActivity":"string",
-      //    "isApplicabilityCriteria4Met":true,
-      //    "applicabilityCriteria5ProjectActivity":"string",
-      //    "isApplicabilityCriteria5Met":true,
-      //    "applicabilityCriteria6ProjectActivity":"string",
-      //    "isApplicabilityCriteria6Met":true,
-      //    "applicabilityCriteria7ProjectActivity":"string",
-      //    "isApplicabilityCriteria7Met":true,
-      //    "applicabilityCriteria8ProjectActivity":"string",
-      //    "isApplicabilityCriteria8Met":true,
-      //    "applicabilityCriteria9ProjectActivity":"string",
-      //    "isApplicabilityCriteria9Met":true,
-      //    "applicabilityCriteria10ProjectActivity":"string",
-      //    "isApplicabilityCriteria10Met":true,
-
       methodologyDeviations: values?.methodologyDeviations,
       monitoringPlan: values?.monitoringPlan,
       carbonManagementAssessment: values?.carbonManagementAssessment,
@@ -594,55 +570,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       environmentImpact: values?.environmentImpact,
       commentsOfStakeholders: values?.commentsOfStakeholders,
     };
-
-    //  "applicabilityCriteria1ProjectActivity":"string",
-    //  "isApplicabilityCriteria1Met":true,
-    //  "applicabilityCriteria2ProjectActivity":"string",
-    //  "isApplicabilityCriteria2Met":true,
-    //  "applicabilityCriteria3ProjectActivity":"string",
-    //  "isApplicabilityCriteria3Met":true,
-    //  "applicabilityCriteria4ProjectActivity":"string",
-    //  "isApplicabilityCriteria4Met":true,
-    //  "applicabilityCriteria5ProjectActivity":"string",
-    //  "isApplicabilityCriteria5Met":true,
-    //  "applicabilityCriteria6ProjectActivity":"string",
-    //  "isApplicabilityCriteria6Met":true,
-    //  "applicabilityCriteria7ProjectActivity":"string",
-    //  "isApplicabilityCriteria7Met":true,
-    //  "applicabilityCriteria8ProjectActivity":"string",
-    //  "isApplicabilityCriteria8Met":true,
-    //  "applicabilityCriteria9ProjectActivity":"string",
-    //  "isApplicabilityCriteria9Met":true,
-    //  "applicabilityCriteria10ProjectActivity":"string",
-    //  "isApplicabilityCriteria10Met":true,
-
-    //  "estimatedNetEmissionReductions":[
-    //     {
-    //        "totalBaselineEmissionReductions":1,
-    //        "totalProjectEmissionReductions":1,
-    //        "totalLeakageEmissionReductions":1,
-    //        "totalNetEmissionReductions":1,
-    //        "totalBufferPoolAllocations":1,
-    //        "totalNumberOfCredingYears":1,
-    //        "avgBaselineEmissionReductions":1,
-    //        "avgProjectEmissionReductions":1,
-    //        "avgLeakageEmissionReductions":1,
-    //        "avgNetEmissionReductions":1,
-    //        "avgBufferPoolAllocations":1,
-    //        "yearlyGHGEmissionReductions":[
-    //           {
-    //              "startDate":1,
-    //              "endDate":1,
-    //              "baselineEmissionReductions":1,
-    //              "projectEmissionReductions":1,
-    //              "leakageEmissionReductions":1,
-    //              "netEmissionReductions":1,
-    //              "bufferPoolAllocation":1
-    //           }
-    //        ]
-    //     }
-    //  ],
-
     console.log(ProcessSteps.VR_VALIDATION_PROCESS, dataValidationProcessFormValues);
     handleValuesUpdate({ [ProcessSteps.VR_VALIDATION_PROCESS]: dataValidationProcessFormValues });
   };
@@ -696,7 +623,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       ></Table> */}
                       <Row className="table-header" justify={'space-between'}>
                         <Col md={6} xl={6} style={{ paddingLeft: 10 }}>
-                          {t('validationReport:siteNo')}
+                          {t('validationReport:siteNo')}.
                         </Col>
                         <Col md={3} xl={3} className="total-cols">
                           {t('validationReport:location')}
@@ -784,10 +711,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         <Col md={3} xl={3}></Col>
                         <Col md={3} xl={3}>
                           <Form.Item name="totalCapacity">
-                            <Input
-                              disabled
-                              // formatter={(value: any) => `${value} kWh`}
-                            />
+                            <Input disabled />
                           </Form.Item>
                         </Col>
                       </Row>
@@ -800,14 +724,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
 
               <Row gutter={60}>
                 <Col md={24} xl={24}>
-                  <Form.Item
-                    name="totalCapacityDescription"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
+                  <Form.Item name="totalCapacityDescription">
                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
 
@@ -832,7 +749,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:onSiteInspection')} ${t('isRequired')}`,
+                        message: `${t('validationReport:titleandreference')} ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -929,7 +846,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         <Input value={'tCO2e/MWh'} disabled />
                       </Form.Item>
                     </div>
-                    <div style={{ width: '190px' }}>
+                    <div style={{ width: '220px' }}>
                       <Input value={'Published by SLSEA (2020)'} disabled />
                     </div>
                   </div>
@@ -959,23 +876,15 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   >
                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
-                  <Form.Item
-                    label={`${t('validationReport:baselineEmission')}`}
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:baselineEmission')} ${t('isRequired')}`,
-                      },
-                    ]}
-                  >
-                    {/* <Table
+                  <h4 className="custom-required">{`${t('validationReport:baselineEmission')}`}</h4>
+
+                  {/* <Table
                       dataSource={baselineEmissionDataSource}
                       columns={baselineEmissionTableColumns}
                       pagination={false}
                     ></Table> */}
-                  </Form.Item>
                   <div className="estimated-emmissions-table-form">
-                    <Row className="header" justify={'space-between'}>
+                    <Row className="header" justify={'space-between'} gutter={[4, 8]}>
                       <Col md={6} xl={6}></Col>
                       <Col md={3} xl={3}>
                         {t('validationReport:projectCapacity')}
@@ -992,23 +901,52 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                       <Col md={3} xl={3}>
                         {t('validationReport:emissionReduction')}
                       </Col>
+                      <Col md={3} xl={3}></Col>
+                    </Row>
+
+                    <Row justify={'space-between'} style={{ marginBottom: 10 }} gutter={[4, 8]}>
+                      <Col md={6} xl={6}>
+                        {t('validationReport:units')}
+                      </Col>
+                      <Col md={3} xl={3}>
+                        <Input size="large" value={'kWp'} disabled />
+                      </Col>
+                      <Col md={3} xl={3}>
+                        <Input size="large" value={'%'} disabled />
+                      </Col>
+                      <Col md={3} xl={3}>
+                        <Input size="large" value={'MWh/Year'} disabled />
+                      </Col>
+                      <Col md={3} xl={3}>
+                        <Input size="large" value={'tCO2/MWh'} disabled />
+                      </Col>
+                      <Col md={3} xl={3}>
+                        <Input size="large" value={'tCO2/Year'} disabled />
+                      </Col>
+                      <Col md={3} xl={3}></Col>
                     </Row>
 
                     <Form.List name="baselineEmissions">
                       {(baselineEmissions, { add, remove }) => (
                         <>
                           {baselineEmissions.map(
-                            ({ key, name, fieldKey, ...restField }, index: number) => (
+                            ({ key, name, fieldKey, ...restField }, index: number, fieldList) => (
                               <>
-                                <Row justify={'space-between'}>
+                                <Row justify={'space-between'} gutter={[4, 8]}>
                                   <Col md={6} xl={6} className="col1">
                                     <Form.Item
                                       {...restField}
                                       name={[name, 'location']}
                                       fieldKey={[name, 'location']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
-                                      <Input className="full-width-form-item" disabled />
+                                      {
+                                        <Input
+                                          size="large"
+                                          className="full-width-form-item"
+                                          disabled
+                                        />
+                                      }
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -1016,11 +954,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       {...restField}
                                       name={[name, 'projectCapacityValue']}
                                       fieldKey={[name, 'projectCapacityValue']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
                                       <InputNumber
+                                        size="large"
                                         className="full-width-form-item"
-                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                        disabled={FormMode.VIEW === formMode}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -1029,11 +968,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       {...restField}
                                       name={[name, 'plantFactorValue']}
                                       fieldKey={[name, 'plantFactorValue']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
                                       <InputNumber
+                                        size="large"
                                         className="full-width-form-item"
-                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                        disabled={FormMode.VIEW === formMode}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -1042,11 +982,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       {...restField}
                                       name={[name, 'avgEnergyOutputValue']}
                                       fieldKey={[name, 'avgEnergyOutputValue']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
                                       <InputNumber
+                                        size="large"
                                         className="full-width-form-item"
-                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                        disabled={FormMode.VIEW === formMode}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -1055,11 +996,12 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       {...restField}
                                       name={[name, 'gridEmissionFactorValue']}
                                       fieldKey={[name, 'gridEmissionFactorValue']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
                                       <InputNumber
                                         className="full-width-form-item"
-                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                        disabled={FormMode.VIEW === formMode}
+                                        size="large"
                                       />
                                     </Form.Item>
                                   </Col>
@@ -1068,13 +1010,40 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       {...restField}
                                       name={[name, 'emissionReductionValue']}
                                       fieldKey={[name, 'emissionReductionValue']}
-                                      rules={requiredRule}
+                                      rules={[requiredValidationRule(t)]}
                                     >
                                       <InputNumber
                                         className="full-width-form-item"
-                                        disabled={index === 0 || FormMode.VIEW === formMode}
+                                        disabled={FormMode.VIEW === formMode}
+                                        size="large"
                                       />
                                     </Form.Item>
+                                  </Col>
+                                  <Col md={3} xl={3} style={{ marginTop: 0 }}>
+                                    {baselineEmissions.length > 1 && (
+                                      <Button
+                                        onClick={() => {
+                                          remove(name);
+                                        }}
+                                        size="small"
+                                        className="addMinusBtn"
+                                        style={{ marginRight: 2 }}
+                                        icon={<MinusOutlined />}
+                                      ></Button>
+                                    )}
+                                    {index === baselineEmissions.length - 1 && (
+                                      <Button
+                                        onClick={() => {
+                                          add();
+                                        }}
+                                        size="middle"
+                                        className="addMinusBtn"
+                                        // block
+                                        icon={<PlusOutlined />}
+                                      >
+                                        {/* Add Entity */}
+                                      </Button>
+                                    )}
                                   </Col>
                                 </Row>
                               </>
@@ -1110,21 +1079,23 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   >
                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
-
-                  <Form.Item
+                  <h4 className="custom-required">{`${t(
+                    'validationReport:estimatedNetEmissionReduction'
+                  )}`}</h4>
+                  {/* <Form.Item
                     label={`${t('validationReport:estimatedNetEmissionReduction')}`}
                     name="estimatedNetEmissionReduction"
-                  >
-                    {/* <Table
+                  > */}
+                  {/* <Table
                       dataSource={estimatedNetEmissionDataSourceList}
                       columns={estimatedNetEmissionTableColumns}
                     ></Table> */}
-                    <NetEmissionReduction
-                      form={form}
-                      t={t}
-                      projectCategory={projectCategory}
-                    ></NetEmissionReduction>
-                  </Form.Item>
+                  <NetEmissionReduction
+                    form={form}
+                    t={t}
+                    projectCategory={projectCategory}
+                  ></NetEmissionReduction>
+                  {/* </Form.Item> */}
                   <Form.Item
                     label={`4.3.7 ${t('validationReport:methodologyDeviations')}`}
                     name="methodologyDeviations"

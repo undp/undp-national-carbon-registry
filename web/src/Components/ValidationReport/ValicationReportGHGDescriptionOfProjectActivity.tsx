@@ -315,7 +315,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       // isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
-      creditingPeriod: values?.creditingPeriod,
+      creditingPeriod: String(values?.creditingPeriod),
       locationsOfProjectActivity: await getLocationDetails(values),
       startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
     };
@@ -406,7 +406,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Row>
 
                 <Row gutter={[8, 16]}>
-                  <Col span={6}>{t('validationReport:projectScopeUNFCC')}</Col>
+                  <Col span={6}>
+                    <div>{t('validationReport:projectScopeUNFCC')}</div>
+                    <div>{t('validationReport:projectScopeUNFCCt2')}</div>
+                  </Col>
                   <Col span={18}>
                     <Form.Item name="projectScopeUNFCC">
                       <Checkbox.Group className="full-width-form-item">
@@ -553,7 +556,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       required: true,
                                       message: `${t('validationReport:province')} ${t(
                                         'isRequired'
-                                      )}}`,
+                                      )}`,
                                     },
                                   ]}
                                 >
@@ -650,20 +653,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
                                   name={[name, 'geographicalLocationCoordinates']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:location')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
                                 >
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     existingCordinate={getExistingCordinate(locationIndex)}
                                     disabled={formMode === FormMode.VIEW}
+                                    isShowCordinate
                                   />
                                 </Form.Item>
                               </Col>
@@ -721,9 +717,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               </Col>
                             </Row>
 
-                            <h4 className="form-section-title" style={{ marginBottom: 4 }}>{`${t(
-                              'validationReport:technicalProjectDescription'
-                            )}`}</h4>
+                            <h4
+                              className="form-section-title custom-required"
+                              style={{ marginBottom: 4 }}
+                            >{`${t('validationReport:technicalProjectDescription')}`}</h4>
                             <Form.List name={[name, 'technicalProjectDescriptionItems']}>
                               {(
                                 technicalProjectDescriptionItemList,
