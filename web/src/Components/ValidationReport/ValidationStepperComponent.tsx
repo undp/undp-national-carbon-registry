@@ -115,7 +115,9 @@ const StepperComponent = (props: any) => {
       return;
     }
     setCurrent(current + 1);
-    scrollToDiv();
+    setTimeout(() => {
+      scrollToDiv();
+    }, 300);
   };
 
   const prev = () => {
