@@ -1154,7 +1154,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, null);
   }
 
-  async query(query: QueryDto, abilityCondition: string): Promise<DataListResponseDto> {
+  async query(query: QueryDto, abilityCondition: string, user: User): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
     const limit = query.size || 10;
     const offset = skip || 0;
@@ -1162,6 +1162,15 @@ export class ProgrammeSlService {
       ? `programme_sl."${query.sort.key}"`
       : `"programme_sl"."createdTime"`;
     const sortOrder = query?.sort?.order || "DESC";
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
 
     let whereConditions = this.helperService.generateWhereSQL(
       query,

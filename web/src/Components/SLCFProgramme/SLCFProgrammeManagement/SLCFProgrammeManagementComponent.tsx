@@ -497,7 +497,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
           </Col>
           <Col lg={{ span: 9 }} md={{ span: 10 }}>
             <div className="filter-section">
-              <div className="search-filter">
+              {/* <div className="search-filter">
                 <Checkbox
                   className="label"
                   onChange={(v) => {
@@ -534,7 +534,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                     ? t('view:ministryLevel')
                     : t('view:seeMine')}
                 </Checkbox>
-              </div>
+              </div> */}
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
