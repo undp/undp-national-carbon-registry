@@ -17,6 +17,6 @@ export class DateUtilService {
       const formattedDay = day.toString().padStart(2, "0");
   
       // Return the formatted date string in YYYY/MM/DD format
-      return `${year}/${formattedMonth}/${formattedDay}`;
+      return `${formattedDay}/${formattedMonth}/${year}`;
     }
 }

@@ -12,12 +12,22 @@ import PhoneInput, {
 import validator from 'validator';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 // import { Form } from 'react-router-dom';
 
 const ProjectDetails = (props: ValidationStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate, cmaDetails, existingFormValues } =
-    props;
+  const {
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    cmaDetails,
+    existingFormValues,
+    formMode,
+  } = props;
 
   const [contactNoInput] = useState<any>();
 
@@ -81,6 +91,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
+              disabled={FormMode.VIEW === formMode}
             >
               <>
                 <div className="form-section mg-top-1">
@@ -119,7 +130,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:telephone')} ${t('isRequired')}`,
+                              message: '',
                             },
                             {
                               validator: async (rule: any, value: any) => {
@@ -164,6 +175,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
+                            disabled={FormMode.VIEW === formMode}
                           />
                         </Form.Item>
 
@@ -173,7 +185,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              // message: `${t('validationReport:email')} ${t('isRequired')}`,
+                              message: '',
                             },
                             {
                               validator: async (rule, value) => {
@@ -183,7 +195,9 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('validation:email')} ${t('isRequired')}`);
+                                  throw new Error(
+                                    `${t('validationReport:email')} ${t('isRequired')}`
+                                  );
                                 } else {
                                   const val = value.trim();
                                   const reg =
@@ -284,23 +298,23 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`${t('validationReport:summary')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
-                      <p>Provinde a brief summary of the following</p>
-                      <ul>
-                        <li>A brief description of the validation and the project.</li>
-                        <li>The purpose and scope of validation.</li>
-                        <li>The method and criteria used for validation.</li>
-                        <li>The number of findings raised during validation.</li>
-                        <li>Any uncertainties associated with the validation.</li>
-                        <li>Summary of the validation conclusion.</li>
-                      </ul>
-                    </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
+                // tooltip={{
+                //   title: (
+                //     <div className="tooltip">
+                //       <p>Provinde a brief summary of the following</p>
+                //       <ul>
+                //         <li>A brief description of the validation and the project.</li>
+                //         <li>The purpose and scope of validation.</li>
+                //         <li>The method and criteria used for validation.</li>
+                //         <li>The number of findings raised during validation.</li>
+                //         <li>Any uncertainties associated with the validation.</li>
+                //         <li>Summary of the validation conclusion.</li>
+                //       </ul>
+                //     </div>
+                //   ),
+                //   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
+                //   placement: 'topLeft',
+                // }}
                 name="summary"
                 rules={[
                   {
@@ -309,10 +323,10 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
               </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
+              <Row className="row" gutter={[40, 8]} justify={'space-between'}>
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
                     <Form.Item
@@ -321,7 +335,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:title')} ${t('isRequired')}`,
+                          message: `${t('validationReport:projectTitle')} ${t('isRequired')}`,
                         },
                       ]}
                     >
@@ -350,11 +364,11 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:reportId')} ${t('isRequired')}`,
+                          message: `${t('validationReport:reportNo')} ${t('isRequired')}`,
                         },
                       ]}
                     >
-                      <Input readOnly size={'large'} />
+                      <Input size={'large'} />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}
@@ -371,108 +385,12 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                   </div>
                 </Col>
               </Row>
-              {/* <Form.Item
-                className="full-width-form-item"
-                label={`${t('CMAForm:stakeHolderConsultationProcess')}`}
-                name="stakeHolderConsultationProcess"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`,
-                  },
-                ]}
-                tooltip={{
-                  title: (
-                    <div>
-                      <p>
-                        Describe the process for, and the outcomes from, the local stakeholder
-                        consultation conducted prior to validation. Include details on the
-                        following:
-                      </p>
-                      <ul>
-                        <li>
-                          The procedures or methods used for engaging local stakeholders (e.g.,
-                          dates of announcements or meetings, periods during which input was
-                          sought).
-                        </li>
-                        <li>
-                          The procedures or methods used for documenting the outcomes of the local
-                          stakeholder consultation.{' '}
-                        </li>
-                        <li>The mechanism for on-going communication with local stakeholders.</li>
-                        <li>
-                          How due account of all and any input received during the consultation has
-                          been taken. Include details on any updates to the project design or
-                          justify why updates are not appropriate.
-                        </li>
-                      </ul>
-
-                      <p>
-                        For AFOLU projects, also demonstrate how the project has or will communicate
-                        the following:
-                      </p>
-                      <ul>
-                        <li>
-                          The project design and implementation, including the results of
-                          monitoring.
-                        </li>
-                        <li>
-                          The risks, costs and benefits the project may bring to local stakeholders.
-                        </li>
-                        <li>
-                          All relevant laws and regulations covering workers’ rights in the host
-                          country.
-                        </li>
-                        <li>
-                          The process of SLCCS validation and verification and the
-                          validation/verification body’s site visit.
-                        </li>
-                      </ul>
-                    </div>
-                  ),
-                }}
-              >
-                <TextArea rows={4} />
-              </Form.Item>
-
-              <Form.Item
-                className="full-width-form-item"
-                label={`${t('CMAForm:summaryOfCommentsRecieved')}`}
-                name="summaryOfCommentsRecieved"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('CMAForm:summaryOfCommentsRecieved')} ${t('isRequired')}`,
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`${t('CMAForm:summaryOfCommentsRecievedPlaceholder')}`}
-                />
-              </Form.Item>
-
-              <Form.Item
-                className="full-width-form-item"
-                label={`${t('CMAForm:considerationOfCommentsRecieved')}`}
-                name="considerationOfCommentsRecieved"
-                rules={[
-                  {
-                    required: true,
-                    message: `${t('CMAForm:considerationOfCommentsRecieved')}`,
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`${t('CMAForm:considerationOfCommentsRecievedPlaceholder')}`}
-                />
-              </Form.Item> */}
 
               <Row justify={'end'} className="step-actions-end">
                 <Button
                   danger
                   size={'large'}
+                  disabled={false}
                   // onClick={prev}
                 >
                   {t('validationReport:cancel')}
@@ -480,6 +398,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                 <Button
                   type="primary"
                   size={'large'}
+                  disabled={false}
                   // onClick={next}
                   htmlType="submit"
                 >

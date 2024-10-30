@@ -7,6 +7,7 @@ import * as Icon from 'react-bootstrap-icons';
 import {
   AppstoreOutlined,
   DashboardOutlined,
+  SettingOutlined,
   ShopOutlined,
   SplitCellsOutlined,
   UserOutlined,
@@ -69,6 +70,10 @@ const LayoutSider = (props: LayoutSiderProps) => {
       0,
       getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
     );
+  }
+
+  if (userInfoState?.userRole === Role.Root) {
+    items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
   }
 
   const onClick: MenuProps['onClick'] = (e) => {

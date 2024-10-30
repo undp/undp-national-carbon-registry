@@ -48,6 +48,7 @@ import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
+import { SlProjectCategoryMap } from "../enum/projectCategory.enum";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -189,11 +190,17 @@ export class ProgrammeSlService {
     ) {
       const docUrls = [];
       for (const doc of cmaDto.content.projectActivity.additionalDocuments) {
-        const docUrl = await this.uploadDocument(
-          DocType.CMA_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-          cmaDto.programmeId,
-          doc
-        );
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.CMA_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+            cmaDto.programmeId,
+            doc
+          );
+        }
         docUrls.push(docUrl);
       }
       cmaDto.content.projectActivity.additionalDocuments = docUrls;
@@ -204,11 +211,17 @@ export class ProgrammeSlService {
         if (location.additionalDocuments && location.additionalDocuments.length > 0) {
           const docUrls = [];
           for (const doc of location.additionalDocuments) {
-            const docUrl = await this.uploadDocument(
-              DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-              cmaDto.programmeId,
-              doc
-            );
+            let docUrl;
+
+            if (this.isValidHttpUrl(doc)) {
+              docUrl = doc;
+            } else {
+              docUrl = await this.uploadDocument(
+                DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+                cmaDto.programmeId,
+                doc
+              );
+            }
             docUrls.push(docUrl);
           }
 
@@ -223,11 +236,17 @@ export class ProgrammeSlService {
     ) {
       const docUrls = [];
       for (const doc of cmaDto.content.appendix.additionalDocuments) {
-        const docUrl = await this.uploadDocument(
-          DocType.CMA_APPENDIX_ADDITIONAL_DOCUMENT,
-          cmaDto.programmeId,
-          doc
-        );
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.CMA_APPENDIX_ADDITIONAL_DOCUMENT,
+            cmaDto.programmeId,
+            doc
+          );
+        }
         docUrls.push(docUrl);
       }
       cmaDto.content.appendix.additionalDocuments = docUrls;
@@ -333,9 +352,18 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(costQuotationDoc);
 
+    let data;
+
+    if (costQuotationDto.content.totalCost) {
+      data = {
+        estimatedProjectCost: costQuotationDto.content.totalCost,
+      };
+    }
+
     const updateProgrammeSlProposalStage = {
       programmeId: costQuotationDto.programmeId,
       txType: TxType.CREATE_COST_QUOTATION,
+      data: data,
     };
     await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
@@ -646,7 +674,12 @@ export class ProgrammeSlService {
       );
     }
 
-    if (programme?.projectProposalStage !== ProjectProposalStage.APPROVED_CMA) {
+    if (
+      !(
+        programme?.projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+        programme?.projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION
+      )
+    ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.programmeIsNotInSuitableStageToProceed",
@@ -665,11 +698,17 @@ export class ProgrammeSlService {
         if (location.additionalDocuments && location.additionalDocuments.length > 0) {
           const docUrls = [];
           for (const doc of location.additionalDocuments) {
-            const docUrl = await this.uploadDocument(
-              DocType.VALIDATION_REPORT_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-              validationReportDto.programmeId,
-              doc
-            );
+            let docUrl;
+
+            if (this.isValidHttpUrl(doc)) {
+              docUrl = doc;
+            } else {
+              docUrl = await this.uploadDocument(
+                DocType.VALIDATION_REPORT_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+                validationReportDto.programmeId,
+                doc
+              );
+            }
             docUrls.push(docUrl);
           }
           location.additionalDocuments = docUrls;
@@ -678,21 +717,33 @@ export class ProgrammeSlService {
     }
 
     if (validationReportDto.content.validationOpinion.validator1Signature) {
-      const signUrl = await this.uploadDocument(
-        DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
-        validationReportDto.programmeId,
-        validationReportDto.content.validationOpinion.validator1Signature
-      );
+      let signUrl;
+
+      if (this.isValidHttpUrl(validationReportDto.content.validationOpinion.validator1Signature)) {
+        signUrl = validationReportDto.content.validationOpinion.validator1Signature;
+      } else {
+        signUrl = await this.uploadDocument(
+          DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
+          validationReportDto.programmeId,
+          validationReportDto.content.validationOpinion.validator1Signature
+        );
+      }
 
       validationReportDto.content.validationOpinion.validator1Signature = signUrl;
     }
 
     if (validationReportDto.content.validationOpinion.validator2Signature) {
-      const signUrl = await this.uploadDocument(
-        DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
-        validationReportDto.programmeId,
-        validationReportDto.content.validationOpinion.validator2Signature
-      );
+      let signUrl;
+
+      if (this.isValidHttpUrl(validationReportDto.content.validationOpinion.validator2Signature)) {
+        signUrl = validationReportDto.content.validationOpinion.validator2Signature;
+      } else {
+        signUrl = await this.uploadDocument(
+          DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
+          validationReportDto.programmeId,
+          validationReportDto.content.validationOpinion.validator2Signature
+        );
+      }
 
       validationReportDto.content.validationOpinion.validator2Signature = signUrl;
     }
@@ -703,11 +754,17 @@ export class ProgrammeSlService {
     ) {
       const docUrls = [];
       for (const doc of validationReportDto.content.appendix.additionalDocuments) {
-        const docUrl = await this.uploadDocument(
-          DocType.VALIDATION_REPORT_APPENDIX_ADDITIONAL_DOCUMENT,
-          validationReportDto.programmeId,
-          doc
-        );
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.VALIDATION_REPORT_APPENDIX_ADDITIONAL_DOCUMENT,
+            validationReportDto.programmeId,
+            doc
+          );
+        }
         docUrls.push(docUrl);
       }
       validationReportDto.content.appendix.additionalDocuments = docUrls;
@@ -1114,38 +1171,38 @@ export class ProgrammeSlService {
     );
     whereConditions = whereConditions ? `WHERE ${whereConditions}` : "";
     const rawQuery = `
-  SELECT 
-    programme_sl.*, 
-    json_build_object(
-            'companyId', c."companyId",
-            'name', c."name",
-            'companyRole', c."companyRole",
-            'logo', c."logo",
-            'email', c."email"
-          ) as company
-  FROM 
-    programme_sl
-  INNER JOIN 
-    company c 
-  ON 
-    "programme_sl"."companyId" = c."companyId"
+      SELECT 
+        programme_sl.*, 
+        json_build_object(
+                'companyId', c."companyId",
+                'name', c."name",
+                'companyRole', c."companyRole",
+                'logo', c."logo",
+                'email', c."email"
+              ) as company
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
 
-    ${whereConditions}
-  ORDER BY 
-    ${sortKey} ${sortOrder}
-  LIMIT ${limit}
-  OFFSET ${offset};
-`;
+        ${whereConditions}
+      ORDER BY 
+        ${sortKey} ${sortOrder}
+      LIMIT ${limit}
+      OFFSET ${offset};
+    `;
     const resp = await this.programmeSlRepo.query(rawQuery);
     const totalQuery = `
-    SELECT COUNT(*) 
-    FROM 
-    programme_sl
-  INNER JOIN 
-    company c 
-  ON 
-    "programme_sl"."companyId" = c."companyId"
-    ${whereConditions}
+      SELECT COUNT(*) 
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
+        ${whereConditions}
     `;
 
     const totalResult = await this.programmeSlRepo.query(totalQuery);
@@ -1187,17 +1244,24 @@ export class ProgrammeSlService {
   //     resp.length > 1 ? resp[1] : undefined
   //   );
   // }
+
+  // MARK: getProjectById
   async getProjectById(programmeId: string): Promise<any> {
     let project: ProgrammeSl = await this.programmeLedgerService.getProgrammeSlById(programmeId);
-    const company: Company = await this.companyService.findByCompanyId(project.companyId);
+    let company: Company;
+
+    if (project && project.companyId) {
+      company = await this.companyService.findByCompanyId(project.companyId);
+    }
+
     let updatedProject = {
       ...project,
       company: company,
     };
-    console.log(JSON.stringify(updatedProject));
     return updatedProject;
   }
 
+  // MARK: gen Reg Certificate
   async generateProjectRegistrationCertificate(programmeId: string) {
     const programme = await this.getProjectById(programmeId);
 
@@ -1215,7 +1279,7 @@ export class ProgrammeSlService {
       certificateNo: this.serialGenerator.generateProjectRegistrationSerial(programme.programmeId),
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
-      sector: programme.projectCategory,
+      sector: SlProjectCategoryMap[programme.projectCategory],
       estimatedCredits: programme.creditEst,
     };
 
@@ -1304,5 +1368,17 @@ export class ProgrammeSlService {
     } else {
       return 0;
     }
+  }
+
+  private isValidHttpUrl(attachment: string): boolean {
+    let url;
+
+    try {
+      url = new URL(attachment);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
   }
 }

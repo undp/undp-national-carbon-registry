@@ -114,14 +114,14 @@ export class ProgrammeSl implements EntitySubject {
   @Column("real", { nullable: true })
   creditTransferred: number;
 
+  @Column("real", { nullable: true })
+  estimatedProjectCost?: number;
+
   @Column({ type: "bigint" })
   startDate: number;
 
   @Column({ type: "bigint" })
   companyId: number;
-
-  @Column({ nullable: true })
-  registrationCertificateUrl?: string;
 
   @Column({
     type: "enum",
@@ -136,6 +136,9 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ type: "bigint" })
   txTime: number;
+
+  @Column({ nullable: true })
+  registrationCertificateUrl: string;
 
   @Column({ type: "bigint" })
   createdTime: number;

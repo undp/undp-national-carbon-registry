@@ -4,31 +4,30 @@ import { CreditType } from "../enum/creditType.enum";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
-export interface ProjectRegistrationCertificateData {
+export interface CreditIssueCertificateData {
   projectName: string;
   companyName: string;
   creditType: string;
   certificateNo: string;
-  regDate: string;
   issueDate: string;
-  sector: string;
-  estimatedCredits: string;
+  monitoringStartDate: string;
+  monitoringEndDate: string;
+  issuedCredits: number;
+  startCreditSerialNo: string;
+  endCreditSerialNo: string;
 }
 
 @Injectable()
-export class ProjectRegistrationCertificateGenerator {
+export class CreditIssueCertificateGenerator {
   constructor(private fileHandler: FileHandlerInterface) {}
 
-  async generateProjectRegistrationCertificate(
-    data: ProjectRegistrationCertificateData,
-    programmeId: string,
-    isPreview?: boolean
-  ) {
+  async generateCreditIssueCertificate(data: CreditIssueCertificateData, isPreview?: boolean) {
     const doc = new PDFDocument({
       margin: 50,
     });
 
-    const filepath = `PROJECT_REGISTRATION_CERTIFICATE_${programmeId}.pdf`;
+    const refFileName = data.certificateNo.replace(/\//g, "_");
+    const filepath = `CREDIT_ISSUANCE_CERTIFICATE_${refFileName}.pdf`;
 
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
@@ -73,7 +72,7 @@ export class ProjectRegistrationCertificateGenerator {
       .fontSize(30)
       .font("Helvetica-Bold")
       .fillColor("#134e9e")
-      .text("Project Registration Certificate", { align: "center" });
+      .text("Credit Issuance Certificate", { align: "center" });
 
     if (isPreview) {
       this.addPreviewWatermark(doc);
@@ -83,82 +82,84 @@ export class ProjectRegistrationCertificateGenerator {
 
     doc
       .font("Helvetica-Bold")
-      .fontSize(16)
+      .fontSize(14)
       .text("Sri Lanka Climate Fund (PVT) Ltd", 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("registers", { align: "center" });
+    doc.font("Helvetica").fontSize(12).text("Issues", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica-Bold").fontSize(16).text(`${data.projectName}`, { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Sri Lankan Certified Emission Reductions (SCER)", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("developed by", { align: "center" });
+    doc.font("Helvetica").fontSize(12).text("for", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(16).text(`${data.companyName}`, { align: "center" });
+    doc.font("Helvetica-Bold").fontSize(14).text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("under", { align: "center" });
+    doc.font("Helvetica").fontSize(12).text("of", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Helvetica").fontSize(14).text(`${data.companyName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Helvetica").fontSize(12).text("registered under", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Helvetica-Bold")
-      .fontSize(16)
+      .fontSize(14)
       .text(`${track} of Sri Lanka Carbon Credit Scheme`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Helvetica")
-      .fontSize(14)
+      .fontSize(12)
       .text("In accordance with the SLCCR eligibility criteria and", { align: "center" });
 
     doc.moveDown(0.4);
 
-    doc.font("Helvetica").fontSize(14).text("approved CDM methodology", { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Approved CDM methodology (AMS I.D Version 18.0)", { align: "center" });
+
+    doc.moveDown(1);
 
     doc
-      .fontSize(12)
+      .fontSize(11)
       .font("Helvetica-Bold")
-      .text("Certificate No ", 170, 425, {
+      .text("Certificate No ", 180, 440, {
         continued: true,
       })
-      .text(`: ${data.certificateNo}`, 216, 425, {
+      .text(`: ${data.certificateNo}`, 230, 440, {
         continued: false,
       })
-      .moveDown(1)
-      .text("Date of registration ", 170, doc.y, {
+      .moveDown(0.4)
+      .text("Date of issuance ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.regDate}`, 185, doc.y, {
+      .text(`: ${data.issueDate}`, 214, doc.y, {
         continued: false,
       })
-      .moveDown(1)
-      .text("Date of issue ", 170, doc.y, {
+      .moveDown(0.4)
+      .text("Monitoring Period ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.issueDate}`, 220, doc.y, {
-        continued: false,
-      })
-      .moveDown(1)
-      .text("Sector ", 170, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.sector}`, 257, doc.y, {
-        continued: false,
-      })
-      .moveDown(1)
-      .text("Methodology ", 170, doc.y, {
-        continued: true,
-      })
-      .text(`: AMS I.D Version 18.0`, 220, doc.y, {
+      .text(`: ${data.monitoringStartDate} - ${data.monitoringEndDate}`, 208, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -166,10 +167,31 @@ export class ProjectRegistrationCertificateGenerator {
     doc
       .font("Helvetica-Bold")
       .fontSize(16)
-      .text(`Estimated Annual Emission Reductions: ${data.estimatedCredits} (tCO2eq)`, 100, doc.y);
+      .text(`Sri Lankan Credit Emission Reductions: ${data.issuedCredits} (tCO2eq)`, 100, doc.y)
+      .moveDown(1.5);
+
+    doc
+      .fontSize(11)
+      .font("Helvetica")
+      .text("Serial Range ", 180, doc.y, {
+        continued: true,
+      })
+      .text(": Block start ", 185, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.startCreditSerialNo}`, 195, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .text(": Block end ", 252, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.endCreditSerialNo}`, 265, doc.y, {
+        continued: false,
+      })
+      .moveDown(1);
 
     // Chairman Signature
-
     const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
 
     if (fs.existsSync(chairmanSignatureImagePath)) {
@@ -200,6 +222,7 @@ export class ProjectRegistrationCertificateGenerator {
 
     // CEO Signature
 
+    // Define image paths
     const ceoSignatureImagePath = "public/signatures/ceo.jpg";
 
     if (fs.existsSync(ceoSignatureImagePath)) {
@@ -255,19 +278,19 @@ export class ProjectRegistrationCertificateGenerator {
     return url;
   }
 
-  // Function to add a preview watermark
-  addPreviewWatermark(doc) {
-    doc.save(); // Save the current state
-    doc
-      .fontSize(160) // Set a large font size for visibility
-      .font("Helvetica-Bold") // Use a standard, bold font
-      .opacity(0.1) // Set low opacity for the watermark
-      .fillColor("grey") // Grey color for the watermark text
-      .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
-      .text("Preview", 0, doc.page.height / 2 - 100, {
-        width: doc.page.width,
-        align: "center",
-      });
-    doc.restore(); // Restore the original state for further additions
-  }
+    // Function to add a preview watermark
+    addPreviewWatermark(doc) {
+      doc.save(); // Save the current state
+      doc
+        .fontSize(160) // Set a large font size for visibility
+        .font("Helvetica-Bold") // Use a standard, bold font
+        .opacity(0.1) // Set low opacity for the watermark
+        .fillColor("grey") // Grey color for the watermark text
+        .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
+        .text("Preview", 0, doc.page.height / 2 - 100, {
+          width: doc.page.width,
+          align: "center",
+        });
+      doc.restore(); // Restore the original state for further additions
+    }
 }

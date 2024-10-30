@@ -353,7 +353,7 @@ export class CreditRetirementSlService {
     const toCompany = await this.companyService.findByCompanyId(retirementRequest.toCompanyId);
 
     const previousCreditStartSerial = programme.creditStartSerialNumber;
-    const endCreditSerial = this.serialGenerator.generateCreditSerialForRetire(
+    const endCreditSerial = this.serialGenerator.calculateCreditSerialNumber(
       previousCreditStartSerial,
       retirementRequest.creditAmount - 1
     );

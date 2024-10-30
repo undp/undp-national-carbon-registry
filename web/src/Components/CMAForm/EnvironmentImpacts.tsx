@@ -5,10 +5,9 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const EnvironmentImpacts = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       analysis: values?.analysisEnvironmentalImpacts,
       assessment: values?.environmentalImpactAssessment,
@@ -42,13 +41,28 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:analysisEnvironmentalImpacts')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:analysisEnvironmentalImpacts')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:analysisEnvironmentalImapactsPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -59,27 +73,48 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:environmentalImpactAssessment')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:environmentalImpactAssessment')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:environmentalImpactAssessmentPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

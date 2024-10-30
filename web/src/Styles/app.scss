@@ -839,3 +839,22 @@ body {
     }
   }
 }
+
+.PhoneInput--disabled {
+  input {
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+    background-color: #f5f5f5;
+
+    &:hover {
+      border-color: #d9d9d9;
+    }
+  }
+
+  .PhoneInputCountrySelect[disabled] {
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.25);
+    background-color: #f5f5f5 !important;
+    cursor: not-allowed;
+  }
+}
