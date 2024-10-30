@@ -7,10 +7,9 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/ico
 import moment from 'moment';
 
 const ApplicationOfMethodology = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues: any = {
       titleAndReference: values?.titleAndReferenceOfMethodology,
       applicability: values?.applicabilityOfMethodology,
@@ -121,13 +120,28 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:titleAndReferenceOfMethodology')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:titleAndReferenceOfMethodology')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:titleAndReferenceOfMethodologyPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -138,13 +152,28 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:applicabilityOfMethodology')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:applicabilityOfMethodology')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:applicabilityOfMethodologyPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -183,11 +212,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:projectBoundary')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:projectBoundary')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               {/* Gases Included Start */}
@@ -209,11 +250,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input />
+                            <Input disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -238,7 +291,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -248,11 +301,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -266,7 +331,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -280,7 +345,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -292,44 +357,92 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselinech4Justification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselinen2oJustification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="baselineotherJustification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                         </div>
                       </div>
@@ -349,7 +462,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -378,7 +503,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -392,7 +517,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -406,7 +531,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -420,7 +545,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -432,44 +557,92 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'ch4Justification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'n2oJustification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'otherJustification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                     </div>
                                     <div className="col5 data-col">
@@ -484,6 +657,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           className="addMinusBtn"
                                           // block
                                           icon={<MinusOutlined />}
+                                          disabled={disableFields}
                                         >
                                           {/* Add Entity */}
                                         </Button>
@@ -503,6 +677,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 }}
                                 size="middle"
                                 className="addMinusBtn"
+                                disabled={disableFields}
                                 // block
                                 icon={<PlusOutlined />}
                               >
@@ -525,11 +700,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input />
+                            <Input disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -554,7 +741,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -568,7 +755,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -582,7 +769,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -596,7 +783,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select>
+                            <Select disabled={disableFields}>
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -608,44 +795,92 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectch4Justification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectn2oJustification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                           <Form.Item
                             name="projectotherJustification"
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
-                            <Input></Input>
+                            <Input disabled={disableFields}></Input>
                           </Form.Item>
                         </div>
                       </div>
@@ -665,11 +900,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input />
+                                        <Input disabled={disableFields} />
                                       </Form.Item>
                                     </div>
                                     <div className="col2 data-col">
@@ -694,7 +941,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -708,7 +955,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -722,7 +969,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -736,7 +983,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select>
+                                        <Select disabled={disableFields}>
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -748,44 +995,92 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'ch4Justification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'n2oJustification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                       <Form.Item
                                         name={[name, 'otherJustification']}
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
-                                        <Input></Input>
+                                        <Input disabled={disableFields}></Input>
                                       </Form.Item>
                                     </div>
                                     <div className="col5 data-col">
@@ -798,6 +1093,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           }}
                                           size="middle"
                                           className="addMinusBtn"
+                                          disabled={disableFields}
                                           // block
                                           icon={<MinusOutlined />}
                                         >
@@ -819,6 +1115,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 }}
                                 size="middle"
                                 className="addMinusBtn"
+                                disabled={disableFields}
                                 // block
                                 icon={<PlusOutlined />}
                               >
@@ -841,11 +1138,27 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:baselineScenario')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:baselineScenario')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:baselineScenarioPlaceholder')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:baselineScenarioPlaceholder')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <Form.Item
@@ -897,11 +1210,23 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:additionality')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:additionality')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -911,13 +1236,26 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:methodologyDeviations')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:methodologyDeviations')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:methodologyDeviationsPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -925,14 +1263,20 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

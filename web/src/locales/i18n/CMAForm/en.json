@@ -25,6 +25,7 @@
   "organizationName": "Organization Name",
   "contactPerson": "Contact Person",
   "title": "Title",
+  "designation": "Designation",
   "address": "Address",
   "otherEntitiesInProject": "Other Entities Involved in the Project",
   "projectActivityLocations": "Project Activity Locations",
@@ -71,7 +72,7 @@
   "commerciallySensitiveInformationPlaceholder": "No commercially sensitive information has been included in this project scope.",
   "projectOwnership": "Project Ownership",
   "projectTrack": "Project Track",
-  "required": "Required",
+  "required": "Required!",
   "projectTrack2Description": "Issued carbon credits from project will only be used for internal offsetting of emissions",
   "projectCreditingPeriod": "Project Crediting Period",
   "projectCreditingDescriptionPlaceholder": "Indicate the project crediting period, specifying the day, month and year for the start  and end dates and the total number of years.",
@@ -138,5 +139,6 @@
   "monitoringPlan": "Monitoring Plan",
   "generalCriteria": "General Criteria",
   "bundlingCriteria": "Bundling Criteria",
-  "calculationMethod": "Calculation Method"
+  "calculationMethod": "Calculation Method",
+  "goBackProjectDetails": "Go Back To Project Details"
 }

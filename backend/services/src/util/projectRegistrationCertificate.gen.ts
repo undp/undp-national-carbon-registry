@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CreditType } from "src/enum/creditType.enum";
+import { CreditType } from "../enum/creditType.enum";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -21,7 +21,8 @@ export class ProjectRegistrationCertificateGenerator {
 
   async generateProjectRegistrationCertificate(
     data: ProjectRegistrationCertificateData,
-    programmeId: string
+    programmeId: string,
+    isPreview?: boolean
   ) {
     const doc = new PDFDocument({
       margin: 50,
@@ -73,6 +74,10 @@ export class ProjectRegistrationCertificateGenerator {
       .font("Helvetica-Bold")
       .fillColor("#134e9e")
       .text("Project Registration Certificate", { align: "center" });
+
+    if (isPreview) {
+      this.addPreviewWatermark(doc);
+    }
 
     doc.moveDown(2).fontSize(16).fillColor("black");
 
@@ -165,10 +170,10 @@ export class ProjectRegistrationCertificateGenerator {
 
     // Chairman Signature
 
-    const chairmanSignatureImagePath = "public/signatures/ceo.jpg";
+    const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
 
     if (fs.existsSync(chairmanSignatureImagePath)) {
-      doc.image(chairmanSignatureImagePath, 110, 600, {
+      doc.image(chairmanSignatureImagePath, 110, 579, {
         width: 120,
         height: 100,
       });
@@ -198,7 +203,7 @@ export class ProjectRegistrationCertificateGenerator {
     const ceoSignatureImagePath = "public/signatures/ceo.jpg";
 
     if (fs.existsSync(ceoSignatureImagePath)) {
-      doc.image(ceoSignatureImagePath, 410, 600, {
+      doc.image(ceoSignatureImagePath, 410, 579, {
         width: 120,
         height: 100,
       });
@@ -248,5 +253,21 @@ export class ProjectRegistrationCertificateGenerator {
     const url = await this.fileHandler.uploadFile("documents/" + filepath, content);
 
     return url;
+  }
+
+  // Function to add a preview watermark
+  addPreviewWatermark(doc) {
+    doc.save(); // Save the current state
+    doc
+      .fontSize(160) // Set a large font size for visibility
+      .font("Helvetica-Bold") // Use a standard, bold font
+      .opacity(0.1) // Set low opacity for the watermark
+      .fillColor("grey") // Grey color for the watermark text
+      .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
+      .text("Preview", 0, doc.page.height / 2 - 100, {
+        width: doc.page.width,
+        align: "center",
+      });
+    doc.restore(); // Restore the original state for further additions
   }
 }

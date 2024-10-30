@@ -173,12 +173,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`1.4 ${t('validationReport:summaryDescriptionProject')}`}
+                label={`1.4 ${t('validationReport:summaryDescriptionProject')} `}
                 name="summary"
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:summaryDescriptionProject')} `,
+                    message: `${t('validationReport:summaryDescriptionProject')} ${t(
+                      'isRequired'
+                    )} `,
                   },
                 ]}
               >

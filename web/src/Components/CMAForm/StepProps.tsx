@@ -13,5 +13,6 @@ export interface CustomStepsProps {
   submitForm?: (appendixVals: any) => void;
   projectCategory?: string;
   existingFormValues?: any;
+  disableFields?: boolean;
   formMode?: FormMode;
 }

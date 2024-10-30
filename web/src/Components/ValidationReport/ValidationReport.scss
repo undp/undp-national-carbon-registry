@@ -169,16 +169,16 @@
   cursor: default !important;
 }
 
-.ant-tooltip {
-  // width: 900px !important;
-  .ant-tooltip-content {
-    width: 600px !important;
-    li {
-      list-style-position: inside;
-      list-style: disc;
-    }
-  }
-}
+// .ant-tooltip {
+//   // width: 900px !important;
+//   .ant-tooltip-content {
+//     width: 600px !important;
+//     li {
+//       list-style-position: inside;
+//       list-style: disc;
+//     }
+//   }
+// }
 
 .form-grid {
   display: grid;
@@ -204,6 +204,10 @@
 .technical-project-description {
   background-color: #e8e8e8 !important;
   width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding-top: 15px;
 }
 
 .technical-project-grid-title {
@@ -248,4 +252,14 @@
 .validation-conclusion {
   display: flex;
   flex-direction: column;
+}
+
+.addMinusBtn {
+  height: 40px !important;
+  // color: #16b1ff;
+  // border: 1px solid #16b1ff;
+}
+
+.deskReviewCategory {
+  vertical-align: text-top;
 }

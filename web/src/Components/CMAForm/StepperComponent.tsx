@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Steps, Button, Form, message } from 'antd';
 import './CMAForm.scss';
 // import './SLCFMonitoringReportComponent.scss';
@@ -15,13 +15,48 @@ import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  appendixDataMapToFields,
+  applicationOfMethodologyDataMapToFields,
+  descriptionOfProjectActivityDataMapToFields,
+  eligibilityCriteriaDataMapToFields,
+  environmentImpactsDataMaptoFields,
+  localStakeholderConsultationDataMaptoFields,
+  monitoringDataMapToFields,
+  projectDetailsDataMapToFields,
+  quantificationOfGHGDataMapToFields,
+} from './viewDataMap';
+
+const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
   const { t, form } = props;
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
+
+  const { state } = useLocation();
+  const isView = !!state?.isView;
+  const isEdit = !!state?.isEdit;
   const { id } = useParams();
+
+  const scrollSection = useRef({} as any);
+
+  const scrollToDiv = () => {
+    if (scrollSection.current) {
+      scrollSection.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
+  const [disableFields, setDisableFields] = useState<boolean>(false);
+
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+
   const [values, setValues] = useState({
     programmeId: id,
     companyId: undefined,
@@ -40,10 +75,12 @@ const StepperComponent = (props: any) => {
 
   const next = () => {
     setCurrent(current + 1);
+    scrollToDiv();
   };
 
   const prev = () => {
     setCurrent(current - 1);
+    scrollToDiv();
   };
 
   const [countries, setCountries] = useState<[]>([]);
@@ -59,6 +96,7 @@ const StepperComponent = (props: any) => {
   const [form6] = useForm();
   const [form7] = useForm();
   const [form8] = useForm();
+  const [form9] = useForm();
 
   const getProgrammeDetailsById = async (programId: any) => {
     try {
@@ -69,30 +107,29 @@ const StepperComponent = (props: any) => {
       const {
         data: { user },
       } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
 
-      // const dateOfIssue = moment().unix();
-      form1.setFieldsValue({
-        title: data?.title,
-        dateOfIssue: moment(),
-        preparedBy: user?.name,
-        physicalAddress: data?.company?.address,
-        email: data?.company?.email,
-        projectProponent: data?.company?.name,
-        telephone: data?.company?.phoneNo,
-        website: data?.company?.website,
-      });
+      if (!(isView || isEdit)) {
+        form1.setFieldsValue({
+          title: data?.title,
+          dateOfIssue: moment(),
+          preparedBy: user?.name,
+          physicalAddress: data?.company?.address,
+          email: data?.company?.email,
+          projectProponent: data?.company?.name,
+          telephone: data?.company?.phoneNo,
+          website: data?.company?.website,
+        });
 
-      setProjectCategory(data?.projectCategory);
-      form2.setFieldsValue({
-        projectTrack: data?.purposeOfCreditDevelopment,
-        // projectTrack: 'TRACK_2',
-        organizationName: data?.company?.name,
-        email: data?.company?.email,
-        telephone: data?.company?.phoneNo,
-        address: data?.company?.address,
-        fax: data?.company?.faxNo,
-      });
+        setProjectCategory(data?.projectCategory);
+        form2.setFieldsValue({
+          projectTrack: data?.purposeOfCreditDevelopment,
+          organizationName: data?.company?.name,
+          email: data?.company?.email,
+          telephone: data?.company?.phoneNo,
+          address: data?.company?.address,
+          fax: data?.company?.faxNo,
+        });
+      }
 
       setValues((prevVal) => ({
         ...prevVal,
@@ -103,9 +140,62 @@ const StepperComponent = (props: any) => {
     }
   };
 
-  const navigateToDetailsPage = () => {
-    navigate(`/programmeManagementSLCF/view/${id}`);
-  };
+  useEffect(() => {
+    const getViewData = async () => {
+      if (isView || isEdit) {
+        const res = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: id,
+          docType: 'cma',
+        });
+
+        if (res?.statusText === 'SUCCESS') {
+          const content = JSON.parse(res?.data.content);
+
+          const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
+          form1.setFieldsValue(projectDetails);
+          const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
+            content?.projectActivity
+          );
+          form2.setFieldsValue(descripitonOfProjectActivity);
+
+          const environmentImpacts = environmentImpactsDataMaptoFields(content?.environmentImpacts);
+          form3.setFieldsValue(environmentImpacts);
+
+          const localStakeholderConsultation = localStakeholderConsultationDataMaptoFields(
+            content?.localStakeholderConsultation
+          );
+          form4.setFieldsValue(localStakeholderConsultation);
+
+          const eligibilityCriteria = eligibilityCriteriaDataMapToFields(
+            content?.eligibilityCriteria
+          );
+          form5.setFieldsValue(eligibilityCriteria);
+
+          const applicationOfMethodology = applicationOfMethodologyDataMapToFields(
+            content?.applicationOfMethodology
+          );
+          form6.setFieldsValue(applicationOfMethodology);
+
+          const quantificationOfGHG = quantificationOfGHGDataMapToFields(
+            content?.quantificationOfGHG
+          );
+          form7.setFieldsValue(quantificationOfGHG);
+
+          const monitoring = monitoringDataMapToFields(content?.monitoring);
+          form8.setFieldsValue(monitoring);
+
+          const appendix = appendixDataMapToFields(content?.appendix);
+          form9.setFieldsValue(appendix);
+        }
+      }
+    };
+
+    getViewData();
+
+    if (isView) {
+      setDisableFields(true);
+    }
+  }, []);
 
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
@@ -115,14 +205,15 @@ const StepperComponent = (props: any) => {
         appendix: appendixVals,
       },
     };
-    console.log('------------final values--------------', tempValues);
+
     try {
       const res = await post('national/programmeSl/createCMA', tempValues);
-      console.log(res);
       if (res?.response?.data?.statusCode === 200) {
         message.open({
           type: 'success',
-          content: 'CMA form has been submitted successfully',
+          content: isEdit
+            ? 'CMA form has been edited successfully'
+            : 'CMA form has been submitted successfully',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -159,19 +250,21 @@ const StepperComponent = (props: any) => {
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
+        <div ref={scrollSection} className="stepper-title-container">
           {/* <div className="step-count">00</div> */}
           <div className="title">{t('CMAForm:form01Title')}</div>
         </div>
       ),
       description: (
         <ProjectDetails
+          prev={navigateToDetailsPage} // will take user to details page
           next={next}
           form={form1}
           current={current}
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -191,6 +284,7 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -209,6 +303,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -227,6 +322,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -245,6 +341,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -263,6 +360,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -281,6 +379,7 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -300,6 +399,7 @@ const StepperComponent = (props: any) => {
           t={t}
           projectCategory={projectCategory}
           handleValuesUpdate={handleValuesUpdate}
+          disableFields={disableFields}
         />
       ),
     },
@@ -312,13 +412,14 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <Appendix
-          next={next}
+          next={navigateToDetailsPage} // will take user to details page
           prev={prev}
-          form={form8}
+          form={form9}
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           submitForm={submitForm}
+          disableFields={disableFields}
         />
       ),
     },

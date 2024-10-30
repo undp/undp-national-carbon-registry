@@ -10,7 +10,7 @@ import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 
 const Step08 = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, submitForm } = props;
+  const { next, prev, form, current, handleValuesUpdate, submitForm, disableFields } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -24,7 +24,6 @@ const Step08 = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       annexures: values?.additionalComments,
       additionalDocuments: await (async function () {
@@ -32,8 +31,12 @@ const Step08 = (props: CustomStepsProps) => {
         if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
           const docs = values.appendixDocuments;
           for (let i = 0; i < docs.length; i++) {
-            const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-            base64Docs.push(temp); // No need for Promise.resolve
+            if (docs[i]?.originFileObj === undefined) {
+              base64Docs.push(docs[i]?.url);
+            } else {
+              const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+              base64Docs.push(temp); // No need for Promise.resolve
+            }
           }
         }
         return base64Docs;
@@ -43,7 +46,7 @@ const Step08 = (props: CustomStepsProps) => {
     if (submitForm) {
       submitForm(tempValues);
     }
-    // handleValuesUpdate({ appendix: tempValues });
+    handleValuesUpdate({ appendix: tempValues });
   };
   return (
     <>
@@ -75,11 +78,23 @@ const Step08 = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:additionalComments')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:additionalComments')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
               <Form.Item
                 label={t('CMAForm:uploadDocs')}
@@ -90,15 +105,9 @@ const Step08 = (props: CustomStepsProps) => {
                 rules={[
                   {
                     validator: async (rule, file) => {
+                      if (disableFields) return;
                       if (file?.length > 0) {
-                        if (
-                          !isValidateFileType(
-                            file[0]?.type,
-                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                          )
-                        ) {
-                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                        } else if (file[0]?.size > maximumImageSize) {
+                        if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
                           throw new Error(`${t('common:maxSizeVal')}`);
                         }
@@ -117,9 +126,15 @@ const Step08 = (props: CustomStepsProps) => {
                   action="/upload.do"
                   listType="picture"
                   multiple={false}
+                  disabled={disableFields}
                   // maxCount={1}
                 >
-                  <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                    disabled={disableFields}
+                  >
                     Upload
                   </Button>
                 </Upload>
@@ -129,9 +144,15 @@ const Step08 = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
-                  {t('CMAForm:submit')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:goBackProjectDetails')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} htmlType={'submit'}>
+                    {t('CMAForm:submit')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>
