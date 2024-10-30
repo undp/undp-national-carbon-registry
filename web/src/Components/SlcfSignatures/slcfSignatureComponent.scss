@@ -1,0 +1,99 @@
+@import '../../Assets/Fonts/fonts.scss';
+@import '../../Styles/variables.scss';
+
+.slcf-signs-container {
+  padding: 50px;
+  color: rgba(58, 53, 65, 0.8);
+
+  .add-sign-title {
+    font-size: 20px;
+    color: rgba(58, 53, 65, 0.8);
+  }
+
+  .slcf-upload-signs-main {
+    .slcf-upload-signs-form {
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      .sign-upload-btn-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+      }
+
+      .ant-btn-primary[disabled],
+      .ant-btn-primary[disabled]:hover,
+      .ant-btn-primary[disabled]:focus,
+      .ant-btn-primary[disabled]:active {
+        color: $dark-text-color;
+        border-color: none;
+        background-color: $line-colors !important;
+        text-shadow: none;
+        box-shadow: none;
+      }
+    }
+
+    .current-signs-main {
+      padding-bottom: 20px;
+      padding-top: 20px;
+
+      .current-signs-title {
+        font-size: 20px;
+        color: rgba(58, 53, 65, 0.8);
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 0 20px;
+      }
+
+      .ant-card-bordered {
+        border: none !important;
+      }
+
+      .signature-card {
+        width: 300px; 
+        max-width: 300px;
+        max-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .ant-card-meta-title {
+          color: rgba(58, 53, 65, 0.8);
+        }
+      }
+
+      .signature-image {
+        width: 90%; 
+        max-height: 160px;
+        object-fit: contain; 
+      }
+    }
+
+    .test-cert-main {
+      padding-top: 20px;
+
+      .test-cert-title {
+        font-size: 20px;
+        color: rgba(58, 53, 65, 0.8);
+      }
+
+      .cert-button-container {
+        display: flex;
+        justify-content: space-between; 
+        padding: 10px; 
+        width: 100%; 
+      }
+
+      .cert-button {
+        flex-grow: 1; 
+        text-align: center; 
+        margin: 0 20px;
+      }
+    }
+  }
+}

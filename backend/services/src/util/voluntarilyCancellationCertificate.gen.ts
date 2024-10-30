@@ -21,7 +21,10 @@ export interface VoluntarilyCancellationCertificateData {
 export class VoluntarilyCancellationCertificateGenerator {
   constructor(private fileHandler: FileHandlerInterface) {}
 
-  async generateVoluntaryCancellationCertificate(data: VoluntarilyCancellationCertificateData) {
+  async generateVoluntaryCancellationCertificate(
+    data: VoluntarilyCancellationCertificateData,
+    isPreview?: boolean
+  ) {
     const doc = new PDFDocument({
       margin: 50,
     });
@@ -82,35 +85,10 @@ export class VoluntarilyCancellationCertificateGenerator {
       .fillColor("green")
       .text("VOLUNTARY CANCELLATION CERTIFICATE", { align: "center" });
 
-    // Presented to/by
-    // doc
-    //   .moveDown(2)
-    //   .fontSize(14)
-    //   .fillColor("black")
-    //   .font("Helvetica") // Set regular font for the label part
-    //   .text("Presented to: ", 70, 220, {
-    //     continued: true, // Continue on the same line
-    //     align: "left",
-    //   })
-    //   .font("Helvetica-Bold") // Switch to bold font for the company name
-    //   .text(`${data.companyName}`, {
-    //     continued: false, // End the continuation here
-    //   })
-    //   .moveDown(1);
 
-    // doc
-    //   .fontSize(14)
-    //   .fillColor("black")
-    //   .font("Helvetica") // Set regular font for the label part
-    //   .text("Presented by: ", {
-    //     continued: true, // Continue on the same line
-    //     align: "left",
-    //   })
-    //   .font("Helvetica-Bold") // Switch to bold font for the company name
-    //   .text("Sri Lanka Climate Fund (Pvt) Ltd.", {
-    //     continued: false, // End the continuation here
-    //   })
-    //   .moveDown(2);
+    if (isPreview) {
+      this.addPreviewWatermark(doc);
+    }
 
     // "Presented to:" Text
     doc.moveDown(2).fontSize(14).fillColor("black");
@@ -255,5 +233,21 @@ export class VoluntarilyCancellationCertificateGenerator {
     const url = await this.fileHandler.uploadFile("documents/" + filepath, content);
 
     return url;
+  }
+
+  // Function to add a preview watermark
+  addPreviewWatermark(doc) {
+    doc.save(); // Save the current state
+    doc
+      .fontSize(160) // Set a large font size for visibility
+      .font("Helvetica-Bold") // Use a standard, bold font
+      .opacity(0.1) // Set low opacity for the watermark
+      .fillColor("grey") // Grey color for the watermark text
+      .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
+      .text("Preview", 0, doc.page.height / 2 - 100, {
+        width: doc.page.width,
+        align: "center",
+      });
+    doc.restore(); // Restore the original state for further additions
   }
 }
