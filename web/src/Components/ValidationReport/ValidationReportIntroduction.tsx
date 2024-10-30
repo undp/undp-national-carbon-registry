@@ -98,78 +98,75 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                   disabled={FormMode.VIEW === formMode}
                 />
               </Form.Item>
+              <h4 className="custom-required">{`1.3 ${t(
+                'validationReport:involvedPartiesAndParticipeant'
+              )}`}</h4>
 
-              <Form.Item
-                className="full-width-form-item"
-                label={`1.3 ${t('validationReport:involvedPartiesAndParticipeant')}`}
-                name="involvedPartiesAndParticipeant"
-              >
-                <div className="form-section mg-top-1">
-                  <Row justify={'space-between'} gutter={[40, 16]}>
-                    <Col xl={24} md={24}>
-                      <div className="step-form-right-col form-grid">
-                        <Form.Item
-                          label={t('validationReport:titleOfTheProjectActivity')}
-                          name="titleOfProjectActivity"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
-                                'isRequired'
-                              )}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
+              <div className="form-section mg-top-1">
+                <Row justify={'space-between'} gutter={[40, 16]}>
+                  <Col xl={24} md={24}>
+                    <div className="step-form-right-col form-grid">
+                      <Form.Item
+                        label={t('validationReport:titleOfTheProjectActivity')}
+                        name="titleOfProjectActivity"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
+                              'isRequired'
+                            )}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
 
-                        <Form.Item
-                          label={t('validationReport:projectParticipants')}
-                          name="projectParticipant"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:projectParticipants')} ${t(
-                                'isRequired'
-                              )}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
+                      <Form.Item
+                        label={t('validationReport:projectParticipants')}
+                        name="projectParticipant"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:projectParticipants')} ${t(
+                              'isRequired'
+                            )}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
 
-                        <Form.Item
-                          label={t('validationReport:hostParty')}
-                          name="hostParty"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
+                      <Form.Item
+                        label={t('validationReport:hostParty')}
+                        name="hostParty"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
 
-                        <Form.Item
-                          label={t('validationReport:consultantOfTheProject')}
-                          name="consultant"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:consultantOfTheProject')} ${t(
-                                'isRequired'
-                              )}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              </Form.Item>
+                      <Form.Item
+                        label={t('validationReport:consultantOfTheProject')}
+                        name="consultant"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:consultantOfTheProject')} ${t(
+                              'isRequired'
+                            )}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" />
+                      </Form.Item>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
 
               <Form.Item
                 className="full-width-form-item"

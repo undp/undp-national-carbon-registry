@@ -30,7 +30,7 @@ const NetEmissionReduction = (props: any) => {
       projectEmissionReductionsVal = Number(form.getFieldValue('projectEmissionReductions') || 0);
       leakageEmissionReductionsVal = Number(form.getFieldValue('leakageEmissionReductions') || 0);
       const netGHGEmissions =
-        baselineEmissionReductionsVal + projectEmissionReductionsVal + leakageEmissionReductionsVal;
+        baselineEmissionReductionsVal - projectEmissionReductionsVal - leakageEmissionReductionsVal;
       console.log(
         '---------cal em vals----',
         baselineEmissionReductionsVal,
@@ -48,8 +48,8 @@ const NetEmissionReduction = (props: any) => {
         leakageEmissionReductionsVal = Number(listVals[index].leakageEmissionReductions || 0);
 
         const netGHGEmissions =
-          baselineEmissionReductionsVal +
-          projectEmissionReductionsVal +
+          baselineEmissionReductionsVal -
+          projectEmissionReductionsVal -
           leakageEmissionReductionsVal;
 
         listVals[index].netEmissionReductions = netGHGEmissions;
@@ -167,7 +167,7 @@ const NetEmissionReduction = (props: any) => {
               Buffer pool allocation
             </Col>
           )}
-          <Col md={2} xl={2}>
+          <Col md={3} xl={3}>
             {' '}
           </Col>
         </Row>
@@ -175,7 +175,7 @@ const NetEmissionReduction = (props: any) => {
         <Form.List name="estimatedNetEmissionReductions">
           {(fields, { add, remove }) => (
             <>
-              {fields.map(({ key, name, ...restField }) => (
+              {fields.map(({ key, name, ...restField }, index: number) => (
                 <>
                   <Row justify={'space-between'} align={'middle'}>
                     <Col md={6} xl={6} className="col1">
@@ -197,7 +197,7 @@ const NetEmissionReduction = (props: any) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('CMAForm:required')}`);
+                                  throw new Error(`${t('validationReport:required')}`);
                                 }
                               },
                             },
@@ -229,7 +229,7 @@ const NetEmissionReduction = (props: any) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('CMAForm:required')}`);
+                                  throw new Error(`${t('validationReport:required')}`);
                                 }
 
                                 const startDate = moment(
@@ -272,7 +272,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t('validationReport:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -291,6 +291,7 @@ const NetEmissionReduction = (props: any) => {
                         ]}
                       >
                         <InputNumber
+                          size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
@@ -309,7 +310,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t('validationReport:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -328,6 +329,7 @@ const NetEmissionReduction = (props: any) => {
                         ]}
                       >
                         <InputNumber
+                          size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
@@ -346,7 +348,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t('validationReport:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -365,6 +367,7 @@ const NetEmissionReduction = (props: any) => {
                         ]}
                       >
                         <InputNumber
+                          size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
                             calculateNetGHGEmissions(value, name);
@@ -383,7 +386,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t('validationReport:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -401,7 +404,7 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber disabled className="full-width-form-item" />
+                        <InputNumber size="large" disabled className="full-width-form-item" />
                       </Form.Item>
                     </Col>
                     {projectCategory === ProjectCategory.AFOLU && (
@@ -431,6 +434,7 @@ const NetEmissionReduction = (props: any) => {
                         >
                           <InputNumber
                             className="full-width-form-item"
+                            size="large"
                             onChange={(value) => {
                               calculateBufferPool(
                                 value,
@@ -447,63 +451,65 @@ const NetEmissionReduction = (props: any) => {
                         </Form.Item>
                       </Col>
                     )}
-                    <Col md={2} xl={2}>
+                    <Col md={3} xl={3} style={{ verticalAlign: 'top' }}>
                       <Form.Item>
-                        <Button
-                          // type="dashed"
-                          onClick={() => {
-                            // reduceTotalCreditingYears()
-                            remove(name);
-                            onPeriodEndChange(null, fields.length - 1);
-                            calculateTotalEmissions(
-                              null,
-                              'projectEmissionReductions',
-                              'totalProjectEmissionReductions'
-                            );
-                            calculateTotalEmissions(
-                              null,
-                              'baselineEmissionReductions',
-                              'totalBaselineEmissionReductions'
-                            );
-                            calculateTotalEmissions(
-                              null,
-                              'leakageEmissionReductions',
-                              'totalLeakageEmissionReductions'
-                            );
-                            calculateTotalEmissions(
-                              null,
-                              'bufferPoolAllocation',
-                              'totalBufferPoolAllocations'
-                            );
-                          }}
-                          size="small"
-                          className="addMinusBtn"
-                          // block
-                          icon={<MinusOutlined />}
-                        >
-                          {/* Add Entity */}
-                        </Button>
+                        {fields.length > 1 && (
+                          <Button
+                            // type="dashed"
+                            style={{ marginRight: 5 }}
+                            onClick={() => {
+                              // reduceTotalCreditingYears()
+                              remove(name);
+                              onPeriodEndChange(null, fields.length - 1);
+                              calculateTotalEmissions(
+                                null,
+                                'projectEmissionReductions',
+                                'totalProjectEmissionReductions'
+                              );
+                              calculateTotalEmissions(
+                                null,
+                                'baselineEmissionReductions',
+                                'totalBaselineEmissionReductions'
+                              );
+                              calculateTotalEmissions(
+                                null,
+                                'leakageEmissionReductions',
+                                'totalLeakageEmissionReductions'
+                              );
+                              calculateTotalEmissions(
+                                null,
+                                'bufferPoolAllocation',
+                                'totalBufferPoolAllocations'
+                              );
+                            }}
+                            size="small"
+                            className="addMinusBtn"
+                            // block
+                            icon={<MinusOutlined />}
+                          >
+                            {/* Add Entity */}
+                          </Button>
+                        )}
+                        {index === fields.length - 1 && (
+                          <Button
+                            // type="dashed"
+                            onClick={() => {
+                              // reduceTotalCreditingYears()
+                              add();
+                            }}
+                            size="middle"
+                            className="addMinusBtn"
+                            // block
+                            icon={<PlusOutlined />}
+                          >
+                            {/* Add Entity */}
+                          </Button>
+                        )}
                       </Form.Item>
                     </Col>
                   </Row>
                 </>
               ))}
-
-              <Form.Item>
-                <Button
-                  // type="dashed"
-                  onClick={() => {
-                    // reduceTotalCreditingYears()
-                    add();
-                  }}
-                  size="middle"
-                  className="addMinusBtn"
-                  // block
-                  icon={<PlusOutlined />}
-                >
-                  {/* Add Entity */}
-                </Button>
-              </Form.Item>
             </>
           )}
         </Form.List>
@@ -538,7 +544,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -565,7 +571,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -574,7 +580,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('validationReport:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -592,7 +598,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -601,7 +607,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('validationReport:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -619,7 +625,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
 
@@ -630,7 +636,7 @@ const NetEmissionReduction = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:required')}`,
+                    message: `${t('validationReport:required')}`,
                   },
                   {
                     validator(rule, value) {
@@ -648,11 +654,11 @@ const NetEmissionReduction = (props: any) => {
                   },
                 ]}
               >
-                <InputNumber className="full-width-form-item" disabled />
+                <InputNumber size="large" className="full-width-form-item" disabled />
               </Form.Item>
             </Col>
           )}
-          <Col md={2} xl={2}>
+          <Col md={3} xl={3}>
             {' '}
           </Col>
         </Row>
@@ -687,7 +693,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3}>
@@ -704,7 +710,7 @@ const NetEmissionReduction = (props: any) => {
               {' '}
             </Col>
           )}
-          <Col md={2} xl={2}>
+          <Col md={3} xl={3}>
             {' '}
           </Col>
         </Row>
@@ -739,7 +745,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -766,7 +772,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <InputNumber className="full-width-form-item" disabled />
+              <InputNumber size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -793,7 +799,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input className="full-width-form-item" disabled />
+              <Input size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           <Col md={3} xl={3} className="total-cols">
@@ -820,7 +826,7 @@ const NetEmissionReduction = (props: any) => {
                 },
               ]}
             >
-              <Input className="full-width-form-item" disabled />
+              <Input size="large" className="full-width-form-item" disabled />
             </Form.Item>
           </Col>
           {projectCategory === ProjectCategory.AFOLU && (
@@ -848,11 +854,11 @@ const NetEmissionReduction = (props: any) => {
                   },
                 ]}
               >
-                <InputNumber className="full-width-form-item" disabled />
+                <InputNumber size="large" className="full-width-form-item" disabled />
               </Form.Item>
             </Col>
           )}
-          <Col md={2} xl={2} className="total-cols">
+          <Col md={3} xl={3} className="total-cols">
             {' '}
           </Col>
         </Row>
