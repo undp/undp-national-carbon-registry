@@ -203,5 +203,6 @@
   "APPROVED_CMA": "CMA Approved",
   "VALIDATION_PENDING": "Validation Pending",
   "REJECTED_VALIDATION": "Validation Rejected",
-  "AUTHORISED": "Authorised"
+  "AUTHORISED": "Authorised",
+  "orgNotAuthDownload": "Your organisation is not authorised to download this document"
 }

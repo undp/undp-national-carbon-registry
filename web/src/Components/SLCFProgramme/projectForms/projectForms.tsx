@@ -344,11 +344,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -390,11 +392,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -436,11 +440,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -475,11 +481,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -534,11 +542,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -584,11 +594,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -636,11 +648,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -672,11 +686,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -766,11 +782,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -824,11 +842,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -875,11 +895,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -966,7 +988,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       userInfoState,
                       DocType.PROJECT_REGISTRATION_CERTIFICATE,
                       projectProposalStage
-                    ) && t('projectDetailsView:orgNotAuthView')
+                    ) && t('projectDetailsView:orgNotAuthDownload')
                   }
                   overlayClassName="custom-tooltip"
                 >
@@ -982,11 +1004,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
