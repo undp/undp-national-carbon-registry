@@ -89,7 +89,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       });
 
       const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      console.log();
       setDsDivisions(tempDivisions);
     } catch (error) {
       console.log(error);
@@ -159,7 +158,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     const val1 = form.getFieldValue('estimatedAnnualGHGEmissionsValue') || 0;
     const listVals = form.getFieldValue('extraGHGEmmissions');
     let tempTotal = Number(val1);
-    console.log('-------em vals change------', val1, listVals);
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
         tempTotal += Number(item?.estimatedAnnualGHGEmissionsValue);
@@ -170,7 +168,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('-----values---------', values);
     const tempValues: any = {
       introduction: values?.introduction,
       sectoralScopeAndProjectType: values?.sectoralScopeAndProjectType,
@@ -346,7 +343,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       commerciallySensitiveInfo: values?.commerciallySensitiveInformation,
     };
 
-    console.log('---------tempVals-----------', tempValues);
     handleValuesUpdate({ projectActivity: tempValues });
   };
 

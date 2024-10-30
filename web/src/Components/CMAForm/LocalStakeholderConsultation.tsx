@@ -8,7 +8,6 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       stakeholderConsultationProcess: values?.stakeHolderConsultationProcess,
       summaryOfComments: values?.summaryOfCommentsRecieved,

@@ -26,20 +26,13 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     let projectEmissionReductionsVal = 0;
     let leakageEmissionReductionsVal = 0;
 
-    console.log('-------cal em is running----------', index);
     if (index === undefined) {
       baselineEmissionReductionsVal = Number(form.getFieldValue('baselineEmissionReductions') || 0);
       projectEmissionReductionsVal = Number(form.getFieldValue('projectEmissionReductions') || 0);
       leakageEmissionReductionsVal = Number(form.getFieldValue('leakageEmissionReductions') || 0);
       const netGHGEmissions =
         baselineEmissionReductionsVal - projectEmissionReductionsVal - leakageEmissionReductionsVal;
-      console.log(
-        '---------cal em vals----',
-        baselineEmissionReductionsVal,
-        projectEmissionReductionsVal,
-        leakageEmissionReductionsVal,
-        netGHGEmissions
-      );
+
       form.setFieldValue('netEmissionReductions', String(netGHGEmissions));
     } else {
       const listVals = form.getFieldValue('extraEmissionReductions');
@@ -113,7 +106,6 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
   };
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       baselineEmissions: values?.baselineEmissions,
       projectEmissions: values?.projectEmissions,

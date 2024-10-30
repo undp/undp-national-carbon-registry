@@ -142,9 +142,7 @@ const StepperComponent = (props: any) => {
 
   useEffect(() => {
     const getViewData = async () => {
-      console.log('view data getting', isEdit, isView, isView || isEdit);
       if (isView || isEdit) {
-        console.log('view data');
         const res = await post('national/programmeSl/getDocLastVersion', {
           programmeId: id,
           docType: 'cma',
@@ -154,9 +152,7 @@ const StepperComponent = (props: any) => {
           const content = JSON.parse(res?.data.content);
 
           const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
-          console.log('view data', projectDetails);
           form1.setFieldsValue(projectDetails);
-          console.log('view data form 1', form1.getFieldsValue());
           const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
             content?.projectActivity
           );
@@ -212,7 +208,6 @@ const StepperComponent = (props: any) => {
 
     try {
       const res = await post('national/programmeSl/createCMA', tempValues);
-      console.log(res);
       if (res?.response?.data?.statusCode === 200) {
         message.open({
           type: 'success',

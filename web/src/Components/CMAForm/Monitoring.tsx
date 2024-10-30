@@ -11,7 +11,6 @@ const Monitoring = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, projectCategory, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       dataAndParametersDescription: values?.dataAndParametersAvailable,
       validationParameters: {
@@ -54,7 +53,6 @@ const Monitoring = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
                 onFinish(values);
                 if (next) {
                   next();

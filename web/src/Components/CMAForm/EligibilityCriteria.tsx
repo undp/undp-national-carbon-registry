@@ -8,7 +8,6 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       generalCriteria411ProjectActivity: values?.generalCriteria411ProjectActivity,
       generalCriteria411IsAgreed: values?.generalCriteria411IsAgreed,

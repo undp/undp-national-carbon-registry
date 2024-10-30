@@ -8,7 +8,6 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       analysis: values?.analysisEnvironmentalImpacts,
       assessment: values?.environmentalImpactAssessment,

@@ -24,14 +24,12 @@ const Step08 = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       annexures: values?.additionalComments,
       additionalDocuments: await (async function () {
         const base64Docs: string[] = [];
         if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
           const docs = values.appendixDocuments;
-          console.log('---------docs-----------', docs);
           for (let i = 0; i < docs.length; i++) {
             if (docs[i]?.originFileObj === undefined) {
               base64Docs.push(docs[i]?.url);
@@ -40,13 +38,11 @@ const Step08 = (props: CustomStepsProps) => {
               base64Docs.push(temp); // No need for Promise.resolve
             }
           }
-          console.log('----------base64docs----------', base64Docs);
         }
         return base64Docs;
       })(),
     };
 
-    console.log('-----appendix vals---------', tempValues);
     if (submitForm) {
       submitForm(tempValues);
     }

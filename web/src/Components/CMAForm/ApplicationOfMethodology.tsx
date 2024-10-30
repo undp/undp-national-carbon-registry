@@ -10,7 +10,6 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues: any = {
       titleAndReference: values?.titleAndReferenceOfMethodology,
       applicability: values?.applicabilityOfMethodology,
