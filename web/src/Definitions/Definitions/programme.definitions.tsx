@@ -281,6 +281,7 @@ export interface ProgrammeSl {
   mitigationActions: any;
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
+  registrationCertificateUrl: string;
 }
 
 export interface ProgrammeR extends Programme {
