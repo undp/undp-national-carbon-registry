@@ -150,6 +150,17 @@ export const formViewPermission = (
   ) {
     return true;
   } else if (
+    docType === DocType.SITE_VISIT_CHECKLIST &&
+    (projectProposalStage === ProjectProposalStage.APPROVED_CMA ||
+      projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
+      projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
+      projectProposalStage === ProjectProposalStage.AUTHORISED) &&
+    (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+  ) {
+    return true;
+  } else if (
     docType === DocType.VALIDATION_REPORT &&
     (projectProposalStage === ProjectProposalStage.VALIDATION_PENDING ||
       projectProposalStage === ProjectProposalStage.REJECTED_VALIDATION ||
