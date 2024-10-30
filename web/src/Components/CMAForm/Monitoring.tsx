@@ -4,19 +4,13 @@ import { CustomStepsProps } from './StepProps';
 import TextArea from 'antd/lib/input/TextArea';
 import { t } from 'i18next';
 import { countries } from 'react-circle-flags';
-import {
-  formatPhoneNumber,
-  isPossiblePhoneNumber,
-  formatPhoneNumberIntl,
-  Country,
-} from 'react-phone-number-input';
+
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 const Monitoring = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, projectCategory } = props;
+  const { next, prev, form, current, handleValuesUpdate, projectCategory, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       dataAndParametersDescription: values?.dataAndParametersAvailable,
       validationParameters: {
@@ -59,7 +53,6 @@ const Monitoring = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
                 onFinish(values);
                 if (next) {
                   next();
@@ -73,11 +66,29 @@ const Monitoring = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:dataAndParametersAvailable')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:dataAndParametersAvailable')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
-                <TextArea rows={4} placeholder={`${t('CMAForm:dataAndParametersAvailable')}`} />
+                <TextArea
+                  rows={4}
+                  placeholder={`${t('CMAForm:dataAndParametersAvailable')}`}
+                  disabled={disableFields}
+                />
               </Form.Item>
 
               <>
@@ -90,11 +101,25 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:data_parameter')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:data_parameter')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -105,11 +130,27 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:unit')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:unit')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
-                        <Input placeholder={`${t('CMAForm:unitPlaceholder')}`} size="large" />
+                        <Input
+                          placeholder={`${t('CMAForm:unitPlaceholder')}`}
+                          size="large"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
 
@@ -120,7 +161,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:description')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:description')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -128,6 +181,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:data_parameterDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -139,7 +193,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:dataSource')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:dataSource')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -147,6 +213,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:dataSourcePlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -158,7 +225,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:justificationOfChoice')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:justificationOfChoice')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -166,6 +247,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:justificationOfChoicePlaceholder')}`}
                           rows={5}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -178,12 +260,24 @@ const Monitoring = (props: CustomStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:purpose')} ${t('isRequired')}`,
+                              message: ``,
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
+                                }
+                              },
                             },
                           ]}
                         >
                           {/* <Input size="large" placeholder={`${t('CMAForm:purposePlaceholder')}`} /> */}
-                          <Select size="large">
+                          <Select size="large" disabled={disableFields}>
                             {projectCategory === 'RENEWABLE_ENERGY' && (
                               <Select.Option value="Determination of baseline scenario">
                                 Determination of baseline scenario
@@ -210,13 +304,26 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:valueApplied')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:valueApplied')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
                         <Input
                           size="large"
                           placeholder={`${t('CMAForm:valueAppliedPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -237,11 +344,25 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:data_parameter')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:data_parameter')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -252,11 +373,27 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:unit')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:unit')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
-                        <Input placeholder={`${t('CMAForm:unitPlaceholder')}`} size="large" />
+                        <Input
+                          placeholder={`${t('CMAForm:unitPlaceholder')}`}
+                          size="large"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
 
@@ -267,7 +404,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:description')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:description')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -275,6 +424,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:data_parameterDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -286,7 +436,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:dataSource')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:dataSource')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -294,6 +456,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:dataSourcePlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -305,9 +468,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:measurementMethodDescription')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:measurementMethodDescription')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -315,6 +490,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:measuremenMethodDescriptionPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -326,7 +502,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringFrequency')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringFrequency')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -334,6 +524,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           placeholder={`${t('CMAForm:monitoringFrequencyPlaceholder')}`}
                           rows={2}
                           size="large"
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -345,7 +536,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:valueApplied')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:valueApplied')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -353,6 +556,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:valueAppliedPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -364,7 +568,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringEquipment')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringEquipment')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -372,6 +590,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:monitoringEquipmentPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -383,7 +602,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringQAProcedures')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringQAProcedures')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -391,6 +624,7 @@ const Monitoring = (props: CustomStepsProps) => {
                           rows={4}
                           size="large"
                           placeholder={`${t('CMAForm:monitoringQAProceduresPlaceholder')}`}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -416,11 +650,23 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:purpose')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
-                        <TextArea rows={4} size="large" />
+                        <TextArea rows={4} size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
 
@@ -431,13 +677,28 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:calculationMethod')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:calculationMethod')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
                         <TextArea
                           rows={4}
                           size="large"
+                          disabled={disableFields}
                           placeholder="Where relevant, provide the calculation method, including  any equations, used to establish the data/parameter."
                         />
                       </Form.Item>
@@ -450,11 +711,30 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringComments')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringComments')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
-                        <TextArea rows={4} size="large" placeholder="Provide any comments" />
+                        <TextArea
+                          rows={4}
+                          size="large"
+                          placeholder="Provide any comments"
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -468,7 +748,19 @@ const Monitoring = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:monitoringPlan')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:monitoringPlan')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
                 tooltip={{
@@ -511,21 +803,27 @@ const Monitoring = (props: CustomStepsProps) => {
                   placement: 'topLeft',
                 }}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>
