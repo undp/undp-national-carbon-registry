@@ -105,7 +105,7 @@ export const VerificationOpinionStep = (props: any) => {
                       name="signature1"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={false}
+                      required={true}
                       rules={[
                         {
                           validator: async (rule, file) => {

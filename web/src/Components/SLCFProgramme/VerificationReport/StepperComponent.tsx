@@ -16,6 +16,7 @@ import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum'
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
+  const [lastVerificationReport, setLastVerificationReport] = useState(null);
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id } = useParams();
@@ -36,13 +37,13 @@ const StepperComponent = (props: any) => {
       ...prevValues,
       ...newValues,
     }));
-    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: '1' };
+    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
     try {
       const res = await post('national/verification/createVerificationReport', body);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
-          content: t('verificationReport:uploadMonitoringReportSuccess'),
+          content: t('verificationReport:createVerificationReportSuccess'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
@@ -87,18 +88,20 @@ const StepperComponent = (props: any) => {
     setCurrent(current - 1);
   };
 
-  const getLatestCMA = async (programId: any) => {
+  const getProjectById = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
+      const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
-        docType: DocumentTypeEnum.CMA,
       });
 
-      // const cmaData = JSON.parse(data?.content);
       const {
         data: { user },
       } = await get('national/User/profile');
       console.log('-----response-------', data, user);
+
+      projectDetailsForm.setFieldsValue({
+        projectName: data?.title,
+      });
 
       verificationFindingForm.setFieldsValue({
         siteLocations: [
@@ -131,6 +134,35 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  const getLatestVerificationReport = async (programId: any) => {
+    try {
+      const { data } = await post('national/programmeSl/getDocLastVersion', {
+        programmeId: programId,
+        docType: DocumentTypeEnum.VERIFICATION_REPORT,
+      });
+      setLastVerificationReport(data);
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const getLatestCMA = async (programId: any) => {
+    try {
+      const { data } = await post('national/programmeSl/getDocLastVersion', {
+        programmeId: programId,
+        docType: DocumentTypeEnum.CMA,
+      });
+
+      // const cmaData = JSON.parse(data?.content);
+      const {
+        data: { user },
+      } = await get('national/User/profile');
+      console.log('-----response-------', data, user);
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
   const loadCMAForm = async () => {
     try {
       const { data } = await post('national/project/project');
@@ -150,7 +182,8 @@ const StepperComponent = (props: any) => {
   };
 
   useEffect(() => {
-    getLatestCMA(id);
+    getLatestVerificationReport(id);
+    getProjectById(id);
   }, []);
 
   useEffect(() => {

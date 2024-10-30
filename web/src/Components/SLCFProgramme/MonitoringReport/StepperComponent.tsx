@@ -38,7 +38,7 @@ const StepperComponent = (props: any) => {
       ...prevValues,
       ...newValues,
     }));
-    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: '1' };
+    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
     try {
       const res = await post('national/verification/createMonitoringReport', body);
       if (res?.statusText === 'SUCCESS') {
@@ -89,71 +89,142 @@ const StepperComponent = (props: any) => {
   const [qualificationForm] = useForm();
   const [annexuresForm] = useForm();
 
-  const getLatestCMA = async (programId: any) => {
+  const getLatestReports = async (programId: any) => {
     try {
       const { data } = await post('national/programmeSl/getDocLastVersion', {
         programmeId: programId,
         docType: DocumentTypeEnum.CMA,
       });
 
-      const cmaData = JSON.parse(data?.content);
-      const {
-        data: { user },
-      } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
+      if (data && data?.content) {
+        const cmaData = JSON.parse(data?.content);
 
-      projectDetailsForm.setFieldsValue({
-        title: cmaData?.projectDetails?.title,
-        projectProponent: cmaData?.projectDetails?.projectProponent,
-        dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
-        version: reportVersion,
-        physicalAddress: cmaData?.projectDetails?.physicalAddress,
-        email: cmaData?.projectDetails?.email,
-        telephone: cmaData?.projectDetails?.telephone,
-        website: cmaData?.projectDetails?.website,
-        preparedBy: cmaData?.projectDetails?.preparedBy,
+        projectDetailsForm.setFieldsValue({
+          title: cmaData?.projectDetails?.title,
+          projectProponent: cmaData?.projectDetails?.projectProponent,
+          dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
+          version: reportVersion,
+          physicalAddress: cmaData?.projectDetails?.physicalAddress,
+          email: cmaData?.projectDetails?.email,
+          telephone: cmaData?.projectDetails?.telephone,
+          website: cmaData?.projectDetails?.website,
+          preparedBy: cmaData?.projectDetails?.preparedBy,
+        });
+      }
+    } catch (error) {
+      console.log('error');
+    }
+
+    try {
+      const { data } = await post('national/programmeSl/getDocLastVersion', {
+        programmeId: programId,
+        docType: DocumentTypeEnum.MONITORING_REPORT,
       });
+      if (data && data?.content) {
+        projectDetailsForm.setFieldsValue({
+          ...data?.content?.projectDetails,
+          dateOfIssue: moment.unix(data?.content?.projectDetails?.dateOfIssue),
+        });
 
-      // setProjectCategory(data?.projectCategory);
-      // form2.setFieldsValue({
-      //   projectTrack: data?.purposeOfCreditDevelopment,
-      //   // projectTrack: 'TRACK_2',
-      //   organizationName: data?.company?.name,
-      //   email: data?.company?.email,
-      //   telephone: data?.company?.phoneNo,
-      //   address: data?.company?.address,
-      //   fax: data?.company?.faxNo,
-      // });
-
-      // setValues((prevVal) => ({
-      //   ...prevVal,
-      //   companyId: data?.company?.companyId,
-      // }));
+        projectActivityForm.setFieldsValue({
+          ...data?.content?.projectActivity,
+          creditingPeriodFromDate: moment.unix(
+            data?.content?.projectActivity?.creditingPeriodFromDate
+          ),
+          creditingPeriodToDate: moment.unix(data?.content?.projectActivity?.creditingPeriodToDate),
+          registrationDateOfTheActivity: moment.unix(
+            data?.content?.projectActivity?.registrationDateOfTheActivity
+          ),
+          projectActivityLocationsList:
+            data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
+              return {
+                ...val,
+                projectStartDate: moment.unix(val?.projectStartDate),
+                // location: val.location[0][0],
+              };
+            }),
+        });
+        qualificationForm.setFieldsValue({
+          ...data?.content?.quantifications,
+          emissionReductionsRemovalsList:
+            data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
+              return {
+                ...val,
+                startDate: moment.unix(val?.startDate),
+                endDate: moment.unix(val?.endDate),
+              };
+            }),
+        });
+        implementationStatusForm.setFieldsValue({
+          ...data?.content?.implementationStatus,
+        });
+        safeguardsForm.setFieldsValue({
+          ...data?.content?.safeguards,
+        });
+        dataAndParametersForm.setFieldsValue({
+          ...data?.content?.dataAndParameters,
+        });
+        // projectActivityForm.setFieldsValue({
+        //   projectProponentsList: [
+        //     {
+        //       organizationName: '',
+        //       email: '',
+        //       telephone: '',
+        //       address: '',
+        //       designation: '',
+        //       contactPerson: '',
+        //       roleInTheProject: '',
+        //       fax: '',
+        //     },
+        //   ],
+        //   projectActivityLocationsList: [
+        //     {
+        //       location: '',
+        //       province: '',
+        //       district: '',
+        //       dsDivision: '',
+        //       city: '',
+        //       community: '',
+        //       optionalDocuments: [],
+        //       projectStartDate: '',
+        //     },
+        //   ],
+        // });
+      } else {
+        projectActivityForm.setFieldsValue({
+          projectProponentsList: [
+            {
+              organizationName: '',
+              email: '',
+              telephone: '',
+              address: '',
+              designation: '',
+              contactPerson: '',
+              roleInTheProject: '',
+              fax: '',
+            },
+          ],
+          projectActivityLocationsList: [
+            {
+              locationOfProjectActivity: '',
+              province: '',
+              district: '',
+              dsDivision: '',
+              city: '',
+              community: '',
+              optionalDocuments: [],
+              projectStartDate: '',
+            },
+          ],
+        });
+      }
     } catch (error) {
       console.log('error');
     }
   };
 
-  const loadCMAForm = async () => {
-    try {
-      const { data } = await post('national/project/project');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadMonitoringReport = async () => {
-    try {
-      const { data } = await post('national/monitoring/monitoring');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getLatestCMA(id);
+    getLatestReports(id);
   }, []);
 
   useEffect(() => {

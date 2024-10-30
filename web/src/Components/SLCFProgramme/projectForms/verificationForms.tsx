@@ -79,10 +79,18 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   }, [data]);
 
   const navigateToMonitoringReportCreate = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.CREATE,
+      },
+    });
   };
   const navigateToMonitoringReportView = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.VIEW,
+      },
+    });
   };
 
   const getBase64 = (file: RcFile): Promise<string> =>
@@ -194,11 +202,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     userInfoState?.userRole !== Role.ViewOnly;
 
   const designDocPending = designDocStatus === DocumentStatus.PENDING;
+
   function navigateToVerificationReportCreate(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
   function navigateToVerificationReportView(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
 
   return loading ? (
