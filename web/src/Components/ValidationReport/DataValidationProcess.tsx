@@ -1,26 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { ValidationStepsProps } from './StepProps';
-import {
-  Row,
-  Button,
-  Form,
-  Col,
-  Input,
-  Checkbox,
-  Table,
-  TableProps,
-  Select,
-  DatePicker,
-  InputNumber,
-} from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, InputNumber, Row, Select, Table, TableProps } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import NetEmissionReduction from '../Common/NetEmissonReduction';
-import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
-import { ProjectCategory } from '../../enum/slRegistryEnum';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { ProjectCategory } from '../../enum/slRegistryEnum';
 import { requiredValidationRule } from '../../Utils/validationHelper';
+import NetEmissionReduction from '../Common/NetEmissonReduction';
+import { ValidationStepsProps } from './StepProps';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 // enum netEmissionColumnType {
 //   TOTAL = 'TOTAL',
@@ -42,100 +29,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     formMode,
   } = props;
 
-  const emptyBackgroundInvestigationRow = {
-    backgroundInvestigationName: '',
-    backgroundInvestigationDesignation: '',
-    backgroundInvestigationOganizationEntity: '',
-    backgroundInvestigationMethodTelephone: '',
-  };
-
-  const emptyEmployedTechnologyDataSourceRow = {
-    employedTechnologySiteNo: '',
-    employedTechnologyLocation: ``,
-    employedTechnologyCapacity: '',
-  };
-
-  const baselineEmissionDataSourceList = [
-    {
-      type: 'unit',
-      location: t('validationReport:units'),
-      projectCapacity: '',
-      plantFactor: '',
-      averageEnergyOutput: '',
-      gridEmissionFactor: '',
-      emissionReduction: '',
-    },
-    {
-      type: 'unit2',
-      location: t('units'),
-      projectCapacity: '',
-      plantFactor: '',
-      averageEnergyOutput: '',
-      gridEmissionFactor: '',
-      emissionReduction: '',
-    },
-  ];
-
-  const estimatedNetEmissionDataSourceList = [
-    {
-      type: 'YEAR',
-      year: {
-        start: '',
-        end: '',
-      },
-      estimatedBaselineEmissionsOrRemovals: '',
-      estimatedProjectEmissionsOrRemovals: '',
-      estimatedLeakageEmissions: '',
-      estimatedNetGhgEmissionReductionsOrRemovals: '',
-    },
-  ];
-
-  const estimatedNetEmissionTotalDataSourceList = [
-    {
-      type: 'TOTAL',
-      label: t('total'),
-      estimatedBaselineEmissionsOrRemovals: '',
-      estimatedProjectEmissionsOrRemovals: '',
-      estimatedLeakageEmissions: '',
-      estimatedNetGhgEmissionReductionsOrRemovals: '',
-    },
-    {
-      type: 'TOTAL_CREDITING_YEARS',
-      label: t('totalNumberOfCreditingYears'),
-      estimatedBaselineEmissionsOrRemovals: '',
-      estimatedProjectEmissionsOrRemovals: '',
-      estimatedLeakageEmissions: '',
-      estimatedNetGhgEmissionReductionsOrRemovals: '',
-    },
-    {
-      type: 'ANNUAL_AVERAGE',
-      label: t('annualAverage'),
-      estimatedBaselineEmissionsOrRemovals: '',
-      estimatedProjectEmissionsOrRemovals: '',
-      estimatedLeakageEmissions: '',
-      estimatedNetGhgEmissionReductionsOrRemovals: '',
-    },
-  ];
-
-  const [baselineEmissionDataSource, setBaselineEmissionDataSource] = useState([
-    baselineEmissionDataSourceList,
-  ]);
-
-  const [employedTechnologyDataSource, setEmployedTechnologyDataSource] = useState([
-    emptyEmployedTechnologyDataSourceRow,
-  ]);
-
-  const [estimatedNetEmissionDataSource, setEstimatedNetEmissionDataSource] = useState([]);
-
   const requiredRule = [{ required: true, message: t('common:isRequired') }];
-
-  const removeEmployedTechnology = (index: number) => {
-    setEmployedTechnologyDataSource((prevATM) => {
-      const newList = [...prevATM];
-      newList.splice(index, 1);
-      return newList;
-    });
-  };
 
   const calculateCapacity = () => {
     const empTechnology = form.getFieldValue('employedTechnologies') as any[];
@@ -144,65 +38,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
     }, 0);
     form.setFieldValue('totalCapacity', `${totalCap} kWp`);
   };
-
-  // useEffect(() => {
-
-  // }, [employedTechnologyDataSource]);
-
-  const employedTechnologyTableColumns: TableProps<any>['columns'] = [
-    {
-      title: t('validationReport:siteNo'),
-      dataIndex: 'employedTechnologySiteNo',
-      key: 'employedTechnologySiteNo',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['employedTechnology', index, 'siteNo']} rules={requiredRule}>
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:location'),
-      dataIndex: 'employedTechnologyLocation',
-      key: 'employedTechnologyLocation',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['employedTechnology', index, 'location']} rules={requiredRule}>
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:capacityKwp'),
-      dataIndex: 'employedTechnologyCapacity',
-      key: 'employedTechnologyCapacity',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['employedTechnology', index, 'capacity']} rules={requiredRule}>
-          <Input size="large" onChange={calculateCapacity} />
-        </Form.Item>
-      ),
-    },
-    {
-      title: '',
-      dataIndex: 'employedTechnologyRemove',
-      key: 'employedTechnologyRemove',
-      render: (_: any, record: any, index: number) => {
-        return employedTechnologyDataSource.length > 1 ? (
-          <Button
-            // type="dashed"
-            onClick={() => {
-              removeEmployedTechnology(index);
-              calculateCapacity();
-            }}
-            size="middle"
-            className="addMinusBtn"
-            // block
-            icon={<MinusOutlined />}
-          ></Button>
-        ) : (
-          <span></span>
-        );
-      },
-    },
-  ];
 
   const applicabilityTableColumns: TableProps<any>['columns'] = [
     {
@@ -616,11 +451,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 <Form.Item>
                   <Row>
                     <Col md={22} xl={22}>
-                      {/* <Table
-                        pagination={false}
-                        dataSource={employedTechnologyDataSource}
-                        columns={employedTechnologyTableColumns}
-                      ></Table> */}
                       <Row className="table-header" justify={'space-between'}>
                         <Col md={6} xl={6} style={{ paddingLeft: 10 }}>
                           {t('validationReport:siteNo')}.
@@ -1082,14 +912,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   <h4 className="custom-required">{`${t(
                     'validationReport:estimatedNetEmissionReduction'
                   )}`}</h4>
-                  {/* <Form.Item
-                    label={`${t('validationReport:estimatedNetEmissionReduction')}`}
-                    name="estimatedNetEmissionReduction"
-                  > */}
-                  {/* <Table
-                      dataSource={estimatedNetEmissionDataSourceList}
-                      columns={estimatedNetEmissionTableColumns}
-                    ></Table> */}
+
                   <NetEmissionReduction
                     form={form}
                     t={t}

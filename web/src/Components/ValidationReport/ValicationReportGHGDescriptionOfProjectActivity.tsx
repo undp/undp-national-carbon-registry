@@ -291,28 +291,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
     }
 
     return locationList;
-
-    // return values.locationsOfProjectActivity.map((activity: any) => {
-    //   const technicalProjDesc = activity.technicalProjectDescriptionItems.map(
-    //     (tecProjDesc: any) => {
-    //       return {
-    //         item: tecProjDesc.item,
-    //         parameterValue: tecProjDesc.parameterValue,
-    //       };
-    //     }
-    //   );
-    //   return {
-    //     locationOfProjectActivity: activity.locationOfProjectActivity,
-    //     province: activity.province,
-    //     district: activity.district,
-    //     dsDivision: activity.dsDivision,
-    //     city: activity.city,
-    //     community: activity.community,
-    //     geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
-    //     additionalDocuments: files,
-    //     technicalProjectDescription: technicalProjDesc,
-    //   };
-    // });
   };
 
   const onFinish = async (values: any) => {
@@ -329,44 +307,12 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       projectTitle: values?.projectTitle,
       projectSize: values?.projectSize,
       ...projectScopeUNFCC,
-      // isProjectScopeEnergyIndustries: values?.isProjectScopeEnergyIndustries,
-      // isProjectScopeEnergyDistribution: values?.isProjectScopeEnergyDistribution,
-      // isProjectScopeEnergyDemand: values?.isProjectScopeEnergyDemand,
-      // isProjectScopeManufacturingIndustries: values?.isProjectScopeManufacturingIndustries,
-      // isProjectScopeChemicalIndustries: values?.isProjectScopeChemicalIndustries,
-      // isProjectScopeChemicalIndustry: values?.isProjectScopeChemicalIndustry,
-      // isProjectScopeConstruction: values?.isProjectScopeConstruction,
-      // isProjectScopeTransport: values?.isProjectScopeTransport,
-      // isProjectScopeMining: values?.isProjectScopeMining,
-      // isProjectScopeFugitiveEmissionsFromFuel: values?.isProjectScopeFugitiveEmissionsFromFuel,
-      // isProjectScopeFugitiveEmissionsFromHalocarbons:
-      //   values?.isProjectScopeFugitiveEmissionsFromHalocarbons,
-      // isProjectScopeSolventsUse: values?.isProjectScopeSolventsUse,
-      // isProjectScopeWasteHandling: values?.isProjectScopeWasteHandling,
-      // isProjectScopeAfforestation: values?.isProjectScopeAfforestation,
-      // isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
       creditingPeriod: String(values?.creditingPeriod),
       locationsOfProjectActivity: await getLocationDetails(values),
       startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
     };
-
-    // startDateCreditingPeriod: '',
-    // locationsOfProjectActivity: [
-    //   {
-    //     locationOfProjectActivity: '',
-    //     province: '',
-    //     district: '',
-    //     dsDivision: '',
-    //     city: '',
-    //     community: '',
-    //     geographicalLocationCoordinates: '',
-    //     additionalDocuments: '',
-    //     technicalProjectDescription: '',
-    //   },
-    // ],
-
     console.log(ProcessSteps.VR_GHG_PROJECT_DESCRIPTION, ghgDescriptionFormValues);
     handleValuesUpdate({ [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues });
   };
