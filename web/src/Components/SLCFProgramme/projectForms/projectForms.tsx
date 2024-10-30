@@ -723,6 +723,64 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               </Col>
             )}
           </Row>
+          <Row className="field" key="Site Visit Checklist">
+            <Col span={18} className="field-key">
+              <div className="label-container">
+                <div className="label">{t('projectDetailsView:siteVisitChecklistForm')}</div>
+              </div>
+              {designDocUrl !== '' && (
+                <div className="time">
+                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
+                  {' ~ ' + designDocversion}
+                </div>
+              )}
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.SITE_VISIT_CHECKLIST,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <EyeOutlined
+                    className="common-progress-icon"
+                    style={
+                      formViewPermission(
+                        userInfoState,
+                        DocType.SITE_VISIT_CHECKLIST,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                          }
+                    }
+                    onClick={() =>
+                      formViewPermission(
+                        userInfoState,
+                        DocType.SITE_VISIT_CHECKLIST,
+                        projectProposalStage
+                      ) && navigateToSiteVisitCheckListView()
+                    }
+                  />
+                </Tooltip>
+              </>
+            </Col>
+          </Row>
           <Row className="field" key="Validation Report">
             <Col span={18} className="field-key">
               <div className="label-container">
