@@ -253,9 +253,8 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         return <span>{item}</span>;
       },
     },
-
     {
-      title: t('projectList:serialNoh'),
+      title: t('projectList:regitrationSerialNo'),
       dataIndex: 'serialNo',
       key: ProgrammeManagementSlColumns.serialNo,
       align: 'left' as const,

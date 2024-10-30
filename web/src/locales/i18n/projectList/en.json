@@ -13,6 +13,7 @@
   "desc": "",
   "noProgrammes": "No Projects",
   "serialNoh": "Serial Number",
+  "regitrationSerialNo": "Registration Serial No",
   "certifiers": "Certifiers",
   "title": "Project Name",
   "gettingProgrammeError": "Error in getting project",

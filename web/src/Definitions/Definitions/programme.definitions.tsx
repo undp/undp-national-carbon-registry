@@ -379,7 +379,7 @@ export const getGeneralFields = (
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
-    serialNo: programme.serialNo,
+    registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
     projectStatus: programme.projectStatus,
     projectCategory: programme.projectCategory,
