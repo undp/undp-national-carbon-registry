@@ -270,14 +270,20 @@ const ProjectDetails = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:cancel')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  htmlType="submit"
-                  // onClick={next}
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

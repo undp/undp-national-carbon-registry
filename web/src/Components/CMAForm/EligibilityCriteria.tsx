@@ -59,7 +59,9 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
               }}
             >
               <>
-                <h4 className="form-section-title">{`4.1 ${t('CMAForm:generalCriteria')}`}</h4>
+                <h4 className="form-section-title custom-required">{`4.1 ${t(
+                  'CMAForm:generalCriteria'
+                )}`}</h4>
 
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
@@ -92,7 +94,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -130,7 +144,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -170,7 +196,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -209,7 +247,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -248,7 +298,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -289,7 +351,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -317,7 +391,9 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
               </>
 
               <>
-                <h4 className="form-section-title">{`4.1 ${t('CMAForm:bundlingCriteria')}`}</h4>
+                <h4 className="form-section-title custom-required">{`4.1 ${t(
+                  'CMAForm:bundlingCriteria'
+                )}`}</h4>
 
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
@@ -348,7 +424,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -386,7 +474,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -424,7 +524,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -463,7 +575,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -501,7 +625,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -540,7 +676,19 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -571,14 +719,20 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

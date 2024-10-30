@@ -121,7 +121,21 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:titleAndReferenceOfMethodology')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:titleAndReferenceOfMethodology')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -139,7 +153,21 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:applicabilityOfMethodology')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:applicabilityOfMethodology')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -185,7 +213,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:projectBoundary')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:projectBoundary')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -211,7 +251,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -250,7 +302,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -294,7 +358,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -305,7 +381,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -316,7 +404,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -327,7 +427,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -351,7 +463,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -434,7 +558,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -445,7 +581,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -456,7 +604,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -467,7 +627,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -529,7 +701,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -612,7 +796,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -623,7 +819,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -634,7 +842,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -645,7 +865,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('CMAForm:required')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('CMAForm:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -669,7 +901,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -752,7 +996,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -763,7 +1019,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -774,7 +1042,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -785,7 +1065,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('CMAForm:required')}`,
+                                            message: ``,
+                                          },
+                                          {
+                                            validator: async (rule, value) => {
+                                              if (
+                                                String(value).trim() === '' ||
+                                                String(value).trim() === undefined ||
+                                                value === null ||
+                                                value === undefined
+                                              ) {
+                                                throw new Error(`${t('CMAForm:required')}`);
+                                              }
+                                            },
                                           },
                                         ]}
                                       >
@@ -847,7 +1139,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:baselineScenario')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:baselineScenario')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -907,7 +1211,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:additionality')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:additionality')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -921,7 +1237,19 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:methodologyDeviations')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:methodologyDeviations')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -936,14 +1264,20 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

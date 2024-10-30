@@ -232,9 +232,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
             if (values?.optionalImages && values?.optionalImages.length > 0) {
               const docs = values.optionalImages;
               for (let i = 0; i < docs.length; i++) {
-                console.log('----------file---------', docs[i]);
-                const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                base64Docs.push(temp); // No need for Promise.resolve
+                if (docs[i]?.originFileObj === undefined) {
+                  base64Docs.push(docs[i]?.url);
+                } else {
+                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                  base64Docs.push(temp); // No need for Promise.resolve
+                }
               }
             }
 
@@ -261,8 +264,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 if (item?.optionalImages && item?.optionalImages.length > 0) {
                   const docs = item.optionalImages;
                   for (let i = 0; i < docs.length; i++) {
-                    const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                    base64Docs.push(temp);
+                    if (docs[i]?.originFileObj === undefined) {
+                      base64Docs.push(docs[i]?.url);
+                    } else {
+                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      base64Docs.push(temp); // No need for Promise.resolve
+                    }
                   }
                 }
 
@@ -319,8 +326,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
         ) {
           const docs = values.optionalProjectActivityDocuments;
           for (let i = 0; i < docs.length; i++) {
-            const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-            base64Docs.push(temp);
+            if (docs[i]?.originFileObj === undefined) {
+              base64Docs.push(docs[i]?.url);
+            } else {
+              const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+              base64Docs.push(temp); // No need for Promise.resolve
+            }
           }
         }
 
@@ -393,7 +404,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:projectActiviy')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:projectActivity')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -411,7 +434,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:sectoralScopeProjectType')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:sectoralScopeProjectType')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -434,7 +471,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:organizationName')} ${t('isRequired')}`,
+                              message: ``,
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(
+                                    `${t('CMAForm:organizationName')} ${t('isRequired')}`
+                                  );
+                                }
+                              },
                             },
                           ]}
                         >
@@ -447,7 +498,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
+                              message: ``,
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(
+                                    `${t('CMAForm:contactPerson')} ${t('isRequired')}`
+                                  );
+                                }
+                              },
                             },
                           ]}
                         >
@@ -460,7 +525,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
+                              message: ``,
                             },
                             {
                               validator: async (rule: any, value: any) => {
@@ -565,7 +630,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:email')} ${t('isRequired')}`,
+                            message: ``,
                           },
                           {
                             validator: async (rule, value) => {
@@ -575,14 +640,14 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
+                                throw new Error(`${t('CMAForm:email')} ${t('isRequired')}`);
                               } else {
                                 const val = value.trim();
                                 const reg =
                                   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                                 const matches = val.match(reg) ? val.match(reg) : [];
                                 if (matches.length === 0) {
-                                  throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                                  throw new Error(`${t('CMAForm:email')} ${t('isInvalid')}`);
                                 }
                               }
                             },
@@ -598,7 +663,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:title')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:title')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -611,7 +688,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:address')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:address')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -637,7 +726,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:organizationName')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:organizationName')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -650,7 +753,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:contactPerson')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -663,7 +778,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:roleInTheProject')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:roleInTheProject')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -726,7 +855,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('CMAForm:email')} ${t('isRequired')}`,
+                          message: ``,
                         },
                         {
                           validator: async (rule, value) => {
@@ -736,14 +865,14 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                               value === null ||
                               value === undefined
                             ) {
-                              throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
+                              throw new Error(`${t('CMAForm:email')} ${t('isRequired')}`);
                             } else {
                               const val = value.trim();
                               const reg =
                                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                               const matches = val.match(reg) ? val.match(reg) : [];
                               if (matches.length === 0) {
-                                throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                                throw new Error(`${t('CMAForm:email')} ${t('isInvalid')}`);
                               }
                             }
                           },
@@ -759,7 +888,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('CMAForm:designation')} ${t('isRequired')}`,
+                          message: ``,
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(`${t('CMAForm:designation')} ${t('isRequired')}`);
+                            }
+                          },
                         },
                       ]}
                     >
@@ -772,7 +913,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('CMAForm:address')} ${t('isRequired')}`,
+                          message: ``,
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(`${t('CMAForm:address')} ${t('isRequired')}`);
+                            }
+                          },
                         },
                       ]}
                     >
@@ -858,9 +1011,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:organizationName')} ${t(
-                                        'isRequired'
-                                      )}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:organizationName')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -873,7 +1038,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:contactPerson')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:contactPerson')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -886,9 +1065,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:roleInTheProject')} ${t(
-                                        'isRequired'
-                                      )}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:roleInTheProject')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -901,7 +1092,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
+                                      message: ``,
                                     },
                                     {
                                       validator: async (rule: any, value: any) => {
@@ -959,7 +1150,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('CMAForm:email')} ${t('isRequired')}`,
+                                    message: ``,
                                   },
                                   {
                                     validator: async (rule, value) => {
@@ -969,9 +1160,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(
-                                          `${t('addCompany:email')} ${t('isRequired')}`
-                                        );
+                                        throw new Error(`${t('CMAForm:email')} ${t('isRequired')}`);
                                       } else {
                                         const val = value.trim();
                                         const reg =
@@ -979,7 +1168,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                         const matches = val.match(reg) ? val.match(reg) : [];
                                         if (matches.length === 0) {
                                           throw new Error(
-                                            `${t('addCompany:email')} ${t('isInvalid')}`
+                                            `${t('CMAForm:email')} ${t('isInvalid')}`
                                           );
                                         }
                                       }
@@ -991,12 +1180,26 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                               </Form.Item>
 
                               <Form.Item
-                                label={t('CMAForm:title')}
+                                label={t('CMAForm:designation')}
                                 name={[name, 'title']}
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('CMAForm:title')} ${t('isRequired')}`,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('CMAForm:designation')} ${t('isRequired')}`
+                                        );
+                                      }
+                                    },
                                   },
                                 ]}
                               >
@@ -1009,7 +1212,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('CMAForm:address')} ${t('isRequired')}`,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(
+                                          `${t('CMAForm:address')} ${t('isRequired')}`
+                                        );
+                                      }
+                                    },
                                   },
                                 ]}
                               >
@@ -1115,7 +1332,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:locationOfProjectActivity')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:locationOfProjectActivity')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1128,7 +1359,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:province')} ${t('isRequired')}}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:province')} ${t('isRequired')}}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1152,7 +1395,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:district')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:district')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1175,7 +1430,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:dsDivision')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:dsDivision')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1197,7 +1464,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:city')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:city')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1219,7 +1498,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:community')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:community')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1234,7 +1525,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:location')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:location')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1257,16 +1560,8 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             validator: async (rule, file) => {
-                              if (disableFields) return;
                               if (file?.length > 0) {
-                                if (
-                                  !isValidateFileType(
-                                    file[0]?.type,
-                                    DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                  )
-                                ) {
-                                  throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                                } else if (file[0]?.size > maximumImageSize) {
+                                if (file[0]?.size > maximumImageSize) {
                                   // default size format of files would be in bytes -> 1MB = 1000000bytes
                                   throw new Error(`${t('common:maxSizeVal')}`);
                                 }
@@ -1307,7 +1602,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:projectFundings')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:projectFundings')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -1420,9 +1729,23 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:locationOfProjectActivity')} ${t(
-                                        'isRequired'
-                                      )}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:locationOfProjectActivity')} ${t(
+                                              'isRequired'
+                                            )}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1435,7 +1758,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:province')} ${t('isRequired')}}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:province')} ${t('isRequired')}}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1459,7 +1796,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:district')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:district')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1484,6 +1835,20 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                       required: true,
                                       message: `${t('CMAForm:dsDivision')} ${t('isRequired')}`,
                                     },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:dsDivision')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
+                                    },
                                   ]}
                                 >
                                   <Select
@@ -1504,7 +1869,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:city')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:city')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1526,7 +1905,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:community')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:community')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1541,7 +1934,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:location')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:location')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1567,17 +1974,8 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       validator: async (rule, file) => {
-                                        if (disableFields) return;
-
                                         if (file?.length > 0) {
-                                          if (
-                                            !isValidateFileType(
-                                              file[0]?.type,
-                                              DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                            )
-                                          ) {
-                                            throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                                          } else if (file[0]?.size > maximumImageSize) {
+                                          if (file[0]?.size > maximumImageSize) {
                                             // default size format of files would be in bytes -> 1MB = 1000000bytes
                                             throw new Error(`${t('common:maxSizeVal')}`);
                                           }
@@ -1618,7 +2016,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:projectFundings')} ${t('isRequired')}`,
+                                      message: ``,
+                                    },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(
+                                            `${t('CMAForm:projectFundings')} ${t('isRequired')}`
+                                          );
+                                        }
+                                      },
                                     },
                                   ]}
                                 >
@@ -1729,7 +2141,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:projectOwnership')} ${t('isRequired')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('CMAForm:projectOwnership')} ${t('isRequired')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1738,6 +2162,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                   <div className="form-item-flex-row">
                     <div className="half-width-form-item">
+                      <p className="custom-required project-track">Project Track</p>
                       <Input
                         size="large"
                         disabled
@@ -2201,7 +2626,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:descriptionOfTheProjectActivity')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:descriptionOfTheProjectActivity')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -2223,14 +2662,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       if (disableFields) return;
 
                       if (file?.length > 0) {
-                        if (
-                          !isValidateFileType(
-                            file[0]?.type,
-                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                          )
-                        ) {
-                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                        } else if (file[0]?.size > maximumImageSize) {
+                        if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
                           throw new Error(`${t('common:maxSizeVal')}`);
                         }
@@ -2249,6 +2681,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                   action="/upload.do"
                   listType="picture"
                   multiple={false}
+                  disabled={disableFields}
                   // maxCount={1}
                 >
                   <Button
@@ -2294,9 +2727,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:conditionsPriorToProjectInitiation')} ${t(
-                      'isRequired'
-                    )}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:conditionsPriorToProjectInitiation')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -2339,7 +2784,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:complianceWithLawsRegulatory')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:complianceWithLawsRegulatory')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -2358,7 +2817,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:participationPrograms')} ${t('isRequired')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(
+                              `${t('CMAForm:participationPrograms')} ${t('isRequired')}`
+                            );
+                          }
+                        },
                       },
                     ]}
                   >
@@ -2377,7 +2850,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('CMAForm:otherFormsOfCredit')} ${t('isRequired')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(
+                              `${t('CMAForm:otherFormsOfCredit')} ${t('isRequired')}`
+                            );
+                          }
+                        },
                       },
                     ]}
                   >
@@ -2396,7 +2883,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:sustainableDevelopment')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:sustainableDevelopment')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -2413,7 +2914,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:leakageManagement')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:leakageManagement')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -2430,7 +2943,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:commerciallySensitiveInformation')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:commerciallySensitiveInformation')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -2445,14 +2972,20 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

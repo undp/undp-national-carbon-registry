@@ -60,6 +60,11 @@
       text-align: left;
     }
   }
+
+  .project-track {
+    color: rgba(58, 53, 65, 0.5);
+  }
+  
   .custom-required:after {
     content: '*';
     color: rgba(255, 77, 79, 0.8) !important;

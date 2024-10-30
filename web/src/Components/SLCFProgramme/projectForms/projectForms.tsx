@@ -217,11 +217,15 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`);
   };
 
-  const navigateToCMAEdit = () => {
-    navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`);
-  };
   const navigateToCMAView = () => {
-    navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`);
+    navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`, {
+      state: { isView: true },
+    });
+  };
+  const navigateToCMAEdit = () => {
+    navigate(`/programmeManagementSLCF/cmaForm/${programmeId}`, {
+      state: { isEdit: true },
+    });
   };
 
   function navigateToValidationAgreementCreate(): void {
@@ -704,6 +708,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               </Col>
             )}
           </Row>
+
           <Row className="field" key="Validation Report">
             <Col span={18} className="field-key">
               <div className="label-container">

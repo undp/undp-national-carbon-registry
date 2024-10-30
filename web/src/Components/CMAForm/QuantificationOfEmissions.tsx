@@ -21,7 +21,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
   }, []);
 
-  const calculateNetGHGEmissions = (value: any, index?: number) => {
+  const calculateNetGHGEmissions = (value?: any, index?: number) => {
     let baselineEmissionReductionsVal = 0;
     let projectEmissionReductionsVal = 0;
     let leakageEmissionReductionsVal = 0;
@@ -32,7 +32,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
       projectEmissionReductionsVal = Number(form.getFieldValue('projectEmissionReductions') || 0);
       leakageEmissionReductionsVal = Number(form.getFieldValue('leakageEmissionReductions') || 0);
       const netGHGEmissions =
-        baselineEmissionReductionsVal + projectEmissionReductionsVal + leakageEmissionReductionsVal;
+        baselineEmissionReductionsVal - projectEmissionReductionsVal - leakageEmissionReductionsVal;
       console.log(
         '---------cal em vals----',
         baselineEmissionReductionsVal,
@@ -50,8 +50,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
         leakageEmissionReductionsVal = Number(listVals[index].leakageEmissionReductions || 0);
 
         const netGHGEmissions =
-          baselineEmissionReductionsVal +
-          projectEmissionReductionsVal +
+          baselineEmissionReductionsVal -
+          projectEmissionReductionsVal -
           leakageEmissionReductionsVal;
 
         listVals[index].netEmissionReductions = netGHGEmissions;
@@ -75,7 +75,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], Math.round(tempTotal / creditingYears));
+    const avgTempTotal = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], avgTempTotal);
   };
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
@@ -90,7 +91,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], Math.round(tempTotal / creditingYears));
+    const total = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], total);
 
     CalculateNetTotalEmissions();
   };
@@ -104,6 +106,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     form.setFieldValue('totalCreditingYears', totalCreditingYears);
     // calculateAvgAnnualERs();
+    calculateNetGHGEmissions(value);
+    calculateTotalEmissions(value, 'baselineEmissionReductions', 'totalBaselineEmissionReductions');
+    calculateTotalEmissions(value, 'projectEmissionReductions', 'totalProjectEmissionReductions');
+    calculateTotalEmissions(value, 'leakageEmissionReductions', 'totalLeakageEmissionReductions');
   };
 
   const onFinish = (values: any) => {
@@ -189,7 +195,19 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:baselineEmissions')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:baselineEmissions')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -207,7 +225,19 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:projectEmissions')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:projectEmissions')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -225,7 +255,19 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:leakage')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:leakage')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
               >
@@ -243,9 +285,21 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:netGHGEmissionReductionsAndRemovals')} ${t(
-                      'isRequired'
-                    )}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:netGHGEmissionReductionsAndRemovals')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -366,12 +420,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -403,12 +462,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -440,12 +504,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -477,12 +546,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -495,10 +569,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input
-                          onChange={(value) => calculateNetGHGEmissions(value)}
-                          disabled={disableFields}
-                        />
+                        <Input onChange={(value) => calculateNetGHGEmissions(value)} disabled />
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
@@ -609,12 +680,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:required')}`,
+                                      message: ``,
                                     },
                                     {
-                                      validator(rule, value) {
-                                        if (!value) {
-                                          return Promise.resolve();
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(`${t('CMAForm:required')}`);
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
@@ -646,12 +722,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:required')}`,
+                                      message: ``,
                                     },
                                     {
-                                      validator(rule, value) {
-                                        if (!value) {
-                                          return Promise.resolve();
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(`${t('CMAForm:required')}`);
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
@@ -683,12 +764,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:required')}`,
+                                      message: ``,
                                     },
                                     {
-                                      validator(rule, value) {
-                                        if (!value) {
-                                          return Promise.resolve();
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(`${t('CMAForm:required')}`);
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
@@ -720,12 +806,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:required')}`,
+                                      message: ``,
                                     },
                                     {
-                                      validator(rule, value) {
-                                        if (!value) {
-                                          return Promise.resolve();
+                                      validator: async (rule, value) => {
+                                        if (
+                                          String(value).trim() === '' ||
+                                          String(value).trim() === undefined ||
+                                          value === null ||
+                                          value === undefined
+                                        ) {
+                                          throw new Error(`${t('CMAForm:required')}`);
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
@@ -738,7 +829,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input disabled={disableFields} />
+                                  <Input disabled />
                                 </Form.Item>
                               </Col>
                               <Col md={2} xl={2}>
@@ -810,12 +901,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -837,12 +933,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -864,12 +965,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -891,12 +997,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -929,12 +1040,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -976,12 +1092,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -1003,12 +1124,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -1030,12 +1156,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -1057,12 +1188,17 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: ``,
                           },
                           {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:required')}`);
                               }
 
                               // eslint-disable-next-line no-restricted-globals
@@ -1090,14 +1226,20 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

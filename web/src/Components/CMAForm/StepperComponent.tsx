@@ -35,9 +35,10 @@ const StepperComponent = (props: any) => {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
 
-  // const { state } = useLocation();
-  // const isView = !!state?.isView;
-  const { id, isView } = useParams();
+  const { state } = useLocation();
+  const isView = !!state?.isView;
+  const isEdit = !!state?.isEdit;
+  const { id } = useParams();
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
@@ -85,8 +86,6 @@ const StepperComponent = (props: any) => {
   const [form9] = useForm();
 
   const getProgrammeDetailsById = async (programId: any) => {
-    if (isView) return;
-
     try {
       const { data } = await post('national/programmeSL/getProjectById', {
         programmeId: programId,
@@ -96,26 +95,28 @@ const StepperComponent = (props: any) => {
         data: { user },
       } = await get('national/User/profile');
 
-      form1.setFieldsValue({
-        title: data?.title,
-        dateOfIssue: moment(),
-        preparedBy: user?.name,
-        physicalAddress: data?.company?.address,
-        email: data?.company?.email,
-        projectProponent: data?.company?.name,
-        telephone: data?.company?.phoneNo,
-        website: data?.company?.website,
-      });
+      if (!(isView || isEdit)) {
+        form1.setFieldsValue({
+          title: data?.title,
+          dateOfIssue: moment(),
+          preparedBy: user?.name,
+          physicalAddress: data?.company?.address,
+          email: data?.company?.email,
+          projectProponent: data?.company?.name,
+          telephone: data?.company?.phoneNo,
+          website: data?.company?.website,
+        });
 
-      setProjectCategory(data?.projectCategory);
-      form2.setFieldsValue({
-        projectTrack: data?.purposeOfCreditDevelopment,
-        organizationName: data?.company?.name,
-        email: data?.company?.email,
-        telephone: data?.company?.phoneNo,
-        address: data?.company?.address,
-        fax: data?.company?.faxNo,
-      });
+        setProjectCategory(data?.projectCategory);
+        form2.setFieldsValue({
+          projectTrack: data?.purposeOfCreditDevelopment,
+          organizationName: data?.company?.name,
+          email: data?.company?.email,
+          telephone: data?.company?.phoneNo,
+          address: data?.company?.address,
+          fax: data?.company?.faxNo,
+        });
+      }
 
       setValues((prevVal) => ({
         ...prevVal,
@@ -128,8 +129,9 @@ const StepperComponent = (props: any) => {
 
   useEffect(() => {
     const getViewData = async () => {
-      console.log('view data getting');
-      if (isView) {
+      console.log('view data getting', isEdit, isView, isView || isEdit);
+      if (isView || isEdit) {
+        console.log('view data');
         const res = await post('national/programmeSl/getDocLastVersion', {
           programmeId: id,
           docType: 'cma',
@@ -137,21 +139,22 @@ const StepperComponent = (props: any) => {
 
         if (res?.statusText === 'SUCCESS') {
           const content = JSON.parse(res?.data.content);
-          console.log('view data content', content);
+
           const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
+          console.log('view data', projectDetails);
           form1.setFieldsValue(projectDetails);
+          console.log('view data form 1', form1.getFieldsValue());
           const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
             content?.projectActivity
           );
-          console.log('view data description activity', descripitonOfProjectActivity);
           form2.setFieldsValue(descripitonOfProjectActivity);
+
           const environmentImpacts = environmentImpactsDataMaptoFields(content?.environmentImpacts);
-          // console.log('view data environement', environmentImpacts);
           form3.setFieldsValue(environmentImpacts);
+
           const localStakeholderConsultation = localStakeholderConsultationDataMaptoFields(
             content?.localStakeholderConsultation
           );
-          console.log('view data local stake holder', localStakeholderConsultation);
           form4.setFieldsValue(localStakeholderConsultation);
 
           const eligibilityCriteria = eligibilityCriteriaDataMapToFields(
@@ -244,7 +247,7 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <ProjectDetails
-          prev={navigateToDetailsPage}
+          prev={navigateToDetailsPage} // will take user to details page
           next={next}
           form={form1}
           current={current}
@@ -399,7 +402,7 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <Appendix
-          next={next}
+          next={navigateToDetailsPage} // will take user to details page
           prev={prev}
           form={form9}
           current={current}

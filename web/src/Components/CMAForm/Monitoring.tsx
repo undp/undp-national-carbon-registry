@@ -4,12 +4,7 @@ import { CustomStepsProps } from './StepProps';
 import TextArea from 'antd/lib/input/TextArea';
 import { t } from 'i18next';
 import { countries } from 'react-circle-flags';
-import {
-  formatPhoneNumber,
-  isPossiblePhoneNumber,
-  formatPhoneNumberIntl,
-  Country,
-} from 'react-phone-number-input';
+
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 const Monitoring = (props: CustomStepsProps) => {
@@ -73,7 +68,21 @@ const Monitoring = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:dataAndParametersAvailable')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:dataAndParametersAvailable')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
@@ -94,7 +103,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:data_parameter')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:data_parameter')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -109,7 +132,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:unit')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:unit')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -128,7 +163,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:description')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:description')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -148,7 +195,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:dataSource')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:dataSource')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -168,7 +227,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:justificationOfChoice')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:justificationOfChoice')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -189,7 +262,19 @@ const Monitoring = (props: CustomStepsProps) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:purpose')} ${t('isRequired')}`,
+                              message: ``,
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
+                                }
+                              },
                             },
                           ]}
                         >
@@ -221,7 +306,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:valueApplied')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:valueApplied')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -249,7 +346,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:data_parameter')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:data_parameter')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -264,7 +375,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:unit')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:unit')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -283,7 +406,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:description')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:description')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -303,7 +438,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:dataSource')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:dataSource')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -323,9 +470,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:measurementMethodDescription')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:measurementMethodDescription')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -345,7 +504,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringFrequency')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringFrequency')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -365,7 +538,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:valueApplied')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:valueApplied')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -385,7 +570,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringEquipment')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringEquipment')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -405,7 +604,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringQAProcedures')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringQAProcedures')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -439,7 +652,19 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:purpose')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
+                              }
+                            },
                           },
                         ]}
                       >
@@ -454,7 +679,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:calculationMethod')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:calculationMethod')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -474,7 +713,21 @@ const Monitoring = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:monitoringComments')} ${t('isRequired')}`,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === '' ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t('CMAForm:monitoringComments')} ${t('isRequired')}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -497,7 +750,19 @@ const Monitoring = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:monitoringPlan')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(`${t('CMAForm:monitoringPlan')} ${t('isRequired')}`);
+                      }
+                    },
                   },
                 ]}
                 tooltip={{
@@ -547,14 +812,20 @@ const Monitoring = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

@@ -133,7 +133,7 @@ const App = () => {
                       path="validationAgreement/:id"
                       element={<ValidationAgreementPage />}
                     />{' '}
-                    <Route path="cmaForm/:id/:isView?" element={<CMAFormPage />} />
+                    <Route path="cmaForm/:id/" element={<CMAFormPage />} />
                     <Route path="validationReport/:id" element={<ValidationReportPage />} />
                   </Route>
 
