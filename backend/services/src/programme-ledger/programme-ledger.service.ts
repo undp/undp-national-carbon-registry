@@ -154,6 +154,7 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_INF;
             break;
           case TxType.CREATE_COST_QUOTATION:
+            uPayload["estimatedProjectCost"] = data?.estimatedProjectCost;
             uPayload["projectProposalStage"] = ProjectProposalStage.SUBMITTED_COST_QUOTATION;
             break;
           case TxType.CREATE_PROJECT_PROPOSAL:
@@ -202,7 +203,7 @@ export class ProgrammeLedgerService {
 
     return updatedProgramme;
   }
-  //MARK: Issue SLCF Credits 
+  //MARK: Issue SLCF Credits
   public async issueSlCredits(
     verificationRequest: VerificationRequestEntity,
     creditType: CreditType,
@@ -260,7 +261,6 @@ export class ProgrammeLedgerService {
         programme.txType = TxType.ISSUE_SL;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
-        
 
         updatedProgramme = programme;
         const uPayload = {
@@ -327,7 +327,7 @@ export class ProgrammeLedgerService {
     return updatedProgramme;
   }
 
-  //MARK: approve SLCF Credit Transfer 
+  //MARK: approve SLCF Credit Transfer
   public async approveCreditTransfer(
     retirementRequest: CreditRetirementSl,
     slcfCompanyId: number,
@@ -393,11 +393,10 @@ export class ProgrammeLedgerService {
         programme.txType = txType;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
-        programme.creditStartSerialNumber =
-          this.serialNumberGenerator.calculateCreditSerialNumber(
-            programme.creditStartSerialNumber,
-            retirementRequest.creditAmount
-          );
+        programme.creditStartSerialNumber = this.serialNumberGenerator.calculateCreditSerialNumber(
+          programme.creditStartSerialNumber,
+          retirementRequest.creditAmount
+        );
 
         updatedProgramme = programme;
         const uPayload = {

@@ -114,6 +114,9 @@ export class ProgrammeSl implements EntitySubject {
   @Column("real", { nullable: true })
   creditTransferred: number;
 
+  @Column("real", { nullable: true })
+  estimatedProjectCost?: number;
+
   @Column({ type: "bigint" })
   startDate: number;
 
