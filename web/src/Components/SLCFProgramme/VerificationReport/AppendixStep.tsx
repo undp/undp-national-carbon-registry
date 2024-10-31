@@ -71,16 +71,7 @@ export const AppendixStep = (props: any) => {
                               {
                                 validator: async (rule, file) => {
                                   if (file?.length > 0) {
-                                    if (
-                                      !isValidateFileType(
-                                        file[0]?.type,
-                                        DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                      )
-                                    ) {
-                                      throw new Error(
-                                        `${t('verificationReport:invalidFileFormat')}`
-                                      );
-                                    } else if (file[0]?.size > maximumImageSize) {
+                                    if (file[0]?.size > maximumImageSize) {
                                       // default size format of files would be in bytes -> 1MB = 1000000bytes
                                       throw new Error(`${t('common:maxSizeVal')}`);
                                     }
