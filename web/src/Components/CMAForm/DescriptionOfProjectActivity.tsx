@@ -24,6 +24,7 @@ import { Telephone } from 'react-bootstrap-icons';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
+import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate, disableFields } = props;
@@ -365,12 +366,13 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 }
               }}
             >
-              <Form.Item
-                className="full-width-form-item"
-                label={`1.1 ${t('CMAForm:projectActivity')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
+              <>
+                <LabelWithTooltip
+                  label={`1.1 ${t('CMAForm:projectActivity')}`}
+                  required={true}
+                  tooltipPosition={TooltipPostion.bottom}
+                  tooltipContent={
+                    <div>
                       <p>Should include:</p>
                       <ul>
                         <li>
@@ -392,36 +394,38 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         </li>
                       </ul>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-                name="introduction"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(`${t('CMAForm:projectActivity')} ${t('isRequired')}`);
-                      }
-                    },
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`${t('CMAForm:projectActivityPlaceholder')}`}
-                  disabled={disableFields}
+                  }
+                  tooltipWidth={600}
                 />
-              </Form.Item>
+                <Form.Item
+                  className="full-width-form-item"
+                  name="introduction"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('CMAForm:projectActivity')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder={`${t('CMAForm:projectActivityPlaceholder')}`}
+                    disabled={disableFields}
+                  />
+                </Form.Item>
+              </>
 
               <Form.Item
                 className="full-width-form-item"
@@ -2566,12 +2570,13 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 {/* Estimated Annual GHG Emissions Years End */}
               </>
 
-              <Form.Item
-                className="full-width-form-item"
-                label={`1.13 ${t('CMAForm:descriptionOfTheProjectActivity')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
+              <>
+                <LabelWithTooltip
+                  label={`1.13 ${t('CMAForm:descriptionOfTheProjectActivity')}`}
+                  tooltipPosition={TooltipPostion.top}
+                  tooltipWidth={800}
+                  tooltipContent={
+                    <div>
                       <p>
                         Describe the project activity or activities (including the technologies or
                         measures employed) and how it/they will achieve net GHG emission reductions
@@ -2614,38 +2619,40 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         </li>
                       </ul>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-                name="projectActivityDescription"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t('CMAForm:descriptionOfTheProjectActivity')} ${t('isRequired')}`
-                        );
-                      }
-                    },
-                  },
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`${t('CMAForm:descriptionOfTheProjectActivityPlaceholder')}`}
-                  disabled={disableFields}
+                  }
                 />
-              </Form.Item>
+                <Form.Item
+                  className="full-width-form-item"
+                  name="projectActivityDescription"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('CMAForm:descriptionOfTheProjectActivity')} ${t('isRequired')}`
+                          );
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder={`${t('CMAForm:descriptionOfTheProjectActivityPlaceholder')}`}
+                    disabled={disableFields}
+                  />
+                </Form.Item>
+              </>
+
               <Form.Item
                 label={t('CMAForm:additionalDocuments')}
                 name="optionalProjectActivityDocuments"
