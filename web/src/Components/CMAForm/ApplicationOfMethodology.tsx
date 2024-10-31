@@ -5,6 +5,7 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const ApplicationOfMethodology = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
@@ -177,11 +178,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 />
               </Form.Item>
 
-              <Form.Item
-                label={`5.3 ${t('CMAForm:projectBoundary')}`}
-                name="projectBoundary"
-                tooltip={{
-                  title: (
+              <>
+                <LabelWithTooltip
+                  label={`5.3 ${t('CMAForm:projectBoundary')}`}
+                  required={true}
+                  tooltipContent={
                     <div className="tooltip">
                       <p>
                         Define the project boundary and identify the relevant GHG sources, sinks and
@@ -205,31 +206,34 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                         various measures are taking place, any reference areas and leakage belts.
                       </p>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(`${t('CMAForm:projectBoundary')} ${t('isRequired')}`);
-                      }
+                  }
+                  tooltipPosition={TooltipPostion.top}
+                  tooltipWidth={900}
+                />
+                <Form.Item
+                  name="projectBoundary"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
                     },
-                  },
-                ]}
-              >
-                <TextArea rows={4} disabled={disableFields} />
-              </Form.Item>
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('CMAForm:projectBoundary')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea rows={4} disabled={disableFields} />
+                </Form.Item>
+              </>
 
               {/* Gases Included Start */}
               <div className="gases-included-container">
@@ -1131,6 +1135,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
               </div>
               {/* Gases Included End */}
               <br />
+
               <Form.Item
                 className='className="full-width-form-item'
                 label={`5.4 ${t('CMAForm:baselineScenario')}`}
@@ -1161,13 +1166,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                 />
               </Form.Item>
 
-              <Form.Item
-                className='className="full-width-form-item'
-                label={`5.5 ${t('CMAForm:additionality')}`}
-                name="additionality"
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
+              <>
+                <LabelWithTooltip
+                  label={`5.5 ${t('CMAForm:additionality')}`}
+                  tooltipContent={
+                    <div>
                       <p>
                         Demonstrate and assess the additionality of the project, in accordance with
                         the applied methodology and any relevant tools, taking into account of the
@@ -1203,31 +1206,36 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                         under track II, additionality is not necessary to be demonstrated
                       </p>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(`${t('CMAForm:additionality')} ${t('isRequired')}`);
-                      }
+                  }
+                  tooltipPosition={TooltipPostion.top}
+                  required={true}
+                  tooltipWidth={800}
+                />
+                <Form.Item
+                  className='className="full-width-form-item'
+                  name="additionality"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
                     },
-                  },
-                ]}
-              >
-                <TextArea rows={4} disabled={disableFields} />
-              </Form.Item>
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('CMAForm:additionality')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea rows={4} disabled={disableFields} />
+                </Form.Item>
+              </>
 
               <Form.Item
                 className='className="full-width-form-item'

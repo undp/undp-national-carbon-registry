@@ -2575,6 +2575,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                   label={`1.13 ${t('CMAForm:descriptionOfTheProjectActivity')}`}
                   tooltipPosition={TooltipPostion.top}
                   tooltipWidth={800}
+                  required={true}
                   tooltipContent={
                     <div>
                       <p>
@@ -2698,11 +2699,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                 </Upload>
               </Form.Item>
 
-              <Form.Item
-                label={`1.14 ${t('CMAForm:conditionsPriorToProjectInitiation')}`}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
+              <>
+                <LabelWithTooltip
+                  label={`1.14 ${t('CMAForm:conditionsPriorToProjectInitiation')}`}
+                  required={true}
+                  tooltipContent={
+                    <div>
                       <p>
                         Describe the conditions existing prior to project initiation and demonstrate
                         that the project has not been implemented to generate GHG emissions for the
@@ -2721,10 +2723,11 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         ecosystems
                       </p>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
+                  }
+                  tooltipWidth={600}
+                />
+              </>
+              <Form.Item
                 className="full-width-form-item"
                 name="conditionsPriorToProjectInitiation"
                 rules={[

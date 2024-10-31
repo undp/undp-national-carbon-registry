@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './LabelWithTooltip.scss';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
