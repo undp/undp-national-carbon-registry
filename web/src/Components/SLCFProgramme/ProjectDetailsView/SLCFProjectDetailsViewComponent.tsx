@@ -150,7 +150,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [programmeOwnerId, setProgrammeOwnerId] = useState<any>([]);
   const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
   const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
-  const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
+  const [verificationHistoryData, setVerificationHistoryData] = useState<any>([]);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
   const { id } = useParams();
@@ -1685,80 +1685,74 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
     try {
-      const response: any = await post('national/programme/queryNdcActions', {
-        page: 1,
-        size: 100,
-        filterAnd: [
-          {
-            key: 'programmeId',
-            operation: '=',
-            value: programmeId,
-          },
-        ],
-      });
-      const groupedByActionId = response.data.reduce((result: any, obj: any) => {
-        const actionId = obj.id;
-        if (!result[actionId]) {
-          result[actionId] = [];
-        }
-        result[actionId].push(obj);
-        return result;
-      }, {});
-
-      ndcActionDocumentData?.map((ndcData: any) => {
-        if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
-          if (ndcData?.type === DocType.MONITORING_REPORT) {
-            groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
-          } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
-            groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
-          }
-        }
-      });
-
-      let monitoringVisible = false;
-      let verificationVisible = false;
-      if (groupedByActionId && ndcActionDocumentDataLoaded) {
-        Object.values(groupedByActionId).forEach((element: any) => {
-          element.forEach((item: any) => {
-            if (!item.monitoringReport) {
-              monitoringVisible = true;
-            }
-            if (!item.verificationReport) {
-              verificationVisible = true;
-            }
-          });
-        });
-
-        setUpcomingTimeLineMonitoringVisible(monitoringVisible);
-        setUpcomingTimeLineVerificationVisible(verificationVisible);
+      const response: any = await get(`national/verification?programmeId=${programmeId}`);
+      if (response) {
+        setVerificationHistoryData(response.data);
+        console.log(response);
       }
+      // const groupedByActionId = response.data.reduce((result: any, obj: any) => {
+      //   const actionId = obj.id;
+      //   if (!result[actionId]) {
+      //     result[actionId] = [];
+      //   }
+      //   result[actionId].push(obj);
+      //   return result;
+      // }, {});
 
-      const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
-        status: 'process',
-        title: actionId,
-        subTitle: '',
-        description: (
-          <NdcActionBody
-            data={groupedByActionId[actionId]}
-            programmeId={data?.programmeId}
-            programmeOwnerId={programmeOwnerId}
-            canUploadMonitorReport={uploadMonitoringReport}
-            getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
-            ministryLevelPermission={ministryLevelPermission}
-            translator={translator}
-            onFinish={(d: any) => {
-              setData(d);
-            }}
-            programme={data}
-          />
-        ),
-        icon: (
-          <span className="step-icon freeze-step">
-            <Icon.Circle />
-          </span>
-        ),
-      }));
-      setNdcActionHistoryData(mappedElements);
+      // ndcActionDocumentData?.map((ndcData: any) => {
+      //   if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
+      //     if (ndcData?.type === DocType.MONITORING_REPORT) {
+      //       groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
+      //     } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
+      //       groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
+      //     }
+      //   }
+      // });
+
+      // let monitoringVisible = false;
+      // let verificationVisible = false;
+      // if (groupedByActionId && ndcActionDocumentDataLoaded) {
+      //   Object.values(groupedByActionId).forEach((element: any) => {
+      //     element.forEach((item: any) => {
+      //       if (!item.monitoringReport) {
+      //         monitoringVisible = true;
+      //       }
+      //       if (!item.verificationReport) {
+      //         verificationVisible = true;
+      //       }
+      //     });
+      //   });
+
+      //   setUpcomingTimeLineMonitoringVisible(monitoringVisible);
+      //   setUpcomingTimeLineVerificationVisible(verificationVisible);
+      // }
+
+      // const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
+      //   status: 'process',
+      //   title: actionId,
+      //   subTitle: '',
+      //   description: (
+      //     <NdcActionBody
+      //       data={groupedByActionId[actionId]}
+      //       programmeId={data?.programmeId}
+      //       programmeOwnerId={programmeOwnerId}
+      //       canUploadMonitorReport={uploadMonitoringReport}
+      //       getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
+      //       ministryLevelPermission={ministryLevelPermission}
+      //       translator={translator}
+      //       onFinish={(d: any) => {
+      //         setData(d);
+      //       }}
+      //       programme={data}
+      //     />
+      //   ),
+      //   icon: (
+      //     <span className="step-icon freeze-step">
+      //       <Icon.Circle />
+      //     </span>
+      //   ),
+      // }));
+      // setNdcActionHistoryData(mappedElements);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -2301,26 +2295,29 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             ) : (
               ''
             )}
-            <Card className="card-container">
-              <div>
-                <VerificationForms
-                  data={documentsData}
-                  title={t('projectDetailsView:verificationPhaseForms')}
-                  icon={<QrcodeOutlined />}
-                  programmeId={data?.programmeId}
-                  programmeOwnerId={programmeOwnerId}
-                  getDocumentDetails={() => {
-                    getDocuments(data?.programmeId);
-                  }}
-                  getProgrammeById={() => {
-                    getProgrammeById();
-                  }}
-                  ministryLevelPermission={ministryLevelPermission}
-                  translator={i18n}
-                  projectProposalStage={data?.projectProposalStage}
-                />
-              </div>
-            </Card>
+            {verificationHistoryData && verificationHistoryData.length > 0 && (
+              <Card className="card-container">
+                <div>
+                  <VerificationForms
+                    data={verificationHistoryData}
+                    title={t('projectDetailsView:verificationPhaseForms')}
+                    icon={<QrcodeOutlined />}
+                    programmeId={data?.programmeId}
+                    companyId={data.companyId}
+                    programmeOwnerId={programmeOwnerId}
+                    getDocumentDetails={() => {
+                      getDocuments(data?.programmeId);
+                    }}
+                    getProgrammeById={() => {
+                      getProgrammeById();
+                    }}
+                    ministryLevelPermission={ministryLevelPermission}
+                    translator={i18n}
+                    projectProposalStage={data?.projectProposalStage}
+                  />
+                </div>
+              </Card>
+            )}
           </Col>
         </Row>
       </div>

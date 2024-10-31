@@ -57,4 +57,33 @@
     margin: 15px 25px;
     font-size: 0.8rem;
   }
+
+  .field-verification-title{
+    margin: 15px 0px;
+
+    .field-key {
+      font-weight: bold;
+    }
+  }
+
+  
+  .verification-row {
+    .field {
+      margin: 15px 50px;
+      font-size: 0.8rem;
+    }
+    
+    .verification-title-icon {
+      padding: 10px;
+    }
+  
+    .field-verification-title{
+      margin: 15px 0px;
+  
+      .field-key {
+        font-weight: bold;
+      }
+    }
+  }
+
 }

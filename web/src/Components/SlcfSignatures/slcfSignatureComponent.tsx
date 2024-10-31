@@ -111,9 +111,9 @@ const SLCFSignatureComponent = (props: any) => {
     setLoading(true);
     try {
       if (url !== undefined && url !== '') {
-        const response = await fetch(url); // Ensure the URL is fetched properly
+        const response = await fetch(url);
         if (response.ok) {
-          const blob = await response.blob(); // Create a blob from the response
+          const blob = await response.blob();
           const downloadUrl = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.style.display = 'none';
@@ -191,9 +191,6 @@ const SLCFSignatureComponent = (props: any) => {
                             throw new Error(`${t('maxUploadSize')}`);
                           }
                         }
-
-                        // }
-                        // }
                       },
                     },
                   ]}
@@ -238,9 +235,6 @@ const SLCFSignatureComponent = (props: any) => {
                             throw new Error(`${t('maxUploadSize')}`);
                           }
                         }
-
-                        // }
-                        // }
                       },
                     },
                   ]}
@@ -282,8 +276,6 @@ const SLCFSignatureComponent = (props: any) => {
           <h2 className="current-signs-title">{t('currentSignatures')}</h2>
           <p>{t('settings:currentSignaturesSub')}</p>
           <Row className="row" gutter={[16, 16]}>
-            {/* <Col xl={12} md={24}> */}
-
             <Card
               className="signature-card"
               cover={
@@ -300,10 +292,6 @@ const SLCFSignatureComponent = (props: any) => {
             >
               <Meta title={t('settings:chairmanSign')} />
             </Card>
-
-            {/* </Col> */}
-            {/* <Col xl={12} md={24}> */}
-
             <Card
               className="signature-card"
               cover={
@@ -320,8 +308,6 @@ const SLCFSignatureComponent = (props: any) => {
             >
               <Meta title={t('settings:ceoSign')} />
             </Card>
-            {/* )} */}
-            {/* </Col> */}
           </Row>
         </div>
         <Divider />
