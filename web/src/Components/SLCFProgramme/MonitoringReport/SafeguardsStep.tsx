@@ -2,9 +2,10 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const SafeguardsStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
 
   const t = translator.t;
   return (
@@ -19,6 +20,7 @@ export const SafeguardsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 onValueChange({ safeguards: values });
                 next();
@@ -37,7 +39,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -106,7 +108,7 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -155,16 +157,16 @@ export const SafeguardsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

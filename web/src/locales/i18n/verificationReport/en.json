@@ -83,6 +83,7 @@
   "managementSystemAndQualityControl": "Management system and quality control",
   "documentUpload": "Upload your additional documents here",
   "typeOfTheFinding": "Type of the Finding",
+  "projectName": "Project Name",
   "cl": "CL",
   "car": "CAR",
   "far": "FAR",
@@ -250,6 +251,6 @@
   "projectCommisionDate": "Project Commisissioning Date",
   "roleInTheProject": "Role in the project",
   "uploadImages": "Optional: Upload your images here",
-  "uploadMonitoringReportSuccess": "Monitoring report submitted successfully",
-  "capacity":"Capacity"
+  "createVerificationReportSuccess": "Verification report submitted successfully",
+  "capacity": "Capacity"
 }
