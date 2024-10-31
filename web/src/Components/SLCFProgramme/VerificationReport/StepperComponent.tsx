@@ -19,6 +19,8 @@ const StepperComponent = (props: any) => {
   const navigationLocation = useLocation();
   const { mode } = navigationLocation.state || {};
   const navigate = useNavigate();
+  const [verificationRequestId, setVerificationRequestId] = useState(0);
+  const [reportId, setReportId] = useState(0);
   const [current, setCurrent] = useState(0);
 
   const [formValues, setFormValues] = useState({});
@@ -36,13 +38,60 @@ const StepperComponent = (props: any) => {
     console.log(JSON.stringify(formValues));
   };
 
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+
+  const approve = async (verify: boolean) => {
+    const body = {
+      verify: verify,
+      verificationRequestId: verificationRequestId,
+      reportId: reportId,
+    };
+    try {
+      const res = await post('national/verification/verifyVerificationReport', body);
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content: verify
+            ? t('verificationReport:verificationReportApproveSuccess')
+            : t('verificationReport:verificationReportRejectSuccess'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate(`/programmeManagementSLCF/view/${id}`);
+      }
+    } catch (error: any) {
+      if (error && error.errors && error.errors.length > 0) {
+        error.errors.forEach((err: any) => {
+          Object.keys(err).forEach((field) => {
+            console.log(`Error in ${field}: ${err[field].join(', ')}`);
+            message.open({
+              type: 'error',
+              content: err[field].join(', '),
+              duration: 4,
+              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            });
+          });
+        });
+      } else {
+        message.open({
+          type: 'error',
+          content: error?.message,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      }
+    }
+  };
+
   const onFinish = async (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       ...newValues,
     }));
     if (FormMode.VIEW === mode) {
-      navigate('/programmeManagementSLCF/viewAll');
+      navigateToDetailsPage();
     } else {
       const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
       try {
@@ -122,6 +171,8 @@ const StepperComponent = (props: any) => {
         docType: DocumentTypeEnum.VERIFICATION_REPORT,
       });
       if (data && data?.content) {
+        setReportId(data?.id);
+        setVerificationRequestId(data?.verificationRequestId);
         const content = data?.content;
         projectDetailsForm.setFieldsValue({
           ...content?.projectDetails,
@@ -215,23 +266,6 @@ const StepperComponent = (props: any) => {
     }
   };
 
-  const getLatestCMA = async (programId: any) => {
-    try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
-        programmeId: programId,
-        docType: DocumentTypeEnum.CMA,
-      });
-
-      // const cmaData = JSON.parse(data?.content);
-      const {
-        data: { user },
-      } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
-    } catch (error) {
-      console.log('error');
-    }
-  };
-
   useEffect(() => {
     getLatestVerificationReport(id);
     getProjectById(id);
@@ -253,6 +287,7 @@ const StepperComponent = (props: any) => {
           form={projectDetailsForm}
           formMode={mode}
           next={next}
+          cancel={navigateToDetailsPage}
           countries={countries}
           onValueChange={onValueChange}
         />
@@ -374,6 +409,13 @@ const StepperComponent = (props: any) => {
           form={appendixForm}
           formMode={mode}
           prev={prev}
+          cancel={navigateToDetailsPage}
+          approve={() => {
+            approve(true);
+          }}
+          reject={() => {
+            approve(false);
+          }}
           onFinish={onFinish}
         />
       ),

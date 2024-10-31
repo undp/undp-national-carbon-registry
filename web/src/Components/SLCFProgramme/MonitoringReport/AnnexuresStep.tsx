@@ -7,8 +7,22 @@ import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
+import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 export const AnnexuresStep = (props: any) => {
-  const { useLocation, translator, current, form, formMode, prev, onFinish } = props;
+  const {
+    useLocation,
+    translator,
+    current,
+    form,
+    formMode,
+    prev,
+    cancel,
+    approve,
+    reject,
+    onFinish,
+  } = props;
+  const { userInfoState } = useUserContext();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -114,8 +128,19 @@ export const AnnexuresStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
+                <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
+                  Cancel
+                </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Done
+                  {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER && (
+                    <span>Done</span>
+                  )}
+                </Button>
+                <Button type="primary" onClick={reject} disabled={false}>
+                  {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && <span>Reject</span>}
+                </Button>
+                <Button type="primary" onClick={approve} disabled={false}>
+                  {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && <span>Approve</span>}
                 </Button>
               </Row>
             </Form>
