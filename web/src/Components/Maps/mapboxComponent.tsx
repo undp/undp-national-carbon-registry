@@ -17,6 +17,7 @@ export const MapboxComponent = (props: MapComponentProps) => {
     markers,
     mapSource,
     onClick,
+    updateCenter,
     showPopupOnClick,
     onMouseMove,
     layer,
@@ -27,11 +28,11 @@ export const MapboxComponent = (props: MapComponentProps) => {
     accessToken,
     onPolygonComplete,
     outlineLayer,
+    updateZoomLevel,
   } = props;
 
   mapboxgl.accessToken = accessToken;
 
-  console.log('-------location props---------', layer, mapSource, outlineLayer);
   useEffect(() => {
     if (!mapContainerRef || !mapContainerRef.current || center.length !== 2) {
       return;
@@ -63,6 +64,15 @@ export const MapboxComponent = (props: MapComponentProps) => {
         const data = draw.getAll();
         console.log('draw.create called');
         onPolygonComplete(data);
+        if (updateZoomLevel) {
+          const tempZoom = map.getZoom();
+          updateZoomLevel(tempZoom);
+        }
+        if (updateCenter) {
+          const tempCenter = map.getCenter();
+          console.log('-------tempCenter---------', tempCenter);
+          updateCenter([tempCenter.lng, tempCenter.lat]);
+        }
       });
     }
 

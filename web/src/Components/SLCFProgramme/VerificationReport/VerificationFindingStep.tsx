@@ -8,9 +8,10 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const VerificationFindingStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -33,6 +34,7 @@ export const VerificationFindingStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
                 values.optionalDocuments = await (async function () {
                   const base64Docs: string[] = [];
@@ -47,6 +49,9 @@ export const VerificationFindingStep = (props: any) => {
 
                   return base64Docs;
                 })();
+                values?.siteLocations?.forEach(async (val: any) => {
+                  val.commissioningDate = moment(val?.commissioningDate).startOf('day').unix();
+                });
                 onValueChange({ verificationFinding: values });
                 next();
               }}
@@ -66,7 +71,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -79,7 +84,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -94,7 +99,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={`3.3 ${t('verificationReport:projectImplementation')}`}
@@ -108,14 +113,14 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
-                  <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
+                  <Row gutter={[40, 16]} className="form-section">
                     <Col xl={12} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:siteLocation')}</h4>
@@ -255,7 +260,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -270,7 +275,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -285,7 +290,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -499,7 +504,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -591,7 +596,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -604,7 +609,7 @@ export const VerificationFindingStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -769,7 +774,7 @@ export const VerificationFindingStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -789,7 +794,7 @@ export const VerificationFindingStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -809,7 +814,7 @@ export const VerificationFindingStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={4} />
+                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -896,10 +901,10 @@ export const VerificationFindingStep = (props: any) => {
               </Form.List>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

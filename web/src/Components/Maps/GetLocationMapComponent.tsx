@@ -49,6 +49,12 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
 
+  const [zoomLevel, setZoomLevel] = useState(5);
+
+  const updateZoomLevel = (zoom: number) => {
+    setZoomLevel(zoom);
+  };
+
   useEffect(() => {
     setProjectLocationMapCenter(
       projectLocation?.length > 0 ? getCenter(projectLocation) : [80.7718, 7.8731]
@@ -135,6 +141,7 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
         <MapComponent
           mapType={mapType}
           center={projectLocationMapCenter}
+          updateZoomLevel={updateZoomLevel}
           zoom={4}
           height={400}
           style="mapbox://styles/mapbox/light-v11"

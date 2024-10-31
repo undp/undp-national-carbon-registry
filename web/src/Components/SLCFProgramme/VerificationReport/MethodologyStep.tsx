@@ -2,9 +2,10 @@ import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/ico
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const MethodologyStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
 
   const t = translator.t;
   return (
@@ -19,29 +20,8 @@ export const MethodologyStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
-                values?.verificationTeamList?.unshift({
-                  name: values.name,
-                  company: values.company,
-                  function: values.function,
-                  taskPerformed: values.taskPerformed,
-                });
-                delete values.name;
-                delete values.company;
-                delete values.function;
-                delete values.taskPerformed;
-                values?.inspectionsList?.unshift({
-                  inspectionName: values.inspectionName,
-                  designation: values.designation,
-                  organizationEntity: values.organizationEntity,
-                  method: values.method,
-                  mainTopics: values.mainTopics,
-                });
-                delete values.inspectionName;
-                delete values.designation;
-                delete values.organizationEntity;
-                delete values.method;
-                delete values.mainTopics;
                 onValueChange({ methodology: values });
                 next();
               }}
@@ -135,95 +115,6 @@ export const MethodologyStep = (props: any) => {
                   </div>
                 </Col>
               </Row>
-              <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
-                <Col xl={5} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="name"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:name')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={5} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="company"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:company')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={6} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name={['function']}
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:function')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Checkbox.Group style={{ display: 'flex' }}>
-                        <Checkbox value={t('verificationReport:tl')}>
-                          {t('verificationReport:tl')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:tm')}>
-                          {t('verificationReport:tm')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:te')}>
-                          {t('verificationReport:te')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:itr')}>
-                          {t('verificationReport:itr')}
-                        </Checkbox>
-                      </Checkbox.Group>
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={7} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name={['taskPerformed']}
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:taskPerformed')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Checkbox.Group style={{ display: 'flex' }}>
-                        <Checkbox value={t('verificationReport:dr')}>
-                          {t('verificationReport:dr')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:sv')}>
-                          {t('verificationReport:sv')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:ri')}>
-                          {t('verificationReport:ri')}
-                        </Checkbox>
-                        <Checkbox value={t('verificationReport:tr')}>
-                          {t('verificationReport:tr')}
-                        </Checkbox>
-                      </Checkbox.Group>
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={1} md={24}></Col>
-              </Row>
 
               <Form.List name="verificationTeamList">
                 {(fields, { add, remove }) => (
@@ -300,7 +191,7 @@ export const MethodologyStep = (props: any) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('verificationReport:function')} ${t(
+                                    message: `${t('verificationReport:taskPerformed')} ${t(
                                       'isRequired'
                                     )}`,
                                   },
@@ -327,18 +218,20 @@ export const MethodologyStep = (props: any) => {
                             <div className="form-list-actions">
                               {/* <h4>Entity {name + 2}</h4> */}
                               <Form.Item>
-                                <Button
-                                  // type="dashed"
-                                  onClick={() => {
-                                    remove(name);
-                                  }}
-                                  size="large"
-                                  className="addMinusBtn"
-                                  // block
-                                  icon={<MinusOutlined />}
-                                >
-                                  {/* Remove Entity */}
-                                </Button>
+                                {name !== 0 && (
+                                  <Button
+                                    // type="dashed"
+                                    onClick={() => {
+                                      remove(name);
+                                    }}
+                                    size="large"
+                                    className="addMinusBtn"
+                                    // block
+                                    icon={<MinusOutlined />}
+                                  >
+                                    {/* Remove Entity */}
+                                  </Button>
+                                )}
                               </Form.Item>
                             </div>
                           </Col>
@@ -384,7 +277,7 @@ export const MethodologyStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -397,7 +290,7 @@ export const MethodologyStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -416,7 +309,7 @@ export const MethodologyStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -451,86 +344,6 @@ export const MethodologyStep = (props: any) => {
                     <h4>{t('verificationReport:mainTopics')}</h4>
                   </div>
                 </Col>
-              </Row>
-              <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
-                <Col xl={4} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="inspectionName"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:name')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={4} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="designation"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:designation')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={4} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="organizationEntity"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:organizationEntity')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={4} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="method"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:method')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={7} md={24}>
-                  <div className="step-form-right-col">
-                    <Form.Item
-                      name="mainTopics"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:mainTopics')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={2} />
-                    </Form.Item>
-                  </div>
-                </Col>
-                <Col xl={1} md={24}></Col>
               </Row>
 
               <Form.List name="inspectionsList">
@@ -616,7 +429,7 @@ export const MethodologyStep = (props: any) => {
                                   },
                                 ]}
                               >
-                                <TextArea rows={2} />
+                                <TextArea rows={2} disabled={FormMode.VIEW === formMode} />
                               </Form.Item>
                             </div>
                           </Col>
@@ -624,18 +437,20 @@ export const MethodologyStep = (props: any) => {
                             <div className="form-list-actions">
                               {/* <h4>Entity {name + 2}</h4> */}
                               <Form.Item>
-                                <Button
-                                  // type="dashed"
-                                  onClick={() => {
-                                    remove(name);
-                                  }}
-                                  size="large"
-                                  className="addMinusBtn"
-                                  // block
-                                  icon={<MinusOutlined />}
-                                >
-                                  {/* Remove Entity */}
-                                </Button>
+                                {name !== 0 && (
+                                  <Button
+                                    // type="dashed"
+                                    onClick={() => {
+                                      remove(name);
+                                    }}
+                                    size="large"
+                                    className="addMinusBtn"
+                                    // block
+                                    icon={<MinusOutlined />}
+                                  >
+                                    {/* Remove Entity */}
+                                  </Button>
+                                )}
                               </Form.Item>
                             </div>
                           </Col>
@@ -677,7 +492,7 @@ export const MethodologyStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -725,10 +540,10 @@ export const MethodologyStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

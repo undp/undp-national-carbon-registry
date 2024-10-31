@@ -22,6 +22,7 @@ export interface MapPopupData {
 export interface MapComponentProps {
   mapType: string;
   center: number[];
+  updateCenter?: (center: [number, number]) => void;
   markers?: MarkerData[];
   zoom: number;
   mapSource?: MapSourceData | MapSourceData[];
@@ -35,4 +36,5 @@ export interface MapComponentProps {
   accessToken?: any;
   onPolygonComplete?: any;
   outlineLayer?: any;
+  updateZoomLevel?: (zoom: number) => void;
 }

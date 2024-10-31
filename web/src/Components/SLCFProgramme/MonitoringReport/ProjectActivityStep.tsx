@@ -472,18 +472,20 @@ export const ProjectActivityStep = (props: any) => {
                                 <div className="form-list-actions">
                                   <h4>Entity {name + 1}</h4>
                                   <Form.Item>
-                                    <Button
-                                      // type="dashed"
-                                      onClick={() => {
-                                        remove(name);
-                                      }}
-                                      size="large"
-                                      className="addMinusBtn"
-                                      // block
-                                      icon={<MinusOutlined />}
-                                    >
-                                      {/* Remove Entity */}
-                                    </Button>
+                                    {name !== 0 && (
+                                      <Button
+                                        // type="dashed"
+                                        onClick={() => {
+                                          remove(name);
+                                        }}
+                                        size="large"
+                                        className="addMinusBtn"
+                                        // block
+                                        icon={<MinusOutlined />}
+                                      >
+                                        {/* Remove Entity */}
+                                      </Button>
+                                    )}
                                   </Form.Item>
                                 </div>
                                 <Row
@@ -940,18 +942,20 @@ export const ProjectActivityStep = (props: any) => {
                           <div className="form-list-actions">
                             <h4>Location {name + 1}</h4>
                             <Form.Item>
-                              <Button
-                                // type="dashed"
-                                onClick={() => {
-                                  remove(name);
-                                }}
-                                size="large"
-                                className="addMinusBtn"
-                                // block
-                                icon={<MinusOutlined />}
-                              >
-                                {/* Remove Entity */}
-                              </Button>
+                              {name !== 0 && (
+                                <Button
+                                  // type="dashed"
+                                  onClick={() => {
+                                    remove(name);
+                                  }}
+                                  size="large"
+                                  className="addMinusBtn"
+                                  // block
+                                  icon={<MinusOutlined />}
+                                >
+                                  {/* Remove Entity */}
+                                </Button>
+                              )}
                             </Form.Item>
                           </div>
                           <Row

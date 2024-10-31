@@ -248,10 +248,18 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   // const designDocPending = designDocStatus === DocumentStatus.PENDING;
 
   function navigateToVerificationReportCreate(): void {
-    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`, {
+      state: {
+        mode: FormMode.CREATE,
+      },
+    });
   }
   function navigateToVerificationReportView(): void {
-    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`, {
+      state: {
+        mode: FormMode.VIEW,
+      },
+    });
   }
 
   const getLatestReport = (reports: any[], docType: DocumentTypeEnum) => {
