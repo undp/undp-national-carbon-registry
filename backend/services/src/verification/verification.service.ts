@@ -413,6 +413,78 @@ export class VerificationService {
     return url;
   }
 
+  //MARK: Aggregate Documents
+  aggregateDocuments(rawData) {
+    const results = rawData.reduce((acc, data) => {
+      let vr = acc[data.vr_id];
+      if (!vr) {
+        vr = {
+          id: data.vr_id,
+          programmeId: data.programmeId,
+          status: data.vr_status,
+          verificationSerialNo: data.verificationSerialNo,
+          creditIssueCertificateUrl: data.creditIssueCertificateUrl,
+          createdTime: data.vr_createdTime,
+          documents: [],
+        };
+        acc[data.vr_id] = vr;
+      }
+
+      if (data.d_id) {
+        // Check if there is a document in this row
+        vr.documents.push({
+          id: data.d_id,
+          type: data.d_type,
+          content: data.d_content,
+          status: data.d_status,
+          createdTime: data.d_createdTime,
+        });
+      }
+
+      return acc;
+    }, {});
+
+    return Object.values(results); // Convert the accumulated results into an array
+  }
+
+  //MARK: Query Verification Requests By ProgrammeId
+  async queryVerificationRequestsByProgrammeId(
+    programmeId: string,
+    user: User
+  ): Promise<any> {
+    
+    const programme = await this.programmeSlService.getProjectById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.programmeNotExist", [
+          programmeId,
+        ]),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const rawResults = await this.entityManager.query(
+      `
+        SELECT 
+            vr.id AS vr_id, vr."programmeId" AS "programmeId", vr.status AS vr_status, vr."createdTime" AS "vr_createdTime", 
+            vr."verificationSerialNo" AS "verificationSerialNo", vr."creditIssueCertificateUrl" AS "creditIssueCertificateUrl",
+            d.id AS d_id, d.type AS d_type, d.content AS d_content, d.status AS d_status, d."createdTime" AS "d_createdTime"
+        FROM 
+            verification_request_entity vr
+        LEFT JOIN 
+            document_entity d ON d."verificationRequestId" = vr.id
+        WHERE 
+            vr."programmeId" = $1
+        ORDER BY 
+            vr.id DESC
+    `,
+      [programmeId]
+    );
+
+    return this.aggregateDocuments(rawResults);
+  }
+
   async getPreviousCreditIssueCertificateSerial(programmeId: string) {
     const latestVerifiedRequest = await this.verificationRequestRepository.findOne({
       where: {

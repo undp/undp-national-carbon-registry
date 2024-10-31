@@ -128,12 +128,15 @@ export const formViewPermission = (
   } else if (
     docType === DocType.MONITORING_REPORT &&
     (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
   ) {
     return true;
   } else if (
     docType === DocType.VERIFICATION_REPORT &&
-    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
   ) {
     return true;
   }

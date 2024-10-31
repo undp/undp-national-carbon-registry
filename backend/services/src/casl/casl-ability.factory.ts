@@ -34,6 +34,7 @@ import { CreditAuditLogViewEntity } from "../entities/creditAuditLog.view.entity
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { CreditRetirementSl } from "src/entities/creditRetirementSl.entity";
 import { DocumentEntity } from "../entities/document.entity";
+import { VerificationRequestEntity } from "../entities/verification.request.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -294,9 +295,12 @@ export class CaslAbilityFactory {
     ) {
       can(Action.Read, CreditAuditLog);
       can(Action.Read, CreditAuditLogViewEntity);
+      can(Action.Read, VerificationRequestEntity);
     } else {
       cannot(Action.Read, CreditAuditLog);
       cannot(Action.Read, CreditAuditLogViewEntity);
+      can(Action.Read, VerificationRequestEntity);
+
     }
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
