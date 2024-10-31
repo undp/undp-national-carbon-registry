@@ -7,6 +7,7 @@ import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 export const AppendixStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -34,19 +35,10 @@ export const AppendixStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
                 if (FormMode.VIEW !== formMode) {
-                  values.optionalDocuments = await (async function () {
-                    const base64Docs: string[] = [];
-
-                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                      const docs = values.optionalDocuments;
-                      for (let i = 0; i < docs.length; i++) {
-                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                        base64Docs.push(temp);
-                      }
-                    }
-
-                    return base64Docs;
-                  })();
+                  values.optionalDocuments = await fileUploadValueExtract(
+                    values,
+                    'optionalDocuments'
+                  );
                 }
                 onFinish({ annexures: values });
               }}
