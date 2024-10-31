@@ -5,12 +5,13 @@ import Icon, {
   CheckCircleOutlined,
   DislikeOutlined,
   ExclamationCircleOutlined,
-  FileAddOutlined,
+  PlusOutlined,
   LikeOutlined,
   BookOutlined,
   FolderViewOutlined,
   VerifiedOutlined,
   DownloadOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -29,6 +30,7 @@ import {
   linkDocVisible,
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export interface VerificationFormsProps {
   data: any;
@@ -82,10 +84,18 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   }, [data]);
 
   const navigateToMonitoringReportCreate = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.CREATE,
+      },
+    });
   };
   const navigateToMonitoringReportView = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.VIEW,
+      },
+    });
   };
 
   const getBase64 = (file: RcFile): Promise<string> =>
@@ -197,11 +207,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     userInfoState?.userRole !== Role.ViewOnly;
 
   const designDocPending = designDocStatus === DocumentStatus.PENDING;
+
   function navigateToVerificationReportCreate(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
   function navigateToVerificationReportView(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
 
   const getLatestReport = (reports: any[], docType: DocumentTypeEnum) => {
@@ -273,7 +284,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      <FolderViewOutlined
+                      <EyeOutlined
                         className="common-progress-icon"
                         style={
                           formViewPermission(
@@ -319,7 +330,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <FileAddOutlined
+                        <PlusOutlined
                           className="common-progress-icon"
                           style={
                             formCreatePermission(
@@ -372,7 +383,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      <FolderViewOutlined
+                      <EyeOutlined
                         className="common-progress-icon"
                         style={
                           formViewPermission(
@@ -417,7 +428,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      <FileAddOutlined
+                      <PlusOutlined
                         className="common-progress-icon"
                         style={
                           formCreatePermission(

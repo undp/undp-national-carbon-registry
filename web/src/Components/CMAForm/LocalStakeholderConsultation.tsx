@@ -5,10 +5,9 @@ import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
 
 const LocalStakeholderConsultation = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate } = props;
+  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
     const tempValues = {
       stakeholderConsultationProcess: values?.stakeHolderConsultationProcess,
       summaryOfComments: values?.summaryOfCommentsRecieved,
@@ -43,7 +42,21 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
                 tooltip={{
@@ -97,7 +110,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                   ),
                 }}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -107,13 +120,28 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:summaryOfCommentsRecieved')} ${t('isRequired')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:summaryOfCommentsRecieved')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:summaryOfCommentsRecievedPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -124,13 +152,28 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:considerationOfCommentsRecieved')}`,
+                    message: ``,
+                  },
+                  {
+                    validator: async (rule, value) => {
+                      if (
+                        String(value).trim() === '' ||
+                        String(value).trim() === undefined ||
+                        value === null ||
+                        value === undefined
+                      ) {
+                        throw new Error(
+                          `${t('CMAForm:considerationOfCommentsRecieved')} ${t('isRequired')}`
+                        );
+                      }
+                    },
                   },
                 ]}
               >
                 <TextArea
                   rows={4}
                   placeholder={`${t('CMAForm:considerationOfCommentsRecievedPlaceholder')}`}
+                  disabled={disableFields}
                 />
               </Form.Item>
 
@@ -138,14 +181,20 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('CMAForm:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  // onClick={next}
-                  htmlType="submit"
-                >
-                  {t('CMAForm:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('CMAForm:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('CMAForm:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

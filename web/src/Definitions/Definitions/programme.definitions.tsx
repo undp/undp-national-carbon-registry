@@ -15,6 +15,7 @@ import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
 import { SectoralScope } from '../Enums/sectoralScope.enum';
 import { RcFile } from 'rc-upload/lib/interface';
 import { CarbonSystemType } from '../Enums/carbonSystemType.enum';
+import { CreditTypeSl } from '../Enums/creditTypeSl.enum';
 
 export const getStageEnumVal = (value: string) => {
   const index = Object.keys(ProgrammeStageUnified).indexOf(value);
@@ -121,6 +122,36 @@ export const getProjectProposalStage = (stage: ProjectProposalStage) => {
       return 'error';
     default:
       return 'default';
+  }
+};
+
+export const getCreditTypeVal = (value: string) => {
+  const index = Object.keys(CreditTypeSl).indexOf(value);
+  if (index < 0) {
+    return value;
+  }
+  return Object.values(CreditTypeSl)[index];
+};
+
+export const getCreditTypeTagType = (stage: CreditTypeSl) => {
+  switch (getCreditTypeVal(stage)) {
+    case CreditTypeSl.TRACK_1:
+      return 'orange';
+    case CreditTypeSl.TRACK_2:
+      return 'purple';
+    default:
+      return 'default';
+  }
+};
+
+export const getCreditTypeName = (value: string) => {
+  switch (getCreditTypeVal(value)) {
+    case CreditTypeSl.TRACK_1:
+      return 'SLCER+';
+    case CreditTypeSl.TRACK_2:
+      return 'SLCER';
+    default:
+      return 'SLCER';
   }
 };
 
@@ -259,6 +290,7 @@ export interface ProgrammeSl {
   creditRetired: number;
   creditFrozen: number;
   creditTransferred: number;
+  estimatedProjectCost: number;
   constantVersion: string;
   proponentTaxVatId: string[];
   companyId: number;
@@ -280,6 +312,7 @@ export interface ProgrammeSl {
   mitigationActions: any;
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
+  registrationCertificateUrl: string;
 }
 
 export interface ProgrammeR extends Programme {
@@ -346,7 +379,7 @@ export const getGeneralFields = (
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
-    serialNo: programme.serialNo,
+    registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
     projectStatus: programme.projectStatus,
     projectCategory: programme.projectCategory,
@@ -421,9 +454,10 @@ export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
   // };
 
   return {
-    estimatedProgrammeCostLKR: '-',
-    creditEst: '-',
-    grantEquivalentLKR: '-',
+    estimatedProgrammeCostLKR: programme.estimatedProjectCost
+      ? programme.estimatedProjectCost
+      : '-',
+    creditEst: programme.creditEst ? programme.creditEst : '-',
   };
 };
 

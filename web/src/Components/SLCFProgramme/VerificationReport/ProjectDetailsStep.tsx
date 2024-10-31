@@ -60,6 +60,33 @@ export const ProjectDetailsStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
+                      label={t('verificationReport:projectName')}
+                      name="projectName"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:projectName')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input disabled size="large" />
+                    </Form.Item>
+
+                    <Form.Item
                       label={t('verificationReport:client')}
                       name="client"
                       rules={[

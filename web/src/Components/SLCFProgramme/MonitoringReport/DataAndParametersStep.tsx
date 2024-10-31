@@ -10,9 +10,11 @@ import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const DataAndParametersStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
+    props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -33,6 +35,7 @@ export const DataAndParametersStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 onValueChange({ dataAndParameters: values });
                 next();
@@ -116,7 +119,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -135,7 +138,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -154,7 +157,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -236,7 +239,7 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -322,6 +325,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_descriptionPlaceholder')}
                       />
@@ -344,6 +348,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_sourceOfDataPlaceholder')}
                       />
@@ -368,6 +373,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t(
                           'monitoringReport:dpm_measurmentMethodsDescriptionPlaceholder'
@@ -427,6 +433,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_valueAppliedPlaceholder')}
                       />
@@ -451,6 +458,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_monitoringEquipmentPlaceholder')}
                       />
@@ -473,6 +481,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_qaQcProceduresPlaceholder')}
                       />
@@ -530,6 +539,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_calculationMethodPlaceholder')}
                       />
@@ -552,6 +562,7 @@ export const DataAndParametersStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={3}
                         placeholder={t('monitoringReport:dpm_commentsPlaceholder')}
                       />
@@ -575,16 +586,16 @@ export const DataAndParametersStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

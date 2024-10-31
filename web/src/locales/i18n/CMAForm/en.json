@@ -25,6 +25,7 @@
   "organizationName": "Organization Name",
   "contactPerson": "Contact Person",
   "title": "Title",
+  "designation": "Designation",
   "address": "Address",
   "otherEntitiesInProject": "Other Entities Involved in the Project",
   "projectActivityLocations": "Project Activity Locations",
@@ -71,7 +72,7 @@
   "commerciallySensitiveInformationPlaceholder": "No commercially sensitive information has been included in this project scope.",
   "projectOwnership": "Project Ownership",
   "projectTrack": "Project Track",
-  "required": "Required",
+  "required": "Required!",
   "projectTrack2Description": "Issued carbon credits from project will only be used for internal offsetting of emissions",
   "projectCreditingPeriod": "Project Crediting Period",
   "projectCreditingDescriptionPlaceholder": "Indicate the project crediting period, specifying the day, month and year for the start  and end dates and the total number of years.",
@@ -98,7 +99,7 @@
   "methodologyDeviationsPlaceholder": "Describe and justify any methodology deviations. Include evidence to demonstrate the  following:   The deviation will not negatively impact the conservativeness of the quantification  of GHG emission reductions or removals.The deviation relates only to the criteria and procedures for monitoring or  measurement, and does not relate to any other part of the methodology.",
   "projectBoundary": "Project Boundary",
   "baselineEmissions": "Baseline Emissions",
-"baselineEmissionsPlaceholder": "Describe the procedure for quantification of baseline emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values)",
+  "baselineEmissionsPlaceholder": "Describe the procedure for quantification of baseline emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values)",
   "projectEmissions": "Project Emissions",
   "projectEmissionPlaceholder": "Describe the procedure for quantification of project emissions and/or removals in  accordance with the applied methodology. Include all relevant equations, and explain  and justify all relevant methodological choices (e.g., with respect to selection of  emission factors and default values).",
   "leakage": "Leakage",
@@ -138,5 +139,6 @@
   "monitoringPlan": "Monitoring Plan",
   "generalCriteria": "General Criteria",
   "bundlingCriteria": "Bundling Criteria",
-  "calculationMethod": "Calculation Method"
+  "calculationMethod": "Calculation Method",
+  "goBackProjectDetails": "Go Back To Project Details"
 }

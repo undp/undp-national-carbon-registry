@@ -326,6 +326,14 @@ export class CaslAbilityFactory {
     if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, DocumentEntity);
+
+      if (user.role == Role.Admin) {
+        can(Action.Update, ProgrammeSl);
+      }
+
+      if (user.role == Role.Manager) {
+        can(Action.Update, ProgrammeSl);
+      }
     }
 
     if (user.companyRole === CompanyRole.CLIMATE_FUND) {
