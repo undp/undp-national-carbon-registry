@@ -6,8 +6,9 @@ import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const AppendixStep = (props: any) => {
-  const { useLocation, translator, current, form, prev, onFinish } = props;
+  const { useLocation, translator, current, form, formMode, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -30,20 +31,23 @@ export const AppendixStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                values.optionalDocuments = await (async function () {
-                  const base64Docs: string[] = [];
+                if (FormMode.VIEW !== formMode) {
+                  values.optionalDocuments = await (async function () {
+                    const base64Docs: string[] = [];
 
-                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                    const docs = values.optionalDocuments;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
+                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                      const docs = values.optionalDocuments;
+                      for (let i = 0; i < docs.length; i++) {
+                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                        base64Docs.push(temp);
+                      }
                     }
-                  }
 
-                  return base64Docs;
-                })();
+                    return base64Docs;
+                  })();
+                }
                 onFinish({ annexures: values });
               }}
             >
@@ -60,33 +64,39 @@ export const AppendixStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} />
+                      <TextArea rows={6} maxLength={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={t('verificationReport:additionalDocuments')}
                       name="optionalDocuments"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={false}
-                      rules={[
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
-                            }
-                          },
-                        },
-                      ]}
+                      required={FormMode.VIEW !== formMode}
+                      rules={
+                        FormMode.VIEW === formMode
+                          ? []
+                          : [
+                              {
+                                validator: async (rule, file) => {
+                                  if (file?.length > 0) {
+                                    if (
+                                      !isValidateFileType(
+                                        file[0]?.type,
+                                        DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                      )
+                                    ) {
+                                      throw new Error(
+                                        `${t('verificationReport:invalidFileFormat')}`
+                                      );
+                                    } else if (file[0]?.size > maximumImageSize) {
+                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                      throw new Error(`${t('common:maxSizeVal')}`);
+                                    }
+                                  }
+                                },
+                              },
+                            ]
+                      }
                     >
                       <Upload
                         accept=".doc, .docx, .pdf, .png, .jpg"
@@ -109,10 +119,10 @@ export const AppendixStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Done
                 </Button>
               </Row>
