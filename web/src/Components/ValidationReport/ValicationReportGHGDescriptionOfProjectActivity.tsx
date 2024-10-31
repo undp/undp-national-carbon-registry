@@ -258,9 +258,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
   };
 
   const getLocationDetails = async (values: any) => {
-    const files = await fileUploadValueExtract(values, 'additionalDocuments');
+    const locationList = [];
 
-    return values.locationsOfProjectActivity.map((activity: any) => {
+    for (let c = 0; c < values.locationsOfProjectActivity.length; c++) {
+      const activity = values.locationsOfProjectActivity[c];
+
       const technicalProjDesc = activity.technicalProjectDescriptionItems.map(
         (tecProjDesc: any) => {
           return {
@@ -269,7 +271,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
           };
         }
       );
-      return {
+      let files: any[] = [];
+
+      if (activity?.additionalDocuments.length > 0) {
+        files = await fileUploadValueExtract(activity, 'additionalDocuments');
+      }
+
+      locationList.push({
         locationOfProjectActivity: activity.locationOfProjectActivity,
         province: activity.province,
         district: activity.district,
@@ -279,8 +287,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
         geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
         additionalDocuments: files,
         technicalProjectDescription: technicalProjDesc,
-      };
-    });
+      });
+    }
+
+    return locationList;
   };
 
   const onFinish = async (values: any) => {
@@ -297,44 +307,12 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       projectTitle: values?.projectTitle,
       projectSize: values?.projectSize,
       ...projectScopeUNFCC,
-      // isProjectScopeEnergyIndustries: values?.isProjectScopeEnergyIndustries,
-      // isProjectScopeEnergyDistribution: values?.isProjectScopeEnergyDistribution,
-      // isProjectScopeEnergyDemand: values?.isProjectScopeEnergyDemand,
-      // isProjectScopeManufacturingIndustries: values?.isProjectScopeManufacturingIndustries,
-      // isProjectScopeChemicalIndustries: values?.isProjectScopeChemicalIndustries,
-      // isProjectScopeChemicalIndustry: values?.isProjectScopeChemicalIndustry,
-      // isProjectScopeConstruction: values?.isProjectScopeConstruction,
-      // isProjectScopeTransport: values?.isProjectScopeTransport,
-      // isProjectScopeMining: values?.isProjectScopeMining,
-      // isProjectScopeFugitiveEmissionsFromFuel: values?.isProjectScopeFugitiveEmissionsFromFuel,
-      // isProjectScopeFugitiveEmissionsFromHalocarbons:
-      //   values?.isProjectScopeFugitiveEmissionsFromHalocarbons,
-      // isProjectScopeSolventsUse: values?.isProjectScopeSolventsUse,
-      // isProjectScopeWasteHandling: values?.isProjectScopeWasteHandling,
-      // isProjectScopeAfforestation: values?.isProjectScopeAfforestation,
-      // isProjectScopeAgriculture: values?.isProjectScopeAgriculture,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
-      creditingPeriod: values?.creditingPeriod,
+      creditingPeriod: String(values?.creditingPeriod),
       locationsOfProjectActivity: await getLocationDetails(values),
       startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
     };
-
-    // startDateCreditingPeriod: '',
-    // locationsOfProjectActivity: [
-    //   {
-    //     locationOfProjectActivity: '',
-    //     province: '',
-    //     district: '',
-    //     dsDivision: '',
-    //     city: '',
-    //     community: '',
-    //     geographicalLocationCoordinates: '',
-    //     additionalDocuments: '',
-    //     technicalProjectDescription: '',
-    //   },
-    // ],
-
     console.log(ProcessSteps.VR_GHG_PROJECT_DESCRIPTION, ghgDescriptionFormValues);
     handleValuesUpdate({ [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues });
   };
@@ -406,7 +384,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Row>
 
                 <Row gutter={[8, 16]}>
-                  <Col span={6}>{t('validationReport:projectScopeUNFCC')}</Col>
+                  <Col span={6}>
+                    <div>{t('validationReport:projectScopeUNFCC')}</div>
+                    <div>{t('validationReport:projectScopeUNFCCt2')}</div>
+                  </Col>
                   <Col span={18}>
                     <Form.Item name="projectScopeUNFCC">
                       <Checkbox.Group className="full-width-form-item">
@@ -553,7 +534,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       required: true,
                                       message: `${t('validationReport:province')} ${t(
                                         'isRequired'
-                                      )}}`,
+                                      )}`,
                                     },
                                   ]}
                                 >
@@ -650,20 +631,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
                                   name={[name, 'geographicalLocationCoordinates']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:location')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
                                 >
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     existingCordinate={getExistingCordinate(locationIndex)}
                                     disabled={formMode === FormMode.VIEW}
+                                    isShowCordinate
                                   />
                                 </Form.Item>
                               </Col>
@@ -679,16 +653,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     {
                                       validator: async (rule, file) => {
                                         if (file?.length > 0) {
-                                          if (
-                                            !isValidateFileType(
-                                              file[0]?.type,
-                                              DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                            )
-                                          ) {
-                                            throw new Error(
-                                              `${t('validationReport:invalidFileFormat')}`
-                                            );
-                                          } else if (file[0]?.size > maximumImageSize) {
+                                          if (file[0]?.size > maximumImageSize) {
                                             // default size format of files would be in bytes -> 1MB = 1000000bytes
                                             throw new Error(`${t('common:maxSizeVal')}`);
                                           }
@@ -721,9 +686,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               </Col>
                             </Row>
 
-                            <h4 className="form-section-title" style={{ marginBottom: 4 }}>{`${t(
-                              'validationReport:technicalProjectDescription'
-                            )}`}</h4>
+                            <h4
+                              className="form-section-title custom-required"
+                              style={{ marginBottom: 4 }}
+                            >{`${t('validationReport:technicalProjectDescription')}`}</h4>
                             <Form.List name={[name, 'technicalProjectDescriptionItems']}>
                               {(
                                 technicalProjectDescriptionItemList,

@@ -101,6 +101,7 @@ export class VerificationService {
         verificationRequest.status = VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED;
         verificationRequest.createdTime = new Date().getTime();
         verificationRequest.updatedTime = new Date().getTime();
+        verificationRequest.creditAmount = 1;
         const saved = await em.save(verificationRequest);
         monitoringReportDocument.verificationRequestId = saved.id;
       }

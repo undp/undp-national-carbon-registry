@@ -37,6 +37,7 @@ import {
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { ProgrammeSlU } from '../../../Definitions/Definitions/programme.definitions';
 
 export interface ProjectFormProps {
   data: any;
@@ -49,6 +50,7 @@ export interface ProjectFormProps {
   ministryLevelPermission?: boolean;
   translator: any;
   projectProposalStage?: any;
+  programmeDetails: ProgrammeSlU;
 }
 
 export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
@@ -61,6 +63,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     getProgrammeById,
     translator,
     projectProposalStage,
+    programmeDetails,
   } = props;
 
   const t = translator.t;
@@ -260,42 +263,42 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     });
   }
 
-  const downloadRegistrationCertificate = async () => {
-    // setLoading(true);
-    // try {
-    //   if (url !== undefined && url !== '') {
-    //     const response = await fetch(url); // Ensure the URL is fetched properly
-    //     if (response.ok) {
-    //       const blob = await response.blob(); // Create a blob from the response
-    //       const downloadUrl = window.URL.createObjectURL(blob);
-    //       const a = document.createElement('a');
-    //       a.style.display = 'none';
-    //       a.href = downloadUrl;
-    //       a.download = url.split('/').pop() || 'Registration_Certificate.pdf'; // Extract filename or provide default
-    //       document.body.appendChild(a);
-    //       a.click();
-    //       document.body.removeChild(a);
-    //       window.URL.revokeObjectURL(downloadUrl); // Clean up the created object URL
-    //     } else {
-    //       message.open({
-    //         type: 'error',
-    //         content: response.statusText,
-    //         duration: 3,
-    //         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-    //       });
-    //     }
-    //   }
-    //   setLoading(false);
-    // } catch (error: any) {
-    //   console.log('Error in exporting transfers', error);
-    //   message.open({
-    //     type: 'error',
-    //     content: error.message,
-    //     duration: 3,
-    //     style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-    //   });
-    //   setLoading(false);
-    // }
+  const downloadRegistrationCertificate = async (url: string) => {
+    setLoading(true);
+    try {
+      if (url !== undefined && url !== '') {
+        const response = await fetch(url); // Ensure the URL is fetched properly
+        if (response.ok) {
+          const blob = await response.blob(); // Create a blob from the response
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = downloadUrl;
+          a.download = url.split('/').pop() || 'Registration_Certificate.pdf'; // Extract filename or provide default
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(downloadUrl); // Clean up the created object URL
+        } else {
+          message.open({
+            type: 'error',
+            content: response.statusText,
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+      }
+      setLoading(false);
+    } catch (error: any) {
+      console.log('Error in exporting transfers', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      setLoading(false);
+    }
   };
 
   return loading ? (
@@ -341,11 +344,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -359,51 +364,55 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 </Tooltip>
               </>
             </Col>
-            <Col span={3} className="field-value">
-              <>
-                <Tooltip
-                  arrowPointAtCenter
-                  placement="top"
-                  trigger="hover"
-                  title={
-                    !formCreatePermission(
-                      userInfoState,
-                      DocType.COST_QUOTATION,
-                      projectProposalStage
-                    ) && t('projectDetailsView:orgNotAuthCreate')
-                  }
-                  overlayClassName="custom-tooltip"
-                >
-                  <PlusOutlined
-                    className="common-progress-icon"
-                    style={
-                      formCreatePermission(
+            {formCreatePermission(userInfoState, DocType.COST_QUOTATION, projectProposalStage) && (
+              <Col span={3} className="field-value">
+                <>
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="top"
+                    trigger="hover"
+                    title={
+                      !formCreatePermission(
                         userInfoState,
                         DocType.COST_QUOTATION,
                         projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
+                      ) && t('projectDetailsView:orgNotAuthCreate')
                     }
-                    onClick={() =>
-                      formCreatePermission(
-                        userInfoState,
-                        DocType.COST_QUOTATION,
-                        projectProposalStage
-                      ) && navigateToCostQuotationCreate()
-                    }
-                  />
-                </Tooltip>
-              </>
-            </Col>
+                    overlayClassName="custom-tooltip"
+                  >
+                    <PlusOutlined
+                      className="common-progress-icon"
+                      style={
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.COST_QUOTATION,
+                          projectProposalStage
+                        )
+                          ? {
+                              color: '#3F3A47',
+                              cursor: 'pointer',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                          : {
+                              color: '#cacaca',
+                              cursor: 'default',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                      }
+                      onClick={() =>
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.COST_QUOTATION,
+                          projectProposalStage
+                        ) && navigateToCostQuotationCreate()
+                      }
+                    />
+                  </Tooltip>
+                </>
+              </Col>
+            )}
           </Row>
           <Row className="field" key="Proposal">
             <Col span={18} className="field-key">
@@ -431,11 +440,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -446,41 +457,51 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 </Tooltip>
               </>
             </Col>
-            <Col span={3} className="field-value">
-              <>
-                <Tooltip
-                  arrowPointAtCenter
-                  placement="top"
-                  trigger="hover"
-                  title={
-                    !formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
-                    t('projectDetailsView:orgNotAuthCreate')
-                  }
-                  overlayClassName="custom-tooltip"
-                >
-                  <PlusOutlined
-                    className="common-progress-icon"
-                    style={
-                      formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
+            {formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) && (
+              <Col span={3} className="field-value">
+                <>
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="top"
+                    trigger="hover"
+                    title={
+                      !formCreatePermission(
+                        userInfoState,
+                        DocType.PROPOSAL,
+                        projectProposalStage
+                      ) && t('projectDetailsView:orgNotAuthCreate')
                     }
-                    onClick={() =>
-                      formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
-                      navigateToProposalCreate()
-                    }
-                  />
-                </Tooltip>
-              </>
-            </Col>
+                    overlayClassName="custom-tooltip"
+                  >
+                    <PlusOutlined
+                      className="common-progress-icon"
+                      style={
+                        formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
+                          ? {
+                              color: '#3F3A47',
+                              cursor: 'pointer',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                          : {
+                              color: '#cacaca',
+                              cursor: 'default',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                      }
+                      onClick={() =>
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.PROPOSAL,
+                          projectProposalStage
+                        ) && navigateToProposalCreate()
+                      }
+                    />
+                  </Tooltip>
+                </>
+              </Col>
+            )}
           </Row>
           <Row className="field" key="Validation Agreement">
             <Col span={18} className="field-key">
@@ -521,11 +542,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -539,51 +562,59 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                 </Tooltip>
               </>
             </Col>
-            <Col span={3} className="field-value">
-              <>
-                <Tooltip
-                  arrowPointAtCenter
-                  placement="top"
-                  trigger="hover"
-                  title={
-                    !formCreatePermission(
-                      userInfoState,
-                      DocType.VALIDATION_AGREEMENT,
-                      projectProposalStage
-                    ) && t('projectDetailsView:orgNotAuthCreate')
-                  }
-                  overlayClassName="custom-tooltip"
-                >
-                  <PlusOutlined
-                    className="common-progress-icon"
-                    style={
-                      formCreatePermission(
+            {formCreatePermission(
+              userInfoState,
+              DocType.VALIDATION_AGREEMENT,
+              projectProposalStage
+            ) && (
+              <Col span={3} className="field-value">
+                <>
+                  <Tooltip
+                    arrowPointAtCenter
+                    placement="top"
+                    trigger="hover"
+                    title={
+                      !formCreatePermission(
                         userInfoState,
                         DocType.VALIDATION_AGREEMENT,
                         projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                          }
+                      ) && t('projectDetailsView:orgNotAuthCreate')
                     }
-                    onClick={() =>
-                      formCreatePermission(
-                        userInfoState,
-                        DocType.VALIDATION_AGREEMENT,
-                        projectProposalStage
-                      ) && navigateToValidationAgreementCreate()
-                    }
-                  />
-                </Tooltip>
-              </>
-            </Col>
+                    overlayClassName="custom-tooltip"
+                  >
+                    <PlusOutlined
+                      className="common-progress-icon"
+                      style={
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.VALIDATION_AGREEMENT,
+                          projectProposalStage
+                        )
+                          ? {
+                              color: '#3F3A47',
+                              cursor: 'pointer',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                          : {
+                              color: '#cacaca',
+                              cursor: 'default',
+                              margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
+                            }
+                      }
+                      onClick={() =>
+                        formCreatePermission(
+                          userInfoState,
+                          DocType.VALIDATION_AGREEMENT,
+                          projectProposalStage
+                        ) && navigateToValidationAgreementCreate()
+                      }
+                    />
+                  </Tooltip>
+                </>
+              </Col>
+            )}
           </Row>
           <Row className="field" key="Carbon Management Assessment (CMA)">
             <Col span={18} className="field-key">
@@ -617,11 +648,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -653,11 +686,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -708,7 +743,66 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               </Col>
             )}
           </Row>
-
+          <Row className="field" key="Site Visit Checklist">
+            <Col span={18} className="field-key">
+              <div className="label-container">
+                <div className="label">{t('projectDetailsView:siteVisitChecklistForm')}</div>
+              </div>
+              {designDocUrl !== '' && (
+                <div className="time">
+                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
+                  {' ~ ' + designDocversion}
+                </div>
+              )}
+            </Col>
+            <Col span={3} className="field-value">
+              <>
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="top"
+                  trigger="hover"
+                  title={
+                    !formViewPermission(
+                      userInfoState,
+                      DocType.SITE_VISIT_CHECKLIST,
+                      projectProposalStage
+                    ) && t('projectDetailsView:orgNotAuthView')
+                  }
+                  overlayClassName="custom-tooltip"
+                >
+                  <EyeOutlined
+                    className="common-progress-icon"
+                    style={
+                      formViewPermission(
+                        userInfoState,
+                        DocType.SITE_VISIT_CHECKLIST,
+                        projectProposalStage
+                      )
+                        ? {
+                            color: '#3F3A47',
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
+                          }
+                        : {
+                            color: '#cacaca',
+                            cursor: 'default',
+                            margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
+                          }
+                    }
+                    onClick={() =>
+                      formViewPermission(
+                        userInfoState,
+                        DocType.SITE_VISIT_CHECKLIST,
+                        projectProposalStage
+                      ) && navigateToSiteVisitCheckListView()
+                    }
+                  />
+                </Tooltip>
+              </>
+            </Col>
+          </Row>
           <Row className="field" key="Validation Report">
             <Col span={18} className="field-key">
               <div className="label-container">
@@ -748,11 +842,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -799,11 +895,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                               color: '#3F3A47',
                               cursor: 'pointer',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                           : {
                               color: '#cacaca',
                               cursor: 'default',
                               margin: '0px 0px 1.5px 0px',
+                              fontSize: '110%',
                             }
                       }
                       onClick={() =>
@@ -890,7 +988,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       userInfoState,
                       DocType.PROJECT_REGISTRATION_CERTIFICATE,
                       projectProposalStage
-                    ) && t('projectDetailsView:orgNotAuthView')
+                    ) && t('projectDetailsView:orgNotAuthDownload')
                   }
                   overlayClassName="custom-tooltip"
                 >
@@ -906,11 +1004,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -918,7 +1018,8 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         userInfoState,
                         DocType.PROJECT_REGISTRATION_CERTIFICATE,
                         projectProposalStage
-                      ) && downloadRegistrationCertificate()
+                      ) &&
+                      downloadRegistrationCertificate(programmeDetails?.registrationCertificateUrl)
                     }
                   />
                 </Tooltip>

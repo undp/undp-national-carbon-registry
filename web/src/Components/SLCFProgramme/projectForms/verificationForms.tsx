@@ -27,6 +27,7 @@ import {
   linkDocVisible,
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export interface VerificationFormsProps {
   data: any;
@@ -79,10 +80,18 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   }, [data]);
 
   const navigateToMonitoringReportCreate = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.CREATE,
+      },
+    });
   };
   const navigateToMonitoringReportView = () => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`);
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+      state: {
+        mode: FormMode.VIEW,
+      },
+    });
   };
 
   const getBase64 = (file: RcFile): Promise<string> =>
@@ -194,11 +203,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     userInfoState?.userRole !== Role.ViewOnly;
 
   const designDocPending = designDocStatus === DocumentStatus.PENDING;
+
   function navigateToVerificationReportCreate(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
   function navigateToVerificationReportView(): void {
-    throw new Error('Function not implemented.');
+    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`);
   }
 
   return loading ? (
@@ -244,11 +254,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -289,11 +301,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -341,11 +355,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>
@@ -386,11 +402,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             color: '#3F3A47',
                             cursor: 'pointer',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                         : {
                             color: '#cacaca',
                             cursor: 'default',
                             margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
                           }
                     }
                     onClick={() =>

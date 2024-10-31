@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { MapSourceData } from '../../Definitions/Definitions/mapComponent.definitions';
 import { MapComponent } from './mapComponent';
 import { FormInstance } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 
 interface CMAMapComponentProps {
   form: FormInstance;
@@ -9,10 +10,18 @@ interface CMAMapComponentProps {
   listName?: string;
   existingCordinate?: any[];
   disabled?: boolean;
+  isShowCordinate?: boolean;
 }
 
 const GetLocationMapComponent = (props: CMAMapComponentProps) => {
-  const { form, formItemName, listName, existingCordinate, disabled } = props;
+  const {
+    form,
+    formItemName,
+    listName,
+    existingCordinate,
+    disabled,
+    isShowCordinate = false,
+  } = props;
 
   const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -120,19 +129,29 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
 
   const mapComponentMemoizedValue = useMemo(() => {
     return (
-      <MapComponent
-        mapType={mapType}
-        center={projectLocationMapCenter}
-        zoom={zoomLevel}
-        updateZoomLevel={updateZoomLevel}
-        height={400}
-        style="mapbox://styles/mapbox/light-v11"
-        accessToken={accessToken}
-        onPolygonComplete={!disabled ? onPolygonComplete : undefined}
-        mapSource={projectLocationMapSource}
-        layer={projectLocationMapLayer}
-        outlineLayer={projectLocationMapOutlineLayer}
-      ></MapComponent>
+      <>
+        {isShowCordinate && (
+          <TextArea
+            rows={3}
+            disabled
+            style={{ marginBottom: 5, wordBreak: 'break-all' }}
+            value={JSON.stringify(projectLocation)}
+          ></TextArea>
+        )}
+        <MapComponent
+          mapType={mapType}
+          center={projectLocationMapCenter}
+          updateZoomLevel={updateZoomLevel}
+          zoom={4}
+          height={400}
+          style="mapbox://styles/mapbox/light-v11"
+          accessToken={accessToken}
+          onPolygonComplete={!disabled ? onPolygonComplete : undefined}
+          mapSource={projectLocationMapSource}
+          layer={projectLocationMapLayer}
+          outlineLayer={projectLocationMapOutlineLayer}
+        ></MapComponent>
+      </>
     );
   }, [
     projectLocationMapCenter,
