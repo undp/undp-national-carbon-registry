@@ -2295,27 +2295,29 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             ) : (
               ''
             )}
-            <Card className="card-container">
-              <div>
-                <VerificationForms
-                  data={verificationHistoryData}
-                  title={t('projectDetailsView:verificationPhaseForms')}
-                  icon={<QrcodeOutlined />}
-                  programmeId={data?.programmeId}
-                  companyId={data.companyId}
-                  programmeOwnerId={programmeOwnerId}
-                  getDocumentDetails={() => {
-                    getDocuments(data?.programmeId);
-                  }}
-                  getProgrammeById={() => {
-                    getProgrammeById();
-                  }}
-                  ministryLevelPermission={ministryLevelPermission}
-                  translator={i18n}
-                  projectProposalStage={data?.projectProposalStage}
-                />
-              </div>
-            </Card>
+            {verificationHistoryData && verificationHistoryData.length > 0 && (
+              <Card className="card-container">
+                <div>
+                  <VerificationForms
+                    data={verificationHistoryData}
+                    title={t('projectDetailsView:verificationPhaseForms')}
+                    icon={<QrcodeOutlined />}
+                    programmeId={data?.programmeId}
+                    companyId={data.companyId}
+                    programmeOwnerId={programmeOwnerId}
+                    getDocumentDetails={() => {
+                      getDocuments(data?.programmeId);
+                    }}
+                    getProgrammeById={() => {
+                      getProgrammeById();
+                    }}
+                    ministryLevelPermission={ministryLevelPermission}
+                    translator={i18n}
+                    projectProposalStage={data?.projectProposalStage}
+                  />
+                </div>
+              </Card>
+            )}
           </Col>
         </Row>
       </div>
