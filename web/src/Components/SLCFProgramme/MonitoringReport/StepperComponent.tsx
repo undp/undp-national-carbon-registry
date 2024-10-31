@@ -18,6 +18,8 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
+  const [verificationRequestId, setVerificationRequestId] = useState(0);
+  const [reportId, setReportId] = useState(0);
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id } = useParams();
@@ -35,13 +37,59 @@ const StepperComponent = (props: any) => {
     console.log(JSON.stringify(formValues));
   };
 
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+  const approve = async (verify: boolean) => {
+    const body = {
+      verify: verify,
+      verificationRequestId: verificationRequestId,
+      reportId: reportId,
+    };
+    try {
+      const res = await post('national/verification/verifyMonitoringReport', body);
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content: verify
+            ? t('monitoringReport:monitoringReportApproveSuccess')
+            : t('monitoringReport:monitoringReportRejectSuccess'),
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigate(`/programmeManagementSLCF/view/${id}`);
+      }
+    } catch (error: any) {
+      if (error && error.errors && error.errors.length > 0) {
+        error.errors.forEach((err: any) => {
+          Object.keys(err).forEach((field) => {
+            console.log(`Error in ${field}: ${err[field].join(', ')}`);
+            message.open({
+              type: 'error',
+              content: err[field].join(', '),
+              duration: 4,
+              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            });
+          });
+        });
+      } else {
+        message.open({
+          type: 'error',
+          content: error?.message,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+      }
+    }
+  };
+
   const onFinish = async (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       ...newValues,
     }));
     if (FormMode.VIEW === mode) {
-      navigate('/programmeManagementSLCF/viewAll');
+      navigateToDetailsPage();
     } else {
       const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
       try {
@@ -53,7 +101,7 @@ const StepperComponent = (props: any) => {
             duration: 4,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
-          navigate(`/programmeManagementSLCF/view/${id}`);
+          navigateToDetailsPage();
         }
       } catch (error: any) {
         if (error && error.errors && error.errors.length > 0) {
@@ -127,6 +175,8 @@ const StepperComponent = (props: any) => {
         docType: DocumentTypeEnum.MONITORING_REPORT,
       });
       if (data && data?.content) {
+        setReportId(data?.id);
+        setVerificationRequestId(data?.verificationRequestId);
         projectDetailsForm.setFieldsValue({
           ...data?.content?.projectDetails,
           dateOfIssue: moment.unix(data?.content?.projectDetails?.dateOfIssue),
@@ -265,6 +315,7 @@ const StepperComponent = (props: any) => {
           form={projectDetailsForm}
           formMode={mode}
           next={next}
+          cancel={navigateToDetailsPage}
           countries={countries}
           onValueChange={onValueChange}
         />
@@ -386,6 +437,13 @@ const StepperComponent = (props: any) => {
           form={annexuresForm}
           formMode={mode}
           prev={prev}
+          cancel={navigateToDetailsPage}
+          approve={() => {
+            approve(true);
+          }}
+          reject={() => {
+            approve(false);
+          }}
           onFinish={onFinish}
         />
       ),

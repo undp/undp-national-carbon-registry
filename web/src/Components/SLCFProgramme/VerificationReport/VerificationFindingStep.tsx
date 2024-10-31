@@ -9,6 +9,7 @@ import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 
 export const VerificationFindingStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
@@ -36,22 +37,16 @@ export const VerificationFindingStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                values.optionalDocuments = await (async function () {
-                  const base64Docs: string[] = [];
+                if (FormMode.VIEW !== formMode) {
+                  values.optionalDocuments = await fileUploadValueExtract(
+                    values,
+                    'optionalDocuments'
+                  );
 
-                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                    const docs = values.optionalDocuments;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
-                    }
-                  }
-
-                  return base64Docs;
-                })();
-                values?.siteLocations?.forEach(async (val: any) => {
-                  val.commissioningDate = moment(val?.commissioningDate).startOf('day').unix();
-                });
+                  values?.siteLocations?.forEach(async (val: any) => {
+                    val.commissioningDate = moment(val?.commissioningDate).startOf('day').unix();
+                  });
+                }
                 onValueChange({ verificationFinding: values });
                 next();
               }}
@@ -622,26 +617,23 @@ export const VerificationFindingStep = (props: any) => {
                       name="optionalDocuments"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={false}
-                      rules={[
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
-                            }
-                          },
-                        },
-                      ]}
+                      required={FormMode.VIEW !== formMode}
+                      rules={
+                        FormMode.VIEW === formMode
+                          ? []
+                          : [
+                              {
+                                validator: async (rule, file) => {
+                                  if (file?.length > 0) {
+                                    if (file[0]?.size > maximumImageSize) {
+                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                      throw new Error(`${t('common:maxSizeVal')}`);
+                                    }
+                                  }
+                                },
+                              },
+                            ]
+                      }
                     >
                       <Upload
                         accept=".doc, .docx, .pdf, .png, .jpg"
