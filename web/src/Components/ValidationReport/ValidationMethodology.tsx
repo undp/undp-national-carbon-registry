@@ -49,83 +49,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     { label: t('validationReport:conclusion4'), value: 'CONCLUSION_4' },
   ];
 
-  const deskReviewValidationTableColumns: TableProps<any>['columns'] = [
-    {
-      title: t('validationReport:validationCategory'),
-      dataIndex: 'validationCategory',
-      key: 'validationCategory',
-      className: 'deskReviewCategory',
-      onCell: (_, index) => {
-        if (index === 0) {
-          return { rowSpan: 7 };
-        }
-        if (index && index > 0 && index < 7) {
-          return { rowSpan: 0 };
-        }
-
-        if (index === 7) {
-          return { rowSpan: 7 };
-        }
-        if (index && index > 7 && index < 14) {
-          return { rowSpan: 0 };
-        }
-
-        return {};
-      },
-    },
-    {
-      title: t('validationReport:specificSection'),
-      dataIndex: 'specificSection',
-      key: 'specificSection',
-      render: (_: any, record: any, index: number) =>
-        record.sectionInput ? (
-          <Form.Item name={record.specificSection} rules={[requiredValidationRule(t)]}>
-            <Input size="large" />
-          </Form.Item>
-        ) : (
-          record?.specificSection.map((val: any) => {
-            return <p>{val}</p>;
-          })
-        ),
-    },
-    {
-      title: t('validationReport:noOfCars'),
-      dataIndex: 'noOfCars',
-      key: 'noOfCars',
-      render: (_: any, record: any, index: number) => (
-        <>
-          <Form.Item name={record.noOfCars} rules={[requiredValidationRule(t)]}>
-            <InputNumber size="large" />
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      title: t('validationReport:noOfCL'),
-      dataIndex: 'noOfCL',
-      key: 'noOfCL',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={record.noOfCL} rules={[requiredValidationRule(t)]}>
-          <InputNumber size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:noOfFAR'),
-      dataIndex: 'noOfFAR',
-      key: 'noOfFAR',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          // name={['validationCategory', index, 'noOfFAR']}
-          name={record.noOfFAR}
-          rules={[requiredValidationRule(t)]}
-        >
-          <InputNumber size="large" />
-        </Form.Item>
-      ),
-    },
-  ];
-
   const deskReviewValidationDataSource = [
     {
       validationCategory: t('validationReport:generalDescriptionOfProjectActivity'),
@@ -293,6 +216,123 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       noOfCars: 'sumNoOfCAR',
       noOfCL: 'sumNoOfCL',
       noOfFAR: 'sumNoOfFAR',
+    },
+  ];
+
+  const calculateSum = (type: string, value: any) => {
+    if (value && !isNaN(value)) {
+      const total = deskReviewValidationDataSource
+        .slice(0, -1)
+        .reduce((currentVal: number, source: any) => {
+          const formValue = form.getFieldValue(source[type]);
+          if (!isNaN(formValue)) {
+            return currentVal + formValue;
+          }
+          return currentVal;
+        }, 0);
+
+      if (type === 'noOfCars') {
+        form.setFieldValue('sumNoOfCAR', total);
+      } else if (type === 'noOfCL') {
+        form.setFieldValue('sumNoOfCL', total);
+      } else if (type === 'noOfFAR') {
+        form.setFieldValue('sumNoOfFAR', total);
+      }
+    }
+  };
+
+  const deskReviewValidationTableColumns: TableProps<any>['columns'] = [
+    {
+      title: t('validationReport:validationCategory'),
+      dataIndex: 'validationCategory',
+      key: 'validationCategory',
+      className: 'deskReviewCategory',
+      onCell: (_, index) => {
+        if (index === 0) {
+          return { rowSpan: 7 };
+        }
+        if (index && index > 0 && index < 7) {
+          return { rowSpan: 0 };
+        }
+
+        if (index === 7) {
+          return { rowSpan: 7 };
+        }
+        if (index && index > 7 && index < 14) {
+          return { rowSpan: 0 };
+        }
+
+        return {};
+      },
+    },
+    {
+      title: t('validationReport:specificSection'),
+      dataIndex: 'specificSection',
+      key: 'specificSection',
+      render: (_: any, record: any, index: number) =>
+        record.sectionInput ? (
+          <Form.Item name={record.specificSection} rules={[requiredValidationRule(t)]}>
+            <Input size="large" />
+          </Form.Item>
+        ) : (
+          record?.specificSection.map((val: any) => {
+            return <p>{val}</p>;
+          })
+        ),
+    },
+    {
+      title: t('validationReport:noOfCars'),
+      dataIndex: 'noOfCars',
+      key: 'noOfCars',
+      render: (_: any, record: any, index: number) => (
+        <>
+          <Form.Item name={record.noOfCars} rules={[requiredValidationRule(t)]}>
+            <InputNumber
+              disabled={index === deskReviewValidationDataSource.length - 1}
+              onChange={(value: any) => {
+                calculateSum('noOfCars', value);
+              }}
+              size="large"
+            />
+          </Form.Item>
+        </>
+      ),
+    },
+    {
+      title: t('validationReport:noOfCL'),
+      dataIndex: 'noOfCL',
+      key: 'noOfCL',
+      render: (_: any, record: any, index: number) => (
+        <Form.Item name={record.noOfCL} rules={[requiredValidationRule(t)]}>
+          <InputNumber
+            onChange={(value: any) => {
+              calculateSum('noOfCL', value);
+            }}
+            disabled={index === deskReviewValidationDataSource.length - 1}
+            size="large"
+          />
+        </Form.Item>
+      ),
+    },
+    {
+      title: t('validationReport:noOfFAR'),
+      dataIndex: 'noOfFAR',
+      key: 'noOfFAR',
+      render: (_: any, record: any, index: number) => (
+        <Form.Item
+          // name={['validationCategory', index, 'noOfFAR']}
+          name={record.noOfFAR}
+          rules={[requiredValidationRule(t)]}
+        >
+          <InputNumber
+            disabled={index === deskReviewValidationDataSource.length - 1}
+            onChange={(value: any) => {
+              calculateSum('noOfFAR', value);
+            }}
+            size="large"
+          />
+        </Form.Item>
+      ),
     },
   ];
 
