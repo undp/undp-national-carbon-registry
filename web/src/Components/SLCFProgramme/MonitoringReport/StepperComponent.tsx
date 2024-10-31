@@ -12,8 +12,6 @@ import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import { version } from 'os';
-import { DocType } from '../../../Definitions/Enums/document.type';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 const StepperComponent = (props: any) => {
@@ -55,7 +53,7 @@ const StepperComponent = (props: any) => {
             duration: 4,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
-          // navigate('/programmeManagementSLCF/viewAll');
+          navigate(`/programmeManagementSLCF/view/${id}`);
         }
       } catch (error: any) {
         if (error && error.errors && error.errors.length > 0) {

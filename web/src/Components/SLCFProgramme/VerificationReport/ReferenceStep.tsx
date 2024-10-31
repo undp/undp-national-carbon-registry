@@ -7,8 +7,9 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import moment from 'moment';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const ReferenceStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -32,6 +33,7 @@ export const ReferenceStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
                 onValueChange({ reference: values });
                 next();
@@ -50,16 +52,16 @@ export const ReferenceStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={8} maxLength={6} />
+                      <TextArea rows={8} maxLength={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

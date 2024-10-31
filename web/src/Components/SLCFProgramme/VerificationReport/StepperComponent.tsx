@@ -10,13 +10,17 @@ import { ReferenceStep } from './ReferenceStep';
 import { AppendixStep } from './AppendixStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
+  const navigationLocation = useLocation();
+  const { mode } = navigationLocation.state || {};
+  const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
-  const [lastVerificationReport, setLastVerificationReport] = useState(null);
+
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id } = useParams();
@@ -37,38 +41,42 @@ const StepperComponent = (props: any) => {
       ...prevValues,
       ...newValues,
     }));
-    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
-    try {
-      const res = await post('national/verification/createVerificationReport', body);
-      if (res?.statusText === 'SUCCESS') {
-        message.open({
-          type: 'success',
-          content: t('verificationReport:createVerificationReportSuccess'),
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-        // navigate('/programmeManagementSLCF/viewAll');
-      }
-    } catch (error: any) {
-      if (error && error.errors && error.errors.length > 0) {
-        error.errors.forEach((err: any) => {
-          Object.keys(err).forEach((field) => {
-            console.log(`Error in ${field}: ${err[field].join(', ')}`);
-            message.open({
-              type: 'error',
-              content: err[field].join(', '),
-              duration: 4,
-              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+    if (FormMode.VIEW === mode) {
+      navigate('/programmeManagementSLCF/viewAll');
+    } else {
+      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      try {
+        const res = await post('national/verification/createVerificationReport', body);
+        if (res?.statusText === 'SUCCESS') {
+          message.open({
+            type: 'success',
+            content: t('verificationReport:createVerificationReportSuccess'),
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+          navigate(`/programmeManagementSLCF/view/${id}`);
+        }
+      } catch (error: any) {
+        if (error && error.errors && error.errors.length > 0) {
+          error.errors.forEach((err: any) => {
+            Object.keys(err).forEach((field) => {
+              console.log(`Error in ${field}: ${err[field].join(', ')}`);
+              message.open({
+                type: 'error',
+                content: err[field].join(', '),
+                duration: 4,
+                style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+              });
             });
           });
-        });
-      } else {
-        message.open({
-          type: 'error',
-          content: error?.message,
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
+        } else {
+          message.open({
+            type: 'error',
+            content: error?.message,
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
       }
     }
   };
@@ -102,33 +110,6 @@ const StepperComponent = (props: any) => {
       projectDetailsForm.setFieldsValue({
         projectName: data?.title,
       });
-
-      verificationFindingForm.setFieldsValue({
-        siteLocations: [
-          {
-            siteLocation: '',
-            commissioningDate: '',
-          },
-        ],
-        complianceList: [
-          {
-            dataParameter: '',
-            sourceOfData: '',
-            reportedValue: '',
-          },
-        ],
-        resolutionOfFindings: [
-          {
-            type: [],
-            findingNo: '',
-            refToMR: '',
-            description: '',
-            summary: '',
-            assesment: '',
-            conclusion: [],
-          },
-        ],
-      });
     } catch (error) {
       console.log('error');
     }
@@ -140,7 +121,95 @@ const StepperComponent = (props: any) => {
         programmeId: programId,
         docType: DocumentTypeEnum.VERIFICATION_REPORT,
       });
-      setLastVerificationReport(data);
+      if (data && data?.content) {
+        const content = data?.content;
+        projectDetailsForm.setFieldsValue({
+          ...content?.projectDetails,
+          completionDate: moment.unix(content?.projectDetails?.completionDate),
+          versionDate: moment.unix(content?.projectDetails?.versionDate),
+          monitoringPeriodStart: moment.unix(content?.projectDetails?.monitoringPeriodStart),
+          monitoringPeriodEnd: moment.unix(content?.projectDetails?.monitoringPeriodEnd),
+        });
+        introductionForm.setFieldsValue({
+          ...content?.introduction,
+          creditionPeriodStart: moment.unix(content?.introduction?.creditionPeriodStart),
+          creditionPeriodEnd: moment.unix(content?.introduction?.creditionPeriodEnd),
+          periodVerifiedStart: moment.unix(content?.introduction?.periodVerifiedStart),
+          periodVerifiedEnd: moment.unix(content?.introduction?.periodVerifiedEnd),
+        });
+        methodologyForm.setFieldsValue({
+          ...content?.methodology,
+        });
+        verificationFindingForm.setFieldsValue({
+          ...content?.verificationFinding,
+          siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
+            return {
+              ...val,
+              commissioningDate: moment.unix(val?.commissioningDate),
+            };
+          }),
+        });
+
+        verificationOpinionForm.setFieldsValue({
+          ...content?.verificationOpinion,
+          dateOfSignature1: moment.unix(content?.verificationOpinion?.dateOfSignature1),
+          dateOfSignature2: moment.unix(content?.verificationOpinion?.dateOfSignature2),
+        });
+
+        referenceForm.setFieldsValue({
+          ...content?.reference,
+        });
+
+        appendixForm.setFieldsValue({
+          ...content?.annexures,
+        });
+      } else {
+        methodologyForm.setFieldsValue({
+          verificationTeamList: [
+            {
+              name: '',
+              company: '',
+              function: [],
+              taskPerformed: [],
+            },
+          ],
+          inspectionsList: [
+            {
+              name: '',
+              designation: '',
+              organizationEntity: '',
+              method: '',
+              mainTopics: '',
+            },
+          ],
+        });
+        verificationFindingForm.setFieldsValue({
+          siteLocations: [
+            {
+              siteLocation: '',
+              commissioningDate: '',
+            },
+          ],
+          complianceList: [
+            {
+              dataParameter: '',
+              sourceOfData: '',
+              reportedValue: '',
+            },
+          ],
+          resolutionOfFindings: [
+            {
+              type: [],
+              findingNo: '',
+              refToMR: '',
+              description: '',
+              summary: '',
+              assesment: '',
+              conclusion: [],
+            },
+          ],
+        });
+      }
     } catch (error) {
       console.log('error');
     }
@@ -163,33 +232,11 @@ const StepperComponent = (props: any) => {
     }
   };
 
-  const loadCMAForm = async () => {
-    try {
-      const { data } = await post('national/project/project');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadMonitoringReport = async () => {
-    try {
-      const { data } = await post('national/monitoring/monitoring');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     getLatestVerificationReport(id);
     getProjectById(id);
   }, []);
 
-  useEffect(() => {
-    // loadProjectDetails();
-    // loadCMAForm();
-  }, []);
   const steps = [
     {
       title: (
@@ -204,6 +251,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={projectDetailsForm}
+          formMode={mode}
           next={next}
           countries={countries}
           onValueChange={onValueChange}
@@ -223,6 +271,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={introductionForm}
+          formMode={mode}
           next={next}
           prev={prev}
           countries={countries}
@@ -243,6 +292,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={methodologyForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -262,6 +312,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={verificationFindingForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -281,6 +332,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={verificationOpinionForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -300,6 +352,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={referenceForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -319,6 +372,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={appendixForm}
+          formMode={mode}
           prev={prev}
           onFinish={onFinish}
         />

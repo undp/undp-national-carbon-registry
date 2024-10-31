@@ -215,7 +215,7 @@ export class VerificationService {
     verificationReportDocument.type = DocumentTypeEnum.VERIFICATION_REPORT;
     verificationReportDocument.createdTime = new Date().getTime();
     verificationReportDocument.updatedTime = new Date().getTime();
-    verificationReportDocument.content = verificationReportDto.content;
+    verificationReportDocument.content = JSON.parse(verificationReportDto.content);
 
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequest = await this.verificationRequestRepository.findOne({
