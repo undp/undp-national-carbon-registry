@@ -17,8 +17,10 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import GetLocationMapComponent from '../../Maps/GetLocationMapComponent';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const ProjectActivityStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
+    props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -131,6 +133,7 @@ export const ProjectActivityStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
                 values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
@@ -178,6 +181,7 @@ export const ProjectActivityStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_monitoringObjectivePlaceholder')}`}
                       />
@@ -221,6 +225,7 @@ export const ProjectActivityStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_implementationPlaceholder')}`}
                       />
@@ -236,6 +241,7 @@ export const ProjectActivityStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={6}
                         placeholder={`${t('monitoringReport:pa_scopeAndTypePlaceholder')}`}
                       />
@@ -321,7 +327,7 @@ export const ProjectActivityStep = (props: any) => {
                             ]}
                           >
                             <PhoneInput
-                              // placeholder={t('monitoringReport:telephone')}
+                              disabled={FormMode.VIEW === formMode}
                               international
                               value={formatPhoneNumberIntl(contactNoInput)}
                               defaultCountry="LK"
@@ -375,7 +381,7 @@ export const ProjectActivityStep = (props: any) => {
                             ]}
                           >
                             <PhoneInput
-                              // placeholder={t('monitoringReport:telephone')}
+                              disabled={FormMode.VIEW === formMode}
                               international
                               value={formatPhoneNumberIntl(contactNoInput)}
                               defaultCountry="LK"
@@ -448,7 +454,7 @@ export const ProjectActivityStep = (props: any) => {
                             },
                           ]}
                         >
-                          <TextArea rows={4} />
+                          <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -529,7 +535,7 @@ export const ProjectActivityStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <TextArea rows={4} />
+                                        <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                                       </Form.Item>
 
                                       <Form.Item
@@ -584,7 +590,7 @@ export const ProjectActivityStep = (props: any) => {
                                         ]}
                                       >
                                         <PhoneInput
-                                          // placeholder={t('monitoringReport:telephone')}
+                                          disabled={FormMode.VIEW === formMode}
                                           international
                                           value={formatPhoneNumberIntl(contactNoInput)}
                                           defaultCountry="LK"
@@ -663,7 +669,7 @@ export const ProjectActivityStep = (props: any) => {
                                         },
                                       ]}
                                     >
-                                      <TextArea rows={4} />
+                                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                                     </Form.Item>
 
                                     <Form.Item
@@ -714,7 +720,7 @@ export const ProjectActivityStep = (props: any) => {
                                       ]}
                                     >
                                       <PhoneInput
-                                        // placeholder={t('monitoringReport:telephone')}
+                                        disabled={FormMode.VIEW === formMode}
                                         international
                                         value={formatPhoneNumberIntl(contactNoInput)}
                                         defaultCountry="LK"
@@ -844,7 +850,7 @@ export const ProjectActivityStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={6} />
+                                    <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -1075,7 +1081,7 @@ export const ProjectActivityStep = (props: any) => {
                                 name={[name, 'location']}
                                 rules={[
                                   {
-                                    required: true,
+                                    required: false,
                                     message: `${t('monitoringReport:location')} ${t('isRequired')}`,
                                   },
                                 ]}
@@ -1239,7 +1245,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1258,6 +1264,7 @@ export const ProjectActivityStep = (props: any) => {
                       ]}
                     >
                       <TextArea
+                        disabled={FormMode.VIEW === formMode}
                         rows={6}
                         placeholder={`${t('monitoringReport:participationGhgProgramsPlaceholder')}`}
                       />
@@ -1276,7 +1283,7 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -1294,16 +1301,16 @@ export const ProjectActivityStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

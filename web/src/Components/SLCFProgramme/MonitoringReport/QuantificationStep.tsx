@@ -7,8 +7,9 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import moment from 'moment';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const QualificationStep = (props: any) => {
-  const { useLocation, translator, current, form, next, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -120,21 +121,8 @@ export const QualificationStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                values?.emissionReductionsRemovalsList?.unshift({
-                  startDate: values.startDate,
-                  endDate: values.endDate,
-                  baselineEmissions: values.baselineEmissions,
-                  projectEmissions: values.projectEmissions,
-                  leakageEmissions: values.leakageEmissions,
-                  ghgEmissions: values.ghgEmissions,
-                });
-                delete values.startDate;
-                delete values.endDate;
-                delete values.baselineEmissions;
-                delete values.projectEmissions;
-                delete values.leakageEmissions;
-                delete values.ghgEmissions;
                 values?.emissionReductionsRemovalsList?.forEach((val: any) => {
                   val.startDate = moment(values?.startDate).startOf('day').unix();
                   val.endDate = moment(values?.endDate).startOf('day').unix();
@@ -169,7 +157,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -226,7 +214,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <Form.Item
@@ -239,7 +227,7 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
                     <>
@@ -261,7 +249,7 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} />
+                              <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                             </Form.Item>
                           </div>
                         </Col>
@@ -694,16 +682,16 @@ export const QualificationStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={4} />
+                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

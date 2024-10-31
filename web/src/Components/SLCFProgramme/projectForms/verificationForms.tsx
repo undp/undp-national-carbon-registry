@@ -27,6 +27,7 @@ import {
   linkDocVisible,
 } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export interface VerificationFormsProps {
   data: any;

@@ -10,17 +10,21 @@ import { QualificationStep } from './QuantificationStep';
 import { AnnexuresStep } from './AnnexuresStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { version } from 'os';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 const StepperComponent = (props: any) => {
+  const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id } = useParams();
+  const navigationLocation = useLocation();
+  const { mode } = navigationLocation.state || {};
   const t = translator.t;
   const reportVersion = process.env.MONITORING_REPORT_VERSION
     ? process.env.MONITORING_REPORT_VERSION
@@ -38,38 +42,42 @@ const StepperComponent = (props: any) => {
       ...prevValues,
       ...newValues,
     }));
-    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
-    try {
-      const res = await post('national/verification/createMonitoringReport', body);
-      if (res?.statusText === 'SUCCESS') {
-        message.open({
-          type: 'success',
-          content: t('monitoringReport:uploadMonitoringReportSuccess'),
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-        // navigate('/programmeManagementSLCF/viewAll');
-      }
-    } catch (error: any) {
-      if (error && error.errors && error.errors.length > 0) {
-        error.errors.forEach((err: any) => {
-          Object.keys(err).forEach((field) => {
-            console.log(`Error in ${field}: ${err[field].join(', ')}`);
-            message.open({
-              type: 'error',
-              content: err[field].join(', '),
-              duration: 4,
-              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+    if (FormMode.VIEW === mode) {
+      navigate('/programmeManagementSLCF/viewAll');
+    } else {
+      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      try {
+        const res = await post('national/verification/createMonitoringReport', body);
+        if (res?.statusText === 'SUCCESS') {
+          message.open({
+            type: 'success',
+            content: t('monitoringReport:uploadMonitoringReportSuccess'),
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+          // navigate('/programmeManagementSLCF/viewAll');
+        }
+      } catch (error: any) {
+        if (error && error.errors && error.errors.length > 0) {
+          error.errors.forEach((err: any) => {
+            Object.keys(err).forEach((field) => {
+              console.log(`Error in ${field}: ${err[field].join(', ')}`);
+              message.open({
+                type: 'error',
+                content: err[field].join(', '),
+                duration: 4,
+                style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+              });
             });
           });
-        });
-      } else {
-        message.open({
-          type: 'error',
-          content: error?.message,
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
+        } else {
+          message.open({
+            type: 'error',
+            content: error?.message,
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
       }
     }
   };
@@ -217,6 +225,18 @@ const StepperComponent = (props: any) => {
             },
           ],
         });
+        qualificationForm.setFieldsValue({
+          emissionReductionsRemovalsList: [
+            {
+              startDate: '',
+              endDate: '',
+              baselineEmissions: 0,
+              projectEmissions: 0,
+              leakageEmissions: 0,
+              ghgEmissions: 0,
+            },
+          ],
+        });
       }
     } catch (error) {
       console.log('error');
@@ -245,6 +265,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={projectDetailsForm}
+          formMode={mode}
           next={next}
           countries={countries}
           onValueChange={onValueChange}
@@ -264,6 +285,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={projectActivityForm}
+          formMode={mode}
           next={next}
           prev={prev}
           countries={countries}
@@ -284,6 +306,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={implementationStatusForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -303,6 +326,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={safeguardsForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -322,6 +346,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={dataAndParametersForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -341,6 +366,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={qualificationForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -360,6 +386,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={annexuresForm}
+          formMode={mode}
           prev={prev}
           onFinish={onFinish}
         />

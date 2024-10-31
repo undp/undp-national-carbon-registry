@@ -6,8 +6,9 @@ import { UploadOutlined } from '@ant-design/icons';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const AnnexuresStep = (props: any) => {
-  const { useLocation, translator, current, form, prev, onFinish } = props;
+  const { useLocation, translator, current, form, formMode, prev, onFinish } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -30,6 +31,7 @@ export const AnnexuresStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
                 values.optionalDocuments = await (async function () {
                   const base64Docs: string[] = [];
@@ -60,7 +62,7 @@ export const AnnexuresStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:q_documentUpload')}
@@ -109,10 +111,10 @@ export const AnnexuresStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Done
                 </Button>
               </Row>
