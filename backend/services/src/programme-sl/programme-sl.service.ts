@@ -138,42 +138,17 @@ export class ProgrammeSlService {
     return savedProgramme;
   }
 
-  async createCMA(cmaDto: CMADto, user: User): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+  async approveINF(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programmeSl.notProjectParticipant", []),
-        HttpStatus.BAD_REQUEST
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
       );
     }
 
-    if (user.companyId != cmaDto.companyId) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programmeSl.cannotCreateCMAForOtherProjectParticipants",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
 
-    const programme = await this.programmeLedgerService.getProgrammeSlById(cmaDto.programmeId);
-
-    if (
-      !(
-        programme?.projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
-        programme?.projectProposalStage === ProjectProposalStage.REJECTED_CMA
-      )
-    ) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "programmeSl.programmeIsNotInSuitableStageToProceed",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const companyId = user.companyId;
+    const companyId = programme.companyId;
 
     const projectCompany = await this.companyService.findByCompanyId(companyId);
 
@@ -184,105 +159,79 @@ export class ProgrammeSlService {
       );
     }
 
-    if (
-      cmaDto.content.projectActivity.additionalDocuments &&
-      cmaDto.content.projectActivity.additionalDocuments.length > 0
-    ) {
-      const docUrls = [];
-      for (const doc of cmaDto.content.projectActivity.additionalDocuments) {
-        let docUrl;
-
-        if (this.isValidHttpUrl(doc)) {
-          docUrl = doc;
-        } else {
-          docUrl = await this.uploadDocument(
-            DocType.CMA_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-            cmaDto.programmeId,
-            doc
-          );
-        }
-        docUrls.push(docUrl);
-      }
-      cmaDto.content.projectActivity.additionalDocuments = docUrls;
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_INF) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-    if (cmaDto.content.projectActivity.locationsOfProjectActivity.length > 0) {
-      for (const location of cmaDto.content.projectActivity.locationsOfProjectActivity) {
-        if (location.additionalDocuments && location.additionalDocuments.length > 0) {
-          const docUrls = [];
-          for (const doc of location.additionalDocuments) {
-            let docUrl;
-
-            if (this.isValidHttpUrl(doc)) {
-              docUrl = doc;
-            } else {
-              docUrl = await this.uploadDocument(
-                DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-                cmaDto.programmeId,
-                doc
-              );
-            }
-            docUrls.push(docUrl);
-          }
-
-          location.additionalDocuments = docUrls;
-        }
-      }
-    }
-
-    if (
-      cmaDto.content.appendix.additionalDocuments &&
-      cmaDto.content.appendix.additionalDocuments.length > 0
-    ) {
-      const docUrls = [];
-      for (const doc of cmaDto.content.appendix.additionalDocuments) {
-        let docUrl;
-
-        if (this.isValidHttpUrl(doc)) {
-          docUrl = doc;
-        } else {
-          docUrl = await this.uploadDocument(
-            DocType.CMA_APPENDIX_ADDITIONAL_DOCUMENT,
-            cmaDto.programmeId,
-            doc
-          );
-        }
-        docUrls.push(docUrl);
-      }
-      cmaDto.content.appendix.additionalDocuments = docUrls;
-    }
-
-    const cmaDoc = new DocumentEntity();
-    cmaDoc.content = JSON.stringify(cmaDto.content);
-    cmaDoc.programmeId = cmaDto.programmeId;
-    cmaDoc.companyId = user.companyId;
-    cmaDoc.userId = user.id;
-    cmaDoc.type = DocumentTypeEnum.CMA;
-
-    const lastVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, cmaDto.programmeId);
-    cmaDoc.version = lastVersion + 1;
-    cmaDoc.status = DocumentStatus.PENDING;
-    cmaDoc.createdTime = new Date().getTime();
-    cmaDoc.updatedTime = cmaDoc.createdTime;
-
-    await this.documentRepo.insert(cmaDoc);
-
-    //updating proposal stage in programme
     const updateProgrammeSlProposalStage = {
-      programmeId: cmaDto.programmeId,
-      txType: TxType.CREATE_CMA,
+      programmeId: programmeId,
+      txType: TxType.APPROVE_INF,
     };
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
-
-    await this.emailHelperService.sendEmailToSLCFAdmins(
-      EmailTemplates.CMA_CREATE,
+    //send email to Project Participant
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.PROGRAMME_SL_APPROVED,
       null,
-      cmaDto.programmeId,
+      programmeId,
       companyId
     );
 
-    return new DataResponseDto(HttpStatus.OK, cmaDoc);
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async rejectINF(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_INF) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_INF,
+    };
+
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    //send email to Project Participant
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.PROGRAMME_SL_REJECTED,
+      null,
+      programmeId,
+      companyId
+    );
+    return new DataResponseDto(HttpStatus.OK, response);
   }
 
   async createCostQuotation(
@@ -551,7 +500,389 @@ export class ProgrammeSlService {
     };
     await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
+    //send email to Project Participant
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.PROJECT_PROPOSAL_SUBMITTED,
+      null,
+      validationAgreementDto.programmeId,
+      companyId
+    );
+
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
+  }
+
+  async approveProposal(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.APPROVE_PROPOSAL,
+    };
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    //updating cost quotation document status
+    const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.COST_QUOTATION,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.COST_QUOTATION,
+          version: lastCostQuotationDocVersion,
+        },
+        {
+          status: DocumentStatus.ACCEPTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //updating proposal document status
+    const lastProposalDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.PROJECT_PROPOSAL,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.PROJECT_PROPOSAL,
+          version: lastProposalDocVersion,
+        },
+        {
+          status: DocumentStatus.ACCEPTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //updating agreement document status
+    const lastAgreementDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_AGREEMENT,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.VALIDATION_AGREEMENT,
+          version: lastAgreementDocVersion,
+        },
+        {
+          status: DocumentStatus.ACCEPTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //sending email to SLCF Admins
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.PROJECT_PROPOSAL_ACCEPTED,
+      null,
+      programmeId,
+      companyId
+    );
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async rejectProposal(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_PROPOSAL,
+    };
+
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    //updating cost quotation document status
+    const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.COST_QUOTATION,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.COST_QUOTATION,
+          version: lastCostQuotationDocVersion,
+        },
+        {
+          status: DocumentStatus.REJECTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //updating proposal document status
+    const lastProposalDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.PROJECT_PROPOSAL,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.PROJECT_PROPOSAL,
+          version: lastProposalDocVersion,
+        },
+        {
+          status: DocumentStatus.REJECTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //updating agreement document status
+    const lastAgreementDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_AGREEMENT,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.VALIDATION_AGREEMENT,
+          version: lastAgreementDocVersion,
+        },
+        {
+          status: DocumentStatus.REJECTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //sending email to SLCF Admins
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.PROJECT_PROPOSAL_REJECTED,
+      null,
+      programmeId,
+      companyId
+    );
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async createCMA(cmaDto: CMADto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notProjectParticipant", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (user.companyId != cmaDto.companyId) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.cannotCreateCMAForOtherProjectParticipants",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(cmaDto.programmeId);
+
+    if (
+      !(
+        programme?.projectProposalStage === ProjectProposalStage.ACCEPTED_PROPOSAL ||
+        programme?.projectProposalStage === ProjectProposalStage.REJECTED_CMA
+      )
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const companyId = user.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (
+      cmaDto.content.projectActivity.additionalDocuments &&
+      cmaDto.content.projectActivity.additionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of cmaDto.content.projectActivity.additionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.CMA_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+            cmaDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      cmaDto.content.projectActivity.additionalDocuments = docUrls;
+    }
+
+    if (cmaDto.content.projectActivity.locationsOfProjectActivity.length > 0) {
+      for (const location of cmaDto.content.projectActivity.locationsOfProjectActivity) {
+        if (location.additionalDocuments && location.additionalDocuments.length > 0) {
+          const docUrls = [];
+          for (const doc of location.additionalDocuments) {
+            let docUrl;
+
+            if (this.isValidHttpUrl(doc)) {
+              docUrl = doc;
+            } else {
+              docUrl = await this.uploadDocument(
+                DocType.CMA_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+                cmaDto.programmeId,
+                doc
+              );
+            }
+            docUrls.push(docUrl);
+          }
+
+          location.additionalDocuments = docUrls;
+        }
+      }
+    }
+
+    if (
+      cmaDto.content.appendix.additionalDocuments &&
+      cmaDto.content.appendix.additionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of cmaDto.content.appendix.additionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.CMA_APPENDIX_ADDITIONAL_DOCUMENT,
+            cmaDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      cmaDto.content.appendix.additionalDocuments = docUrls;
+    }
+
+    const cmaDoc = new DocumentEntity();
+    cmaDoc.content = JSON.stringify(cmaDto.content);
+    cmaDoc.programmeId = cmaDto.programmeId;
+    cmaDoc.companyId = user.companyId;
+    cmaDoc.userId = user.id;
+    cmaDoc.type = DocumentTypeEnum.CMA;
+
+    const lastVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, cmaDto.programmeId);
+    cmaDoc.version = lastVersion + 1;
+    cmaDoc.status = DocumentStatus.PENDING;
+    cmaDoc.createdTime = new Date().getTime();
+    cmaDoc.updatedTime = cmaDoc.createdTime;
+
+    await this.documentRepo.insert(cmaDoc);
+
+    //updating proposal stage in programme
+    const updateProgrammeSlProposalStage = {
+      programmeId: cmaDto.programmeId,
+      txType: TxType.CREATE_CMA,
+    };
+
+    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.CMA_CREATE,
+      null,
+      cmaDto.programmeId,
+      companyId
+    );
+
+    return new DataResponseDto(HttpStatus.OK, cmaDoc);
   }
 
   async approveCMA(cmaAppoveDto: CMAApproveDto, user: User): Promise<DataResponseDto> {
@@ -645,7 +976,100 @@ export class ProgrammeSlService {
     };
     await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
+    //updating document status
+    const lastCMADocVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, programmeId);
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.CMA,
+          version: lastCMADocVersion,
+        },
+        {
+          status: DocumentStatus.ACCEPTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //sending email to SLCF Admins
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.CMA_APPROVED,
+      null,
+      programmeId,
+      companyId
+    );
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
+  }
+
+  async rejectCMA(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.SUBMITTED_CMA) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_CMA,
+    };
+
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    //updating document status
+    const lastCMADocVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, programmeId);
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.CMA,
+          version: lastCMADocVersion,
+        },
+        {
+          status: DocumentStatus.REJECTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //sending email to SLCF Admins
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.CMA_REJECTED,
+      null,
+      programmeId,
+      companyId
+    );
+    return new DataResponseDto(HttpStatus.OK, response);
   }
 
   async createValidationReport(
@@ -794,6 +1218,14 @@ export class ProgrammeSlService {
     };
     await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
+    //sendin email to Ex committee
+    await this.emailHelperService.sendEmailToExCom(
+      EmailTemplates.VALIDATION_SUBMITTED,
+      null,
+      validationReportDto.programmeId,
+      companyId
+    );
+
     return new DataResponseDto(HttpStatus.OK, validationReportDoc);
   }
 
@@ -843,47 +1275,123 @@ export class ProgrammeSlService {
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
-    return new DataResponseDto(HttpStatus.OK, response.data);
+    //update document status
+    const lastValidationDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_REPORT,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.VALIDATION_REPORT,
+          version: lastValidationDocVersion,
+        },
+        {
+          status: DocumentStatus.ACCEPTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //send email to SLCF and Project Participant
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.PROGRAMME_SL_AUTHORIZED,
+      null,
+      programmeId,
+      companyId
+    );
+
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      EmailTemplates.PROGRAMME_SL_AUTHORIZED,
+      null,
+      programmeId,
+      companyId
+    );
+
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async rejectValidation(programmeId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    const companyId = programme.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (programme?.projectProposalStage !== ProjectProposalStage.VALIDATION_PENDING) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProgrammeSlProposalStage = {
+      programmeId: programmeId,
+      txType: TxType.REJECT_VALIDATION,
+    };
+
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    //updating document status
+    const lastValidationDocVersion = await this.getLastDocumentVersion(
+      DocumentTypeEnum.VALIDATION_REPORT,
+      programmeId
+    );
+
+    await this.documentRepo
+      .update(
+        {
+          programmeId: programmeId,
+          type: DocumentTypeEnum.VALIDATION_REPORT,
+          version: lastValidationDocVersion,
+        },
+        {
+          status: DocumentStatus.REJECTED,
+          updatedTime: Date.now(),
+        }
+      )
+      .catch((err) => {
+        throw err;
+      });
+
+    //sending email to SLCF Admins
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.VALIDATION_REJECTED,
+      null,
+      programmeId,
+      companyId
+    );
+    return new DataResponseDto(HttpStatus.OK, response);
   }
 
   async updateProposalStage(
     updateProposalStageDto: UpdateProjectProposalStageDto,
     user: User
-  ): Promise<DataResponseDto> {
+  ): Promise<ProgrammeSl> {
     const programmeId = updateProposalStageDto.programmeId;
     const txType = updateProposalStageDto.txType;
     const data = updateProposalStageDto.data;
-    if (
-      txType == TxType.APPROVE_INF ||
-      txType == TxType.REJECT_INF ||
-      txType == TxType.CREATE_COST_QUOTATION ||
-      txType == TxType.CREATE_PROJECT_PROPOSAL ||
-      txType == TxType.CREATE_VALIDATION_AGREEMENT ||
-      txType == TxType.APPROVE_CMA ||
-      txType == TxType.REJECT_CMA ||
-      txType == TxType.CREATE_VALIDATION_REPORT
-    ) {
-      if (user.companyRole != CompanyRole.CLIMATE_FUND) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
-          HttpStatus.UNAUTHORIZED
-        );
-      }
-    } else if (txType == TxType.APPROVE_PROPOSAL || txType == TxType.REJECT_PROPOSAL) {
-      if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
-          HttpStatus.UNAUTHORIZED
-        );
-      }
-    } else if (txType == TxType.APPROVE_VALIDATION || txType == TxType.REJECT_VALIDATION) {
-      if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
-          HttpStatus.UNAUTHORIZED
-        );
-      }
-    }
 
     //updating proposal stage in programme
     const updatedProgramme = await this.programmeLedger.updateProgrammeSlProposalStage(
@@ -892,219 +1400,7 @@ export class ProgrammeSlService {
       data
     );
 
-    //updating document status
-    if (txType == TxType.APPROVE_PROPOSAL) {
-      const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.COST_QUOTATION,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.COST_QUOTATION,
-            version: lastCostQuotationDocVersion,
-          },
-          {
-            status: DocumentStatus.ACCEPTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-
-      const lastProposalDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.PROJECT_PROPOSAL,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.PROJECT_PROPOSAL,
-            version: lastProposalDocVersion,
-          },
-          {
-            status: DocumentStatus.ACCEPTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-
-      const lastAgreementDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.VALIDATION_AGREEMENT,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.VALIDATION_AGREEMENT,
-            version: lastAgreementDocVersion,
-          },
-          {
-            status: DocumentStatus.ACCEPTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    } else if (txType == TxType.REJECT_PROPOSAL) {
-      const lastCostQuotationDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.COST_QUOTATION,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.COST_QUOTATION,
-            version: lastCostQuotationDocVersion,
-          },
-          {
-            status: DocumentStatus.REJECTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-
-      const lastProposalDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.PROJECT_PROPOSAL,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.PROJECT_PROPOSAL,
-            version: lastProposalDocVersion,
-          },
-          {
-            status: DocumentStatus.REJECTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-
-      const lastAgreementDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.VALIDATION_AGREEMENT,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.VALIDATION_AGREEMENT,
-            version: lastAgreementDocVersion,
-          },
-          {
-            status: DocumentStatus.REJECTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    } else if (txType == TxType.APPROVE_CMA) {
-      const lastCMADocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.CMA,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.CMA,
-            version: lastCMADocVersion,
-          },
-          {
-            status: DocumentStatus.ACCEPTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    } else if (txType == TxType.REJECT_CMA) {
-      const lastCMADocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.CMA,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.CMA,
-            version: lastCMADocVersion,
-          },
-          {
-            status: DocumentStatus.REJECTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    } else if (txType == TxType.APPROVE_VALIDATION) {
-      const lastValidationDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.VALIDATION_REPORT,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.VALIDATION_REPORT,
-            version: lastValidationDocVersion,
-          },
-          {
-            status: DocumentStatus.ACCEPTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    } else if (txType == TxType.REJECT_VALIDATION) {
-      const lastValidationDocVersion = await this.getLastDocumentVersion(
-        DocumentTypeEnum.VALIDATION_REPORT,
-        programmeId
-      );
-
-      await this.documentRepo
-        .update(
-          {
-            programmeId: programmeId,
-            type: DocumentTypeEnum.VALIDATION_REPORT,
-            version: lastValidationDocVersion,
-          },
-          {
-            status: DocumentStatus.REJECTED,
-            updatedTime: Date.now(),
-          }
-        )
-        .catch((err) => {
-          throw err;
-        });
-    }
-    return new DataResponseDto(HttpStatus.OK, updatedProgramme);
+    return updatedProgramme;
   }
 
   async getDocs(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {

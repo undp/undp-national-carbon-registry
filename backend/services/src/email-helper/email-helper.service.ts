@@ -415,6 +415,7 @@ export class EmailHelperService {
     const users = await this.userService.getSLCFAdminAndManagerUsers();
     let programme: ProgrammeSl;
     let companyDetails: Company;
+
     if (programmeId) {
       programme = await this.programmeLedger.getProgrammeSlById(programmeId);
     }
@@ -429,19 +430,49 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
-          programmePageLink: hostAddress + `/programmeSlManagement/view/${programmeId}`,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
-
+      case "PROJECT_PROPOSAL_ACCEPTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "PROJECT_PROPOSAL_REJECTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
       case "CMA_CREATE":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
-          programmePageLink: hostAddress + `/cmaManagement/view/${programmeId}`,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
-
+      case "PROGRAMME_SL_AUTHORIZED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "VALIDATION_REJECTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
       case "CREDIT_TRANSFER_SL_REQUEST":
       case "CREDIT_RETIRE_SL_REQUEST":
       case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
@@ -467,6 +498,166 @@ export class EmailHelperService {
       //     programmePageLink: hostAddress + `/retirementManagement`,
       //   };
       //   break;
+
+      default:
+        break;
+    }
+
+    users.forEach(async (user: any) => {
+      templateData = {
+        ...templateData,
+        name: user.user_name,
+      };
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+
+      await this.asyncOperationsInterface.AddAction(action);
+    });
+  }
+
+  public async sendEmailToProjectParticipant(
+    template,
+    templateData: any,
+    programmeId?: string,
+    companyId?: number
+  ) {
+    if (this.isEmailDisabled) return;
+    const systemCountryName = this.configService.get("systemCountryName");
+    const hostAddress = this.configService.get("host");
+    const users = await this.userService.getOrganisationAdminAndManagerUsers(companyId);
+    let programme: ProgrammeSl;
+    let companyDetails: Company;
+
+    if (programmeId) {
+      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+    }
+
+    if (companyId) {
+      companyDetails = await this.companyService.findByCompanyId(companyId);
+    }
+
+    switch (template.id) {
+      case "PROGRAMME_SL_APPROVED":
+        templateData = {
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "PROGRAMME_SL_REJECTED":
+        templateData = {
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+
+      case "PROJECT_PROPOSAL_SUBMITTED":
+        templateData = {
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "CMA_APPROVED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "CMA_REJECTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "PROGRAMME_SL_AUTHORIZED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      default:
+        break;
+    }
+
+    users.forEach(async (user: any) => {
+      templateData = {
+        ...templateData,
+        name: user.user_name,
+      };
+      const action: AsyncAction = {
+        actionType: AsyncActionType.Email,
+        actionProps: {
+          emailType: template.id,
+          sender: user.user_email,
+          subject: this.helperService.getEmailTemplateMessage(
+            template["subject"],
+            templateData,
+            true
+          ),
+          emailBody: this.helperService.getEmailTemplateMessage(
+            template["html"],
+            templateData,
+            false
+          ),
+        },
+      };
+
+      await this.asyncOperationsInterface.AddAction(action);
+    });
+  }
+
+  public async sendEmailToExCom(
+    template,
+    templateData: any,
+    programmeId?: string,
+    companyId?: number
+  ) {
+    if (this.isEmailDisabled) return;
+    const systemCountryName = this.configService.get("systemCountryName");
+    const hostAddress = this.configService.get("host");
+    const users = await this.userService.getExComAdminAndManagerUsers();
+    let programme: ProgrammeSl;
+    let companyDetails: Company;
+    if (programmeId) {
+      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+    }
+
+    if (companyId) {
+      companyDetails = await this.companyService.findByCompanyId(companyId);
+    }
+
+    switch (template.id) {
+      case "VALIDATION_SUBMITTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
 
       default:
         break;

@@ -1154,6 +1154,24 @@ export class UserService {
     //return result.map((item) => {return item.user_email});
   }
 
+  async getExComAdminAndManagerUsers() {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin, :manager)", {
+        admin: Role.Admin,
+        manager: Role.Manager,
+      })
+      .andWhere("user.companyRole= :companyRole", {
+        companyRole: CompanyRole.EXECUTIVE_COMMITTEE,
+      })
+      .select(["user.name", "user.email"])
+      .getRawMany();
+
+    return result;
+
+    //return result.map((item) => {return item.user_email});
+  }
+
   async getGovAdminUsers() {
     const result = await this.userRepo
       .createQueryBuilder("user")
