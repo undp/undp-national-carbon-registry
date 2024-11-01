@@ -8,9 +8,20 @@ import PhoneInput, {
 
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const ProjectDetailsStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, onValueChange } = props;
+  const {
+    useLocation,
+    translator,
+    current,
+    form,
+    formMode,
+    next,
+    cancel,
+    countries,
+    onValueChange,
+  } = props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -31,6 +42,7 @@ export const ProjectDetailsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
                 values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').unix();
@@ -328,6 +340,7 @@ export const ProjectDetailsStep = (props: any) => {
                       ]}
                     >
                       <PhoneInput
+                        disabled={FormMode.VIEW === formMode}
                         placeholder={t('monitoringReport:pd_telephone')}
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
@@ -367,10 +380,10 @@ export const ProjectDetailsStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'}>
+                <Button danger size={'large'} onClick={cancel} disabled={false}>
                   Cancel
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

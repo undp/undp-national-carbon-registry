@@ -36,14 +36,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     taskPerformed: '',
   };
 
-  const [backgroundInvestigationDataSource, setBackgroundInvestigationDataSource] = useState([
-    emptyBackgroundInvestigationRow,
-  ]);
-
-  const [appointmentTeamMembersDataSource, setAppointmentTeamMembersDataSource] = useState([
-    emptyAppointmentTeamMembersDataSourceRow,
-  ]);
-
   const vmTypeOfFindings = [
     { label: 'CL', value: 'CL' },
     { label: 'CAR', value: 'CAR' },
@@ -55,270 +47,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     { label: t('validationReport:conclusion2'), value: 'CONCLUSION_2' },
     { label: t('validationReport:conclusion3'), value: 'CONCLUSION_3' },
     { label: t('validationReport:conclusion4'), value: 'CONCLUSION_4' },
-  ];
-
-  const removeAppointmentTeamMembers = (index: number) => {
-    setAppointmentTeamMembersDataSource((prevATM) => {
-      const newList = [...prevATM];
-      newList.splice(index, 1);
-      return newList;
-    });
-  };
-
-  const appointmentTeamMembersTableColumns: TableProps<any>['columns'] = [
-    {
-      title: t('validationReport:name'),
-      dataIndex: 'appointmentTeamMembersName',
-      key: 'appointmentTeamMembersName',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['teamMembers', index, 'name']} rules={[requiredValidationRule(t)]}>
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:company'),
-      dataIndex: 'appointmentTeamMembersCompany',
-      key: 'appointmentTeamMembersCompany',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['teamMembers', index, 'company']}
-          initialValue={record?.appointmentTeamMembersCompany}
-          rules={[requiredValidationRule(t)]}
-        >
-          <Input size="large" value={t('validationReport:sriLankaClimateFund')} disabled />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:function'),
-      dataIndex: 'appointmentTeamMembersFunction',
-      key: 'appointmentTeamMembersFunction',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['teamMembers', index, 'function']} rules={[requiredValidationRule(t)]}>
-          <Checkbox.Group style={{ display: 'flex' }}>
-            <Checkbox value={t('validationReport:tl')}>{t('validationReport:tl')}</Checkbox>
-            <Checkbox value={t('validationReport:te')}>{t('validationReport:te')}</Checkbox>
-            <Checkbox value={t('validationReport:tm')}>{t('validationReport:tm')}</Checkbox>
-            <Checkbox value={t('validationReport:itr')}>{t('validationReport:itr')}</Checkbox>
-          </Checkbox.Group>
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:taskPerformed'),
-      dataIndex: 'appointmentTeamMembersTaskPerformed',
-      key: 'appointmentTeamMembersTaskPerformed',
-      render: (_: any, record: any, index: number) => (
-        <>
-          <Form.Item
-            name={['teamMembers', index, 'taskPerformed']}
-            rules={[requiredValidationRule(t)]}
-          >
-            <Checkbox.Group style={{ display: 'flex' }}>
-              <Checkbox value={t('validationReport:dr')}>{t('validationReport:dr')}</Checkbox>
-              <Checkbox value={t('validationReport:sv')}>{t('validationReport:sv')}</Checkbox>
-              <Checkbox value={t('validationReport:ri')}>{t('validationReport:ri')}</Checkbox>
-              <Checkbox value={t('validationReport:tr')}>{t('validationReport:tr')}</Checkbox>
-            </Checkbox.Group>
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      title: '',
-      dataIndex: 'appointmentTeamMembersDelete',
-      key: 'appointmentTeamMembersDelete',
-      render: (_: any, record: any, index: number) => (
-        <>
-          {appointmentTeamMembersDataSource.length > 1 ? (
-            <Button
-              // type="dashed"
-              onClick={() => {
-                removeAppointmentTeamMembers(index);
-              }}
-              size="middle"
-              className="addMinusBtn"
-              // block
-              icon={<MinusOutlined />}
-            ></Button>
-          ) : (
-            <span></span>
-          )}
-        </>
-      ),
-    },
-  ];
-
-  const removeBackgroundInvestigation = (index: number) => {
-    setBackgroundInvestigationDataSource((prevATM) => {
-      const newList = [...prevATM];
-      newList.splice(index, 1);
-      return newList;
-    });
-  };
-
-  const backgroundInvestigationTableColumns: TableProps<any>['columns'] = [
-    {
-      title: t('validationReport:name'),
-      dataIndex: 'backgroundInvestigationName',
-      key: 'backgroundInvestigationName',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={['followupInterviews', index, 'name']} rules={[requiredValidationRule(t)]}>
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:designation'),
-      dataIndex: 'backgroundInvestigationDesignation',
-      key: 'backgroundInvestigationDesignation',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['followupInterviews', index, 'designation']}
-          rules={[requiredValidationRule(t)]}
-        >
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:OganizationEntity'),
-      dataIndex: 'backgroundInvestigationOganizationEntity',
-      key: 'backgroundInvestigationOganizationEntity',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['followupInterviews', index, 'organization']}
-          rules={[requiredValidationRule(t)]}
-        >
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:methodTelephone'),
-      dataIndex: 'backgroundInvestigationMethodTelephone',
-      key: 'backgroundInvestigationMethodTelephone',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['followupInterviews', index, 'method']}
-          rules={[requiredValidationRule(t)]}
-        >
-          <Input size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:mainTopicCovered'),
-      dataIndex: 'backgroundInvestigationMainTopicCovered',
-      key: 'backgroundInvestigationMainTopicCovered',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          name={['followupInterviews', index, 'mainTopicsCovered']}
-          rules={[requiredValidationRule(t)]}
-        >
-          <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
-        </Form.Item>
-      ),
-    },
-    {
-      title: '',
-      dataIndex: 'backgroundInvestigationRemove',
-      key: 'backgroundInvestigationRemove',
-      render: (_: any, record: any, index: number) => {
-        return backgroundInvestigationDataSource.length > 1 ? (
-          <Button
-            // type="dashed"
-            onClick={() => {
-              removeBackgroundInvestigation(index);
-            }}
-            size="middle"
-            className="addMinusBtn"
-            // block
-            icon={<MinusOutlined />}
-          ></Button>
-        ) : (
-          <span></span>
-        );
-      },
-    },
-  ];
-
-  const deskReviewValidationTableColumns: TableProps<any>['columns'] = [
-    {
-      title: t('validationReport:validationCategory'),
-      dataIndex: 'validationCategory',
-      key: 'validationCategory',
-      className: 'deskReviewCategory',
-      onCell: (_, index) => {
-        if (index === 0) {
-          return { rowSpan: 7 };
-        }
-        if (index && index > 0 && index < 7) {
-          return { rowSpan: 0 };
-        }
-
-        if (index === 7) {
-          return { rowSpan: 7 };
-        }
-        if (index && index > 7 && index < 14) {
-          return { rowSpan: 0 };
-        }
-
-        return {};
-      },
-    },
-    {
-      title: t('validationReport:specificSection'),
-      dataIndex: 'specificSection',
-      key: 'specificSection',
-      render: (_: any, record: any, index: number) =>
-        record.sectionInput ? (
-          <Form.Item name={record.specificSection} rules={[requiredValidationRule(t)]}>
-            <Input size="large" />
-          </Form.Item>
-        ) : (
-          record?.specificSection.map((val: any) => {
-            return <p>{val}</p>;
-          })
-        ),
-    },
-    {
-      title: t('validationReport:noOfCars'),
-      dataIndex: 'noOfCars',
-      key: 'noOfCars',
-      render: (_: any, record: any, index: number) => (
-        <>
-          <Form.Item name={record.noOfCars} rules={[requiredValidationRule(t)]}>
-            <InputNumber size="large" />
-          </Form.Item>
-        </>
-      ),
-    },
-    {
-      title: t('validationReport:noOfCL'),
-      dataIndex: 'noOfCL',
-      key: 'noOfCL',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item name={record.noOfCL} rules={[requiredValidationRule(t)]}>
-          <InputNumber size="large" />
-        </Form.Item>
-      ),
-    },
-    {
-      title: t('validationReport:noOfFAR'),
-      dataIndex: 'noOfFAR',
-      key: 'noOfFAR',
-      render: (_: any, record: any, index: number) => (
-        <Form.Item
-          // name={['validationCategory', index, 'noOfFAR']}
-          name={record.noOfFAR}
-          rules={[requiredValidationRule(t)]}
-        >
-          <InputNumber size="large" />
-        </Form.Item>
-      ),
-    },
   ];
 
   const deskReviewValidationDataSource = [
@@ -491,6 +219,123 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
     },
   ];
 
+  const calculateSum = (type: string, value: any) => {
+    if (value && !isNaN(value)) {
+      const total = deskReviewValidationDataSource
+        .slice(0, -1)
+        .reduce((currentVal: number, source: any) => {
+          const formValue = form.getFieldValue(source[type]);
+          if (!isNaN(formValue)) {
+            return currentVal + formValue;
+          }
+          return currentVal;
+        }, 0);
+
+      if (type === 'noOfCars') {
+        form.setFieldValue('sumNoOfCAR', total);
+      } else if (type === 'noOfCL') {
+        form.setFieldValue('sumNoOfCL', total);
+      } else if (type === 'noOfFAR') {
+        form.setFieldValue('sumNoOfFAR', total);
+      }
+    }
+  };
+
+  const deskReviewValidationTableColumns: TableProps<any>['columns'] = [
+    {
+      title: t('validationReport:validationCategory'),
+      dataIndex: 'validationCategory',
+      key: 'validationCategory',
+      className: 'deskReviewCategory',
+      onCell: (_, index) => {
+        if (index === 0) {
+          return { rowSpan: 7 };
+        }
+        if (index && index > 0 && index < 7) {
+          return { rowSpan: 0 };
+        }
+
+        if (index === 7) {
+          return { rowSpan: 7 };
+        }
+        if (index && index > 7 && index < 14) {
+          return { rowSpan: 0 };
+        }
+
+        return {};
+      },
+    },
+    {
+      title: t('validationReport:specificSection'),
+      dataIndex: 'specificSection',
+      key: 'specificSection',
+      render: (_: any, record: any, index: number) =>
+        record.sectionInput ? (
+          <Form.Item name={record.specificSection} rules={[requiredValidationRule(t)]}>
+            <Input size="large" />
+          </Form.Item>
+        ) : (
+          record?.specificSection.map((val: any) => {
+            return <p>{val}</p>;
+          })
+        ),
+    },
+    {
+      title: t('validationReport:noOfCars'),
+      dataIndex: 'noOfCars',
+      key: 'noOfCars',
+      render: (_: any, record: any, index: number) => (
+        <>
+          <Form.Item name={record.noOfCars} rules={[requiredValidationRule(t)]}>
+            <InputNumber
+              disabled={index === deskReviewValidationDataSource.length - 1}
+              onChange={(value: any) => {
+                calculateSum('noOfCars', value);
+              }}
+              size="large"
+            />
+          </Form.Item>
+        </>
+      ),
+    },
+    {
+      title: t('validationReport:noOfCL'),
+      dataIndex: 'noOfCL',
+      key: 'noOfCL',
+      render: (_: any, record: any, index: number) => (
+        <Form.Item name={record.noOfCL} rules={[requiredValidationRule(t)]}>
+          <InputNumber
+            onChange={(value: any) => {
+              calculateSum('noOfCL', value);
+            }}
+            disabled={index === deskReviewValidationDataSource.length - 1}
+            size="large"
+          />
+        </Form.Item>
+      ),
+    },
+    {
+      title: t('validationReport:noOfFAR'),
+      dataIndex: 'noOfFAR',
+      key: 'noOfFAR',
+      render: (_: any, record: any, index: number) => (
+        <Form.Item
+          // name={['validationCategory', index, 'noOfFAR']}
+          name={record.noOfFAR}
+          rules={[requiredValidationRule(t)]}
+        >
+          <InputNumber
+            disabled={index === deskReviewValidationDataSource.length - 1}
+            onChange={(value: any) => {
+              calculateSum('noOfFAR', value);
+            }}
+            size="large"
+          />
+        </Form.Item>
+      ),
+    },
+  ];
+
   const onFinish = async (values: any) => {
     // const validationMethodologyFormValues: any = {
     //   appointmentTeamMembers: values?.vmAppointmentTeamMembers,
@@ -601,7 +446,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               disabled={FormMode.VIEW === formMode}
             >
               <h4 className="custom-required">3.1 {t('validationReport:methodandCriteria')}</h4>
-              <p>{t('validationReport:methodValidationSteps')}</p>
+              <p>{t('validationReport:methodValidationSteps')}:</p>
               <ul>
                 <li>{t('validationReport:methodValidationSteps1')}</li>
                 <li>{t('validationReport:methodValidationSteps2')}</li>
@@ -619,38 +464,123 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               <h4 className="custom-required">
                 3.1.1 {t('validationReport:appointmentOfTeamMembers')}
               </h4>
-              <Row>
-                <Col span={24}>
-                  <Table
+              {/* <Table
                     pagination={false}
                     dataSource={appointmentTeamMembersDataSource}
                     columns={appointmentTeamMembersTableColumns}
-                  ></Table>
+                  ></Table> */}
+
+              <Row className="table-header" justify={'space-between'} gutter={[16, 4]}>
+                <Col md={4} xl={4}>
+                  {t('validationReport:name')}
                 </Col>
-                <Col
-                  span={24}
-                  style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}
-                >
-                  <Button
-                    onClick={() => {
-                      // setAppointmentTeamMembersDataSource((prevATM) => {
-                      //   return [...prevATM, emptyAppointmentTeamMembersDataSourceRow];
-                      // });
-                      const existing = form.getFieldValue('teamMembers');
-                      form.setFieldValue('teamMembers', [
-                        ...existing,
-                        emptyAppointmentTeamMembersDataSourceRow,
-                      ]);
-                      setAppointmentTeamMembersDataSource((prevATM) => {
-                        return [...prevATM, emptyAppointmentTeamMembersDataSourceRow];
-                      });
-                    }}
-                    size="large"
-                    className="addMinusBtn"
-                    icon={<PlusOutlined />}
-                  ></Button>
+                <Col md={5} xl={5}>
+                  {t('validationReport:company')}
                 </Col>
+                <Col md={6} xl={6}>
+                  {t('validationReport:function')}
+                </Col>
+                <Col md={6} xl={6}>
+                  {t('validationReport:taskPerformed')}
+                </Col>
+                <Col md={3} xl={3}></Col>
               </Row>
+
+              <Form.List name="teamMembers">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }, index: number) => (
+                      <>
+                        <Row justify={'space-between'} gutter={[16, 4]}>
+                          <Col md={4} xl={4} className="col1">
+                            <Form.Item name={[name, 'name']} rules={[requiredValidationRule(t)]}>
+                              <Input size="large" />
+                            </Form.Item>
+                          </Col>
+                          <Col md={5} xl={5}>
+                            <Form.Item name={[name, 'company']} rules={[requiredValidationRule(t)]}>
+                              <Input
+                                size="large"
+                                value={t('validationReport:sriLankaClimateFund')}
+                                disabled
+                              />
+                            </Form.Item>
+                          </Col>
+                          <Col md={6} xl={6}>
+                            <Form.Item
+                              name={[name, 'function']}
+                              rules={[requiredValidationRule(t)]}
+                            >
+                              <Checkbox.Group style={{ display: 'flex' }}>
+                                <Checkbox value={t('validationReport:tl')}>
+                                  {t('validationReport:tl')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:te')}>
+                                  {t('validationReport:te')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:tm')}>
+                                  {t('validationReport:tm')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:itr')}>
+                                  {t('validationReport:itr')}
+                                </Checkbox>
+                              </Checkbox.Group>
+                            </Form.Item>
+                          </Col>
+
+                          <Col md={6} xl={6}>
+                            <Form.Item
+                              name={[name, 'taskPerformed']}
+                              rules={[requiredValidationRule(t)]}
+                            >
+                              <Checkbox.Group style={{ display: 'flex' }}>
+                                <Checkbox value={t('validationReport:dr')}>
+                                  {t('validationReport:dr')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:sv')}>
+                                  {t('validationReport:sv')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:ri')}>
+                                  {t('validationReport:ri')}
+                                </Checkbox>
+                                <Checkbox value={t('validationReport:tr')}>
+                                  {t('validationReport:tr')}
+                                </Checkbox>
+                              </Checkbox.Group>
+                            </Form.Item>
+                          </Col>
+
+                          <Col md={3} xl={3} style={{ verticalAlign: 'top' }}>
+                            <Form.Item>
+                              {fields.length > 1 && (
+                                <Button
+                                  style={{ marginRight: 5 }}
+                                  onClick={() => {
+                                    remove(name);
+                                  }}
+                                  size="small"
+                                  className="addMinusBtn"
+                                  icon={<MinusOutlined />}
+                                ></Button>
+                              )}
+                              {index === fields.length - 1 && (
+                                <Button
+                                  onClick={() => {
+                                    add(emptyAppointmentTeamMembersDataSourceRow);
+                                  }}
+                                  size="middle"
+                                  className="addMinusBtn"
+                                  icon={<PlusOutlined />}
+                                ></Button>
+                              )}
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </>
+                    ))}
+                  </>
+                )}
+              </Form.List>
 
               <p style={{ marginTop: 5, marginBottom: 0 }}>
                 {t('validationReport:memberDescription1')}
@@ -679,7 +609,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                     <ul>
                       <li>{t('validationReport:deskReviewP1')}</li>
                       <li>{t('validationReport:deskReviewP2')}</li>
-                      <li>{t('validationReport:deskReviewP3')}</li>
                       <li>{t('validationReport:deskReviewP4')}</li>
                       <li>{t('validationReport:deskReviewP5')}</li>
                       <li>{t('validationReport:deskReviewP6')}</li>
@@ -704,40 +633,112 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   </Form.Item>
                 </Col>
 
-                <Col md={24} xl={24}>
-                  <Form.Item
-                    label={`3.1.5 ${t('validationReport:backgroundInvestigationAndFollowups')}`}
-                    rules={[requiredValidationRule(t)]}
-                  >
-                    <Row>
-                      <Col span={24}>
-                        <Table
-                          dataSource={backgroundInvestigationDataSource}
-                          columns={backgroundInvestigationTableColumns}
-                          pagination={false}
-                        ></Table>
-                      </Col>
-                      <Col
-                        span={24}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          marginTop: 10,
-                        }}
-                      >
-                        <Button
-                          onClick={() => {
-                            setBackgroundInvestigationDataSource((prevBI) => {
-                              return [...prevBI, emptyBackgroundInvestigationRow];
-                            });
-                          }}
-                          icon={<PlusOutlined />}
-                        >
-                          {/* {t('addRow')} */}
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Form.Item>
+                <Col>
+                  <h4 className="custom-required">{`3.1.5 ${t(
+                    'validationReport:backgroundInvestigationAndFollowups'
+                  )}`}</h4>
+                </Col>
+
+                <Col>
+                  <Row className="table-header" justify={'space-between'} gutter={[16, 4]}>
+                    <Col md={4} xl={4}>
+                      <div style={{ marginLeft: 5 }}></div>
+                      {t('validationReport:name')}
+                    </Col>
+                    <Col md={4} xl={4}>
+                      {t('validationReport:designation')}
+                    </Col>
+                    <Col md={4} xl={4}>
+                      {t('validationReport:oganizationEntity')}
+                    </Col>
+                    <Col md={4} xl={4}>
+                      {t('validationReport:methodTelephone')}
+                    </Col>
+                    <Col md={4} xl={4}>
+                      {t('validationReport:mainTopicCovered')}
+                    </Col>
+                    <Col md={3} xl={3}></Col>
+                  </Row>
+
+                  <Form.List name="followupInterviews">
+                    {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restField }, index: number) => (
+                          <>
+                            <Row justify={'space-between'} gutter={[16, 4]}>
+                              <Col md={4} xl={4} className="col1">
+                                <Form.Item
+                                  name={[name, 'name']}
+                                  rules={[requiredValidationRule(t)]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              </Col>
+                              <Col md={4} xl={4}>
+                                <Form.Item
+                                  name={[name, 'designation']}
+                                  rules={[requiredValidationRule(t)]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              </Col>
+                              <Col md={4} xl={4}>
+                                <Form.Item
+                                  name={[name, 'organization']}
+                                  rules={[requiredValidationRule(t)]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              </Col>
+
+                              <Col md={4} xl={4}>
+                                <Form.Item
+                                  name={[name, 'method']}
+                                  rules={[requiredValidationRule(t)]}
+                                >
+                                  <Input size="large" />
+                                </Form.Item>
+                              </Col>
+
+                              <Col md={4} xl={4}>
+                                <Form.Item
+                                  name={[name, 'mainTopicsCovered']}
+                                  rules={[requiredValidationRule(t)]}
+                                >
+                                  <TextArea disabled={FormMode.VIEW === formMode} rows={3} />
+                                </Form.Item>
+                              </Col>
+                              <Col md={3} xl={3}>
+                                <Form.Item>
+                                  {fields.length > 1 && (
+                                    <Button
+                                      style={{ marginRight: 5 }}
+                                      onClick={() => {
+                                        remove(name);
+                                      }}
+                                      size="small"
+                                      className="addMinusBtn"
+                                      icon={<MinusOutlined />}
+                                    ></Button>
+                                  )}
+                                  {index === fields.length - 1 && (
+                                    <Button
+                                      onClick={() => {
+                                        add();
+                                      }}
+                                      size="middle"
+                                      className="addMinusBtn"
+                                      icon={<PlusOutlined />}
+                                    ></Button>
+                                  )}
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          </>
+                        ))}
+                      </>
+                    )}
+                  </Form.List>
                 </Col>
 
                 <Col md={24} xl={24}>
@@ -745,13 +746,37 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                     label={`3.2 ${t('validationReport:definitionOfClarificationRequest')}`}
                     name="environmentImpact"
                   >
-                    <p>{t('validationReport:definitionOfClarificationRequest1')}</p>
-                    <p>{t('validationReport:definitionOfClarificationRequest2')}</p>
-                    <ul>
+                    {/* <p>{t('validationReport:definitionOfClarificationRequest1')}</p> */}
+                    <p style={{ marginBottom: 0 }}>
+                      <b>A Clarification Request (CL)</b> will be issued where information is
+                      insufficient, unclear or not transparent enough to establish whether a
+                      requirement is met.{' '}
+                    </p>
+                    <p style={{ marginBottom: 0 }}>
+                      <b>A Corrective Action Request (CAR)</b> will be issued where:{' '}
+                    </p>
+                    <ul style={{ marginBottom: 0 }}>
+                      <li>
+                        mistakes have been made in assumptions, application of the methodology or
+                        the project documentation which will have a direct influence on the project
+                        results,
+                      </li>
+                      <li>
+                        the requirements deemed relevant for validation of the project with certain
+                        characteristics have not been met or{' '}
+                      </li>
+                    </ul>
+                    <p>
+                      <b>A Forward Action Request (FAR)</b> will be issued when certain issues
+                      related to project implementation should be reviewed during the first
+                      verification.
+                    </p>
+                    {/* <p>{t('validationReport:definitionOfClarificationRequest2')}</p> */}
+                    {/* <ul>
                       <li>{t('validationReport:definitionOfClarificationRequest21')}</li>
                       <li>{t('validationReport:definitionOfClarificationRequest22')}</li>
                     </ul>
-                    <p>{t('validationReport:definitionOfClarificationRequest3')}</p>
+                    <p>{t('validationReport:definitionOfClarificationRequest3')}</p> */}
                   </Form.Item>
                 </Col>
                 <Col md={24} xl={24}>
@@ -779,11 +804,18 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               <div className="form-section">
                                 <Col md={24} xl={24}>
                                   <Row>
-                                    <Col md={3}>{t('validationReport:typeOfFindings')}</Col>
+                                    <Col
+                                      md={4}
+                                      style={{ marginTop: 3 }}
+                                      className="custom-required-only"
+                                    >
+                                      {t('validationReport:typeOfFindings')}
+                                    </Col>
                                     <Col md={12}>
                                       <Form.Item
                                         {...resolutionRestField}
                                         name={[resolutionName, 'typeOfFinding']}
+                                        rules={[requiredValidationRule(t)]}
                                       >
                                         <Radio.Group
                                           style={{ display: 'flex', justifyContent: 'start' }}
@@ -794,11 +826,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   </Row>
 
                                   <Row>
-                                    <Col md={3}>{t('validationReport:findingNo')}</Col>
+                                    <Col md={4} className="custom-required-only">
+                                      {t('validationReport:findingNo')}
+                                    </Col>
                                     <Col md={12}>
                                       <Form.Item
                                         {...resolutionRestField}
                                         name={[resolutionName, 'findingNo']}
+                                        rules={[requiredValidationRule(t)]}
                                       >
                                         <Input size="large" />
                                       </Form.Item>
@@ -806,11 +841,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   </Row>
 
                                   <Row>
-                                    <Col md={3}>{t('validationReport:refToCMA')}</Col>
+                                    <Col md={4} className="custom-required-only">
+                                      {t('validationReport:refToCMA')}
+                                    </Col>
                                     <Col md={12}>
                                       <Form.Item
                                         {...resolutionRestField}
                                         name={[resolutionName, 'rfToCMA']}
+                                        rules={[requiredValidationRule(t)]}
                                       >
                                         <Input size="large" />
                                       </Form.Item>
@@ -855,7 +893,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   <Form.Item
                                     {...resolutionRestField}
                                     label={`${t('validationReport:conclusion')}`}
-                                    rules={[requiredValidationRule(t)]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t('validationReport:conclusion')} ${t(
+                                          'isRequired'
+                                        )}`,
+                                      },
+                                    ]}
                                     name={[resolutionName, 'conclusion']}
                                   >
                                     <Radio.Group
@@ -901,7 +946,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 </Col>
               </Row>
 
-              <p>{t('validationReport:validationMethodologyTableTitle')}</p>
+              <p>{t('validationReport:validationMethodologyTableTitle')}:</p>
               <p>{t('validationReport:tableNote')}</p>
 
               <Table

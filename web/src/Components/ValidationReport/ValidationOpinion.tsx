@@ -92,7 +92,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationAgreement:required')}`,
+                          message: `${t('validationReport:signature')}  ${t('isRequired')}`,
                         },
                         {
                           validator: async (rule, file) => {
@@ -138,7 +138,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:name')}  ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -150,7 +150,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:designation')}  ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -162,7 +162,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:dateOfSignature')}  ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -185,7 +185,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationAgreement:required')}`,
+                          message: `${t('validationReport:signature')}  ${t('isRequired')}`,
                         },
                         {
                           validator: async (rule, file) => {
@@ -231,7 +231,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:name')}  ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -243,7 +243,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:designation')}  ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -255,7 +255,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t('validationReport:dateOfSignature')}  ${t('isRequired')}`,
                       },
                     ]}
                   >

@@ -1,12 +1,13 @@
-import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, Request, Get, Query } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { MonitoringReportDto } from "src/dto/monitoring.report.dto";
 import { VerificationReportDto } from "src/dto/verification.report.dto";
-import { CreditIssuanceCertificateDto } from "src/dto/credit.issuance.certificate.dto";
-import { IssueCreditsDto } from "src/dto/issue.credits.dto";
 import { VerifyReportDto } from "src/dto/verify.report.dto";
 import { VerificationService } from "src/verification/verification.service";
+import { PoliciesGuardEx } from "../../casl/policy.guard";
+import { Action } from "../../casl/action.enum";
+import { VerificationRequestEntity } from "../../entities/verification.request.entity";
 
 @ApiTags("Verification")
 @ApiBearerAuth()
@@ -36,6 +37,13 @@ export class VerificationController {
   @Post("verifyVerificationReport")
   verifyVerificationReport(@Body() verifyReportDto: VerifyReportDto, @Request() req) {
     return this.verificationService.verifyVerificationReport(verifyReportDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
+  @Get()
+  async queryCreditRetirementRequests(@Query("programmeId") programmeId: string, @Request() req) {
+    return await this.verificationService.queryVerificationRequestsByProgrammeId(programmeId, req.user);
   }
 
   // @UseGuards(JwtAuthGuard)

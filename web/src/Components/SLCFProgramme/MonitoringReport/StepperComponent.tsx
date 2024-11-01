@@ -10,17 +10,21 @@ import { QualificationStep } from './QuantificationStep';
 import { AnnexuresStep } from './AnnexuresStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import { version } from 'os';
-import { DocType } from '../../../Definitions/Enums/document.type';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 const StepperComponent = (props: any) => {
+  const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
   const [current, setCurrent] = useState(0);
+  const [verificationRequestId, setVerificationRequestId] = useState(0);
+  const [reportId, setReportId] = useState(0);
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id } = useParams();
+  const navigationLocation = useLocation();
+  const { mode } = navigationLocation.state || {};
   const t = translator.t;
   const reportVersion = process.env.MONITORING_REPORT_VERSION
     ? process.env.MONITORING_REPORT_VERSION
@@ -33,22 +37,27 @@ const StepperComponent = (props: any) => {
     console.log(JSON.stringify(formValues));
   };
 
-  const onFinish = async (newValues: any) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      ...newValues,
-    }));
-    const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: '1' };
+  const navigateToDetailsPage = () => {
+    navigate(`/programmeManagementSLCF/view/${id}`);
+  };
+  const approve = async (verify: boolean) => {
+    const body = {
+      verify: verify,
+      verificationRequestId: verificationRequestId,
+      reportId: reportId,
+    };
     try {
-      const res = await post('national/verification/createMonitoringReport', body);
+      const res = await post('national/verification/verifyMonitoringReport', body);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
-          content: t('monitoringReport:uploadMonitoringReportSuccess'),
+          content: verify
+            ? t('monitoringReport:monitoringReportApproveSuccess')
+            : t('monitoringReport:monitoringReportRejectSuccess'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        // navigate('/programmeManagementSLCF/viewAll');
+        navigate(`/programmeManagementSLCF/view/${id}`);
       }
     } catch (error: any) {
       if (error && error.errors && error.errors.length > 0) {
@@ -74,6 +83,51 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  const onFinish = async (newValues: any) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      ...newValues,
+    }));
+    if (FormMode.VIEW === mode) {
+      navigateToDetailsPage();
+    } else {
+      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      try {
+        const res = await post('national/verification/createMonitoringReport', body);
+        if (res?.statusText === 'SUCCESS') {
+          message.open({
+            type: 'success',
+            content: t('monitoringReport:uploadMonitoringReportSuccess'),
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+          navigateToDetailsPage();
+        }
+      } catch (error: any) {
+        if (error && error.errors && error.errors.length > 0) {
+          error.errors.forEach((err: any) => {
+            Object.keys(err).forEach((field) => {
+              console.log(`Error in ${field}: ${err[field].join(', ')}`);
+              message.open({
+                type: 'error',
+                content: err[field].join(', '),
+                duration: 4,
+                style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+              });
+            });
+          });
+        } else {
+          message.open({
+            type: 'error',
+            content: error?.message,
+            duration: 4,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+      }
+    }
+  };
+
   const next = () => {
     setCurrent(current + 1);
   };
@@ -89,71 +143,156 @@ const StepperComponent = (props: any) => {
   const [qualificationForm] = useForm();
   const [annexuresForm] = useForm();
 
-  const getLatestCMA = async (programId: any) => {
+  const getLatestReports = async (programId: any) => {
     try {
       const { data } = await post('national/programmeSl/getDocLastVersion', {
         programmeId: programId,
         docType: DocumentTypeEnum.CMA,
       });
 
-      const cmaData = JSON.parse(data?.content);
-      const {
-        data: { user },
-      } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
+      if (data && data?.content) {
+        const cmaData = JSON.parse(data?.content);
 
-      projectDetailsForm.setFieldsValue({
-        title: cmaData?.projectDetails?.title,
-        projectProponent: cmaData?.projectDetails?.projectProponent,
-        dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
-        version: reportVersion,
-        physicalAddress: cmaData?.projectDetails?.physicalAddress,
-        email: cmaData?.projectDetails?.email,
-        telephone: cmaData?.projectDetails?.telephone,
-        website: cmaData?.projectDetails?.website,
-        preparedBy: cmaData?.projectDetails?.preparedBy,
+        projectDetailsForm.setFieldsValue({
+          title: cmaData?.projectDetails?.title,
+          projectProponent: cmaData?.projectDetails?.projectProponent,
+          dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
+          version: reportVersion,
+          physicalAddress: cmaData?.projectDetails?.physicalAddress,
+          email: cmaData?.projectDetails?.email,
+          telephone: cmaData?.projectDetails?.telephone,
+          website: cmaData?.projectDetails?.website,
+          preparedBy: cmaData?.projectDetails?.preparedBy,
+        });
+      }
+    } catch (error) {
+      console.log('error');
+    }
+
+    try {
+      const { data } = await post('national/programmeSl/getDocLastVersion', {
+        programmeId: programId,
+        docType: DocumentTypeEnum.MONITORING_REPORT,
       });
+      if (data && data?.content) {
+        setReportId(data?.id);
+        setVerificationRequestId(data?.verificationRequestId);
+        projectDetailsForm.setFieldsValue({
+          ...data?.content?.projectDetails,
+          dateOfIssue: moment.unix(data?.content?.projectDetails?.dateOfIssue),
+        });
 
-      // setProjectCategory(data?.projectCategory);
-      // form2.setFieldsValue({
-      //   projectTrack: data?.purposeOfCreditDevelopment,
-      //   // projectTrack: 'TRACK_2',
-      //   organizationName: data?.company?.name,
-      //   email: data?.company?.email,
-      //   telephone: data?.company?.phoneNo,
-      //   address: data?.company?.address,
-      //   fax: data?.company?.faxNo,
-      // });
-
-      // setValues((prevVal) => ({
-      //   ...prevVal,
-      //   companyId: data?.company?.companyId,
-      // }));
+        projectActivityForm.setFieldsValue({
+          ...data?.content?.projectActivity,
+          creditingPeriodFromDate: moment.unix(
+            data?.content?.projectActivity?.creditingPeriodFromDate
+          ),
+          creditingPeriodToDate: moment.unix(data?.content?.projectActivity?.creditingPeriodToDate),
+          registrationDateOfTheActivity: moment.unix(
+            data?.content?.projectActivity?.registrationDateOfTheActivity
+          ),
+          projectActivityLocationsList:
+            data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
+              return {
+                ...val,
+                projectStartDate: moment.unix(val?.projectStartDate),
+                // location: val.location[0][0],
+              };
+            }),
+        });
+        qualificationForm.setFieldsValue({
+          ...data?.content?.quantifications,
+          emissionReductionsRemovalsList:
+            data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
+              return {
+                ...val,
+                startDate: moment.unix(val?.startDate),
+                endDate: moment.unix(val?.endDate),
+              };
+            }),
+        });
+        implementationStatusForm.setFieldsValue({
+          ...data?.content?.implementationStatus,
+        });
+        safeguardsForm.setFieldsValue({
+          ...data?.content?.safeguards,
+        });
+        dataAndParametersForm.setFieldsValue({
+          ...data?.content?.dataAndParameters,
+        });
+        // projectActivityForm.setFieldsValue({
+        //   projectProponentsList: [
+        //     {
+        //       organizationName: '',
+        //       email: '',
+        //       telephone: '',
+        //       address: '',
+        //       designation: '',
+        //       contactPerson: '',
+        //       roleInTheProject: '',
+        //       fax: '',
+        //     },
+        //   ],
+        //   projectActivityLocationsList: [
+        //     {
+        //       location: '',
+        //       province: '',
+        //       district: '',
+        //       dsDivision: '',
+        //       city: '',
+        //       community: '',
+        //       optionalDocuments: [],
+        //       projectStartDate: '',
+        //     },
+        //   ],
+        // });
+      } else {
+        projectActivityForm.setFieldsValue({
+          projectProponentsList: [
+            {
+              organizationName: '',
+              email: '',
+              telephone: '',
+              address: '',
+              designation: '',
+              contactPerson: '',
+              roleInTheProject: '',
+              fax: '',
+            },
+          ],
+          projectActivityLocationsList: [
+            {
+              locationOfProjectActivity: '',
+              province: '',
+              district: '',
+              dsDivision: '',
+              city: '',
+              community: '',
+              optionalDocuments: [],
+              projectStartDate: '',
+            },
+          ],
+        });
+        qualificationForm.setFieldsValue({
+          emissionReductionsRemovalsList: [
+            {
+              startDate: '',
+              endDate: '',
+              baselineEmissions: 0,
+              projectEmissions: 0,
+              leakageEmissions: 0,
+              ghgEmissions: 0,
+            },
+          ],
+        });
+      }
     } catch (error) {
       console.log('error');
     }
   };
 
-  const loadCMAForm = async () => {
-    try {
-      const { data } = await post('national/project/project');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadMonitoringReport = async () => {
-    try {
-      const { data } = await post('national/monitoring/monitoring');
-      const cma = data.map((provinceData: any) => provinceData.provinceName);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getLatestCMA(id);
+    getLatestReports(id);
   }, []);
 
   useEffect(() => {
@@ -174,7 +313,9 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={projectDetailsForm}
+          formMode={mode}
           next={next}
+          cancel={navigateToDetailsPage}
           countries={countries}
           onValueChange={onValueChange}
         />
@@ -193,6 +334,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={projectActivityForm}
+          formMode={mode}
           next={next}
           prev={prev}
           countries={countries}
@@ -213,6 +355,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={implementationStatusForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -232,6 +375,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={safeguardsForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -251,6 +395,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={dataAndParametersForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -270,6 +415,7 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={qualificationForm}
+          formMode={mode}
           next={next}
           prev={prev}
           onValueChange={onValueChange}
@@ -289,7 +435,15 @@ const StepperComponent = (props: any) => {
           translator={translator}
           current={current}
           form={annexuresForm}
+          formMode={mode}
           prev={prev}
+          cancel={navigateToDetailsPage}
+          approve={() => {
+            approve(true);
+          }}
+          reject={() => {
+            approve(false);
+          }}
           onFinish={onFinish}
         />
       ),

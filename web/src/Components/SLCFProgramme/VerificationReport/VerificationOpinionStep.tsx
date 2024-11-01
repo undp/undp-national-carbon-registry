@@ -14,9 +14,12 @@ import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 
 export const VerificationOpinionStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
+    props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -45,33 +48,12 @@ export const VerificationOpinionStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                values.signature1 = await (async function () {
-                  const base64Docs: string[] = [];
-
-                  if (values?.signature1 && values?.signature1.length > 0) {
-                    const docs = values.signature1;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
-                    }
-                  }
-
-                  return base64Docs;
-                })();
-                values.signature2 = await (async function () {
-                  const base64Docs: string[] = [];
-
-                  if (values?.signature2 && values?.signature2.length > 0) {
-                    const docs = values.signature2;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
-                    }
-                  }
-
-                  return base64Docs;
-                })();
+                if (FormMode.VIEW !== formMode) {
+                  values.signature1 = await fileUploadValueExtract(values, 'signature1');
+                  values.signature2 = await fileUploadValueExtract(values, 'signature2');
+                }
                 onValueChange({ verificationOpinion: values });
                 next();
               }}
@@ -91,7 +73,7 @@ export const VerificationOpinionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -105,30 +87,27 @@ export const VerificationOpinionStep = (props: any) => {
                       name="signature1"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={false}
-                      rules={[
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
-                            } else {
-                              throw new Error(
-                                `${t('verificationReport:signature')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
+                      required={FormMode.VIEW !== formMode}
+                      rules={
+                        FormMode.VIEW === formMode
+                          ? []
+                          : [
+                              {
+                                validator: async (rule, file) => {
+                                  if (file?.length > 0) {
+                                    if (file[0]?.size > maximumImageSize) {
+                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                      throw new Error(`${t('common:maxSizeVal')}`);
+                                    }
+                                  } else {
+                                    throw new Error(
+                                      `${t('verificationReport:signature')} ${t('isRequired')}`
+                                    );
+                                  }
+                                },
+                              },
+                            ]
+                      }
                     >
                       <Upload
                         accept=".doc, .docx, .pdf, .png, .jpg"
@@ -236,30 +215,27 @@ export const VerificationOpinionStep = (props: any) => {
                       name="signature2"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={true}
-                      rules={[
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('verificationReport:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
-                            } else {
-                              throw new Error(
-                                `${t('verificationReport:signature')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
+                      required={FormMode.VIEW !== formMode}
+                      rules={
+                        FormMode.VIEW === formMode
+                          ? []
+                          : [
+                              {
+                                validator: async (rule, file) => {
+                                  if (file?.length > 0) {
+                                    if (file[0]?.size > maximumImageSize) {
+                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                      throw new Error(`${t('common:maxSizeVal')}`);
+                                    }
+                                  } else {
+                                    throw new Error(
+                                      `${t('verificationReport:signature')} ${t('isRequired')}`
+                                    );
+                                  }
+                                },
+                              },
+                            ]
+                      }
                     >
                       <Upload
                         accept=".doc, .docx, .pdf, .png, .jpg"
@@ -363,10 +339,10 @@ export const VerificationOpinionStep = (props: any) => {
               </Row>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

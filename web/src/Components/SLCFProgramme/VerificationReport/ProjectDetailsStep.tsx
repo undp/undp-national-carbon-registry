@@ -9,9 +9,20 @@ import PhoneInput, {
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const ProjectDetailsStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, onValueChange } = props;
+  const {
+    useLocation,
+    translator,
+    current,
+    form,
+    formMode,
+    next,
+    cancel,
+    countries,
+    onValueChange,
+  } = props;
 
   const { get, post } = useConnection();
   const [contactNoInput] = useState<any>();
@@ -42,6 +53,7 @@ export const ProjectDetailsStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
                 values.completionDate = moment(values?.completionDate).startOf('day').unix();
@@ -59,6 +71,33 @@ export const ProjectDetailsStep = (props: any) => {
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('verificationReport:projectName')}
+                      name="projectName"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:projectName')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input disabled size="large" />
+                    </Form.Item>
+
                     <Form.Item
                       label={t('verificationReport:client')}
                       name="client"
@@ -184,6 +223,7 @@ export const ProjectDetailsStep = (props: any) => {
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
                         defaultCountry="LK"
+                        disabled={FormMode.VIEW === formMode}
                         countryCallingCodeEditable={false}
                         onChange={(v) => {}}
                         countries={countries}
@@ -335,7 +375,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:monitoringPeriod')}`}
@@ -459,7 +499,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -505,7 +545,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -549,16 +589,16 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} />
+                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'}>
+                <Button danger size={'large'} onClick={cancel} disabled={false}>
                   Cancel
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>

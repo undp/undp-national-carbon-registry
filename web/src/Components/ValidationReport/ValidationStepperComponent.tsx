@@ -110,11 +110,21 @@ const StepperComponent = (props: any) => {
   };
 
   const next = () => {
+    if (current === 7 && mode === FormMode.VIEW) {
+      navigateToDetailsPage();
+      return;
+    }
     setCurrent(current + 1);
-    scrollToDiv();
+    setTimeout(() => {
+      scrollToDiv();
+    }, 300);
   };
 
   const prev = () => {
+    if (current === 0) {
+      navigateToDetailsPage();
+      return;
+    }
     setCurrent(current - 1);
   };
 
@@ -270,6 +280,13 @@ const StepperComponent = (props: any) => {
             taskPerformed: '',
           },
         ],
+        followupInterviews: [
+          {
+            name: '',
+            designation: '',
+            organization: '',
+          },
+        ],
       });
 
       form5.setFieldsValue({
@@ -285,15 +302,6 @@ const StepperComponent = (props: any) => {
         gridEmissionFactorUnit: 'tCO2e/MWh',
         gridEmissionFactorValueGlobal: 0.72222,
         baselineEmissions: [
-          {
-            type: 'unit',
-            location: t('validationReport:units'),
-            projectCapacityValue: 'kWp',
-            plantFactorValue: '%',
-            avgEnergyOutputValue: 'MWh/Year',
-            gridEmissionFactorValue: 'tCO2/MWh',
-            emissionReductionValue: 'tCO2/Yea',
-          },
           ...projectContent?.projectActivity.locationsOfProjectActivity.map(
             (location: any, index: number) => {
               return {
@@ -640,7 +648,6 @@ const StepperComponent = (props: any) => {
       const references = validationReportContent.references;
       const appendix = validationReportContent.appendix;
 
-      // const dateOfIssue = moment().unix();
       form1.setFieldsValue({
         client: projectDetails?.client,
         address: projectDetails?.address,
@@ -667,23 +674,6 @@ const StepperComponent = (props: any) => {
         summary: introductionDetails?.summary,
       });
 
-      // const projectLocations = ghgProjectDescription.locationsOfProjectActivity.map(
-      //   (location: any) => {
-      //     return {
-      //       technicalProjectDescriptionItems: location.technicalProjectDescription,
-      //       locationOfProjectActivity: location.locationOfProjectActivity,
-      //       province: location.province,
-      //       district: location.district,
-      //       dsDivision: location.dsDivision,
-      //       city: location.city,
-      //       community: location.community,
-      //       additionalDocuments: location.additionalDocuments,
-      //       geographicalLocationCoordinates: location.geographicalLocationCoordinates[0],
-      //     };
-      //   }
-      // );
-      // console.log('List', projectLocations);
-
       const projectLocations = ghgProjectDescription.locationsOfProjectActivity.map(
         (location: any) => {
           return {
@@ -694,32 +684,22 @@ const StepperComponent = (props: any) => {
             dsDivision: location.dsDivision,
             city: location.city,
             community: location.community,
-            additionalDocuments: location.additionalDocuments,
+            additionalDocuments: location.additionalDocuments?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
             geographicalLocationCoordinates: location.geographicalLocationCoordinates[0][0],
           };
         }
       );
 
       form3.setFieldsValue({
-        // creditingPeriod: projectContent?.projectActivity?.totalCreditingYears,
-        // locationsOfProjectActivity: projectContent?.projectActivity.locationsOfProjectActivity.map(
-        //   (location: any) => {
-        //     return {
-        //       ...location,
-        //       technicalProjectDescriptionItems: [
-        //         {
-        //           item: '',
-        //           parameterValue: [
-        //             {
-        //               parameter: '',
-        //               value: '',
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     };
-        //   }
-        // ),
         ...ghgProjectDescription,
         projectScopeUNFCC: projectScopeList(t)
           .filter((item: any) => {
@@ -727,74 +707,6 @@ const StepperComponent = (props: any) => {
           })
           .map((pItem: any) => pItem.id),
         locationsOfProjectActivity: projectLocations,
-        // isProjectScopeEnergyIndustries: ghgProjectDescription.isProjectScopeEnergyIndustries,
-        // isProjectScopeEnergyDistribution: ghgProjectDescription.isProjectScopeEnergyDistribution,
-        // isProjectScopeEnergyDemand: ghgProjectDescription.isProjectScopeEnergyDemand,
-        // isProjectScopeManufacturingIndustries: ghgProjectDescription.isProjectScopeManufacturingIndustries,
-        // isProjectScopeChemicalIndustries: ghgProjectDescription.isProjectScopeChemicalIndustries,
-        // isProjectScopeChemicalIndustry: ghgProjectDescription.isProjectScopeChemicalIndustry,
-        // isProjectScopeConstruction: ghgProjectDescription.isProjectScopeConstruction,
-        // isProjectScopeTransport: ghgProjectDescription.isProjectScopeTransport,
-        // isProjectScopeMining: ghgProjectDescription.isProjectScopeMining,
-        // isProjectScopeFugitiveEmissionsFromFuel: ghgProjectDescription.,
-        // isProjectScopeFugitiveEmissionsFromHalocarbons: ghgProjectDescription,
-        // isProjectScopeSolventsUse: ghgProjectDescription,
-        // isProjectScopeWasteHandling: ghgProjectDescription,
-        // isProjectScopeAfforestation: ghgProjectDescription,
-        // isProjectScopeAgriculture: ghgProjectDescription,
-
-        // projectTitle: ghgProjectDescription.projectTitle,
-        // projectSize: ghgProjectDescription.projectSize,
-        // isProjectScopeEnergyIndustries: ghgProjectDescription.isProjectScopeEnergyIndustries,
-        // isProjectScopeEnergyDistribution: ghgProjectDescription.isProjectScopeEnergyDistribution,
-        // isProjectScopeEnergyDemand: ghgProjectDescription.isProjectScopeEnergyDemand,
-        // isProjectScopeManufacturingIndustries: ghgProjectDescription.isProjectScopeManufacturingIndustries,
-        // isProjectScopeChemicalIndustries: ghgProjectDescription.isProjectScopeChemicalIndustries,
-        // isProjectScopeChemicalIndustry: ghgProjectDescription.isProjectScopeChemicalIndustry,
-        // isProjectScopeConstruction: ghgProjectDescription.isProjectScopeConstruction,
-        // isProjectScopeTransport: ghgProjectDescription.isProjectScopeTransport,
-        // isProjectScopeMining: ghgProjectDescription.isProjectScopeMining,
-        // isProjectScopeFugitiveEmissionsFromFuel: ghgProjectDescription.,
-        // isProjectScopeFugitiveEmissionsFromHalocarbons: ghgProjectDescription,
-        // isProjectScopeSolventsUse: ghgProjectDescription,
-        // isProjectScopeWasteHandling: ghgProjectDescription,
-        // isProjectScopeAfforestation: ghgProjectDescription,
-        // isProjectScopeAgriculture: ghgProjectDescription,
-        // appliedMethodology: 'Quia ut optio conse',
-        // technicalAreas: 'Corrupti ut eum iur',
-        // creditingPeriod: 'Velit quaerat conse',
-        // locationsOfProjectActivity: [
-        //   {
-        //     locationOfProjectActivity: 'Aut quam rerum disti',
-        //     province: 'Central',
-        //     district: 'Kandy',
-        //     dsDivision: 'Abanpola',
-        //     city: 'Colombo',
-        //     community: 'Autem in nulla id et',
-        //     geographicalLocationCoordinates: [
-        //       [
-        //         [
-        //           [80.39625139724865, 7.738554078601368],
-        //           [80.73017497460904, 6.0411073520659215],
-        //           [81.60506563501434, 6.7447755490509],
-        //           [80.39625139724865, 7.738554078601368],
-        //         ],
-        //       ],
-        //     ],
-        //     additionalDocuments: [],
-        //     technicalProjectDescription: [
-        //       {
-        //         item: 'Labore quas voluptas',
-        //         parameterValue: [
-        //           {
-        //             parameter: 'Cupidatat accusantiu',
-        //             value: 'Rerum distinctio Eu',
-        //           },
-        //         ],
-        //       },
-        //     ],
-        //   },
-        // ],
         startDateCreditingPeriod: moment(ghgProjectDescription.startDateCreditingPeriod),
       });
 
@@ -807,17 +719,8 @@ const StepperComponent = (props: any) => {
         ...dataForValidationProcess,
         gridEmissionFactorUnit: 'tCO2e/MWh',
         gridEmissionFactorValueGlobal: 0.72222,
-        totalCapacity: `${dataForValidationProcess?.totalCapacity} kWh`,
+        totalCapacity: `${dataForValidationProcess?.totalCapacity} kWp`,
         baselineEmissions: [
-          {
-            type: 'unit',
-            location: t('validationReport:units'),
-            projectCapacityValue: 'kWp',
-            plantFactorValue: '%',
-            avgEnergyOutputValue: 'MWh/Year',
-            gridEmissionFactorValue: 'tCO2/MWh',
-            emissionReductionValue: 'tCO2/Yea',
-          },
           ...dataForValidationProcess?.baselineEmissions?.map((emissions: any) => {
             return {
               location: emissions.location,
@@ -851,7 +754,6 @@ const StepperComponent = (props: any) => {
         avgLeakageEmissionReductions: Number(netEmissionReduction.avgLeakageEmissionReductions),
         avgNetEmissionReductions: Number(netEmissionReduction.avgNetEmissionReductions),
         avgBufferPoolAllocations: Number(netEmissionReduction.avgBufferPoolAllocations),
-        // yearlyGHGEmissionReductions: dataForValidationProcess,
       });
 
       form6.setFieldsValue({
@@ -987,6 +889,7 @@ const StepperComponent = (props: any) => {
       description: (
         <ProjectDetails
           next={next}
+          prev={prev}
           form={form1}
           current={current}
           t={t}

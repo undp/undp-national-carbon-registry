@@ -1,114 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Upload } from 'antd';
-import PhoneInput, {
-  Country,
-  formatPhoneNumber,
-  formatPhoneNumberIntl,
-  isPossiblePhoneNumber,
-} from 'react-phone-number-input';
-
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import LocationMapComponent from './LocationMapComponent';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 export const IntroductionStep = (props: any) => {
-  const { useLocation, translator, current, form, next, countries, prev, onValueChange } = props;
+  const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
+    props;
 
-  const { post } = useConnection();
-  const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
-  const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
-    : 5000000;
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
-  const getProvinces = async () => {
-    try {
-      const { data } = await post('national/location/province');
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
-      setProvinces(tempProvinces);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getDistricts = async (provinceName: string) => {
-    try {
-      const { data } = await post('national/location/district', {
-        filterAnd: [
-          {
-            key: 'provinceName',
-            operation: '=',
-            value: provinceName,
-          },
-        ],
-      });
-      const tempDistricts = data.map((districtData: any) => districtData.districtName);
-      setDistricts(tempDistricts);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getDivisions = async (districtName: string) => {
-    try {
-      const { data } = await post('national/location/division', {
-        filterAnd: [
-          {
-            key: 'districtName',
-            operation: '=',
-            value: districtName,
-          },
-        ],
-      });
-
-      const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      setDsDivisions(tempDivisions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getCities = async (division?: string) => {
-    try {
-      const { data } = await post('national/location/city');
-
-      const tempCities = data.map((cityData: any) => cityData.cityName);
-      setCities(tempCities);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getProvinces();
-    getCities();
-  }, []);
-
-  const onProvinceSelect = async (value: any) => {
-    getDistricts(value);
-    try {
-    } catch (error) {}
-  };
-
-  const onDistrictSelect = (value: string) => {
-    getDivisions(value);
-  };
   const t = translator.t;
   return (
     <>
@@ -122,8 +21,19 @@ export const IntroductionStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
+                values.creditionPeriodStart = moment(values?.creditionPeriodStart)
+                  .startOf('day')
+                  .unix();
+                values.creditionPeriodEnd = moment(values?.creditionPeriodEnd)
+                  .startOf('day')
+                  .unix();
+                values.periodVerifiedStart = moment(values?.periodVerifiedStart)
+                  .startOf('day')
+                  .unix();
+                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd).startOf('day').unix();
                 onValueChange({ introduction: values });
                 next();
               }}
@@ -141,7 +51,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={`1.1 ${t('verificationReport:objective')}`}
@@ -153,7 +63,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={`1.2 ${t('verificationReport:scopeAndCriteria')}`}
@@ -165,7 +75,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
@@ -462,17 +372,17 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
               </Row>
 
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev}>
+                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" htmlType="submit" disabled={false}>
                   Next
                 </Button>
               </Row>
