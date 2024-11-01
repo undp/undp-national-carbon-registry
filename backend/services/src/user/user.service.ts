@@ -1150,8 +1150,6 @@ export class UserService {
       .getRawMany();
 
     return result;
-
-    //return result.map((item) => {return item.user_email});
   }
 
   async getExComAdminAndManagerUsers() {
@@ -1168,8 +1166,6 @@ export class UserService {
       .getRawMany();
 
     return result;
-
-    //return result.map((item) => {return item.user_email});
   }
 
   async getGovAdminUsers() {
