@@ -72,9 +72,23 @@
       font-size: 0.8rem;
     }
 
-    .verification-title-icon {
-      padding: 10px;
+    .verification-title-main {
+      display: flex;
+      justify-content: flex-start;
+
+      .verification-title-icon {
+        padding: 0px 10px;
+      }
+
+      .verification-title-status-tag{
+        padding-left: 15px;
+        font-weight: 500;
+      }
+
+
     }
+
+    
 
     .field-verification-title {
       margin: 15px 0px;

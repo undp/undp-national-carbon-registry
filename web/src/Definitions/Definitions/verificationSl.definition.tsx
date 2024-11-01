@@ -14,13 +14,13 @@ export const getVerificationRequestStatusType = (stage: VerificationRequestStatu
     case VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED:
       return 'green';
     case VerificationRequestStatusEnum.MONITORING_REPORT_VERIFIED:
+    case VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED:
       return 'orange';
     case VerificationRequestStatusEnum.VERIFICATION_REPORT_UPLOADED:
       return 'blue';
     case VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED:
       return 'geekblue';
     case VerificationRequestStatusEnum.MONITORING_REPORT_REJECTED:
-    case VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED:
       return 'red';
     default:
       return 'default';
@@ -32,14 +32,14 @@ export const getVerificationRequestStatusName = (value: string) => {
     case VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED:
       return 'Pending';
     case VerificationRequestStatusEnum.MONITORING_REPORT_VERIFIED:
+    case VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED:
       return 'Verification Pending';
     case VerificationRequestStatusEnum.VERIFICATION_REPORT_UPLOADED:
       return 'Awaiting Authorisation';
     case VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED:
       return 'Credit Issued';
     case VerificationRequestStatusEnum.MONITORING_REPORT_REJECTED:
-    case VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED:
-      return 'Rejected';
+      return 'Report Declined';
     default:
       return 'Pending';
   }

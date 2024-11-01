@@ -313,19 +313,22 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
         {docData.map((item) => (
           <div className="verification-row">
             <Row className="field-verification-title" key="Verification Request Title">
-              <Col span={15} className="field-key">
-                <div>
+              <Col span={24} className="field-key">
+                <div className="verification-title-main">
                   <span className="verification-title-icon">
                     <VerifiedOutlined />
                   </span>
                   {moment(parseInt(item.createdTime)).format('DD MMMM YYYY @ HH:mm')}
                   {item.verificationSerialNo && ` - ${item.verificationSerialNo}`} {'    '}
+                  <span className="verification-title-status-tag">
+                    <Tag
+                      className="clickable"
+                      color={getVerificationRequestStatusType(item.status)}
+                    >
+                      {addSpaces(getVerificationRequestStatusName(item.status))}
+                    </Tag>
+                  </span>
                 </div>
-              </Col>
-              <Col span={6} className="field-value verification-req-status-col">
-                <Tag className="clickable" color={getVerificationRequestStatusType(item.status)}>
-                  {addSpaces(getVerificationRequestStatusName(item.status))}
-                </Tag>
               </Col>
             </Row>
             <div>
