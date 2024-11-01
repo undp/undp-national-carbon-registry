@@ -6,6 +6,7 @@ import { t } from 'i18next';
 import { countries } from 'react-circle-flags';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
+import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const Monitoring = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, projectCategory, disableFields } = props;
@@ -630,11 +631,11 @@ const Monitoring = (props: CustomStepsProps) => {
                     </Col>
 
                     <Col xl={24} md={24}>
-                      <Form.Item
-                        label={t('CMAForm:purpose')}
-                        name="monitoringPurpose"
-                        tooltip={{
-                          title: (
+                      <>
+                        <LabelWithTooltip
+                          label={t('CMAForm:purpose')}
+                          required={true}
+                          tooltipContent={
                             <div className="tooltip">
                               <p>Indicate one of the following:</p>
                               <ul>
@@ -643,31 +644,34 @@ const Monitoring = (props: CustomStepsProps) => {
                                 <li>Calculation of leakage </li>
                               </ul>
                             </div>
-                          ),
-                          icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                          placement: 'topLeft',
-                        }}
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
-                              }
+                          }
+                          tooltipPosition={TooltipPostion.top}
+                          tooltipWidth={290}
+                        />
+                        <Form.Item
+                          name="monitoringPurpose"
+                          rules={[
+                            {
+                              required: true,
+                              message: ``,
                             },
-                          },
-                        ]}
-                      >
-                        <TextArea rows={4} size="large" disabled={disableFields} />
-                      </Form.Item>
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(`${t('CMAForm:purpose')} ${t('isRequired')}`);
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <TextArea rows={4} size="large" disabled={disableFields} />
+                        </Form.Item>
+                      </>
                     </Col>
 
                     <Col xl={24} md={24}>
@@ -741,31 +745,14 @@ const Monitoring = (props: CustomStepsProps) => {
                 </div>
               </>
 
-              <Form.Item
-                className="full-width-form-item"
-                label={`7.3 ${t('CMAForm:monitoringPlan')}`}
-                name="monitoringPlan"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(`${t('CMAForm:monitoringPlan')} ${t('isRequired')}`);
-                      }
-                    },
-                  },
-                ]}
-                tooltip={{
-                  title: (
-                    <div className="tooltip">
+              <>
+                <LabelWithTooltip
+                  label={`7.3 ${t('CMAForm:monitoringPlan')}`}
+                  tooltipPosition={TooltipPostion.top}
+                  tooltipWidth={800}
+                  required={true}
+                  tooltipContent={
+                    <div>
                       <p>
                         Describe the process and schedule for obtaining, recording, compiling and
                         analysing the monitored data and parameters set out in Section 0 (Data and
@@ -798,13 +785,33 @@ const Monitoring = (props: CustomStepsProps) => {
                         and management system.
                       </p>
                     </div>
-                  ),
-                  icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                  placement: 'topLeft',
-                }}
-              >
-                <TextArea rows={4} disabled={disableFields} />
-              </Form.Item>
+                  }
+                />
+                <Form.Item
+                  className="full-width-form-item"
+                  name="monitoringPlan"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('CMAForm:monitoringPlan')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea rows={4} disabled={disableFields} />
+                </Form.Item>
+              </>
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>

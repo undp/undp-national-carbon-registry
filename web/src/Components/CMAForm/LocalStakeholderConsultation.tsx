@@ -3,6 +3,7 @@ import React from 'react';
 import { CustomStepsProps } from './StepProps';
 import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
+import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const LocalStakeholderConsultation = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
@@ -35,32 +36,13 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                 }
               }}
             >
-              <Form.Item
-                className="full-width-form-item"
-                label={`${t('CMAForm:stakeHolderConsultationProcess')}`}
-                name="stakeHolderConsultationProcess"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`
-                        );
-                      }
-                    },
-                  },
-                ]}
-                tooltip={{
-                  title: (
+              <>
+                <LabelWithTooltip
+                  label={`${t('CMAForm:stakeHolderConsultationProcess')}`}
+                  required={true}
+                  tooltipPosition={TooltipPostion.bottom}
+                  tooltipWidth={700}
+                  tooltipContent={
                     <div>
                       <p>
                         Describe the process for, and the outcomes from, the local stakeholder
@@ -107,11 +89,35 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                         </li>
                       </ul>
                     </div>
-                  ),
-                }}
-              >
-                <TextArea rows={4} disabled={disableFields} />
-              </Form.Item>
+                  }
+                />
+                <Form.Item
+                  className="full-width-form-item"
+                  name="stakeHolderConsultationProcess"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('CMAForm:stakeHolderConsultationProcess')} ${t('isRequired')}`
+                          );
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea rows={4} disabled={disableFields} />
+                </Form.Item>
+              </>
 
               <Form.Item
                 className="full-width-form-item"
