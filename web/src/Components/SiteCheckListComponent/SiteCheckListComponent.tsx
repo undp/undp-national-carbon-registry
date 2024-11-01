@@ -106,7 +106,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     const fileUrlParts = vals?.validatorSignature.split('/');
     const fileName = fileUrlParts[fileUrlParts.length - 1];
 
-
     const tempVals = {
       projectName: vals?.projectName,
       organizationName: vals?.organizationName,
