@@ -81,10 +81,10 @@ export const AddCostQuotationForm = (props: any) => {
     form.setFieldsValue(tempInialVals);
   };
 
-  const convertFileToBase64 = async (image: any) => {
-    const res = await getBase64(image?.originFileObj as RcFile);
-    return res;
-  };
+  // const convertFileToBase64 = async (image: any) => {
+  //   const res = await getBase64(image?.originFileObj as RcFile);
+  //   return res;
+  // };
 
   useEffect(() => {
     const getViewData = async () => {
@@ -528,7 +528,6 @@ export const AddCostQuotationForm = (props: any) => {
                         name="signature"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
-                        // required={true}
                         rules={[
                           {
                             required: true,

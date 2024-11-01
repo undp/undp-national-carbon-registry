@@ -49,8 +49,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         programmeId: programmeId,
       });
 
-      console.log('-----response-------', data);
-
       const tempValues = {
         projectName: data?.title,
         organizationName: data?.company?.name,
@@ -58,14 +56,11 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         location: data?.geographicalLocationCoordinates,
       };
 
-      console.log('--------tempVales------', tempValues);
       form.setFieldsValue(tempValues);
     } catch (error) {
       console.log('--------error---------', error);
     }
   };
-
-  console.log(form.getFieldsValue());
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -111,7 +106,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     const fileUrlParts = vals?.validatorSignature.split('/');
     const fileName = fileUrlParts[fileUrlParts.length - 1];
 
-    console.log('signature', vals?.validatorSignature, fileName);
 
     const tempVals = {
       projectName: vals?.projectName,
@@ -197,7 +191,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   useEffect(() => {
     getDataToPopulate(id);
     const getViewData = async () => {
-      console.log('-------isView----------', isView);
       if (isView) {
         const res = await post('national/programmeSl/getDocLastVersion', {
           programmeId: id,
@@ -206,7 +199,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
         if (res?.statusText === 'SUCCESS') {
           const content = JSON.parse(res?.data.content);
-          console.log('------content---------', content);
           viewDataMapToFields(content);
         }
       } else {
