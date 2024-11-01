@@ -17,6 +17,7 @@ import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancel
 import { User } from "../entities/user.entity";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
+import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.gen";
 
 @Injectable()
 export class ConfigurationSettingsService {
@@ -28,6 +29,7 @@ export class ConfigurationSettingsService {
     private fileHandler: FileHandlerInterface,
     private projectRegistrationCertificateGenerator: ProjectRegistrationCertificateGenerator,
     private creditIssueCertificateGenerator: CreditIssueCertificateGenerator,
+    private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
     private voluntarilyCancellationCertificateGenerator: VoluntarilyCancellationCertificateGenerator,
     private dateUtilService: DateUtilService
   ) {}
@@ -185,6 +187,23 @@ export class ConfigurationSettingsService {
         return { certURL };
         break;
 
+        case SLCFCertificateType.CARBON_NEUTRAL:
+          const neutralData = {
+            projectName: "Solar Project Preview",
+            companyName: "ABC Private Limited",
+            scope: "Project Level",
+            certificateNo: "SLCCS/REG/0000/0000/CI/00",
+            issueDate: this.dateUtilService.formatCustomDate(),
+            creditAmount: 0,
+            orgBoundary: "Organization Boundary",
+            assessmentPeriod: `${this.dateUtilService.formatCustomDate()} - ${this.dateUtilService.formatCustomDate()}`,
+          };
+          const carbonNeutralCertUrl = await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
+            neutralData,
+            true
+          );
+          return { certURL: carbonNeutralCertUrl };
+          break;
       default:
         break;
     }
