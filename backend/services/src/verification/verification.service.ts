@@ -177,7 +177,7 @@ export class VerificationService {
         verificationRequest.status = VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED;
         verificationRequest.createdTime = new Date().getTime();
         verificationRequest.updatedTime = new Date().getTime();
-        verificationRequest.creditAmount = 1;
+        verificationRequest.creditAmount = docContent?.quantifications?.ghgEmissionsTotal;
         const saved = await em.save(verificationRequest);
         monitoringReportDocument.verificationRequestId = saved.id;
       }
@@ -399,6 +399,8 @@ export class VerificationService {
           {
             status: VerificationRequestStatusEnum.VERIFICATION_REPORT_UPLOADED,
             userId: user.id,
+            monitoringStartDate: docContent?.projectDetails?.monitoringPeriodStart,
+            monitoringEndDate: docContent?.projectDetails?.monitoringPeriodEnd,
             updatedTime: new Date().getTime(),
           }
         );
