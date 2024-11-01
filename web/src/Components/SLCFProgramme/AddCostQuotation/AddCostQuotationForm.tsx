@@ -81,6 +81,11 @@ export const AddCostQuotationForm = (props: any) => {
     form.setFieldsValue(tempInialVals);
   };
 
+  const convertFileToBase64 = async (image: any) => {
+    const res = await getBase64(image?.originFileObj as RcFile);
+    return res;
+  };
+
   useEffect(() => {
     const getViewData = async () => {
       if (isView) {
@@ -113,16 +118,19 @@ export const AddCostQuotationForm = (props: any) => {
     }
   }, []);
   const submitForm = async (values: any) => {
-    const base64Docs: string[] = [];
+    // const base64Docs: string[] = [];
 
-    if (values?.signature.length > 0) {
-      const docs = values.signature;
-      for (let i = 0; i < docs.length; i++) {
-        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-        base64Docs.push(temp);
-      }
-    }
-
+    // if (values?.signature && values?.signature.length > 0) {
+    //   const docs = values?.signature;
+    //   for (let i = 0; i < docs.length; i++) {
+    //     const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+    //     base64Docs.push(temp);
+    //   }
+    // }
+    const base64Signature =
+      values?.signature && values?.signature[0]
+        ? await convertFileToBase64(values?.signature[0])
+        : undefined;
     if (values?.additionalServices && values?.additionalServices.length > 0) {
       const services = values.additionalServices;
       for (const service of services) {
@@ -141,7 +149,7 @@ export const AddCostQuotationForm = (props: any) => {
         costVerification: Number(values?.costVerification),
         additionalServices: values?.additionalServices,
         totalCost: Number(values?.totalCost),
-        signature: base64Docs,
+        signature: base64Signature,
       },
     };
 
@@ -520,8 +528,14 @@ export const AddCostQuotationForm = (props: any) => {
                         name="signature"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
-                        required={true}
+                        // required={true}
                         rules={[
+                          {
+                            required: true,
+                            message: `${t('costQuotation:signature')} ${t(
+                              'costQuotation:isRequired'
+                            )}`,
+                          },
                           {
                             validator: async (rule, file) => {
                               if (file?.length > 0) {
@@ -553,6 +567,7 @@ export const AddCostQuotationForm = (props: any) => {
                           multiple={false}
                           disabled={disableFields}
                           fileList={form.getFieldValue('signature') || []}
+                          maxCount={1}
                         >
                           <Button
                             className="upload-doc"

@@ -22,6 +22,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
+import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
@@ -54,13 +55,17 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         projectName: data?.title,
         organizationName: data?.company?.name,
         projectTrack: data?.purposeOfCreditDevelopment,
+        location: data?.geographicalLocationCoordinates,
       };
 
+      console.log('--------tempVales------', tempValues);
       form.setFieldsValue(tempValues);
     } catch (error) {
       console.log('--------error---------', error);
     }
   };
+
+  console.log(form.getFieldsValue());
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -422,7 +427,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   },
                 ]}
               >
-                <Input size="large" disabled={disableFields} />
+                <GetMultipleLocationsMapComponent
+                  existingCoordinate={form.getFieldValue('location')}
+                  form={form}
+                  formItemName={'location'}
+                  disabled={true}
+                />
               </Form.Item>
 
               <Form.Item
