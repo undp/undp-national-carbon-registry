@@ -22,6 +22,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
+import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
@@ -48,12 +49,11 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         programmeId: programmeId,
       });
 
-      console.log('-----response-------', data);
-
       const tempValues = {
         projectName: data?.title,
         organizationName: data?.company?.name,
         projectTrack: data?.purposeOfCreditDevelopment,
+        location: data?.geographicalLocationCoordinates,
       };
 
       form.setFieldsValue(tempValues);
@@ -106,7 +106,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     const fileUrlParts = vals?.validatorSignature.split('/');
     const fileName = fileUrlParts[fileUrlParts.length - 1];
 
-    console.log('signature', vals?.validatorSignature, fileName);
 
     const tempVals = {
       projectName: vals?.projectName,
@@ -192,7 +191,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   useEffect(() => {
     getDataToPopulate(id);
     const getViewData = async () => {
-      console.log('-------isView----------', isView);
       if (isView) {
         const res = await post('national/programmeSl/getDocLastVersion', {
           programmeId: id,
@@ -201,7 +199,6 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
         if (res?.statusText === 'SUCCESS') {
           const content = JSON.parse(res?.data.content);
-          console.log('------content---------', content);
           viewDataMapToFields(content);
         }
       } else {
@@ -422,7 +419,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   },
                 ]}
               >
-                <Input size="large" disabled={disableFields} />
+                <GetMultipleLocationsMapComponent
+                  existingCoordinate={form.getFieldValue('location')}
+                  form={form}
+                  formItemName={'location'}
+                  disabled={true}
+                />
               </Form.Item>
 
               <Form.Item
