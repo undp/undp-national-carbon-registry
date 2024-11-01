@@ -118,19 +118,19 @@ export const AddCostQuotationForm = (props: any) => {
     }
   }, []);
   const submitForm = async (values: any) => {
-    // const base64Docs: string[] = [];
+    const base64Docs: string[] = [];
 
-    // if (values?.signature && values?.signature.length > 0) {
-    //   const docs = values?.signature;
-    //   for (let i = 0; i < docs.length; i++) {
-    //     const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-    //     base64Docs.push(temp);
-    //   }
-    // }
-    const base64Signature =
-      values?.signature && values?.signature[0]
-        ? await convertFileToBase64(values?.signature[0])
-        : undefined;
+    if (values?.signature && values?.signature.length > 0) {
+      const docs = values?.signature;
+      for (let i = 0; i < docs.length; i++) {
+        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+        base64Docs.push(temp);
+      }
+    }
+    // const base64Signature =
+    //   values?.signature && values?.signature[0]
+    //     ? await convertFileToBase64(values?.signature[0])
+    //     : undefined;
     if (values?.additionalServices && values?.additionalServices.length > 0) {
       const services = values.additionalServices;
       for (const service of services) {
@@ -149,7 +149,7 @@ export const AddCostQuotationForm = (props: any) => {
         costVerification: Number(values?.costVerification),
         additionalServices: values?.additionalServices,
         totalCost: Number(values?.totalCost),
-        signature: base64Signature,
+        signature: base64Docs,
       },
     };
 
@@ -567,7 +567,7 @@ export const AddCostQuotationForm = (props: any) => {
                           multiple={false}
                           disabled={disableFields}
                           fileList={form.getFieldValue('signature') || []}
-                          maxCount={1}
+                          // maxCount={1}
                         >
                           <Button
                             className="upload-doc"
