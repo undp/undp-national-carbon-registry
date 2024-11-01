@@ -149,7 +149,82 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new initial notification owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+        A new initial notification form owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROGRAMME_SL_APPROVED: {
+    id: "PROGRAMME_SL_APPROVED",
+    subject: "Initial Notification Form Approved",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Your initial notification form has been approved in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROGRAMME_SL_REJECTED: {
+    id: "PROGRAMME_SL_REJECTED",
+    subject: "Initial Notification Form Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Your initial notification form has been rejected in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROJECT_PROPOSAL_SUBMITTED: {
+    id: "PROJECT_PROPOSAL_SUBMITTED",
+    subject: "Project Proposal Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Project proposal for your initial notification form has been submitted by SLCF in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROJECT_PROPOSAL_ACCEPTED: {
+    id: "PROJECT_PROPOSAL_ACCEPTED",
+    subject: "Project Proposal Accepted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Project Proposal for project owned by {{organisationName}} has been accepted by project participant in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROJECT_PROPOSAL_REJECTED: {
+    id: "PROJECT_PROPOSAL_REJECTED",
+    subject: "Project Proposal Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Project Proposal for the initial notification form for project owned by {{organisationName}} has been rejected by project participant in the Carbon Registry. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -164,9 +239,84 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Carbon Management Assessment Form owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+        A new Carbon Management Assessment Form for project owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
 
-        Click <a href="{{cmaPageLink}}">here</a> for more details of the form.
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  CMA_APPROVED: {
+    id: "CMA_APPROVED",
+    subject: "Carbon Management Assessment Form Approved",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Your Carbon Management Assessment Form has been approved by SLCF in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  CMA_REJECTED: {
+    id: "CMA_REJECTED",
+    subject: "Carbon Management Assessment Form Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Your Carbon Management Assessment Form has been rejected by SLCF in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  VALIDATION_SUBMITTED: {
+    id: "VALIDATION_SUBMITTED",
+    subject: "Validation Report Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new validation report form for project owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  PROGRAMME_SL_AUTHORIZED: {
+    id: "PROGRAMME_SL_AUTHORIZED",
+    subject: "Project Authorized",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Project owned by {{organisationName}} has been authorized in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  VALIDATION_REJECTED: {
+    id: "VALIDATION_REJECTED",
+    subject: "Validation Report Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Validation report for project owned by {{organisationName}} has been rejected in the Carbon Registry. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
         <br><br>
 
         Sincerely,  <br>
@@ -683,7 +833,7 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
-  
+
   CREDIT_TRANSFER_SL_REQUEST: {
     id: "CREDIT_TRANSFER_SL_REQUEST",
     subject: "Credit Transfer Request Received",

@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
@@ -32,20 +33,17 @@ export class CostQuotationContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   costValidation: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   costVerification: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   totalCost: number;
 
   @ApiPropertyOptional()

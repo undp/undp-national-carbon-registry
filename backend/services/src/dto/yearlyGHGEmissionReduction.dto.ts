@@ -28,24 +28,20 @@ export class YearlyGHGEmissionReduction {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   baselineEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   projectEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   leakageEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   netEmissionReductions: number;
 }

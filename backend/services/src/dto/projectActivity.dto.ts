@@ -96,19 +96,16 @@ export class ProjectActivity {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   totalEstimatedGHGERs: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   totalCreditingYears: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
   @IsNumber()
   avgAnnualERs: number;
 

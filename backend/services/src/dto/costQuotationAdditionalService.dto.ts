@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
@@ -20,7 +21,6 @@ export class CostQuotationAdditionalServiceDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
+  @IsNumber()
   cost: number;
 }

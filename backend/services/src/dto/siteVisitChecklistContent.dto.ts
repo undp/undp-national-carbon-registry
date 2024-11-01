@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
   ArrayNotEmpty,
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -27,9 +28,8 @@ export class SiteVisitChecklistContentDto {
   organizationName: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  location: string;
+  @IsArray()
+  location: [];
 
   @ApiProperty()
   @IsNotEmpty()
