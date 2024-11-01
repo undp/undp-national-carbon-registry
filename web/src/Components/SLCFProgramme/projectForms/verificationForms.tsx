@@ -1,4 +1,4 @@
-import { Col, Row, Skeleton, Tooltip, message } from 'antd';
+import { Col, Row, Skeleton, Tag, Tooltip, message } from 'antd';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './projectForms.scss';
 import Icon, {
@@ -13,6 +13,8 @@ import Icon, {
   DownloadOutlined,
   EyeOutlined,
   EditOutlined,
+  CheckOutlined,
+  CheckCircleTwoTone,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -33,6 +35,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
+import { addSpaces } from '../../../Definitions/Definitions/programme.definitions';
+import {
+  getVerificationRequestStatusName,
+  getVerificationRequestStatusType,
+} from '../../../Definitions/Definitions/verificationSl.definition';
 
 export interface VerificationFormsProps {
   data: any;
@@ -306,16 +313,21 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
         {docData.map((item) => (
           <div className="verification-row">
             <Row className="field-verification-title" key="Verification Request Title">
-              <Col span={18} className="field-key">
-                <div>
+              <Col span={24} className="field-key">
+                <div className="verification-title-main">
                   <span className="verification-title-icon">
                     <VerifiedOutlined />
                   </span>
                   {moment(parseInt(item.createdTime)).format('DD MMMM YYYY @ HH:mm')}
                   {item.verificationSerialNo && ` - ${item.verificationSerialNo}`} {'    '}
-                  {item.status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED && (
-                    <CheckCircleOutlined style={{ color: 'green' }} />
-                  )}
+                  <span className="verification-title-status-tag">
+                    <Tag
+                      className="clickable"
+                      color={getVerificationRequestStatusType(item.status)}
+                    >
+                      {addSpaces(getVerificationRequestStatusName(item.status))}
+                    </Tag>
+                  </span>
                 </div>
               </Col>
             </Row>
@@ -374,7 +386,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     </Tooltip>
                   </>
                 </Col>
-                {!hasAcceptedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) && (
+                {!hasAcceptedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) ? (
                   <Col span={3} className="field-value">
                     {hasRejectedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) ? (
                       <>
@@ -468,6 +480,10 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       )
                     )}
                   </Col>
+                ) : (
+                  <Col span={3} className="field-value">
+                    <CheckCircleTwoTone twoToneColor="#52c41a" />
+                  </Col>
                 )}
               </Row>
               <Row className="field" key={`VerificationReport${item.id}`}>
@@ -526,7 +542,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     </Tooltip>
                   </>
                 </Col>
-                {!hasAcceptedReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT) && (
+                {!hasAcceptedReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT) ? (
                   <Col span={3} className="field-value">
                     {hasRejectedReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT) ? (
                       <>
@@ -621,10 +637,14 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       )
                     )}
                   </Col>
+                ) : (
+                  <Col span={3} className="field-value">
+                    <CheckCircleTwoTone twoToneColor="#52c41a" />
+                  </Col>
                 )}
               </Row>
               {item.creditIssueCertificateUrl && (
-                <Row className="field" key="Verification Report">
+                <Row className="field" key="creditIssueCertificate">
                   <Col span={18} className="field-key">
                     <div className="label-container">
                       <div className="label">{t('projectDetailsView:creditIssueCertificate')}</div>

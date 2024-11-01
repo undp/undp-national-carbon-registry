@@ -58,7 +58,7 @@
     font-size: 0.8rem;
   }
 
-  .field-verification-title{
+  .field-verification-title {
     margin: 15px 0px;
 
     .field-key {
@@ -66,24 +66,41 @@
     }
   }
 
-  
   .verification-row {
     .field {
       margin: 15px 50px;
       font-size: 0.8rem;
     }
-    
-    .verification-title-icon {
-      padding: 10px;
+
+    .verification-title-main {
+      display: flex;
+      justify-content: flex-start;
+
+      .verification-title-icon {
+        padding: 0px 10px;
+      }
+
+      .verification-title-status-tag{
+        padding-left: 15px;
+        font-weight: 500;
+      }
+
+
     }
-  
-    .field-verification-title{
+
+    
+
+    .field-verification-title {
       margin: 15px 0px;
-  
+
+      .verification-req-status-col {
+        display: flex;
+        justify-content: center;
+      }
+
       .field-key {
         font-weight: bold;
       }
     }
   }
-
 }
