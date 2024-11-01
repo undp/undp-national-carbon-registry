@@ -178,7 +178,7 @@ export const ProjectDetailsStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('monitoringReport:pd_physicalAddress')} ${t('isRequired')}`
+                                `${t('monitoringReport:address')} ${t('isRequired')}`
                               );
                             }
                           },
