@@ -22,6 +22,8 @@ import { EntityManager, Repository } from "typeorm";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { ConfigService } from "@nestjs/config";
+import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { DocType } from "../enum/document.type";
 
 @Injectable()
 export class VerificationService {
@@ -39,7 +41,8 @@ export class VerificationService {
     private serialGenerator: SLCFSerialNumberGeneratorService,
     private txRefGen: TxRefGeneratorService,
     private emailHelperService: EmailHelperService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private fileHandler: FileHandlerInterface
   ) {}
 
   //MARK: create Monitoring Report
@@ -52,6 +55,79 @@ export class VerificationService {
         ),
         HttpStatus.BAD_REQUEST
       );
+    }
+
+    const docContent = JSON.parse(monitoringReportDto.content);
+
+    if (
+      docContent.annexures.optionalDocuments &&
+      docContent.annexures.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of docContent.annexures.optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.MONITORING_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
+            monitoringReportDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      docContent.annexures.optionalDocuments = docUrls;
+    }
+
+    if (
+      docContent.projectActivity.projectActivityLocationsList &&
+      docContent.projectActivity.projectActivityLocationsList.length > 0
+    ) {
+      for (const location of docContent.projectActivity.projectActivityLocationsList) {
+        if (location.optionalDocuments && location.optionalDocuments.length > 0) {
+          const docUrls = [];
+          for (const doc of location.optionalDocuments) {
+            let docUrl;
+
+            if (this.isValidHttpUrl(doc)) {
+              docUrl = doc;
+            } else {
+              docUrl = await this.uploadDocument(
+                DocType.MONITORING_REPORT_LOCATION_OF_PROJECT_ACTIVITY_OPTIONAL_DOCUMENT,
+                monitoringReportDto.programmeId,
+                doc
+              );
+            }
+            docUrls.push(docUrl);
+          }
+
+          location.optionalDocuments = docUrls;
+        }
+      }
+    }
+
+    if (
+      docContent.quantifications.optionalDocuments &&
+      docContent.quantifications.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of docContent.quantifications.optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.MONITORING_REPORT_QUANTIFICATIONS_OPTIONAL_DOCUMENT,
+            monitoringReportDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      docContent.quantifications.optionalDocuments = docUrls;
     }
 
     const monitoringDocument = await this.documentRepository.findOne({
@@ -73,7 +149,7 @@ export class VerificationService {
     monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
     monitoringReportDocument.createdTime = new Date().getTime();
     monitoringReportDocument.updatedTime = new Date().getTime();
-    monitoringReportDocument.content = JSON.parse(monitoringReportDto.content);
+    monitoringReportDocument.content = docContent;
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequest: VerificationRequestEntity =
         await this.verificationRequestRepository.findOne({
@@ -194,6 +270,97 @@ export class VerificationService {
         HttpStatus.BAD_REQUEST
       );
     }
+
+    const docContent = JSON.parse(verificationReportDto.content);
+
+    if (
+      docContent.annexures.optionalDocuments &&
+      docContent.annexures.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of docContent.annexures.optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
+            verificationReportDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      docContent.annexures.optionalDocuments = docUrls;
+    }
+
+    if (
+      docContent.verificationFinding.optionalDocuments &&
+      docContent.verificationFinding.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of docContent.verificationFinding.optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_FINDING_OPTIONAL_DOCUMENT,
+            verificationReportDto.programmeId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      docContent.verificationFinding.optionalDocuments = docUrls;
+    }
+
+    if (
+      docContent.verificationOpinion.signature1 &&
+      docContent.verificationOpinion.signature1.length > 0
+    ) {
+      const signUrls = [];
+      for (const sign of docContent.verificationOpinion.signature1) {
+        let signUrl;
+
+        if (this.isValidHttpUrl(sign)) {
+          signUrl = sign;
+        } else {
+          signUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
+            verificationReportDto.programmeId,
+            sign
+          );
+        }
+        signUrls.push(signUrl);
+      }
+      docContent.verificationOpinion.signature1 = signUrls;
+    }
+
+    if (
+      docContent.verificationOpinion.signature2 &&
+      docContent.verificationOpinion.signature2.length > 0
+    ) {
+      const signUrls = [];
+      for (const sign of docContent.verificationOpinion.signature2) {
+        let signUrl;
+
+        if (this.isValidHttpUrl(sign)) {
+          signUrl = sign;
+        } else {
+          signUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
+            verificationReportDto.programmeId,
+            sign
+          );
+        }
+        signUrls.push(signUrl);
+      }
+      docContent.verificationOpinion.signature2 = signUrls;
+    }
+
     const verificationDocument = await this.documentRepository.findOne({
       where: {
         programmeId: verificationReportDto.programmeId,
@@ -215,7 +382,7 @@ export class VerificationService {
     verificationReportDocument.type = DocumentTypeEnum.VERIFICATION_REPORT;
     verificationReportDocument.createdTime = new Date().getTime();
     verificationReportDocument.updatedTime = new Date().getTime();
-    verificationReportDocument.content = JSON.parse(verificationReportDto.content);
+    verificationReportDocument.content = docContent;
 
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequest = await this.verificationRequestRepository.findOne({
@@ -449,18 +616,12 @@ export class VerificationService {
   }
 
   //MARK: Query Verification Requests By ProgrammeId
-  async queryVerificationRequestsByProgrammeId(
-    programmeId: string,
-    user: User
-  ): Promise<any> {
-    
+  async queryVerificationRequestsByProgrammeId(programmeId: string, user: User): Promise<any> {
     const programme = await this.programmeSlService.getProjectById(programmeId);
 
     if (!programme) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("programme.programmeNotExist", [
-          programmeId,
-        ]),
+        this.helperService.formatReqMessagesString("programme.programmeNotExist", [programmeId]),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -499,4 +660,69 @@ export class VerificationService {
 
     return latestVerifiedRequest?.verificationSerialNo;
   }
+
+  private isValidHttpUrl(attachment: string): boolean {
+    let url;
+
+    try {
+      url = new URL(attachment);
+    } catch (_) {
+      return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
+
+  private async uploadDocument(type: DocType, id: string, data: string) {
+    let filetype;
+    try {
+      filetype = this.getFileExtension(data);
+      data = data.split(",")[1];
+      if (filetype == undefined) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    } catch (Exception: any) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.invalidDocumentUpload", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    const response: any = await this.fileHandler.uploadFile(
+      `documents/${this.helperService.enumToString(DocType, type)}${
+        id ? "_" + id : ""
+      }_${Date.now()}.${filetype}`,
+      data
+    );
+    if (response) {
+      return response;
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programme.docUploadFailed", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  private fileExtensionMap = new Map([
+    ["pdf", "pdf"],
+    ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],
+    ["vnd.ms-excel", "xls"],
+    ["vnd.ms-powerpoint", "ppt"],
+    ["vnd.openxmlformats-officedocument.presentationml.presentation", "pptx"],
+    ["msword", "doc"],
+    ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
+    ["csv", "csv"],
+    ["png", "png"],
+    ["jpeg", "jpg"],
+  ]);
+
+  private getFileExtension = (file: string): string => {
+    let fileType = file.split(";")[0].split("/")[1];
+    fileType = this.fileExtensionMap.get(fileType);
+    return fileType;
+  };
 }
