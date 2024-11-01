@@ -280,6 +280,13 @@ const StepperComponent = (props: any) => {
             taskPerformed: '',
           },
         ],
+        followupInterviews: [
+          {
+            name: '',
+            designation: '',
+            organization: '',
+          },
+        ],
       });
 
       form5.setFieldsValue({
