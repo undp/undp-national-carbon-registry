@@ -80,7 +80,6 @@ const SLCFSignatureComponent = (props: any) => {
     const chairmanSignResponse = await get(
       `national/Settings/query?id=${ConfigurationSettingsType.chairmanSign}`
     );
-    console.log(ceoSignResponse);
     if (ceoSignResponse && ceoSignResponse.data) {
       setCeoSign(ceoSignResponse.data);
     }
@@ -336,7 +335,6 @@ const SLCFSignatureComponent = (props: any) => {
             <Button
               className="cert-button"
               onClick={() => getPreviewCertificate(SLCFCertificateType.CARBON_NEUTRAL)}
-              disabled={true}
             >
               {t('settings:previewCarbonNeutralCert')}
             </Button>
