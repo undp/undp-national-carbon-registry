@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsPhoneNumber,
   IsPositive,
   IsString,
@@ -117,8 +118,8 @@ export class ValidationReportGHGDescription {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  creditingPeriod: string;
+  @IsNumber()
+  creditingPeriod: number;
 
   @ApiProperty()
   @IsNotEmpty()

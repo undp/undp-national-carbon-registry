@@ -104,7 +104,6 @@ export class ProgrammeSlDto {
   @ApiPropertyOptional()
   @ValidateIf((o) => o.projectCategory === ProjectCategory.RENEWABLE_ENERGY)
   @IsNumber()
-  @IsPositive()
   proposedProjectCapacity?: number;
 
   @ApiPropertyOptional()

@@ -24,66 +24,55 @@ export class ValidationReportNetEmissionReductions {
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   totalBaselineEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   totalProjectEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   totalLeakageEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   totalNetEmissionReductions: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
-  @IsPositive()
   totalBufferPoolAllocations?: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   totalNumberOfCredingYears: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   avgBaselineEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   avgProjectEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   avgLeakageEmissionReductions: number;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  @IsPositive()
   avgNetEmissionReductions: number;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
-  @IsPositive()
   avgBufferPoolAllocations?: number;
 }
