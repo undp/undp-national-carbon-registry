@@ -2101,7 +2101,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Team members table end */}
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`8. ${t('projectProposal:costing')}`}
+            label={`9. ${t('projectProposal:costing')}`}
             name="costing"
             rules={[
               {
