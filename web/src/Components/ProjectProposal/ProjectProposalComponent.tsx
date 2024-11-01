@@ -41,7 +41,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
 
-  const projectPlanEndTimeChange = (value?: any) => {
+  const projectPlanChange = (value?: any) => {
     const projectPlanActivity01StartDate = form.getFieldValue('projectPlanActivity01StartDate');
     const projectPlanActivity01EndDate = form.getFieldValue('projectPlanActivity01EndDate');
     const projectPlanActivity01 = form.getFieldValue('projectPlanActivity01');
@@ -339,7 +339,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       setDisableFields(true);
     }
 
-    // projectPlanEndTimeChange();
+    // projectPlanChange();
   }, []);
 
   const onFinish = async (values: any) => {
@@ -1756,7 +1756,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input
+                      disabled={disableFields}
+                      onChange={(value) => projectPlanChange(value)}
+                    />
                   </Form.Item>
                 </Col>
                 <Col md={8} xl={8} className="col-3">
@@ -1788,6 +1791,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       placeholder="Start Date"
                       picker="date"
                       disabled={disableFields}
+                      onChange={(value) => projectPlanChange(value)}
                     />
                   </Form.Item>
                   <p>to</p>
@@ -1818,7 +1822,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       size="large"
                       placeholder="End Date"
                       picker="date"
-                      onChange={(value) => projectPlanEndTimeChange(value)}
+                      onChange={(value) => projectPlanChange(value)}
                       disabled={disableFields}
                       disabledDate={(currentDate: any) =>
                         currentDate <
@@ -1851,7 +1855,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 },
                               ]}
                             >
-                              <Input disabled={disableFields} />
+                              <Input
+                                disabled={disableFields}
+                                onChange={(value) => projectPlanChange(value)}
+                              />
                             </Form.Item>
                           </Col>
                           <Col md={8} xl={8} className="col-3">
@@ -1883,6 +1890,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 placeholder="Start Date"
                                 disabled={disableFields}
                                 picker="date"
+                                onChange={(value) => projectPlanChange(value)}
                                 // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                               />
                             </Form.Item>
@@ -1914,7 +1922,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 size="large"
                                 placeholder="End Date"
                                 picker="date"
-                                onChange={(value) => projectPlanEndTimeChange(value)}
+                                onChange={(value) => projectPlanChange(value)}
                                 disabled={disableFields}
                                 disabledDate={(currentDate: any) =>
                                   currentDate <
@@ -1931,7 +1939,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               <Button
                                 onClick={() => {
                                   remove(name);
-                                  projectPlanEndTimeChange();
+                                  projectPlanChange();
                                 }}
                                 icon={<MinusOutlined />}
                                 disabled={disableFields}
