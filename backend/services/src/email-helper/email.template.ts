@@ -145,13 +145,13 @@ export const EmailTemplates = {
   },
   PROGRAMME_SL_CREATE: {
     id: "PROGRAMME_SL_CREATE",
-    subject: "New Initial Notification Form Submitted",
+    subject: "New: Initial Notification Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
-        A new initial notification form owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+        A new Initial Notification form has been submitted, by {{organisationName}}. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -160,11 +160,11 @@ export const EmailTemplates = {
   },
   PROGRAMME_SL_APPROVED: {
     id: "PROGRAMME_SL_APPROVED",
-    subject: "Initial Notification Form Approved",
+    subject: "Initial Notification Approved",
     html: `
         Hi {{name}}, <br><br>
 
-        Your initial notification form has been approved in the Carbon Registry. <br><br>
+        Your initial notification form has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -181,7 +181,7 @@ export const EmailTemplates = {
 
         Your initial notification form has been rejected in the Carbon Registry. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        Please submit a new notification request.
         <br><br>
 
         Sincerely,  <br>
@@ -190,13 +190,13 @@ export const EmailTemplates = {
   },
   PROJECT_PROPOSAL_SUBMITTED: {
     id: "PROJECT_PROPOSAL_SUBMITTED",
-    subject: "Project Proposal Submitted",
+    subject: "New: Proposal Submitted",
     html: `
         Hi {{name}}, <br><br>
 
-        Project proposal for your initial notification form has been submitted by SLCF in the Carbon Registry. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} has been submitted by Sri Lanka Climate Fund. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
+        Please review and accept by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -205,11 +205,11 @@ export const EmailTemplates = {
   },
   PROJECT_PROPOSAL_ACCEPTED: {
     id: "PROJECT_PROPOSAL_ACCEPTED",
-    subject: "Project Proposal Accepted",
+    subject: "Proposal Accepted",
     html: `
         Hi {{name}}, <br><br>
 
-        Project Proposal for project owned by {{organisationName}} has been accepted by project participant in the Carbon Registry. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} has been accepted by {{organisationName}}. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -220,11 +220,11 @@ export const EmailTemplates = {
   },
   PROJECT_PROPOSAL_REJECTED: {
     id: "PROJECT_PROPOSAL_REJECTED",
-    subject: "Project Proposal Rejected",
+    subject: "Proposal Rejected",
     html: `
         Hi {{name}}, <br><br>
 
-        Project Proposal for the initial notification form for project owned by {{organisationName}} has been rejected by project participant in the Carbon Registry. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} has been rejected by {{organisationName}}. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -235,13 +235,13 @@ export const EmailTemplates = {
   },
   CMA_CREATE: {
     id: "CMA_CREATE",
-    subject: "New Carbon Management Assessment Form Submitted",
+    subject: "New: Carbon Management Assessment Form Submitted",
     html: `
         Hi {{name}}, <br><br>
 
-        A new Carbon Management Assessment Form for project owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+        A new Carbon Management Assessment Form for project {{programmeName}} owned by {{organisationName}} has been submitted by {{organisationName}}. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -250,11 +250,11 @@ export const EmailTemplates = {
   },
   CMA_APPROVED: {
     id: "CMA_APPROVED",
-    subject: "Carbon Management Assessment Form Approved",
+    subject: "Carbon Management Assessment Approved",
     html: `
         Hi {{name}}, <br><br>
 
-        Your Carbon Management Assessment Form has been approved by SLCF in the Carbon Registry. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the form.
         <br><br>
@@ -265,13 +265,13 @@ export const EmailTemplates = {
   },
   CMA_REJECTED: {
     id: "CMA_REJECTED",
-    subject: "Carbon Management Assessment Form Rejected",
+    subject: "Carbon Management Assessment Rejected",
     html: `
         Hi {{name}}, <br><br>
 
-        Your Carbon Management Assessment Form has been rejected by SLCF in the Carbon Registry. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} has been rejected by Sri Lanka Climate Fund. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        Please re-submit the Carbon Management Assessment form by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -280,13 +280,13 @@ export const EmailTemplates = {
   },
   VALIDATION_SUBMITTED: {
     id: "VALIDATION_SUBMITTED",
-    subject: "Validation Report Submitted",
+    subject: "New: Validation Report Submitted",
     html: `
         Hi {{name}}, <br><br>
 
-        A new validation report form for project owned by {{organisationName}} has been created in the Carbon Registry. <br><br>
+        A new Validation Report has been submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}}. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -299,10 +299,12 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Project owned by {{organisationName}} has been authorized in the Carbon Registry. <br><br>
+        Project {{programmeName}} owned by {{organisationName}} has been authorized by Executive Board of Sri Lanka Climate Fund. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
         <br><br>
+
+        Please proceed to the next phase and submit the Monitoring Report.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Credit Registry Team
@@ -314,9 +316,9 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation report for project owned by {{organisationName}} has been rejected in the Carbon Registry. <br><br>
+        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
 
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
+        Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>

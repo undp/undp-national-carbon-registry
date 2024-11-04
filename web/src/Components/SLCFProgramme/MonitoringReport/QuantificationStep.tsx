@@ -122,24 +122,30 @@ export const QualificationStep = (props: any) => {
               requiredMark={true}
               form={form}
               disabled={FormMode.VIEW === formMode}
+              initialValues={{
+                q_baselineEmission2:
+                  'B𝑬𝒚 = 𝑬𝑮𝒚×𝑬F\nWhere,  BEy= Baseline Emissions in year y (tCO2e)  EGy = Quantity of net electricity supplied to the grid as a result of the implementation of the Clean Development Mechanism (CDM) project activity in year y (MWh).\nEFy = CO2 Emission factor of the grid in the year 2020 (tCO2/ MWh)',
+              }}
               onFinish={async (values: any) => {
-                values?.emissionReductionsRemovalsList?.forEach((val: any) => {
-                  val.startDate = moment(values?.startDate).startOf('day').unix();
-                  val.endDate = moment(values?.endDate).startOf('day').unix();
-                });
-                values.optionalDocuments = await (async function () {
-                  const base64Docs: string[] = [];
+                if (FormMode.VIEW !== formMode) {
+                  values?.emissionReductionsRemovalsList?.forEach((val: any) => {
+                    val.startDate = moment(values?.startDate).startOf('day').unix();
+                    val.endDate = moment(values?.endDate).startOf('day').unix();
+                  });
+                  values.optionalDocuments = await (async function () {
+                    const base64Docs: string[] = [];
 
-                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                    const docs = values.optionalDocuments;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
+                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                      const docs = values.optionalDocuments;
+                      for (let i = 0; i < docs.length; i++) {
+                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                        base64Docs.push(temp);
+                      }
                     }
-                  }
 
-                  return base64Docs;
-                })();
+                    return base64Docs;
+                  })();
+                }
                 onValueChange({ quantifications: values });
                 next();
               }}
@@ -160,6 +166,10 @@ export const QualificationStep = (props: any) => {
                       <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
+                    <Form.Item name="q_baselineEmission2">
+                      <TextArea rows={4} disabled={true} />
+                    </Form.Item>
+
                     <Form.Item
                       label={t('monitoringReport:q_documentUpload')}
                       name="optionalDocuments"
@@ -170,14 +180,7 @@ export const QualificationStep = (props: any) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              if (
-                                !isValidateFileType(
-                                  file[0]?.type,
-                                  DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                                )
-                              ) {
-                                throw new Error(`${t('monitoringReport:invalidFileFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
+                              if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);
                               }
@@ -249,7 +252,12 @@ export const QualificationStep = (props: any) => {
                                 },
                               ]}
                             >
-                              <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
+                              <TextArea
+                                rows={4}
+                                disabled={FormMode.VIEW === formMode}
+                                placeholder="Quantify the net GHG emission reductions and removals, summarizing the key results  using the table below. Specify breakdown of GHG emission reductions and removals by  annually. 
+For AFOLU projects, include quantification of the net change in carbon stocks. Also, state  the non-permanence risk rating (as determined in the AFOLU non-permanence risk  report) and calculate the total number of buffer credits that need to be deposited into the  AFOLU pooled buffer account. Attach the non-permanence risk report as either an  appendix or a separate document."
+                              />
                             </Form.Item>
                           </div>
                         </Col>
@@ -334,7 +342,7 @@ export const QualificationStep = (props: any) => {
                                   </Col>
                                   <Col xl={1} md={24}>
                                     <div className="step-form-right-col">
-                                      <h4 className="to-label">{t('monitoringReport:to')}</h4>
+                                      <h4 className="to-lable">{t('monitoringReport:to')}</h4>
                                     </div>
                                   </Col>
                                   <Col xl={4} md={24}>
@@ -529,7 +537,7 @@ export const QualificationStep = (props: any) => {
                             </Form.Item>
                           </div>
                         </Col>
-                        <Col xl={4} md={24}>
+                        <Col xl={3} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="leakageEmissionsTotal">
                               <Input size="large" disabled />
@@ -543,6 +551,7 @@ export const QualificationStep = (props: any) => {
                             </Form.Item>
                           </div>
                         </Col>
+                        <Col xl={1} md={24}></Col>
                       </Row>
                       <Row gutter={[16, 16]} className="form-section">
                         <Col xl={9} md={24}>
@@ -579,7 +588,7 @@ export const QualificationStep = (props: any) => {
                             </Form.Item>
                           </div>
                         </Col>
-                        <Col xl={4} md={24}>
+                        <Col xl={3} md={24}>
                           <div className="step-form-right-col">
                             <Form.Item name="leakageEmissionsAverage">
                               <Input size="large" disabled />
@@ -593,6 +602,7 @@ export const QualificationStep = (props: any) => {
                             </Form.Item>
                           </div>
                         </Col>
+                        <Col xl={1} md={24}></Col>
                       </Row>
                     </>
 
@@ -673,7 +683,7 @@ export const QualificationStep = (props: any) => {
                       </Row>
                     </>
                     <Form.Item
-                      label={t('monitoringReport:q_remarks')}
+                      label={`5.6 ${t('monitoringReport:q_remarks')}`}
                       name="q_remarks"
                       rules={[
                         {

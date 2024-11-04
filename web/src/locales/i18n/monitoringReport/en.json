@@ -94,13 +94,17 @@
   "title": "Title",
   "titlePlaceholder": "Provide the title",
   "address": "Address",
-  "registrationDateOfTheActivity": "Registration date Of the project activity",
+  "creditingPeriodFromDate ": "From date",
+  "creditingPeriodToDate  ": "To date",
+  "creditingPeriodComment  ": "Comment",
+  "registrationDateOfTheActivity": "Registration date of the project activity",
   "projectTrackAndCreditUse": "Project track and credit use",
+  "projectTrackAndCreditUseComment": "*Issued carbon credits from project will only be used for internal offsetting of emissions",
   "otherEntitiesInProject": "Other Entities Involved in the Project",
   "projectCreditingPeriod": "Project Crediting Period",
   "titleAndReferenceOfMethodology": "Title and Reference of Methodology",
   "reference": "Reference",
-  "otherFormsOfCredit": "Other forms of Credit",
+  "otherFormsOfCredit": "Other forms of Credits",
   "otherFormsOfCreditPlaceholder": "Describe whether the project has sought or received another form of GHG-related  environmental credit, including renewable energy certificates. Include all relevant  information about the GHG-related environmental credit and the related program. List all other programs under which the project is eligible to participate (to create  another form of GHG-related environmental credit).",
   "participationGhgPrograms": "Participation under Other GHG Programs",
   "participationGhgProgramsPlaceholder": "Where applicable, indicate whether the project is registered under any other GHG  programs and, where this is the case, provide the registration number and details. Provide  details of any GHG credits claimed under such programs",
@@ -156,5 +160,7 @@
   "projectCommisionDate": "Project Commisissioning Date",
   "roleInTheProject": "Role in the project",
   "uploadImages": "Optional: Upload your images here",
-  "uploadMonitoringReportSuccess": "Monitoring report submitted successfully"
+  "uploadMonitoringReportSuccess": "Monitoring report submitted successfully",
+  "monitoringReportRejectSuccess": "Monitoring report rejected successfully",
+  "monitoringReportApproveSuccess": "Monitoring report approved successfully"
 }

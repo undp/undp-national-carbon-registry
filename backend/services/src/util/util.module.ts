@@ -38,6 +38,7 @@ import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancel
 import { ProjectRegistrationCertificateGenerator } from "./projectRegistrationCertificate.gen";
 import { DateUtilService } from "./dateUtil.service";
 import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
+import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.gen";
 
 @Module({
   imports: [
@@ -95,6 +96,7 @@ import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
+    CarbonNeutralCertificateGenerator,
     DateUtilService
   ],
   exports: [
@@ -117,6 +119,7 @@ import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
+    CarbonNeutralCertificateGenerator,
     DateUtilService
   ],
 })

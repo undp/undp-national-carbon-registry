@@ -14,6 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const navigationLocation = useLocation();
@@ -193,6 +194,16 @@ const StepperComponent = (props: any) => {
         });
         verificationFindingForm.setFieldsValue({
           ...content?.verificationFinding,
+          optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
           siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
             return {
               ...val,
@@ -205,6 +216,26 @@ const StepperComponent = (props: any) => {
           ...content?.verificationOpinion,
           dateOfSignature1: moment.unix(content?.verificationOpinion?.dateOfSignature1),
           dateOfSignature2: moment.unix(content?.verificationOpinion?.dateOfSignature2),
+          signature1: data?.content?.verificationOpinion?.signature1?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
+          signature2: data?.content?.verificationOpinion?.signature2?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
         });
 
         referenceForm.setFieldsValue({
@@ -213,6 +244,16 @@ const StepperComponent = (props: any) => {
 
         appendixForm.setFieldsValue({
           ...content?.annexures,
+          optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
         });
       } else {
         methodologyForm.setFieldsValue({

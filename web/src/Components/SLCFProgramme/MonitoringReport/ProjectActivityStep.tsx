@@ -52,6 +52,7 @@ export const ProjectActivityStep = (props: any) => {
 
   const getExistingCordinate = (locationIndex: number) => {
     const locationList = form.getFieldValue('projectActivityLocationsList');
+    console.log(locationList);
     if (locationList[locationIndex] && locationList[locationIndex].location)
       return locationList[locationIndex].location;
 
@@ -136,31 +137,35 @@ export const ProjectActivityStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
-                values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
-                  .startOf('day')
-                  .unix();
-                values.creditingPeriodToDate = moment(values?.creditingPeriodToDate)
-                  .startOf('day')
-                  .unix();
-                values.registrationDateOfTheActivity = moment(values?.registrationDateOfTheActivity)
-                  .startOf('day')
-                  .unix();
-                values?.projectActivityLocationsList?.forEach(async (val: any) => {
-                  val.projectStartDate = moment(values?.projectStartDate).startOf('day').unix();
-                  val.optionalDocuments = await (async function () {
-                    const base64Docs: string[] = [];
+                if (formMode !== FormMode.VIEW) {
+                  values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
+                    .startOf('day')
+                    .unix();
+                  values.creditingPeriodToDate = moment(values?.creditingPeriodToDate)
+                    .startOf('day')
+                    .unix();
+                  values.registrationDateOfTheActivity = moment(
+                    values?.registrationDateOfTheActivity
+                  )
+                    .startOf('day')
+                    .unix();
+                  await values?.projectActivityLocationsList?.forEach(async (val: any) => {
+                    val.projectStartDate = moment(val?.projectStartDate).startOf('day').unix();
+                    val.optionalDocuments = await (async function () {
+                      const base64Docs: string[] = [];
 
-                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                      const docs = values.optionalDocuments;
-                      for (let i = 0; i < docs.length; i++) {
-                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                        base64Docs.push(temp);
+                      if (val?.optionalDocuments && val?.optionalDocuments.length > 0) {
+                        const docs = val.optionalDocuments;
+                        for (let i = 0; i < docs.length; i++) {
+                          const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                          base64Docs.push(temp);
+                        }
                       }
-                    }
 
-                    return base64Docs;
-                  })();
-                });
+                      return base64Docs;
+                    })();
+                  });
+                }
                 onValueChange({ projectActivity: values });
                 next();
               }}
@@ -289,7 +294,7 @@ export const ProjectActivityStep = (props: any) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('monitoringReport:telephone')} ${t('isRequired')}`,
+                                message: ``,
                               },
                               {
                                 validator: async (rule: any, value: any) => {
@@ -305,20 +310,10 @@ export const ProjectActivityStep = (props: any) => {
                                   } else {
                                     const phoneNo = formatPhoneNumber(String(value));
                                     if (String(value).trim() !== '') {
-                                      if (
-                                        phoneNo === null ||
-                                        phoneNo === '' ||
-                                        phoneNo === undefined
-                                      ) {
+                                      if (!isPossiblePhoneNumber(String(value))) {
                                         throw new Error(
-                                          `${t('monitoringReport:telephone')} ${t('isRequired')}`
+                                          `${t('monitoringReport:telephone')} ${t('isInvalid')}`
                                         );
-                                      } else {
-                                        if (!isPossiblePhoneNumber(String(value))) {
-                                          throw new Error(
-                                            `${t('monitoringReport:telephone')} ${t('isInvalid')}`
-                                          );
-                                        }
                                       }
                                     }
                                   }
@@ -400,7 +395,7 @@ export const ProjectActivityStep = (props: any) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('monitoringReport:email')} ${t('isRequired')}`,
+                              message: ``,
                             },
                             {
                               validator: async (rule, value) => {
@@ -546,9 +541,7 @@ export const ProjectActivityStep = (props: any) => {
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('monitoringReport:telephone')} ${t(
-                                              'isRequired'
-                                            )}`,
+                                            message: ``,
                                           },
                                           {
                                             validator: async (rule: any, value: any) => {
@@ -566,24 +559,12 @@ export const ProjectActivityStep = (props: any) => {
                                               } else {
                                                 const phoneNo = formatPhoneNumber(String(value));
                                                 if (String(value).trim() !== '') {
-                                                  if (
-                                                    phoneNo === null ||
-                                                    phoneNo === '' ||
-                                                    phoneNo === undefined
-                                                  ) {
+                                                  if (!isPossiblePhoneNumber(String(value))) {
                                                     throw new Error(
                                                       `${t('monitoringReport:telephone')} ${t(
-                                                        'isRequired'
+                                                        'isInvalid'
                                                       )}`
                                                     );
-                                                  } else {
-                                                    if (!isPossiblePhoneNumber(String(value))) {
-                                                      throw new Error(
-                                                        `${t('monitoringReport:telephone')} ${t(
-                                                          'isInvalid'
-                                                        )}`
-                                                      );
-                                                    }
                                                   }
                                                 }
                                               }
@@ -611,9 +592,7 @@ export const ProjectActivityStep = (props: any) => {
                                       rules={[
                                         {
                                           required: true,
-                                          message: `${t('monitoringReport:email')} ${t(
-                                            'isRequired'
-                                          )}`,
+                                          message: ``,
                                         },
                                         {
                                           validator: async (rule, value) => {
@@ -920,6 +899,9 @@ export const ProjectActivityStep = (props: any) => {
                                 >
                                   <Input size="large" />
                                 </Form.Item>
+                                <h4 className="form-section-title">
+                                  {`${t('monitoringReport:projectTrackAndCreditUseComment')}`}
+                                </h4>
                               </Col>
                             </Row>
                           </div>
@@ -1085,7 +1067,7 @@ export const ProjectActivityStep = (props: any) => {
                                 name={[name, 'location']}
                                 rules={[
                                   {
-                                    required: false,
+                                    required: true,
                                     message: `${t('monitoringReport:location')} ${t('isRequired')}`,
                                   },
                                 ]}
@@ -1093,7 +1075,9 @@ export const ProjectActivityStep = (props: any) => {
                                 <GetLocationMapComponent
                                   form={form}
                                   formItemName={[name, 'location']}
+                                  listName="projectActivityLocationsList"
                                   existingCordinate={getExistingCordinate(locationIndex)}
+                                  disabled={formMode === FormMode.VIEW}
                                 />
                               </Form.Item>
                             </Col>
@@ -1103,22 +1087,26 @@ export const ProjectActivityStep = (props: any) => {
                                 name={[name, 'optionalDocuments']}
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
-                                required={false}
-                                rules={[
-                                  {
-                                    validator: async (rule, file) => {
-                                      if (file?.length > 0) {
-                                        if (!isValidateFileType(file[0]?.type)) {
-                                          throw new Error(
-                                            `${t('monitoringReport:invalidFileFormat')}`
-                                          );
-                                        } else if (file[0]?.size > maximumImageSize) {
-                                          throw new Error(`${t('common:maxSizeVal')}`);
-                                        }
-                                      }
-                                    },
-                                  },
-                                ]}
+                                required={formMode !== FormMode.VIEW}
+                                rules={
+                                  formMode === FormMode.VIEW
+                                    ? []
+                                    : [
+                                        {
+                                          validator: async (rule, file) => {
+                                            if (file?.length > 0) {
+                                              if (!isValidateFileType(file[0]?.type)) {
+                                                throw new Error(
+                                                  `${t('monitoringReport:invalidFileFormat')}`
+                                                );
+                                              } else if (file[0]?.size > maximumImageSize) {
+                                                throw new Error(`${t('common:maxSizeVal')}`);
+                                              }
+                                            }
+                                          },
+                                        },
+                                      ]
+                                }
                               >
                                 <Upload
                                   accept=".doc, .docx, .pdf, .png, .jpg"
@@ -1144,7 +1132,7 @@ export const ProjectActivityStep = (props: any) => {
                             </Col>
                             <Col xl={12} md={24}>
                               <Form.Item
-                                label={`${t('monitoringReport:projectStartDate')}`}
+                                label={`1.10 ${t('monitoringReport:projectStartDate')}`}
                                 name={[name, 'projectStartDate']}
                                 rules={[
                                   {
@@ -1202,7 +1190,7 @@ export const ProjectActivityStep = (props: any) => {
               </>
 
               <h4 className="form-section-title">
-                {t('monitoringReport:titleAndReferenceOfMethodology')}
+                {`1.11 ${t('monitoringReport:titleAndReferenceOfMethodology')}`}
               </h4>
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
@@ -1256,7 +1244,7 @@ export const ProjectActivityStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:participationGhgPrograms')}
+                      label={`1.12 ${t('monitoringReport:participationGhgPrograms')}`}
                       name="participationGhgPrograms"
                       rules={[
                         {
@@ -1278,7 +1266,7 @@ export const ProjectActivityStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
                     <Form.Item
-                      label={t('monitoringReport:otherFormsOfCredit')}
+                      label={`1.13 ${t('monitoringReport:otherFormsOfCredit')}`}
                       name="otherFormsOfCredit"
                       rules={[
                         {
@@ -1294,7 +1282,7 @@ export const ProjectActivityStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('monitoringReport:sustainableDevelopment')}
+                      label={`1.14 ${t('monitoringReport:sustainableDevelopment')}`}
                       name="sustainableDevelopment"
                       rules={[
                         {

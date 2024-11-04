@@ -5,5 +5,7 @@
   "programmeExistsWithSameProgrammeId": "Programme exists with same programme ID",
   "cannotCreateCMAForOtherProjectParticipants": "Cannot create CMA for other project participants",
   "programmeNotExist": "Programme is not existing with the given Programme ID",
-  "programmeIsNotInSuitableStageToProceed": "Programme is not in a suitable state to proceed"
+  "programmeIsNotInSuitableStageToProceed": "Programme is not in a suitable state to proceed",
+  "shouldHaveOnlySingleCoordinateForSingleProjectGeography": "Should have only single pair of coordinates when project geography is single",
+  "shouldHaveMoreThanSingleCoordinateForMultipleProjectGeography": "Should have more than single pair of coordinates when project geography is multiple"
 }

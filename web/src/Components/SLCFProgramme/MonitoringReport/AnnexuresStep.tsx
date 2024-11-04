@@ -47,19 +47,21 @@ export const AnnexuresStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                values.optionalDocuments = await (async function () {
-                  const base64Docs: string[] = [];
+                if (FormMode.VIEW !== formMode) {
+                  values.optionalDocuments = await (async function () {
+                    const base64Docs: string[] = [];
 
-                  if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                    const docs = values.optionalDocuments;
-                    for (let i = 0; i < docs.length; i++) {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                      base64Docs.push(temp);
+                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
+                      const docs = values.optionalDocuments;
+                      for (let i = 0; i < docs.length; i++) {
+                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                        base64Docs.push(temp);
+                      }
                     }
-                  }
 
-                  return base64Docs;
-                })();
+                    return base64Docs;
+                  })();
+                }
                 onFinish({ annexures: values });
               }}
             >
