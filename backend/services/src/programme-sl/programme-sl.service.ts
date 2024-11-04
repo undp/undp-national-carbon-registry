@@ -483,24 +483,24 @@ export class ProgrammeSlService {
       validationAgreementDto.content.projectParticipantSignature = docUrl;
     }
 
-    if (validationAgreementDto.content.witness1Signature) {
+    if (validationAgreementDto.content.climateFundWitnessSignature) {
       const docUrl = await this.uploadDocument(
         DocType.AGREEMENT_WITNESS1_SIGN,
         validationAgreementDto.programmeId,
-        validationAgreementDto.content.witness1Signature
+        validationAgreementDto.content.climateFundWitnessSignature
       );
 
-      validationAgreementDto.content.witness1Signature = docUrl;
+      validationAgreementDto.content.climateFundWitnessSignature = docUrl;
     }
 
-    if (validationAgreementDto.content.witness2Signature) {
+    if (validationAgreementDto.content.projectParticipantWitnessSignature) {
       const docUrl = await this.uploadDocument(
         DocType.AGREEMENT_WITNESS2_SIGN,
         validationAgreementDto.programmeId,
-        validationAgreementDto.content.witness2Signature
+        validationAgreementDto.content.projectParticipantWitnessSignature
       );
 
-      validationAgreementDto.content.witness2Signature = docUrl;
+      validationAgreementDto.content.projectParticipantWitnessSignature = docUrl;
     }
 
     if (validationAgreementDto.content.annexureADoc) {
