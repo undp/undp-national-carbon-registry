@@ -51,7 +51,7 @@ export const SafeguardsStep = (props: any) => {
                             <p>
                               Describe the process for, and the outcomes from, ongoing communication
                               with local stakeholders conducted prior to verification. Include
-                              details on the following
+                              details on the following:
                             </p>
                             <ul>
                               <li>
@@ -61,29 +61,29 @@ export const SafeguardsStep = (props: any) => {
                               </li>
                               <li>
                                 The procedures or methods used for documenting the outcomes of the
-                                local stakeholder communication
+                                local stakeholder communication.
                               </li>
                               <li>
-                                The mechanism for on-going communication with local stakeholders
+                                The mechanism for on-going communication with local stakeholders.
                               </li>
                               <li>
                                 How due account of all and any input received during ongoing
                                 communication has been taken. Include details on any updates to the
-                                project design or justify why updates are not appropriate. For AFOLU
+                                project design or justify why updates are not appropriate For AFOLU.
                               </li>
                             </ul>
                             <p>
                               Projects, also demonstrate how the project has communicated the
-                              following with local stakeholders
+                              following with local stakeholders:
                             </p>
                             <ul>
                               <li>
                                 The results of project implementation, including the results of
-                                monitoring
+                                monitoring.
                               </li>
                               <li>
                                 Any changes, where relevant, to risks, costs and benefits the
-                                project may bring to local stakeholders
+                                project may bring to local stakeholders.
                               </li>
                               <li>
                                 Any changes, where relevant, to relevant laws and regulations
@@ -91,7 +91,7 @@ export const SafeguardsStep = (props: any) => {
                               </li>
                               <li>
                                 The process of SLCCS verification and the validation/verification
-                                body’s site visit
+                                body’s site visit.
                               </li>
                             </ul>
                           </div>
@@ -117,7 +117,7 @@ export const SafeguardsStep = (props: any) => {
                       tooltip={{
                         title: (
                           <div className="tooltip">
-                            <p> For AFOLU projects, provide details on the following </p>
+                            <p> For AFOLU projects, provide details on the following: </p>
                             <ul>
                               <li>
                                 Activities implemented to mitigate risks local stakeholders due to

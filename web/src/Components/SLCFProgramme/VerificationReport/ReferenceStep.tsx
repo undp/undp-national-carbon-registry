@@ -52,7 +52,7 @@ export const ReferenceStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={8} maxLength={6} disabled={FormMode.VIEW === formMode} />
+                      <TextArea rows={8} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>

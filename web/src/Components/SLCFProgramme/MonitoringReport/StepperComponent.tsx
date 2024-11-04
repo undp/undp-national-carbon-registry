@@ -14,6 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
 const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
@@ -196,12 +197,31 @@ const StepperComponent = (props: any) => {
               return {
                 ...val,
                 projectStartDate: moment.unix(val?.projectStartDate),
-                // location: val.location[0][0],
+                optionalDocuments: val?.optionalDocuments?.map(
+                  (document: string, index: number) => {
+                    return {
+                      uid: index,
+                      name: extractFilePropertiesFromLink(document).fileName,
+                      status: 'done',
+                      url: document,
+                    };
+                  }
+                ),
               };
             }),
         });
         qualificationForm.setFieldsValue({
           ...data?.content?.quantifications,
+          optionalDocuments: data?.content?.quantifications?.optionalDocuments?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
           emissionReductionsRemovalsList:
             data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
               return {
@@ -219,6 +239,19 @@ const StepperComponent = (props: any) => {
         });
         dataAndParametersForm.setFieldsValue({
           ...data?.content?.dataAndParameters,
+        });
+        annexuresForm.setFieldsValue({
+          ...data?.content?.annexures,
+          optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
+            (document: string, index: number) => {
+              return {
+                uid: index,
+                name: extractFilePropertiesFromLink(document).fileName,
+                status: 'done',
+                url: document,
+              };
+            }
+          ),
         });
         // projectActivityForm.setFieldsValue({
         //   projectProponentsList: [

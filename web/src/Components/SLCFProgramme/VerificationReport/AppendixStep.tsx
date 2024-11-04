@@ -66,7 +66,7 @@ export const AppendixStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={6} maxLength={6} disabled={FormMode.VIEW === formMode} />
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                     <Form.Item
                       label={t('verificationReport:additionalDocuments')}

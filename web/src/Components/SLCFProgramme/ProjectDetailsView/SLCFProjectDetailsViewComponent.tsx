@@ -237,10 +237,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const getPieChartData = (d: ProgrammeSlU) => {
     const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
     const dt = [
-      Number((numIsExist(d.creditEst) - d.creditTransferred - d.creditRetired - frozen).toFixed(2)),
+      Number(
+        (
+          numIsExist(d.creditEst) -
+          numIsExist(d.creditTransferred) -
+          numIsExist(d.creditRetired) -
+          frozen
+        ).toFixed(2)
+      ),
       Number(numIsExist(d.creditBalance).toFixed(2)),
-      Number(d.creditTransferred),
-      Number(d.creditRetired),
+      Number(numIsExist(d.creditTransferred)),
+      Number(numIsExist(d.creditRetired)),
       frozen,
     ];
     return dt;
@@ -2053,7 +2060,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                 showAlways: true,
                                 show: true,
                                 label: 'Total',
-                                formatter: () => (data.creditEst ? '' + data.creditEst : '0'),
+                                formatter: () => {
+                                  console.log('------data-------', data);
+                                  return data.creditEst ? '' + data.creditEst : '0';
+                                },
                               },
                             },
                           },

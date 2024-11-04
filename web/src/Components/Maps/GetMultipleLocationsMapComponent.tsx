@@ -33,6 +33,7 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
     : '';
 
   const [projectLocations, setProjectLocations] = useState<any[][]>(existingCoordinate || []);
+
   const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
@@ -49,9 +50,17 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
   };
 
   useEffect(() => {
-    setProjectLocations([]);
-    updateZoomLevel(4);
+    if (!disabled) {
+      setProjectLocations([]);
+      updateZoomLevel(4);
+    }
   }, [disableMultipleLocations]);
+
+  useEffect(() => {
+    if (existingCoordinate) {
+      setProjectLocations(existingCoordinate);
+    }
+  }, [existingCoordinate]);
 
   useEffect(() => {
     setProjectLocationMapCenter(center ? center : [80.7718, 7.8731]);
@@ -103,7 +112,7 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
     setProjectLocationMapLayer(tempLocationLayer);
     setProjectLocationMapOutlineLayer(tempOutlineLayer);
 
-    if (listName) {
+    if (listName && projectLocations !== undefined) {
       const listFields = form.getFieldValue(listName);
 
       if (listFields[formItemName[0]] !== undefined) {
@@ -115,8 +124,9 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
       }
 
       form.setFieldValue(listName, listFields);
+    } else if (projectLocations !== undefined) {
+      form.setFieldValue(formItemName, projectLocations);
     }
-    form.setFieldValue(formItemName, projectLocations);
   }, [projectLocations]);
 
   const onPolygonComplete = function (data: any) {
@@ -193,7 +203,13 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
                 })}
                 {' }'}
               </div>
-              <DeleteOutlined className="delete-icon" onClick={() => deleteLocation(i)} />
+              {!disabled && (
+                <DeleteOutlined
+                  className="delete-icon"
+                  onClick={() => deleteLocation(i)}
+                  disabled={disabled}
+                />
+              )}
             </div>
           ))}
         </div>

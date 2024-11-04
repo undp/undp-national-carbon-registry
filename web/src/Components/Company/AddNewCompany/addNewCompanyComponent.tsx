@@ -279,6 +279,8 @@ export const AddNewCompanyComponent = (props: any) => {
     state?.record?.ministry ? state?.record?.ministry : ''
   );
 
+  const [faxNumber, setFaxNumber] = useState(state?.record?.faxNo || '');
+
   let selectedGovDepatments = ministryOrgs[selectedMinistry];
   if (existgovDep && existgovDep.length > 0) {
     selectedGovDepatments = selectedGovDepatments.filter((x: string) => !existgovDep.includes(x));
@@ -456,6 +458,14 @@ export const AddNewCompanyComponent = (props: any) => {
       const buyerCountryValues = regionsList;
       const newBuyerValues = buyerCountryValues?.filter((item: any) => item !== t('national'));
       formOne.setFieldValue('provinces', [...newBuyerValues]);
+    }
+  };
+
+  const handleFaxNumberChange = (value: any) => {
+    if (value && isPossiblePhoneNumber(value)) {
+      setFaxNumber(formatPhoneNumberIntl(value));
+    } else {
+      setFaxNumber(value);
     }
   };
 
@@ -1269,7 +1279,7 @@ export const AddNewCompanyComponent = (props: any) => {
                   <Form.Item
                     name="faxNo"
                     label={t('addCompany:faxNo')}
-                    initialValue={state?.record?.faxNo}
+                    initialValue={faxNumber}
                     rules={[
                       {
                         required: false,
@@ -1312,7 +1322,7 @@ export const AddNewCompanyComponent = (props: any) => {
                       value={formatPhoneNumberIntl(contactNoInput)}
                       defaultCountry="LK"
                       countryCallingCodeEditable={false}
-                      onChange={(v) => {}}
+                      onChange={handleFaxNumberChange}
                       countries={countries}
                     />
                   </Form.Item>
