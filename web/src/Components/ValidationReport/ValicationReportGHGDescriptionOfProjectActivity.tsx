@@ -6,6 +6,7 @@ import {
   Divider,
   Form,
   Input,
+  InputNumber,
   Radio,
   Row,
   Select,
@@ -309,7 +310,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       ...projectScopeUNFCC,
       appliedMethodology: values?.appliedMethodology,
       technicalAreas: values?.technicalAreas,
-      creditingPeriod: String(values?.creditingPeriod),
+      creditingPeriod: values?.creditingPeriod,
       locationsOfProjectActivity: await getLocationDetails(values),
       startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
     };
@@ -449,7 +450,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <Input size="large" />
+                    <InputNumber size="large" />
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"

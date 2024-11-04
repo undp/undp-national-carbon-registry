@@ -239,7 +239,7 @@ const StepperComponent = (props: any) => {
       });
 
       form3.setFieldsValue({
-        creditingPeriod: projectContent?.projectActivity?.totalCreditingYears,
+        creditingPeriod: Number(projectContent?.projectActivity?.totalCreditingYears),
         locationsOfProjectActivity: projectContent?.projectActivity.locationsOfProjectActivity.map(
           (location: any) => {
             return {
