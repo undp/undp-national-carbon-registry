@@ -48,7 +48,8 @@ import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
-import { SlProjectCategoryMap } from "../enum/projectCategory.enum";
+import { ProjectCategory, SlProjectCategoryMap } from "../enum/projectCategory.enum";
+import { ProjectGeography } from "src/enum/projectGeography.enum";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -101,6 +102,50 @@ export class ProgrammeSlService {
         this.helperService.formatReqMessagesString("programmeSl.noCompanyExistingInSystem", []),
         HttpStatus.BAD_REQUEST
       );
+    }
+
+    if (programme.projectCategory !== ProjectCategory.OTHER) {
+      programme.otherProjectCategory = null;
+    }
+
+    if (programme.projectGeography === ProjectGeography.SINGLE) {
+      if (
+        programme.geographicalLocationCoordinates.length > 1 ||
+        programme.geographicalLocationCoordinates.length < 1
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programmeSl.shouldHaveOnlySingleCoordinateForSingleProjectGeography",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+    } else if (programme.projectGeography === ProjectGeography.MULTIPLE) {
+      if (programme.geographicalLocationCoordinates.length <= 1) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programmeSl.shouldHaveMoreThanSingleCoordinateForMultipleProjectGeography",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+    }
+
+    if (
+      programme.projectCategory === ProjectCategory.AFFORESTATION ||
+      programme.projectCategory === ProjectCategory.REFORESTATION ||
+      programme.projectCategory === ProjectCategory.OTHER
+    ) {
+      programme.proposedProjectCapacity = null;
+    }
+
+    if (
+      programme.projectCategory === ProjectCategory.RENEWABLE_ENERGY ||
+      programme.projectCategory === ProjectCategory.OTHER
+    ) {
+      programme.speciesPlanted = null;
     }
 
     programme.programmeId = await this.counterService.incrementCount(CounterType.PROGRAMME_SL, 4);
