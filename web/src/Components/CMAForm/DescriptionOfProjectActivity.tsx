@@ -2356,7 +2356,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -2426,7 +2426,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                                         // eslint-disable-next-line no-restricted-globals
                                         if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer'));
+                                          return Promise.reject(new Error('Should be a number'));
                                         }
 
                                         return Promise.resolve();
@@ -2505,7 +2505,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -2536,7 +2536,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -2567,7 +2567,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();

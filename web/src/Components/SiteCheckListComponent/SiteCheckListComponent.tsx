@@ -638,7 +638,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          throw new Error('Should be an integer!');
+                          throw new Error('Should be a number!');
                         }
                       },
                     },
@@ -670,7 +670,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
                         // // eslint-disable-next-line no-restricted-globals
                         // if (isNaN(value)) {
-                        //   return Promise.reject(new Error('Should be an integer!'));
+                        //   return Promise.reject(new Error('Should be a number!'));
                         // }
                       },
                     },
