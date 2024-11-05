@@ -43,6 +43,15 @@
 .step-form-container {
   width: 100%;
 
+  .website-input {
+    .ant-input {
+      margin-left: 0.3rem;
+    }
+    .ant-input-group-addon {
+      border: 1px solid $common-form-input-border;
+    }
+  }
+
   .form-section-title {
     margin-bottom: 20px;
     margin-top: 30px;
@@ -64,7 +73,7 @@
   .project-track {
     color: rgba(58, 53, 65, 0.5);
   }
-  
+
   .custom-required:after {
     content: '*';
     color: rgba(255, 77, 79, 0.8) !important;
@@ -156,7 +165,7 @@
     }
 
     .col4 {
-      width: 30%;
+      width: 40%;
       padding: 0px 10px;
     }
   }
@@ -352,5 +361,3 @@
 .ant-form-item-tooltip {
   cursor: default !important;
 }
-
-

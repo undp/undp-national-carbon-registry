@@ -49,6 +49,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const [dsDivisions, setDsDivisions] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
 
+  const [selectedYears, setSelectedYears] = useState<any[]>([]);
   const getProvinces = async () => {
     try {
       const { data } = await post('national/location/province');
@@ -2324,7 +2325,13 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           size="large"
                           picker="year"
                           disabled={disableFields}
-                          onChange={(value) => onEmissionsYearChange(value, 1)}
+                          onChange={(value) => {
+                            onEmissionsYearChange(value, 1);
+                            const year = moment(value).year();
+                            console.log('------year--------', year);
+                            setSelectedYears((prevYrs) => [...prevYrs, year]);
+                          }}
+                          disabledDate={(currYrs) => selectedYears.includes(moment(currYrs).year())}
                         />
                       </Form.Item>
                     </Col>
@@ -2386,8 +2393,14 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     size="large"
                                     picker="year"
                                     disabled={disableFields}
-                                    onChange={(value) =>
-                                      onEmissionsYearChange(value, fields.length + 1)
+                                    onChange={(value) => {
+                                      onEmissionsYearChange(value, fields.length + 1);
+                                      const year = moment(value).year();
+                                      console.log('------year--------', year);
+                                      setSelectedYears((prevYrs) => [...prevYrs, year]);
+                                    }}
+                                    disabledDate={(currYrs) =>
+                                      selectedYears.includes(moment(currYrs).year())
                                     }
                                   />
                                 </Form.Item>
