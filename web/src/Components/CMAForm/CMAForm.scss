@@ -52,6 +52,41 @@
     }
   }
 
+  .equation-container {
+    background-color: #f3f3f3;
+    padding: 12px;
+
+    .equation {
+      display: flex;
+      width: 350px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #615d67;
+      i:first-child {
+        font-size: 14px;
+      }
+      sub {
+        font-size: 9px;
+      }
+
+      span {
+        font-weight: 400;
+        margin-bottom: 0 !important;
+        i {
+          font-size: 14px !important;
+        }
+      }
+    }
+
+    .equation-description {
+      p:first-child {
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+
   .form-section-title {
     margin-bottom: 20px;
     margin-top: 30px;
