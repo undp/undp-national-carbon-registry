@@ -311,6 +311,17 @@ export const AddCostQuotationForm = (props: any) => {
                             required: true,
                             message: `${t('costQuotation:cost')} ${t('costQuotation:isRequired')}`,
                           },
+                          {
+                            validator: async (rule, value) => {
+                              if (value < 0) {
+                                throw new Error(
+                                  `${t('costQuotation:cost')} ${t(
+                                    'costQuotation:cannotHaveNegativeNumbers'
+                                  )}`
+                                );
+                              }
+                            },
+                          },
                         ]}
                       >
                         <Input
@@ -349,6 +360,17 @@ export const AddCostQuotationForm = (props: any) => {
                           {
                             required: true,
                             message: `${t('costQuotation:cost')} ${t('costQuotation:isRequired')}`,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (value < 0) {
+                                throw new Error(
+                                  `${t('costQuotation:cost')} ${t(
+                                    'costQuotation:cannotHaveNegativeNumbers'
+                                  )}`
+                                );
+                              }
+                            },
                           },
                         ]}
                       >
@@ -506,22 +528,29 @@ export const AddCostQuotationForm = (props: any) => {
                       {' '}
                     </Col>
                   </Row>
-                  <Paragraph>
-                    <Text strong>{t('costQuotation:vatIsNotApplicable')}</Text>
-                    <br />
-                    <Text>{t('costQuotation:conditions')}</Text>
-                    <br />
-                    <Text>{t('costQuotation:paymentUpfront')}</Text>
-                    <br />
-                    <Text>{t('costQuotation:transport')}</Text>
-                    <br />
-                    <Text>{t('costQuotation:quotationValidation')}</Text>
-                  </Paragraph>
+                  <br />
+                  <div>
+                    <p>{t('costQuotation:vatIsNotApplicable')}</p>
+
+                    <p>
+                      <strong>{t('costQuotation:conditions')}</strong>
+                    </p>
+                    <ol type="a">
+                      <li>
+                        {t('costQuotation:paymentUpfront')}
+                        <br />
+                        {t('costQuotation:downPayment')}
+                      </li>
+                      <li>{t('costQuotation:transport')}</li>
+                      <li>{t('costQuotation:quotationValidation')}</li>
+                    </ol>
+                  </div>
                 </div>
                 {/* Cost Quotation table end */}
 
                 <div className="cost-quotation-signature">
-                  <Row className="data-rows">
+                  <Text>Approved by,</Text>
+                  <Row className="sign-row">
                     <Col md={24} xl={12}>
                       <Form.Item
                         label={t('costQuotation:signature')}
@@ -580,6 +609,9 @@ export const AddCostQuotationForm = (props: any) => {
                       </Form.Item>
                     </Col>
                   </Row>
+                  <Text>Chief Executive Officer</Text>
+                  <br />
+                  <Text>Sri Lanka Climate Fund</Text>
                 </div>
 
                 <Row justify={'end'} className="step-actions-end">
