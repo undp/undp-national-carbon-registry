@@ -254,14 +254,14 @@ const ProjectDetails = (props: CustomStepsProps) => {
                               value !== null ||
                               value !== undefined
                             ) {
-                              if (value && !validator.isURL('https://' + value))
-                                throw new Error(`${t('addCompany:website')} ${t('isInvalid')}`);
+                              if (value && !validator.isURL(value))
+                                throw new Error(`${t('CMAForm:website')} ${t('isInvalid')}`);
                             }
                           },
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} addonBefore="https://" />
+                      <Input size="large" disabled={disableFields} />
                     </Form.Item>
                   </div>
                 </Col>
