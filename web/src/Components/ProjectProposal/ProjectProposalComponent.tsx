@@ -759,6 +759,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   name="clientEmail"
                   rules={[
                     {
+                      required: true,
+                      message: '',
+                    },
+                    {
                       validator: async (rule, value) => {
                         if (
                           String(value).trim() === '' ||
@@ -854,6 +858,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   label={t('projectProposal:email')}
                   name="servcieProviderEmail"
                   rules={[
+                    {
+                      required: true,
+                      message: '',
+                    },
                     {
                       validator: async (rule, value) => {
                         if (

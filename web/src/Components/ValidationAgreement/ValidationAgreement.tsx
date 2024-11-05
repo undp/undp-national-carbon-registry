@@ -12,6 +12,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64, getFileName } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -242,6 +243,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <Form.Item
             name="dateOfIssue"
             label="Date of Issue"
+            className="date-of-issue"
             rules={[
               // {
               //   required: true,
@@ -403,7 +405,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: `${t('validationAgreement:required')}`,
                     },
                     {
                       validator(rule, value) {
@@ -714,7 +716,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
             <Row justify={'space-between'} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
-                <Form.Item name="SLCFWitness" label="Witness">
+                <Form.Item name="SLCFWitness" label="Witness" className="witness-input">
                   <Input
                     defaultValue={'Sri Lanka Climate Fund (PVT) Ltd'}
                     placeholder="Sri Lanka Climate Fund (PVT) Ltd"
@@ -723,9 +725,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <div>
+                  <LabelWithTooltip label="Signature" required={true} />
                   <Form.Item
                     name="SLCFWitnessSignature"
-                    label="Signature"
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
@@ -810,6 +813,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 <Form.Item
                   name="clientBehalf"
                   label="Witness"
+                  className="witness-input"
                   rules={[
                     {
                       required: true,
@@ -821,9 +825,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <div>
+                  <LabelWithTooltip label="Signature" required={true} />
                   <Form.Item
                     name="ClientWitnessSignature"
-                    label="Signature"
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
