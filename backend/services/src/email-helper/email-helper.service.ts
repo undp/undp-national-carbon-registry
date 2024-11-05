@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import {
   AsyncAction,
@@ -403,12 +403,7 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailToSLCFAdmins(
-    template,
-    templateData: any,
-    programmeId?: string,
-    companyId?: number
-  ) {
+  public async sendEmailToSLCFAdmins(template, templateData: any, programmeId: string) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
@@ -416,13 +411,16 @@ export class EmailHelperService {
     let programme: ProgrammeSl;
     let companyDetails: Company;
 
-    if (programmeId) {
-      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+    programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("common.programmeNotFound", []),
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-    if (companyId) {
-      companyDetails = await this.companyService.findByCompanyId(companyId);
-    }
+    companyDetails = await this.companyService.findByCompanyId(programme.companyId);
 
     switch (template.id) {
       case "PROGRAMME_SL_CREATE":
@@ -457,7 +455,7 @@ export class EmailHelperService {
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
-      case "PROGRAMME_SL_AUTHORIZED":
+      case "VALIDATION_APPROVED":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
@@ -466,6 +464,30 @@ export class EmailHelperService {
         };
         break;
       case "VALIDATION_REJECTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "MONITORING_CREATE":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "VERIFICATION_REJECTED":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
@@ -530,26 +552,25 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailToProjectParticipant(
-    template,
-    templateData: any,
-    programmeId?: string,
-    companyId?: number
-  ) {
+  public async sendEmailToProjectParticipant(template, templateData: any, programmeId: string) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
-    const users = await this.userService.getOrganisationAdminAndManagerUsers(companyId);
     let programme: ProgrammeSl;
     let companyDetails: Company;
 
-    if (programmeId) {
-      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+    programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("common.programmeNotFound", []),
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-    if (companyId) {
-      companyDetails = await this.companyService.findByCompanyId(companyId);
-    }
+    companyDetails = await this.companyService.findByCompanyId(programme.companyId);
+
+    const users = await this.userService.getOrganisationAdminAndManagerUsers(programme.companyId);
 
     switch (template.id) {
       case "PROGRAMME_SL_APPROVED":
@@ -561,6 +582,7 @@ export class EmailHelperService {
         break;
       case "PROGRAMME_SL_REJECTED":
         templateData = {
+          organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
@@ -590,7 +612,39 @@ export class EmailHelperService {
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
-      case "PROGRAMME_SL_AUTHORIZED":
+      case "VALIDATION_APPROVED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "MONITORING_APPROVED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "MONITORING_REJECTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+      case "VERIFICATION_REJECTED":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
@@ -629,28 +683,36 @@ export class EmailHelperService {
     });
   }
 
-  public async sendEmailToExCom(
-    template,
-    templateData: any,
-    programmeId?: string,
-    companyId?: number
-  ) {
+  public async sendEmailToExCom(template, templateData: any, programmeId?: string) {
     if (this.isEmailDisabled) return;
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
     const users = await this.userService.getExComAdminAndManagerUsers();
     let programme: ProgrammeSl;
     let companyDetails: Company;
-    if (programmeId) {
-      programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+
+    programme = await this.programmeLedger.getProgrammeSlById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("common.programmeNotFound", []),
+        HttpStatus.BAD_REQUEST
+      );
     }
 
-    if (companyId) {
-      companyDetails = await this.companyService.findByCompanyId(companyId);
-    }
+    companyDetails = await this.companyService.findByCompanyId(programme.companyId);
 
     switch (template.id) {
       case "VALIDATION_SUBMITTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
+
+      case "VERIFICATION_CREATE":
         templateData = {
           organisationName: companyDetails.name,
           countryName: systemCountryName,

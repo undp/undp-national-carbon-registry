@@ -179,7 +179,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Your initial notification form has been rejected in the Carbon Registry. <br><br>
+        Initial notification submitted by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please submit a new notification request.
         <br><br>
@@ -194,7 +194,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} has been submitted by Sri Lanka Climate Fund. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} have been submitted by Sri Lanka Climate Fund. <br><br>
 
         Please review and accept by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -209,7 +209,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} has been accepted by {{organisationName}}. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been accepted by {{organisationName}}. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -224,7 +224,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} has been rejected by {{organisationName}}. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been rejected by {{organisationName}}. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -239,7 +239,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Carbon Management Assessment Form for project {{programmeName}} owned by {{organisationName}} has been submitted by {{organisationName}}. <br><br>
+        A new Carbon Management Assessment Form has been submitted, for the project {{programmeName}}, by {{organisationName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -293,13 +293,15 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
-  PROGRAMME_SL_AUTHORIZED: {
-    id: "PROGRAMME_SL_AUTHORIZED",
-    subject: "Project Authorized",
+  VALIDATION_APPROVED: {
+    id: "VALIDATION_APPROVED",
+    subject: "Validation Report Approved",
     html: `
         Hi {{name}}, <br><br>
 
-        Project {{programmeName}} owned by {{organisationName}} has been authorized by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Validation Report submitted for the project {{programmeName}} by {{organisationName}} has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
+
+        Now the project has been authorized.
 
         Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
         <br><br>
@@ -319,6 +321,96 @@ export const EmailTemplates = {
         Validation report submitted for the project {{programmeName}} owned by {{organisationName}} has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  MONITORING_CREATE: {
+    id: "MONITORING_CREATE",
+    subject: "New: Monitoring Report Submitted",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new Monitoring Report has been submitted by {{organisationName}} for the project {{programmeName}}. <br><br>
+
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  MONITORING_APPROVED: {
+    id: "MONITORING_APPROVED",
+    subject: "Monitoring Report Approved",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} has been approved by Sri Lanka Climate Fund. <br><br>
+
+        Click <a href="{{programmePageLink}}">here</a> to be directed to create the Verification Report.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  MONITORING_REJECTED: {
+    id: "MONITORING_REJECTED",
+    subject: "Monitoring Report Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} has been rejected by Sri Lanka Climate Fund. <br><br>
+
+        Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  VERIFICATION_CREATE: {
+    id: "VERIFICATION_CREATE",
+    subject: "New: Verification Report Submitted!",
+    html: `
+        Hi {{name}}, <br><br>
+
+        A new Verification Report has been submitted, for the organization {{organisationName}} for the project {{programmeName}}. <br><br>
+
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  VERIFICATION_APPROVED: {
+    id: "VERIFICATION_APPROVED",
+    subject: "Verification Report Approved",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Verification Report submitted for the project {{programmeName}} by the organization {{organisationName}} has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
+
+        Please request for the credits transfer or retirement accordingly. 
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+  VERIFICATION_REJECTED: {
+    id: "VERIFICATION_REJECTED",
+    subject: "Verification Report Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Verification Report submitted for the project {{programmeName}} by the organization {{organisationName}} has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
+
+        Please re-submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
         <br><br>
 
         Sincerely,  <br>
@@ -843,7 +935,7 @@ export const EmailTemplates = {
         Hi {{name}}, <br><br>
 
         {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+        Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
@@ -857,7 +949,7 @@ export const EmailTemplates = {
         Hi {{name}}, <br><br>
 
         {{organisationName}} has requested to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+        Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
