@@ -85,7 +85,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                     <Col md={10} xl={10} className="col-2">
                       The project activity shall be a new project, which will reduce/absorb GHG
                       emissions or the project activity shall be a project, which was implemented on
-                      or after 2010 in order to offset GHG emission within the organization.
+                      or after 2010 in order to offset GHG emission within the organisation.
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item

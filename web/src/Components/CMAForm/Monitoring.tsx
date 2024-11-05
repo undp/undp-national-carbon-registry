@@ -280,18 +280,18 @@ const Monitoring = (props: CustomStepsProps) => {
                           {/* <Input size="large" placeholder={`${t('CMAForm:purposePlaceholder')}`} /> */}
                           <Select size="large" disabled={disableFields}>
                             {projectCategory === 'RENEWABLE_ENERGY' && (
-                              <Select.Option value="Determination of baseline scenario">
-                                Determination of baseline scenario
+                              <Select.Option value="Determination of Baseline Scenario">
+                                Determination of Baseline Scenario
                               </Select.Option>
                             )}
-                            <Select.Option value="Calculation of baseline emissions">
-                              Calculation of baseline emissions
+                            <Select.Option value="Calculation of Baseline Emissions">
+                              Calculation of Baseline Emissions
                             </Select.Option>
                             <Select.Option value="Calculation of project emissions">
-                              Calculation of project emissions
+                              Calculation of Project Emissions
                             </Select.Option>
                             <Select.Option value="Calculation of leakage">
-                              Calculation of leakage
+                              Calculation of Leakage
                             </Select.Option>
                           </Select>
                         </Form.Item>

@@ -306,7 +306,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       city: values?.city || 'test',
       community: 'test',
       geographicalLocationCoordinates: values?.projectLocation,
-      projectGeography: 'SINGLE',
+      projectGeography: values?.projectGeography,
       otherProjectCategory: values?.otherCategory,
       landExtent: (function () {
         if (values?.landExtent) {

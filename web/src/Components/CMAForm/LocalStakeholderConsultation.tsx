@@ -38,7 +38,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
             >
               <>
                 <LabelWithTooltip
-                  label={`${t('CMAForm:stakeHolderConsultationProcess')}`}
+                  label={`3.1 ${t('CMAForm:stakeHolderConsultationProcess')}`}
                   required={true}
                   tooltipPosition={TooltipPostion.bottom}
                   tooltipWidth={700}
@@ -121,7 +121,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:summaryOfCommentsRecieved')}`}
+                label={`3.2 ${t('CMAForm:summaryOfCommentsRecieved')}`}
                 name="summaryOfCommentsRecieved"
                 rules={[
                   {
@@ -153,7 +153,7 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:considerationOfCommentsRecieved')}`}
+                label={`3.3 ${t('CMAForm:considerationOfCommentsRecieved')}`}
                 name="considerationOfCommentsRecieved"
                 rules={[
                   {
