@@ -10,7 +10,7 @@ export enum TooltipPostion {
 interface ILabelWithTooltip {
   label: string;
   required?: boolean;
-  tooltipContent: JSX.Element;
+  tooltipContent?: JSX.Element;
   tooltipWidth?: number;
   tooltipPosition?: TooltipPostion | undefined;
 }
@@ -64,16 +64,18 @@ const LabelWithTooltip = (props: ILabelWithTooltip) => {
     <div className="label-with-tooltip">
       <label className={`${required ? 'custom-required' : ''}`}>{label}</label>
 
-      <div className="tooltip-section">
-        <InfoCircleOutlined />
-        <div className="tooltip-container">
-          <HoverTooltip
-            tooltipPosition={tooltipPosition}
-            content={tooltipContent}
-            width={tooltipWidth}
-          />
+      {tooltipContent !== undefined && (
+        <div className="tooltip-section">
+          <InfoCircleOutlined />
+          <div className="tooltip-container">
+            <HoverTooltip
+              tooltipPosition={tooltipPosition}
+              content={tooltipContent}
+              width={tooltipWidth}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

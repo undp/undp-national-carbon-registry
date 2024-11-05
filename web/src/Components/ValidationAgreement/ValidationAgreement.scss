@@ -46,6 +46,18 @@
     }
   }
   
+  .witness-input {
+    label {
+      color: black;
+    }
+  }
+
+  .date-of-issue {
+    .ant-picker {
+      width: 50%;
+    }
+  }
+
   .full-width-form-item {
     width: 100%;
   }
