@@ -80,7 +80,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
               <Row justify={'space-between'} gutter={40} className="mg-top-1">
                 <Col md={24} xl={10}>
-                  <p className="no-margin-p">{t('validationReport:witness')}</p>
+                  {/* <p className="no-margin-p">{t('validationReport:witness')}</p> */}
 
                   <div className="signature-upload">
                     <Form.Item
@@ -173,7 +173,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   </Form.Item>
                 </Col>
                 <Col md={24} xl={10}>
-                  <p className="no-margin-p">{t('validationReport:witness')}</p>
+                  {/* <p className="no-margin-p">{t('validationReport:witness')}</p> */}
 
                   <div className="signature-upload">
                     <Form.Item
