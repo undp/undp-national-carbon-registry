@@ -22,6 +22,12 @@
   "one": "1",
   "two": "2",
   "somethingWentWrong": "Something went wrong!",
-  "cannotHaveNegativeNumbers": "cannot have negative numbers!"
+  "cannotHaveNegativeNumbers": "cannot have negative numbers!",
+  "approvedBy": "Approved by,",
+  "ceo": "Chief Executive Officer",
+  "sriLankaClimateFund": "Sri Lanka Climate Fund",
+  "back":"Back",
+  "cancel":"Cancel",
+  "submit":"Submit"
 
 }

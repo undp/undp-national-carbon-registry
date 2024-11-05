@@ -549,7 +549,7 @@ export const AddCostQuotationForm = (props: any) => {
                 {/* Cost Quotation table end */}
 
                 <div className="cost-quotation-signature">
-                  <Text>Approved by,</Text>
+                  <Text>{t('costQuotation:approvedBy')}</Text>
                   <Row className="sign-row">
                     <Col md={24} xl={12}>
                       <Form.Item
@@ -609,25 +609,26 @@ export const AddCostQuotationForm = (props: any) => {
                       </Form.Item>
                     </Col>
                   </Row>
-                  <Text>Chief Executive Officer</Text>
+                  <Text>{t('costQuotation:ceo')}</Text>
                   <br />
-                  <Text>Sri Lanka Climate Fund</Text>
+                  <Text>{t('costQuotation:sriLankaClimateFund')}</Text>
                 </div>
-
+                <br />
+                <br />
                 <Row justify={'end'} className="step-actions-end">
                   {isView ? (
                     <>
                       <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                        Back
+                        {t('costQuotation:back')}
                       </Button>
                     </>
                   ) : (
                     <>
                       <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                        Cancel
+                        {t('costQuotation:cancel')}
                       </Button>
                       <Button type="primary" size={'large'} htmlType="submit">
-                        submit
+                        {t('costQuotation:submit')}
                       </Button>
                     </>
                   )}
