@@ -9,7 +9,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
+import { getBase64, getFileName } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
@@ -50,7 +50,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       SLCFSignature: [
         {
           uid: 'slcf_signature',
-          name: 'CLIMATE_FUND_SIGN',
+          name: getFileName(val?.climateFundSignature),
           status: 'done',
           url: val?.climateFundSignature,
         },
@@ -58,7 +58,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       clientSignature: [
         {
           uid: 'participant_signature',
-          name: 'PARTICIPANT_SIGN',
+          name: getFileName(val?.projectParticipantSignature),
           status: 'done',
           url: val?.projectParticipantSignature,
         },
@@ -67,9 +67,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       SLCFWitnessSignature: [
         {
           uid: 'witness_1_sign',
-          name: 'WITNESS_1_SIGN',
+          name: getFileName(val?.climateFundWitnessSignature),
           status: 'done',
-          url: val?.witness1Signature,
+          url: val?.climateFundWitnessSignature,
         },
       ],
       SLCFWitnessName: val?.witness1Name,
@@ -78,27 +78,27 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       ClientWitnessSignature: [
         {
           uid: 'witness_2_sign',
-          name: 'WITNESS_2_SIGN',
+          name: getFileName(val?.projectParticipantWitnessSignature),
           status: 'done',
-          url: val?.witness2Signature,
+          url: val?.projectParticipantWitnessSignature,
         },
       ],
       clientWitnessName: val?.witness2Name,
       clientWitnessDesignation: val?.witness2Designation,
       annexureAadditionalComments: val?.annexureAComment,
-      annexureAadditionalDocs: [
+      annexureAadditionalDocs: val?.annexureADoc && [
         {
           uid: 'appendix_1',
-          name: 'ANNEXURE_A_DOC',
+          name: getFileName(val?.annexureADoc),
           status: 'done',
           url: val?.annexureADoc,
         },
       ],
       annexureBadditionalComments: val?.annexureBComment,
-      annexureBadditionalDocs: [
+      annexureBadditionalDocs: val?.annexureBDoc && [
         {
           uid: 'appendix_2',
-          name: 'ANNEXURE_B_DOC',
+          name: getFileName(val?.annexureBDoc),
           status: 'done',
           url: val?.annexureBDoc,
         },
@@ -146,12 +146,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         ? await convertFileToBase64(values?.clientSignature[0])
         : undefined;
 
-    const witness1Signature =
+    const climateFundWitnessSignature =
       values?.SLCFWitnessSignature && values?.SLCFWitnessSignature[0]
         ? await convertFileToBase64(values?.clientSignature[0])
         : undefined;
 
-    const witness2Signature =
+    const projectParticipantWitnessSignature =
       values?.ClientWitnessSignature && values?.ClientWitnessSignature[0]
         ? await convertFileToBase64(values?.clientSignature[0])
         : undefined;
@@ -176,15 +176,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         whereasConditions: values?.whereas,
         settlementFee: Number(values?.settlementFee),
         climateFundSignature,
+        projectParticipantName: values?.clientBehalf,
         projectParticipantSignature,
         projectParticipantSignatory: values?.clientAuthorizedSignatory,
-        witness1Signature,
-        witness1Name: values?.SLCFWitnessName,
-        witness1Designation: values?.SLCFWitnessDesignation,
-        witness2Label: values?.ClientWitness,
-        witness2Signature,
-        witness2Name: values?.clientWitnessName,
-        witness2Designation: values?.clientWitnessDesignation,
+        climateFundWitnessSignature,
+        climateFundWitnessName: values?.SLCFWitnessName,
+        climateFundWitnessDesignation: values?.SLCFWitnessDesignation,
+        // witness2Label: values?.ClientWitness,
+        projectParticipantWitnessSignature,
+        projectParticipantWitnessName: values?.clientWitnessName,
+        projectParticipantWitnessDesignation: values?.clientWitnessDesignation,
         annexureAComment: values?.annexureAadditionalComments,
         annexureADoc,
         annexureBComment: values?.annexureBadditionalComments,
@@ -412,7 +413,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer!'));
+                          return Promise.reject(new Error('Should be a number!'));
                         }
 
                         return Promise.resolve();
@@ -807,7 +808,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               </Col>
               <Col md={24} xl={10}>
                 <Form.Item
-                  name="ClientWitness"
+                  name="clientBehalf"
                   label="Witness"
                   rules={[
                     {
@@ -816,7 +817,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={isView} />
+                  <Input disabled />
                 </Form.Item>
 
                 <div>

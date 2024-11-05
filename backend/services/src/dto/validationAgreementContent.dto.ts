@@ -50,6 +50,11 @@ export class ValidationAgreementContentDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
+  projectParticipantName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   projectParticipantSignature: string;
 
   @ApiProperty()
@@ -60,37 +65,32 @@ export class ValidationAgreementContentDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness1Signature: string;
+  climateFundWitnessSignature: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness1Name: string;
+  climateFundWitnessName: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness1Designation: string;
+  climateFundWitnessDesignation: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness2Label: string;
+  projectParticipantWitnessSignature: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness2Signature: string;
+  projectParticipantWitnessName: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  witness2Name: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  witness2Designation: string;
+  projectParticipantWitnessDesignation: string;
 
   @ApiProperty()
   @IsNotEmpty()

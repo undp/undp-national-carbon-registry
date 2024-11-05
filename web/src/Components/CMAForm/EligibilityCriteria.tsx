@@ -122,7 +122,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -172,7 +172,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -224,7 +224,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -275,7 +275,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -326,7 +326,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -379,7 +379,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -452,7 +452,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -502,7 +502,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -552,7 +552,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -603,7 +603,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -653,7 +653,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>
@@ -704,7 +704,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields}>
+                        <Select size="large" disabled={disableFields} placeholder="Select">
                           <Select.Option value={true}>Yes</Select.Option>
                           <Select.Option value={false}>No</Select.Option>
                         </Select>

@@ -270,7 +270,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input disabled={disableFields} />
+                            <TextArea rows={9} disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -482,7 +482,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input />
+                                        <TextArea rows={9} disabled={disableFields} />
                                       </Form.Item>
                                     </div>
                                     <div className="col2 data-col">
@@ -684,6 +684,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 disabled={disableFields}
                                 // block
                                 icon={<PlusOutlined />}
+                                style={{ marginLeft: '10px' }}
                               >
                                 {/* Add Entity */}
                               </Button>
@@ -720,7 +721,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Input disabled={disableFields} />
+                            <TextArea rows={9} disabled={disableFields} />
                           </Form.Item>
                         </div>
                         <div className="col2 data-col">
@@ -920,7 +921,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Input disabled={disableFields} />
+                                        <TextArea rows={9} disabled={disableFields} />
                                       </Form.Item>
                                     </div>
                                     <div className="col2 data-col">
@@ -1120,6 +1121,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                 size="middle"
                                 className="addMinusBtn"
                                 disabled={disableFields}
+                                style={{ marginLeft: '10px' }}
                                 // block
                                 icon={<PlusOutlined />}
                               >

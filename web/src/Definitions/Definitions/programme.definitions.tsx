@@ -501,6 +501,16 @@ export const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
+export const getFileName = (fileUrl: string) => {
+  console.log('-------file url------', fileUrl);
+  if (fileUrl === '' || fileUrl === undefined) return undefined;
+
+  const fileUrlParts = fileUrl?.split('/');
+  const fileName = fileUrlParts[fileUrlParts.length - 1];
+
+  return fileName;
+};
+
 // export const base64ToFile = (base64String: string, filename: string): File => {
 //   // Split the Base64 string into metadata and data
 //   const arr = base64String.split(',');
