@@ -155,7 +155,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROGRAMME_SL_APPROVED: {
@@ -170,7 +170,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROGRAMME_SL_REJECTED: {
@@ -185,7 +185,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROJECT_PROPOSAL_SUBMITTED: {
@@ -200,7 +200,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROJECT_PROPOSAL_ACCEPTED: {
@@ -215,7 +215,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROJECT_PROPOSAL_REJECTED: {
@@ -230,7 +230,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   CMA_CREATE: {
@@ -245,7 +245,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   CMA_APPROVED: {
@@ -260,7 +260,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   CMA_REJECTED: {
@@ -275,7 +275,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VALIDATION_SUBMITTED: {
@@ -290,7 +290,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VALIDATION_APPROVED: {
@@ -309,7 +309,7 @@ export const EmailTemplates = {
         Please proceed to the next phase and submit the Monitoring Report.<br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VALIDATION_REJECTED: {
@@ -324,7 +324,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   MONITORING_CREATE: {
@@ -339,7 +339,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   MONITORING_APPROVED: {
@@ -354,7 +354,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   MONITORING_REJECTED: {
@@ -369,7 +369,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VERIFICATION_CREATE: {
@@ -384,7 +384,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VERIFICATION_APPROVED: {
@@ -399,7 +399,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   VERIFICATION_REJECTED: {
@@ -414,7 +414,7 @@ export const EmailTemplates = {
         <br><br>
 
         Sincerely,  <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   PROGRAMME_AUTHORISATION: {
@@ -924,7 +924,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the project.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -938,7 +938,7 @@ export const EmailTemplates = {
         Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -952,7 +952,7 @@ export const EmailTemplates = {
         Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -966,7 +966,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -980,7 +980,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -995,7 +995,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -1010,7 +1010,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -1025,7 +1025,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 
@@ -1040,7 +1040,7 @@ export const EmailTemplates = {
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
 };
