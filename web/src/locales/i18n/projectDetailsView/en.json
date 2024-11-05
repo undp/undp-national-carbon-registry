@@ -208,5 +208,6 @@
   "noVerificationReports": "No verification reports submitted",
   "noMonitoringReports": "No monitoring reports submitted",
   "orgNotAuthEdit": "Your organisation is not authorised to edit this document",
-  "creditIssueCertificate": "Credit Issuance Certificate"
+  "creditIssueCertificate": "Credit Issuance Certificate",
+  "verificationRequest": "Verification Request"
 }
