@@ -182,7 +182,8 @@
   "involveParties": "Involved Parties and Project  Participants",
   "projectSpecification": "Project specification",
   "startDateCommisionDate": "Start date /Commissioning date",
-  "technicalProjectDescription": "Technical Information",
+  "technicalProjectDescription": "Technical Project Description",
+  "technicalInformation": "Technical Information",
   "contributiontoSustainableDevelopment": "Contribution to sustainable development",
   "projectBaselinePlan": "Project Baseline, Additionality  and Monitoring Plan",
   "technologyEmployed": "Technology employed",
@@ -274,6 +275,6 @@
   "addLocation": "Add Location",
   "uploadDocs": "Upload your additional documents here",
   "projectCharacteristics": "Project Characteristics",
-  "required": "Required",
+  "required": "Required!",
   "backtoProjectDetails": "Back to Project Details"
 }
