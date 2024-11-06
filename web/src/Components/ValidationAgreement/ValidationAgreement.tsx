@@ -245,10 +245,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             label="Date of Issue"
             className="date-of-issue"
             rules={[
-              // {
-              //   required: true,
-              //   // message: `Date of Issue ${t('isRequired')}`,
-              // },
+              {
+                required: true,
+                message: ``,
+              },
               {
                 validator: async (rule, value) => {
                   if (
@@ -396,7 +396,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">3. Settlement of Fees</h4>
             <div className="section-description mg-bottom-1">
-              <p>3.1 Verification fee</p>
+              <p className="settlement-fee-label">3.1 Verification fee</p>
               <div className="mg-left-1 settlement-fee">
                 Project Proponent shall pay LKR
                 <Form.Item
@@ -405,7 +405,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('validationAgreement:required')}`,
+                      message: `Verification fee ${t('isRequired')}`,
                     },
                     {
                       validator(rule, value) {
