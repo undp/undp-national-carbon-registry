@@ -34,6 +34,15 @@ export class VerificationRequestEntity implements EntitySubject {
   @Column({ nullable: true })
   creditIssueCertificateUrl: string;
 
+  @Column({ nullable: true })
+  carbonNeutralCertificateSerialNo: string;
+
+  @Column({ nullable: false, default: false })
+  carbonNeutralCertificateRequested: boolean;
+
+  @Column({ nullable: true })
+  carbonNeutralCertificateUrl: string;
+
   @Column({ type: "bigint" })
   createdTime: number;
 

@@ -272,7 +272,7 @@ export class ProgrammeLedgerService {
           companyId: programme.companyId,
         };
 
-        if (!programme.creditStartSerialNumber) {
+        if (!programme.creditStartSerialNumber || programme.creditStartSerialNumber == null || programme.creditStartSerialNumber == '') {
           programme.creditStartSerialNumber = `SLCCS/REG/${programme.programmeId}/1`;
           uPayload["creditStartSerialNumber"] = programme.creditStartSerialNumber;
         }

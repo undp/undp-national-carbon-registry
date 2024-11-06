@@ -196,6 +196,7 @@ export class ConfigurationSettingsService {
             issueDate: this.dateUtilService.formatCustomDate(),
             creditAmount: 0,
             orgBoundary: "Organization Boundary",
+            assessmentYear: new Date().getFullYear(),
             assessmentPeriod: `${this.dateUtilService.formatCustomDate()} - ${this.dateUtilService.formatCustomDate()}`,
           };
           const carbonNeutralCertUrl = await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
