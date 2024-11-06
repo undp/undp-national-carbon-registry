@@ -332,7 +332,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <TextArea rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
@@ -361,7 +361,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <TextArea rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
