@@ -44,7 +44,7 @@ export const VerificationFindingStep = (props: any) => {
                   );
 
                   values?.siteLocations?.forEach(async (val: any) => {
-                    val.commissioningDate = moment(val?.commissioningDate).startOf('day').unix();
+                    val.commissioningDate = moment(val?.commissioningDate).startOf('day').valueOf();
                   });
                 }
                 onValueChange({ verificationFinding: values });

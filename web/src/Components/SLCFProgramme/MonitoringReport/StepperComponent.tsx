@@ -157,7 +157,7 @@ const StepperComponent = (props: any) => {
         projectDetailsForm.setFieldsValue({
           title: cmaData?.projectDetails?.title,
           projectProponent: cmaData?.projectDetails?.projectProponent,
-          dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
+          dateOfIssue: moment(cmaData?.projectDetails?.dateOfIssue),
           version: reportVersion,
           physicalAddress: cmaData?.projectDetails?.physicalAddress,
           email: cmaData?.projectDetails?.email,
@@ -180,23 +180,21 @@ const StepperComponent = (props: any) => {
         setVerificationRequestId(data?.verificationRequestId);
         projectDetailsForm.setFieldsValue({
           ...data?.content?.projectDetails,
-          dateOfIssue: moment.unix(data?.content?.projectDetails?.dateOfIssue),
+          dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
         });
 
         projectActivityForm.setFieldsValue({
           ...data?.content?.projectActivity,
-          creditingPeriodFromDate: moment.unix(
-            data?.content?.projectActivity?.creditingPeriodFromDate
-          ),
-          creditingPeriodToDate: moment.unix(data?.content?.projectActivity?.creditingPeriodToDate),
-          registrationDateOfTheActivity: moment.unix(
+          creditingPeriodFromDate: moment(data?.content?.projectActivity?.creditingPeriodFromDate),
+          creditingPeriodToDate: moment(data?.content?.projectActivity?.creditingPeriodToDate),
+          registrationDateOfTheActivity: moment(
             data?.content?.projectActivity?.registrationDateOfTheActivity
           ),
           projectActivityLocationsList:
             data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
               return {
                 ...val,
-                projectStartDate: moment.unix(val?.projectStartDate),
+                projectStartDate: moment(val?.projectStartDate),
                 optionalDocuments: val?.optionalDocuments?.map(
                   (document: string, index: number) => {
                     return {
@@ -226,8 +224,8 @@ const StepperComponent = (props: any) => {
             data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
               return {
                 ...val,
-                startDate: moment.unix(val?.startDate),
-                endDate: moment.unix(val?.endDate),
+                startDate: moment(val?.startDate),
+                endDate: moment(val?.endDate),
               };
             }),
         });

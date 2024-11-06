@@ -45,7 +45,7 @@ export const ProjectDetailsStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
-                values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').unix();
+                values.dateOfIssue = moment(values?.dateOfIssue).startOf('day').valueOf();
                 onValueChange({ projectDetails: values });
                 next();
               }}

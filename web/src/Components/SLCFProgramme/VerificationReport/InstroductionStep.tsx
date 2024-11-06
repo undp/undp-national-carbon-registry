@@ -26,14 +26,16 @@ export const IntroductionStep = (props: any) => {
               onFinish={async (values: any) => {
                 values.creditionPeriodStart = moment(values?.creditionPeriodStart)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 values.creditionPeriodEnd = moment(values?.creditionPeriodEnd)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 values.periodVerifiedStart = moment(values?.periodVerifiedStart)
                   .startOf('day')
-                  .unix();
-                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd).startOf('day').unix();
+                  .valueOf();
+                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd)
+                  .startOf('day')
+                  .valueOf();
                 onValueChange({ introduction: values });
                 next();
               }}
