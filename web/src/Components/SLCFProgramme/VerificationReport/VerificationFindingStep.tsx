@@ -83,14 +83,12 @@ export const VerificationFindingStep = (props: any) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={`3.2 ${t('verificationReport:verificationReport')}`}
-                      name="verificationReport"
+                      label={`3.2 ${t('verificationReport:monitoringReport')}`}
+                      name="monitoringReport"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:verificationReport')} ${t(
-                            'isRequired'
-                          )}`,
+                          message: `${t('verificationReport:monitoringReport')} ${t('isRequired')}`,
                         },
                       ]}
                     >
@@ -460,7 +458,7 @@ export const VerificationFindingStep = (props: any) => {
                       name="exPostIsMeasuring"
                       rules={[
                         {
-                          required: true,
+                          required: false,
                           message: `${t('verificationReport:exPostIsMeasuring')} ${t(
                             'isRequired'
                           )}`,
@@ -509,7 +507,7 @@ export const VerificationFindingStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Row>
-                      <Col xl={12} md={24}>
+                      <Col xl={12} md={24} style={{ paddingTop: '8px' }}>
                         <label> The approach mentioned above is</label>
                       </Col>
                       <Col xl={12} md={24}>
@@ -517,7 +515,7 @@ export const VerificationFindingStep = (props: any) => {
                           name="aboveApproach"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: `${t('verificationReport:aboveApproach')} ${t(
                                 'isRequired'
                               )}`,
@@ -554,7 +552,7 @@ export const VerificationFindingStep = (props: any) => {
                 <Col xl={8} md={24}>
                   <div className="step-form-left-col">
                     <Row>
-                      <Col xl={10} md={24}>
+                      <Col xl={10} md={24} style={{ paddingTop: '8px' }}>
                         <label> ERy = 775– 0 – 0 =</label>
                       </Col>
                       <Col xl={14} md={24}>
@@ -562,7 +560,7 @@ export const VerificationFindingStep = (props: any) => {
                           name="emissionReductions"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: `${t('verificationReport:emissionReductions')} ${t(
                                 'isRequired'
                               )}`,
@@ -587,7 +585,9 @@ export const VerificationFindingStep = (props: any) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:accuracy')} ${t('isRequired')}`,
+                          message: `${t('verificationReport:accuracyOReductionCalculations')} ${t(
+                            'isRequired'
+                          )}`,
                         },
                       ]}
                     >
@@ -600,7 +600,9 @@ export const VerificationFindingStep = (props: any) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:qualityControl')} ${t('isRequired')}`,
+                          message: `${t(
+                            'verificationReport:managementSystemAndQualityControl'
+                          )} ${t('isRequired')}`,
                         },
                       ]}
                     >
@@ -884,7 +886,7 @@ export const VerificationFindingStep = (props: any) => {
                           // block
                           icon={<PlusOutlined />}
                         >
-                          {/* Add Entity */}
+                          Add Finding
                         </Button>
                       </Form.Item>
                     </div>

@@ -133,17 +133,23 @@ export const AnnexuresStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
                   Cancel
                 </Button>
-                <Button type="primary" htmlType="submit" disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER && (
-                    <span>Done</span>
+                {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+                  FormMode.VIEW !== formMode && (
+                    <Button type="primary" htmlType="submit" disabled={false}>
+                      <span>Submit</span>
+                    </Button>
                   )}
-                </Button>
-                <Button type="primary" onClick={reject} disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && <span>Reject</span>}
-                </Button>
-                <Button type="primary" onClick={approve} disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && <span>Approve</span>}
-                </Button>
+
+                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
+                  <Button type="primary" onClick={reject} disabled={false}>
+                    <span>Reject</span>
+                  </Button>
+                )}
+                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
+                  <Button type="primary" onClick={approve} disabled={false}>
+                    <span>Approve</span>
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

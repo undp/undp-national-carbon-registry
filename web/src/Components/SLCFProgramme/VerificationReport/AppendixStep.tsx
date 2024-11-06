@@ -124,7 +124,7 @@ export const AppendixStep = (props: any) => {
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   FormMode.VIEW !== formMode && (
                     <Button type="primary" htmlType="submit" disabled={false}>
-                      <span>Done</span>
+                      <span>Submit</span>
                     </Button>
                   )}
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
