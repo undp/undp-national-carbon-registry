@@ -61,7 +61,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       //   new Date(projectPlanActivity01StartDate).getTime()
       // );
       const firstObj: { x: string; y: [number, number] } = {
-        x: projectPlanActivity01,
+        x: '01.' + ' ' + projectPlanActivity01,
         y: [
           new Date(projectPlanActivity01StartDate).getTime(),
           new Date(projectPlanActivity01EndDate).getTime(),
@@ -73,22 +73,27 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     const extraProjectPlanActivities = form.getFieldValue('extraProjectPlanActivities');
 
     if (extraProjectPlanActivities !== undefined && extraProjectPlanActivities[0] !== undefined) {
-      extraProjectPlanActivities.map((activity: any) => {
-        if (
-          activity.projectPlanActivity &&
-          activity.projectPlanActivityStartDate &&
-          activity.projectPlanActivityEndDate
-        ) {
-          const tempObj: { x: string; y: [number, number] } = {
-            x: activity.projectPlanActivity,
-            y: [
-              new Date(activity.projectPlanActivityStartDate).getTime(),
-              new Date(activity.projectPlanActivityEndDate).getTime(),
-            ],
-          };
-          tempTimelineData.push(tempObj);
-        }
-      });
+      extraProjectPlanActivities
+        .filter((item: any) => item !== undefined)
+        .map((activity: any, index: number) => {
+          if (
+            activity.projectPlanActivity &&
+            activity.projectPlanActivityStartDate &&
+            activity.projectPlanActivityEndDate
+          ) {
+            const tempObj: { x: string; y: [number, number] } = {
+              x:
+                (index <= 7 ? '0' + String(index + 2) : String(index + 2)) +
+                `${'. '}` +
+                activity.projectPlanActivity,
+              y: [
+                new Date(activity.projectPlanActivityStartDate).getTime(),
+                new Date(activity.projectPlanActivityEndDate).getTime(),
+              ],
+            };
+            tempTimelineData.push(tempObj);
+          }
+        });
     }
 
     if (tempTimelineData.length > 0) {
@@ -278,7 +283,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         if (tempServices !== undefined && tempServices.length > 0) {
           tempServices.forEach((service) => {
             const tempServiceObj = {
-              cost: service.cost,
+              cost: String(service.cost),
               service: service.service,
             };
 
@@ -527,12 +532,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Introduction start */}
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`1 ${t('projectProposal:introduction')}`}
+            label={`1. ${t('projectProposal:introduction')}`}
             name="introduction"
             rules={[
               {
                 required: true,
-                message: `${t('projectProposal:introduction')} ${t('isRequired')}`,
+                message: ``,
+              },
+              {
+                validator: async (rule, value) => {
+                  if (
+                    String(value).trim() === '' ||
+                    String(value).trim() === undefined ||
+                    value === null ||
+                    value === undefined
+                  ) {
+                    throw new Error(`${t('projectProposal:introduction')} ${t('isRequired')}`);
+                  }
+                },
               },
             ]}
           >
@@ -552,7 +569,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:projectTitle')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:projectTitle')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
@@ -565,7 +596,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:proposalNo')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:proposalNo')} ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -607,7 +650,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:revNo')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:revNo')} ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -625,7 +680,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:durationOfService')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:durationOfService')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
@@ -638,7 +707,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:validityPeriod')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:validityPeriod')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
@@ -688,7 +771,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:name')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:name')} ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -748,7 +843,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:contactPerson')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:contactPerson')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
@@ -803,7 +912,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:name')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:name')} ${t('isRequired')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -894,7 +1015,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:contactPerson')} ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('projectProposal:contactPerson')} ${t('isRequired')}`
+                          );
+                        }
+                      },
                     },
                   ]}
                 >
@@ -953,15 +1088,29 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Overall background start */}
           <>
             <h4 className="section-title mg-top-2">
-              2 {t('projectProposal:overallProjectBackground')}
+              2. {t('projectProposal:overallProjectBackground')}
             </h4>
             <Form.Item
-              label={t('projectProposal:overallProjectBackground')}
+              // label={t('projectProposal:overallProjectBackground')}
               name="overallProjectBackground"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectProposal:overallProjectBackground')} ${t('isRequired')}`,
+                  message: ``,
+                },
+                {
+                  validator: async (rule, value) => {
+                    if (
+                      String(value).trim() === '' ||
+                      String(value).trim() === undefined ||
+                      value === null ||
+                      value === undefined
+                    ) {
+                      throw new Error(
+                        `${t('projectProposal:overallProjectBackground')} ${t('isRequired')}`
+                      );
+                    }
+                  },
                 },
               ]}
             >
@@ -976,7 +1125,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
           <>
-            <h4 className="section-title mg-top-2">3 {t('projectProposal:creditingScheme')}</h4>
+            <h4 className="section-title mg-top-2">3. {t('projectProposal:creditingScheme')}</h4>
 
             <p className="section-description">
               Sri Lanka Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
@@ -1019,20 +1168,30 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <Form.Item
               className="full-width-form-item highlight-label mg-top-2"
-              label={`4 ${t('projectProposal:scopeForThisProposal')}`}
+              label={`4. ${t('projectProposal:scopeForThisProposal')}`}
               name="scopeForThisProposal"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectProposal:scopeForThisProposal')} ${t('isRequired')}`,
+                  message: ``,
+                },
+                {
+                  validator: async (rule, value) => {
+                    if (
+                      String(value).trim() === '' ||
+                      String(value).trim() === undefined ||
+                      value === null ||
+                      value === undefined
+                    ) {
+                      throw new Error(
+                        `${t('projectProposal:scopeForThisProposal')} ${t('isRequired')}`
+                      );
+                    }
+                  },
                 },
               ]}
             >
-              <TextArea
-                rows={4}
-                placeholder={'Give a brief introduction about the project.'}
-                disabled={disableFields}
-              />
+              <TextArea rows={4} disabled={disableFields} />
             </Form.Item>
           </>
           {/* Scope for this proposal end */}
@@ -1057,7 +1216,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1075,7 +1246,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1093,7 +1276,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1111,7 +1306,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1193,7 +1400,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1212,7 +1431,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+                      },
                     },
                   ]}
                 >
@@ -1338,7 +1569,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Estimation of GHG Reduction start */}
           <>
             <h4 className="section-title mg-bottom-1">
-              5 {t('projectProposal:estimationOfGHGReduction')}
+              5. {t('projectProposal:estimationOfGHGReduction')}
             </h4>
             <p className="section-description">
               Emission reduction resulting from the implementation of this project is as follows
@@ -1355,13 +1586,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             </p>
 
             <div className="equation-description">
-              <p className="mg-top-1 mg-bottom-1">where</p>
+              <p className="mg-top-1 mg-bottom-1">Where</p>
 
               <i>
                 BE<sub>y</sub> = Baseline Emissions in year y (tCO<sub>2</sub>)
               </i>
               <br />
-
               <i>
                 EG<sub>y</sub> = Quantity of net electricity displaced as a result of the
                 implementation of the project activity in year y (MWh)
@@ -1384,7 +1614,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <Col md={3} xl={3}>
                   Value
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   Unit
                 </Col>
                 <Col md={8} xl={8}>
@@ -1402,12 +1632,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
                       },
                       {
-                        validator(rule, value) {
-                          if (!value) {
-                            return Promise.resolve();
+                        validator: async (rule, value) => {
+                          // if (!value) {
+                          //   return Promise.resolve();
+                          // }
+
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
@@ -1423,13 +1662,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   <Form.Item
                     name="projectCapacityUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1442,7 +1693,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1461,12 +1724,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
                       },
                       {
-                        validator(rule, value) {
-                          if (!value) {
-                            return Promise.resolve();
+                        validator: async (rule, value) => {
+                          // if (!value) {
+                          //   return Promise.resolve();
+                          // }
+
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
@@ -1482,13 +1754,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   <Form.Item
                     name="plantFactorUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1501,7 +1785,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1520,12 +1816,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
                       },
                       {
-                        validator(rule, value) {
-                          if (!value) {
-                            return Promise.resolve();
+                        validator: async (rule, value) => {
+                          // if (!value) {
+                          //   return Promise.resolve();
+                          // }
+
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
@@ -1541,13 +1846,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   <Form.Item
                     name="avgEnergyOutputUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1560,7 +1877,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1579,12 +1908,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
                       },
                       {
-                        validator(rule, value) {
-                          if (!value) {
-                            return Promise.resolve();
+                        validator: async (rule, value) => {
+                          // if (!value) {
+                          //   return Promise.resolve();
+                          // }
+
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
@@ -1600,13 +1938,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   <Form.Item
                     name="gridEmissionFactorUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1619,7 +1969,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1638,12 +2000,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
                       },
                       {
-                        validator(rule, value) {
-                          if (!value) {
-                            return Promise.resolve();
+                        validator: async (rule, value) => {
+                          // if (!value) {
+                          //   return Promise.resolve();
+                          // }
+
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
@@ -1659,13 +2030,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Input disabled={disableFields} />
                   </Form.Item>
                 </Col>
-                <Col md={3} xl={3}>
+                <Col md={4} xl={4}>
                   <Form.Item
                     name="emissionReductionUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1678,7 +2061,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1699,12 +2094,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('projectProposal:required')}`,
+                      message: ``,
                     },
                     {
-                      validator(rule, value) {
-                        if (!value) {
-                          return Promise.resolve();
+                      validator: async (rule, value) => {
+                        // if (!value) {
+                        //   return Promise.resolve();
+                        // }
+
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
                         }
 
                         // eslint-disable-next-line no-restricted-globals
@@ -1760,7 +2164,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -1788,7 +2204,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('CMAForm:required')}`);
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
                         },
                       },
@@ -1820,7 +2236,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('CMAForm:required')}`);
+                            throw new Error(`${t('projectProposal:required')}`);
                           }
                         },
                       },
@@ -1859,7 +2275,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('projectProposal:required')}`,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule, value) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(`${t('projectProposal:required')}`);
+                                    }
+                                  },
                                 },
                               ]}
                             >
@@ -1920,7 +2348,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('CMAForm:required')}`);
+                                      throw new Error(`${t('projectProposal:required')}`);
                                     }
                                   },
                                 },
@@ -1963,6 +2391,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                         onClick={() => {
                           add();
                         }}
+                        className="addBtn"
                         icon={<PlusOutlined />}
                         disabled={disableFields}
                       />
@@ -1991,12 +2420,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`8 ${t('projectProposal:teamComposition')}`}
+            label={`8. ${t('projectProposal:teamComposition')}`}
             name="teamComposition"
             rules={[
               {
                 required: true,
-                message: `${t('projectProposal:teamComposition')} ${t('isRequired')}`,
+                message: ``,
+              },
+              {
+                validator: async (rule, value) => {
+                  if (
+                    String(value).trim() === '' ||
+                    String(value).trim() === undefined ||
+                    value === null ||
+                    value === undefined
+                  ) {
+                    throw new Error(`${t('projectProposal:teamComposition')} ${t('isRequired')}`);
+                  }
+                },
               },
             ]}
           >
@@ -2026,7 +2467,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -2039,7 +2492,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -2116,13 +2581,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
           {/* Team members table end */}
           <Form.Item
-            className="full-width-form-item highlight-label"
+            className="full-width-form-item highlight-label mg-top-1"
             label={`9. ${t('projectProposal:costing')}`}
             name="costing"
             rules={[
               {
                 required: true,
-                message: `${t('projectProposal:costing')} ${t('isRequired')}`,
+                message: ``,
+              },
+              {
+                validator: async (rule, value) => {
+                  if (
+                    String(value).trim() === '' ||
+                    String(value).trim() === undefined ||
+                    value === null ||
+                    value === undefined
+                  ) {
+                    throw new Error(`${t('projectProposal:costing')} ${t('isRequired')}`);
+                  }
+                },
               },
             ]}
           >
@@ -2160,12 +2637,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Cost ${t('isRequired')}`,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Cost ${t('isRequired')}`);
+                        }
+
+                        if (isNaN(value)) {
+                          return Promise.reject(new Error('Should be a number'));
+                        }
+                      },
                     },
                   ]}
                 >
                   <Input
-                    type="number"
+                    // type="number"
                     size="large"
                     disabled={disableFields}
                     onChange={(val) => {
@@ -2196,10 +2689,26 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       required: true,
                       message: `Cost ${t('isRequired')}`,
                     },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('projectProposal:required')}`);
+                        }
+
+                        if (isNaN(value)) {
+                          return Promise.reject(new Error('Should be a number'));
+                        }
+                      },
+                    },
                   ]}
                 >
                   <Input
-                    type="number"
+                    // type="number"
                     size="large"
                     disabled={disableFields}
                     onChange={(val) => {
@@ -2256,14 +2765,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('costQuotation:cost')} ${t(
-                                  'costQuotation:isRequired'
-                                )}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('projectProposal:required')}`);
+                                  }
+
+                                  if (isNaN(value)) {
+                                    return Promise.reject(new Error('Should be a number'));
+                                  }
+                                },
                               },
                             ]}
                           >
                             <Input
-                              type="number"
+                              // type="number"
                               size="large"
                               onChange={(val) => {
                                 calculateTotalCost();
@@ -2364,10 +2887,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
             <p className="capitalize">
-              SLCF will validate/verify the project independently, and ensure the avoidance of the
-              double counting by the establishment of SLCCS Executive Board and responsible for
-              monitoring and regularly evaluating the process and performance, seeking to ensure the
-              continuity of SLCCS functions
+              SLCF will validate/verify the project independently, counting by the establishment of
+              SLCCS Executive Board and responsible for monitoring and regularly evaluating the
+              process and performance, seeking to ensure the continuity of SLCCS functions
             </p>
 
             <p className="capitalize">SLCCS Executive Board Members</p>
@@ -2380,7 +2902,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('projectProposal:required')}`,
+                        message: ``,
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('projectProposal:required')}`);
+                          }
+                        },
                       },
                     ]}
                   >
@@ -2400,7 +2934,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             rules={[
                               {
                                 required: true,
-                                message: `${t('projectProposal:isRequired')}`,
+                                message: ``,
+                              },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(`${t('projectProposal:required')}`);
+                                  }
+                                },
                               },
                             ]}
                           >
@@ -2467,17 +3013,128 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`12 ${t('projectProposal:slcssProjectDetails')}`}
+            label={`12. ${t('projectProposal:slcssProjectDetails')}`}
             name="slcssProjectDetails"
             rules={[
               {
                 required: true,
-                message: `${t('projectProposal:slcssProjectDetails')} ${t('isRequired')}`,
+                message: ``,
+              },
+              {
+                validator: async (rule, value) => {
+                  if (
+                    String(value).trim() === '' ||
+                    String(value).trim() === undefined ||
+                    value === null ||
+                    value === undefined
+                  ) {
+                    throw new Error(
+                      `${t('projectProposal:slcssProjectDetails')} ${t('isRequired')}`
+                    );
+                  }
+                },
               },
             ]}
           >
             <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
+
+          <section className="mg-top-2" style={{ marginBottom: '48px' }}>
+            <h4 className="section-title">Document Information</h4>
+            <Row className="mg-top-1" justify={'space-between'}>
+              <>
+                <Col md={4} xl={4} className="section-title">
+                  Title of document
+                </Col>
+                <Col md={18} xl={18} className="section-title">
+                  Proposal
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  Document No
+                </Col>
+                <Col md={18} xl={18} className="mg-top-1">
+                  SLCCS-PRO-FRM
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  Document Type
+                </Col>
+                <Col md={18} xl={18} className="mg-top-1">
+                  Form
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  Business Function
+                </Col>
+                <Col md={18} xl={18} className="mg-top-1">
+                  Clarification of the validation / verification process
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  Version
+                </Col>
+                <Col md={18} xl={18} className="mg-top-1">
+                  02.1
+                </Col>
+              </>
+            </Row>
+
+            <h4 className="section-title mg-top-2">Revisions</h4>
+            <Row className="mg-top-1" justify={'space-between'}>
+              <>
+                <Col md={4} xl={4} className="section-title">
+                  Version
+                </Col>
+                <Col md={6} xl={6} className="section-title">
+                  Date
+                </Col>
+                <Col md={12} xl={12} className="section-title">
+                  Description
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  01.0
+                </Col>
+                <Col md={6} xl={6} className="mg-top-1">
+                  21-08-2019
+                </Col>
+                <Col md={12} xl={12} className="mg-top-1">
+                  Initial Issuance
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  02.0
+                </Col>
+                <Col md={6} xl={6} className="mg-top-1">
+                  26-05-2021
+                </Col>
+                <Col md={12} xl={12} className="mg-top-1">
+                  Editorial changes
+                </Col>
+              </>
+              <>
+                <Col md={4} xl={4} className="mg-top-1">
+                  02.1
+                </Col>
+                <Col md={6} xl={6} className="mg-top-1">
+                  13-01-2023
+                </Col>
+                <Col md={12} xl={12} className="mg-top-1">
+                  Revisions to:
+                  <ul>
+                    <li>Change the official address of the company on the front page.</li>
+                  </ul>
+                </Col>
+              </>
+            </Row>
+          </section>
 
           <Row justify={'end'} className="step-actions-end">
             {isView ? (

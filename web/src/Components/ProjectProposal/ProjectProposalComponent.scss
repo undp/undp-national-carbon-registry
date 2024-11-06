@@ -51,6 +51,10 @@
     text-transform: capitalize;
   }
 
+  .text-transform-none {
+    text-transform: none;
+  }
+
   .step-actions {
     &-end {
       button:not(:last-child) {
@@ -237,14 +241,19 @@
     .col-4 {
       padding: 10px 16px;
     }
+
+    .addBtn {
+      margin-left: 40px;
+    }
   }
 
   .team-members-table {
-    width: 50%;
+    width: 70%;
     margin-bottom: 8px;
     @media (max-width: 760px) {
       width: 100%;
     }
+
 
     .header {
       font-weight: 600;
@@ -267,7 +276,8 @@
     }
 
     .addBtn {
-      margin-top: 4px;
+      margin-top: 16px;
+      margin-bottom: 16px;
     }
 
     .minusBtn {
