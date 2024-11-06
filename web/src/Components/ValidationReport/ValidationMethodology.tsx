@@ -795,133 +795,161 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                       <>
                         <Col span={24} className="full-width-form-item">
                           {resolutionOfFindingsList.map(
-                            ({
-                              key: resolutionkey,
-                              name: resolutionName,
-                              fieldKey: resolutionFieldKey,
-                              ...resolutionRestField
-                            }) => (
-                              <div className="form-section">
-                                <Col md={24} xl={24}>
-                                  <Row>
-                                    <Col
-                                      md={4}
-                                      style={{ marginTop: 3 }}
-                                      className="custom-required-only"
+                            (
+                              {
+                                key: resolutionkey,
+                                name: resolutionName,
+                                fieldKey: resolutionFieldKey,
+                                ...resolutionRestField
+                              },
+                              index: number
+                            ) => (
+                              <>
+                                {resolutionOfFindingsList.length > 1 && (
+                                  <Row style={{ marginBottom: 5 }}>
+                                    <Col>
+                                      <Button
+                                        style={{ marginRight: 5 }}
+                                        onClick={() => {
+                                          remove(index);
+                                        }}
+                                        size="small"
+                                        className="addMinusBtn"
+                                        icon={<MinusOutlined />}
+                                      ></Button>
+                                    </Col>
+                                  </Row>
+                                )}
+
+                                <div className="form-section">
+                                  <Col md={24} xl={24}>
+                                    <Row>
+                                      <Col
+                                        md={4}
+                                        style={{ marginTop: 3 }}
+                                        className="custom-required-only"
+                                      >
+                                        {t('validationReport:typeOfFindings')}
+                                      </Col>
+                                      <Col md={12}>
+                                        <Form.Item
+                                          {...resolutionRestField}
+                                          name={[resolutionName, 'typeOfFinding']}
+                                          rules={[requiredValidationRule(t)]}
+                                        >
+                                          <Radio.Group
+                                            style={{ display: 'flex', justifyContent: 'start' }}
+                                            options={vmTypeOfFindings}
+                                          />
+                                        </Form.Item>
+                                      </Col>
+                                    </Row>
+
+                                    <Row>
+                                      <Col md={4} className="custom-required-only">
+                                        {t('validationReport:findingNo')}
+                                      </Col>
+                                      <Col md={12}>
+                                        <Form.Item
+                                          {...resolutionRestField}
+                                          name={[resolutionName, 'findingNo']}
+                                          rules={[requiredValidationRule(t)]}
+                                        >
+                                          <Input size="large" />
+                                        </Form.Item>
+                                      </Col>
+                                    </Row>
+
+                                    <Row>
+                                      <Col md={4} className="custom-required-only">
+                                        {t('validationReport:refToCMA')}
+                                      </Col>
+                                      <Col md={12}>
+                                        <Form.Item
+                                          {...resolutionRestField}
+                                          name={[resolutionName, 'rfToCMA']}
+                                          rules={[requiredValidationRule(t)]}
+                                        >
+                                          <Input size="large" />
+                                        </Form.Item>
+                                      </Col>
+                                    </Row>
+                                  </Col>
+
+                                  <Col span={24}>
+                                    <Form.Item
+                                      {...resolutionRestField}
+                                      label={`${t(
+                                        'validationReport:actionRequestByValidationTeam'
+                                      )}`}
+                                      name={[resolutionName, 'actionRequestsByValidationTeam']}
+                                      rules={[requiredValidationRule(t)]}
                                     >
-                                      {t('validationReport:typeOfFindings')}
-                                    </Col>
-                                    <Col md={12}>
-                                      <Form.Item
-                                        {...resolutionRestField}
-                                        name={[resolutionName, 'typeOfFinding']}
-                                        rules={[requiredValidationRule(t)]}
-                                      >
-                                        <Radio.Group
-                                          style={{ display: 'flex', justifyContent: 'start' }}
-                                          options={vmTypeOfFindings}
-                                        />
-                                      </Form.Item>
-                                    </Col>
-                                  </Row>
+                                      <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
+                                    </Form.Item>
+                                  </Col>
 
-                                  <Row>
-                                    <Col md={4} className="custom-required-only">
-                                      {t('validationReport:findingNo')}
-                                    </Col>
-                                    <Col md={12}>
-                                      <Form.Item
-                                        {...resolutionRestField}
-                                        name={[resolutionName, 'findingNo']}
-                                        rules={[requiredValidationRule(t)]}
-                                      >
-                                        <Input size="large" />
-                                      </Form.Item>
-                                    </Col>
-                                  </Row>
-
-                                  <Row>
-                                    <Col md={4} className="custom-required-only">
-                                      {t('validationReport:refToCMA')}
-                                    </Col>
-                                    <Col md={12}>
-                                      <Form.Item
-                                        {...resolutionRestField}
-                                        name={[resolutionName, 'rfToCMA']}
-                                        rules={[requiredValidationRule(t)]}
-                                      >
-                                        <Input size="large" />
-                                      </Form.Item>
-                                    </Col>
-                                  </Row>
-                                </Col>
-
-                                <Col span={24}>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    label={`${t('validationReport:actionRequestByValidationTeam')}`}
-                                    name={[resolutionName, 'actionRequestsByValidationTeam']}
-                                    rules={[requiredValidationRule(t)]}
-                                  >
-                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
-                                  </Form.Item>
-                                </Col>
-
-                                <Col span={24}>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    label={`${t('validationReport:summaryOfProjectOwnerResponse')}`}
-                                    name={[resolutionName, 'summaryOfProjectOwnerResponse']}
-                                    rules={[requiredValidationRule(t)]}
-                                  >
-                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
-                                  </Form.Item>
-                                </Col>
-
-                                <Col span={24}>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    label={`${t('validationReport:validationTeamAssessment')}`}
-                                    name={[resolutionName, 'validationTeamAssessment']}
-                                    rules={[requiredValidationRule(t)]}
-                                  >
-                                    <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
-                                  </Form.Item>
-                                </Col>
-
-                                <Col span={24}>
-                                  <Form.Item
-                                    {...resolutionRestField}
-                                    label={`${t('validationReport:conclusion')}`}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('validationReport:conclusion')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                    name={[resolutionName, 'conclusion']}
-                                  >
-                                    <Radio.Group
-                                      style={{ width: '100%' }}
-                                      className="validation-conclusion"
+                                  <Col span={24}>
+                                    <Form.Item
+                                      {...resolutionRestField}
+                                      label={`${t(
+                                        'validationReport:summaryOfProjectOwnerResponse'
+                                      )}`}
+                                      name={[resolutionName, 'summaryOfProjectOwnerResponse']}
+                                      rules={[requiredValidationRule(t)]}
                                     >
-                                      {vmConlusion.map((value) => {
-                                        return (
-                                          <Row style={{ width: '100%' }}>
-                                            <Col span={24}>
-                                              <Radio style={{ width: '100%' }} value={value.value}>
-                                                {value.label}
-                                              </Radio>
-                                            </Col>
-                                          </Row>
-                                        );
-                                      })}
-                                    </Radio.Group>
-                                  </Form.Item>
-                                </Col>
-                              </div>
+                                      <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
+                                    </Form.Item>
+                                  </Col>
+
+                                  <Col span={24}>
+                                    <Form.Item
+                                      {...resolutionRestField}
+                                      label={`${t('validationReport:validationTeamAssessment')}`}
+                                      name={[resolutionName, 'validationTeamAssessment']}
+                                      rules={[requiredValidationRule(t)]}
+                                    >
+                                      <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
+                                    </Form.Item>
+                                  </Col>
+
+                                  <Col span={24}>
+                                    <Form.Item
+                                      {...resolutionRestField}
+                                      label={`${t('validationReport:conclusion')}`}
+                                      rules={[
+                                        {
+                                          required: true,
+                                          message: `${t('validationReport:conclusion')} ${t(
+                                            'isRequired'
+                                          )}`,
+                                        },
+                                      ]}
+                                      name={[resolutionName, 'conclusion']}
+                                    >
+                                      <Radio.Group
+                                        style={{ width: '100%' }}
+                                        className="validation-conclusion"
+                                      >
+                                        {vmConlusion.map((value) => {
+                                          return (
+                                            <Row style={{ width: '100%' }}>
+                                              <Col span={24}>
+                                                <Radio
+                                                  style={{ width: '100%' }}
+                                                  value={value.value}
+                                                >
+                                                  {value.label}
+                                                </Radio>
+                                              </Col>
+                                            </Row>
+                                          );
+                                        })}
+                                      </Radio.Group>
+                                    </Form.Item>
+                                  </Col>
+                                </div>
+                              </>
                             )
                           )}
                         </Col>

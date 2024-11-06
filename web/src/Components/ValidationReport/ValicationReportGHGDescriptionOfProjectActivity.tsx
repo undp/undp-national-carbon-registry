@@ -1,3 +1,4 @@
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import {
   Button,
   Checkbox,
@@ -10,39 +11,17 @@ import {
   Radio,
   Row,
   Select,
-  Space,
-  StepProps,
   Upload,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
-import {
-  InfoCircleFilled,
-  InfoCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
-import TextArea from 'antd/lib/input/TextArea';
-import PhoneInput, {
-  formatPhoneNumber,
-  formatPhoneNumberIntl,
-  isPossiblePhoneNumber,
-  Country,
-} from 'react-phone-number-input';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
 import moment from 'moment';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { Telephone } from 'react-bootstrap-icons';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
-import { CustomStepsProps } from '../CMAForm/StepProps';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { requiredValidationRule } from '../../Utils/validationHelper';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
+import { useEffect, useState } from 'react';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { fileUploadValueExtract } from '../../Utils/utilityHelper';
+import { requiredValidationRule } from '../../Utils/validationHelper';
+import { CustomStepsProps } from '../CMAForm/StepProps';
+import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
+import { ProcessSteps } from './ValidationStepperComponent';
 
 const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate, formMode } = props;
@@ -385,13 +364,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Row>
 
                 <Row gutter={[8, 16]}>
-                  <Col span={6}>
-                    <div>{t('validationReport:projectScopeUNFCC')}</div>
+                  <Col span={24}>
                     <div className="custom-required">
+                      {t('validationReport:projectScopeUNFCC')}
                       {t('validationReport:projectScopeUNFCCt2')}
                     </div>
                   </Col>
-                  <Col span={18}>
+                  <Col span={24}>
                     <Form.Item
                       name="projectScopeUNFCC"
                       rules={[
@@ -405,12 +384,15 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                         {projectScopeList.map((scopeListItem: any, index: number) => {
                           return (
                             <Col span={24}>
-                              <div className="side-by-side-form-item full-width-form-item">
-                                <span>{`${index + 1} ${scopeListItem.label}`}</span>
+                              <div className=" full-width-form-item">
                                 <Checkbox
                                   key={scopeListItem.id}
                                   value={scopeListItem.id}
                                 ></Checkbox>
+
+                                <span style={{ marginLeft: 5 }}>{`${index + 1}. ${
+                                  scopeListItem.label
+                                }`}</span>
                               </div>
 
                               <Divider style={{ margin: 10 }} />
@@ -700,7 +682,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             <h4
                               className="form-section-title custom-required"
                               style={{ marginBottom: 4 }}
-                            >{`${t('validationReport:technicalProjectDescription')}`}</h4>
+                            >{`${t('validationReport:technicalInformation')}`}</h4>
                             <Form.List name={[name, 'technicalProjectDescriptionItems']}>
                               {(
                                 technicalProjectDescriptionItemList,

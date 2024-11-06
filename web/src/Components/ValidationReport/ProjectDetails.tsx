@@ -260,7 +260,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                                 value !== null ||
                                 value !== undefined
                               ) {
-                                if (value && !validator.isURL('https://' + value))
+                                if (value && !validator.isURL(value))
                                   throw new Error(
                                     `${t('validationReport:website')} ${t('isInvalid')}`
                                   );

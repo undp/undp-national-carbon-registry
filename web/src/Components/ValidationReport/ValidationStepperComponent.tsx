@@ -244,6 +244,17 @@ const StepperComponent = (props: any) => {
           (location: any) => {
             return {
               ...location,
+              additionalDocuments:
+                location.additionalDocuments && location.additionalDocuments?.length > 0
+                  ? location.additionalDocuments?.map((document: string, index: number) => {
+                      return {
+                        uid: index,
+                        name: extractFilePropertiesFromLink(document).fileName,
+                        status: 'done',
+                        url: document,
+                      };
+                    })
+                  : [],
               technicalProjectDescriptionItems: [
                 {
                   item: '',

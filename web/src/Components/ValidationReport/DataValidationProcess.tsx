@@ -79,8 +79,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       key: 'applicabilityCriteriaMet',
       width: '100px',
       render: (_: any, record: any, index: number) => (
-        <Form.Item name={record.applicabilityCriteriaMet} rules={requiredRule}>
-          <Select>
+        <Form.Item name={record.applicabilityCriteriaMet} rules={[requiredValidationRule(t)]}>
+          <Select size="large">
             <Select.Option value="YES">{t('validationReport:yes')}</Select.Option>
             <Select.Option value="NO">{t('validationReport:no')}</Select.Option>
             <Select.Option value="NOT_APPLICABLE">
