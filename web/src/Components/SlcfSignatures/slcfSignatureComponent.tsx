@@ -184,10 +184,10 @@ const SLCFSignatureComponent = (props: any) => {
                             isCorrectFormat = true;
                           }
                           if (!isCorrectFormat) {
-                            throw new Error(`${t('unsupportedFormat')}`);
+                            throw new Error(`${t('settings:unsupportedFormat')}`);
                           } else if (file[0]?.size > maximumImageSize) {
                             // default size format of files would be in bytes -> 1MB = 1000000bytes
-                            throw new Error(`${t('maxUploadSize')}`);
+                            throw new Error(`${t('settings:maxUploadSize')}`);
                           }
                         }
                       },
@@ -228,10 +228,10 @@ const SLCFSignatureComponent = (props: any) => {
                             isCorrectFormat = true;
                           }
                           if (!isCorrectFormat) {
-                            throw new Error(`${t('unsupportedFormat')}`);
+                            throw new Error(`${t('settings:unsupportedFormat')}`);
                           } else if (file[0]?.size > maximumImageSize) {
                             // default size format of files would be in bytes -> 1MB = 1000000bytes
-                            throw new Error(`${t('maxUploadSize')}`);
+                            throw new Error(`${t('settings:maxUploadSize')}`);
                           }
                         }
                       },

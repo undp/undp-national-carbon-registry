@@ -14,7 +14,9 @@
   "previewCreditIssueCert": "Credit Issuance Certificate",
   "previewCreditRetirementCert": "Voluntary Retirement Certificate",
   "previewCarbonNeutralCert": "Carbon Neutral Certificate",
-  "signUploadSuccess": "Signature/s saved."
+  "signUploadSuccess": "Signature/s saved.",
+  "unsupportedFormat": "Only JPG image format is supported",
+  "maxUploadSize": "Maximum upload file size is 5MB!"
 
 
 }

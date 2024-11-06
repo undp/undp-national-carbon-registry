@@ -8,6 +8,7 @@ import { VerificationService } from "src/verification/verification.service";
 import { PoliciesGuardEx } from "../../casl/policy.guard";
 import { Action } from "../../casl/action.enum";
 import { VerificationRequestEntity } from "../../entities/verification.request.entity";
+import { CNCertificateIssueDto } from "../../dto/cncertificateIssue.dto";
 
 @ApiTags("Verification")
 @ApiBearerAuth()
@@ -42,8 +43,21 @@ export class VerificationController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
   @Get()
-  async queryCreditRetirementRequests(@Query("programmeId") programmeId: string, @Request() req) {
+  async queryVerificationRequests(@Query("programmeId") programmeId: string, @Request() req) {
     return await this.verificationService.queryVerificationRequestsByProgrammeId(programmeId, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
+  @Post("requestCarbonNeutralCertificate")
+  async requestCarbonNeutralCertificate(@Body() body: {verificationRequestId: number}, @Request() req) {
+    const { verificationRequestId } = body;
+    return this.verificationService.requestCarbonNeutralCertificate(verificationRequestId, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
+  @Post("issueCarbonNeutralCertificate")
+  async approveCarbonNeutralCertificate(@Body() cNCertificateIssueDto: CNCertificateIssueDto, @Request() req) {
+    return this.verificationService.approveCarbonNeutralCertificate(cNCertificateIssueDto, req.user);
   }
 
   // @UseGuards(JwtAuthGuard)

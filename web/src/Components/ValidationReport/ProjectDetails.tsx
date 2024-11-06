@@ -260,7 +260,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                                 value !== null ||
                                 value !== undefined
                               ) {
-                                if (value && !validator.isURL('https://' + value))
+                                if (value && !validator.isURL(value))
                                   throw new Error(
                                     `${t('validationReport:website')} ${t('isInvalid')}`
                                   );
@@ -332,7 +332,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <TextArea rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
@@ -361,7 +361,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <TextArea rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>

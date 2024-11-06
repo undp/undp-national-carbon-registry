@@ -1697,7 +1697,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
+  const getVerificationHistory = async (programmeId: string) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
     try {
@@ -1787,9 +1787,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     if (data) {
       setProgrammeOwnerId(data?.companyId);
       setCurrentProgrammeStatus(data?.currentStage);
-      getNdcActionHistory(data?.programmeId, ndcActionDocumentData);
+      getVerificationHistory(data?.programmeId);
     }
-  }, [data, ndcActionDocumentData]);
+  }, [data]);
 
   if (!data) {
     return <Loading />;
@@ -2340,8 +2340,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     getDocumentDetails={() => {
                       getDocuments(data?.programmeId);
                     }}
-                    getProgrammeById={() => {
-                      getProgrammeById();
+                    getVerificationData={() => {
+                      getVerificationHistory(data?.programmeId);
                     }}
                     ministryLevelPermission={ministryLevelPermission}
                     translator={i18n}

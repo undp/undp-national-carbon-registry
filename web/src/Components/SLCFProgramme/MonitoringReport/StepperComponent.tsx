@@ -14,7 +14,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
+import {
+  extractFilePropertiesFromLink,
+  fileUploadValueExtract,
+} from '../../../Utils/utilityHelper';
 const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
@@ -92,7 +95,46 @@ const StepperComponent = (props: any) => {
     if (FormMode.VIEW === mode) {
       navigateToDetailsPage();
     } else {
-      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      const content = { ...formValues, ...newValues };
+
+      content.projectActivity.creditingPeriodFromDate = moment(
+        content?.projectActivity?.creditingPeriodFromDate
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectActivity.creditingPeriodToDate = moment(
+        content?.projectActivity?.creditingPeriodToDate
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectActivity.registrationDateOfTheActivity = moment(
+        content?.projectActivity?.registrationDateOfTheActivity
+      )
+        .startOf('day')
+        .valueOf();
+      await content.projectActivity?.projectActivityLocationsList?.forEach(async (val: any) => {
+        val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
+        val.optionalDocuments = await fileUploadValueExtract(val, 'optionalDocuments');
+      });
+
+      content.projectDetails.dateOfIssue = moment(content?.projectDetails?.dateOfIssue)
+        .startOf('day')
+        .valueOf();
+
+      content?.quantification?.emissionReductionsRemovalsList?.forEach((val: any) => {
+        val.startDate = moment(content?.quantification?.startDate).startOf('day').valueOf();
+        val.endDate = moment(content?.quantification?.endDate).startOf('day').valueOf();
+      });
+      content.quantifications.optionalDocuments = await fileUploadValueExtract(
+        content?.quantifications,
+        'optionalDocuments'
+      );
+
+      content.annexures.optionalDocuments = await fileUploadValueExtract(
+        content?.annexures,
+        'optionalDocuments'
+      );
+      const body = { content: JSON.stringify(content), programmeId: id };
       try {
         const res = await post('national/verification/createMonitoringReport', body);
         if (res?.statusText === 'SUCCESS') {
@@ -157,7 +199,7 @@ const StepperComponent = (props: any) => {
         projectDetailsForm.setFieldsValue({
           title: cmaData?.projectDetails?.title,
           projectProponent: cmaData?.projectDetails?.projectProponent,
-          dateOfIssue: moment.unix(cmaData?.projectDetails?.dateOfIssue),
+          dateOfIssue: moment(cmaData?.projectDetails?.dateOfIssue),
           version: reportVersion,
           physicalAddress: cmaData?.projectDetails?.physicalAddress,
           email: cmaData?.projectDetails?.email,
@@ -180,23 +222,21 @@ const StepperComponent = (props: any) => {
         setVerificationRequestId(data?.verificationRequestId);
         projectDetailsForm.setFieldsValue({
           ...data?.content?.projectDetails,
-          dateOfIssue: moment.unix(data?.content?.projectDetails?.dateOfIssue),
+          dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
         });
 
         projectActivityForm.setFieldsValue({
           ...data?.content?.projectActivity,
-          creditingPeriodFromDate: moment.unix(
-            data?.content?.projectActivity?.creditingPeriodFromDate
-          ),
-          creditingPeriodToDate: moment.unix(data?.content?.projectActivity?.creditingPeriodToDate),
-          registrationDateOfTheActivity: moment.unix(
+          creditingPeriodFromDate: moment(data?.content?.projectActivity?.creditingPeriodFromDate),
+          creditingPeriodToDate: moment(data?.content?.projectActivity?.creditingPeriodToDate),
+          registrationDateOfTheActivity: moment(
             data?.content?.projectActivity?.registrationDateOfTheActivity
           ),
           projectActivityLocationsList:
             data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
               return {
                 ...val,
-                projectStartDate: moment.unix(val?.projectStartDate),
+                projectStartDate: moment(val?.projectStartDate),
                 optionalDocuments: val?.optionalDocuments?.map(
                   (document: string, index: number) => {
                     return {
@@ -226,8 +266,8 @@ const StepperComponent = (props: any) => {
             data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
               return {
                 ...val,
-                startDate: moment.unix(val?.startDate),
-                endDate: moment.unix(val?.endDate),
+                startDate: moment(val?.startDate),
+                endDate: moment(val?.endDate),
               };
             }),
         });

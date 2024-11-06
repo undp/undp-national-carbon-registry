@@ -50,10 +50,6 @@ export const VerificationOpinionStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                if (FormMode.VIEW !== formMode) {
-                  values.signature1 = await fileUploadValueExtract(values, 'signature1');
-                  values.signature2 = await fileUploadValueExtract(values, 'signature2');
-                }
                 onValueChange({ verificationOpinion: values });
                 next();
               }}

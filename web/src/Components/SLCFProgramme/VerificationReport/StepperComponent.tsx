@@ -14,7 +14,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
+import {
+  extractFilePropertiesFromLink,
+  fileUploadValueExtract,
+} from '../../../Utils/utilityHelper';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const navigationLocation = useLocation();
@@ -94,7 +97,73 @@ const StepperComponent = (props: any) => {
     if (FormMode.VIEW === mode) {
       navigateToDetailsPage();
     } else {
-      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      const content = { ...formValues, ...newValues };
+
+      content.projectDetails.completionDate = moment(content?.projectDetails?.completionDate)
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.versionDate = moment(content?.projectDetails?.versionDate)
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.monitoringPeriodStart = moment(
+        content?.projectDetails?.monitoringPeriodStart
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.monitoringPeriodEnd = moment(
+        content?.projectDetails?.monitoringPeriodEnd
+      )
+        .startOf('day')
+        .valueOf();
+
+      content.introduction.creditionPeriodStart = moment(
+        content?.introduction?.creditionPeriodStart
+      )
+        .startOf('day')
+        .valueOf();
+      content.introduction.creditionPeriodEnd = moment(content?.introduction?.creditionPeriodEnd)
+        .startOf('day')
+        .valueOf();
+      content.introduction.periodVerifiedStart = moment(content?.introduction?.periodVerifiedStart)
+        .startOf('day')
+        .valueOf();
+      content.introduction.periodVerifiedEnd = moment(content?.introduction?.periodVerifiedEnd)
+        .startOf('day')
+        .valueOf();
+
+      content.annexures.optionalDocuments = await fileUploadValueExtract(
+        content?.annexures,
+        'optionalDocuments'
+      );
+
+      content.verificationFinding.optionalDocuments = await fileUploadValueExtract(
+        content?.verificationFinding,
+        'optionalDocuments'
+      );
+
+      content?.verificationFinding?.siteLocations?.forEach(async (val: any) => {
+        val.commissioningDate = moment(val?.commissioningDate).startOf('day').valueOf();
+      });
+
+      content.verificationOpinion.signature1 = await fileUploadValueExtract(
+        content?.verificationOpinion,
+        'signature1'
+      );
+      content.verificationOpinion.signature2 = await fileUploadValueExtract(
+        content?.verificationOpinion,
+        'signature2'
+      );
+      content.verificationOpinion.dateOfSignature1 = moment(
+        content?.verificationOpinion?.dateOfSignature1
+      )
+        .startOf('day')
+        .valueOf();
+      content.verificationOpinion.dateOfSignature2 = moment(
+        content?.verificationOpinion?.dateOfSignature2
+      )
+        .startOf('day')
+        .valueOf();
+      const body = { content: JSON.stringify(content), programmeId: id };
       try {
         const res = await post('national/verification/createVerificationReport', body);
         if (res?.statusText === 'SUCCESS') {
@@ -177,17 +246,17 @@ const StepperComponent = (props: any) => {
         const content = data?.content;
         projectDetailsForm.setFieldsValue({
           ...content?.projectDetails,
-          completionDate: moment.unix(content?.projectDetails?.completionDate),
-          versionDate: moment.unix(content?.projectDetails?.versionDate),
-          monitoringPeriodStart: moment.unix(content?.projectDetails?.monitoringPeriodStart),
-          monitoringPeriodEnd: moment.unix(content?.projectDetails?.monitoringPeriodEnd),
+          completionDate: moment(content?.projectDetails?.completionDate),
+          versionDate: moment(content?.projectDetails?.versionDate),
+          monitoringPeriodStart: moment(content?.projectDetails?.monitoringPeriodStart),
+          monitoringPeriodEnd: moment(content?.projectDetails?.monitoringPeriodEnd),
         });
         introductionForm.setFieldsValue({
           ...content?.introduction,
-          creditionPeriodStart: moment.unix(content?.introduction?.creditionPeriodStart),
-          creditionPeriodEnd: moment.unix(content?.introduction?.creditionPeriodEnd),
-          periodVerifiedStart: moment.unix(content?.introduction?.periodVerifiedStart),
-          periodVerifiedEnd: moment.unix(content?.introduction?.periodVerifiedEnd),
+          creditionPeriodStart: moment(content?.introduction?.creditionPeriodStart),
+          creditionPeriodEnd: moment(content?.introduction?.creditionPeriodEnd),
+          periodVerifiedStart: moment(content?.introduction?.periodVerifiedStart),
+          periodVerifiedEnd: moment(content?.introduction?.periodVerifiedEnd),
         });
         methodologyForm.setFieldsValue({
           ...content?.methodology,
@@ -207,15 +276,15 @@ const StepperComponent = (props: any) => {
           siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
             return {
               ...val,
-              commissioningDate: moment.unix(val?.commissioningDate),
+              commissioningDate: moment(val?.commissioningDate),
             };
           }),
         });
 
         verificationOpinionForm.setFieldsValue({
           ...content?.verificationOpinion,
-          dateOfSignature1: moment.unix(content?.verificationOpinion?.dateOfSignature1),
-          dateOfSignature2: moment.unix(content?.verificationOpinion?.dateOfSignature2),
+          dateOfSignature1: moment(content?.verificationOpinion?.dateOfSignature1),
+          dateOfSignature2: moment(content?.verificationOpinion?.dateOfSignature2),
           signature1: data?.content?.verificationOpinion?.signature1?.map(
             (document: string, index: number) => {
               return {

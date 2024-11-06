@@ -12,6 +12,7 @@ export interface CarbonNeutralCertificateData {
   issueDate: string;
   creditAmount: number;
   orgBoundary: string;
+  assessmentYear: number;
   assessmentPeriod: string;
 }
 
@@ -26,8 +27,6 @@ export class CarbonNeutralCertificateGenerator {
 
     const refFileName = data.certificateNo.replace(/\//g, "_");
     const filepath = `CARBON_NEUTRAL_CERTIFICATE_${refFileName}.pdf`;
-
-    const currentYear = new Date().getFullYear();
 
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
@@ -45,7 +44,7 @@ export class CarbonNeutralCertificateGenerator {
     const totalImageWidth = image1Width + image2Width + 2 * spaceBetweenImages;
 
     const startImageX = (doc.page.width - totalImageWidth) / 2;
-    const startImageY = 50; 
+    const startImageY = 50;
 
     // Draw each image
     doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
@@ -75,7 +74,7 @@ export class CarbonNeutralCertificateGenerator {
       .font("Helvetica-Bold")
       .fontSize(14)
       .text(`Presented to: ${data.companyName}`, 70, 180, { align: "center" });
-      doc.moveDown(0.5);
+    doc.moveDown(0.5);
     doc
       .font("Helvetica-Bold")
       .fontSize(14)
@@ -83,19 +82,32 @@ export class CarbonNeutralCertificateGenerator {
 
     doc.moveDown(1);
 
-    doc.font("Helvetica").fontSize(12).text("Sri Lanka Climate Fund (PVT) Ltd. certifies that", { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text("Sri Lanka Climate Fund (PVT) Ltd. certifies that", { align: "center" });
 
     doc.moveDown(0.5);
-    
+
     doc.font("Helvetica").fontSize(12).text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO2e`, { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text(`has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO2e`, {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`quantified and verified for the calender year ${currentYear}`, { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text(`quantified and verified for the calender year ${data.assessmentYear}`, {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
@@ -110,12 +122,17 @@ export class CarbonNeutralCertificateGenerator {
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`registered under Sri Lanka Carbon Crediting Scheme (SLCCS)`, { align: "center" });
+    doc
+      .font("Helvetica")
+      .fontSize(12)
+      .text(`registered under Sri Lanka Carbon Crediting Scheme (SLCCS)`, { align: "center" });
 
     doc.moveDown(1);
-    doc.font("Helvetica-Bold").fontSize(14).text(`Assessment of ${data.scope} GHG Statement`, { align: "center" });
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(14)
+      .text(`Assessment of ${data.scope} GHG Statement`, { align: "center" });
     doc.moveDown(1);
-
 
     doc
       .fontSize(11)
@@ -142,9 +159,11 @@ export class CarbonNeutralCertificateGenerator {
       .text("Organization Boundary ", 180, doc.y, {
         continued: true,
       })
+      .text('')
       .font("Helvetica")
-      .text(`: ${data.orgBoundary}`, 202, doc.y, {
+      .text(`: ${data.orgBoundary}`, 334, doc.y, {
         continued: false,
+        indent: -7
       })
       .moveDown(0.4)
       .font("Helvetica-Bold")
@@ -165,8 +184,6 @@ export class CarbonNeutralCertificateGenerator {
         continued: false,
       })
       .moveDown(1);
-
-
 
     doc
       .fontSize(11)

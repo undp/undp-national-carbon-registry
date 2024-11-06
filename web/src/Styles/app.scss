@@ -77,6 +77,13 @@ body {
     color: #ffffff;
   }
 }
+.ant-picker-large .ant-picker-input > input {
+  font-size: 14px !important;
+}
+
+.ant-select-lg {
+  font-size: 14px !important;
+}
 
 .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
   color: $dark-text-color !important;

@@ -262,6 +262,7 @@ export class EmailHelperService {
       case "CREDIT_RETIRE_SL_REQUEST_REJECTED":
       case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
       case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+      case "CREDIT_RECEIVED_AND_RETIRED_SL":
         templateData = {
           ...templateData,
           pageLink: hostAddress + "/retirementManagement/viewAll",
@@ -510,16 +511,14 @@ export class EmailHelperService {
         };
         break;
 
-      // case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
-      //   templateData = {
-      //     organisationName: companyDetails.name,
-      //     countryName: systemCountryName,
-      //     programmeName: programme.title,
-      //     credits: templateData.credits,
-      //     serialNumber: programme.serialNo,
-      //     programmePageLink: hostAddress + `/retirementManagement`,
-      //   };
-      //   break;
+      case "CARBON_NEUTRAL_SL_REQUESTED":
+        templateData = {
+          organisationName: companyDetails.name,
+          countryName: systemCountryName,
+          programmeName: programme.title,
+          pageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+        };
+        break;
 
       default:
         break;
