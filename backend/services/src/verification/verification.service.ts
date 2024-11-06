@@ -844,6 +844,12 @@ export class VerificationService {
       );
     });
 
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
+      { },
+      verificationRequest.programmeId
+    );
+
     return updatedVerificationRequest;
   }
 
