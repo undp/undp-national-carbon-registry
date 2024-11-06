@@ -53,6 +53,8 @@ export const VerificationOpinionStep = (props: any) => {
                 if (FormMode.VIEW !== formMode) {
                   values.signature1 = await fileUploadValueExtract(values, 'signature1');
                   values.signature2 = await fileUploadValueExtract(values, 'signature2');
+                  values.dateOfSignature1 = moment(values?.dateOfSignature1).startOf('day').unix();
+                  values.dateOfSignature2 = moment(values?.dateOfSignature2).startOf('day').unix();
                 }
                 onValueChange({ verificationOpinion: values });
                 next();

@@ -115,24 +115,28 @@ export const AppendixStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
+                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+                  (FormMode.VIEW === formMode && (
+                    <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
+                      Cancel
+                    </Button>
+                  ))}
+                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+                  FormMode.VIEW !== formMode && (
+                    <Button type="primary" htmlType="submit" disabled={false}>
+                      <span>Done</span>
+                    </Button>
+                  )}
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
-                    Cancel
+                  <Button type="primary" onClick={reject} disabled={false}>
+                    <span>Reject</span>
                   </Button>
                 )}
-                <Button type="primary" htmlType="submit" disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && <span>Done</span>}
-                </Button>
-                <Button type="primary" onClick={reject} disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                    <span>Reject</span>
-                  )}
-                </Button>
-                <Button type="primary" onClick={approve} disabled={false}>
-                  {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
+                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
+                  <Button type="primary" onClick={approve} disabled={false}>
                     <span>Approve</span>
-                  )}
-                </Button>
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>
