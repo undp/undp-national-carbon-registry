@@ -759,6 +759,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   name="clientEmail"
                   rules={[
                     {
+                      required: true,
+                      message: '',
+                    },
+                    {
                       validator: async (rule, value) => {
                         if (
                           String(value).trim() === '' ||
@@ -854,6 +858,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   label={t('projectProposal:email')}
                   name="servcieProviderEmail"
                   rules={[
+                    {
+                      required: true,
+                      message: '',
+                    },
                     {
                       validator: async (rule, value) => {
                         if (
@@ -1404,7 +1412,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be an integer!'));
+                            return Promise.reject(new Error('Should be a number!'));
                           }
 
                           return Promise.resolve();
@@ -1463,7 +1471,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be an integer!'));
+                            return Promise.reject(new Error('Should be a number!'));
                           }
 
                           return Promise.resolve();
@@ -1522,7 +1530,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be an integer!'));
+                            return Promise.reject(new Error('Should be a number!'));
                           }
 
                           return Promise.resolve();
@@ -1581,7 +1589,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be an integer'));
+                            return Promise.reject(new Error('Should be a number'));
                           }
 
                           return Promise.resolve();
@@ -1640,7 +1648,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be an integer'));
+                            return Promise.reject(new Error('Should be a number'));
                           }
 
                           return Promise.resolve();
@@ -1701,7 +1709,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be an integer'));
+                          return Promise.reject(new Error('Should be a number'));
                         }
 
                         return Promise.resolve();

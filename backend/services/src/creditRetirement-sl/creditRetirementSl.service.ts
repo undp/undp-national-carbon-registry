@@ -189,8 +189,7 @@ export class CreditRetirementSlService {
           ? EmailTemplates.CREDIT_TRANSFER_SL_REQUEST
           : EmailTemplates.CREDIT_RETIRE_SL_REQUEST,
         { credits: creditRetirementDto.creditAmount },
-        programme.programmeId,
-        fromCompany.companyId
+        programme.programmeId
       );
     }
 
@@ -542,8 +541,7 @@ export class CreditRetirementSlService {
           credits: retirementRequest.creditAmount,
           remark,
         },
-        programme.programmeId,
-        programme.companyId
+        programme.programmeId
       );
     }
 

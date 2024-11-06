@@ -43,6 +43,53 @@
 .step-form-container {
   width: 100%;
 
+  .website-input {
+    .ant-input {
+      margin-left: 0.3rem;
+    }
+    .ant-input-group-addon {
+      border: 1px solid $common-form-input-border;
+    }
+  }
+
+  .equation-container {
+    background-color: #f3f3f3;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #D9D9D9;
+    margin: 8px 0px 16px 0px;
+
+    .equation {
+      display: flex;
+      width: 350px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #615d67;
+      i:first-child {
+        font-size: 14px;
+      }
+      sub {
+        font-size: 9px;
+      }
+
+      span {
+        font-weight: 400;
+        margin-bottom: 0 !important;
+        i {
+          font-size: 14px !important;
+        }
+      }
+    }
+
+    .equation-description {
+      p:first-child {
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+
   .form-section-title {
     margin-bottom: 20px;
     margin-top: 30px;
@@ -64,7 +111,7 @@
   .project-track {
     color: rgba(58, 53, 65, 0.5);
   }
-  
+
   .custom-required:after {
     content: '*';
     color: rgba(255, 77, 79, 0.8) !important;
@@ -156,7 +203,7 @@
     }
 
     .col4 {
-      width: 30%;
+      width: 40%;
       padding: 0px 10px;
     }
   }
@@ -352,5 +399,3 @@
 .ant-form-item-tooltip {
   cursor: default !important;
 }
-
-

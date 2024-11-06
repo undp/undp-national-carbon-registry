@@ -176,8 +176,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROGRAMME_SL_CREATE,
       null,
-      savedProgramme.programmeId,
-      companyId
+      savedProgramme.programmeId
     );
 
     return savedProgramme;
@@ -224,8 +223,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_APPROVED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
 
     return new DataResponseDto(HttpStatus.OK, response);
@@ -273,8 +271,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_REJECTED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -483,24 +480,24 @@ export class ProgrammeSlService {
       validationAgreementDto.content.projectParticipantSignature = docUrl;
     }
 
-    if (validationAgreementDto.content.witness1Signature) {
+    if (validationAgreementDto.content.climateFundWitnessSignature) {
       const docUrl = await this.uploadDocument(
         DocType.AGREEMENT_WITNESS1_SIGN,
         validationAgreementDto.programmeId,
-        validationAgreementDto.content.witness1Signature
+        validationAgreementDto.content.climateFundWitnessSignature
       );
 
-      validationAgreementDto.content.witness1Signature = docUrl;
+      validationAgreementDto.content.climateFundWitnessSignature = docUrl;
     }
 
-    if (validationAgreementDto.content.witness2Signature) {
+    if (validationAgreementDto.content.projectParticipantWitnessSignature) {
       const docUrl = await this.uploadDocument(
         DocType.AGREEMENT_WITNESS2_SIGN,
         validationAgreementDto.programmeId,
-        validationAgreementDto.content.witness2Signature
+        validationAgreementDto.content.projectParticipantWitnessSignature
       );
 
-      validationAgreementDto.content.witness2Signature = docUrl;
+      validationAgreementDto.content.projectParticipantWitnessSignature = docUrl;
     }
 
     if (validationAgreementDto.content.annexureADoc) {
@@ -549,8 +546,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROJECT_PROPOSAL_SUBMITTED,
       null,
-      validationAgreementDto.programmeId,
-      companyId
+      validationAgreementDto.programmeId
     );
 
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
@@ -663,8 +659,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_ACCEPTED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -777,8 +772,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_REJECTED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -923,8 +917,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CMA_CREATE,
       null,
-      cmaDto.programmeId,
-      companyId
+      cmaDto.programmeId
     );
 
     return new DataResponseDto(HttpStatus.OK, cmaDoc);
@@ -1044,8 +1037,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_APPROVED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
   }
@@ -1111,8 +1103,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_REJECTED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -1267,8 +1258,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToExCom(
       EmailTemplates.VALIDATION_SUBMITTED,
       null,
-      validationReportDto.programmeId,
-      companyId
+      validationReportDto.programmeId
     );
 
     return new DataResponseDto(HttpStatus.OK, validationReportDoc);
@@ -1344,17 +1334,15 @@ export class ProgrammeSlService {
 
     //send email to SLCF and Project Participant
     await this.emailHelperService.sendEmailToSLCFAdmins(
-      EmailTemplates.PROGRAMME_SL_AUTHORIZED,
+      EmailTemplates.VALIDATION_APPROVED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
 
     await this.emailHelperService.sendEmailToProjectParticipant(
-      EmailTemplates.PROGRAMME_SL_AUTHORIZED,
+      EmailTemplates.VALIDATION_APPROVED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
 
     return new DataResponseDto(HttpStatus.OK, response);
@@ -1424,8 +1412,7 @@ export class ProgrammeSlService {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.VALIDATION_REJECTED,
       null,
-      programmeId,
-      companyId
+      programmeId
     );
     return new DataResponseDto(HttpStatus.OK, response);
   }

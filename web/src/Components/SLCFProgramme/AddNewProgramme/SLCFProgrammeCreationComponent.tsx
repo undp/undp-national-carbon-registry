@@ -306,7 +306,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       city: values?.city || 'test',
       community: 'test',
       geographicalLocationCoordinates: values?.projectLocation,
-      projectGeography: 'SINGLE',
+      projectGeography: values?.projectGeography,
       otherProjectCategory: values?.otherCategory,
       landExtent: (function () {
         if (values?.landExtent) {
@@ -612,7 +612,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                           // eslint-disable-next-line no-restricted-globals
                                           if (isNaN(value)) {
                                             return Promise.reject(
-                                              new Error('Land Extent should be an integer')
+                                              new Error('Land Extent should be an number')
                                             );
                                           }
 
@@ -664,7 +664,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                                         if (isNaN(value)) {
                                                           return Promise.reject(
                                                             new Error(
-                                                              'Land Extent should be an integer'
+                                                              'Land Extent should be an number'
                                                             )
                                                           );
                                                         }
@@ -859,8 +859,14 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
-                                        if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer!'));
+                                        if (!Number.isInteger(Number(value))) {
+                                          return Promise.reject(
+                                            new Error(
+                                              `${t(
+                                                'addProgramme:projectCapacity'
+                                              )} should be an integer!`
+                                            )
+                                          );
                                         }
 
                                         return Promise.resolve();

@@ -189,6 +189,13 @@ export class VerificationService {
       return await em.save(monitoringReportDocument);
     });
 
+    //send email to SLCF
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.MONITORING_CREATE,
+      null,
+      monitoringReportDto.programmeId
+    );
+
     return new DataResponseDto(HttpStatus.OK, savedReport);
   }
 
@@ -203,9 +210,9 @@ export class VerificationService {
         HttpStatus.BAD_REQUEST
       );
     }
-
+    let verificationRequest: VerificationRequestEntity;
     await this.entityManager.transaction(async (em) => {
-      const verificationRequest = await this.verificationRequestRepository.find({
+      verificationRequest = await this.verificationRequestRepository.findOne({
         where: {
           id: verifyReportDto.verificationRequestId,
         },
@@ -262,6 +269,21 @@ export class VerificationService {
         return;
       }
     });
+
+    //send email to Project Participant
+    if (verifyReportDto.verify) {
+      await this.emailHelperService.sendEmailToProjectParticipant(
+        EmailTemplates.MONITORING_APPROVED,
+        null,
+        verificationRequest.programmeId
+      );
+    } else {
+      await this.emailHelperService.sendEmailToProjectParticipant(
+        EmailTemplates.MONITORING_REJECTED,
+        null,
+        verificationRequest.programmeId
+      );
+    }
   }
 
   //MARK: create Verification Report
@@ -423,6 +445,13 @@ export class VerificationService {
       return await em.save(verificationReportDocument);
     });
 
+    //send email to SLCF
+    await this.emailHelperService.sendEmailToExCom(
+      EmailTemplates.VERIFICATION_CREATE,
+      null,
+      verificationReportDto.programmeId
+    );
+
     return new DataResponseDto(HttpStatus.OK, savedReport);
   }
 
@@ -541,6 +570,31 @@ export class VerificationService {
         return;
       }
     });
+
+    //send email to Project Participant and SLCF
+    if (verifyReportDto.verify) {
+      await this.emailHelperService.sendEmailToSLCFAdmins(
+        EmailTemplates.VERIFICATION_APPROVED,
+        null,
+        verificationRequest.programmeId
+      );
+      await this.emailHelperService.sendEmailToProjectParticipant(
+        EmailTemplates.VERIFICATION_APPROVED,
+        null,
+        verificationRequest.programmeId
+      );
+    } else {
+      await this.emailHelperService.sendEmailToSLCFAdmins(
+        EmailTemplates.VERIFICATION_REJECTED,
+        null,
+        verificationRequest.programmeId
+      );
+      await this.emailHelperService.sendEmailToProjectParticipant(
+        EmailTemplates.VERIFICATION_REJECTED,
+        null,
+        verificationRequest.programmeId
+      );
+    }
   }
 
   //MARK: approve Carbon Neutral Certificate

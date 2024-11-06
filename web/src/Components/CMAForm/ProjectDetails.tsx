@@ -134,7 +134,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          message: `${t('CMAForm:email')} ${t('isRequired')}`,
+                          message: ``,
                         },
                         {
                           validator: async (rule, value) => {
@@ -144,14 +144,14 @@ const ProjectDetails = (props: CustomStepsProps) => {
                               value === null ||
                               value === undefined
                             ) {
-                              throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
+                              throw new Error(`${t('CMAForm:email')} ${t('isRequired')}`);
                             } else {
                               const val = value.trim();
                               const reg =
                                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                               const matches = val.match(reg) ? val.match(reg) : [];
                               if (matches.length === 0) {
-                                throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                                throw new Error(`${t('CMAForm:email')} ${t('isInvalid')}`);
                               }
                             }
                           },
@@ -240,6 +240,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                     <Form.Item
                       label={t('CMAForm:website')}
                       name="website"
+                      className="website-input"
                       rules={[
                         {
                           required: true,
@@ -253,8 +254,8 @@ const ProjectDetails = (props: CustomStepsProps) => {
                               value !== null ||
                               value !== undefined
                             ) {
-                              if (value && !validator.isURL('https://' + value))
-                                throw new Error(`${t('addCompany:website')} ${t('isInvalid')}`);
+                              if (value && !validator.isURL(value))
+                                throw new Error(`${t('CMAForm:website')} ${t('isInvalid')}`);
                             }
                           },
                         },

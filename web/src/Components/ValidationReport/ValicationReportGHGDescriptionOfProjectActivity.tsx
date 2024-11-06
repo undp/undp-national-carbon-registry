@@ -387,10 +387,20 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <Row gutter={[8, 16]}>
                   <Col span={6}>
                     <div>{t('validationReport:projectScopeUNFCC')}</div>
-                    <div>{t('validationReport:projectScopeUNFCCt2')}</div>
+                    <div className="custom-required">
+                      {t('validationReport:projectScopeUNFCCt2')}
+                    </div>
                   </Col>
                   <Col span={18}>
-                    <Form.Item name="projectScopeUNFCC">
+                    <Form.Item
+                      name="projectScopeUNFCC"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('validationReport:projectScopeUNFCC')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
                       <Checkbox.Group className="full-width-form-item">
                         {projectScopeList.map((scopeListItem: any, index: number) => {
                           return (

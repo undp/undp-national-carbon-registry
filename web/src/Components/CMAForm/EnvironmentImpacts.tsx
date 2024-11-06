@@ -36,7 +36,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:analysisEnvironmentalImpacts')}`}
+                label={`2.1 ${t('CMAForm:analysisEnvironmentalImpacts')}`}
                 name="analysisEnvironmentalImpacts"
                 rules={[
                   {
@@ -68,7 +68,7 @@ const EnvironmentImpacts = (props: CustomStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('CMAForm:environmentalImpactAssessment')}`}
+                label={`2.2 ${t('CMAForm:environmentalImpactAssessment')}`}
                 name="environmentalImpactAssessment"
                 rules={[
                   {

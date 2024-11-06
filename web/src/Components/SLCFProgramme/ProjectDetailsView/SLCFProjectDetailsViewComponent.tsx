@@ -114,6 +114,7 @@ import { VerificationForms } from '../projectForms/verificationForms';
 import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRequestForm';
 import { HttpStatusCode } from 'axios';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
+import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -593,6 +594,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     }
+  };
+
+  const navigateToMonitoringReportCreate = () => {
+    navigate(`/programmeManagementSLCF/monitoringReport/${id}`, {
+      state: {
+        mode: FormMode.CREATE,
+      },
+    });
   };
 
   const approveValidation = async () => {
@@ -1924,6 +1933,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             }}
           >
             {t('projectDetailsView:approve')}
+          </Button>
+        );
+      }
+    } else if (userInfoState && data.projectProposalStage === ProjectProposalStage.AUTHORISED) {
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        actionBtns.push(
+          <Button
+            type="primary"
+            onClick={() => {
+              navigateToMonitoringReportCreate();
+            }}
+          >
+            {t('projectDetailsView:verificationRequest')}
           </Button>
         );
       }

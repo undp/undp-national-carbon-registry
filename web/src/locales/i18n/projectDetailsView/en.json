@@ -198,7 +198,7 @@
   "SUBMITTED_VALIDATION_AGREEMENT": "Acceptance Pending",
   "ACCEPTED_PROPOSAL": "Accepted",
   "REJECTED_PROPOSAL": "Rejected",
-  "SUBMITTED_CMA": "Processing",
+  "SUBMITTED_CMA": "CMA Processing",
   "REJECTED_CMA": "CMA Rejected",
   "APPROVED_CMA": "CMA Approved",
   "VALIDATION_PENDING": "Validation Pending",
@@ -227,12 +227,6 @@
   "organisationBoundary": "Organisation Boundary",
   "requestCarbonNeutralCertificateSuccess": "Carbon Neutral Certificate Requested",
   "carbonNeutralCertificateApproved": "Carbon Neutral Certificate Approved",
-  "carbonNeutralCertificateRejected": "Carbon Neutral Certificate Rejected"
-
-
-
-
-
-
-
+  "carbonNeutralCertificateRejected": "Carbon Neutral Certificate Rejected",
+  "verificationRequest": "Verification Request"
 }

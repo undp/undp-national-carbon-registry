@@ -5,6 +5,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { t } from 'i18next';
 import moment from 'moment';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -182,7 +183,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
             >
               <Form.Item
                 className='className="full-width-form-item'
-                label={`${t('CMAForm:baselineEmissions')}`}
+                label={`6.1 ${t('CMAForm:baselineEmissions')}`}
                 name="baselineEmissions"
                 rules={[
                   {
@@ -210,9 +211,41 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 />
               </Form.Item>
 
+              {/* Equation */}
+              <div className="equation-container">
+                <p className="equation">
+                  <i>
+                    BE<sub>y</sub> = EG<sub>y</sub> * EF<sub>y</sub>
+                  </i>
+                </p>
+
+                <div className="equation-description">
+                  <p className="mg-top-1">where</p>
+
+                  <span>
+                    BE<sub>y</sub> = Quantity of net electricity supplied to the grid as a result of
+                    the implementation of the Clean Development Mechanism (CDM) project activity in
+                    year y (MWh).
+                  </span>
+                  <br />
+
+                  <span>
+                    EG<sub>y</sub> = Combined margin CO<sub>2</sub> Emission factor of the grid
+                    connected power generation in the year y calculated using the latest version of
+                    the “Tool to calculate the emission factor for an electricity system” (tCO
+                    <sub>2</sub>e/ MWh)
+                  </span>
+                  <br />
+
+                  <span>
+                    EF<sub>y</sub> = Baseline Emissions in year y (tCO<sub>2</sub>e)
+                  </span>
+                  <br />
+                </div>
+              </div>
               <Form.Item
                 className='className="full-width-form-item'
-                label={`${t('CMAForm:projectEmissions')}`}
+                label={`6.2 ${t('CMAForm:projectEmissions')}`}
                 name="projectEmissions"
                 rules={[
                   {
@@ -242,7 +275,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
               <Form.Item
                 className='className="full-width-form-item'
-                label={`${t('CMAForm:leakage')}`}
+                label={`6.3 ${t('CMAForm:leakage')}`}
                 name="leakage"
                 rules={[
                   {
@@ -270,33 +303,61 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                 />
               </Form.Item>
 
-              <Form.Item
-                className='className="full-width-form-item'
-                label={`${t('CMAForm:netGHGEmissionReductionsAndRemovals')}`}
-                name="netGHGEmissionReductionsAndRemovals"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === '' ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t('CMAForm:netGHGEmissionReductionsAndRemovals')} ${t('isRequired')}`
-                        );
-                      }
+              <>
+                <LabelWithTooltip
+                  label={`6.4 ${t('CMAForm:netGHGEmissionReductionsAndRemovals')}`}
+                  tooltipContent={
+                    <div>
+                      <p>
+                        Describe the procedure for quantification of net GHG emission reductions and
+                        removals. Include all relevant equations. For AFOLU projects, include
+                        equations for the quantification of net change in carbon stocks.{' '}
+                      </p>
+                      <p>
+                        Provide the ex-ante calculation (estimate) of baseline emissions/removals,
+                        project emissions/removals, leakage emissions and net GHG emission
+                        reductions and removals in the table below.
+                      </p>
+                      <p>
+                        For data and parameters monitored, use estimates. Document how each equation
+                        is applied, in a manner that enables the reader to reproduce the
+                        calculation. Provide example calculations for all key equations, to allow
+                        the reader to reproduce the calculation of estimated net GHG emission
+                        reductions or removals.
+                      </p>
+                    </div>
+                  }
+                  required={true}
+                  tooltipWidth={600}
+                  tooltipPosition={TooltipPostion.top}
+                />
+                <Form.Item
+                  className='className="full-width-form-item'
+                  name="netGHGEmissionReductionsAndRemovals"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
                     },
-                  },
-                ]}
-              >
-                <TextArea rows={4} disabled={disableFields} />
-              </Form.Item>
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(
+                            `${t('CMAForm:netGHGEmissionReductionsAndRemovals')} ${t('isRequired')}`
+                          );
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <TextArea rows={4} disabled={disableFields} />
+                </Form.Item>
+              </>
 
               {/* Estimated Emmissions table start */}
               <>
@@ -427,7 +488,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -469,7 +530,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -511,7 +572,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -553,7 +614,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -687,7 +748,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                                         // eslint-disable-next-line no-restricted-globals
                                         if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer'));
+                                          return Promise.reject(new Error('Should be a number'));
                                         }
 
                                         return Promise.resolve();
@@ -729,7 +790,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                                         // eslint-disable-next-line no-restricted-globals
                                         if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer'));
+                                          return Promise.reject(new Error('Should be a number'));
                                         }
 
                                         return Promise.resolve();
@@ -771,7 +832,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                                         // eslint-disable-next-line no-restricted-globals
                                         if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer'));
+                                          return Promise.reject(new Error('Should be a number'));
                                         }
 
                                         return Promise.resolve();
@@ -813,7 +874,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                                         // eslint-disable-next-line no-restricted-globals
                                         if (isNaN(value)) {
-                                          return Promise.reject(new Error('Should be an integer'));
+                                          return Promise.reject(new Error('Should be a number'));
                                         }
 
                                         return Promise.resolve();
@@ -908,7 +969,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -940,7 +1001,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -972,7 +1033,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1004,7 +1065,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1047,7 +1108,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1099,7 +1160,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1131,7 +1192,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1163,7 +1224,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
@@ -1195,7 +1256,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
 
                               // eslint-disable-next-line no-restricted-globals
                               if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be an integer'));
+                                return Promise.reject(new Error('Should be a number'));
                               }
 
                               return Promise.resolve();
