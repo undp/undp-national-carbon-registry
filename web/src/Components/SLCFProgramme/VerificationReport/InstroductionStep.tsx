@@ -26,14 +26,16 @@ export const IntroductionStep = (props: any) => {
               onFinish={async (values: any) => {
                 values.creditionPeriodStart = moment(values?.creditionPeriodStart)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 values.creditionPeriodEnd = moment(values?.creditionPeriodEnd)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 values.periodVerifiedStart = moment(values?.periodVerifiedStart)
                   .startOf('day')
-                  .unix();
-                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd).startOf('day').unix();
+                  .valueOf();
+                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd)
+                  .startOf('day')
+                  .valueOf();
                 onValueChange({ introduction: values });
                 next();
               }}
@@ -141,6 +143,7 @@ export const IntroductionStep = (props: any) => {
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:creditionPeriod')}`}
+                      <span style={{ color: 'rgba(255, 77, 79, 0.8)' }}> *</span>
                     </h4>
                     <Row>
                       <Col xl={11} md={24}>
@@ -278,6 +281,7 @@ export const IntroductionStep = (props: any) => {
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:periodVerified')}`}
+                      <span style={{ color: 'rgba(255, 77, 79, 0.8)' }}> *</span>
                     </h4>
                     <Row>
                       <Col xl={11} md={24}>

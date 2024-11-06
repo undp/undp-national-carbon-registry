@@ -129,8 +129,8 @@ export const QualificationStep = (props: any) => {
               onFinish={async (values: any) => {
                 if (FormMode.VIEW !== formMode) {
                   values?.emissionReductionsRemovalsList?.forEach((val: any) => {
-                    val.startDate = moment(values?.startDate).startOf('day').unix();
-                    val.endDate = moment(values?.endDate).startOf('day').unix();
+                    val.startDate = moment(values?.startDate).startOf('day').valueOf();
+                    val.endDate = moment(values?.endDate).startOf('day').valueOf();
                   });
                   values.optionalDocuments = await (async function () {
                     const base64Docs: string[] = [];

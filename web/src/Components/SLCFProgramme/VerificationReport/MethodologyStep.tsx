@@ -57,7 +57,7 @@ export const MethodologyStep = (props: any) => {
                       <h4>
                         The verification of the emission reductions has assessed all factors and
                         issues that constitute the basis for emission reductions from the project.
-                        These include
+                        These :
                       </h4>
                       <ul>
                         <li>

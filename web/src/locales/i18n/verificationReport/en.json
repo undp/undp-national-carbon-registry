@@ -253,6 +253,6 @@
   "uploadImages": "Optional: Upload your images here",
   "createVerificationReportSuccess": "Verification report submitted successfully",
   "verificationReportRejectSuccess": "Verification report rejected successfully",
-  "verificationApproveSuccess": "Verification report approved successfully",
+  "verificationReportApproveSuccess": "Verification report approved successfully",
   "capacity": "Capacity"
 }

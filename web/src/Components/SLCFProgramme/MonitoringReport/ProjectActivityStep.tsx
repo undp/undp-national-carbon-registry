@@ -140,17 +140,17 @@ export const ProjectActivityStep = (props: any) => {
                 if (formMode !== FormMode.VIEW) {
                   values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
                     .startOf('day')
-                    .unix();
+                    .valueOf();
                   values.creditingPeriodToDate = moment(values?.creditingPeriodToDate)
                     .startOf('day')
-                    .unix();
+                    .valueOf();
                   values.registrationDateOfTheActivity = moment(
                     values?.registrationDateOfTheActivity
                   )
                     .startOf('day')
-                    .unix();
+                    .valueOf();
                   await values?.projectActivityLocationsList?.forEach(async (val: any) => {
-                    val.projectStartDate = moment(val?.projectStartDate).startOf('day').unix();
+                    val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
                     val.optionalDocuments = await (async function () {
                       const base64Docs: string[] = [];
 

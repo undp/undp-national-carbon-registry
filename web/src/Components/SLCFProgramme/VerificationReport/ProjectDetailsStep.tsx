@@ -56,14 +56,14 @@ export const ProjectDetailsStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
                 console.log('-----values---------', values);
-                values.completionDate = moment(values?.completionDate).startOf('day').unix();
-                values.versionDate = moment(values?.versionDate).startOf('day').unix();
+                values.completionDate = moment(values?.completionDate).startOf('day').valueOf();
+                values.versionDate = moment(values?.versionDate).startOf('day').valueOf();
                 values.monitoringPeriodStart = moment(values?.monitoringPeriodStart)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 values.monitoringPeriodEnd = moment(values?.monitoringPeriodEnd)
                   .startOf('day')
-                  .unix();
+                  .valueOf();
                 onValueChange({ projectDetails: values });
                 next();
               }}
