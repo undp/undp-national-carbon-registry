@@ -67,7 +67,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       render: (_: any, record: any, index: number) => (
         <>
           <Form.Item name={record.projectActivity} rules={requiredRule}>
-            <Input size="large" />
+            <TextArea size="large" rows={4} />
           </Form.Item>
           <Form.Item hidden name={['applicabilityCriteria', index, 'criteriaNo']}></Form.Item>
         </>
@@ -600,6 +600,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
 
                   <Table
+                    className="applicability-table"
                     dataSource={applicabilityTableDataSource}
                     columns={applicabilityTableColumns}
                     pagination={false}
@@ -770,13 +771,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'location']}
                                       rules={[requiredValidationRule(t)]}
                                     >
-                                      {
-                                        <Input
-                                          size="large"
-                                          className="full-width-form-item"
-                                          disabled
-                                        />
-                                      }
+                                      {<Input size="large" className="full-width-form-item" />}
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>

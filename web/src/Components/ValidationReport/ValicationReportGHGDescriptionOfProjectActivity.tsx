@@ -354,10 +354,10 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       ]}
                     >
                       <Radio.Group style={{ justifyContent: 'flex-start' }}>
+                        <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
                         <Radio value={'SMALL'}>
                           {t('validationReport:smallScaleBundleProject')}
                         </Radio>
-                        <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -432,7 +432,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     <Input size="large" />
                   </Form.Item>
                   <Form.Item
-                    className="full-width-form-item"
                     label={`${t('validationReport:creditingPeriod')}`}
                     name="creditingPeriod"
                     rules={[
@@ -442,7 +441,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <InputNumber size="large" />
+                    <InputNumber className="full-width-form-item" size="large" />
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"
@@ -457,10 +456,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <DatePicker
-                      size="large"
-                      disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                    />
+                    <DatePicker size="large" />
                   </Form.Item>
                 </div>
               </div>
