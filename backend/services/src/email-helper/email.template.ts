@@ -970,6 +970,19 @@ export const EmailTemplates = {
         `,
   },
 
+  CREDIT_RECEIVED_AND_RETIRED_SL: {
+    id: "CREDIT_RECEIVED_AND_RETIRED_SL",
+    subject: "Credit Received and Retired",
+    html: `
+        Hi {{name}},<br><br>
+
+        {{fromCompany}} has transferred {{credits}} credits from {{programmeName}} to your organisation. {{credits}} tCO2e emissions have been inset from your organisation. <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+
   CREDIT_RETIRE_SL_REQUEST_APPROVED: {
     id: "CREDIT_RETIRE_SL_REQUEST_APPROVED",
     subject: "Credit Retirement Request Approved",

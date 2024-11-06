@@ -70,21 +70,12 @@ export class VoluntarilyCancellationCertificateGenerator {
     );
     doc.moveDown(2);
 
-    doc.opacity(0.2);
-    doc.image("images/SLCF_logo.jpg", 80, 280, {
-      width: 500,
-      height: 500,
-    });
-    doc.restore();
-    doc.opacity(1);
-
     // Title
     doc
       .fontSize(26)
       .font("Times-Bold")
       .fillColor("green")
       .text("VOLUNTARY CANCELLATION CERTIFICATE", { align: "center" });
-
 
     if (isPreview) {
       this.addPreviewWatermark(doc);
@@ -218,6 +209,13 @@ export class VoluntarilyCancellationCertificateGenerator {
         { align: "left" }
       );
 
+    doc.opacity(0.2);
+    doc.image("images/SLCF_logo.jpg", 80, 280, {
+      width: 500,
+      height: 500,
+    });
+    doc.restore();
+    doc.opacity(1);
     // End and save the document
     doc.end();
 
