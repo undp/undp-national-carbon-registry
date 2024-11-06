@@ -160,11 +160,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   ) => {
     const timelineObjs: any[] = [];
     if (projectTimeline !== undefined && projectTimeline.length > 0) {
-      projectTimeline.forEach((timelineItem) => {
+      projectTimeline.forEach((timelineItem: any, index: number) => {
         const startDate = timelineItem.period[0] * 1000; // converting into miliseconds
         const endDate = timelineItem.period[1] * 1000; // converting into miliseconds
         const tempObj = {
-          x: timelineItem.activity,
+          x:
+            (index < 9 ? '0' + String(index + 1) : String(index + 1)) +
+            '. ' +
+            timelineItem.activity,
           y: [startDate, endDate],
         };
         timelineObjs.push(tempObj);
@@ -2121,7 +2124,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input placeholder="5412 tCO2e" disabled={disableFields} />
+                  <Input disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
