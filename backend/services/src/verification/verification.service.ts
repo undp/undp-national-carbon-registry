@@ -632,11 +632,10 @@ export class VerificationService {
         verificationRequest.programmeId,
         "CNC"
       );
-      carbonNeutralCertificateSerial =
-        this.serialGenerator.generateCarbonNeutralCertificateNumber(
-          previousCarbonNeutralCertificateSerial
-        );
-  
+      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
+        previousCarbonNeutralCertificateSerial
+      );
+
       const neutralData = {
         projectName: programme.title,
         companyName: programme.company.name,
@@ -649,7 +648,7 @@ export class VerificationService {
           cNCertificateIssueDto.assessmentPeriodEnd
         ),
         orgBoundary: cNCertificateIssueDto.orgBoundary,
-        assessmentYear:cNCertificateIssueDto.year,
+        assessmentYear: cNCertificateIssueDto.year,
         assessmentPeriod: `${this.dateUtilService.formatCustomDate(
           cNCertificateIssueDto.assessmentPeriodStart
         )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
@@ -668,25 +667,25 @@ export class VerificationService {
       {
         carbonNeutralCertificateRequested: false,
         carbonNeutralCertificateSerialNo: carbonNeutralCertificateSerial,
-        carbonNeutralCertificateUrl: carbonNeutralCertUrl
+        carbonNeutralCertificateUrl: carbonNeutralCertUrl,
       }
-    )
+    );
 
     const hostAddress = this.configService.get("host");
-      await this.emailHelperService.sendEmailToOrganisationAdmins(
-        programme.company.companyId,
-        cNCertificateIssueDto.approve ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
-        {
-          programmeName: programme.title,
-          remark: cNCertificateIssueDto.orgBoundary,
-          pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
-        }
-      );
+    await this.emailHelperService.sendEmailToOrganisationAdmins(
+      programme.company.companyId,
+      cNCertificateIssueDto.approve
+        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
+        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
+      {
+        programmeName: programme.title,
+        remark: cNCertificateIssueDto.orgBoundary,
+        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
+      }
+    );
 
-    
-
-      console.log(carbonNeutralCertUrl);
-      return updatedRequest;
+    console.log(carbonNeutralCertUrl);
+    return updatedRequest;
   }
 
   //MARK: get Credit Issuance Certificate URL
@@ -847,7 +846,7 @@ export class VerificationService {
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
-      { },
+      {},
       verificationRequest.programmeId
     );
 
