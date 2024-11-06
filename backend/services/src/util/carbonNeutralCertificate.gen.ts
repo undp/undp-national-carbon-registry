@@ -12,6 +12,7 @@ export interface CarbonNeutralCertificateData {
   issueDate: string;
   creditAmount: number;
   orgBoundary: string;
+  assessmentYear: number;
   assessmentPeriod: string;
 }
 
@@ -26,8 +27,6 @@ export class CarbonNeutralCertificateGenerator {
 
     const refFileName = data.certificateNo.replace(/\//g, "_");
     const filepath = `CARBON_NEUTRAL_CERTIFICATE_${refFileName}.pdf`;
-
-    const currentYear = new Date().getFullYear();
 
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
@@ -95,7 +94,7 @@ export class CarbonNeutralCertificateGenerator {
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`quantified and verified for the calender year ${currentYear}`, { align: "center" });
+    doc.font("Helvetica").fontSize(12).text(`quantified and verified for the calender year ${data.assessmentYear}`, { align: "center" });
 
     doc.moveDown(0.5);
 

@@ -15,6 +15,10 @@ import Icon, {
   EditOutlined,
   CheckOutlined,
   CheckCircleTwoTone,
+  CloseOutlined,
+  CloseCircleOutlined,
+  ExclamationCircleTwoTone,
+  SendOutlined,
 } from '@ant-design/icons';
 import { RcFile } from 'antd/lib/upload';
 import moment from 'moment';
@@ -40,6 +44,11 @@ import {
   getVerificationRequestStatusName,
   getVerificationRequestStatusType,
 } from '../../../Definitions/Definitions/verificationSl.definition';
+import { VerificationRequest } from '../../../Definitions/Entities/verificationRequest';
+import {
+  CarbonNeutralConfirmationModelSl,
+  CarbonNeutralConfirmationPopupInfo,
+} from '../../Models/carbonNeutralConfirmationModelSl';
 
 export interface VerificationFormsProps {
   data: any;
@@ -49,11 +58,21 @@ export interface VerificationFormsProps {
   companyId: any;
   programmeOwnerId: number;
   getDocumentDetails: any;
-  getProgrammeById: any;
+  getVerificationData: any;
   ministryLevelPermission?: boolean;
   translator: any;
   projectProposalStage?: any;
 }
+
+// type PopupInfo = {
+//   headerText: string;
+//   icon: any;
+//   text: any;
+//   actionBtnText: string;
+//   okAction: any;
+//   type: 'primary' | 'danger';
+//   remarkRequired: boolean;
+// };
 
 export const VerificationForms: FC<VerificationFormsProps> = (props: VerificationFormsProps) => {
   const {
@@ -63,7 +82,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     programmeId,
     companyId,
     getDocumentDetails,
-    getProgrammeById,
+    getVerificationData,
     translator,
     projectProposalStage,
   } = props;
@@ -72,7 +91,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   const { userInfoState } = useUserContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const { delete: del, post } = useConnection();
   const [docData, setDocData] = useState<any[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [selectedReq, setSelectedReq] = useState<VerificationRequest>();
+  const [popupInfo, setPopupInfo] = useState<any>({});
+  const [actionInfo, setActionInfo] = useState<any>({});
+  const [rejectDocData, setRejectDocData] = useState<any>({});
   // const { delete: del, post } = useConnection();
   // const fileInputRef: any = useRef(null);
   // const fileInputRefMeth: any = useRef(null);
@@ -90,6 +115,19 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   useEffect(() => {
     setDocData(data);
   }, [data]);
+
+  const showCarbonNeutralCertificateRequestApproveModal = (
+    record: any,
+    info: CarbonNeutralConfirmationPopupInfo
+  ) => {
+    setSelectedReq(record);
+    setModalVisible(true);
+    setPopupInfo(info);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
 
   const navigateToMonitoringReportCreate = () => {
     navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
@@ -269,6 +307,80 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     });
   }
 
+  const requestCarbonNeutralCertificate = async (verificationRequestId: number) => {
+    setLoading(true);
+    try {
+      const response: any = await post('national/verification/requestCarbonNeutralCertificate', {
+        verificationRequestId: verificationRequestId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        message.open({
+          type: 'success',
+          content: `${t('projectDetailsView:requestCarbonNeutralCertificateSuccess')}`,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+
+        getVerificationData();
+      }
+    } catch (err: any) {
+      console.log('Error in getting documents - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (
+    reqId: number,
+    level: string,
+    startDate: number,
+    endDate: number,
+    year: number,
+    comment: string,
+    approve: boolean
+  ) => {
+    setLoading(true);
+    try {
+      const response: any = await post('national/verification/issueCarbonNeutralCertificate', {
+        verificationRequestId: reqId,
+        scope: level,
+        assessmentPeriodStart: startDate,
+        assessmentPeriodEnd: endDate,
+        year,
+        approve,
+        orgBoundary: comment,
+      });
+      const successMsg = approve
+        ? `${t('projectDetailsView:carbonNeutralCertificateApproved')}`
+        : `${t('projectDetailsView:carbonNeutralCertificateRejected')}`;
+      message.open({
+        type: 'success',
+        content: successMsg,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      getVerificationData();
+    } catch (error: any) {
+      console.log('Error in issuing  request', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      // return error.message;
+    } finally {
+      setModalVisible(false);
+      setLoading(false);
+    }
+  };
+
   const getLatestReport = (reports: any[], docType: DocumentTypeEnum) => {
     const filteredReports = reports.filter((report) => report.type === docType);
 
@@ -310,7 +422,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
           <span className="title-icon">{icon}</span>
           <span className="title-text">{title}</span>
         </div>
-        {docData.map((item) => (
+        {docData.map((item, index, array) => (
           <div className="verification-row">
             <Row className="field-verification-title" key="Verification Request Title">
               <Col span={24} className="field-key">
@@ -658,6 +770,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         trigger="hover"
                         title={
                           userInfoState?.companyId !== companyId &&
+                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
                           t('projectDetailsView:orgNotAuthDownload')
                         }
                         overlayClassName="custom-tooltip"
@@ -665,15 +778,16 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         <DownloadOutlined
                           className="common-progress-icon"
                           style={
-                            userInfoState?.companyId === companyId
+                            userInfoState?.companyId !== companyId &&
+                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                               ? {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
+                                  color: '#cacaca',
+                                  cursor: 'default',
                                   margin: '0px 0px 1.5px 0px',
                                 }
                               : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
+                                  color: '#3F3A47',
+                                  cursor: 'pointer',
                                   margin: '0px 0px 1.5px 0px',
                                 }
                           }
@@ -690,19 +804,271 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   </Col>
                 </Row>
               )}
+              {item.carbonNeutralCertificateUrl ? (
+                <Row className="field" key="carbonNeutralCertificate">
+                  <Col span={18} className="field-key">
+                    <div className="label-container">
+                      <div className="label">
+                        {t('projectDetailsView:carbonNeutralCertificate')}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={3} className="field-value">
+                    <>
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="top"
+                        trigger="hover"
+                        title={
+                          userInfoState?.companyId !== companyId &&
+                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+                          t('projectDetailsView:orgNotAuthDownload')
+                        }
+                        overlayClassName="custom-tooltip"
+                      >
+                        <DownloadOutlined
+                          className="common-progress-icon"
+                          style={
+                            userInfoState?.companyId !== companyId &&
+                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                              ? {
+                                  color: '#cacaca',
+                                  cursor: 'default',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                              : {
+                                  color: '#3F3A47',
+                                  cursor: 'pointer',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                          }
+                          onClick={() =>
+                            formViewPermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            ) && downloadCreditIssueCertificate(item.carbonNeutralCertificateUrl)
+                          }
+                        />
+                      </Tooltip>
+                    </>
+                  </Col>
+                </Row>
+              ) : index === array.length - 1 &&
+                !item.carbonNeutralCertificateUrl &&
+                item.status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED &&
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                <Row className="field" key="carbonNeutralCertificate">
+                  <Col span={18} className="field-key">
+                    <div className="label-container">
+                      <div className="label">
+                        {t('projectDetailsView:carbonNeutralCertificate')}
+                      </div>
+                    </div>
+                  </Col>
+                  <Col span={3} className="field-value">
+                    <>
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="top"
+                        trigger="hover"
+                        title={
+                          userInfoState?.companyId !== companyId
+                            ? t('projectDetailsView:orgNotAuthDownload')
+                            : item.carbonNeutralCertificateRequested &&
+                              t('projectDetailsView:carbonNeutralCertificateRequestPending')
+                        }
+                        overlayClassName="custom-tooltip"
+                      >
+                        <SendOutlined
+                          className="common-progress-icon"
+                          style={
+                            userInfoState?.companyId === companyId &&
+                            !item.carbonNeutralCertificateRequested
+                              ? {
+                                  color: '#3F3A47',
+                                  cursor: 'pointer',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                              : {
+                                  color: '#cacaca',
+                                  cursor: 'default',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                          }
+                          onClick={() =>
+                            formCreatePermission(
+                              userInfoState,
+                              DocType.MONITORING_REPORT,
+                              projectProposalStage
+                            ) &&
+                            !item.carbonNeutralCertificateRequested &&
+                            requestCarbonNeutralCertificate(item.id)
+                          }
+                        />
+                      </Tooltip>
+                    </>
+                  </Col>
+                </Row>
+              ) : (
+                index === array.length - 1 &&
+                !item.carbonNeutralCertificateUrl &&
+                item.carbonNeutralCertificateRequested &&
+                userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
+                  <Row className="field" key="carbonNeutralCertificate">
+                    <Col span={18} className="field-key approve-cnc-title-col">
+                      <div className="label-container">
+                        <div className="label">
+                          {t('projectDetailsView:carbonNeutralCertificate')}
+                          <span className="approve-cnc-title-icon">
+                            <ExclamationCircleTwoTone twoToneColor="#eb8f34" />
+                          </span>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col span={3} className="field-value">
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="top"
+                        trigger="hover"
+                        title={
+                          !item.carbonNeutralCertificateRequested &&
+                          t('projectDetailsView:noCarbonNeutralCertificateRequest')
+                        }
+                        overlayClassName="custom-tooltip"
+                      >
+                        <CheckOutlined
+                          className="common-progress-icon"
+                          style={
+                            item.carbonNeutralCertificateRequested
+                              ? {
+                                  color: '#32c761',
+                                  cursor: 'pointer',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                              : {
+                                  color: '#cacaca',
+                                  cursor: 'default',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                          }
+                          onClick={() => {
+                            // Check permissions and if carbonNeutralCertificateRequested is true
+                            const hasPermission = formCreatePermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            );
+
+                            if (hasPermission && item.carbonNeutralCertificateRequested) {
+                              showCarbonNeutralCertificateRequestApproveModal(item, {
+                                headerText: t('projectDetailsView:approveCNCModelTitle'),
+                                icon: <CheckCircleOutlined />,
+                                actionBtnText: t('projectDetailsView:approve'),
+                                okAction: (
+                                  comment: any,
+                                  level: any,
+                                  startDate: any,
+                                  endDate: any,
+                                  year: any
+                                ) => {
+                                  handleApprove(
+                                    item.id,
+                                    level,
+                                    startDate,
+                                    endDate,
+                                    year,
+                                    comment,
+                                    true
+                                  );
+                                },
+                                type: 'primary',
+                                remarkRequired: false,
+                              });
+                            }
+                          }}
+                        />
+                      </Tooltip>
+                    </Col>
+                    <Col span={3} className="field-value">
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="top"
+                        trigger="hover"
+                        title={
+                          !item.carbonNeutralCertificateRequested &&
+                          t('projectDetailsView:noCarbonNeutralCertificateRequest')
+                        }
+                        overlayClassName="custom-tooltip"
+                      >
+                        <CloseOutlined
+                          className="common-progress-icon"
+                          style={
+                            item.carbonNeutralCertificateRequested
+                              ? {
+                                  color: '#f70505',
+                                  cursor: 'pointer',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                              : {
+                                  color: '#cacaca',
+                                  cursor: 'default',
+                                  margin: '0px 0px 1.5px 0px',
+                                }
+                          }
+                          onClick={() => {
+                            // Check permissions and if carbonNeutralCertificateRequested is true
+                            const hasPermission = formCreatePermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            );
+
+                            if (hasPermission && item.carbonNeutralCertificateRequested) {
+                              showCarbonNeutralCertificateRequestApproveModal(item, {
+                                headerText: t('projectDetailsView:rejectCNCModelTitle'),
+                                icon: <CloseCircleOutlined />,
+                                actionBtnText: t('projectDetailsView:Reject'),
+                                okAction: (
+                                  comment: any,
+                                  level: any,
+                                  startDate: any,
+                                  endDate: any,
+                                  year: any
+                                ) => {
+                                  handleApprove(
+                                    item.id,
+                                    level,
+                                    startDate,
+                                    endDate,
+                                    year,
+                                    comment,
+                                    false
+                                  );
+                                },
+                                type: 'danger',
+                                remarkRequired: true,
+                              });
+                            }
+                          }}
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
+                )
+              )}
             </div>
           </div>
         ))}
       </div>
-      {/* <RejectDocumentationConfirmationModel
-        actionInfo={actionInfo}
-        onActionConfirmed={handleOk}
+      <CarbonNeutralConfirmationModelSl
+        actionInfo={popupInfo}
         onActionCanceled={handleCancel}
-        openModal={openRejectDocConfirmationModal}
+        openModal={modalVisible}
         errorMsg={''}
         loading={loading}
         translator={translator}
-      /> */}
+      />
     </>
   );
 };

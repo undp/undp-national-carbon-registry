@@ -253,6 +253,32 @@ export class CreditRetirementSlService {
     );
   }
 
+  //MARK: get Credit Amount Sum
+  async getCreditAmountSum(
+    companyId: number,
+    startEpoch: number,
+    endEpoch: number
+  ): Promise<number> {
+    const creditAmountSum = await this.retirementRepo
+      .createQueryBuilder("credit")
+      .select("SUM(credit.creditAmount)", "sum")
+      .where(
+        `(
+          (credit.creditType = :creditType AND credit.fromCompanyId = :companyId)
+          OR credit.toCompanyId = :companyId
+        )`,
+        { creditType: "TRACK_2", companyId }
+      )
+      .andWhere("credit.status = :status", { status: "Approved" })
+      .andWhere("credit.txTime BETWEEN :startEpoch AND :endEpoch", {
+        startEpoch,
+        endEpoch,
+      })
+      .getRawOne();
+
+    return parseFloat(creditAmountSum.sum) || 0; // Return 0 if the sum is null
+  }
+
   //MARK: Update Status
   async updateCreditRetirementRequestStatus(dto: CreditRetirementStatusUpdateSlDto, user: User) {
     const retirementRequest = await this.retirementRepo.findOneBy({

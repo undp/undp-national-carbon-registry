@@ -951,4 +951,46 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+
+  CARBON_NEUTRAL_SL_REQUESTED: {
+    id: "CARBON_NEUTRAL_SL_REQUESTED",
+    subject: "Carbon Neutral Certificate Requested",
+    html: `
+        Hi {{name}},<br><br>
+
+        The Carbon Neutral Certificate for the project {{programmeName}} has been requested by the organisation {{organisationName}}.<br>
+        This can be approved/rejected from <a href="{{pageLink}}">here</a><br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CARBON_NEUTRAL_SL_REQUEST_APPROVED: {
+    id: "CARBON_NEUTRAL_SL_REQUEST_APPROVED",
+    subject: "Carbon Neutral Certificate Approved",
+    html: `
+        Hi {{name}},<br><br>
+
+        The Carbon Neutral Certificate for the project {{programmeName}} requested by your organisation has been approved by {{countryName}} Climate Fund.<br>
+        This can be downloaded from <a href="{{pageLink}}">here</a><br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  CARBON_NEUTRAL_SL_REQUEST_REJECTED: {
+    id: "CARBON_NEUTRAL_SL_REQUEST_REJECTED",
+    subject: "Carbon Neutral Certificate Declined",
+    html: `
+        Hi {{name}},<br><br>
+
+        The Carbon Neutral Certificate for the project {{programmeName}} requested by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
 };

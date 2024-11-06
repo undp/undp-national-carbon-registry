@@ -75,6 +75,26 @@ export class SLCFSerialNumberGeneratorService {
     return `${programmeRegistrationSerial}/CI/${paddedRetirementReqId}`;
   }
 
+  public generateCarbonNeutralCertificateNumber(
+    previousCreditIssueCertSerial: string | null
+  ): string {
+    // Default to '0001' if no previous reference ID is provided
+    let lastNumber = "0001";
+    if (previousCreditIssueCertSerial) {
+      // Extract the last part of the previous reference ID
+      const parts = previousCreditIssueCertSerial.split("/");
+      const lastSection = parts[parts.length - 1];
+      // Parse the last section as a number, increment it, and pad it back to 4 digits
+      const incrementedNumber = (parseInt(lastSection, 10) + 1).toString().padStart(2, "0");
+      lastNumber = incrementedNumber;
+    }
+
+    // Convert the numbers to strings and pad them with zeros to ensure they are 4 digits
+    const paddedRetirementReqId = lastNumber.padStart(4, "0");
+    // Construct the full string
+    return `SLCF/CNC/${paddedRetirementReqId}`;
+  }
+
   public matchesCreditFormat(serialNumber: string) {
     const pattern = /^SLCCS\/REG\/\d{4}\/\d+$/;
     return pattern.test(serialNumber);

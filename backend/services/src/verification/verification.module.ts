@@ -15,6 +15,7 @@ import { DocumentEntity } from "src/entities/document.entity";
 import { VerificationRequestEntity } from "src/entities/verification.request.entity";
 import { VerificationService } from "./verification.service";
 import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
+import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
     AsyncOperationsModule,
     FileHandlerModule,
     ProgrammeSlModule,
+    CreditRetirementSlModule
   ],
   providers: [Logger, VerificationService],
   exports: [VerificationService],
