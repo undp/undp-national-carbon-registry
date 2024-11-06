@@ -37,16 +37,6 @@ export const VerificationFindingStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                if (FormMode.VIEW !== formMode) {
-                  values.optionalDocuments = await fileUploadValueExtract(
-                    values,
-                    'optionalDocuments'
-                  );
-
-                  values?.siteLocations?.forEach(async (val: any) => {
-                    val.commissioningDate = moment(val?.commissioningDate).startOf('day').valueOf();
-                  });
-                }
                 onValueChange({ verificationFinding: values });
                 next();
               }}

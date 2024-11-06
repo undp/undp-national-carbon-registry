@@ -18,6 +18,8 @@ import { getBase64 } from '../../../Definitions/Definitions/programme.definition
 import { RcFile } from 'antd/lib/upload';
 import GetLocationMapComponent from '../../Maps/GetLocationMapComponent';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import LabelWithTooltip, { TooltipPostion } from '../../LabelWithTooltip/LabelWithTooltip';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 export const ProjectActivityStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
     props;
@@ -137,35 +139,6 @@ export const ProjectActivityStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
-                if (formMode !== FormMode.VIEW) {
-                  values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
-                    .startOf('day')
-                    .valueOf();
-                  values.creditingPeriodToDate = moment(values?.creditingPeriodToDate)
-                    .startOf('day')
-                    .valueOf();
-                  values.registrationDateOfTheActivity = moment(
-                    values?.registrationDateOfTheActivity
-                  )
-                    .startOf('day')
-                    .valueOf();
-                  await values?.projectActivityLocationsList?.forEach(async (val: any) => {
-                    val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
-                    val.optionalDocuments = await (async function () {
-                      const base64Docs: string[] = [];
-
-                      if (val?.optionalDocuments && val?.optionalDocuments.length > 0) {
-                        const docs = val.optionalDocuments;
-                        for (let i = 0; i < docs.length; i++) {
-                          const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                          base64Docs.push(temp);
-                        }
-                      }
-
-                      return base64Docs;
-                    })();
-                  });
-                }
                 onValueChange({ projectActivity: values });
                 next();
               }}
@@ -191,37 +164,38 @@ export const ProjectActivityStep = (props: any) => {
                         placeholder={`${t('monitoringReport:pa_monitoringObjectivePlaceholder')}`}
                       />
                     </Form.Item>
-                    <Form.Item
+                    <LabelWithTooltip
                       label={`1.2 ${t('monitoringReport:pa_implementation')}`}
+                      required={true}
+                      tooltipPosition={TooltipPostion.bottom}
+                      tooltipContent={
+                        <div>
+                          <p>Should include:</p>
+                          <ul>
+                            <li>
+                              A summary description of the implementation status of the
+                              technologies/measures(e.g. plant,equipment, process, or management or
+                              conversion measures) included in the project.
+                            </li>
+                            <li>
+                              Whether the project is a bundled project activity leading to an
+                              aggregated emission reduction.
+                            </li>
+                            <li>
+                              Relevent dates of the project activity (e.g. construction,
+                              commissioningm continued operation periods, etc.)
+                            </li>
+                            <li>
+                              Total GHG emission reductions or removals generated in this monitoring
+                              period.
+                            </li>
+                          </ul>
+                        </div>
+                      }
+                      tooltipWidth={600}
+                    />
+                    <Form.Item
                       name="implementation"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p>Should include:</p>
-                            <ul>
-                              <li>
-                                A summary description of the implementation status of the
-                                technologies/measures(e.g. plant,equipment, process, or management
-                                or conversion measures) included in the project.
-                              </li>
-                              <li>
-                                Whether the project is a bundled project activity leading to an
-                                aggregated emission reduction.
-                              </li>
-                              <li>
-                                Relevent dates of the project activity (e.g. construction,
-                                commissioningm continued operation periods, etc.)
-                              </li>
-                              <li>
-                                Total GHG emission reductions or removals generated in this
-                                monitoring period.
-                              </li>
-                            </ul>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
                       rules={[
                         {
                           required: true,
@@ -1095,11 +1069,7 @@ export const ProjectActivityStep = (props: any) => {
                                         {
                                           validator: async (rule, file) => {
                                             if (file?.length > 0) {
-                                              if (!isValidateFileType(file[0]?.type)) {
-                                                throw new Error(
-                                                  `${t('monitoringReport:invalidFileFormat')}`
-                                                );
-                                              } else if (file[0]?.size > maximumImageSize) {
+                                              if (file[0]?.size > maximumImageSize) {
                                                 throw new Error(`${t('common:maxSizeVal')}`);
                                               }
                                             }

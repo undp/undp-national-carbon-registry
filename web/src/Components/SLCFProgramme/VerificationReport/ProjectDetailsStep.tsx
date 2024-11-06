@@ -55,15 +55,6 @@ export const ProjectDetailsStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
-                values.completionDate = moment(values?.completionDate).startOf('day').valueOf();
-                values.versionDate = moment(values?.versionDate).startOf('day').valueOf();
-                values.monitoringPeriodStart = moment(values?.monitoringPeriodStart)
-                  .startOf('day')
-                  .valueOf();
-                values.monitoringPeriodEnd = moment(values?.monitoringPeriodEnd)
-                  .startOf('day')
-                  .valueOf();
                 onValueChange({ projectDetails: values });
                 next();
               }}

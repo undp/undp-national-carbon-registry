@@ -8,6 +8,7 @@ import moment from 'moment';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 export const QualificationStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -127,25 +128,6 @@ export const QualificationStep = (props: any) => {
                   'B𝑬𝒚 = 𝑬𝑮𝒚×𝑬F\nWhere,  BEy= Baseline Emissions in year y (tCO2e)  EGy = Quantity of net electricity supplied to the grid as a result of the implementation of the Clean Development Mechanism (CDM) project activity in year y (MWh).\nEFy = CO2 Emission factor of the grid in the year 2020 (tCO2/ MWh)',
               }}
               onFinish={async (values: any) => {
-                if (FormMode.VIEW !== formMode) {
-                  values?.emissionReductionsRemovalsList?.forEach((val: any) => {
-                    val.startDate = moment(values?.startDate).startOf('day').valueOf();
-                    val.endDate = moment(values?.endDate).startOf('day').valueOf();
-                  });
-                  values.optionalDocuments = await (async function () {
-                    const base64Docs: string[] = [];
-
-                    if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
-                      const docs = values.optionalDocuments;
-                      for (let i = 0; i < docs.length; i++) {
-                        const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                        base64Docs.push(temp);
-                      }
-                    }
-
-                    return base64Docs;
-                  })();
-                }
                 onValueChange({ quantifications: values });
                 next();
               }}
