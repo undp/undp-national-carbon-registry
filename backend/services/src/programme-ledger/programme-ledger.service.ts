@@ -410,11 +410,11 @@ export class ProgrammeLedgerService {
         };
 
         if (retirementRequest.creditType === CreditType.TRACK_1) {
-          programme.creditTransferred =
-            programme.creditTransferred + retirementRequest.creditAmount;
+          programme.creditTransferred = (programme.creditTransferred) ?
+            programme.creditTransferred + retirementRequest.creditAmount : retirementRequest.creditAmount;
           uPayload["creditTransferred"] = programme.creditTransferred;
         } else {
-          programme.creditRetired = programme.creditRetired + retirementRequest.creditAmount;
+          programme.creditRetired = (programme.creditRetired) ? programme.creditRetired + retirementRequest.creditAmount : retirementRequest.creditAmount;
           uPayload["creditRetired"] = programme.creditRetired;
         }
 

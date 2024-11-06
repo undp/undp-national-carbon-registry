@@ -262,6 +262,7 @@ export class EmailHelperService {
       case "CREDIT_RETIRE_SL_REQUEST_REJECTED":
       case "CREDIT_TRANSFER_SL_REQUEST_CANCELED":
       case "CREDIT_RETIRE_SL_REQUEST_CANCELED":
+      case "CREDIT_RECEIVED_AND_RETIRED_SL":
         templateData = {
           ...templateData,
           pageLink: hostAddress + "/retirementManagement/viewAll",

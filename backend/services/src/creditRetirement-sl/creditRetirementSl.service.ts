@@ -451,6 +451,18 @@ export class CreditRetirementSlService {
           remark,
         }
       );
+
+      if (CreditType.TRACK_1) {
+        await this.emailHelperService.sendEmailToOrganisationAdmins(
+          toCompany.companyId,
+          EmailTemplates.CREDIT_RECEIVED_AND_RETIRED_SL,
+          {
+            fromCompany: fromCompany.name,
+            programmeName: programme.title,
+            credits: retirementRequest.creditAmount,
+          }
+        );
+      }
     }
 
     return new BasicResponseDto(
