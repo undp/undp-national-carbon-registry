@@ -1368,7 +1368,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 {t('projectProposal:submissionFinalValidation')}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t('projectProposal:slccsAdministrator')}
               </Col>
             </Row>
 
@@ -1484,7 +1484,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 {t('projectProposal:submissionFinalReportsToEB')}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:verificationTeam')}
+                {t('projectProposal:slccsAdministrator')}
               </Col>
             </Row>
 
