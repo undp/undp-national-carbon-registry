@@ -158,6 +158,8 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
   const companyCredit = programme.company.slcfAccountBalance
     ? programme.company.slcfAccountBalance[programme.purposeOfCreditDevelopment]
     : 0;
+
+  const programmeCredit = programme.creditBalance ? programme.creditBalance : 0;
   // let totalCredits = 0;
   // let companyName = undefined;
   // for (const index in programme.creditOwnerPercentage) {
@@ -501,10 +503,17 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
                   validator(rule, v) {
                     if (
                       getFieldValue('creditAmount') &&
-                      parseFloat(getFieldValue('creditAmount')) > companyCredit
+                      parseFloat(getFieldValue('creditAmount')) > programmeCredit
                     ) {
                       // eslint-disable-next-line prefer-promise-reject-errors
                       return Promise.reject('Retire Amount > Credit Balance');
+                    }
+                    if (
+                      getFieldValue('creditAmount') &&
+                      parseFloat(getFieldValue('creditAmount')) > companyCredit
+                    ) {
+                      // eslint-disable-next-line prefer-promise-reject-errors
+                      return Promise.reject('Retire Amount > Organisation Credit Balance');
                     }
                     return Promise.resolve();
                   },
@@ -527,7 +536,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
           </Col>
           <Col lg={6} md={12}>
             <Form.Item className="popup-credit-input">
-              <InputNumber placeholder={addCommSep(companyCredit)} disabled />
+              <InputNumber placeholder={addCommSep(programmeCredit)} disabled />
             </Form.Item>
           </Col>
         </Row>

@@ -255,7 +255,7 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
         const prvTxTime = programme.txTime;
 
-        programme.creditBalance = programme.creditBalance + verificationRequest.creditAmount;
+        programme.creditBalance = (programme.creditBalance) ? programme.creditBalance + verificationRequest.creditAmount : verificationRequest.creditAmount;
 
         programme.creditChange = verificationRequest.creditAmount;
         programme.txType = TxType.ISSUE_SL;
