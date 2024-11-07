@@ -38,6 +38,7 @@ import {
   QrcodeOutlined,
   SafetyOutlined,
   TransactionOutlined,
+  FileOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -1994,6 +1995,31 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <span>
             <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
             <span>{v as string}</span>
+          </span>
+        );
+      } else if (k === 'additionalDocuments') {
+        generalInfo[text] = (
+          <span>
+            {v?.length > 0
+              ? v.map((fValue: string, index: number) => {
+                  return (
+                    <div style={{ marginBottom: 2 }}>
+                      <a href={fValue} target="_blank" rel="noopener noreferrer">
+                        <FileOutlined
+                          style={{
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
+                            marginRight: 5,
+                          }}
+                          // onClick={() => onclick()}
+                        />
+                        {`Document  ${index + 1}`}
+                      </a>
+                    </div>
+                  );
+                })
+              : '-'}
           </span>
         );
       } else {

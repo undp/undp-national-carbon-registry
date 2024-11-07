@@ -228,5 +228,8 @@
   "requestCarbonNeutralCertificateSuccess": "Carbon Neutral Certificate Requested",
   "carbonNeutralCertificateApproved": "Carbon Neutral Certificate Approved",
   "carbonNeutralCertificateRejected": "Carbon Neutral Certificate Rejected",
-  "verificationRequest": "Verification Request"
+  "dsDivision": "Division",
+  "province": "Province",
+  "district": "District",
+  "additionalDocuments": "Additional Documents"
 }
