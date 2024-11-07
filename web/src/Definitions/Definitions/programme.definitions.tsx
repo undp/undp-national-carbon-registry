@@ -398,8 +398,8 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
     dsDivision: programme.dsDivision,
-    province: programme.province,
     district: programme.district,
+    province: programme.province,
     additionalDocuments: programme.additionalDocuments,
   };
 
