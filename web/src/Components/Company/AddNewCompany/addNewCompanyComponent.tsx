@@ -461,14 +461,6 @@ export const AddNewCompanyComponent = (props: any) => {
     }
   };
 
-  const handleFaxNumberChange = (value: any) => {
-    if (value && isPossiblePhoneNumber(value)) {
-      setFaxNumber(formatPhoneNumberIntl(value));
-    } else {
-      setFaxNumber(value);
-    }
-  };
-
   const onFinishStepTwo = async (values: any) => {
     const requestData = {
       ...values,
@@ -1319,10 +1311,14 @@ export const AddNewCompanyComponent = (props: any) => {
                     <PhoneInput
                       placeholder={t('addCompany:faxNo')}
                       international
-                      value={formatPhoneNumberIntl(contactNoInput)}
+                      value={formatPhoneNumberIntl(faxNumber)}
                       defaultCountry="LK"
                       countryCallingCodeEditable={false}
-                      onChange={handleFaxNumberChange}
+                      onChange={(v) => {
+                        if (v === undefined) {
+                          setFaxNumber(undefined);
+                        }
+                      }}
                       countries={countries}
                     />
                   </Form.Item>
@@ -1330,7 +1326,7 @@ export const AddNewCompanyComponent = (props: any) => {
                     <Form.Item
                       label={t('addCompany:province')}
                       name="provinces"
-                      initialValue={state?.record?.provinces}
+                      initialValue={state?.record?.provinces ?? []}
                       rules={[
                         {
                           required: true,

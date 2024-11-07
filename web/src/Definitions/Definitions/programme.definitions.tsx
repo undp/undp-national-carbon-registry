@@ -9,6 +9,7 @@ import {
   ProgrammeStatus,
   ProgrammeCategory,
   ProjectProposalStage,
+  getProjectCategory,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -382,7 +383,7 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
     projectStatus: programme.projectStatus,
-    projectCategory: programme.projectCategory,
+    projectCategory: getProjectCategory[programme.projectCategory],
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
