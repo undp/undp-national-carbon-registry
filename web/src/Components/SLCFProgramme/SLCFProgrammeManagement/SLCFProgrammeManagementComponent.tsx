@@ -334,7 +334,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         sort: sort,
       });
       setTableData(response?.data ? response.data : []);
-      setTotalProgramme(response?.data?.total ? response?.data?.total : 0);
+      setTotalProgramme(response.response?.data?.total ? response.response?.data?.total : 0);
       setLoading(false);
       setDataQuery({
         filterAnd: filter,
