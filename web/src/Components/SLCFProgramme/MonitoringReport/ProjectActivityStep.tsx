@@ -942,9 +942,7 @@ export const ProjectActivityStep = (props: any) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('monitoringReport:province')} ${t(
-                                      'isRequired'
-                                    )}}`,
+                                    message: `${t('monitoringReport:province')} ${t('isRequired')}`,
                                   },
                                 ]}
                               >

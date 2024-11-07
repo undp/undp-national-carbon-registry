@@ -70,34 +70,32 @@ export const SafeguardsStep = (props: any) => {
                             <li>
                               How due account of all and any input received during ongoing
                               communication has been taken. Include details on any updates to the
-                              project design or justify why updates are not appropriate For AFOLU.
-                            </li>
-                          </ul>
-                          <p>
-                            Projects, also demonstrate how the project has communicated the
-                            following with local stakeholders:
-                          </p>
-                          <ul>
-                            <li>
-                              The results of project implementation, including the results of
-                              monitoring.
-                            </li>
-                            <li>
-                              Any changes, where relevant, to risks, costs and benefits the project
-                              may bring to local stakeholders.
-                            </li>
-                            <li>
-                              Any changes, where relevant, to relevant laws and regulations covering
-                              workers’ right in the host country
-                            </li>
-                            <li>
-                              The process of SLCCS verification and the validation/verification
-                              body’s site visit.
+                              project design or justify why updates are not appropriate. For AFOLU
+                              Projects, also demonstrate how the project has communicated the
+                              following with local stakeholders:
+                              <ul>
+                                <li>
+                                  The results of project implementation, including the results of
+                                  monitoring.
+                                </li>
+                                <li>
+                                  Any changes, where relevant, to risks, costs and benefits the
+                                  project may bring to local stakeholders.
+                                </li>
+                                <li>
+                                  Any changes, where relevant, to relevant laws and regulations
+                                  covering workers’ right in the host country
+                                </li>
+                                <li>
+                                  The process of SLCCS verification and the validation/verification
+                                  body’s site visit.
+                                </li>
+                              </ul>
                             </li>
                           </ul>
                         </div>
                       }
-                      tooltipWidth={600}
+                      tooltipWidth={800}
                     />
                     <Form.Item
                       name="stakeholderConsultation"
