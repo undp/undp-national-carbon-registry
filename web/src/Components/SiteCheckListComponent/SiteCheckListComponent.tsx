@@ -257,7 +257,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       projectStartDate: moment(values?.projectStartDate).startOf('day').unix(),
       projectCommissionDate: moment(values?.projectCommissionDate).startOf('day').unix(),
       projectTrack: form.getFieldValue('projectTrack'),
-      projectCapacity: Number(values?.projectCapacity),
+      projectCapacity: values?.projectCapacity,
       plantFactorPercentage: Number(values?.plantFactorPercentage),
       projectEmission: values?.projectEmission,
       leakageEmission: values?.leakageEmission,

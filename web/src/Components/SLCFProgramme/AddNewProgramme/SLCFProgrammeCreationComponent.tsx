@@ -310,9 +310,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       otherProjectCategory: values?.otherCategory,
       landExtent: (function () {
         if (values?.landExtent) {
-          const lands = [Number(values?.landExtent)];
+          const lands = [Number(values?.landExtent).toFixed(2)];
           if (values?.landList) {
-            values?.landList.forEach((item: any) => lands.push(Number(item.land)));
+            values?.landList.forEach((item: any) => lands.push(Number(item.land).toFixed(2)));
           }
           return lands;
         }

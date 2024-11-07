@@ -6,6 +6,7 @@ import { t } from 'i18next';
 import moment from 'moment';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
+import { formatNumberWithDecimalPlaces } from '../../Utils/utilityHelper';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -69,7 +70,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    const avgTempTotal = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    const avgTempTotal =
+      creditingYears > 0 ? formatNumberWithDecimalPlaces(tempTotal / creditingYears) : 0;
     form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], avgTempTotal);
   };
 
@@ -85,7 +87,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    const total = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    const total =
+      creditingYears > 0 ? formatNumberWithDecimalPlaces(tempTotal / creditingYears) : 0;
     form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], total);
 
     CalculateNetTotalEmissions();
