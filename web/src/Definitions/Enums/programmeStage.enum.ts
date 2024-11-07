@@ -58,3 +58,10 @@ export enum ProgrammeStageLegend {
   REJECTED = 'Rejected',
   AWAITING_AUTHORIZATION = 'AwaitingAuthorization',
 }
+
+export const getProjectCategory: { [key: string]: string } = {
+  RENEWABLE_ENERGY: 'Renewable Energy',
+  AFFORESTATION: 'Afforestation',
+  REFORESTATION: 'Reforestation',
+  OTHER: 'Other',
+};

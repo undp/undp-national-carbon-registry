@@ -115,6 +115,7 @@ import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRe
 import { HttpStatusCode } from 'axios';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -1937,7 +1938,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       }
     } else if (userInfoState && data.projectProposalStage === ProjectProposalStage.AUTHORISED) {
-      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      if (
+        userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+        ((verificationHistoryData &&
+          verificationHistoryData.length > 0 &&
+          (verificationHistoryData[0].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+            verificationHistoryData[0].status ===
+              VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
+          !verificationHistoryData.length)
+      ) {
         actionBtns.push(
           <Button
             type="primary"
@@ -1962,11 +1972,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     ) {
       const text = t('projectDetailsView:' + k);
       if (k === 'projectStatus') {
-        generalInfo[text] = (
-          <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
-            {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
-          </Tag>
-        );
+        generalInfo[text] = t(`projectDetailsView:${getStatusEnumVal(v as string)}`);
       } else if (k === 'projectProposalStage') {
         generalInfo[text] = (
           <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>

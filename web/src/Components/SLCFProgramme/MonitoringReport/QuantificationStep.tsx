@@ -49,9 +49,8 @@ export const QualificationStep = (props: any) => {
   };
 
   const onBaselineEmissionsChange = () => {
-    const val1 = form.getFieldValue('baselineEmissions') || 0;
     const listVals = form.getFieldValue('emissionReductionsRemovalsList');
-    let tempTotal = Number(val1);
+    let tempTotal = 0;
     if (listVals?.length) {
       listVals.forEach((item: any) => {
         tempTotal =
@@ -65,9 +64,8 @@ export const QualificationStep = (props: any) => {
   };
 
   const onProjectEmissionsChange = () => {
-    const val1 = form.getFieldValue('projectEmissions') || 0;
     const listVals = form.getFieldValue('emissionReductionsRemovalsList');
-    let tempTotal = Number(val1);
+    let tempTotal = 0;
     if (listVals?.length) {
       listVals.forEach((item: any) => {
         tempTotal =
@@ -81,9 +79,8 @@ export const QualificationStep = (props: any) => {
   };
 
   const onLeakageEmissionsChange = () => {
-    const val1 = form.getFieldValue('leakageEmissions') || 0;
     const listVals = form.getFieldValue('emissionReductionsRemovalsList');
-    let tempTotal = Number(val1);
+    let tempTotal = 0;
     if (listVals?.length) {
       listVals.forEach((item: any) => {
         tempTotal =
@@ -96,9 +93,8 @@ export const QualificationStep = (props: any) => {
     calculateAnnualAverage();
   };
   const onGhgEmissionsChange = () => {
-    const val1 = form.getFieldValue('ghgEmissions') || 0;
     const listVals = form.getFieldValue('emissionReductionsRemovalsList');
-    let tempTotal = Number(val1);
+    let tempTotal = 0;
     if (listVals?.length) {
       listVals.forEach((item: any) => {
         tempTotal =
@@ -453,25 +449,25 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                                   </Col>
                                   <Col xl={1} md={24}>
                                     <div className="form-list-actions">
-                                      {/* <h4>Entity {name + 2}</h4> */}
                                       <Form.Item>
-                                        <Button
-                                          // type="dashed"
-                                          onClick={() => {
-                                            remove(name);
-                                            onBaselineEmissionsChange();
-                                            onProjectEmissionsChange();
-                                            onLeakageEmissionsChange();
-                                            onGhgEmissionsChange();
-                                            onEmissionsYearChange();
-                                          }}
-                                          size="large"
-                                          className="addMinusBtn"
-                                          // block
-                                          icon={<MinusOutlined />}
-                                        >
-                                          {/* Remove Entity */}
-                                        </Button>
+                                        {name !== 0 && (
+                                          <Button
+                                            onClick={() => {
+                                              remove(name);
+                                              onBaselineEmissionsChange();
+                                              onProjectEmissionsChange();
+                                              onLeakageEmissionsChange();
+                                              onGhgEmissionsChange();
+                                              onEmissionsYearChange();
+                                            }}
+                                            size="large"
+                                            className="addMinusBtn"
+                                            // block
+                                            icon={<MinusOutlined />}
+                                          >
+                                            {/* Remove Entity */}
+                                          </Button>
+                                        )}
                                       </Form.Item>
                                     </div>
                                   </Col>

@@ -67,7 +67,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       render: (_: any, record: any, index: number) => (
         <>
           <Form.Item name={record.projectActivity} rules={requiredRule}>
-            <TextArea size="large" rows={4} />
+            <TextArea size="large" rows={4} disabled={FormMode.VIEW === formMode} />
           </Form.Item>
           <Form.Item hidden name={['applicabilityCriteria', index, 'criteriaNo']}></Form.Item>
         </>
