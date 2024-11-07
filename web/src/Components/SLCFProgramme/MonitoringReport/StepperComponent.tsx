@@ -18,6 +18,7 @@ import {
   extractFilePropertiesFromLink,
   fileUploadValueExtract,
 } from '../../../Utils/utilityHelper';
+import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
@@ -213,6 +214,16 @@ const StepperComponent = (props: any) => {
     }
 
     try {
+      // const response: any = await get(`national/verification?programmeId=${programId}`);
+      // if (
+      //   response &&
+      //   response.data &&
+      //   response.data.length &&
+      //   (response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+      //     response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)
+      // ) {
+      //   console.log(response);
+      // }
       const { data } = await post('national/programmeSl/getDocLastVersion', {
         programmeId: programId,
         docType: DocumentTypeEnum.MONITORING_REPORT,
@@ -293,32 +304,6 @@ const StepperComponent = (props: any) => {
             }
           ),
         });
-        // projectActivityForm.setFieldsValue({
-        //   projectProponentsList: [
-        //     {
-        //       organizationName: '',
-        //       email: '',
-        //       telephone: '',
-        //       address: '',
-        //       designation: '',
-        //       contactPerson: '',
-        //       roleInTheProject: '',
-        //       fax: '',
-        //     },
-        //   ],
-        //   projectActivityLocationsList: [
-        //     {
-        //       location: '',
-        //       province: '',
-        //       district: '',
-        //       dsDivision: '',
-        //       city: '',
-        //       community: '',
-        //       optionalDocuments: [],
-        //       projectStartDate: '',
-        //     },
-        //   ],
-        // });
       } else {
         projectActivityForm.setFieldsValue({
           projectProponentsList: [
