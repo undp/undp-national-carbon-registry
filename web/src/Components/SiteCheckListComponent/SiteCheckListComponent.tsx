@@ -1,4 +1,15 @@
-import { Button, Col, DatePicker, Form, message, Row, Select, TimePicker, Upload } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  message,
+  Row,
+  Select,
+  TimePicker,
+  Upload,
+  Spin,
+} from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import Input from 'antd/lib/input/Input';
 import { i18n } from 'i18next';
@@ -23,12 +34,15 @@ import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
 import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
+import { Loading } from '../Loading/loading';
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
   const { translator } = props;
 
   const [contactNoInput] = useState<any>();
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { state } = useLocation();
   const isView = !!state?.isView;
@@ -44,6 +58,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   };
 
   const getDataToPopulate = async (programmeId: any) => {
+    setLoading(true);
     try {
       const { data } = await post('national/programmeSL/getProjectById', {
         programmeId: programmeId,
@@ -59,6 +74,8 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       form.setFieldsValue(tempValues);
     } catch (error) {
       console.log('--------error---------', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -116,7 +133,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       projectCommissionDate: moment.unix(vals?.projectCommissionDate),
       projectTrack: vals?.projectTrack,
       projectCapacity: vals?.projectCapacity,
-      projectFactor: vals?.projectFactor,
+      plantFactorPercentage: vals?.plantFactorPercentage
+        ? String(vals?.plantFactorPercentage)
+        : '0',
       projectEmission: vals?.projectEmission,
       leakageEmission: vals?.leakageEmission,
       eligibility1YesNo: vals?.eligibility1YesNo,
@@ -191,14 +210,21 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     getDataToPopulate(id);
     const getViewData = async () => {
       if (isView) {
-        const res = await post('national/programmeSl/getDocLastVersion', {
-          programmeId: id,
-          docType: 'siteVisitChecklist',
-        });
+        setLoading(true);
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'siteVisitChecklist',
+          });
 
-        if (res?.statusText === 'SUCCESS') {
-          const content = JSON.parse(res?.data.content);
-          viewDataMapToFields(content);
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data.content);
+            viewDataMapToFields(content);
+          }
+        } catch (error) {
+          console.log('-----error----');
+        } finally {
+          setLoading(false);
         }
       } else {
         getDataToPopulate(id);
@@ -232,7 +258,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       projectCommissionDate: moment(values?.projectCommissionDate).startOf('day').unix(),
       projectTrack: form.getFieldValue('projectTrack'),
       projectCapacity: Number(values?.projectCapacity),
-      projectFactor: values?.projectFactor,
+      plantFactorPercentage: Number(values?.plantFactorPercentage),
       projectEmission: values?.projectEmission,
       leakageEmission: values?.leakageEmission,
       eligibility1YesNo: values?.eligibility1YesNo,
@@ -302,6 +328,8 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       validatorSignature: validatorSignatureBase64,
     };
 
+    setLoading(true);
+
     try {
       const res = await post('national/programmeSl/cma/approve', {
         programmeId: id,
@@ -325,8 +353,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="site-check-list-container">
@@ -480,7 +514,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
           {/* Project Details Start */}
           <>
-            <h4 className="section-title">Project Details</h4>
+            <h4 className="section-title mg-top-1 mg-bottom-1">Project Details</h4>
 
             <Row gutter={40}>
               <Col md={12} xl={12}>
@@ -538,8 +572,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </div>
 
                 <Form.Item
-                  label="Project Factor"
-                  name="projectFactor"
+                  label="Plant Factor"
+                  name="plantFactorPercentage"
+                  className="plant-factor"
                   rules={[
                     {
                       required: true,
@@ -555,11 +590,15 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         ) {
                           throw new Error(`Project Factor ${t('isRequired')}`);
                         }
+
+                        if (isNaN(value)) {
+                          throw new Error(`Should be a number!`);
+                        }
                       },
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled={disableFields} addonAfter="%" />
                 </Form.Item>
 
                 <Form.Item
@@ -637,9 +676,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         }
 
                         // eslint-disable-next-line no-restricted-globals
-                        if (isNaN(value)) {
-                          throw new Error('Should be a number!');
-                        }
+                        // if (isNaN(value)) {
+                        //   throw new Error('Should be a number!');
+                        // }
                       },
                     },
                   ]}
@@ -718,6 +757,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         required: true,
                         message: ``,
                       },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                          }
+                        },
+                      },
                     ]}
                   >
                     <Select size="large" placeholder="Select" disabled={disableFields}>
@@ -732,7 +783,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: ``,
                       },
                       {
                         validator: async (rule: any, value: any) => {
@@ -1804,7 +1855,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: `Stakeholder Name ${t('isRequired')}`,
+                                  message: ``,
                                 },
                                 {
                                   validator: async (rule: any, value: any) => {
