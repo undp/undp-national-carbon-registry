@@ -3,6 +3,7 @@ import { Button, Col, DatePicker, Form, Input, InputNumber, Row } from 'antd';
 import moment from 'moment';
 import { ProjectCategory } from '../../enum/slRegistryEnum';
 import { useEffect } from 'react';
+import { formatNumberWithDecimalPlaces } from '../../Utils/utilityHelper';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -77,7 +78,7 @@ const NetEmissionReduction = (props: any) => {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
         EMISSION_CATEGORY_AVG_MAP[category],
-        Math.round(tempTotal / creditingYears)
+        formatNumberWithDecimalPlaces(tempTotal / creditingYears)
       );
     } else {
       form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
@@ -104,7 +105,7 @@ const NetEmissionReduction = (props: any) => {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
         EMISSION_CATEGORY_AVG_MAP[category],
-        Math.round(tempTotal / creditingYears)
+        formatNumberWithDecimalPlaces(tempTotal / creditingYears)
       );
     } else {
       form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
@@ -125,7 +126,7 @@ const NetEmissionReduction = (props: any) => {
     if (creditingYears > 0) {
       form.setFieldValue(
         EMISSION_CATEGORY_AVG_MAP[category],
-        Math.round(tempTotal / creditingYears)
+        formatNumberWithDecimalPlaces(tempTotal / creditingYears)
       );
     } else {
       form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], 0);
