@@ -2690,7 +2690,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Cost ${t('isRequired')}`,
+                      message: ``,
                     },
                     {
                       validator: async (rule, value) => {
@@ -2700,7 +2700,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`Cost ${t('isRequired')}`);
                         }
 
                         if (isNaN(value)) {

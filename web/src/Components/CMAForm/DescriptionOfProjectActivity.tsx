@@ -203,7 +203,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               email: item?.email,
               contactPerson: item?.contactPerson,
               title: item?.title,
-              // role: item?.roleInTheProject,
+              role: item?.roleInTheProject,
               telephone: item?.telephone,
               fax: item?.fax,
               address: item?.address,
