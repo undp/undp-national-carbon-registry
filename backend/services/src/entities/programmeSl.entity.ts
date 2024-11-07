@@ -57,7 +57,7 @@ export class ProgrammeSl implements EntitySubject {
   })
   projectGeography: ProjectGeography;
 
-  @Column("bigint", { array: true, nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true, array: true })
   landExtent?: number[];
 
   @Column({ nullable: true })
