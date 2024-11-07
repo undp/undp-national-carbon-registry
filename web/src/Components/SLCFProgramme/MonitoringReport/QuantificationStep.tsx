@@ -233,8 +233,8 @@ export const QualificationStep = (props: any) => {
                               <TextArea
                                 rows={4}
                                 disabled={FormMode.VIEW === formMode}
-                                placeholder="Quantify the net GHG emission reductions and removals, summarizing the key results  using the table below. Specify breakdown of GHG emission reductions and removals by  annually. 
-For AFOLU projects, include quantification of the net change in carbon stocks. Also, state  the non-permanence risk rating (as determined in the AFOLU non-permanence risk  report) and calculate the total number of buffer credits that need to be deposited into the  AFOLU pooled buffer account. Attach the non-permanence risk report as either an  appendix or a separate document."
+                                placeholder="Quantify the net GHG emission reductions and removals, summarizing the key results using the table below. Specify breakdown of GHG emission reductions and removals by annually. 
+For AFOLU projects, include quantification of the net change in carbon stocks. Also, state the non-permanence risk rating (as determined in the AFOLU non-permanence risk report) and calculate the total number of buffer credits that need to be deposited into the AFOLU pooled buffer account. Attach the non-permanence risk report as either an appendix or a separate document."
                               />
                             </Form.Item>
                           </div>
@@ -375,7 +375,7 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                                           {
                                             required: true,
                                             message: `${t(
-                                              'monitoringReport:baselineEmissions'
+                                              'monitoringReport:baselineEmissionsTitle'
                                             )} ${t('isRequired')}`,
                                           },
                                         ]}
@@ -394,9 +394,9 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('monitoringReport:projectEmissions')} ${t(
-                                              'isRequired'
-                                            )}`,
+                                            message: `${t(
+                                              'monitoringReport:projectEmissionsTitle'
+                                            )} ${t('isRequired')}`,
                                           },
                                         ]}
                                       >
@@ -414,9 +414,9 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('monitoringReport:leakageEmissions')} ${t(
-                                              'isRequired'
-                                            )}`,
+                                            message: `${t(
+                                              'monitoringReport:leakageEmissionsTitle'
+                                            )} ${t('isRequired')}`,
                                           },
                                         ]}
                                       >
@@ -434,9 +434,9 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                                         rules={[
                                           {
                                             required: true,
-                                            message: `${t('monitoringReport:ghgEmissions')} ${t(
-                                              'isRequired'
-                                            )}`,
+                                            message: `${t(
+                                              'monitoringReport:ghgEmissionsTitle'
+                                            )} ${t('isRequired')}`,
                                           },
                                         ]}
                                       >
