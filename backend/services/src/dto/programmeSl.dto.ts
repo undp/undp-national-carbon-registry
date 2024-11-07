@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from "@nestjs/swagger";
 import {
   ArrayMinSize,
   IsArray,
@@ -103,8 +107,8 @@ export class ProgrammeSlDto {
 
   @ApiPropertyOptional()
   @ValidateIf((o) => o.projectCategory === ProjectCategory.RENEWABLE_ENERGY)
-  @IsNumber()
-  proposedProjectCapacity?: number;
+  @IsString()
+  proposedProjectCapacity?: string;
 
   @ApiPropertyOptional()
   @ValidateIf(
@@ -129,9 +133,15 @@ export class ProgrammeSlDto {
   @IsNotEmpty()
   @IsEnum(ProjectStatus, {
     message:
-      "Invalid project status. Supported following project status:" + Object.values(ProjectStatus),
+      "Invalid project status. Supported following project status:" +
+      Object.values(ProjectStatus),
   })
   projectStatus: ProjectStatus;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  projectStatusDescription?: string;
 
   @ApiProperty({ enum: CreditType })
   @IsNotEmpty()

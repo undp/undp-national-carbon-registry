@@ -318,7 +318,8 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
         }
         return undefined;
       })(),
-      proposedProjectCapacity: Number(values?.projectCapacity),
+      proposedProjectCapacity: values?.projectCapacity,
+      projectStatusDescription: values?.projectStatusDescription,
       speciesPlanted: 'test',
       projectDescription: 'test',
       projectStatus: values?.projectStatus,
@@ -759,6 +760,13 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                               </Form.Item>
 
                               <Form.Item
+                                label={t('addProgramme:projectStatusDescription')}
+                                name={'projectStatusDescription'}
+                              >
+                                <Input />
+                              </Form.Item>
+
+                              <Form.Item
                                 label={t('addProgramme:creditDevelopmentPurpose')}
                                 name="creditDevelopmentPurpose"
                                 rules={[
@@ -859,15 +867,15 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
-                                        if (!Number.isInteger(Number(value))) {
-                                          return Promise.reject(
-                                            new Error(
-                                              `${t(
-                                                'addProgramme:projectCapacity'
-                                              )} should be an integer!`
-                                            )
-                                          );
-                                        }
+                                        // if (!Number.isInteger(Number(value))) {
+                                        //   return Promise.reject(
+                                        //     new Error(
+                                        //       `${t(
+                                        //         'addProgramme:projectCapacity'
+                                        //       )} should be an integer!`
+                                        //     )
+                                        //   );
+                                        // }
 
                                         return Promise.resolve();
                                       },
