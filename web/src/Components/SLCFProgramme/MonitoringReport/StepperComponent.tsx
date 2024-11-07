@@ -332,6 +332,7 @@ const StepperComponent = (props: any) => {
           ],
         });
         qualificationForm.setFieldsValue({
+          yearsTotal: 1,
           emissionReductionsRemovalsList: [
             {
               startDate: '',

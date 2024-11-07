@@ -471,7 +471,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" type="number" />
                     </Form.Item>
                   </div>
                 </Col>
