@@ -31,6 +31,7 @@ import { ProjectGeography } from "src/enum/projectGeography.enum";
 import { ProjectStatus } from "src/enum/projectStatus.enum";
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { CreditType } from "../enum/creditType.enum";
+import { IsTwoDecimalPoints } from "src/util/twoDecimalPointNumber.decorator";
 
 export class ProgrammeSlDto {
   @ApiProperty()
@@ -99,6 +100,7 @@ export class ProgrammeSlDto {
   )
   @IsArray()
   @IsNotEmpty({ each: true })
+  @IsTwoDecimalPoints({ each : true })
   landExtent?: number[];
 
   @ApiPropertyOptional()

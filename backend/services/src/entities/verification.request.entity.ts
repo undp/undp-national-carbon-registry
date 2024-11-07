@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { EntitySubject } from "./entity.subject";
 import { VerificationRequestStatusEnum } from "src/enum/verification.request.status.enum";
+import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 
 @Entity()
 export class VerificationRequestEntity implements EntitySubject {
@@ -19,7 +20,7 @@ export class VerificationRequestEntity implements EntitySubject {
   })
   status: VerificationRequestStatusEnum;
 
-  @Column({ nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditAmount: number;
 
   @Column({ nullable: true })
