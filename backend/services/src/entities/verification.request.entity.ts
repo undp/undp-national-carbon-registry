@@ -19,7 +19,7 @@ export class VerificationRequestEntity implements EntitySubject {
   })
   status: VerificationRequestStatusEnum;
 
-  @Column()
+  @Column({ nullable: true })
   creditAmount: number;
 
   @Column({ nullable: true })
