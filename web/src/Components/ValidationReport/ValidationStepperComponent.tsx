@@ -333,10 +333,37 @@ const StepperComponent = (props: any) => {
               return {
                 startDate: moment(emissionData.startDate * 1000),
                 endDate: moment(emissionData.endDate * 1000),
+                baselineEmissionReductions: emissionData.baselineEmissionReductions,
+                projectEmissionReductions: emissionData.projectEmissionReductions,
+                leakageEmissionReductions: emissionData.leakageEmissionReductions,
+                netEmissionReductions: emissionData.netEmissionReductions,
               };
             }
           ),
-        totalNumberOfCredingYears: projectContent?.projectActivity?.totalCreditingYears,
+        totalBaselineEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.totalBaselineEmissionReductions,
+        totalProjectEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.totalProjectEmissionReductions,
+        totalLeakageEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.totalLeakageEmissionReductions,
+        totalNetEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.totalNetEmissionReductions,
+        avgBaselineEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.avgBaselineEmissionReductions,
+        avgProjectEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.avgProjectEmissionReductions,
+        avgLeakageEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions
+            ?.avgLeakageEmissionReductions,
+        avgNetEmissionReductions:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.avgNetEmissionReductions,
+        totalNumberOfCredingYears:
+          projectContent?.quantificationOfGHG?.netGHGEmissionReductions?.totalNumberOfCredingYears,
       });
 
       // setProjectCategory(data?.projectCategory);

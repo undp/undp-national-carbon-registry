@@ -288,7 +288,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
         <>
           <Form.Item name={record.noOfCars} rules={[requiredValidationRule(t)]}>
             <InputNumber
-              disabled={index === deskReviewValidationDataSource.length - 1}
+              disabled={
+                index === deskReviewValidationDataSource.length - 1 || formMode === FormMode.VIEW
+              }
               onChange={(value: any) => {
                 calculateSum('noOfCars', value);
               }}
@@ -308,7 +310,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
             onChange={(value: any) => {
               calculateSum('noOfCL', value);
             }}
-            disabled={index === deskReviewValidationDataSource.length - 1}
+            disabled={
+              index === deskReviewValidationDataSource.length - 1 || formMode === FormMode.VIEW
+            }
             size="large"
           />
         </Form.Item>
@@ -325,7 +329,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
           rules={[requiredValidationRule(t)]}
         >
           <InputNumber
-            disabled={index === deskReviewValidationDataSource.length - 1}
+            disabled={
+              index === deskReviewValidationDataSource.length - 1 || formMode === FormMode.VIEW
+            }
             onChange={(value: any) => {
               calculateSum('noOfFAR', value);
             }}
