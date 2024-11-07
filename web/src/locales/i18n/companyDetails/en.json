@@ -8,7 +8,7 @@
     "phoneNo" : "Phone",
     "website" : "Website",
     "address" : "Address",
-    "creditBalance":"Credit Balance",
+    "creditBalance":"Article 6.4 Credit Balance",
     "programmeCount":"Number of Projects",
     "remarks": "Remarks",
     "region": "Region",
@@ -19,5 +19,8 @@
     "govDep": "Department",
     "ministry": "Ministry",
     "faxNo": "Fax",
-    "province": "Province"
+    "province": "Province",
+    "track1CreditBalance":"SLCER+ Credit Balance",
+    "track2CreditBalance":"SLCER Credit Balance",
+    "totalRetiredCredits":"Retired Credit Balance"
 }

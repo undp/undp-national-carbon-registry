@@ -42,6 +42,7 @@ import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import {
+  getProjectCategory,
   ProgrammeStageMRV,
   ProgrammeStageR,
   ProgrammeStatus,
@@ -191,7 +192,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.projectCategory,
       align: 'left' as const,
       render: (item: any) => {
-        return <span>{item}</span>;
+        return <span>{getProjectCategory[item]}</span>;
       },
     },
     {

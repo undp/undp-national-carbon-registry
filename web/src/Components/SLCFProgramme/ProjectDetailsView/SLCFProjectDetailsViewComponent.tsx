@@ -1972,11 +1972,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     ) {
       const text = t('projectDetailsView:' + k);
       if (k === 'projectStatus') {
-        generalInfo[text] = (
-          <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
-            {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
-          </Tag>
-        );
+        generalInfo[text] = t(`projectDetailsView:${getStatusEnumVal(v as string)}`);
       } else if (k === 'projectProposalStage') {
         generalInfo[text] = (
           <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>
