@@ -31,6 +31,8 @@ import {
   addCommSepRound,
   addSpaces,
   getCompanyBgColor,
+  getCreditTypeName,
+  getCreditTypeTagType,
   getStageTransferEnumVal,
   getTransferStageTagType,
 } from '../../../Definitions/Definitions/programme.definitions';
@@ -41,13 +43,14 @@ import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { ProfileIcon } from '../../../Components/IconComponents/ProfileIcon/profile.icon';
 import { ConfigurationSettingsType } from '../../../Definitions/Definitions/settings.definitions';
-import {
-  getCreditTypeName,
-  getCreditTypeTagType,
-} from '../../../Definitions/Definitions/creditRetirementSl.definition';
+// import {
+//   getCreditTypeName,
+//   getCreditTypeTagType,
+// } from '../../../Definitions/Definitions/creditRetirementSl.definition';
 import { CreditRetirementSlActionModel } from '../../Models/creditRetirementSlActionModel';
 import { CreditRetirementSl } from '../../../Definitions/Entities/creditRetirementSl';
 import { CreditTransferSlStage, CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
+import { CreditTransferStage } from '../../../Definitions/Enums/creditTransferStage.enum';
 
 type CompanyInfo = {
   name: string;
@@ -431,7 +434,43 @@ export const CreditRetirementSlComponent = (props: any) => {
             </List.Item>
           )}
         />
-      ) : userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ? (
+      ) : //  : userInfoState?.companyId === record.fromCompanyId &&
+      //   record.status === 'Approved' &&
+      //   record.creditType === CreditTypeSl.TRACK_2 ? (
+      //   <List
+      //     className="action-menu"
+      //     size="small"
+      //     dataSource={[
+      //       {
+      //         text: t('creditTransfer:genCarbonNeutralCert'),
+      //         icon: <Icon.ExclamationOctagon />,
+      //         click: () => {
+      //           showModalOnAction(record, {
+      //             title: t('creditTransfer:cancelTitle'),
+      //             icon: <Icon.ExclamationOctagon />,
+      //             actionBtnText: t('creditTransfer:proceed'),
+      //             okAction: (requestId: any, comment: any) =>
+      //               handleRequestOk(
+      //                 requestId,
+      //                 comment,
+      //                 CreditTransferSlStage.Cancelled,
+      //                 cancelSuccessMessage
+      //               ),
+      //             type: 'danger',
+      //             remarkRequired: true,
+      //           });
+      //         },
+      //       },
+      //     ]}
+      //     renderItem={(item: any) => (
+      //       <List.Item onClick={item.click}>
+      //         <Typography.Text className="action-icon color-error">{item.icon}</Typography.Text>
+      //         <span>{item.text}</span>
+      //       </List.Item>
+      //     )}
+      //   />
+      // )
+      record.status === 'Pending' && userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ? (
         <List
           className="action-menu"
           size="small"

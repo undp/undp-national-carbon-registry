@@ -139,7 +139,7 @@ export const getCreditTypeTagType = (stage: CreditTypeSl) => {
     case CreditTypeSl.TRACK_1:
       return 'orange';
     case CreditTypeSl.TRACK_2:
-      return 'purple';
+      return 'lime';
     default:
       return 'default';
   }
@@ -387,10 +387,10 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
-      programme.creditBalance +
-      programme.creditFrozen +
-      programme.creditRetired +
-      programme.creditTransferred,
+      (programme.creditBalance || 0) +
+      (programme.creditFrozen || 0) +
+      (programme.creditRetired || 0) +
+      (programme.creditTransferred || 0),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
   };
