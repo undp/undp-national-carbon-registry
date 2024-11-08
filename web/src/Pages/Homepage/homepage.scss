@@ -88,16 +88,23 @@
   }
 
   .image-container {
-    background-image: linear-gradient(to bottom,
+    background-image: linear-gradient(
+        to bottom,
         rgba(255, 255, 255, 0.3) 10%,
-        rgba(22, 177, 255, 0.4) 40%),
-      url('../../Assets/Images/factory.webp');
-    background-image: linear-gradient(to bottom,
+        rgba(4, 105, 177, 0.24) 40%
+      ),
+      url('../../Assets/Images/sigiriya.jpg');
+    background-image: linear-gradient(
+        to bottom,
         rgba(255, 255, 255, 0.3) 10%,
-        rgba(22, 177, 255, 0.4) 40%),
-      image-set('../../Assets/Images/factory.png'type('image/png'),
-        '../../Assets/Images/factory.webp'type('image/webp'));
+        rgba(4, 105, 177, 0.24) 40%
+      ),
+      image-set(
+        '../../Assets/Images/sigiriya.jpg' type('image/jpg'),
+        '../../Assets/Images/sigiriya.webp' type('image/webp')
+      );
     background-size: cover;
+    background-position: top !important;
   }
 
   .homepage-img-container {
@@ -163,8 +170,7 @@
 
     @-webkit-keyframes arrow
 
-    /*Safari and Chrome*/
-      {
+    /*Safari and Chrome*/ {
       0% {
         opacity: 0;
       }
