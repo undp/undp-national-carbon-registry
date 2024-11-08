@@ -64,13 +64,13 @@ export class SiteVisitChecklistContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  projectCapacity: number;
+  @IsString()
+  projectCapacity: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  projectFactor: string;
+  @IsNumber()
+  plantFactorPercentage: number;
 
   @ApiProperty()
   @IsNotEmpty()

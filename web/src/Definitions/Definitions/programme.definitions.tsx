@@ -314,6 +314,10 @@ export interface ProgrammeSl {
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
   registrationCertificateUrl: string;
+  district?: string;
+  dsDivision?: string;
+  province?: string;
+  additionalDocuments?: [];
 }
 
 export interface ProgrammeR extends Programme {
@@ -393,6 +397,10 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
       (programme.creditTransferred || 0),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
+    dsDivision: programme.dsDivision,
+    district: programme.district,
+    province: programme.province,
+    additionalDocuments: programme.additionalDocuments,
   };
 
   return res;

@@ -57,11 +57,11 @@ export class ProgrammeSl implements EntitySubject {
   })
   projectGeography: ProjectGeography;
 
-  @Column("bigint", { array: true, nullable: true })
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true, array: true })
   landExtent?: number[];
 
   @Column({ nullable: true })
-  proposedProjectCapacity?: number;
+  proposedProjectCapacity?: string;
 
   @Column({ nullable: true })
   speciesPlanted?: string;
@@ -78,6 +78,9 @@ export class ProgrammeSl implements EntitySubject {
     array: false,
   })
   projectStatus: ProjectStatus; //this status is maintained for SLCF
+
+  @Column({ nullable: true })
+  projectStatusDescription?: string;
 
   @Column({
     type: "enum",

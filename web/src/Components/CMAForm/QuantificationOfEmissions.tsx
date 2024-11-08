@@ -6,6 +6,7 @@ import { t } from 'i18next';
 import moment from 'moment';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
+import { formatNumberWithDecimalPlaces } from '../../Utils/utilityHelper';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -69,7 +70,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    const avgTempTotal = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    const avgTempTotal =
+      creditingYears > 0 ? formatNumberWithDecimalPlaces(tempTotal / creditingYears) : 0;
     form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], avgTempTotal);
   };
 
@@ -85,7 +87,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
     }
     const creditingYears = Number(form.getFieldValue('totalCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, String(tempTotal));
-    const total = creditingYears > 0 ? Math.round(tempTotal / creditingYears) : 0;
+    const total =
+      creditingYears > 0 ? formatNumberWithDecimalPlaces(tempTotal / creditingYears) : 0;
     form.setFieldValue(EMISSION_CATEGORY_AVG_MAP[category], total);
 
     CalculateNetTotalEmissions();
@@ -215,7 +218,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
               <div className="equation-container">
                 <p className="equation">
                   <i>
-                    BE<sub>y</sub> = EG<sub>y</sub> * EF<sub>y</sub>
+                    BE<sub>y</sub> = EG<sub>y</sub> x EF<sub>y</sub>
                   </i>
                 </p>
 
@@ -223,14 +226,14 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   <p className="mg-top-1">where</p>
 
                   <span>
-                    BE<sub>y</sub> = Quantity of net electricity supplied to the grid as a result of
+                    EG<sub>y</sub>= Quantity of net electricity supplied to the grid as a result of
                     the implementation of the Clean Development Mechanism (CDM) project activity in
                     year y (MWh).
                   </span>
                   <br />
 
                   <span>
-                    EG<sub>y</sub> = Combined margin CO<sub>2</sub> Emission factor of the grid
+                    EF<sub>y</sub> = Combined margin CO<sub>2</sub> Emission factor of the grid
                     connected power generation in the year y calculated using the latest version of
                     the “Tool to calculate the emission factor for an electricity system” (tCO
                     <sub>2</sub>e/ MWh)
@@ -238,7 +241,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   <br />
 
                   <span>
-                    EF<sub>y</sub> = Baseline Emissions in year y (tCO<sub>2</sub>e)
+                    BE<sub>y</sub>= Baseline Emissions in year y (tCO<sub>2</sub>e)
                   </span>
                   <br />
                 </div>

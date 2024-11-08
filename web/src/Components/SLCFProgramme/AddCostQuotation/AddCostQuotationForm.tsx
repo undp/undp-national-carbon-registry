@@ -19,6 +19,7 @@ export const AddCostQuotationForm = (props: any) => {
 
   const { state } = useLocation();
   const isView = !!state?.isView;
+  const [loading, setLoading] = useState<boolean>(isView);
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
@@ -595,7 +596,7 @@ export const AddCostQuotationForm = (props: any) => {
                           multiple={false}
                           disabled={disableFields}
                           fileList={form.getFieldValue('signature') || []}
-                          // maxCount={1}
+                          maxCount={1}
                         >
                           <Button
                             className="upload-doc"

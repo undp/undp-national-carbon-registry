@@ -332,7 +332,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} size="large" />
+                      <TextArea disabled={FormMode.VIEW === formMode} rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
@@ -361,7 +361,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} size="large" />
+                      <TextArea disabled={FormMode.VIEW === formMode} rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>

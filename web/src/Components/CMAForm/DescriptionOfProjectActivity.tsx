@@ -203,7 +203,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               email: item?.email,
               contactPerson: item?.contactPerson,
               title: item?.title,
-              // role: item?.roleInTheProject,
+              role: item?.roleInTheProject,
               telephone: item?.telephone,
               fax: item?.fax,
               address: item?.address,
@@ -2182,7 +2182,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       {/* </Form.Item> */}
                     </div>
 
-                    <div style={{ fontSize: '12px', marginLeft: '8px' }}>
+                    <div style={{ fontSize: '12px', marginLeft: '8px', marginTop: '36px' }}>
                       {form.getFieldValue('projectTrack') === 'TRACK_2' && (
                         <>
                           *Issued carbon credits from project will only be used for internal
