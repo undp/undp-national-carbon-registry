@@ -243,6 +243,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       Number(
         (
           numIsExist(d.creditEst) -
+          numIsExist(d?.creditBalance) -
           numIsExist(d.creditTransferred) -
           numIsExist(d.creditRetired) -
           frozen

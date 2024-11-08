@@ -110,14 +110,6 @@ const App = () => {
                   </Route>
 
                   <Route
-                    path=""
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
-                  >
-                    <Route path="siteCheckList" element={<SiteVisitCheckListPage />} />
-                    <Route path="validationReport" element={<ValidationReportPage />} />
-                  </Route>
-
-                  <Route
                     path="/programmeManagementSLCF"
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >

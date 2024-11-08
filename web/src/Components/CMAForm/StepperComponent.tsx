@@ -27,6 +27,7 @@ import {
   projectDetailsDataMapToFields,
   quantificationOfGHGDataMapToFields,
 } from './viewDataMap';
+import { Loading } from '../Loading/loading';
 
 const CMA_STEPS = {};
 
@@ -38,6 +39,8 @@ const StepperComponent = (props: any) => {
   const { state } = useLocation();
   const isView = !!state?.isView;
   const isEdit = !!state?.isEdit;
+
+  const [loading, setLoading] = useState<boolean>(isView || isEdit);
   const { id } = useParams();
 
   const scrollSection = useRef({} as any);
@@ -100,6 +103,7 @@ const StepperComponent = (props: any) => {
 
   const getProgrammeDetailsById = async (programId: any) => {
     try {
+      setLoading(true);
       const { data } = await post('national/programmeSL/getProjectById', {
         programmeId: programId,
       });
@@ -137,55 +141,66 @@ const StepperComponent = (props: any) => {
       }));
     } catch (error) {
       console.log('error');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const getViewData = async () => {
       if (isView || isEdit) {
-        const res = await post('national/programmeSl/getDocLastVersion', {
-          programmeId: id,
-          docType: 'cma',
-        });
+        setLoading(true);
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'cma',
+          });
 
-        if (res?.statusText === 'SUCCESS') {
-          const content = JSON.parse(res?.data.content);
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data.content);
 
-          const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
-          form1.setFieldsValue(projectDetails);
-          const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
-            content?.projectActivity
-          );
-          form2.setFieldsValue(descripitonOfProjectActivity);
+            const projectDetails = projectDetailsDataMapToFields(content?.projectDetails);
+            form1.setFieldsValue(projectDetails);
+            const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(
+              content?.projectActivity
+            );
+            form2.setFieldsValue(descripitonOfProjectActivity);
 
-          const environmentImpacts = environmentImpactsDataMaptoFields(content?.environmentImpacts);
-          form3.setFieldsValue(environmentImpacts);
+            const environmentImpacts = environmentImpactsDataMaptoFields(
+              content?.environmentImpacts
+            );
+            form3.setFieldsValue(environmentImpacts);
 
-          const localStakeholderConsultation = localStakeholderConsultationDataMaptoFields(
-            content?.localStakeholderConsultation
-          );
-          form4.setFieldsValue(localStakeholderConsultation);
+            const localStakeholderConsultation = localStakeholderConsultationDataMaptoFields(
+              content?.localStakeholderConsultation
+            );
+            form4.setFieldsValue(localStakeholderConsultation);
 
-          const eligibilityCriteria = eligibilityCriteriaDataMapToFields(
-            content?.eligibilityCriteria
-          );
-          form5.setFieldsValue(eligibilityCriteria);
+            const eligibilityCriteria = eligibilityCriteriaDataMapToFields(
+              content?.eligibilityCriteria
+            );
+            form5.setFieldsValue(eligibilityCriteria);
 
-          const applicationOfMethodology = applicationOfMethodologyDataMapToFields(
-            content?.applicationOfMethodology
-          );
-          form6.setFieldsValue(applicationOfMethodology);
+            const applicationOfMethodology = applicationOfMethodologyDataMapToFields(
+              content?.applicationOfMethodology
+            );
+            form6.setFieldsValue(applicationOfMethodology);
 
-          const quantificationOfGHG = quantificationOfGHGDataMapToFields(
-            content?.quantificationOfGHG
-          );
-          form7.setFieldsValue(quantificationOfGHG);
+            const quantificationOfGHG = quantificationOfGHGDataMapToFields(
+              content?.quantificationOfGHG
+            );
+            form7.setFieldsValue(quantificationOfGHG);
 
-          const monitoring = monitoringDataMapToFields(content?.monitoring);
-          form8.setFieldsValue(monitoring);
+            const monitoring = monitoringDataMapToFields(content?.monitoring);
+            form8.setFieldsValue(monitoring);
 
-          const appendix = appendixDataMapToFields(content?.appendix);
-          form9.setFieldsValue(appendix);
+            const appendix = appendixDataMapToFields(content?.appendix);
+            form9.setFieldsValue(appendix);
+          }
+        } catch (error) {
+          console.log('error', error);
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -207,6 +222,7 @@ const StepperComponent = (props: any) => {
     };
 
     try {
+      setLoading(true);
       const res = await post('national/programmeSl/createCMA', tempValues);
       if (res?.response?.data?.statusCode === 200) {
         message.open({
@@ -226,8 +242,11 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setLoading(false);
     }
   };
+
   const getCountryList = async () => {
     try {
       const response = await get('national/organisation/countries');
@@ -425,6 +444,9 @@ const StepperComponent = (props: any) => {
     },
   ];
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <>
       <Steps
