@@ -581,7 +581,7 @@ export const CreditRetirementSlComponent = (props: any) => {
       render: (item: any, Obj: any) => {
         return (
           <Tooltip title={Obj.serialNo} color={TooltipColor} key={TooltipColor}>
-            <Tag className="clickable" color={getCreditTypeTagType(Obj.creditType)}>
+            <Tag color={getCreditTypeTagType(Obj.creditType)}>
               {addSpaces(getCreditTypeName(Obj.creditType))}
             </Tag>
           </Tooltip>
@@ -689,7 +689,7 @@ export const CreditRetirementSlComponent = (props: any) => {
       render: (item: any, Obj: any) => {
         return (
           <Tooltip title={Obj.programmeSerialNo} color={TooltipColor} key={Obj.programmeSerialNo}>
-            <Tag className="clickable" color={getTransferStageTagType(Obj.status, Obj)}>
+            <Tag color={getTransferStageTagType(Obj.status, Obj)}>
               {addSpaces(getStageTransferEnumVal(Obj.status, Obj))}
             </Tag>
           </Tooltip>

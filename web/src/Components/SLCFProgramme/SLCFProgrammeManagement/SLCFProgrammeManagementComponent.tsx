@@ -228,7 +228,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       align: 'center' as const,
       render: (item: any) => {
         return (
-          <Tag className="clickable" color={getCreditTypeTagType(item as CreditTypeSl)}>
+          <Tag color={getCreditTypeTagType(item as CreditTypeSl)}>
             {addSpaces(getCreditTypeName(item as string))}
           </Tag>
         );
