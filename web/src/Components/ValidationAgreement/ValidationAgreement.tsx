@@ -13,6 +13,7 @@ import { getBase64, getFileName } from '../../Definitions/Definitions/programme.
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
+import { Loading } from '../Loading/loading';
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -20,6 +21,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
+  const [loading, setLoading] = useState<boolean>(isView);
 
   const [form] = useForm();
 
@@ -116,14 +118,21 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   useEffect(() => {
     const getViewData = async () => {
       if (isView) {
-        const res = await post('national/programmeSl/getDocLastVersion', {
-          programmeId: id,
-          docType: 'validationAgreement',
-        });
+        setLoading(true);
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'validationAgreement',
+          });
 
-        if (res?.statusText === 'SUCCESS') {
-          const content = JSON.parse(res?.data.content);
-          viewDataMapToFields(content);
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data.content);
+            viewDataMapToFields(content);
+          }
+        } catch (error) {
+          console.log('error', error);
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -207,6 +216,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     // }, []);
 
     try {
+      setLoading(true);
       const res = await post('national/programmeSl/createValidationAgreement', tempValues);
 
       console.log('------------res---------', res);
@@ -226,9 +236,14 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
