@@ -1,11 +1,15 @@
 @import '../../Assets/Fonts/fonts.scss';
 @import '../../Styles/variables.scss';
 
+$max-pagewidth: 1600px;
+$title-color: #3a8ab5;
+
 .homepage-container {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: $background-color;
+  background-color: $outside-background-color;
   scroll-behavior: smooth;
 
   .homepage-header-container {
@@ -204,7 +208,7 @@
     }
 
     .text-ctn {
-      margin-left: 2vw;
+      margin-left: 5vw;
       bottom: 50px;
       font-family: $secondary-font-family;
       font-size: 4rem;
@@ -271,10 +275,12 @@
     height: fit-content;
     padding: 10px 60px 10px 60px;
     text-align: center;
-    margin-top: 5px;
+    margin: 5px auto;
+    max-width: $max-pagewidth;
 
     @media (max-width: $lg-size) {
       height: fit-content;
+      margin-top: 35px;
     }
 
     @media (max-width: 536px) {
@@ -282,31 +288,33 @@
     }
 
     .title {
-      font-size: 2rem;
+      font-size: 28px;
       font-weight: 700;
       font-family: $primary-font-family;
       color: $title-text-color;
-      text-align: center;
+      color: $title-color;
+      text-align: start;
       justify-content: center;
       text-transform: uppercase;
-      padding: 50px 50px 10px 50px;
+      padding: 50px 50px 0px 50px;
 
       @media (max-width: $lg-size) {
-        font-size: 2rem;
-        margin-top: 1rem;
+        font-size: 24px;
+        margin-top: 0rem;
+        padding-top: 15px;
         color: $title-text-color;
         line-height: 1.5em;
       }
     }
 
     .homepagebody {
-      text-align: center;
+      text-align: start;
       font-size: 0.875rem;
       font-weight: 400;
       font-family: $primary-font-family;
       color: $title-text-color;
       justify-content: center;
-      margin: 20px 60px 20px 60px;
+      margin: 20px 50px;
 
       @media (max-width: $lg-size) {
         font-size: 0.8rem;
@@ -315,20 +323,29 @@
         line-height: 1.5em;
       }
 
-      .homepagebody_aboutusline1 {
+      .homepagebody_text {
         font-size: 1.125rem;
-        margin-top: 1rem;
         color: $title-text-color;
+        margin-bottom: 10px;
+
+        &.list {
+          li {
+            margin: 10px 0px;
+          }
+
+          @media screen and (max-width: 767px) {
+            padding-left: 20px;
+          }
+        }
 
         @media (max-width: $lg-size) {
           font-size: 1rem;
-          margin-top: 1rem;
           color: $title-text-color;
           line-height: 1.5em;
         }
 
         @media (max-width: 1200px) {
-          margin-top: 3rem;
+          margin-top: 1rem;
         }
       }
 
@@ -361,7 +378,7 @@
         font-weight: 700;
         font-family: $primary-font-family;
         color: $title-text-color;
-        text-align: center;
+        text-align: start;
         justify-content: center;
         margin-top: 2rem;
       }
@@ -369,31 +386,31 @@
 
     .aboutus-card-main-container {
       display: flex;
-      height: 26rem;
+      height: 23rem;
       min-height: 20rem;
       max-width: 26rem;
       justify-content: center;
       background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
       border-radius: 0.625rem;
-      padding: 40px 25px 25px 25px;
-      margin: 60px 40px 60px 40px;
+      padding: 50px 25px 25px 25px;
+      margin: 10px;
       text-align: center;
 
       @media (max-width: 1350px) {
-        height: 28rem;
+        height: 23rem;
         max-width: 18rem;
-        padding: 30px 5px 25px 5px;
+        padding: 50px 5px 25px 5px;
       }
 
       @media (max-width: 1050px) {
         max-width: 18rem;
-        padding: 30px 5px 25px 5px;
+        padding: 50px 5px 25px 5px;
       }
 
       @media (max-width: 986px) {
-        height: 28rem;
+        height: 21rem;
         max-width: 18rem;
-        padding: 30px 5px 25px 5px;
+        padding: 50px 5px 25px 5px;
       }
 
       @media (max-width: 764px) {
@@ -402,7 +419,7 @@
 
       @media (max-width: 536px) {
         padding: 40px 5px 25px 5px;
-        margin: 60px 0 60px 0;
+        margin: 30px 0;
       }
     }
 
@@ -445,10 +462,13 @@
 
       .aboutus-card-text {
         color: $dark-text-color;
-        line-height: 2;
+        font-size: 15px;
+        line-height: 24px;
+        // text-align: justify;
       }
 
       .aboutus-card-title {
+        font-size: 18px;
         font-weight: 700;
         display: flex;
         color: $dark-text-color;
@@ -461,6 +481,12 @@
 
     .undplogocontainer {
       padding-top: 40px;
+
+      .gutter-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
       .align-to-end {
         @media (max-width: 767px) {
@@ -481,19 +507,22 @@
       }
 
       .erbd {
-        width: 14.5rem;
+        width: 15.7rem;
+        // margin-top: 5px;
       }
 
       .undp {
         width: 4rem;
+        // margin-left: 20px;
       }
 
       .unfccc {
-        width: 7.5rem;
+        margin-top: 22px;
+        width: 6.5rem;
       }
 
       .ieta {
-        width: 14.5rem;
+        width: 14.8rem;
 
         @media (max-width: 876px) {
           width: 12rem;
@@ -509,7 +538,8 @@
       }
 
       .esa {
-        width: 14.5rem;
+        width: 15rem;
+        // margin-top: -5px;
 
         @media (max-width: 876px) {
           width: 11rem;
@@ -525,7 +555,8 @@
       }
 
       .wbank {
-        width: 7.5rem;
+        width: 9rem;
+        margin-top: -12px;
       }
     }
   }
@@ -540,7 +571,8 @@
 
   .homepage-image-content-container {
     background-color: $outside-background-color;
-    margin-top: 5px;
+    margin: 5px auto;
+    max-width: $max-pagewidth;
 
     @media (max-width: 767px) {
       padding-left: 0;
@@ -556,15 +588,16 @@
     }
 
     ul {
-      margin-top: 20px;
-      margin-bottom: 20px;
+      margin-top: 5px;
+      margin-bottom: 10px;
     }
 
     li {
-      line-height: 40px;
+      line-height: 25px;
+      margin-bottom: 10px;
 
       @media (max-width: 536px) {
-        line-height: 30px;
+        line-height: 20px;
       }
     }
 
@@ -573,6 +606,7 @@
       font-weight: 700;
       font-family: $primary-font-family;
       color: $title-text-color;
+      color: $title-color;
       text-align: left;
       justify-content: left;
       text-transform: uppercase;
@@ -580,8 +614,9 @@
       padding: 50px 50px 10px 0;
 
       @media (max-width: $lg-size) {
-        font-size: 2rem;
-        margin-top: 1rem;
+        font-size: 24px;
+        margin-top: 0rem;
+        padding-top: 15px;
         color: $title-text-color;
         line-height: 1.5em;
       }
@@ -602,6 +637,44 @@
       color: $title-text-color;
       justify-content: left;
       margin: 20px 10px 20px 75px;
+
+      .homepage_accordian {
+        border-radius: 5px;
+        font-family: "Inter";
+        margin-bottom: 80px;
+
+        .homepage_collapsepanel {
+          border-radius: 5px !important;
+
+          .ant-collapse-header-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(58, 53, 65, 0.8);
+          }
+
+          .collapsetext {
+            font-size: 16px;
+            padding: 0px 20px;
+            margin-bottom: 10px;
+          }
+        }
+
+        @media (max-width: $lg-size) {
+          .ant-collapse-header-text {
+            font-size: 16px;
+          }
+
+          .collapsetext {
+            font-size: 14px;
+
+            li{
+              strong{
+                margin-bottom: 5px;
+              }
+            }
+          }
+        }
+      }
 
       @media (max-width: $lg-size) {
         font-size: 0.8rem;
