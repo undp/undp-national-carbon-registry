@@ -1981,7 +1981,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       } else if (k === 'purposeOfCreditDevelopment') {
         generalInfo[text] = (
-          <Tag className="clickable" color={getCreditTypeTagType(v as CreditTypeSl)}>
+          <Tag color={getCreditTypeTagType(v as CreditTypeSl)}>
             {addSpaces(getCreditTypeName(v as string))}
           </Tag>
         );

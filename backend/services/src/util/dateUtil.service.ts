@@ -2,21 +2,28 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class DateUtilService {
-    //MARK: formatCustomDate
-    formatCustomDate(epoch?) {
-      // If an epoch is provided, create a Date object for that epoch; otherwise, use the current date
-      const date = epoch ? new Date(parseInt(epoch, 10)) : new Date();
   
-      // Extract year, month, and day
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1; // getMonth returns 0-11, so add 1 to adjust to 1-12
-      const day = date.getDate();
+  //MARK: formatCustomDate
+  formatCustomDate(epoch?: string | number) {
+    // If an epoch is provided, create a Date object for that epoch; otherwise, use the current date
+    const date = epoch ? new Date(parseInt(epoch.toString(), 10)) : new Date();
   
-      // Pad the month and day to ensure they are always two digits
-      const formattedMonth = month.toString().padStart(2, "0");
-      const formattedDay = day.toString().padStart(2, "0");
+    // Convert to the desired timezone (Asia/Kolkata) using Intl.DateTimeFormat
+    const options: Intl.DateTimeFormatOptions = { 
+      timeZone: "Asia/Kolkata", 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit' 
+    };
+    const formatter = new Intl.DateTimeFormat("en-US", options);
+    const parts = formatter.formatToParts(date);
   
-      // Return the formatted date string in YYYY/MM/DD format
-      return `${formattedDay}/${formattedMonth}/${year}`;
-    }
+    // Extract year, month, and day
+    const year = parts.find(part => part.type === 'year')?.value;
+    const month = parts.find(part => part.type === 'month')?.value;
+    const day = parts.find(part => part.type === 'day')?.value;
+  
+    // Return the formatted date string in DD/MM/YYYY format
+    return `${day}/${month}/${year}`;
+  }
 }
