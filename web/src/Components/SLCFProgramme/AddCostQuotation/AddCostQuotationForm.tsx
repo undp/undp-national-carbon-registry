@@ -595,7 +595,7 @@ export const AddCostQuotationForm = (props: any) => {
                           multiple={false}
                           disabled={disableFields}
                           fileList={form.getFieldValue('signature') || []}
-                          // maxCount={1}
+                          maxCount={1}
                         >
                           <Button
                             className="upload-doc"

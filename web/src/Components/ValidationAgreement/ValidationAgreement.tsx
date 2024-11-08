@@ -149,12 +149,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
     const climateFundWitnessSignature =
       values?.SLCFWitnessSignature && values?.SLCFWitnessSignature[0]
-        ? await convertFileToBase64(values?.clientSignature[0])
+        ? await convertFileToBase64(values?.SLCFWitnessSignature[0])
         : undefined;
 
     const projectParticipantWitnessSignature =
       values?.ClientWitnessSignature && values?.ClientWitnessSignature[0]
-        ? await convertFileToBase64(values?.clientSignature[0])
+        ? await convertFileToBase64(values?.ClientWitnessSignature[0])
         : undefined;
 
     const annexureADoc =
