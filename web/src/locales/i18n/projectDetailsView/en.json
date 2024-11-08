@@ -204,6 +204,7 @@
   "VALIDATION_PENDING": "Validation Pending",
   "REJECTED_VALIDATION": "Validation Rejected",
   "AUTHORISED": "Authorised",
+  "verificationRequest": "Verification Request",
   "orgNotAuthDownload": "Your organisation is not authorised to download this document",
   "noVerificationReports": "No verification reports submitted",
   "noMonitoringReports": "No monitoring reports submitted",

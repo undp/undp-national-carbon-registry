@@ -1,5 +1,5 @@
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, Form, Input, Row, Upload } from 'antd';
+import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Upload } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
 import { DocType } from '../../../Definitions/Enums/document.type';
@@ -9,8 +9,20 @@ import { getBase64 } from '../../../Definitions/Definitions/programme.definition
 import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
+import { requiredValidationRule } from '../../../Utils/validationHelper';
+import NetEmissionReduction from '../../Common/NetEmissonReduction';
 export const QualificationStep = (props: any) => {
-  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
+  const {
+    useLocation,
+    translator,
+    current,
+    form,
+    formMode,
+    next,
+    prev,
+    onValueChange,
+    projectCategory,
+  } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -240,348 +252,12 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                           </div>
                         </Col>
                       </Row>
-                      <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
-                        <Col xl={9} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:year')}</h4>
-                          </div>
-                        </Col>
 
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:baselineEmissionsTitle')}</h4>
-                          </div>
-                        </Col>
-
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:projectEmissionsTitle')}</h4>
-                          </div>
-                        </Col>
-
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:leakageEmissionsTitle')}</h4>
-                          </div>
-                        </Col>
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:ghgEmissionsTitle')}</h4>
-                          </div>
-                        </Col>
-                        <Col xl={1} md={24}></Col>
-                      </Row>
-
-                      <Form.List name="emissionReductionsRemovalsList">
-                        {(fields, { add, remove }) => (
-                          <>
-                            {fields.map(({ key, name, ...restField }) => (
-                              <>
-                                <Row
-                                  justify={'space-between'}
-                                  gutter={[16, 16]}
-                                  className="form-section"
-                                >
-                                  <Col xl={4} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'startDate']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: '',
-                                          },
-                                          {
-                                            validator: async (rule, value) => {
-                                              if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
-                                                value === null ||
-                                                value === undefined
-                                              ) {
-                                                throw new Error(
-                                                  `${t('monitoringReport:startDate')} ${t(
-                                                    'isRequired'
-                                                  )}`
-                                                );
-                                              }
-                                            },
-                                          },
-                                        ]}
-                                      >
-                                        <DatePicker
-                                          size="large"
-                                          disabledDate={(currentDate: any) =>
-                                            currentDate < moment().startOf('day')
-                                          }
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={1} md={24}>
-                                    <div className="step-form-right-col">
-                                      <h4 className="to-lable">{t('monitoringReport:to')}</h4>
-                                    </div>
-                                  </Col>
-                                  <Col xl={4} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'endDate']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: '',
-                                          },
-                                          {
-                                            validator: async (rule, value) => {
-                                              if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
-                                                value === null ||
-                                                value === undefined
-                                              ) {
-                                                throw new Error(
-                                                  `${t('monitoringReport:endDate')} ${t(
-                                                    'isRequired'
-                                                  )}`
-                                                );
-                                              }
-                                            },
-                                          },
-                                        ]}
-                                      >
-                                        <DatePicker
-                                          size="large"
-                                          disabledDate={(currentDate: any) => {
-                                            return (
-                                              currentDate &&
-                                              currentDate <=
-                                                moment(
-                                                  form.getFieldsValue()
-                                                    .emissionReductionsRemovalsList[name].startDate,
-                                                  'YYYY-MM-DD'
-                                                )
-                                            );
-                                          }}
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={4} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'baselineEmissions']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: `${t(
-                                              'monitoringReport:baselineEmissionsTitle'
-                                            )} ${t('isRequired')}`,
-                                          },
-                                        ]}
-                                      >
-                                        <Input
-                                          size="large"
-                                          onChange={(val) => onBaselineEmissionsChange()}
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={4} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'projectEmissions']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: `${t(
-                                              'monitoringReport:projectEmissionsTitle'
-                                            )} ${t('isRequired')}`,
-                                          },
-                                        ]}
-                                      >
-                                        <Input
-                                          size="large"
-                                          onChange={(val) => onProjectEmissionsChange()}
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={3} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'leakageEmissions']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: `${t(
-                                              'monitoringReport:leakageEmissionsTitle'
-                                            )} ${t('isRequired')}`,
-                                          },
-                                        ]}
-                                      >
-                                        <Input
-                                          size="large"
-                                          onChange={(val) => onLeakageEmissionsChange()}
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={3} md={24}>
-                                    <div className="step-form-right-col">
-                                      <Form.Item
-                                        name={[name, 'ghgEmissions']}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: `${t(
-                                              'monitoringReport:ghgEmissionsTitle'
-                                            )} ${t('isRequired')}`,
-                                          },
-                                        ]}
-                                      >
-                                        <Input
-                                          size="large"
-                                          onChange={(val) => onGhgEmissionsChange()}
-                                        />
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                  <Col xl={1} md={24}>
-                                    <div className="form-list-actions">
-                                      <Form.Item>
-                                        {name !== 0 && (
-                                          <Button
-                                            onClick={() => {
-                                              remove(name);
-                                              onBaselineEmissionsChange();
-                                              onProjectEmissionsChange();
-                                              onLeakageEmissionsChange();
-                                              onGhgEmissionsChange();
-                                              onEmissionsYearChange();
-                                            }}
-                                            size="large"
-                                            className="addMinusBtn"
-                                            // block
-                                            icon={<MinusOutlined />}
-                                          >
-                                            {/* Remove Entity */}
-                                          </Button>
-                                        )}
-                                      </Form.Item>
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </>
-                            ))}
-                            <div className="form-list-actions">
-                              <Form.Item>
-                                <Button
-                                  // type="dashed"
-                                  onClick={() => {
-                                    add();
-                                    onEmissionsYearChange();
-                                  }}
-                                  size="large"
-                                  className="addMinusBtn"
-                                  // block
-                                  icon={<PlusOutlined />}
-                                >
-                                  {/* Add Entity */}
-                                </Button>
-                              </Form.Item>
-                            </div>
-                          </>
-                        )}
-                      </Form.List>
-
-                      <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
-                        <Col xl={9} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:total')}</h4>
-                          </div>
-                        </Col>
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="baselineEmissionsTotal">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="projectEmissionsTotal">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="leakageEmissionsTotal">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="ghgEmissionsTotal">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={1} md={24}></Col>
-                      </Row>
-                      <Row gutter={[16, 16]} className="form-section">
-                        <Col xl={9} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:totalYears')}</h4>
-                          </div>
-                        </Col>
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="yearsTotal">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                      </Row>
-
-                      <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
-                        <Col xl={9} md={24}>
-                          <div className="step-form-right-col">
-                            <h4>{t('monitoringReport:annualAverage')}</h4>
-                          </div>
-                        </Col>
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="baselineEmissionsAverage">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={4} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="projectEmissionsAverage">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="leakageEmissionsAverage">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={3} md={24}>
-                          <div className="step-form-right-col">
-                            <Form.Item name="ghgEmissionsAverage">
-                              <Input size="large" disabled />
-                            </Form.Item>
-                          </div>
-                        </Col>
-                        <Col xl={1} md={24}></Col>
-                      </Row>
+                      <NetEmissionReduction
+                        form={form}
+                        t={t}
+                        projectCategory={projectCategory}
+                      ></NetEmissionReduction>
                     </>
 
                     <>
