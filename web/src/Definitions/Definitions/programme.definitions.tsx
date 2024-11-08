@@ -381,6 +381,11 @@ export const getGeneralFields = (
   return res;
 };
 
+const safeNumber = (value: any) => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num; // Return 0 if conversion results in NaN
+};
+
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
@@ -391,10 +396,10 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
-      (programme.creditBalance || 0) +
-      (programme.creditFrozen || 0) +
-      (programme.creditRetired || 0) +
-      (programme.creditTransferred || 0),
+      safeNumber(programme.creditBalance) +
+      safeNumber(programme.creditFrozen) +
+      safeNumber(programme.creditRetired) +
+      safeNumber(programme.creditTransferred),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
     dsDivision: programme.dsDivision,
