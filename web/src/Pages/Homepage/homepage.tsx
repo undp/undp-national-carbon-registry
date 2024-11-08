@@ -92,6 +92,7 @@ const Homepage = () => {
             <Row>
               <div className="text-ctn">
                 <span>
+                  {t('homepage:countryName')} <br />
                   {t('homepage:national')} {t('homepage:carbon')} <br />
                   {t('homepage:registry')}
                 </span>
