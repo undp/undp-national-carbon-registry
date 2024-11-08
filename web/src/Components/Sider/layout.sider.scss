@@ -7,6 +7,11 @@
   .country-flag {
     margin-top: 27px;
     margin-left: -8px;
+
+    img {
+      width: 15px;
+      height: auto;
+    }
   }
 
   .country-name {
@@ -139,15 +144,13 @@
     }
 
     .custom-padding-left {
-      padding-left: 3.0rem !important;
+      padding-left: 3rem !important;
     }
   }
 }
 
 .ant-layout-sider-collapsed {
-  
   .layout-sider-div-container {
-
     .custom-padding-left {
       padding-left: 32px !important;
     }

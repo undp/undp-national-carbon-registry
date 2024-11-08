@@ -17,6 +17,7 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
 const { Text } = Typography;
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Loading } from '../Loading/loading';
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -25,6 +26,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
+  const [loading, setLoading] = useState<boolean>(isView);
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
@@ -337,6 +339,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             duration: 4,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -494,6 +498,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     };
 
     try {
+      setLoading(true);
       const res = await post('national/programmeSl/createProjectProposal', tempValues);
       if (res?.statusText === 'SUCCESS') {
         message.open({
@@ -511,8 +516,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="proposal-form-container">

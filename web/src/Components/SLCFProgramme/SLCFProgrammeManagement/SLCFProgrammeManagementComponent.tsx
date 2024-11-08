@@ -190,7 +190,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       dataIndex: 'projectCategory',
       sorter: true,
       key: ProgrammeManagementSlColumns.projectCategory,
-      align: 'left' as const,
+      align: 'center' as const,
       render: (item: any) => {
         return <span>{getProjectCategory[item]}</span>;
       },
@@ -221,6 +221,20 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       },
     },
     {
+      title: t('projectList:purposeOfCreditDevelopment'),
+      dataIndex: 'purposeOfCreditDevelopment',
+      key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
+      sorter: true,
+      align: 'center' as const,
+      render: (item: any) => {
+        return (
+          <Tag color={getCreditTypeTagType(item as CreditTypeSl)}>
+            {addSpaces(getCreditTypeName(item as string))}
+          </Tag>
+        );
+      },
+    },
+    {
       title: t('projectList:balance'),
       dataIndex: 'creditBalance',
       key: ProgrammeManagementSlColumns.creditBalance,
@@ -228,20 +242,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       align: 'right' as const,
       render: (item: any) => {
         return <span>{item}</span>;
-      },
-    },
-    {
-      title: t('projectList:purposeOfCreditDevelopment'),
-      dataIndex: 'purposeOfCreditDevelopment',
-      key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any) => {
-        return (
-          <Tag className="clickable" color={getCreditTypeTagType(item as CreditTypeSl)}>
-            {addSpaces(getCreditTypeName(item as string))}
-          </Tag>
-        );
       },
     },
     {

@@ -19,6 +19,7 @@ export const AddCostQuotationForm = (props: any) => {
 
   const { state } = useLocation();
   const isView = !!state?.isView;
+  const [loading, setLoading] = useState<boolean>(isView);
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 

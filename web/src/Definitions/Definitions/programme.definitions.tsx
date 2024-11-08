@@ -139,7 +139,7 @@ export const getCreditTypeTagType = (stage: CreditTypeSl) => {
     case CreditTypeSl.TRACK_1:
       return 'orange';
     case CreditTypeSl.TRACK_2:
-      return 'purple';
+      return 'lime';
     default:
       return 'default';
   }
@@ -381,6 +381,11 @@ export const getGeneralFields = (
   return res;
 };
 
+const safeNumber = (value: any) => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num; // Return 0 if conversion results in NaN
+};
+
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
@@ -391,10 +396,10 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
-      programme.creditBalance +
-      programme.creditFrozen +
-      programme.creditRetired +
-      programme.creditTransferred,
+      safeNumber(programme.creditBalance) +
+      safeNumber(programme.creditFrozen) +
+      safeNumber(programme.creditRetired) +
+      safeNumber(programme.creditTransferred),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
     dsDivision: programme.dsDivision,

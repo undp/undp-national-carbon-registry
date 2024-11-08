@@ -243,6 +243,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       Number(
         (
           numIsExist(d.creditEst) -
+          numIsExist(d?.creditBalance) -
           numIsExist(d.creditTransferred) -
           numIsExist(d.creditRetired) -
           frozen
@@ -1982,7 +1983,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       } else if (k === 'purposeOfCreditDevelopment') {
         generalInfo[text] = (
-          <Tag className="clickable" color={getCreditTypeTagType(v as CreditTypeSl)}>
+          <Tag color={getCreditTypeTagType(v as CreditTypeSl)}>
             {addSpaces(getCreditTypeName(v as string))}
           </Tag>
         );

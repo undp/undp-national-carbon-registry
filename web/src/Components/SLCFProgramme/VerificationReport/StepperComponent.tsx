@@ -227,7 +227,7 @@ const StepperComponent = (props: any) => {
       console.log('-----response-------', data, user);
 
       projectDetailsForm.setFieldsValue({
-        projectName: data?.title,
+        projectTitle: data?.title,
       });
     } catch (error) {
       console.log('error');

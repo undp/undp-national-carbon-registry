@@ -433,10 +433,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   {moment(parseInt(item.createdTime)).format('DD MMMM YYYY @ HH:mm')}
                   {item.verificationSerialNo && ` - ${item.verificationSerialNo}`} {'    '}
                   <span className="verification-title-status-tag">
-                    <Tag
-                      className="clickable"
-                      color={getVerificationRequestStatusType(item.status)}
-                    >
+                    <Tag color={getVerificationRequestStatusType(item.status)}>
                       {addSpaces(getVerificationRequestStatusName(item.status))}
                     </Tag>
                   </span>
