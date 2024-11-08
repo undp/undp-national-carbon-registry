@@ -63,8 +63,8 @@ export const ProjectDetailsStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:projectName')}
-                      name="projectName"
+                      label={t('verificationReport:projectTitle')}
+                      name="projectTitle"
                       rules={[
                         {
                           required: true,
@@ -79,7 +79,7 @@ export const ProjectDetailsStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('verificationReport:projectName')} ${t('isRequired')}`
+                                `${t('verificationReport:projectTitle')} ${t('isRequired')}`
                               );
                             }
                           },
@@ -500,33 +500,6 @@ export const ProjectDetailsStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:projectTitle')}
-                      name="projectTitle"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:projectTitle')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
                       label={t('verificationReport:workCarriedOutBy')}
                       name="workCarriedOutBy"
                       rules={[
@@ -538,11 +511,6 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
-                  </div>
-                </Col>
-
-                <Col xl={12} md={24}>
-                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('verificationReport:reportNo')}
                       name="reportNo"
@@ -569,7 +537,11 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                  </div>
+                </Col>
 
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('verificationReport:workApprovedBy')}
                       name="workApprovedBy"
@@ -580,7 +552,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
+                      <TextArea rows={7} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>
