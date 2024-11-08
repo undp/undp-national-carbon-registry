@@ -714,7 +714,8 @@ export const ProjectActivityStep = (props: any) => {
                         <Col xl={12} md={24}>
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
-                              {`1.6  ${t('monitoringReport:projectCreditingPeriod')}`}
+                              {`1.6  ${t('monitoringReport:projectCreditingPeriod')}`}{' '}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={11} md={24}>
@@ -816,6 +817,7 @@ export const ProjectActivityStep = (props: any) => {
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
                               {`1.7  ${t('monitoringReport:registrationDateOfTheActivity')}`}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={24} md={24}>
@@ -857,6 +859,7 @@ export const ProjectActivityStep = (props: any) => {
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
                               {`1.8  ${t('monitoringReport:projectTrackAndCreditUse')}`}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={24} md={24}>
@@ -871,7 +874,7 @@ export const ProjectActivityStep = (props: any) => {
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                                 </Form.Item>
                                 <h4 className="form-section-title">
                                   {`${t('monitoringReport:projectTrackAndCreditUseComment')}`}

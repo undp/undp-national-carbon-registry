@@ -249,11 +249,13 @@ const StepperComponent = (props: any) => {
     try {
       const response: any = await get(`national/verification?programmeId=${programId}`);
       if (
-        response &&
-        response.data &&
-        response.data.length &&
-        (response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
-          response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)
+        (response &&
+          response.data &&
+          response.data.length &&
+          (response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+            response.data[0].status ===
+              VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
+        !(response && response.data && response.data.length)
       ) {
         projectActivityForm.setFieldsValue({
           projectProponentsList: [
