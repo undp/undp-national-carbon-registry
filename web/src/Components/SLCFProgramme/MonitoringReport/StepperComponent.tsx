@@ -98,7 +98,6 @@ const StepperComponent = (props: any) => {
       const {
         data: { user },
       } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
 
       setProjectCategory(data?.projectCategory);
     } catch (error) {
