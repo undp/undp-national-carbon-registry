@@ -228,18 +228,16 @@ const StepperComponent = (props: any) => {
 
         qualificationForm.setFieldsValue({
           estimatedNetEmissionReductions:
-            cmaData?.quantificationOfGHG?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
-              (emissionData: any) => {
-                return {
-                  startDate: moment(emissionData.startDate * 1000),
-                  endDate: moment(emissionData.endDate * 1000),
-                  baselineEmissionReductions: emissionData.baselineEmissionReductions,
-                  projectEmissionReductions: emissionData.projectEmissionReductions,
-                  leakageEmissionReductions: emissionData.leakageEmissionReductions,
-                  netEmissionReductions: emissionData.netEmissionReductions,
-                };
-              }
-            ),
+            cmaData?.quantifications?.estimatedNetEmissionReductions.map((emissionData: any) => {
+              return {
+                startDate: moment(emissionData.startDate * 1000),
+                endDate: moment(emissionData.endDate * 1000),
+                baselineEmissionReductions: emissionData.baselineEmissionReductions,
+                projectEmissionReductions: emissionData.projectEmissionReductions,
+                leakageEmissionReductions: emissionData.leakageEmissionReductions,
+                netEmissionReductions: emissionData.netEmissionReductions,
+              };
+            }),
         });
       }
     } catch (error) {
@@ -349,7 +347,7 @@ const StepperComponent = (props: any) => {
             ),
 
             estimatedNetEmissionReductions:
-              data?.content?.quantifications?.yearlyGHGEmissionReductions?.map(
+              data?.content?.quantifications?.estimatedNetEmissionReductions?.map(
                 (netEmission: any) => {
                   return {
                     ...netEmission,
