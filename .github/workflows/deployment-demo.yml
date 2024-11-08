@@ -91,7 +91,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/staging-demo'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-web-sl
@@ -132,7 +132,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
       - name: Build, tag, and push the development image to Amazon ECR
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/staging-demo'
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -145,7 +145,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Deploy development docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/staging-demo'
         env:
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_DEMO }}
           HOSTNAME: ${{secrets.HOST_IP_DEMO }}
