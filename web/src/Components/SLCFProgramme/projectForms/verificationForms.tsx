@@ -129,17 +129,19 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     setModalVisible(false);
   };
 
-  const navigateToMonitoringReportCreate = () => {
+  const navigateToMonitoringReportCreate = (docId: any) => {
     navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
       state: {
         mode: FormMode.CREATE,
+        docId: docId,
       },
     });
   };
-  const navigateToMonitoringReportView = () => {
+  const navigateToMonitoringReportView = (docId: any) => {
     navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
       state: {
         mode: FormMode.VIEW,
+        docId: docId,
       },
     });
   };
@@ -292,17 +294,19 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
 
   // const designDocPending = designDocStatus === DocumentStatus.PENDING;
 
-  function navigateToVerificationReportCreate(): void {
+  function navigateToVerificationReportCreate(docId: any): void {
     navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`, {
       state: {
         mode: FormMode.CREATE,
+        docId: docId,
       },
     });
   }
-  function navigateToVerificationReportView(): void {
+  function navigateToVerificationReportView(docId: any): void {
     navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`, {
       state: {
         mode: FormMode.VIEW,
+        docId: docId,
       },
     });
   }
@@ -396,6 +400,23 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     });
 
     return latestReport;
+  };
+
+  const getLatestReportId = (reports: any[], docType: DocumentTypeEnum) => {
+    const filteredReports = reports.filter((report) => report.type === docType);
+
+    let latestReport: any = null;
+    let maxTime = 0;
+
+    filteredReports.forEach((report) => {
+      const createdTime = parseInt(report.createdTime);
+      if (createdTime > maxTime) {
+        maxTime = createdTime;
+        latestReport = report;
+      }
+    });
+
+    return latestReport?.id;
   };
 
   const hasPendingReport = (reports: any[], docType: DocumentTypeEnum) => {
@@ -492,7 +513,10 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             userInfoState,
                             DocType.MONITORING_REPORT,
                             projectProposalStage
-                          ) && navigateToMonitoringReportView()
+                          ) &&
+                          navigateToMonitoringReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
+                          )
                         }
                       />
                     </Tooltip>
@@ -539,7 +563,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 userInfoState,
                                 DocType.MONITORING_REPORT,
                                 projectProposalStage
-                              ) && navigateToMonitoringReportCreate()
+                              ) &&
+                              navigateToMonitoringReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.MONITORING_REPORT
+                                )
+                              )
                             }
                           />
                         </Tooltip>
@@ -584,7 +614,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                   userInfoState,
                                   DocType.MONITORING_REPORT,
                                   projectProposalStage
-                                ) && navigateToMonitoringReportCreate()
+                                ) && navigateToMonitoringReportCreate(null)
                               }
                             />
                           </Tooltip>
@@ -648,7 +678,10 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             userInfoState,
                             DocType.VERIFICATION_REPORT,
                             projectProposalStage
-                          ) && navigateToVerificationReportView()
+                          ) &&
+                          navigateToVerificationReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
+                          )
                         }
                       />
                     </Tooltip>
@@ -695,7 +728,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 userInfoState,
                                 DocType.VERIFICATION_REPORT,
                                 projectProposalStage
-                              ) && navigateToVerificationReportCreate()
+                              ) &&
+                              navigateToVerificationReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.VERIFICATION_REPORT
+                                )
+                              )
                             }
                           />
                         </Tooltip>
@@ -741,7 +780,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                   userInfoState,
                                   DocType.VERIFICATION_REPORT,
                                   projectProposalStage
-                                ) && navigateToVerificationReportCreate()
+                                ) && navigateToVerificationReportCreate(null)
                               }
                             />
                           </Tooltip>

@@ -30,7 +30,7 @@ const StepperComponent = (props: any) => {
   const { id } = useParams();
   const navigationLocation = useLocation();
   const [projectCategory, setProjectCategory] = useState<string>('');
-  const { mode } = navigationLocation.state || {};
+  const { mode, docId } = navigationLocation.state || {};
   const t = translator.t;
   const reportVersion = process.env.MONITORING_REPORT_VERSION
     ? process.env.MONITORING_REPORT_VERSION
@@ -245,16 +245,7 @@ const StepperComponent = (props: any) => {
     }
 
     try {
-      const response: any = await get(`national/verification?programmeId=${programId}`);
-      if (
-        (response &&
-          response.data &&
-          response.data.length &&
-          (response.data[0].status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
-            response.data[0].status ===
-              VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
-        !(response && response.data && response.data.length)
-      ) {
+      if (docId === null) {
         projectActivityForm.setFieldsValue({
           projectProponentsList: [
             {
@@ -294,9 +285,8 @@ const StepperComponent = (props: any) => {
           ],
         });
       } else {
-        const { data } = await post('national/programmeSl/getDocLastVersion', {
-          programmeId: programId,
-          docType: DocumentTypeEnum.MONITORING_REPORT,
+        const { data } = await post('national/programmeSl/getDocumentById', {
+          docId: docId,
         });
         if (data && data?.content) {
           setReportId(data?.id);

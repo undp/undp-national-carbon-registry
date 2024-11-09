@@ -1062,7 +1062,7 @@ export const ProjectActivityStep = (props: any) => {
                                 name={[name, 'optionalDocuments']}
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
-                                required={formMode !== FormMode.VIEW}
+                                required={false}
                                 rules={
                                   formMode === FormMode.VIEW
                                     ? []
