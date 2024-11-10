@@ -156,13 +156,23 @@ export class VerificationService {
     monitoringReportDocument.updatedTime = new Date().getTime();
     monitoringReportDocument.content = docContent;
     const savedReport = await this.entityManager.transaction(async (em) => {
-      const verificationRequest: VerificationRequestEntity =
-        await this.verificationRequestRepository.findOne({
+      const verificationRequests: VerificationRequestEntity[] =
+        await this.verificationRequestRepository.find({
           where: {
             programmeId: monitoringReportDto.programmeId,
           },
+          order: { id: "DESC" },
         });
-      if (verificationRequest) {
+      if (
+        verificationRequests &&
+        verificationRequests.length &&
+        !(
+          verificationRequests[0].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+          verificationRequests[0].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED
+        )
+      ) {
         await em.update(
           VerificationRequestEntity,
           {
@@ -174,7 +184,7 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
-        monitoringReportDocument.verificationRequestId = verificationRequest.id;
+        monitoringReportDocument.verificationRequestId = verificationRequests[0].id;
       } else {
         const verificationRequest = new VerificationRequestEntity();
         verificationRequest.programmeId = monitoringReportDto.programmeId;

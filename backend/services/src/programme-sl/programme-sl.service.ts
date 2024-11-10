@@ -1597,6 +1597,14 @@ export class ProgrammeSlService {
     };
     return updatedProject;
   }
+  async getDocumentById(docId: number): Promise<any> {
+    const document = await this.documentRepo.findOne({
+      where: {
+        id: docId,
+      },
+    });
+    return document;
+  }
 
   // MARK: gen Reg Certificate
   async generateProjectRegistrationCertificate(programmeId: string) {

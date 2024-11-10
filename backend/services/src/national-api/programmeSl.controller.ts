@@ -159,6 +159,14 @@ export class ProgrammeSlController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getDocumentById")
+  async getDocumentById(@Body("docId") docId: number, @Request() req) {
+    return this.programmeService.getDocumentById(docId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @Post("getProjectById")
   async getProjectById(@Body("programmeId") programmeId: string) {
     return this.programmeService.getProjectById(programmeId);
