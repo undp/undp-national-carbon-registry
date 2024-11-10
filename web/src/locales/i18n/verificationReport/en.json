@@ -215,6 +215,7 @@
   "q_comparisonWithCMA": "Comparison of actual emission reductions with estimates in the CMA",
   "q_emissionRedictionAndRemovals": "Net of GHG Emission Reductions and Removals",
   "item": "Item",
+  "lessThanOrEqual": "should be less than or equal to ",
   "additionalComments": "Additional Comments",
   "valueApplied": "Values applied in ex-ante  calculation of the registered  CMA",
   "actualValues": "Actual values reached  during the monitoring period",

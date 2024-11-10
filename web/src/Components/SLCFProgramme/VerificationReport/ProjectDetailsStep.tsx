@@ -21,6 +21,7 @@ export const ProjectDetailsStep = (props: any) => {
     next,
     cancel,
     countries,
+    verifiedScer,
     onValueChange,
   } = props;
 
@@ -465,6 +466,13 @@ export const ProjectDetailsStep = (props: any) => {
                             ) {
                               throw new Error(
                                 `${t('verificationReport:verifiedScer')} ${t('isRequired')}`
+                              );
+                            }
+                            if (Number(value) >= verifiedScer) {
+                              throw new Error(
+                                `${t('verificationReport:verifiedScer')} ${t(
+                                  'verificationReport:lessThanOrEqual'
+                                )} ${verifiedScer}`
                               );
                             }
                           },
