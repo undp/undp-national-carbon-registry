@@ -468,7 +468,7 @@ export const ProjectDetailsStep = (props: any) => {
                                 `${t('verificationReport:verifiedScer')} ${t('isRequired')}`
                               );
                             }
-                            if (Number(value) >= verifiedScer) {
+                            if (Number(value) > verifiedScer) {
                               throw new Error(
                                 `${t('verificationReport:verifiedScer')} ${t(
                                   'verificationReport:lessThanOrEqual'
