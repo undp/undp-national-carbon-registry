@@ -27,6 +27,7 @@ const StepperComponent = (props: any) => {
   const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [current, setCurrent] = useState(0);
+  const [verifiedScer, setVerifiedScer] = useState(0);
 
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
@@ -215,18 +216,20 @@ const StepperComponent = (props: any) => {
   const prev = () => {
     setCurrent(current - 1);
   };
+  const safeNumber = (value: any) => Number(value) || 0;
 
   const getProjectById = async (programId: any) => {
     try {
       const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
       });
-
-      const {
-        data: { user },
-      } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
-
+      const creditReceived =
+        safeNumber(data.creditBalance) +
+        safeNumber(data.creditFrozen) +
+        safeNumber(data.creditRetired) +
+        safeNumber(data.creditTransferred);
+      const creditEst = safeNumber(data.creditEst);
+      setVerifiedScer(creditEst - creditReceived);
       projectDetailsForm.setFieldsValue({
         projectTitle: data?.title,
       });
@@ -402,6 +405,7 @@ const StepperComponent = (props: any) => {
           next={next}
           cancel={navigateToDetailsPage}
           countries={countries}
+          verifiedScer={verifiedScer}
           onValueChange={onValueChange}
         />
       ),
