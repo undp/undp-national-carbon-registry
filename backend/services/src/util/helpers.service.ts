@@ -470,7 +470,7 @@ export class HelperService {
     }
 
     if(isSubject) 
-      return `${this.configService.get("email.getemailprefix")} Carbon Registry: ${template}`;
+      return `Sri Lanka Carbon Registry: ${template}`;
     else 
       return template;
 }
