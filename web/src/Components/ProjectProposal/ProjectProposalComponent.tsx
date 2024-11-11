@@ -2901,9 +2901,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
             <p className="capitalize">
-              SLCF will validate/verify the project independently, counting by the establishment of
-              SLCCS Executive Board and responsible for monitoring and regularly evaluating the
-              process and performance, seeking to ensure the continuity of SLCCS functions
+              SLCF will validate/verify the project independently, and ensure the avoidance of the
+              double counting by the establishment of SLCCS Executive Board and responsible for
+              monitoring and regularly evaluating the process and performance, seeking to ensure the
+              continuity of SLCCS functions
             </p>
 
             <p className="capitalize">SLCCS Executive Board Members</p>
