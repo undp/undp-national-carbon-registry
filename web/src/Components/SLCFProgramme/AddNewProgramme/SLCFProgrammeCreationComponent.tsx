@@ -117,16 +117,16 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   const getCities = async (division?: string) => {
     try {
-      // const { data } = await post('national/location/city', {
-      //   filterAnd: [
-      //     {
-      //       key: 'divisionName',
-      //       operation: '=',
-      //       value: division,
-      //     },
-      //   ],
-      // });
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities(tempCities);
@@ -137,7 +137,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
   }, []);
 
   const onProvinceSelect = async (value: any) => {
@@ -150,9 +150,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     getDivisions(value);
   };
 
-  // const onDivisionSelect = (value: string) => {
-  //   getCities(value);
-  // };
+  const onDivisionSelect = (value: string) => {
+    getCities(value);
+  };
 
   const onGeographyOfProjectSelect = (value: string) => {
     if (value === 'MULTIPLE') {
@@ -376,6 +376,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('addProgramme:dsDivisionPlaceholder')}
+                                  onSelect={onDivisionSelect}
                                 >
                                   {dsDivisions.map((division: string) => (
                                     <Select.Option value={division}>{division}</Select.Option>
