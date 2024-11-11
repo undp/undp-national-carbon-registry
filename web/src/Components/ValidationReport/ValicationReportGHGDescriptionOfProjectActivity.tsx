@@ -42,9 +42,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
   const { post } = useConnection();
 
   const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
+  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
+  const [cities, setCities] = useState<{ [key: number]: string[] }>({});
 
   const getProvinces = async () => {
     try {
@@ -56,7 +56,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
     }
   };
 
-  const getDistricts = async (provinceName: string) => {
+  const getDistricts = async (provinceName: string, index: number) => {
     try {
       const { data } = await post('national/location/district', {
         filterAnd: [
@@ -68,13 +68,13 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
         ],
       });
       const tempDistricts = data.map((districtData: any) => districtData.districtName);
-      setDistricts(tempDistricts);
+      setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getDivisions = async (districtName: string) => {
+  const getDivisions = async (districtName: string, index: number) => {
     try {
       const { data } = await post('national/location/division', {
         filterAnd: [
@@ -87,47 +87,48 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       });
 
       const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      setDsDivisions(tempDivisions);
+      setDsDivisions((prev2) => ({ ...prev2, [index]: tempDivisions }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getCities = async (division?: string) => {
+  const getCities = async (division: string, index: number) => {
     try {
-      // const { data } = await post('national/location/city', {
-      //   filterAnd: [
-      //     {
-      //       key: 'divisionName',
-      //       operation: '=',
-      //       value: division,
-      //     },
-      //   ],
-      // });
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
-      setCities(tempCities);
+      setCities((prev3) => ({ ...prev3, [index]: tempCities }));
     } catch (error) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
     // form.setFieldValue('totalCreditingYears', 1)
     form.setFieldValue('totalEstimatedGHGERs', 0);
   }, []);
 
-  const onProvinceSelect = async (value: any) => {
-    getDistricts(value);
-    try {
-    } catch (error) {}
+  const onProvinceSelect = async (value: any, index: number) => {
+    getDistricts(value, index);
   };
 
-  const onDistrictSelect = (value: string) => {
-    getDivisions(value);
+  const onDistrictSelect = (value: string, index: number) => {
+    getDivisions(value, index);
+  };
+
+  const onDivisionSelect = (value: string, index: number) => {
+    getCities(value, index);
   };
 
   const projectScopeList = [
@@ -479,6 +480,15 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   // type="dashed"
                                   onClick={() => {
                                     remove(name);
+                                    if (districts[name]) {
+                                      delete districts[name];
+                                    }
+                                    if (dsDivisions[name]) {
+                                      delete dsDivisions[name];
+                                    }
+                                    if (cities[name]) {
+                                      delete cities[name];
+                                    }
                                   }}
                                   size="large"
                                   className="addMinusBtn"
@@ -529,7 +539,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                 >
                                   <Select
                                     size="large"
-                                    onChange={onProvinceSelect}
+                                    onChange={(value) => onProvinceSelect(value, name)}
                                     placeholder={t('validationReport:provincePlaceholder')}
                                   >
                                     {provinces.map((province: string, index: number) => (
@@ -553,9 +563,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   <Select
                                     size="large"
                                     placeholder={t('validationReport:districtPlaceholder')}
-                                    onSelect={onDistrictSelect}
+                                    onSelect={(value) => onDistrictSelect(value, name)}
                                   >
-                                    {districts?.map((district: string, index: number) => (
+                                    {districts[name]?.map((district: string, index: number) => (
                                       <Select.Option key={district}>{district}</Select.Option>
                                     ))}
                                   </Select>
@@ -575,8 +585,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   <Select
                                     size="large"
                                     placeholder={t('validationReport:dsDivisionPlaceholder')}
+                                    onSelect={(value) => onDivisionSelect(value, name)}
                                   >
-                                    {dsDivisions.map((division: string) => (
+                                    {dsDivisions[name]?.map((division: string) => (
                                       <Select.Option value={division}>{division}</Select.Option>
                                     ))}
                                   </Select>
@@ -595,7 +606,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     placeholder={t('validationReport:cityPlaceholder')}
                                   >
-                                    {cities.map((city: string) => (
+                                    {cities[name]?.map((city: string) => (
                                       <Select.Option value={city}>{city}</Select.Option>
                                     ))}
                                   </Select>

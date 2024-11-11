@@ -29,10 +29,12 @@ export const ProjectActivityStep = (props: any) => {
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
+
   const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
+  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
+  const [cities, setCities] = useState<{ [key: number]: string[] }>({});
+
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -41,15 +43,6 @@ export const ProjectActivityStep = (props: any) => {
       return e;
     }
     return e?.fileList;
-  };
-  const getProvinces = async () => {
-    try {
-      const { data } = await post('national/location/province');
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
-      setProvinces(tempProvinces);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const getExistingCordinate = (locationIndex: number) => {
@@ -61,7 +54,17 @@ export const ProjectActivityStep = (props: any) => {
     return null;
   };
 
-  const getDistricts = async (provinceName: string) => {
+  const getProvinces = async () => {
+    try {
+      const { data } = await post('national/location/province');
+      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      setProvinces(tempProvinces);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDistricts = async (provinceName: string, index: number) => {
     try {
       const { data } = await post('national/location/district', {
         filterAnd: [
@@ -73,13 +76,13 @@ export const ProjectActivityStep = (props: any) => {
         ],
       });
       const tempDistricts = data.map((districtData: any) => districtData.districtName);
-      setDistricts(tempDistricts);
+      setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getDivisions = async (districtName: string) => {
+  const getDivisions = async (districtName: string, index: number) => {
     try {
       const { data } = await post('national/location/division', {
         filterAnd: [
@@ -92,18 +95,27 @@ export const ProjectActivityStep = (props: any) => {
       });
 
       const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      setDsDivisions(tempDivisions);
+      setDsDivisions((prev2) => ({ ...prev2, [index]: tempDivisions }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getCities = async (division?: string) => {
+  const getCities = async (division: string, index: number) => {
     try {
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
-      setCities(tempCities);
+      setCities((prev3) => ({ ...prev3, [index]: tempCities }));
     } catch (error) {
       console.log(error);
     }
@@ -111,18 +123,21 @@ export const ProjectActivityStep = (props: any) => {
 
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
   }, []);
 
-  const onProvinceSelect = async (value: any) => {
-    getDistricts(value);
-    try {
-    } catch (error) {}
+  const onProvinceSelect = async (value: any, index: number) => {
+    getDistricts(value, index);
   };
 
-  const onDistrictSelect = (value: string) => {
-    getDivisions(value);
+  const onDistrictSelect = (value: string, index: number) => {
+    getDivisions(value, index);
   };
+
+  const onDivisionSelect = (value: string, index: number) => {
+    getCities(value, index);
+  };
+
   const t = translator.t;
   return (
     <>
@@ -906,6 +921,15 @@ export const ProjectActivityStep = (props: any) => {
                                   // type="dashed"
                                   onClick={() => {
                                     remove(name);
+                                    if (districts[name]) {
+                                      delete districts[name];
+                                    }
+                                    if (dsDivisions[name]) {
+                                      delete dsDivisions[name];
+                                    }
+                                    if (cities[name]) {
+                                      delete cities[name];
+                                    }
                                   }}
                                   size="large"
                                   className="addMinusBtn"
@@ -951,7 +975,7 @@ export const ProjectActivityStep = (props: any) => {
                               >
                                 <Select
                                   size="large"
-                                  onChange={onProvinceSelect}
+                                  onChange={(value) => onProvinceSelect(value, name)}
                                   placeholder={t('monitoringReport:provincePlaceholder')}
                                 >
                                   {provinces.map((province: string, index: number) => (
@@ -973,9 +997,9 @@ export const ProjectActivityStep = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('monitoringReport:districtPlaceholder')}
-                                  onSelect={onDistrictSelect}
+                                  onSelect={(value) => onDistrictSelect(value, name)}
                                 >
-                                  {districts?.map((district: string, index: number) => (
+                                  {districts[name]?.map((district: string, index: number) => (
                                     <Select.Option key={district}>{district}</Select.Option>
                                   ))}
                                 </Select>
@@ -995,8 +1019,9 @@ export const ProjectActivityStep = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('monitoringReport:dsDivisionPlaceholder')}
+                                  onSelect={(value) => onDivisionSelect(value, name)}
                                 >
-                                  {dsDivisions.map((division: string) => (
+                                  {dsDivisions[name]?.map((division: string) => (
                                     <Select.Option value={division}>{division}</Select.Option>
                                   ))}
                                 </Select>
@@ -1015,7 +1040,7 @@ export const ProjectActivityStep = (props: any) => {
                                   size="large"
                                   placeholder={t('monitoringReport:cityPlaceholder')}
                                 >
-                                  {cities.map((city: string) => (
+                                  {cities[name]?.map((city: string) => (
                                     <Select.Option value={city}>{city}</Select.Option>
                                   ))}
                                 </Select>
