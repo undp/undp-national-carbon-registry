@@ -100,7 +100,8 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
@@ -117,7 +118,8 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
@@ -133,7 +135,8 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
@@ -146,7 +149,8 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
@@ -157,7 +161,8 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
@@ -167,28 +172,32 @@ export const formViewPermission = (
       projectProposalStage === ProjectProposalStage.AUTHORISED) &&
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND)
+      userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
     docType === DocType.PROJECT_REGISTRATION_CERTIFICATE &&
     projectProposalStage === ProjectProposalStage.AUTHORISED &&
     (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
     docType === DocType.MONITORING_REPORT &&
     (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   } else if (
     docType === DocType.VERIFICATION_REPORT &&
     (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER)
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   }
@@ -230,7 +239,8 @@ export const formDownloadPermission = (
     projectProposalStage === ProjectProposalStage.AUTHORISED &&
     (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
       userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE)
+      userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
   ) {
     return true;
   }
