@@ -51,6 +51,7 @@
   "monitoringPeriod": "Monitoring Period",
   "estimatedScer": "Estimated SCER in This Monitoring Period",
   "verifiedScer": "Verified SCER",
+  "shouldBeInteger": "Credit should be a positive integer",
   "summary": "Summary",
   "projectTitle": "Project Title",
   "reportNo": "Report No",

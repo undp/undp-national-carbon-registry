@@ -457,6 +457,10 @@ export const ProjectDetailsStep = (props: any) => {
                           message: '',
                         },
                         {
+                          pattern: /^[1-9]\d*$/,
+                          message: `${t('verificationReport:shouldBeInteger')}`,
+                        },
+                        {
                           validator: async (rule, value) => {
                             if (
                               String(value).trim() === '' ||
