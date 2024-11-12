@@ -51,6 +51,7 @@ import {
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
+import { Role } from '../../../Definitions/Enums/role.enum';
 
 const { Search } = Input;
 
@@ -458,19 +459,21 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
           <div className="body-title">{t('projectList:slcfViewProgrammes')}</div>
         </div>
         <div className="actions">
-          {ability.can(Action.Manage, ProgrammeEntity) && enableAddProgramme && (
-            <div className="action-bar">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<PlusOutlined />}
-                onClick={onClickAddProgramme}
-              >
-                {t('projectList:addProgramme')}
-              </Button>
-            </div>
-          )}
+          {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+            userInfoState.userRole !== Role.ViewOnly &&
+            enableAddProgramme && (
+              <div className="action-bar">
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  icon={<PlusOutlined />}
+                  onClick={onClickAddProgramme}
+                >
+                  {t('projectList:addProgramme')}
+                </Button>
+              </div>
+            )}
         </div>
       </div>
       <div className="content-card">
