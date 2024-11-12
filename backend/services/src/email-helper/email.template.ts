@@ -982,7 +982,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
 
         Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been approved by {{countryName}} Climate Fund. <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1012,7 +1012,7 @@ export const EmailTemplates = {
 
         Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1042,7 +1042,7 @@ export const EmailTemplates = {
 
         {{organisationName}} has cancelled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
         {{remark}}<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team

@@ -452,7 +452,7 @@ export class CreditRetirementSlService {
         }
       );
 
-      if (CreditType.TRACK_1) {
+      if (retirementRequest.creditType === CreditType.TRACK_1) {
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           toCompany.companyId,
           EmailTemplates.CREDIT_RECEIVED_AND_RETIRED_SL,
