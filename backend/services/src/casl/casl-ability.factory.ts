@@ -295,12 +295,9 @@ export class CaslAbilityFactory {
     ) {
       can(Action.Read, CreditAuditLog);
       can(Action.Read, CreditAuditLogViewEntity);
-      can(Action.Read, VerificationRequestEntity);
     } else {
       cannot(Action.Read, CreditAuditLog);
       cannot(Action.Read, CreditAuditLogViewEntity);
-      can(Action.Read, VerificationRequestEntity);
-
     }
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
@@ -312,6 +309,7 @@ export class CaslAbilityFactory {
       can(Action.Read, CreditRetirementSl, {
         fromCompanyId: { $eq: user.companyId },
       });
+      can(Action.Read, VerificationRequestEntity);
 
       if (user.role == Role.Admin || user.role == Role.Manager) {
         can(Action.Create, ProgrammeSl);
@@ -320,19 +318,23 @@ export class CaslAbilityFactory {
         can(Action.Update, DocumentEntity);
         can(Action.Create, CreditRetirementSl);
         can(Action.Update, CreditRetirementSl);
+        can(Action.Create, VerificationRequestEntity);
       }
     }
 
     if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, DocumentEntity);
+      can(Action.Read, VerificationRequestEntity);
 
       if (user.role == Role.Admin) {
         can(Action.Update, ProgrammeSl);
+        can(Action.Update, VerificationRequestEntity);
       }
 
       if (user.role == Role.Manager) {
         can(Action.Update, ProgrammeSl);
+        can(Action.Update, VerificationRequestEntity);
       }
     }
 
@@ -341,6 +343,7 @@ export class CaslAbilityFactory {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, CreditRetirementSl);
       can(Action.Read, DocumentEntity);
+      can(Action.Read, VerificationRequestEntity);
 
       if (user.role == Role.Admin) {
         can(Action.Create, Company);
@@ -350,6 +353,7 @@ export class CaslAbilityFactory {
         can(Action.Update, ProgrammeSl);
         can(Action.Create, DocumentEntity);
         can(Action.Update, DocumentEntity);
+        can(Action.Update, VerificationRequestEntity);
       }
 
       if (user.role == Role.Manager) {
@@ -358,7 +362,16 @@ export class CaslAbilityFactory {
         can(Action.Update, ProgrammeSl);
         can(Action.Create, DocumentEntity);
         can(Action.Update, DocumentEntity);
+        can(Action.Update, VerificationRequestEntity);
       }
+    }
+
+    if (user.companyRole === CompanyRole.GOVERNMENT) {
+      can(Action.Read, User);
+      can(Action.Read, ProgrammeSl);
+      can(Action.Read, CreditRetirementSl);
+      can(Action.Read, DocumentEntity);
+      can(Action.Read, VerificationRequestEntity);
     }
 
     return build({
