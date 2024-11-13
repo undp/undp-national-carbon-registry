@@ -844,7 +844,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('validationAgreement:required')}`,
+                      message: `Witness ${t('isRequired')}`,
                     },
                   ]}
                 >
