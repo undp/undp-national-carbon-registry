@@ -582,16 +582,17 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 <p className="no-margin-p">Sri Lanka Climate Fund (Pvt) Ltd.</p>
 
                 <div className="signature-upload">
+                  <LabelWithTooltip label="Signature" required={true} />
                   <Form.Item
                     name="SLCFSignature"
-                    label="Signature"
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Signature ${t('isRequired')}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -666,10 +667,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 </span>
 
                 <span className="signature-upload">
+                  <div className="mg-top-1">
+                    <LabelWithTooltip label="Signature" required={true} />
+                  </div>
                   <Form.Item
                     name="clientSignature"
-                    label="Signature"
-                    className="mg-top-1 "
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
