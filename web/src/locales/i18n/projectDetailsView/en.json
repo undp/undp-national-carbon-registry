@@ -232,5 +232,8 @@
   "dsDivision": "Division",
   "province": "Province",
   "district": "District",
-  "additionalDocuments": "Additional Documents"
+  "city": "City",
+  "additionalDocuments": "Additional Documents",
+  "projectDescription": "Project Description",
+  "community": "Community"
 }

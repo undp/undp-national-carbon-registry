@@ -317,6 +317,9 @@ export interface ProgrammeSl {
   district?: string;
   dsDivision?: string;
   province?: string;
+  city?: string;
+  community?: string;
+  projectDescription?: string;
   additionalDocuments?: [];
 }
 
@@ -402,9 +405,12 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
       safeNumber(programme.creditTransferred),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
+    city: programme.city,
     dsDivision: programme.dsDivision,
     district: programme.district,
     province: programme.province,
+    community: programme.community,
+    projectDescription: programme.projectDescription,
     additionalDocuments: programme.additionalDocuments,
   };
 
