@@ -318,7 +318,7 @@ const StepperComponent = (props: any) => {
 
           appendixForm.setFieldsValue({
             ...content?.annexures,
-            optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
+            optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
               (document: string, index: number) => {
                 return {
                   uid: index,
