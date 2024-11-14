@@ -84,11 +84,7 @@
         padding-left: 15px;
         font-weight: 500;
       }
-
-
     }
-
-    
 
     .field-verification-title {
       margin: 15px 0px;
@@ -108,4 +104,34 @@
       padding-left: 10px;
     }
   }
+  .ant-btn-sm {
+    height: 25px;
+    width: 80px;
+  }
+
+  .ant-btn span {
+    text-transform: none;
+    color: rgba(58, 53, 65, 0.6);  
+  }
+
+  .ant-btn-dangerous span {
+    text-transform: none;
+    color: #ff7875;  
+  }
+
+  .ant-btn:hover span {
+    text-transform: none;
+    color: #40a9ff;  
+  }
+
+  .ant-btn-dangerous:hover span {
+    text-transform: none;
+    color: #ff7875;  
+  }
+
+  .anticon-check-circle {
+    margin-top: 6.5px;
+    margin-left: 30px;
+  }
+
 }

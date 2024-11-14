@@ -235,5 +235,12 @@
   "city": "City",
   "additionalDocuments": "Additional Documents",
   "projectDescription": "Project Description",
-  "community": "Community"
+  "community": "Community",
+  "btnAdd": "Add",
+  "btnView": "View",
+  "btnEdit": "Edit",
+  "btnDownload": "Download",
+  "btnSend": "Send",
+  "btnApprove": "Approve",
+  "btnReject": "Reject"
 }
