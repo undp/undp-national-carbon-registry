@@ -177,7 +177,12 @@ export const CreditRetirementSlComponent = (props: any) => {
     let sort: any;
     if (sortOrder && sortField) {
       sort = {
-        key: sortField,
+        key:
+          sortField === 'fromCompany'
+            ? 'fromCompanyId'
+            : sortField === 'toCompany'
+            ? 'toCompanyId'
+            : sortField,
         order: sortOrder,
         nullFirst: false,
       };
