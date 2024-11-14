@@ -1,4 +1,4 @@
-import { Col, Row, Skeleton, Tooltip, message } from 'antd';
+import { Button, Col, Row, Skeleton, Tooltip, message } from 'antd';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './projectForms.scss';
 import {
@@ -312,12 +312,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
         </div>
         <div>
           <Row className="field" key="Cost Quotation">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:costQuotationForm')}</div>
               </div>
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -332,7 +332,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -360,12 +360,26 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         projectProposalStage
                       ) && navigateToCostQuotationView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToCostQuotationView()}
+                    disabled={
+                      !formViewPermission(
+                        userInfoState,
+                        DocType.COST_QUOTATION,
+                        projectProposalStage
+                      )
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
             {formCreatePermission(userInfoState, DocType.COST_QUOTATION, projectProposalStage) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -380,7 +394,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <PlusOutlined
+                    {/* <PlusOutlined
                       className="common-progress-icon"
                       style={
                         formCreatePermission(
@@ -408,19 +422,33 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           projectProposalStage
                         ) && navigateToCostQuotationCreate()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToCostQuotationCreate()}
+                      disabled={
+                        !formCreatePermission(
+                          userInfoState,
+                          DocType.COST_QUOTATION,
+                          projectProposalStage
+                        )
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnAdd')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
           </Row>
           <Row className="field" key="Proposal">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:proposalForm')}</div>
               </div>
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -432,7 +460,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
@@ -453,12 +481,22 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
                       navigateToProposalView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToProposalView()}
+                    disabled={
+                      !formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
             {formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -473,7 +511,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <PlusOutlined
+                    {/* <PlusOutlined
                       className="common-progress-icon"
                       style={
                         formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
@@ -497,25 +535,35 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           projectProposalStage
                         ) && navigateToProposalCreate()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToProposalCreate()}
+                      disabled={
+                        !formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnAdd')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
           </Row>
           <Row className="field" key="Validation Agreement">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:validationAgreementForm')}</div>
               </div>
-              {designDocUrl !== '' && (
+              {/* {designDocUrl !== '' && (
                 <div className="time">
                   {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
                   {' ~ ' + designDocversion}
                 </div>
-              )}
+              )} */}
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -530,7 +578,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -558,7 +606,21 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         projectProposalStage
                       ) && navigateToValidationAgreementView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToValidationAgreementView()}
+                    disabled={
+                      !formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_AGREEMENT,
+                        projectProposalStage
+                      )
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
@@ -567,7 +629,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               DocType.VALIDATION_AGREEMENT,
               projectProposalStage
             ) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -582,7 +644,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <PlusOutlined
+                    {/* <PlusOutlined
                       className="common-progress-icon"
                       style={
                         formCreatePermission(
@@ -610,25 +672,39 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           projectProposalStage
                         ) && navigateToValidationAgreementCreate()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToValidationAgreementCreate()}
+                      disabled={
+                        !formCreatePermission(
+                          userInfoState,
+                          DocType.VALIDATION_AGREEMENT,
+                          projectProposalStage
+                        )
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnAdd')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
           </Row>
           <Row className="field" key="Carbon Management Assessment (CMA)">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:cmaForm')}</div>
               </div>
-              {designDocUrl !== '' && (
+              {/* {designDocUrl !== '' && (
                 <div className="time">
                   {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
                   {' ~ ' + designDocversion}
                 </div>
-              )}
+              )} */}
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -640,7 +716,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(userInfoState, DocType.CMA, projectProposalStage)
@@ -661,12 +737,20 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       formViewPermission(userInfoState, DocType.CMA, projectProposalStage) &&
                       navigateToCMAView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToCMAView()}
+                    disabled={!formViewPermission(userInfoState, DocType.CMA, projectProposalStage)}
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
             {formCreatePermission(userInfoState, DocType.CMA, projectProposalStage) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -678,7 +762,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <PlusOutlined
+                    {/* <PlusOutlined
                       className="common-progress-icon"
                       style={
                         formCreatePermission(userInfoState, DocType.CMA, projectProposalStage)
@@ -699,14 +783,24 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         formCreatePermission(userInfoState, DocType.CMA, projectProposalStage) &&
                         navigateToCMACreate()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToCMACreate()}
+                      disabled={
+                        !formCreatePermission(userInfoState, DocType.CMA, projectProposalStage)
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnAdd')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
 
             {formEditPermission(userInfoState, DocType.CMA, projectProposalStage) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -718,7 +812,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <EditOutlined
+                    {/* <EditOutlined
                       className="common-progress-icon"
                       style={
                         formEditPermission(userInfoState, DocType.CMA, projectProposalStage)
@@ -737,25 +831,35 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         formEditPermission(userInfoState, DocType.CMA, projectProposalStage) &&
                         navigateToCMAEdit()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToCMAEdit()}
+                      disabled={
+                        !formEditPermission(userInfoState, DocType.CMA, projectProposalStage)
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnEdit')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
           </Row>
           <Row className="field" key="Site Visit Checklist">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:siteVisitChecklistForm')}</div>
               </div>
-              {designDocUrl !== '' && (
+              {/* {designDocUrl !== '' && (
                 <div className="time">
                   {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
                   {' ~ ' + designDocversion}
                 </div>
-              )}
+              )} */}
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -770,7 +874,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -798,24 +902,38 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         projectProposalStage
                       ) && navigateToSiteVisitCheckListView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToSiteVisitCheckListView()}
+                    disabled={
+                      !formViewPermission(
+                        userInfoState,
+                        DocType.SITE_VISIT_CHECKLIST,
+                        projectProposalStage
+                      )
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
           </Row>
           <Row className="field" key="Validation Report">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:validationReportForm')}</div>
               </div>
-              {designDocUrl !== '' && (
+              {/* {designDocUrl !== '' && (
                 <div className="time">
                   {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
                   {' ~ ' + designDocversion}
                 </div>
-              )}
+              )} */}
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -830,7 +948,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <EyeOutlined
+                  {/* <EyeOutlined
                     className="common-progress-icon"
                     style={
                       formViewPermission(
@@ -858,7 +976,21 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         projectProposalStage
                       ) && navigateToValidationReportView()
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() => navigateToValidationReportView()}
+                    disabled={
+                      !formViewPermission(
+                        userInfoState,
+                        DocType.VALIDATION_REPORT,
+                        projectProposalStage
+                      )
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnView')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>
@@ -868,7 +1000,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               DocType.VALIDATION_REPORT,
               projectProposalStage
             ) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -883,7 +1015,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <PlusOutlined
+                    {/* <PlusOutlined
                       className="common-progress-icon"
                       style={
                         formCreatePermission(
@@ -911,14 +1043,28 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           projectProposalStage
                         ) && navigateToValidationReportCreate()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToValidationReportCreate()}
+                      disabled={
+                        !formCreatePermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        )
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnAdd')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
 
             {formEditPermission(userInfoState, DocType.VALIDATION_REPORT, projectProposalStage) && (
-              <Col span={3} className="field-value">
+              <Col span={6} className="field-value">
                 <>
                   <Tooltip
                     arrowPointAtCenter
@@ -933,7 +1079,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    <EditOutlined
+                    {/* <EditOutlined
                       className="common-progress-icon"
                       style={
                         formEditPermission(
@@ -959,25 +1105,39 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                           projectProposalStage
                         ) && navigateToValidationReportEdit()
                       }
-                    />
+                    /> */}
+                    <Button
+                      type="default"
+                      onClick={() => navigateToValidationReportEdit()}
+                      disabled={
+                        !formEditPermission(
+                          userInfoState,
+                          DocType.VALIDATION_REPORT,
+                          projectProposalStage
+                        )
+                      }
+                      size="small"
+                    >
+                      {t('projectDetailsView:btnEdit')}
+                    </Button>
                   </Tooltip>
                 </>
               </Col>
             )}
           </Row>
           <Row className="field" key="Project Registration Certificate">
-            <Col span={18} className="field-key">
+            <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:registrationCertificate')}</div>
               </div>
-              {designDocUrl !== '' && (
+              {/* {designDocUrl !== '' && (
                 <div className="time">
                   {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
                   {' ~ ' + designDocversion}
                 </div>
-              )}
+              )} */}
             </Col>
-            <Col span={3} className="field-value">
+            <Col span={6} className="field-value">
               <>
                 <Tooltip
                   arrowPointAtCenter
@@ -992,7 +1152,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  <DownloadOutlined
+                  {/* <DownloadOutlined
                     className="common-progress-icon"
                     style={
                       formDownloadPermission(
@@ -1021,7 +1181,23 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       ) &&
                       downloadRegistrationCertificate(programmeDetails?.registrationCertificateUrl)
                     }
-                  />
+                  /> */}
+                  <Button
+                    type="default"
+                    onClick={() =>
+                      downloadRegistrationCertificate(programmeDetails?.registrationCertificateUrl)
+                    }
+                    disabled={
+                      !formDownloadPermission(
+                        userInfoState,
+                        DocType.PROJECT_REGISTRATION_CERTIFICATE,
+                        projectProposalStage
+                      )
+                    }
+                    size="small"
+                  >
+                    {t('projectDetailsView:btnDownload')}
+                  </Button>
                 </Tooltip>
               </>
             </Col>

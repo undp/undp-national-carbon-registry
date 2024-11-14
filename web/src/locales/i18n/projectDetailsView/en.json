@@ -232,5 +232,12 @@
   "dsDivision": "Division",
   "province": "Province",
   "district": "District",
-  "additionalDocuments": "Additional Documents"
+  "additionalDocuments": "Additional Documents",
+  "btnAdd": "Add",
+  "btnView": "View",
+  "btnEdit": "Edit",
+  "btnDownload": "Download",
+  "btnSend": "Send",
+  "btnApprove": "Approve",
+  "btnReject": "Reject"
 }

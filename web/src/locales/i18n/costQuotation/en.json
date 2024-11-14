@@ -13,7 +13,7 @@
   "serviceCost": "Cost(LKR)",
   "serviceValidation": "Project Validation & Registration",
   "serviceVerification": "Verification & Credit Issuance",
-  "vatIsNotApplicable": "*VAT Is Not Applicable",
+  "vatIsNotApplicable": "*VAT is not applicable",
   "conditions": "Conditions:",
   "paymentUpfront":"40% of the payment on up front",
   "downPayment":"60% of the payment on completing the Validation and Verification",
