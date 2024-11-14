@@ -524,10 +524,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           )
                         }
                         disabled={
-                          !formViewPermission(
-                            userInfoState,
-                            DocType.MONITORING_REPORT,
-                            projectProposalStage
+                          !(
+                            formViewPermission(
+                              userInfoState,
+                              DocType.MONITORING_REPORT,
+                              projectProposalStage
+                            ) && getLatestReport(item.documents, DocumentTypeEnum.MONITORING_REPORT)
                           )
                         }
                         size="small"
@@ -742,10 +744,13 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           )
                         }
                         disabled={
-                          !formViewPermission(
-                            userInfoState,
-                            DocType.VERIFICATION_REPORT,
-                            projectProposalStage
+                          !(
+                            formViewPermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            ) &&
+                            getLatestReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
                           )
                         }
                         size="small"
