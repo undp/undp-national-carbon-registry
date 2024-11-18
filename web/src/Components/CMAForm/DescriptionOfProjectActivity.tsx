@@ -45,11 +45,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { post } = useConnection();
 
   const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
+  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
+  const [cities, setCities] = useState<{ [key: number]: string[] }>({});
 
   const [selectedYears, setSelectedYears] = useState<any[]>([]);
+
   const getProvinces = async () => {
     try {
       const { data } = await post('national/location/province');
@@ -60,7 +61,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     }
   };
 
-  const getDistricts = async (provinceName: string) => {
+  const getDistricts = async (provinceName: string, index: number) => {
     try {
       const { data } = await post('national/location/district', {
         filterAnd: [
@@ -72,13 +73,13 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
         ],
       });
       const tempDistricts = data.map((districtData: any) => districtData.districtName);
-      setDistricts(tempDistricts);
+      setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getDivisions = async (districtName: string) => {
+  const getDivisions = async (districtName: string, index: number) => {
     try {
       const { data } = await post('national/location/division', {
         filterAnd: [
@@ -91,27 +92,27 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       });
 
       const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      setDsDivisions(tempDivisions);
+      setDsDivisions((prev2) => ({ ...prev2, [index]: tempDivisions }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getCities = async (division?: string) => {
+  const getCities = async (division: string, index: number) => {
     try {
-      // const { data } = await post('national/location/city', {
-      //   filterAnd: [
-      //     {
-      //       key: 'divisionName',
-      //       operation: '=',
-      //       value: division,
-      //     },
-      //   ],
-      // });
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
-      setCities(tempCities);
+      setCities((prev3) => ({ ...prev3, [index]: tempCities }));
     } catch (error) {
       console.log(error);
     }
@@ -119,19 +120,21 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
     // form.setFieldValue('totalCreditingYears', 1)
     form.setFieldValue('totalEstimatedGHGERs', 0);
   }, []);
 
-  const onProvinceSelect = async (value: any) => {
-    getDistricts(value);
-    try {
-    } catch (error) {}
+  const onProvinceSelect = async (value: any, index: number) => {
+    getDistricts(value, index);
   };
 
-  const onDistrictSelect = (value: string) => {
-    getDivisions(value);
+  const onDistrictSelect = (value: string, index: number) => {
+    getDivisions(value, index);
+  };
+
+  const onDivisionSelect = (value: string, index: number) => {
+    getCities(value, index);
   };
 
   const calculateAvgAnnualERs = () => {
@@ -203,7 +206,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               email: item?.email,
               contactPerson: item?.contactPerson,
               title: item?.title,
-              // role: item?.roleInTheProject,
+              role: item?.roleInTheProject,
               telephone: item?.telephone,
               fax: item?.fax,
               address: item?.address,
@@ -1378,7 +1381,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       >
                         <Select
                           size="large"
-                          onChange={onProvinceSelect}
+                          onChange={(value) => onProvinceSelect(value, 0)}
                           placeholder={t('CMAForm:provincePlaceholder')}
                           disabled={disableFields}
                         >
@@ -1415,10 +1418,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         <Select
                           size="large"
                           placeholder={t('CMAForm:districtPlaceholder')}
-                          onSelect={onDistrictSelect}
+                          onSelect={(value) => onDistrictSelect(value, 0)}
                           disabled={disableFields}
                         >
-                          {districts?.map((district: string, index: number) => (
+                          {districts[0]?.map((district: string, index: number) => (
                             <Select.Option key={district + index} value={district}>
                               {district}
                             </Select.Option>
@@ -1451,8 +1454,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           size="large"
                           placeholder={t('CMAForm:dsDivisionPlaceholder')}
                           disabled={disableFields}
+                          onSelect={(value) => onDivisionSelect(value, 0)}
                         >
-                          {dsDivisions.map((division: string, index: number) => (
+                          {dsDivisions[0]?.map((division: string, index: number) => (
                             <Select.Option value={division} key={division + index}>
                               {division}
                             </Select.Option>
@@ -1486,7 +1490,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           placeholder={t('CMAForm:cityPlaceholder')}
                           disabled={disableFields}
                         >
-                          {cities.map((city: string, index) => (
+                          {cities[0]?.map((city: string, index) => (
                             <Select.Option value={city} key={city + index}>
                               {city}
                             </Select.Option>
@@ -1703,6 +1707,15 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 // type="dashed"
                                 onClick={() => {
                                   remove(name);
+                                  if (districts[name + 1]) {
+                                    delete districts[name + 1];
+                                  }
+                                  if (dsDivisions[name + 1]) {
+                                    delete dsDivisions[name + 1];
+                                  }
+                                  if (cities[name + 1]) {
+                                    delete cities[name + 1];
+                                  }
                                 }}
                                 size="large"
                                 className="addMinusBtn"
@@ -1779,7 +1792,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 >
                                   <Select
                                     size="large"
-                                    onChange={onProvinceSelect}
+                                    onChange={(value) => onProvinceSelect(value, name + 1)}
                                     placeholder={t('CMAForm:provincePlaceholder')}
                                     disabled={disableFields}
                                   >
@@ -1818,10 +1831,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   <Select
                                     size="large"
                                     placeholder={t('CMAForm:districtPlaceholder')}
-                                    onSelect={onDistrictSelect}
+                                    onSelect={(value) => onDistrictSelect(value, name + 1)}
                                     disabled={disableFields}
                                   >
-                                    {districts?.map((district: string, index: number) => (
+                                    {districts[name + 1]?.map((district: string, index: number) => (
                                       <Select.Option key={name + district + index} value={district}>
                                         {district}
                                       </Select.Option>
@@ -1856,12 +1869,18 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     size="large"
                                     placeholder={t('CMAForm:dsDivisionPlaceholder')}
                                     disabled={disableFields}
+                                    onSelect={(value) => onDivisionSelect(value, name + 1)}
                                   >
-                                    {dsDivisions.map((division: string, index: number) => (
-                                      <Select.Option value={division} key={name + division + index}>
-                                        {division}
-                                      </Select.Option>
-                                    ))}
+                                    {dsDivisions[name + 1]?.map(
+                                      (division: string, index: number) => (
+                                        <Select.Option
+                                          value={division}
+                                          key={name + division + index}
+                                        >
+                                          {division}
+                                        </Select.Option>
+                                      )
+                                    )}
                                   </Select>
                                 </Form.Item>
                                 <Form.Item
@@ -1893,7 +1912,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     placeholder={t('CMAForm:cityPlaceholder')}
                                     disabled={disableFields}
                                   >
-                                    {cities.map((city: string, index: number) => (
+                                    {cities[name + 1]?.map((city: string, index: number) => (
                                       <Select.Option value={city} key={name + city + index}>
                                         {city}
                                       </Select.Option>
@@ -2182,7 +2201,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       {/* </Form.Item> */}
                     </div>
 
-                    <div style={{ fontSize: '12px', marginLeft: '8px' }}>
+                    <div style={{ fontSize: '12px', marginLeft: '8px', marginTop: '36px' }}>
                       {form.getFieldValue('projectTrack') === 'TRACK_2' && (
                         <>
                           *Issued carbon credits from project will only be used for internal

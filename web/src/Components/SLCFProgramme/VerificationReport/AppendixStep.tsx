@@ -44,12 +44,6 @@ export const AppendixStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                if (FormMode.VIEW !== formMode) {
-                  values.optionalDocuments = await fileUploadValueExtract(
-                    values,
-                    'optionalDocuments'
-                  );
-                }
                 onFinish({ annexures: values });
               }}
             >

@@ -9,6 +9,7 @@ import {
   ProgrammeStatus,
   ProgrammeCategory,
   ProjectProposalStage,
+  getProjectCategory,
 } from '../Enums/programmeStage.enum';
 import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
 import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
@@ -138,7 +139,7 @@ export const getCreditTypeTagType = (stage: CreditTypeSl) => {
     case CreditTypeSl.TRACK_1:
       return 'orange';
     case CreditTypeSl.TRACK_2:
-      return 'purple';
+      return 'lime';
     default:
       return 'default';
   }
@@ -313,6 +314,10 @@ export interface ProgrammeSl {
   environmentalAssessmentRegistrationNo: any;
   article6trade: boolean;
   registrationCertificateUrl: string;
+  district?: string;
+  dsDivision?: string;
+  province?: string;
+  additionalDocuments?: [];
 }
 
 export interface ProgrammeR extends Programme {
@@ -376,22 +381,31 @@ export const getGeneralFields = (
   return res;
 };
 
+const safeNumber = (value: any) => {
+  const num = Number(value);
+  return isNaN(num) ? 0 : num; // Return 0 if conversion results in NaN
+};
+
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
     registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
     projectStatus: programme.projectStatus,
-    projectCategory: programme.projectCategory,
+    projectCategory: getProjectCategory[programme.projectCategory],
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
     purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
-      programme.creditBalance +
-      programme.creditFrozen +
-      programme.creditRetired +
-      programme.creditTransferred,
+      safeNumber(programme.creditBalance) +
+      safeNumber(programme.creditFrozen) +
+      safeNumber(programme.creditRetired) +
+      safeNumber(programme.creditTransferred),
     creditRetired: programme.creditRetired,
     creditBalance: programme.creditBalance,
+    dsDivision: programme.dsDivision,
+    district: programme.district,
+    province: programme.province,
+    additionalDocuments: programme.additionalDocuments,
   };
 
   return res;

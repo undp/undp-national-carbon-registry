@@ -24,18 +24,6 @@ export const IntroductionStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
-                values.creditionPeriodStart = moment(values?.creditionPeriodStart)
-                  .startOf('day')
-                  .valueOf();
-                values.creditionPeriodEnd = moment(values?.creditionPeriodEnd)
-                  .startOf('day')
-                  .valueOf();
-                values.periodVerifiedStart = moment(values?.periodVerifiedStart)
-                  .startOf('day')
-                  .valueOf();
-                values.periodVerifiedEnd = moment(values?.periodVerifiedEnd)
-                  .startOf('day')
-                  .valueOf();
                 onValueChange({ introduction: values });
                 next();
               }}

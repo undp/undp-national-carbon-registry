@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from "@nestjs/swagger";
 import {
   ArrayMinSize,
   IsArray,
@@ -31,6 +35,7 @@ import { ProjectGeography } from "src/enum/projectGeography.enum";
 import { ProjectStatus } from "src/enum/projectStatus.enum";
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { CreditType } from "../enum/creditType.enum";
+import { IsTwoDecimalPoints } from "src/util/twoDecimalPointNumber.decorator";
 
 export class ProgrammeSlDto {
   @ApiProperty()
@@ -99,12 +104,13 @@ export class ProgrammeSlDto {
   )
   @IsArray()
   @IsNotEmpty({ each: true })
+  @IsTwoDecimalPoints({ each : true })
   landExtent?: number[];
 
   @ApiPropertyOptional()
   @ValidateIf((o) => o.projectCategory === ProjectCategory.RENEWABLE_ENERGY)
-  @IsNumber()
-  proposedProjectCapacity?: number;
+  @IsString()
+  proposedProjectCapacity?: string;
 
   @ApiPropertyOptional()
   @ValidateIf(
@@ -129,9 +135,15 @@ export class ProgrammeSlDto {
   @IsNotEmpty()
   @IsEnum(ProjectStatus, {
     message:
-      "Invalid project status. Supported following project status:" + Object.values(ProjectStatus),
+      "Invalid project status. Supported following project status:" +
+      Object.values(ProjectStatus),
   })
   projectStatus: ProjectStatus;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  projectStatusDescription?: string;
 
   @ApiProperty({ enum: CreditType })
   @IsNotEmpty()

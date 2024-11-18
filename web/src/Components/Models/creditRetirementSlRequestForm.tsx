@@ -492,7 +492,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
               name={'creditAmount'}
               rules={[
                 {
-                  pattern: new RegExp(/^[+]?([.]\d+|\d+[.]?\d*)$/g),
+                  pattern: /^[1-9]\d*$/,
                   message: 'Credit Should be a positive number',
                 },
                 {
@@ -524,7 +524,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
                 placeholder=""
                 controls={false}
                 onKeyPress={(event) => {
-                  if (!/[0-9\.]/.test(event.key)) {
+                  if (!/^\d$/.test(event.key)) {
                     event.preventDefault();
                   }
                 }}

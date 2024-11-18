@@ -38,6 +38,7 @@ import {
   QrcodeOutlined,
   SafetyOutlined,
   TransactionOutlined,
+  FileOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -115,6 +116,7 @@ import { CreditRetirementSlRequestForm } from '../../Models/creditRetirementSlRe
 import { HttpStatusCode } from 'axios';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -152,6 +154,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
   const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
   const [verificationHistoryData, setVerificationHistoryData] = useState<any>([]);
+  const [verificationHistoryDataLoaded, setVerificationHistoryDataLoaded] = useState(false);
   const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
   const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
   const { id } = useParams();
@@ -241,6 +244,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       Number(
         (
           numIsExist(d.creditEst) -
+          numIsExist(d?.creditBalance) -
           numIsExist(d.creditTransferred) -
           numIsExist(d.creditRetired) -
           frozen
@@ -600,6 +604,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     navigate(`/programmeManagementSLCF/monitoringReport/${id}`, {
       state: {
         mode: FormMode.CREATE,
+        docId: null,
       },
     });
   };
@@ -1704,71 +1709,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       const response: any = await get(`national/verification?programmeId=${programmeId}`);
       if (response) {
         setVerificationHistoryData(response.data);
+        setVerificationHistoryDataLoaded(true);
         console.log(response);
       }
-      // const groupedByActionId = response.data.reduce((result: any, obj: any) => {
-      //   const actionId = obj.id;
-      //   if (!result[actionId]) {
-      //     result[actionId] = [];
-      //   }
-      //   result[actionId].push(obj);
-      //   return result;
-      // }, {});
-
-      // ndcActionDocumentData?.map((ndcData: any) => {
-      //   if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
-      //     if (ndcData?.type === DocType.MONITORING_REPORT) {
-      //       groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
-      //     } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
-      //       groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
-      //     }
-      //   }
-      // });
-
-      // let monitoringVisible = false;
-      // let verificationVisible = false;
-      // if (groupedByActionId && ndcActionDocumentDataLoaded) {
-      //   Object.values(groupedByActionId).forEach((element: any) => {
-      //     element.forEach((item: any) => {
-      //       if (!item.monitoringReport) {
-      //         monitoringVisible = true;
-      //       }
-      //       if (!item.verificationReport) {
-      //         verificationVisible = true;
-      //       }
-      //     });
-      //   });
-
-      //   setUpcomingTimeLineMonitoringVisible(monitoringVisible);
-      //   setUpcomingTimeLineVerificationVisible(verificationVisible);
-      // }
-
-      // const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
-      //   status: 'process',
-      //   title: actionId,
-      //   subTitle: '',
-      //   description: (
-      //     <NdcActionBody
-      //       data={groupedByActionId[actionId]}
-      //       programmeId={data?.programmeId}
-      //       programmeOwnerId={programmeOwnerId}
-      //       canUploadMonitorReport={uploadMonitoringReport}
-      //       getProgrammeDocs={() => getDocuments(String(data?.programmeId))}
-      //       ministryLevelPermission={ministryLevelPermission}
-      //       translator={translator}
-      //       onFinish={(d: any) => {
-      //         setData(d);
-      //       }}
-      //       programme={data}
-      //     />
-      //   ),
-      //   icon: (
-      //     <span className="step-icon freeze-step">
-      //       <Icon.Circle />
-      //     </span>
-      //   ),
-      // }));
-      // setNdcActionHistoryData(mappedElements);
     } catch (error: any) {
       console.log('Error in getting programme', error);
       message.open({
@@ -1937,7 +1880,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       }
     } else if (userInfoState && data.projectProposalStage === ProjectProposalStage.AUTHORISED) {
-      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      if (
+        userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+        ((verificationHistoryData &&
+          verificationHistoryData.length > 0 &&
+          (verificationHistoryData[verificationHistoryData.length - 1].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+            verificationHistoryData[verificationHistoryData.length - 1].status ===
+              VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
+          (!verificationHistoryData.length && verificationHistoryDataLoaded))
+      ) {
         actionBtns.push(
           <Button
             type="primary"
@@ -1962,11 +1914,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     ) {
       const text = t('projectDetailsView:' + k);
       if (k === 'projectStatus') {
-        generalInfo[text] = (
-          <Tag color={getProgrammeStatus(v as ProgrammeStatus)}>
-            {t(`projectDetailsView:${getStatusEnumVal(v as string)}`)}
-          </Tag>
-        );
+        generalInfo[text] = t(`projectDetailsView:${getStatusEnumVal(v as string)}`);
       } else if (k === 'projectProposalStage') {
         generalInfo[text] = (
           <Tag color={getProjectProposalStage(v as ProjectProposalStage)}>
@@ -1975,7 +1923,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       } else if (k === 'purposeOfCreditDevelopment') {
         generalInfo[text] = (
-          <Tag className="clickable" color={getCreditTypeTagType(v as CreditTypeSl)}>
+          <Tag color={getCreditTypeTagType(v as CreditTypeSl)}>
             {addSpaces(getCreditTypeName(v as string))}
           </Tag>
         );
@@ -1988,6 +1936,31 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <span>
             <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
             <span>{v as string}</span>
+          </span>
+        );
+      } else if (k === 'additionalDocuments') {
+        generalInfo[text] = (
+          <span>
+            {v?.length > 0
+              ? v.map((fValue: string, index: number) => {
+                  return (
+                    <div style={{ marginBottom: 2 }}>
+                      <a href={fValue} target="_blank" rel="noopener noreferrer">
+                        <FileOutlined
+                          style={{
+                            cursor: 'pointer',
+                            margin: '0px 0px 1.5px 0px',
+                            fontSize: '110%',
+                            marginRight: 5,
+                          }}
+                          // onClick={() => onclick()}
+                        />
+                        {`Document  ${index + 1}`}
+                      </a>
+                    </div>
+                  );
+                })
+              : '-'}
           </span>
         );
       } else {

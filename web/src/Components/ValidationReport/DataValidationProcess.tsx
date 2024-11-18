@@ -67,7 +67,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
       render: (_: any, record: any, index: number) => (
         <>
           <Form.Item name={record.projectActivity} rules={requiredRule}>
-            <TextArea size="large" rows={4} />
+            <TextArea size="large" rows={4} disabled={FormMode.VIEW === formMode} />
           </Form.Item>
           <Form.Item hidden name={['applicabilityCriteria', index, 'criteriaNo']}></Form.Item>
         </>
@@ -432,7 +432,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
             >
               <h4>4.1 {t('validationReport:projectDetails')}</h4>
 
-              <Col md={24} xl={24}>
+              <Col xl={24}>
                 <Form.Item
                   label={`4.1.1 ${t('validationReport:generalDescription')}`}
                   name="generalDescription"
@@ -450,17 +450,18 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 )}`}</h4>
                 <Form.Item>
                   <Row>
-                    <Col md={22} xl={22}>
+                    <Col xl={24}>
                       <Row className="table-header" justify={'space-between'}>
-                        <Col md={6} xl={6} style={{ paddingLeft: 10 }}>
+                        <Col md={3} xl={3} style={{ paddingLeft: 10 }}>
                           {t('validationReport:siteNo')}.
                         </Col>
-                        <Col md={3} xl={3} className="total-cols">
+                        <Col md={5} xl={5} className="total-cols">
                           {t('validationReport:location')}
                         </Col>
-                        <Col md={3} xl={3}>
+                        <Col md={5} xl={5}>
                           {t('validationReport:capacity')}
                         </Col>
+                        <Col md={3} xl={3}></Col>
                       </Row>
                       <Form.List name="employedTechnologies">
                         {(employedTechnology, { add, remove }) => (
@@ -468,8 +469,8 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                             {employedTechnology.map(
                               ({ key, name, fieldKey, ...restField }, index: number) => (
                                 <>
-                                  <Row justify={'space-between'} align={'middle'}>
-                                    <Col md={6} xl={6} className="col1">
+                                  <Row justify={'space-between'} align={'top'}>
+                                    <Col md={3} xl={3} className="col1">
                                       <Form.Item
                                         {...restField}
                                         name={[name, 'siteNo']}
@@ -477,10 +478,13 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         rules={requiredRule}
                                         className="full-width-form-item"
                                       >
-                                        <InputNumber />
+                                        <InputNumber
+                                          className="full-width-form-item"
+                                          size="large"
+                                        />
                                       </Form.Item>
                                     </Col>
-                                    <Col md={3} xl={3}>
+                                    <Col md={5} xl={5}>
                                       <Form.Item
                                         {...restField}
                                         name={[name, 'location']}
@@ -488,10 +492,10 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         rules={requiredRule}
                                         className="full-width-form-item"
                                       >
-                                        <Input />
+                                        <Input size="large" />
                                       </Form.Item>
                                     </Col>
-                                    <Col md={3} xl={3}>
+                                    <Col md={5} xl={5}>
                                       <Form.Item
                                         {...restField}
                                         name={[name, 'capacity']}
@@ -501,8 +505,34 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         <InputNumber
                                           className="full-width-form-item"
                                           onChange={calculateCapacity}
+                                          size="large"
                                         />
                                       </Form.Item>
+                                    </Col>
+                                    <Col md={3} xl={3} style={{ marginTop: 0 }}>
+                                      <div style={{ display: 'flex', justifyContent: 'left' }}>
+                                        {employedTechnology.length > 1 && (
+                                          <Button
+                                            onClick={() => {
+                                              remove(name);
+                                            }}
+                                            size="small"
+                                            className="addMinusBtn"
+                                            style={{ marginRight: 2 }}
+                                            icon={<MinusOutlined />}
+                                          ></Button>
+                                        )}
+                                        {index + 1 === employedTechnology.length && (
+                                          <Button
+                                            onClick={() => {
+                                              add();
+                                            }}
+                                            size="large"
+                                            className="addMinusBtn"
+                                            icon={<PlusOutlined />}
+                                          ></Button>
+                                        )}
+                                      </div>
                                     </Col>
                                   </Row>
                                 </>
@@ -512,7 +542,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         )}
                       </Form.List>
                     </Col>
-                    <Col
+                    {/* <Col
                       md={2}
                       xl={2}
                       style={{
@@ -530,20 +560,21 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         style={{ marginBottom: 26 }}
                         icon={<PlusOutlined />}
                       ></Button>
-                    </Col>
+                    </Col> */}
                   </Row>
                   <Row justify={'space-between'}>
-                    <Col md={22} xl={22}>
+                    <Col md={24} xl={24}>
                       <Row style={{ width: '100%' }} justify={'space-between'}>
-                        <Col md={6} xl={6}>
+                        <Col md={3} xl={3}>
                           {t('validationReport:totalCapacity')}
                         </Col>
-                        <Col md={3} xl={3}></Col>
-                        <Col md={3} xl={3}>
+                        <Col md={5} xl={5}></Col>
+                        <Col md={5} xl={5}>
                           <Form.Item name="totalCapacity">
-                            <Input disabled />
+                            <Input size="large" disabled />
                           </Form.Item>
                         </Col>
+                        <Col md={3} xl={3}></Col>
                       </Row>
                     </Col>
 

@@ -14,15 +14,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
+import {
+  extractFilePropertiesFromLink,
+  fileUploadValueExtract,
+} from '../../../Utils/utilityHelper';
+import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries } = props;
   const navigationLocation = useLocation();
-  const { mode } = navigationLocation.state || {};
+  const { mode, docId } = navigationLocation.state || {};
   const navigate = useNavigate();
   const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [current, setCurrent] = useState(0);
+  const [verifiedScer, setVerifiedScer] = useState(0);
 
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
@@ -94,7 +99,73 @@ const StepperComponent = (props: any) => {
     if (FormMode.VIEW === mode) {
       navigateToDetailsPage();
     } else {
-      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      const content = { ...formValues, ...newValues };
+
+      content.projectDetails.completionDate = moment(content?.projectDetails?.completionDate)
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.versionDate = moment(content?.projectDetails?.versionDate)
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.monitoringPeriodStart = moment(
+        content?.projectDetails?.monitoringPeriodStart
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectDetails.monitoringPeriodEnd = moment(
+        content?.projectDetails?.monitoringPeriodEnd
+      )
+        .startOf('day')
+        .valueOf();
+
+      content.introduction.creditionPeriodStart = moment(
+        content?.introduction?.creditionPeriodStart
+      )
+        .startOf('day')
+        .valueOf();
+      content.introduction.creditionPeriodEnd = moment(content?.introduction?.creditionPeriodEnd)
+        .startOf('day')
+        .valueOf();
+      content.introduction.periodVerifiedStart = moment(content?.introduction?.periodVerifiedStart)
+        .startOf('day')
+        .valueOf();
+      content.introduction.periodVerifiedEnd = moment(content?.introduction?.periodVerifiedEnd)
+        .startOf('day')
+        .valueOf();
+
+      content.annexures.optionalDocuments = await fileUploadValueExtract(
+        content?.annexures,
+        'optionalDocuments'
+      );
+
+      content.verificationFinding.optionalDocuments = await fileUploadValueExtract(
+        content?.verificationFinding,
+        'optionalDocuments'
+      );
+
+      content?.verificationFinding?.siteLocations?.forEach(async (val: any) => {
+        val.commissioningDate = moment(val?.commissioningDate).startOf('day').valueOf();
+      });
+
+      content.verificationOpinion.signature1 = await fileUploadValueExtract(
+        content?.verificationOpinion,
+        'signature1'
+      );
+      content.verificationOpinion.signature2 = await fileUploadValueExtract(
+        content?.verificationOpinion,
+        'signature2'
+      );
+      content.verificationOpinion.dateOfSignature1 = moment(
+        content?.verificationOpinion?.dateOfSignature1
+      )
+        .startOf('day')
+        .valueOf();
+      content.verificationOpinion.dateOfSignature2 = moment(
+        content?.verificationOpinion?.dateOfSignature2
+      )
+        .startOf('day')
+        .valueOf();
+      const body = { content: JSON.stringify(content), programmeId: id };
       try {
         const res = await post('national/verification/createVerificationReport', body);
         if (res?.statusText === 'SUCCESS') {
@@ -145,116 +216,120 @@ const StepperComponent = (props: any) => {
   const prev = () => {
     setCurrent(current - 1);
   };
+  const safeNumber = (value: any) => Number(value) || 0;
 
   const getProjectById = async (programId: any) => {
     try {
       const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
       });
-
-      const {
-        data: { user },
-      } = await get('national/User/profile');
-      console.log('-----response-------', data, user);
-
+      const creditReceived =
+        safeNumber(data.creditBalance) +
+        safeNumber(data.creditFrozen) +
+        safeNumber(data.creditRetired) +
+        safeNumber(data.creditTransferred);
+      const creditEst = safeNumber(data.creditEst);
+      setVerifiedScer(creditEst - creditReceived);
       projectDetailsForm.setFieldsValue({
-        projectName: data?.title,
+        projectTitle: data?.title,
       });
     } catch (error) {
       console.log('error');
     }
   };
 
-  const getLatestVerificationReport = async (programId: any) => {
+  const getLatestReports = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
-        programmeId: programId,
-        docType: DocumentTypeEnum.VERIFICATION_REPORT,
-      });
-      if (data && data?.content) {
-        setReportId(data?.id);
-        setVerificationRequestId(data?.verificationRequestId);
-        const content = data?.content;
-        projectDetailsForm.setFieldsValue({
-          ...content?.projectDetails,
-          completionDate: moment(content?.projectDetails?.completionDate),
-          versionDate: moment(content?.projectDetails?.versionDate),
-          monitoringPeriodStart: moment(content?.projectDetails?.monitoringPeriodStart),
-          monitoringPeriodEnd: moment(content?.projectDetails?.monitoringPeriodEnd),
+      if (docId) {
+        const { data } = await post('national/programmeSl/getDocumentById', {
+          docId: docId,
         });
-        introductionForm.setFieldsValue({
-          ...content?.introduction,
-          creditionPeriodStart: moment(content?.introduction?.creditionPeriodStart),
-          creditionPeriodEnd: moment(content?.introduction?.creditionPeriodEnd),
-          periodVerifiedStart: moment(content?.introduction?.periodVerifiedStart),
-          periodVerifiedEnd: moment(content?.introduction?.periodVerifiedEnd),
-        });
-        methodologyForm.setFieldsValue({
-          ...content?.methodology,
-        });
-        verificationFindingForm.setFieldsValue({
-          ...content?.verificationFinding,
-          optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
-            (document: string, index: number) => {
+        console.log(data);
+        if (data && data?.content) {
+          setReportId(data?.id);
+          setVerificationRequestId(data?.verificationRequestId);
+          const content = data?.content;
+          projectDetailsForm.setFieldsValue({
+            ...content?.projectDetails,
+            completionDate: moment(content?.projectDetails?.completionDate),
+            versionDate: moment(content?.projectDetails?.versionDate),
+            monitoringPeriodStart: moment(content?.projectDetails?.monitoringPeriodStart),
+            monitoringPeriodEnd: moment(content?.projectDetails?.monitoringPeriodEnd),
+          });
+          introductionForm.setFieldsValue({
+            ...content?.introduction,
+            creditionPeriodStart: moment(content?.introduction?.creditionPeriodStart),
+            creditionPeriodEnd: moment(content?.introduction?.creditionPeriodEnd),
+            periodVerifiedStart: moment(content?.introduction?.periodVerifiedStart),
+            periodVerifiedEnd: moment(content?.introduction?.periodVerifiedEnd),
+          });
+          methodologyForm.setFieldsValue({
+            ...content?.methodology,
+          });
+          verificationFindingForm.setFieldsValue({
+            ...content?.verificationFinding,
+            optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+            siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
               return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
+                ...val,
+                commissioningDate: moment(val?.commissioningDate),
               };
-            }
-          ),
-          siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
-            return {
-              ...val,
-              commissioningDate: moment(val?.commissioningDate),
-            };
-          }),
-        });
+            }),
+          });
 
-        verificationOpinionForm.setFieldsValue({
-          ...content?.verificationOpinion,
-          dateOfSignature1: moment(content?.verificationOpinion?.dateOfSignature1),
-          dateOfSignature2: moment(content?.verificationOpinion?.dateOfSignature2),
-          signature1: data?.content?.verificationOpinion?.signature1?.map(
-            (document: string, index: number) => {
-              return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
-              };
-            }
-          ),
-          signature2: data?.content?.verificationOpinion?.signature2?.map(
-            (document: string, index: number) => {
-              return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
-              };
-            }
-          ),
-        });
+          verificationOpinionForm.setFieldsValue({
+            ...content?.verificationOpinion,
+            dateOfSignature1: moment(content?.verificationOpinion?.dateOfSignature1),
+            dateOfSignature2: moment(content?.verificationOpinion?.dateOfSignature2),
+            signature1: data?.content?.verificationOpinion?.signature1?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+            signature2: data?.content?.verificationOpinion?.signature2?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+          });
 
-        referenceForm.setFieldsValue({
-          ...content?.reference,
-        });
+          referenceForm.setFieldsValue({
+            ...content?.reference,
+          });
 
-        appendixForm.setFieldsValue({
-          ...content?.annexures,
-          optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
-            (document: string, index: number) => {
-              return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
-              };
-            }
-          ),
-        });
+          appendixForm.setFieldsValue({
+            ...content?.annexures,
+            optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+          });
+        }
       } else {
         methodologyForm.setFieldsValue({
           verificationTeamList: [
@@ -308,7 +383,7 @@ const StepperComponent = (props: any) => {
   };
 
   useEffect(() => {
-    getLatestVerificationReport(id);
+    getLatestReports(id);
     getProjectById(id);
   }, []);
 
@@ -330,6 +405,7 @@ const StepperComponent = (props: any) => {
           next={next}
           cancel={navigateToDetailsPage}
           countries={countries}
+          verifiedScer={verifiedScer}
           onValueChange={onValueChange}
         />
       ),

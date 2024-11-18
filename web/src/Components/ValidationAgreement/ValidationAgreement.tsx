@@ -13,6 +13,7 @@ import { getBase64, getFileName } from '../../Definitions/Definitions/programme.
 import { RcFile, UploadFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
+import { Loading } from '../Loading/loading';
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -20,6 +21,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
+  const [loading, setLoading] = useState<boolean>(isView);
 
   const [form] = useForm();
 
@@ -116,14 +118,21 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   useEffect(() => {
     const getViewData = async () => {
       if (isView) {
-        const res = await post('national/programmeSl/getDocLastVersion', {
-          programmeId: id,
-          docType: 'validationAgreement',
-        });
+        setLoading(true);
+        try {
+          const res = await post('national/programmeSl/getDocLastVersion', {
+            programmeId: id,
+            docType: 'validationAgreement',
+          });
 
-        if (res?.statusText === 'SUCCESS') {
-          const content = JSON.parse(res?.data.content);
-          viewDataMapToFields(content);
+          if (res?.statusText === 'SUCCESS') {
+            const content = JSON.parse(res?.data.content);
+            viewDataMapToFields(content);
+          }
+        } catch (error) {
+          console.log('error', error);
+        } finally {
+          setLoading(false);
         }
       }
     };
@@ -138,32 +147,40 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
   const onFinish = async (values: any) => {
     const climateFundSignature =
-      values?.SLCFSignature && values?.SLCFSignature[0]
+      values?.SLCFSignature && values?.SLCFSignature?.length > 0 && values?.SLCFSignature[0]
         ? await convertFileToBase64(values?.SLCFSignature[0])
         : undefined;
 
     const projectParticipantSignature =
-      values?.clientSignature && values?.clientSignature[0]
+      values?.clientSignature && values?.clientSignature?.length > 0 && values?.clientSignature[0]
         ? await convertFileToBase64(values?.clientSignature[0])
         : undefined;
 
     const climateFundWitnessSignature =
-      values?.SLCFWitnessSignature && values?.SLCFWitnessSignature[0]
-        ? await convertFileToBase64(values?.clientSignature[0])
+      values?.SLCFWitnessSignature &&
+      values?.SLCFWitnessSignature?.length > 0 &&
+      values?.SLCFWitnessSignature[0]
+        ? await convertFileToBase64(values?.SLCFWitnessSignature[0])
         : undefined;
 
     const projectParticipantWitnessSignature =
-      values?.ClientWitnessSignature && values?.ClientWitnessSignature[0]
-        ? await convertFileToBase64(values?.clientSignature[0])
+      values?.ClientWitnessSignature &&
+      values?.ClientWitnessSignature?.length > 0 &&
+      values?.ClientWitnessSignature[0]
+        ? await convertFileToBase64(values?.ClientWitnessSignature[0])
         : undefined;
 
     const annexureADoc =
-      values?.annexureAadditionalDocs && values?.annexureAadditionalDocs[0]
+      values?.annexureAadditionalDocs &&
+      values?.annexureAadditionalDocs?.length > 0 &&
+      values?.annexureAadditionalDocs[0]
         ? await convertFileToBase64(values?.annexureAadditionalDocs[0])
         : undefined;
 
     const annexureBDoc =
-      values?.annexureBadditionalDocs && values?.annexureBadditionalDocs[0]
+      values?.annexureBadditionalDocs &&
+      values?.annexureAadditionalDocs?.length > 0 &&
+      values?.annexureBadditionalDocs[0]
         ? await convertFileToBase64(values?.annexureBadditionalDocs[0])
         : undefined;
 
@@ -199,6 +216,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     // }, []);
 
     try {
+      setLoading(true);
       const res = await post('national/programmeSl/createValidationAgreement', tempValues);
 
       console.log('------------res---------', res);
@@ -218,9 +236,14 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
@@ -245,10 +268,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             label="Date of Issue"
             className="date-of-issue"
             rules={[
-              // {
-              //   required: true,
-              //   // message: `Date of Issue ${t('isRequired')}`,
-              // },
+              {
+                required: true,
+                message: ``,
+              },
               {
                 validator: async (rule, value) => {
                   if (
@@ -396,7 +419,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">3. Settlement of Fees</h4>
             <div className="section-description mg-bottom-1">
-              <p>3.1 Verification fee</p>
+              <p className="settlement-fee-label">3.1 Verification fee</p>
               <div className="mg-left-1 settlement-fee">
                 Project Proponent shall pay LKR
                 <Form.Item
@@ -405,7 +428,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('validationAgreement:required')}`,
+                      message: `Verification fee ${t('isRequired')}`,
                     },
                     {
                       validator(rule, value) {

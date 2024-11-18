@@ -1,82 +1,78 @@
 Name,Country,District,Latitude,Longitude,Language
-Abanpola,LK,Kandy,7.2727,80.5687,en
-Adalathmulla,LK,Badulla,6.9738,81.0901,en
-Akmeemana,LK,Galle,6.3241,80.2164,en
-Alawathugoda,LK,Kandy,7.1735,80.5964,en
-Aluthgama,LK,Kalutara,6.4246,80.5425,en
-Ambalangoda,LK,Galle,6.2733,80.1180,en
-Ambepussa,LK,Kegalle,7.0350,80.2340,en
-Ampitiya,LK,Kandy,7.2890,80.6175,en
-Anamaduwa,LK,Puttalam,7.1480,80.6141,en
-Anuradhapura,LK,Anuradhapura,8.3139,80.3908,en
-Aranayake,LK,Kegalle,6.9748,80.5407,en
-Aralaganwila,LK,Polonnaruwa,7.0667,81.0254,en
-Athugalpura,LK,Kurunegala,7.6000,80.4000,en
-Athurugiriya,LK,Colombo,6.9529,80.3270,en
-Athurugiriya North,LK,Colombo,6.9529,80.3270,en
-Batticaloa,LK,Batticaloa,7.7126,81.3205,en
-Beliatta,LK,Hambantota,6.0514,81.0737,en
-Bentota,LK,Galle,6.8306,80.3759,en
-Biyagama,LK,Gampaha,6.3047,80.2684,en
-Bogawantalawa,LK,Nuwara Eliya,6.6067,81.1873,en
-Boralesgamuwa,LK,Colombo,6.9700,80.8507,en
-Chilaw,LK,Puttalam,7.5669,79.9792,en
-Dambulla,LK,Matale,7.4013,80.6502,en
-Dedigama,LK,Kegalle,6.9751,80.3675,en
-Dickwella,LK,Hambantota,6.0163,80.6815,en
-Dimbulagala,LK,Polonnaruwa,7.0662,81.0318,en
-Dodangoda,LK,Kalutara,6.4300,80.3500,en
-Egodauyana,LK,Gampaha,6.2983,80.1283,en
-Gampaha,LK,Gampaha,6.9678,79.9755,en
-Gangawatakorale,LK,Kandy,7.2944,80.6432,en
-Ginigathena,LK,Nuwara Eliya,6.8233,80.5744,en
-Gonapola,LK,Ratnapura,6.7583,80.3400,en
-Hambantota Town,LK,Hambantota,6.1242,81.1232,en
-Hikkaduwa,LK,Galle,6.2492,80.0991,en
-Hiripitiya,LK,Kegalle,6.9499,80.3300,en
-Hiriyala West,LK,Kurunegala,7.5711,80.3925,en
-Ihalakottegama,LK,Matale,7.3975,80.6344,en
-Ihalagoda South,LK,Ratnapura,6.7538,80.3719,en
-Ihalagoda West,LK,Ratnapura,6.7538,80.3719,en
-Kadawatha North,LK,Gampaha,6.9598,79.9771,en
-Kadawatha South,LK,Gampaha,6.9598,79.9771,en
-Kahawatta East,LK,Ratnapura,6.6725,80.3685,en
-Kahawatta West,LK,Ratnapura,6.6725,80.3685,en
-Kakandeniya East,LK,Kurunegala,7.6000,80.4000,en
-Kakandeniya West,LK,Kurunegala,7.6000,80.4000,en
-Kalutara Town,LK,Kalutara,6.5800,79.9607,en
-Kalutara North,LK,Kalutara,6.5833,79.9572,en
-Kalutara South,LK,Kalutara,6.5750,79.9653,en
-Kalutara West,LK,Kalutara,6.5850,79.9705,en
-Kanthale,LK,Trincomalee,8.5788,81.2302,en
-Karuwalagaswewa,LK,Puttalam,7.9356,79.8393,en
-Katana,LK,Gampaha,7.2778,79.8833,en
-Keppetipola,LK,Badulla,6.9320,80.9044,en
-Kiribathgoda,LK,Gampaha,6.9773,79.9283,en
-Kolonnawa,LK,Colombo,6.9333,79.8947,en
-Kurunegala,LK,Kurunegala,7.4864,80.3647,en
-Maharagama,LK,Colombo,6.8522,79.9249,en
-Malwana,LK,Gampaha,6.9431,80.0018,en
-Matale,LK,Matale,7.4675,80.6234,en
-Matugama,LK,Kalutara,6.5230,80.1134,en
-Moratuwa,LK,Colombo,6.7730,79.8816,en
-Mulleriyawa,LK,Colombo,6.9271,79.8971,en
-Nawalapitiya,LK,Nuwara Eliya,7.0538,80.5353,en
-Negombo,LK,Gampaha,7.2008,79.8737,en
-Nittambuwa,LK,Gampaha,7.1412,80.1010,en
-Padiyapelella,LK,Nuwara Eliya,7.1075,80.8622,en
-Pannala,LK,Kurunegala,7.3280,80.0218,en
-Peliyagoda,LK,Gampaha,6.9553,79.8971,en
-Pettah,LK,Colombo,6.9340,79.8528,en
-Puttalam,LK,Puttalam,8.0330,79.8264,en
-Ratnapura,LK,Ratnapura,6.6828,80.3991,en
-Ruwanwella,LK,Kegalle,7.0459,80.2537,en
-Samanthurai,LK,Batticaloa,7.3646,81.8043,en
-Seethawaka,LK,Colombo,6.9521,80.2180,en
-Sri Jayawardenepura Kotte,LK,Colombo,6.9022,79.9083,en
-Talangama,LK,Colombo,6.9000,79.9183,en
-Tissamaharama,LK,Hambantota,6.2791,81.2871,en
-Trincomalee,LK,Trincomalee,8.5760,81.2335,en
-Udugama,LK,Galle,6.2866,80.1596,en
-Weligama,LK,Matara,5.9774,80.4288,en
-Welimada,LK,Badulla,6.8956,80.9135,en
+Addalachchenai,LK,Ampara,6.8956,80.9135,en
+Akkaraipattu,LK,Ampara,6.8956,80.9135,en
+Ampara,LK,Ampara,6.8956,80.9135,en 
+Galnewa,LK,Anuradhapura,6.8956,80.9135,en
+Galenbindunuwewa,LK,Anuradhapura,6.8956,80.9135,en
+Horowpothana,LK,Anuradhapura,6.8956,80.9135,en 
+Badulla,LK,Badulla,6.8956,80.9135,en 
+Bandarawela,LK,Badulla,6.8956,80.9135,en
+Ella,LK,Badulla,6.8956,80.9135,en
+Eravur Pattu,LK,Batticaloa,6.8956,80.9135,en
+Kattankudy,LK,Batticaloa,6.8956,80.9135,en
+Koralai Pattu,LK,Batticaloa,6.8956,80.9135,en
+Colombo,LK,Colombo,6.8956,80.9135,en
+Dehiwala,LK,Colombo,6.8956,80.9135,en
+Homagama,LK,Colombo,6.8956,80.9135,en
+Akmeemana,LK,Galle,6.8956,80.9135,en 
+Ambalangoda,LK,Galle,6.8956,80.9135,en 
+Baddegama,LK,Galle,6.8956,80.9135,en
+Attanagalla,LK,Gampaha,6.8956,80.9135,en
+Biyagama,LK,Gampaha,6.8956,80.9135,en
+Divulapitiya,LK,Gampaha,6.8956,80.9135,en
+Ambalantota,LK,Hambantota,6.8956,80.9135,en
+Angunakolapelessa,LK,Hambantota,6.8956,80.9135,en
+Beliatta,LK,Hambantota,6.8956,80.9135,en
+Delft,LK,Jaffna,6.8956,80.9135,en
+Jaffna,LK,Jaffna,6.8956,80.9135,en
+Nallur,LK,Jaffna,6.8956,80.9135,en
+Agalawatta,LK,Kalutara,6.8956,80.9135,en
+Bandaragama,LK,Kalutara,6.8956,80.9135,en
+Beruwala,LK,Kalutara,6.8956,80.9135,en
+Akurana,LK,Kandy,6.8956,80.9135,en 
+Delthota,LK,Kandy,6.8956,80.9135,en 
+Doluwa,LK,Kandy,6.8956,80.9135,en
+Aranayaka,LK,Kegalle,6.8956,80.9135,en
+Bulathkohupitiya,LK,Kegalle,6.8956,80.9135,en
+Dehiovita,LK,Kegalle,6.8956,80.9135,en
+Kandavalai,LK,Kilinochchi,6.8956,80.9135,en
+Karachchi,LK,Kilinochchi,6.8956,80.9135,en
+Pachchilaipalli,LK,Kilinochchi,6.8956,80.9135,en
+Alawwa,LK,Kurunegala,6.8956,80.9135,en
+Ambanpola,LK,Kurunegala,6.8956,80.9135,en
+Bamunakotuwa,LK,Kurunegala,6.8956,80.9135,en
+Madhu,LK,Mannar,6.8956,80.9135,en
+Mannar,LK,Mannar,6.8956,80.9135,en
+Manthai West,LK,Mannar,6.8956,80.9135,en
+Ambanganga Korale,LK,Matale,6.8956,80.9135,en
+Dambulla,LK,Matale,6.8956,80.9135,en
+Galewela,LK,Matale,6.8956,80.9135,en
+Akuressa,LK,Matara,6.8956,80.9135,en
+Athuraliya,LK,Matara,6.8956,80.9135,en
+Devinuwara,LK,Matara,6.8956,80.9135,en
+Badalkumbura,LK,Moneragala,6.8956,80.9135,en
+Bibile,LK,Moneragala,6.8956,80.9135,en
+Buttala,LK,Moneragala,6.8956,80.9135,en
+Manthai East,LK,Mullaitivu,6.8956,80.9135,en
+Maritimepattu,LK,Mullaitivu,6.8956,80.9135,en
+Oddusuddan,LK,Mullaitivu,6.8956,80.9135,en
+Ambagamuwa,LK,Nuwara Eliya,6.8956,80.9135,en
+Hanguranketha,LK,Nuwara Eliya,6.8956,80.9135,en
+Kothmale,LK,Nuwara Eliya,6.8956,80.9135,en
+Dimbulagala,LK,Polonnaruwa,6.8956,80.9135,en
+Elahera,LK,Polonnaruwa,6.8956,80.9135,en
+Hingurakgoda,LK,Polonnaruwa,6.8956,80.9135,en
+Anamaduwa,LK,Puttalam,6.8956,80.9135,en
+Arachchikattuwa,LK,Puttalam,6.8956,80.9135,en
+Chilaw,LK,Puttalam,6.8956,80.9135,en
+Ayagama,LK,Ratnapura,6.8956,80.9135,en
+Balangoda,LK,Ratnapura,6.8956,80.9135,en
+Eheliyagoda,LK,Ratnapura,6.8956,80.9135,en
+Gomarankadawala,LK,Trincomalee,6.8956,80.9135,en
+Kantalai,LK,Trincomalee,6.8956,80.9135,en
+Kinniya,LK,Trincomalee,6.8956,80.9135,en
+Vavuniya,LK,Vavuniya,6.8956,80.9135,en
+Vavuniya North,LK,Vavuniya,6.8956,80.9135,en
+Vavuniya South,LK,Vavuniya,6.8956,80.9135,en
+ 
+

@@ -179,7 +179,7 @@
   "orgNotAuthCreate": "Your organisation is not authorised to create this document",
   "orgNotAuthView": "Your organisation is not authorised to view this document",
   "PROPOSAL_STAGE": "Proposal Stage",
-  "PROCUREMENT_STAGE": "Procument Stage",
+  "PROCUREMENT_STAGE": "Procurement Stage",
   "CONSTRUCTION_STAGE": "Construction Stage",
   "INSTALLATION_STAGE": "Installation Stage",
   "infApproved": "Initial notification form approved successfully",
@@ -204,6 +204,7 @@
   "VALIDATION_PENDING": "Validation Pending",
   "REJECTED_VALIDATION": "Validation Rejected",
   "AUTHORISED": "Authorised",
+  "verificationRequest": "Request Credit",
   "orgNotAuthDownload": "Your organisation is not authorised to download this document",
   "noVerificationReports": "No verification reports submitted",
   "noMonitoringReports": "No monitoring reports submitted",
@@ -228,5 +229,8 @@
   "requestCarbonNeutralCertificateSuccess": "Carbon Neutral Certificate Requested",
   "carbonNeutralCertificateApproved": "Carbon Neutral Certificate Approved",
   "carbonNeutralCertificateRejected": "Carbon Neutral Certificate Rejected",
-  "verificationRequest": "Verification Request"
+  "dsDivision": "Division",
+  "province": "Province",
+  "district": "District",
+  "additionalDocuments": "Additional Documents"
 }

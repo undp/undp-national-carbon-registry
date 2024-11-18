@@ -14,7 +14,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../../Definitions/Enums/document.type.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { extractFilePropertiesFromLink } from '../../../Utils/utilityHelper';
+import {
+  extractFilePropertiesFromLink,
+  fileUploadValueExtract,
+} from '../../../Utils/utilityHelper';
+import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries } = props;
@@ -25,7 +29,8 @@ const StepperComponent = (props: any) => {
   const { get, post } = useConnection();
   const { id } = useParams();
   const navigationLocation = useLocation();
-  const { mode } = navigationLocation.state || {};
+  const [projectCategory, setProjectCategory] = useState<string>('');
+  const { mode, docId } = navigationLocation.state || {};
   const t = translator.t;
   const reportVersion = process.env.MONITORING_REPORT_VERSION
     ? process.env.MONITORING_REPORT_VERSION
@@ -84,6 +89,22 @@ const StepperComponent = (props: any) => {
     }
   };
 
+  const getProgrammeDetailsById = async () => {
+    try {
+      const { data } = await post('national/programmeSL/getProjectById', {
+        programmeId: id,
+      });
+
+      const {
+        data: { user },
+      } = await get('national/User/profile');
+
+      setProjectCategory(data?.projectCategory);
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
   const onFinish = async (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -92,7 +113,46 @@ const StepperComponent = (props: any) => {
     if (FormMode.VIEW === mode) {
       navigateToDetailsPage();
     } else {
-      const body = { content: JSON.stringify({ ...formValues, ...newValues }), programmeId: id };
+      const content = { ...formValues, ...newValues };
+
+      content.projectActivity.creditingPeriodFromDate = moment(
+        content?.projectActivity?.creditingPeriodFromDate
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectActivity.creditingPeriodToDate = moment(
+        content?.projectActivity?.creditingPeriodToDate
+      )
+        .startOf('day')
+        .valueOf();
+      content.projectActivity.registrationDateOfTheActivity = moment(
+        content?.projectActivity?.registrationDateOfTheActivity
+      )
+        .startOf('day')
+        .valueOf();
+      await content.projectActivity?.projectActivityLocationsList?.forEach(async (val: any) => {
+        val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
+        val.optionalDocuments = await fileUploadValueExtract(val, 'optionalDocuments');
+      });
+
+      content.projectDetails.dateOfIssue = moment(content?.projectDetails?.dateOfIssue)
+        .startOf('day')
+        .valueOf();
+
+      content?.quantification?.emissionReductionsRemovalsList?.forEach((val: any) => {
+        val.startDate = moment(content?.quantification?.startDate).startOf('day').valueOf();
+        val.endDate = moment(content?.quantification?.endDate).startOf('day').valueOf();
+      });
+      content.quantifications.optionalDocuments = await fileUploadValueExtract(
+        content?.quantifications,
+        'optionalDocuments'
+      );
+
+      content.annexures.optionalDocuments = await fileUploadValueExtract(
+        content?.annexures,
+        'optionalDocuments'
+      );
+      const body = { content: JSON.stringify(content), programmeId: id };
       try {
         const res = await post('national/verification/createMonitoringReport', body);
         if (res?.statusText === 'SUCCESS') {
@@ -165,119 +225,27 @@ const StepperComponent = (props: any) => {
           website: cmaData?.projectDetails?.website,
           preparedBy: cmaData?.projectDetails?.preparedBy,
         });
+
+        qualificationForm.setFieldsValue({
+          estimatedNetEmissionReductions:
+            cmaData?.quantifications?.estimatedNetEmissionReductions.map((emissionData: any) => {
+              return {
+                startDate: moment(emissionData.startDate * 1000),
+                endDate: moment(emissionData.endDate * 1000),
+                baselineEmissionReductions: emissionData.baselineEmissionReductions,
+                projectEmissionReductions: emissionData.projectEmissionReductions,
+                leakageEmissionReductions: emissionData.leakageEmissionReductions,
+                netEmissionReductions: emissionData.netEmissionReductions,
+              };
+            }),
+        });
       }
     } catch (error) {
       console.log('error');
     }
 
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
-        programmeId: programId,
-        docType: DocumentTypeEnum.MONITORING_REPORT,
-      });
-      if (data && data?.content) {
-        setReportId(data?.id);
-        setVerificationRequestId(data?.verificationRequestId);
-        projectDetailsForm.setFieldsValue({
-          ...data?.content?.projectDetails,
-          dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
-        });
-
-        projectActivityForm.setFieldsValue({
-          ...data?.content?.projectActivity,
-          creditingPeriodFromDate: moment(data?.content?.projectActivity?.creditingPeriodFromDate),
-          creditingPeriodToDate: moment(data?.content?.projectActivity?.creditingPeriodToDate),
-          registrationDateOfTheActivity: moment(
-            data?.content?.projectActivity?.registrationDateOfTheActivity
-          ),
-          projectActivityLocationsList:
-            data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
-              return {
-                ...val,
-                projectStartDate: moment(val?.projectStartDate),
-                optionalDocuments: val?.optionalDocuments?.map(
-                  (document: string, index: number) => {
-                    return {
-                      uid: index,
-                      name: extractFilePropertiesFromLink(document).fileName,
-                      status: 'done',
-                      url: document,
-                    };
-                  }
-                ),
-              };
-            }),
-        });
-        qualificationForm.setFieldsValue({
-          ...data?.content?.quantifications,
-          optionalDocuments: data?.content?.quantifications?.optionalDocuments?.map(
-            (document: string, index: number) => {
-              return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
-              };
-            }
-          ),
-          emissionReductionsRemovalsList:
-            data?.content?.quantifications?.emissionReductionsRemovalsList?.map((val: any) => {
-              return {
-                ...val,
-                startDate: moment(val?.startDate),
-                endDate: moment(val?.endDate),
-              };
-            }),
-        });
-        implementationStatusForm.setFieldsValue({
-          ...data?.content?.implementationStatus,
-        });
-        safeguardsForm.setFieldsValue({
-          ...data?.content?.safeguards,
-        });
-        dataAndParametersForm.setFieldsValue({
-          ...data?.content?.dataAndParameters,
-        });
-        annexuresForm.setFieldsValue({
-          ...data?.content?.annexures,
-          optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
-            (document: string, index: number) => {
-              return {
-                uid: index,
-                name: extractFilePropertiesFromLink(document).fileName,
-                status: 'done',
-                url: document,
-              };
-            }
-          ),
-        });
-        // projectActivityForm.setFieldsValue({
-        //   projectProponentsList: [
-        //     {
-        //       organizationName: '',
-        //       email: '',
-        //       telephone: '',
-        //       address: '',
-        //       designation: '',
-        //       contactPerson: '',
-        //       roleInTheProject: '',
-        //       fax: '',
-        //     },
-        //   ],
-        //   projectActivityLocationsList: [
-        //     {
-        //       location: '',
-        //       province: '',
-        //       district: '',
-        //       dsDivision: '',
-        //       city: '',
-        //       community: '',
-        //       optionalDocuments: [],
-        //       projectStartDate: '',
-        //     },
-        //   ],
-        // });
-      } else {
+      if (docId === null) {
         projectActivityForm.setFieldsValue({
           projectProponentsList: [
             {
@@ -305,17 +273,103 @@ const StepperComponent = (props: any) => {
           ],
         });
         qualificationForm.setFieldsValue({
-          emissionReductionsRemovalsList: [
+          estimatedNetEmissionReductions: [
             {
               startDate: '',
               endDate: '',
-              baselineEmissions: 0,
-              projectEmissions: 0,
-              leakageEmissions: 0,
-              ghgEmissions: 0,
+              baselineEmissionReductions: '',
+              projectEmissionReductions: '',
+              leakageEmissionReductions: '',
+              netEmissionReductions: '',
             },
           ],
         });
+      } else {
+        const { data } = await post('national/programmeSl/getDocumentById', {
+          docId: docId,
+        });
+        if (data && data?.content) {
+          setReportId(data?.id);
+          setVerificationRequestId(data?.verificationRequestId);
+          projectDetailsForm.setFieldsValue({
+            ...data?.content?.projectDetails,
+            dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
+          });
+
+          projectActivityForm.setFieldsValue({
+            ...data?.content?.projectActivity,
+            creditingPeriodFromDate: moment(
+              data?.content?.projectActivity?.creditingPeriodFromDate
+            ),
+            creditingPeriodToDate: moment(data?.content?.projectActivity?.creditingPeriodToDate),
+            registrationDateOfTheActivity: moment(
+              data?.content?.projectActivity?.registrationDateOfTheActivity
+            ),
+            projectActivityLocationsList:
+              data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
+                return {
+                  ...val,
+                  projectStartDate: moment(val?.projectStartDate),
+                  optionalDocuments: val?.optionalDocuments?.map(
+                    (document: string, index: number) => {
+                      return {
+                        uid: index,
+                        name: extractFilePropertiesFromLink(document).fileName,
+                        status: 'done',
+                        url: document,
+                      };
+                    }
+                  ),
+                };
+              }),
+          });
+          qualificationForm.setFieldsValue({
+            ...data?.content?.quantifications,
+            optionalDocuments: data?.content?.quantifications?.optionalDocuments?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+
+            estimatedNetEmissionReductions:
+              data?.content?.quantifications?.estimatedNetEmissionReductions?.map(
+                (netEmission: any) => {
+                  return {
+                    ...netEmission,
+                    startDate: moment(netEmission.startDate),
+                    endDate: moment(netEmission.endDate),
+                  };
+                }
+              ),
+          });
+          implementationStatusForm.setFieldsValue({
+            ...data?.content?.implementationStatus,
+          });
+          safeguardsForm.setFieldsValue({
+            ...data?.content?.safeguards,
+          });
+          dataAndParametersForm.setFieldsValue({
+            ...data?.content?.dataAndParameters,
+          });
+          annexuresForm.setFieldsValue({
+            ...data?.content?.annexures,
+            optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
+              (document: string, index: number) => {
+                return {
+                  uid: index,
+                  name: extractFilePropertiesFromLink(document).fileName,
+                  status: 'done',
+                  url: document,
+                };
+              }
+            ),
+          });
+        }
       }
     } catch (error) {
       console.log('error');
@@ -324,6 +378,7 @@ const StepperComponent = (props: any) => {
 
   useEffect(() => {
     getLatestReports(id);
+    getProgrammeDetailsById();
   }, []);
 
   useEffect(() => {
@@ -449,6 +504,7 @@ const StepperComponent = (props: any) => {
           formMode={mode}
           next={next}
           prev={prev}
+          projectCategory={projectCategory}
           onValueChange={onValueChange}
         />
       ),

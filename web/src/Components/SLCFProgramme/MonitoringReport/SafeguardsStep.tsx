@@ -3,6 +3,7 @@ import { Button, Col, Form, Row } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import LabelWithTooltip, { TooltipPostion } from '../../LabelWithTooltip/LabelWithTooltip';
 
 export const SafeguardsStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
@@ -42,63 +43,62 @@ export const SafeguardsStep = (props: any) => {
                       <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
-                    <Form.Item
+                    <LabelWithTooltip
                       label={`3.2 ${t('monitoringReport:s_stakeholderConsultation')}`}
-                      name="stakeholderConsultation"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p>
-                              Describe the process for, and the outcomes from, ongoing communication
-                              with local stakeholders conducted prior to verification. Include
-                              details on the following:
-                            </p>
-                            <ul>
-                              <li>
-                                The procedures or methods used for engaging local stakeholders (eg,
-                                dates of announcements or meetings, periods during which input was
-                                sought).
-                              </li>
-                              <li>
-                                The procedures or methods used for documenting the outcomes of the
-                                local stakeholder communication.
-                              </li>
-                              <li>
-                                The mechanism for on-going communication with local stakeholders.
-                              </li>
-                              <li>
-                                How due account of all and any input received during ongoing
-                                communication has been taken. Include details on any updates to the
-                                project design or justify why updates are not appropriate For AFOLU.
-                              </li>
-                            </ul>
-                            <p>
+                      required={true}
+                      tooltipPosition={TooltipPostion.bottom}
+                      tooltipContent={
+                        <div>
+                          <p>
+                            Describe the process for, and the outcomes from, ongoing communication
+                            with local stakeholders conducted prior to verification. Include details
+                            on the following:
+                          </p>
+                          <ul>
+                            <li>
+                              The procedures or methods used for engaging local stakeholders (eg,
+                              dates of announcements or meetings, periods during which input was
+                              sought).
+                            </li>
+                            <li>
+                              The procedures or methods used for documenting the outcomes of the
+                              local stakeholder communication.
+                            </li>
+                            <li>
+                              The mechanism for on-going communication with local stakeholders.
+                            </li>
+                            <li>
+                              How due account of all and any input received during ongoing
+                              communication has been taken. Include details on any updates to the
+                              project design or justify why updates are not appropriate. For AFOLU
                               Projects, also demonstrate how the project has communicated the
                               following with local stakeholders:
-                            </p>
-                            <ul>
-                              <li>
-                                The results of project implementation, including the results of
-                                monitoring.
-                              </li>
-                              <li>
-                                Any changes, where relevant, to risks, costs and benefits the
-                                project may bring to local stakeholders.
-                              </li>
-                              <li>
-                                Any changes, where relevant, to relevant laws and regulations
-                                covering workers’ right in the host country
-                              </li>
-                              <li>
-                                The process of SLCCS verification and the validation/verification
-                                body’s site visit.
-                              </li>
-                            </ul>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
+                              <ul>
+                                <li>
+                                  The results of project implementation, including the results of
+                                  monitoring.
+                                </li>
+                                <li>
+                                  Any changes, where relevant, to risks, costs and benefits the
+                                  project may bring to local stakeholders.
+                                </li>
+                                <li>
+                                  Any changes, where relevant, to relevant laws and regulations
+                                  covering workers’ right in the host country
+                                </li>
+                                <li>
+                                  The process of SLCCS verification and the validation/verification
+                                  body’s site visit.
+                                </li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div>
+                      }
+                      tooltipWidth={800}
+                    />
+                    <Form.Item
+                      name="stakeholderConsultation"
                       rules={[
                         {
                           required: true,
@@ -111,43 +111,44 @@ export const SafeguardsStep = (props: any) => {
                       <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
 
-                    <Form.Item
+                    <LabelWithTooltip
                       label={`3.3 ${t('monitoringReport:s_afoluSpecificSafeguards')}`}
+                      required={true}
+                      tooltipPosition={TooltipPostion.top}
+                      tooltipContent={
+                        <div>
+                          <p> For AFOLU projects, provide details on the following: </p>
+                          <ul>
+                            <li>
+                              Activities implemented to mitigate risks local stakeholders due to
+                              project implementation.
+                            </li>
+                            <li>
+                              Any updates, where relevant, to the property and land use rights of
+                              the local stakeholders and a demonstration that the project has not
+                              negatively impacted such rights without first obtaining the free,
+                              prior and informed consent of the affected parties, and provided just
+                              and fair compensation if done so.
+                            </li>
+                            <li>
+                              The processes used to communicate and consult with local stakeholders
+                              during the monitoring period, including any information about any
+                              conflicts that arose between the project proponent and local
+                              stakeholders and whether any such conflicts were resolved via the
+                              established grievance redress procedure.
+                            </li>
+                          </ul>
+                          <p>
+                            For AFOLU projects with no impacts on local stakeholders, provide
+                            evidence of such.
+                          </p>
+                          <p>For non-AFOLU projects, this section is not required.</p>
+                        </div>
+                      }
+                      tooltipWidth={600}
+                    />
+                    <Form.Item
                       name="afoluSpecificSafeguards"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p> For AFOLU projects, provide details on the following: </p>
-                            <ul>
-                              <li>
-                                Activities implemented to mitigate risks local stakeholders due to
-                                project implementation.
-                              </li>
-                              <li>
-                                Any updates, where relevant, to the property and land use rights of
-                                the local stakeholders and a demonstration that the project has not
-                                negatively impacted such rights without first obtaining the free,
-                                prior and informed consent of the affected parties, and provided
-                                just and fair compensation if done so.
-                              </li>
-                              <li>
-                                The processes used to communicate and consult with local
-                                stakeholders during the monitoring period, including any information
-                                about any conflicts that arose between the project proponent and
-                                local stakeholders and whether any such conflicts were resolved via
-                                the established grievance redress procedure.
-                              </li>
-                            </ul>
-                            <p>
-                              For AFOLU projects with no impacts on local stakeholders, provide
-                              evidence of such.
-                            </p>
-                            <p>For non-AFOLU projects, this section is not required.</p>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
                       rules={[
                         {
                           required: true,

@@ -18,6 +18,8 @@ import { getBase64 } from '../../../Definitions/Definitions/programme.definition
 import { RcFile } from 'antd/lib/upload';
 import GetLocationMapComponent from '../../Maps/GetLocationMapComponent';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
+import LabelWithTooltip, { TooltipPostion } from '../../LabelWithTooltip/LabelWithTooltip';
+import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 export const ProjectActivityStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
     props;
@@ -27,10 +29,12 @@ export const ProjectActivityStep = (props: any) => {
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
+
   const [provinces, setProvinces] = useState<string[]>([]);
-  const [districts, setDistricts] = useState<string[]>([]);
-  const [dsDivisions, setDsDivisions] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
+  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
+  const [cities, setCities] = useState<{ [key: number]: string[] }>({});
+
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
@@ -39,15 +43,6 @@ export const ProjectActivityStep = (props: any) => {
       return e;
     }
     return e?.fileList;
-  };
-  const getProvinces = async () => {
-    try {
-      const { data } = await post('national/location/province');
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
-      setProvinces(tempProvinces);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const getExistingCordinate = (locationIndex: number) => {
@@ -59,7 +54,17 @@ export const ProjectActivityStep = (props: any) => {
     return null;
   };
 
-  const getDistricts = async (provinceName: string) => {
+  const getProvinces = async () => {
+    try {
+      const { data } = await post('national/location/province');
+      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      setProvinces(tempProvinces);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getDistricts = async (provinceName: string, index: number) => {
     try {
       const { data } = await post('national/location/district', {
         filterAnd: [
@@ -71,13 +76,13 @@ export const ProjectActivityStep = (props: any) => {
         ],
       });
       const tempDistricts = data.map((districtData: any) => districtData.districtName);
-      setDistricts(tempDistricts);
+      setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getDivisions = async (districtName: string) => {
+  const getDivisions = async (districtName: string, index: number) => {
     try {
       const { data } = await post('national/location/division', {
         filterAnd: [
@@ -90,18 +95,27 @@ export const ProjectActivityStep = (props: any) => {
       });
 
       const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
-      setDsDivisions(tempDivisions);
+      setDsDivisions((prev2) => ({ ...prev2, [index]: tempDivisions }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getCities = async (division?: string) => {
+  const getCities = async (division: string, index: number) => {
     try {
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
-      setCities(tempCities);
+      setCities((prev3) => ({ ...prev3, [index]: tempCities }));
     } catch (error) {
       console.log(error);
     }
@@ -109,18 +123,21 @@ export const ProjectActivityStep = (props: any) => {
 
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
   }, []);
 
-  const onProvinceSelect = async (value: any) => {
-    getDistricts(value);
-    try {
-    } catch (error) {}
+  const onProvinceSelect = async (value: any, index: number) => {
+    getDistricts(value, index);
   };
 
-  const onDistrictSelect = (value: string) => {
-    getDivisions(value);
+  const onDistrictSelect = (value: string, index: number) => {
+    getDivisions(value, index);
   };
+
+  const onDivisionSelect = (value: string, index: number) => {
+    getCities(value, index);
+  };
+
   const t = translator.t;
   return (
     <>
@@ -137,35 +154,6 @@ export const ProjectActivityStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               initialValues={{}}
               onFinish={async (values: any) => {
-                if (formMode !== FormMode.VIEW) {
-                  values.creditingPeriodFromDate = moment(values?.creditingPeriodFromDate)
-                    .startOf('day')
-                    .valueOf();
-                  values.creditingPeriodToDate = moment(values?.creditingPeriodToDate)
-                    .startOf('day')
-                    .valueOf();
-                  values.registrationDateOfTheActivity = moment(
-                    values?.registrationDateOfTheActivity
-                  )
-                    .startOf('day')
-                    .valueOf();
-                  await values?.projectActivityLocationsList?.forEach(async (val: any) => {
-                    val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
-                    val.optionalDocuments = await (async function () {
-                      const base64Docs: string[] = [];
-
-                      if (val?.optionalDocuments && val?.optionalDocuments.length > 0) {
-                        const docs = val.optionalDocuments;
-                        for (let i = 0; i < docs.length; i++) {
-                          const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                          base64Docs.push(temp);
-                        }
-                      }
-
-                      return base64Docs;
-                    })();
-                  });
-                }
                 onValueChange({ projectActivity: values });
                 next();
               }}
@@ -191,37 +179,38 @@ export const ProjectActivityStep = (props: any) => {
                         placeholder={`${t('monitoringReport:pa_monitoringObjectivePlaceholder')}`}
                       />
                     </Form.Item>
-                    <Form.Item
+                    <LabelWithTooltip
                       label={`1.2 ${t('monitoringReport:pa_implementation')}`}
+                      required={true}
+                      tooltipPosition={TooltipPostion.bottom}
+                      tooltipContent={
+                        <div>
+                          <p>Should include:</p>
+                          <ul>
+                            <li>
+                              A summary description of the implementation status of the
+                              technologies/measures(e.g. plant,equipment, process, or management or
+                              conversion measures) included in the project.
+                            </li>
+                            <li>
+                              Whether the project is a bundled project activity leading to an
+                              aggregated emission reduction.
+                            </li>
+                            <li>
+                              Relevent dates of the project activity (e.g. construction,
+                              commissioningm continued operation periods, etc.)
+                            </li>
+                            <li>
+                              Total GHG emission reductions or removals generated in this monitoring
+                              period.
+                            </li>
+                          </ul>
+                        </div>
+                      }
+                      tooltipWidth={600}
+                    />
+                    <Form.Item
                       name="implementation"
-                      tooltip={{
-                        title: (
-                          <div className="tooltip">
-                            <p>Should include:</p>
-                            <ul>
-                              <li>
-                                A summary description of the implementation status of the
-                                technologies/measures(e.g. plant,equipment, process, or management
-                                or conversion measures) included in the project.
-                              </li>
-                              <li>
-                                Whether the project is a bundled project activity leading to an
-                                aggregated emission reduction.
-                              </li>
-                              <li>
-                                Relevent dates of the project activity (e.g. construction,
-                                commissioningm continued operation periods, etc.)
-                              </li>
-                              <li>
-                                Total GHG emission reductions or removals generated in this
-                                monitoring period.
-                              </li>
-                            </ul>
-                          </div>
-                        ),
-                        icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                        placement: 'topLeft',
-                      }}
                       rules={[
                         {
                           required: true,
@@ -740,7 +729,8 @@ export const ProjectActivityStep = (props: any) => {
                         <Col xl={12} md={24}>
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
-                              {`1.6  ${t('monitoringReport:projectCreditingPeriod')}`}
+                              {`1.6  ${t('monitoringReport:projectCreditingPeriod')}`}{' '}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={11} md={24}>
@@ -842,6 +832,7 @@ export const ProjectActivityStep = (props: any) => {
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
                               {`1.7  ${t('monitoringReport:registrationDateOfTheActivity')}`}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={24} md={24}>
@@ -883,6 +874,7 @@ export const ProjectActivityStep = (props: any) => {
                           <div className="step-form-right-col">
                             <h4 className="form-section-title">
                               {`1.8  ${t('monitoringReport:projectTrackAndCreditUse')}`}
+                              <span style={{ color: '#ff4d4f' }}> *</span>
                             </h4>
                             <Row>
                               <Col xl={24} md={24}>
@@ -897,7 +889,7 @@ export const ProjectActivityStep = (props: any) => {
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                                 </Form.Item>
                                 <h4 className="form-section-title">
                                   {`${t('monitoringReport:projectTrackAndCreditUseComment')}`}
@@ -929,6 +921,15 @@ export const ProjectActivityStep = (props: any) => {
                                   // type="dashed"
                                   onClick={() => {
                                     remove(name);
+                                    if (districts[name]) {
+                                      delete districts[name];
+                                    }
+                                    if (dsDivisions[name]) {
+                                      delete dsDivisions[name];
+                                    }
+                                    if (cities[name]) {
+                                      delete cities[name];
+                                    }
                                   }}
                                   size="large"
                                   className="addMinusBtn"
@@ -968,15 +969,13 @@ export const ProjectActivityStep = (props: any) => {
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('monitoringReport:province')} ${t(
-                                      'isRequired'
-                                    )}}`,
+                                    message: `${t('monitoringReport:province')} ${t('isRequired')}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  onChange={onProvinceSelect}
+                                  onChange={(value) => onProvinceSelect(value, name)}
                                   placeholder={t('monitoringReport:provincePlaceholder')}
                                 >
                                   {provinces.map((province: string, index: number) => (
@@ -998,9 +997,9 @@ export const ProjectActivityStep = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('monitoringReport:districtPlaceholder')}
-                                  onSelect={onDistrictSelect}
+                                  onSelect={(value) => onDistrictSelect(value, name)}
                                 >
-                                  {districts?.map((district: string, index: number) => (
+                                  {districts[name]?.map((district: string, index: number) => (
                                     <Select.Option key={district}>{district}</Select.Option>
                                   ))}
                                 </Select>
@@ -1020,8 +1019,9 @@ export const ProjectActivityStep = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('monitoringReport:dsDivisionPlaceholder')}
+                                  onSelect={(value) => onDivisionSelect(value, name)}
                                 >
-                                  {dsDivisions.map((division: string) => (
+                                  {dsDivisions[name]?.map((division: string) => (
                                     <Select.Option value={division}>{division}</Select.Option>
                                   ))}
                                 </Select>
@@ -1040,7 +1040,7 @@ export const ProjectActivityStep = (props: any) => {
                                   size="large"
                                   placeholder={t('monitoringReport:cityPlaceholder')}
                                 >
-                                  {cities.map((city: string) => (
+                                  {cities[name]?.map((city: string) => (
                                     <Select.Option value={city}>{city}</Select.Option>
                                   ))}
                                 </Select>
@@ -1087,7 +1087,7 @@ export const ProjectActivityStep = (props: any) => {
                                 name={[name, 'optionalDocuments']}
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
-                                required={formMode !== FormMode.VIEW}
+                                required={false}
                                 rules={
                                   formMode === FormMode.VIEW
                                     ? []
@@ -1095,11 +1095,7 @@ export const ProjectActivityStep = (props: any) => {
                                         {
                                           validator: async (rule, file) => {
                                             if (file?.length > 0) {
-                                              if (!isValidateFileType(file[0]?.type)) {
-                                                throw new Error(
-                                                  `${t('monitoringReport:invalidFileFormat')}`
-                                                );
-                                              } else if (file[0]?.size > maximumImageSize) {
+                                              if (file[0]?.size > maximumImageSize) {
                                                 throw new Error(`${t('common:maxSizeVal')}`);
                                               }
                                             }

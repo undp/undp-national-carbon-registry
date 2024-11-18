@@ -80,5 +80,6 @@
   "projectCapacity": "Proposed Project Capacity",
   "briefProjectDescription": "Brief description of the proposed project",
   "briefProjectDescriptionPlaceholder": "Describe about your project",
-  "documentUpload": "Optional: Upload your documents"
+  "documentUpload": "Optional: Upload your documents",
+  "projectStatusDescription": "Project Status Description"
 }

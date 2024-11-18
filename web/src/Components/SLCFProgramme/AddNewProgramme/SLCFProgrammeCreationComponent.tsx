@@ -19,6 +19,7 @@ import { getBase64 } from '../../../Definitions/Definitions/programme.definition
 import { RcFile } from 'antd/lib/upload';
 import { useNavigate } from 'react-router-dom';
 import GetMultipleLocationsMapComponent from '../../Maps/GetMultipleLocationsMapComponent';
+import { Loading } from '../../Loading/loading';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 
@@ -57,119 +58,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const { post } = useConnection();
   const [form] = Form.useForm();
 
-  // const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : '';
-  // const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-  //   ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-  //   : '';
-
-  // const [projectLocations, setProjectLocations] = useState<any[][]>();
-  // const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
-  // const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
-  // const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
-  // const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
-
-  // const getCenter = (list: any[]) => {
-  //   let count = 0;
-  //   let lat = 0;
-  //   let long = 0;
-  //   for (const l of list) {
-  //     if (l === null || l === 'null') {
-  //       continue;
-  //     }
-  //     count += 1;
-  //     lat += l[0];
-  //     long += l[1];
-  //   }
-  //   return [lat / count, long / count];
-  // };
-
-  // useEffect(() => {
-  //   setProjectLocationMapCenter([80.7718, 7.8731]);
-
-  //   const tempMapSource: any = [];
-  //   const tempLocationLayer: any = [];
-  //   const tempOutlineLayer: any = [];
-  //   projectLocations?.forEach((location: any, index: number) => {
-  //     const mapSource: MapSourceData = {
-  //       key: `projectLocation-${index}`,
-  //       data: {
-  //         type: 'geojson',
-  //         data: {
-  //           type: 'Feature',
-  //           geometry: {
-  //             type: 'Polygon',
-  //             coordinates: location,
-  //           },
-  //           properties: null,
-  //         },
-  //       },
-  //     };
-
-  //     tempMapSource.push(mapSource);
-  //     tempLocationLayer.push({
-  //       id: `projectLocationLayer-${index}`,
-  //       type: 'fill',
-  //       source: `projectLocation-${index}`,
-  //       layout: {},
-  //       paint: {
-  //         'fill-color': '#0080ff',
-  //         'fill-opacity': 0.5,
-  //       },
-  //     });
-  //     tempOutlineLayer.push({
-  //       id: `projectLocationOutline-${index}`,
-  //       type: 'line',
-  //       source: `projectLocation-${index}`,
-  //       layout: {},
-  //       paint: {
-  //         'line-color': '#000',
-  //         'line-width': 1,
-  //       },
-  //     });
-  //   });
-
-  //   setProjectLocationMapSource(tempMapSource);
-  //   setProjectLocationMapLayer(tempLocationLayer);
-  //   setProjectLocationMapOutlineLayer(tempOutlineLayer);
-
-  //   form.setFieldValue('projectLocation', projectLocations);
-  // }, [projectLocations]);
-
-  // const onPolygonComplete = function (data: any) {
-  //   if (data.features.length > 0) {
-  //     const coordinates = data.features[0].geometry.coordinates[0];
-
-  //     setProjectLocations((prev) => {
-  //       if (prev) {
-  //         return [...prev, [coordinates]];
-  //       } else {
-  //         return [[coordinates]];
-  //       }
-  //     });
-  //   }
-  // };
-
-  // const mapComponentMemoizedValue = useMemo(() => {
-  //   return (
-  //     <MapComponent
-  //       mapType={mapType}
-  //       center={projectLocationMapCenter}
-  //       zoom={5}
-  //       height={250}
-  //       style="mapbox://styles/mapbox/light-v11"
-  //       accessToken={accessToken}
-  //       onPolygonComplete={onPolygonComplete}
-  //       mapSource={projectLocationMapSource}
-  //       layer={projectLocationMapLayer}
-  //       outlineLayer={projectLocationMapOutlineLayer}
-  //     ></MapComponent>
-  //   );
-  // }, [
-  //   projectLocationMapCenter,
-  //   projectLocationMapSource,
-  //   projectLocationMapLayer,
-  //   projectLocationMapOutlineLayer,
-  // ]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [projectCategory, setProjectCategory] = useState<string>();
   const [isMultipleLocations, setIsMultipleLocations] = useState<boolean>(false);
@@ -228,16 +117,16 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   const getCities = async (division?: string) => {
     try {
-      // const { data } = await post('national/location/city', {
-      //   filterAnd: [
-      //     {
-      //       key: 'divisionName',
-      //       operation: '=',
-      //       value: division,
-      //     },
-      //   ],
-      // });
-      const { data } = await post('national/location/city');
+      const { data } = await post('national/location/city', {
+        filterAnd: [
+          {
+            key: 'divisionName',
+            operation: '=',
+            value: division,
+          },
+        ],
+      });
+      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities(tempCities);
@@ -248,7 +137,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
   useEffect(() => {
     getProvinces();
-    getCities();
+    // getCities();
   }, []);
 
   const onProvinceSelect = async (value: any) => {
@@ -261,9 +150,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     getDivisions(value);
   };
 
-  // const onDivisionSelect = (value: string) => {
-  //   getCities(value);
-  // };
+  const onDivisionSelect = (value: string) => {
+    getCities(value);
+  };
 
   const onGeographyOfProjectSelect = (value: string) => {
     if (value === 'MULTIPLE') {
@@ -310,15 +199,18 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       otherProjectCategory: values?.otherCategory,
       landExtent: (function () {
         if (values?.landExtent) {
-          const lands = [Number(values?.landExtent)];
+          const lands = [Number(Number(values?.landExtent).toFixed(2))];
           if (values?.landList) {
-            values?.landList.forEach((item: any) => lands.push(Number(item.land)));
+            values?.landList.forEach((item: any) =>
+              lands.push(Number(Number(item.land).toFixed(2)))
+            );
           }
           return lands;
         }
         return undefined;
       })(),
-      proposedProjectCapacity: Number(values?.projectCapacity),
+      proposedProjectCapacity: values?.projectCapacity,
+      projectStatusDescription: values?.projectStatusDescription,
       speciesPlanted: 'test',
       projectDescription: 'test',
       projectStatus: values?.projectStatus,
@@ -327,6 +219,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       additionalDocuments: base64Docs,
     };
 
+    setLoading(true);
     try {
       const res = await post('national/programmeSl/create', body);
       if (res?.statusText === 'SUCCESS') {
@@ -359,8 +252,14 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="add-programme-main-container">
@@ -477,6 +376,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('addProgramme:dsDivisionPlaceholder')}
+                                  onSelect={onDivisionSelect}
                                 >
                                   {dsDivisions.map((division: string) => (
                                     <Select.Option value={division}>{division}</Select.Option>
@@ -759,6 +659,13 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                               </Form.Item>
 
                               <Form.Item
+                                label={t('addProgramme:projectStatusDescription')}
+                                name={'projectStatusDescription'}
+                              >
+                                <Input />
+                              </Form.Item>
+
+                              <Form.Item
                                 label={t('addProgramme:creditDevelopmentPurpose')}
                                 name="creditDevelopmentPurpose"
                                 rules={[
@@ -859,15 +766,15 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                         }
 
                                         // eslint-disable-next-line no-restricted-globals
-                                        if (!Number.isInteger(Number(value))) {
-                                          return Promise.reject(
-                                            new Error(
-                                              `${t(
-                                                'addProgramme:projectCapacity'
-                                              )} should be an integer!`
-                                            )
-                                          );
-                                        }
+                                        // if (!Number.isInteger(Number(value))) {
+                                        //   return Promise.reject(
+                                        //     new Error(
+                                        //       `${t(
+                                        //         'addProgramme:projectCapacity'
+                                        //       )} should be an integer!`
+                                        //     )
+                                        //   );
+                                        // }
 
                                         return Promise.resolve();
                                       },

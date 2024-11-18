@@ -47,6 +47,14 @@
     width: 100%;
   }
 
+  .plant-factor {
+    .ant-input-group-addon {
+      border: 1px solid #d9d9d9 !important;
+      border-radius: 5px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
   .custom-required:after {
     content: '*';
     color: rgba(255, 77, 79, 0.8) !important;

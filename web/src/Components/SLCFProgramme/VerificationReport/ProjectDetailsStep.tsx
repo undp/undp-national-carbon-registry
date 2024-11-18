@@ -21,6 +21,7 @@ export const ProjectDetailsStep = (props: any) => {
     next,
     cancel,
     countries,
+    verifiedScer,
     onValueChange,
   } = props;
 
@@ -55,15 +56,6 @@ export const ProjectDetailsStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
-                values.completionDate = moment(values?.completionDate).startOf('day').valueOf();
-                values.versionDate = moment(values?.versionDate).startOf('day').valueOf();
-                values.monitoringPeriodStart = moment(values?.monitoringPeriodStart)
-                  .startOf('day')
-                  .valueOf();
-                values.monitoringPeriodEnd = moment(values?.monitoringPeriodEnd)
-                  .startOf('day')
-                  .valueOf();
                 onValueChange({ projectDetails: values });
                 next();
               }}
@@ -72,8 +64,8 @@ export const ProjectDetailsStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:projectName')}
-                      name="projectName"
+                      label={t('verificationReport:projectTitle')}
+                      name="projectTitle"
                       rules={[
                         {
                           required: true,
@@ -88,7 +80,7 @@ export const ProjectDetailsStep = (props: any) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('verificationReport:projectName')} ${t('isRequired')}`
+                                `${t('verificationReport:projectTitle')} ${t('isRequired')}`
                               );
                             }
                           },
@@ -465,6 +457,10 @@ export const ProjectDetailsStep = (props: any) => {
                           message: '',
                         },
                         {
+                          pattern: /^[1-9]\d*$/,
+                          message: `${t('verificationReport:shouldBeInteger')}`,
+                        },
+                        {
                           validator: async (rule, value) => {
                             if (
                               String(value).trim() === '' ||
@@ -476,11 +472,18 @@ export const ProjectDetailsStep = (props: any) => {
                                 `${t('verificationReport:verifiedScer')} ${t('isRequired')}`
                               );
                             }
+                            if (Number(value) > verifiedScer) {
+                              throw new Error(
+                                `${t('verificationReport:verifiedScer')} ${t(
+                                  'verificationReport:lessThanOrEqual'
+                                )} ${verifiedScer}`
+                              );
+                            }
                           },
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" type="number" />
                     </Form.Item>
                   </div>
                 </Col>
@@ -509,33 +512,6 @@ export const ProjectDetailsStep = (props: any) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:projectTitle')}
-                      name="projectTitle"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:projectTitle')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
                       label={t('verificationReport:workCarriedOutBy')}
                       name="workCarriedOutBy"
                       rules={[
@@ -547,11 +523,6 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
-                  </div>
-                </Col>
-
-                <Col xl={12} md={24}>
-                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('verificationReport:reportNo')}
                       name="reportNo"
@@ -578,7 +549,11 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" />
                     </Form.Item>
+                  </div>
+                </Col>
 
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
                     <Form.Item
                       label={t('verificationReport:workApprovedBy')}
                       name="workApprovedBy"
@@ -589,7 +564,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
+                      <TextArea rows={7} disabled={FormMode.VIEW === formMode} />
                     </Form.Item>
                   </div>
                 </Col>

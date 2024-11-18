@@ -50,8 +50,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
-    getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
@@ -60,15 +58,29 @@ const LayoutSider = (props: LayoutSiderProps) => {
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
   ];
 
+  // if (
+  //   userInfoState?.userRole === Role.Root ||
+  //   (userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+  //     userInfoState?.userRole === Role.Admin)
+  // ) {
+  //   items.splice(
+  //     1,
+  //     0,
+  //     getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
+  //   );
+  // }
+
   if (
-    userInfoState?.userRole === Role.Root ||
-    (userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
-      userInfoState?.userRole === Role.Admin)
+    !(
+      userInfoState?.companyRole === CompanyRole.MINISTRY ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER
+    )
   ) {
     items.splice(
       1,
       0,
-      getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
+      getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
+      getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />)
     );
   }
 

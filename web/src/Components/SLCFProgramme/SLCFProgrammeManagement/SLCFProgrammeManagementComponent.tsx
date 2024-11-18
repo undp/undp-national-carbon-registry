@@ -42,6 +42,7 @@ import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import {
+  getProjectCategory,
   ProgrammeStageMRV,
   ProgrammeStageR,
   ProgrammeStatus,
@@ -50,6 +51,7 @@ import {
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
+import { Role } from '../../../Definitions/Enums/role.enum';
 
 const { Search } = Input;
 
@@ -189,9 +191,9 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       dataIndex: 'projectCategory',
       sorter: true,
       key: ProgrammeManagementSlColumns.projectCategory,
-      align: 'left' as const,
+      align: 'center' as const,
       render: (item: any) => {
-        return <span>{item}</span>;
+        return <span>{getProjectCategory[item]}</span>;
       },
     },
     {
@@ -220,6 +222,20 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       },
     },
     {
+      title: t('projectList:purposeOfCreditDevelopment'),
+      dataIndex: 'purposeOfCreditDevelopment',
+      key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
+      sorter: true,
+      align: 'center' as const,
+      render: (item: any) => {
+        return (
+          <Tag color={getCreditTypeTagType(item as CreditTypeSl)}>
+            {addSpaces(getCreditTypeName(item as string))}
+          </Tag>
+        );
+      },
+    },
+    {
       title: t('projectList:balance'),
       dataIndex: 'creditBalance',
       key: ProgrammeManagementSlColumns.creditBalance,
@@ -227,20 +243,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       align: 'right' as const,
       render: (item: any) => {
         return <span>{item}</span>;
-      },
-    },
-    {
-      title: t('projectList:purposeOfCreditDevelopment'),
-      dataIndex: 'purposeOfCreditDevelopment',
-      key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
-      sorter: true,
-      align: 'right' as const,
-      render: (item: any) => {
-        return (
-          <Tag className="clickable" color={getCreditTypeTagType(item as CreditTypeSl)}>
-            {addSpaces(getCreditTypeName(item as string))}
-          </Tag>
-        );
       },
     },
     {
@@ -333,7 +335,7 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
         sort: sort,
       });
       setTableData(response?.data ? response.data : []);
-      setTotalProgramme(response?.data?.total ? response?.data?.total : 0);
+      setTotalProgramme(response.response?.data?.total ? response.response?.data?.total : 0);
       setLoading(false);
       setDataQuery({
         filterAnd: filter,
@@ -457,19 +459,21 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
           <div className="body-title">{t('projectList:slcfViewProgrammes')}</div>
         </div>
         <div className="actions">
-          {ability.can(Action.Manage, ProgrammeEntity) && enableAddProgramme && (
-            <div className="action-bar">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<PlusOutlined />}
-                onClick={onClickAddProgramme}
-              >
-                {t('projectList:addProgramme')}
-              </Button>
-            </div>
-          )}
+          {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+            userInfoState.userRole !== Role.ViewOnly &&
+            enableAddProgramme && (
+              <div className="action-bar">
+                <Button
+                  type="primary"
+                  size="large"
+                  block
+                  icon={<PlusOutlined />}
+                  onClick={onClickAddProgramme}
+                >
+                  {t('projectList:addProgramme')}
+                </Button>
+              </div>
+            )}
         </div>
       </div>
       <div className="content-card">

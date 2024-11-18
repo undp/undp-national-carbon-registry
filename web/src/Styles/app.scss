@@ -866,3 +866,9 @@ body {
     cursor: not-allowed;
   }
 }
+
+.ant-form-item-has-error {
+  textarea {
+    border-color: #ff4d4f;
+  }
+}

@@ -51,16 +51,8 @@ export const EmailTemplates = {
         User: {{email}} <br>
         Password (temporary): {{tempPassword}} <br><br>
 
-        If you have any questions, feel free to email our <a href="mailto:help@carbreg.org?subject=I Need Help With The {{countryName}} Carbon Registry">customer success team</a>. 
-        We also offer <a href="{{helpDoc}}">help documentation</a> and <a href="{{liveChat}}">chat</a>.<br><br>
-
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team <br><br>
-
-        <div style="font-size:12px">
-            {{countryName}} <br>
-            {{address}}
-        </div>
         `,
     text: "",
   },
@@ -149,7 +141,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Initial Notification form has been submitted, by {{organisationName}}. <br><br>
+        A new Initial Notification form has been submitted, by {{organisationName}} organization. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -175,7 +167,7 @@ export const EmailTemplates = {
   },
   PROGRAMME_SL_REJECTED: {
     id: "PROGRAMME_SL_REJECTED",
-    subject: "Initial Notification Form Rejected",
+    subject: "Initial Notification Rejected",
     html: `
         Hi {{name}}, <br><br>
 
@@ -190,7 +182,7 @@ export const EmailTemplates = {
   },
   PROJECT_PROPOSAL_SUBMITTED: {
     id: "PROJECT_PROPOSAL_SUBMITTED",
-    subject: "New: Proposal Submitted",
+    subject: "New: Proposal Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -239,7 +231,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Carbon Management Assessment Form has been submitted, for the project {{programmeName}}, by {{organisationName}}. <br><br>
+        A new Carbon Management Assessment form has been submitted, for the project {{programmeName}}, by {{organisationName}} organization. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -254,7 +246,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} has been approved by Sri Lanka Climate Fund. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organization has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the form.
         <br><br>
@@ -269,7 +261,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} has been rejected by Sri Lanka Climate Fund. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please re-submit the Carbon Management Assessment form by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -280,7 +272,7 @@ export const EmailTemplates = {
   },
   VALIDATION_SUBMITTED: {
     id: "VALIDATION_SUBMITTED",
-    subject: "New: Validation Report Submitted",
+    subject: "New: Validation Report Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -299,7 +291,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation Report submitted for the project {{programmeName}} by {{organisationName}} has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Validation Report submitted for the project {{programmeName}} by Sri Lanka Climate Fund has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Now the project has been authorized.
 
@@ -318,7 +310,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organization has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -329,7 +321,7 @@ export const EmailTemplates = {
   },
   MONITORING_CREATE: {
     id: "MONITORING_CREATE",
-    subject: "New: Monitoring Report Submitted",
+    subject: "New: Monitoring Report Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -348,7 +340,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} has been approved by Sri Lanka Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organization has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> to be directed to create the Verification Report.
         <br><br>
@@ -363,7 +355,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} has been rejected by Sri Lanka Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -393,7 +385,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Verification Report submitted for the project {{programmeName}} by the organization {{organisationName}} has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Verification Report submitted for the project {{programmeName}} by the Sri Lanka Climate Fund has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Please request for the credits transfer or retirement accordingly. 
         <br><br>
@@ -408,7 +400,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Verification Report submitted for the project {{programmeName}} by the organization {{organisationName}} has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Verification Report submitted for the project {{programmeName}} by the Sri Lanka Climate Fund has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
         <br><br>
@@ -919,7 +911,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        {{programmeName}} of your Organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br><br>
+        {{programmeName}} of your organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br><br>
 
         Click <a href="{{pageLink}}">here</a> for more details of the project.<br><br>
 
@@ -962,8 +954,21 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
 
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been approved by {{countryName}} Climate Fund. <br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+
+        Sincerely, <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+
+  CREDIT_RECEIVED_AND_RETIRED_SL: {
+    id: "CREDIT_RECEIVED_AND_RETIRED_SL",
+    subject: "Credit Received and Retired",
+    html: `
+        Hi {{name}},<br><br>
+
+        {{fromCompany}} has transferred {{credits}} credits from {{programmeName}} to your organisation. {{credits}} tCO2e emissions have been inset from your organisation. <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -976,8 +981,8 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
 
-        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been approved by {{countryName}} Climate Fund. <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been approved by {{countryName}} Climate Fund. <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -990,7 +995,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
 
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
+        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
         Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
 
@@ -1005,9 +1010,9 @@ export const EmailTemplates = {
     html: `
         Hi {{name}},<br><br>
 
-        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your Organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
+        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1037,7 +1042,7 @@ export const EmailTemplates = {
 
         {{organisationName}} has cancelled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
         {{remark}}<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
+        Click <a href="{{pageLink}}">here</a> for more details of the retirement request.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team

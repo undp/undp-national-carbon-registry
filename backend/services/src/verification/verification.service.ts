@@ -156,13 +156,23 @@ export class VerificationService {
     monitoringReportDocument.updatedTime = new Date().getTime();
     monitoringReportDocument.content = docContent;
     const savedReport = await this.entityManager.transaction(async (em) => {
-      const verificationRequest: VerificationRequestEntity =
-        await this.verificationRequestRepository.findOne({
+      const verificationRequests: VerificationRequestEntity[] =
+        await this.verificationRequestRepository.find({
           where: {
             programmeId: monitoringReportDto.programmeId,
           },
+          order: { id: "DESC" },
         });
-      if (verificationRequest) {
+      if (
+        verificationRequests &&
+        verificationRequests.length &&
+        !(
+          verificationRequests[0].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
+          verificationRequests[0].status ===
+            VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED
+        )
+      ) {
         await em.update(
           VerificationRequestEntity,
           {
@@ -174,7 +184,7 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
-        monitoringReportDocument.verificationRequestId = verificationRequest.id;
+        monitoringReportDocument.verificationRequestId = verificationRequests[0].id;
       } else {
         const verificationRequest = new VerificationRequestEntity();
         verificationRequest.programmeId = monitoringReportDto.programmeId;
@@ -632,11 +642,10 @@ export class VerificationService {
         verificationRequest.programmeId,
         "CNC"
       );
-      carbonNeutralCertificateSerial =
-        this.serialGenerator.generateCarbonNeutralCertificateNumber(
-          previousCarbonNeutralCertificateSerial
-        );
-  
+      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
+        previousCarbonNeutralCertificateSerial
+      );
+
       const neutralData = {
         projectName: programme.title,
         companyName: programme.company.name,
@@ -649,7 +658,7 @@ export class VerificationService {
           cNCertificateIssueDto.assessmentPeriodEnd
         ),
         orgBoundary: cNCertificateIssueDto.orgBoundary,
-        assessmentYear:cNCertificateIssueDto.year,
+        assessmentYear: cNCertificateIssueDto.year,
         assessmentPeriod: `${this.dateUtilService.formatCustomDate(
           cNCertificateIssueDto.assessmentPeriodStart
         )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
@@ -668,25 +677,25 @@ export class VerificationService {
       {
         carbonNeutralCertificateRequested: false,
         carbonNeutralCertificateSerialNo: carbonNeutralCertificateSerial,
-        carbonNeutralCertificateUrl: carbonNeutralCertUrl
+        carbonNeutralCertificateUrl: carbonNeutralCertUrl,
       }
-    )
+    );
 
     const hostAddress = this.configService.get("host");
-      await this.emailHelperService.sendEmailToOrganisationAdmins(
-        programme.company.companyId,
-        cNCertificateIssueDto.approve ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
-        {
-          programmeName: programme.title,
-          remark: cNCertificateIssueDto.orgBoundary,
-          pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
-        }
-      );
+    await this.emailHelperService.sendEmailToOrganisationAdmins(
+      programme.company.companyId,
+      cNCertificateIssueDto.approve
+        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
+        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
+      {
+        programmeName: programme.title,
+        remark: cNCertificateIssueDto.orgBoundary,
+        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
+      }
+    );
 
-    
-
-      console.log(carbonNeutralCertUrl);
-      return updatedRequest;
+    console.log(carbonNeutralCertUrl);
+    return updatedRequest;
   }
 
   //MARK: get Credit Issuance Certificate URL
@@ -847,7 +856,7 @@ export class VerificationService {
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
-      { },
+      {},
       verificationRequest.programmeId
     );
 

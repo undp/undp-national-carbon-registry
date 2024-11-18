@@ -50,16 +50,6 @@ export const VerificationOpinionStep = (props: any) => {
               form={form}
               disabled={FormMode.VIEW === formMode}
               onFinish={async (values: any) => {
-                if (FormMode.VIEW !== formMode) {
-                  values.signature1 = await fileUploadValueExtract(values, 'signature1');
-                  values.signature2 = await fileUploadValueExtract(values, 'signature2');
-                  values.dateOfSignature1 = moment(values?.dateOfSignature1)
-                    .startOf('day')
-                    .valueOf();
-                  values.dateOfSignature2 = moment(values?.dateOfSignature2)
-                    .startOf('day')
-                    .valueOf();
-                }
                 onValueChange({ verificationOpinion: values });
                 next();
               }}
@@ -105,6 +95,46 @@ export const VerificationOpinionStep = (props: any) => {
                                       // default size format of files would be in bytes -> 1MB = 1000000bytes
                                       throw new Error(`${t('common:maxSizeVal')}`);
                                     }
+                                  }
+                                },
+                              },
+                            ]
+                      }
+                    >
+                      <Upload
+                        accept=".doc, .docx, .pdf, .png, .jpg"
+                        beforeUpload={(file: any) => {
+                          return false;
+                        }}
+                        className="design-upload-section"
+                        name="design"
+                        action="/upload.do"
+                        listType="picture"
+                        multiple={false}
+                        // maxCount={1}
+                      >
+                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                          Upload
+                        </Button>
+                      </Upload>
+                    </Form.Item>
+                    {/* <Form.Item
+                      label={t('verificationReport:signature')}
+                      name="signature1"
+                      valuePropName="fileList"
+                      getValueFromEvent={normFile}
+                      required={FormMode.VIEW !== formMode}
+                      rules={
+                        FormMode.VIEW === formMode
+                          ? []
+                          : [
+                              {
+                                validator: async (rule, file) => {
+                                  if (file?.length > 0) {
+                                    if (file[0]?.size > maximumImageSize) {
+                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                      throw new Error(`${t('common:maxSizeVal')}`);
+                                    }
                                   } else {
                                     throw new Error(
                                       `${t('verificationReport:signature')} ${t('isRequired')}`
@@ -131,7 +161,7 @@ export const VerificationOpinionStep = (props: any) => {
                           Upload
                         </Button>
                       </Upload>
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
                       label={t('verificationReport:name')}
                       name="name1"
@@ -233,10 +263,6 @@ export const VerificationOpinionStep = (props: any) => {
                                       // default size format of files would be in bytes -> 1MB = 1000000bytes
                                       throw new Error(`${t('common:maxSizeVal')}`);
                                     }
-                                  } else {
-                                    throw new Error(
-                                      `${t('verificationReport:signature')} ${t('isRequired')}`
-                                    );
                                   }
                                 },
                               },
