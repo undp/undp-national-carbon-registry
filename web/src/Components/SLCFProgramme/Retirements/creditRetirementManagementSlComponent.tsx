@@ -94,10 +94,10 @@ export const CreditRetirementSlComponent = (props: any) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedReq, setSelectedReq] = useState<CreditRetirementSl>();
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
-  const [companiesInfo, setCompaniesInfo] = useState<CompanyInfo[]>();
-  const [totalComCredits, setTotalComCredits] = useState<number>(0);
-  const [companyIdsVal, setCompanyIdsVal] = useState<number[]>();
-  const [creditAmount, setCreditAmount] = useState<number>(0);
+  // const [companiesInfo, setCompaniesInfo] = useState<CompanyInfo[]>();
+  // const [totalComCredits, setTotalComCredits] = useState<number>(0);
+  // const [companyIdsVal, setCompanyIdsVal] = useState<number[]>();
+  // const [creditAmount, setCreditAmount] = useState<number>(0);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
   const [ministryLevelFilter, setMinistryLevelFilter] = useState<boolean>(false);
