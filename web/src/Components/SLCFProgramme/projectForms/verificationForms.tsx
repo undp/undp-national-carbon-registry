@@ -1,4 +1,4 @@
-import { Col, Row, Skeleton, Tag, Tooltip, message } from 'antd';
+import { Button, Col, Row, Skeleton, Tag, Tooltip, message } from 'antd';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './projectForms.scss';
 import Icon, {
@@ -463,12 +463,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
             </Row>
             <div>
               <Row className="field" key="Monitoring Report">
-                <Col span={18} className="field-key">
+                <Col span={12} className="field-key">
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:monitoringReport')}</div>
                   </div>
                 </Col>
-                <Col span={3} className="field-value">
+                <Col span={6} className="field-value">
                   <>
                     <Tooltip
                       arrowPointAtCenter
@@ -486,7 +486,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      <EyeOutlined
+                      {/* <EyeOutlined
                         className="common-progress-icon"
                         style={
                           formViewPermission(
@@ -515,12 +515,32 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
                           )
                         }
-                      />
+                      /> */}
+                      <Button
+                        type="default"
+                        onClick={() =>
+                          navigateToMonitoringReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
+                          )
+                        }
+                        disabled={
+                          !(
+                            formViewPermission(
+                              userInfoState,
+                              DocType.MONITORING_REPORT,
+                              projectProposalStage
+                            ) && getLatestReport(item.documents, DocumentTypeEnum.MONITORING_REPORT)
+                          )
+                        }
+                        size="small"
+                      >
+                        {t('projectDetailsView:btnView')}
+                      </Button>
                     </Tooltip>
                   </>
                 </Col>
                 {!hasAcceptedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) ? (
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     {hasRejectedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) ? (
                       <>
                         <Tooltip
@@ -536,7 +556,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                           overlayClassName="custom-tooltip"
                         >
-                          <EditOutlined
+                          {/* <EditOutlined
                             className="common-progress-icon"
                             style={
                               formCreatePermission(
@@ -568,7 +588,28 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 )
                               )
                             }
-                          />
+                          /> */}
+                          <Button
+                            type="default"
+                            onClick={() =>
+                              navigateToMonitoringReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.MONITORING_REPORT
+                                )
+                              )
+                            }
+                            disabled={
+                              !formCreatePermission(
+                                userInfoState,
+                                DocType.MONITORING_REPORT,
+                                projectProposalStage
+                              )
+                            }
+                            size="small"
+                          >
+                            {t('projectDetailsView:btnEdit')}
+                          </Button>
                         </Tooltip>
                       </>
                     ) : (
@@ -587,7 +628,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             }
                             overlayClassName="custom-tooltip"
                           >
-                            <PlusOutlined
+                            {/* <PlusOutlined
                               className="common-progress-icon"
                               style={
                                 formCreatePermission(
@@ -613,25 +654,39 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                   projectProposalStage
                                 ) && navigateToMonitoringReportCreate(null)
                               }
-                            />
+                            /> */}
+                            <Button
+                              type="default"
+                              onClick={() => navigateToMonitoringReportCreate(null)}
+                              disabled={
+                                !formCreatePermission(
+                                  userInfoState,
+                                  DocType.MONITORING_REPORT,
+                                  projectProposalStage
+                                )
+                              }
+                              size="small"
+                            >
+                              {t('projectDetailsView:btnAdd')}
+                            </Button>
                           </Tooltip>
                         </>
                       )
                     )}
                   </Col>
                 ) : (
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     <CheckCircleTwoTone twoToneColor="#52c41a" />
                   </Col>
                 )}
               </Row>
               <Row className="field" key={`VerificationReport${item.id}`}>
-                <Col span={18} className="field-key">
+                <Col span={12} className="field-key">
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:verificationReport')}</div>
                   </div>
                 </Col>
-                <Col span={3} className="field-value">
+                <Col span={6} className="field-value">
                   <>
                     <Tooltip
                       arrowPointAtCenter
@@ -651,7 +706,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      <EyeOutlined
+                      {/* <EyeOutlined
                         className="common-progress-icon"
                         style={
                           formViewPermission(
@@ -680,12 +735,33 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
                           )
                         }
-                      />
+                      /> */}
+                      <Button
+                        type="default"
+                        onClick={() =>
+                          navigateToVerificationReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
+                          )
+                        }
+                        disabled={
+                          !(
+                            formViewPermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            ) &&
+                            getLatestReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
+                          )
+                        }
+                        size="small"
+                      >
+                        {t('projectDetailsView:btnView')}
+                      </Button>
                     </Tooltip>
                   </>
                 </Col>
                 {!hasAcceptedReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT) ? (
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     {hasRejectedReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT) ? (
                       <>
                         <Tooltip
@@ -701,7 +777,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                           overlayClassName="custom-tooltip"
                         >
-                          <EditOutlined
+                          {/* <EditOutlined
                             className="common-progress-icon"
                             style={
                               formCreatePermission(
@@ -733,7 +809,28 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 )
                               )
                             }
-                          />
+                          /> */}
+                          <Button
+                            type="default"
+                            onClick={() =>
+                              navigateToVerificationReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.VERIFICATION_REPORT
+                                )
+                              )
+                            }
+                            disabled={
+                              !formCreatePermission(
+                                userInfoState,
+                                DocType.VERIFICATION_REPORT,
+                                projectProposalStage
+                              )
+                            }
+                            size="small"
+                          >
+                            {t('projectDetailsView:btnEdit')}
+                          </Button>
                         </Tooltip>
                       </>
                     ) : (
@@ -753,7 +850,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             }
                             overlayClassName="custom-tooltip"
                           >
-                            <PlusOutlined
+                            {/* <PlusOutlined
                               className="common-progress-icon"
                               style={
                                 formCreatePermission(
@@ -779,26 +876,40 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                   projectProposalStage
                                 ) && navigateToVerificationReportCreate(null)
                               }
-                            />
+                            /> */}
+                            <Button
+                              type="default"
+                              onClick={() => navigateToVerificationReportCreate(null)}
+                              disabled={
+                                !formCreatePermission(
+                                  userInfoState,
+                                  DocType.VERIFICATION_REPORT,
+                                  projectProposalStage
+                                )
+                              }
+                              size="small"
+                            >
+                              {t('projectDetailsView:btnAdd')}
+                            </Button>
                           </Tooltip>
                         </>
                       )
                     )}
                   </Col>
                 ) : (
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     <CheckCircleTwoTone twoToneColor="#52c41a" />
                   </Col>
                 )}
               </Row>
               {item.creditIssueCertificateUrl && (
                 <Row className="field" key="creditIssueCertificate">
-                  <Col span={18} className="field-key">
+                  <Col span={12} className="field-key">
                     <div className="label-container">
                       <div className="label">{t('projectDetailsView:creditIssueCertificate')}</div>
                     </div>
                   </Col>
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     <>
                       <Tooltip
                         arrowPointAtCenter
@@ -811,7 +922,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <DownloadOutlined
+                        {/* <DownloadOutlined
                           className="common-progress-icon"
                           style={
                             userInfoState?.companyId !== companyId &&
@@ -834,7 +945,25 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               projectProposalStage
                             ) && downloadCreditIssueCertificate(item.creditIssueCertificateUrl)
                           }
-                        />
+                        /> */}
+                        <Button
+                          type="default"
+                          onClick={() =>
+                            downloadCreditIssueCertificate(item.creditIssueCertificateUrl)
+                          }
+                          disabled={
+                            userInfoState?.companyId !== companyId &&
+                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+                            !formViewPermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            )
+                          }
+                          size="small"
+                        >
+                          {t('projectDetailsView:btnDownload')}
+                        </Button>
                       </Tooltip>
                     </>
                   </Col>
@@ -842,14 +971,14 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
               )}
               {item.carbonNeutralCertificateUrl ? (
                 <Row className="field" key="carbonNeutralCertificate">
-                  <Col span={18} className="field-key">
+                  <Col span={12} className="field-key">
                     <div className="label-container">
                       <div className="label">
                         {t('projectDetailsView:carbonNeutralCertificate')}
                       </div>
                     </div>
                   </Col>
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     <>
                       <Tooltip
                         arrowPointAtCenter
@@ -862,7 +991,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <DownloadOutlined
+                        {/* <DownloadOutlined
                           className="common-progress-icon"
                           style={
                             userInfoState?.companyId !== companyId &&
@@ -885,7 +1014,25 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               projectProposalStage
                             ) && downloadCreditIssueCertificate(item.carbonNeutralCertificateUrl)
                           }
-                        />
+                        /> */}
+                        <Button
+                          type="default"
+                          onClick={() =>
+                            downloadCreditIssueCertificate(item.carbonNeutralCertificateUrl)
+                          }
+                          disabled={
+                            userInfoState?.companyId !== companyId &&
+                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+                            !formViewPermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            )
+                          }
+                          size="small"
+                        >
+                          {t('projectDetailsView:btnDownload')}
+                        </Button>
                       </Tooltip>
                     </>
                   </Col>
@@ -895,14 +1042,14 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                 item.status === VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED &&
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
                 <Row className="field" key="carbonNeutralCertificate">
-                  <Col span={18} className="field-key">
+                  <Col span={12} className="field-key">
                     <div className="label-container">
                       <div className="label">
                         {t('projectDetailsView:carbonNeutralCertificate')}
                       </div>
                     </div>
                   </Col>
-                  <Col span={3} className="field-value">
+                  <Col span={6} className="field-value">
                     <>
                       <Tooltip
                         arrowPointAtCenter
@@ -916,7 +1063,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <SendOutlined
+                        {/* <SendOutlined
                           className="common-progress-icon"
                           style={
                             userInfoState?.companyId === companyId &&
@@ -941,7 +1088,25 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             !item.carbonNeutralCertificateRequested &&
                             requestCarbonNeutralCertificate(item.id)
                           }
-                        />
+                        /> */}
+                        <Button
+                          type="default"
+                          onClick={() => requestCarbonNeutralCertificate(item.id)}
+                          disabled={
+                            !(
+                              userInfoState?.companyId === companyId &&
+                              !item.carbonNeutralCertificateRequested &&
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.MONITORING_REPORT,
+                                projectProposalStage
+                              )
+                            )
+                          }
+                          size="small"
+                        >
+                          {t('projectDetailsView:btnSend')}
+                        </Button>
                       </Tooltip>
                     </>
                   </Col>
@@ -952,7 +1117,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                 item.carbonNeutralCertificateRequested &&
                 userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
                   <Row className="field" key="carbonNeutralCertificate">
-                    <Col span={18} className="field-key approve-cnc-title-col">
+                    <Col span={12} className="field-key approve-cnc-title-col">
                       <div className="label-container">
                         <div className="label">
                           {t('projectDetailsView:carbonNeutralCertificate')}
@@ -962,7 +1127,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         </div>
                       </div>
                     </Col>
-                    <Col span={3} className="field-value">
+                    <Col span={6} className="field-value">
                       <Tooltip
                         arrowPointAtCenter
                         placement="top"
@@ -973,7 +1138,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <CheckOutlined
+                        {/* <CheckOutlined
                           className="common-progress-icon"
                           style={
                             item.carbonNeutralCertificateRequested
@@ -1023,10 +1188,60 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               });
                             }
                           }}
-                        />
+                        /> */}
+                        <Button
+                          type="default"
+                          onClick={() => {
+                            // Check permissions and if carbonNeutralCertificateRequested is true
+                            const hasPermission = formCreatePermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            );
+
+                            if (hasPermission && item.carbonNeutralCertificateRequested) {
+                              showCarbonNeutralCertificateRequestApproveModal(item, {
+                                headerText: t('projectDetailsView:approveCNCModelTitle'),
+                                icon: <CheckCircleOutlined />,
+                                actionBtnText: t('projectDetailsView:approve'),
+                                okAction: (
+                                  comment: any,
+                                  level: any,
+                                  startDate: any,
+                                  endDate: any,
+                                  year: any
+                                ) => {
+                                  handleApprove(
+                                    item.id,
+                                    level,
+                                    startDate,
+                                    endDate,
+                                    year,
+                                    comment,
+                                    true
+                                  );
+                                },
+                                type: 'primary',
+                                remarkRequired: false,
+                              });
+                            }
+                          }}
+                          disabled={
+                            !(
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.VERIFICATION_REPORT,
+                                projectProposalStage
+                              ) && item.carbonNeutralCertificateRequested
+                            )
+                          }
+                          size="small"
+                        >
+                          {t('projectDetailsView:btnApprove')}
+                        </Button>
                       </Tooltip>
                     </Col>
-                    <Col span={3} className="field-value">
+                    <Col span={6} className="field-value">
                       <Tooltip
                         arrowPointAtCenter
                         placement="top"
@@ -1037,7 +1252,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        <CloseOutlined
+                        {/* <CloseOutlined
                           className="common-progress-icon"
                           style={
                             item.carbonNeutralCertificateRequested
@@ -1087,7 +1302,58 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               });
                             }
                           }}
-                        />
+                        /> */}
+                        <Button
+                          danger
+                          type="default"
+                          onClick={() => {
+                            // Check permissions and if carbonNeutralCertificateRequested is true
+                            const hasPermission = formCreatePermission(
+                              userInfoState,
+                              DocType.VERIFICATION_REPORT,
+                              projectProposalStage
+                            );
+
+                            if (hasPermission && item.carbonNeutralCertificateRequested) {
+                              showCarbonNeutralCertificateRequestApproveModal(item, {
+                                headerText: t('projectDetailsView:rejectCNCModelTitle'),
+                                icon: <CloseCircleOutlined />,
+                                actionBtnText: t('projectDetailsView:Reject'),
+                                okAction: (
+                                  comment: any,
+                                  level: any,
+                                  startDate: any,
+                                  endDate: any,
+                                  year: any
+                                ) => {
+                                  handleApprove(
+                                    item.id,
+                                    level,
+                                    startDate,
+                                    endDate,
+                                    year,
+                                    comment,
+                                    false
+                                  );
+                                },
+                                type: 'danger',
+                                remarkRequired: true,
+                              });
+                            }
+                          }}
+                          disabled={
+                            !(
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.VERIFICATION_REPORT,
+                                projectProposalStage
+                              ) && item.carbonNeutralCertificateRequested
+                            )
+                          }
+                          size="small"
+                        >
+                          {t('projectDetailsView:btnReject')}
+                        </Button>
                       </Tooltip>
                     </Col>
                   </Row>

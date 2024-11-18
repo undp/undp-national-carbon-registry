@@ -428,6 +428,24 @@ export class VerificationService {
       },
     });
 
+    const programme = await this.programmeSlService.getProjectById(verificationReportDto.programmeId);
+
+    const creditReceived =
+          (Number(programme.creditBalance) || 0) +
+          (Number(programme.creditFrozen) || 0) +
+          (Number(programme.creditRetired) || 0) +
+          (Number(programme.creditTransferred) || 0);
+
+        if ((programme.creditEst - creditReceived) < Number(docContent?.projectDetails?.verifiedScer)) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "verification.cannotIssueMoreThanEstimatedCredits",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
     const verificationReportDocument = new DocumentEntity();
     verificationReportDocument.userId = user.id;
     verificationReportDocument.companyId = user.companyId;

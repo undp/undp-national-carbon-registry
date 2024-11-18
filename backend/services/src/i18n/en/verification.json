@@ -7,5 +7,6 @@
   "issueCreditsWrongUser": "Only the Executive Board can issue credits",
   "monitoringReportDoesNotExists": "Moitoring report with the given id does not exists",
   "verificationReportDoesNotExists": "Verification report with the given id does not exists",
-  "verificationRequestDoesNotExists": "Verification request with the given id does not exists"
+  "verificationRequestDoesNotExists": "Verification request with the given id does not exists",
+  "cannotIssueMoreThanEstimatedCredits": "Total issue credit amount cannot exceed the project estimated credit amount"
 }

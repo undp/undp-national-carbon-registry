@@ -58,6 +58,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           url: val?.climateFundSignature,
         },
       ],
+      clientBehalf: val?.projectParticipantName,
       clientSignature: [
         {
           uid: 'participant_signature',
@@ -75,8 +76,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           url: val?.climateFundWitnessSignature,
         },
       ],
-      SLCFWitnessName: val?.witness1Name,
-      SLCFWitnessDesignation: val?.witness1Designation,
+      SLCFWitnessName: val?.climateFundWitnessName,
+      SLCFWitnessDesignation: val?.climateFundWitnessDesignation,
       ClientWitness: val?.witness2Label,
       ClientWitnessSignature: [
         {
@@ -86,8 +87,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           url: val?.projectParticipantWitnessSignature,
         },
       ],
-      clientWitnessName: val?.witness2Name,
-      clientWitnessDesignation: val?.witness2Designation,
+      clientWitnessName: val?.projectParticipantWitnessName,
+      clientWitnessDesignation: val?.projectParticipantWitnessDesignation,
       annexureAadditionalComments: val?.annexureAComment,
       annexureAadditionalDocs: val?.annexureADoc && [
         {
@@ -581,16 +582,17 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 <p className="no-margin-p">Sri Lanka Climate Fund (Pvt) Ltd.</p>
 
                 <div className="signature-upload">
+                  <LabelWithTooltip label="Signature" required={true} />
                   <Form.Item
                     name="SLCFSignature"
-                    label="Signature"
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Signature ${t('isRequired')}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -656,7 +658,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `On Behalf of; ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -665,17 +667,19 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 </span>
 
                 <span className="signature-upload">
+                  <div className="mg-top-1">
+                    <LabelWithTooltip label="Signature" required={true} />
+                  </div>
                   <Form.Item
                     name="clientSignature"
-                    label="Signature"
-                    className="mg-top-1 "
+                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
                     // required={true}
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Signature ${t('isRequired')}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -758,7 +762,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Signature ${t('isRequired')}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -811,7 +815,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Name ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -824,7 +828,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Designation ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -840,7 +844,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `${t('validationAgreement:required')}`,
+                      message: `Witness ${t('isRequired')}`,
                     },
                   ]}
                 >
@@ -858,7 +862,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Signature ${t('isRequired')}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -911,7 +915,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Name is ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -924,7 +928,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `Designation ${t('isRequired')}`,
                       },
                     ]}
                   >
@@ -949,54 +953,59 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               <TextArea rows={3} disabled={isView} />
             </Form.Item>
 
-            <Form.Item
-              name="annexureAadditionalDocs"
-              label="Upload your additional documents here"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-              required={false}
-              rules={[
-                {
-                  validator: async (rule, file) => {
-                    if (file?.length > 0) {
-                      if (
-                        !isValidateFileType(file[0]?.type, DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT)
-                      ) {
-                        throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                      } else if (file[0]?.size > maximumImageSize) {
-                        // default size format of files would be in bytes -> 1MB = 1000000bytes
-                        throw new Error(`${t('common:maxSizeVal')}`);
+            <>
+              <LabelWithTooltip label="Upload your additional documents here" required={true} />
+              <Form.Item
+                name="annexureAadditionalDocs"
+                valuePropName="fileList"
+                getValueFromEvent={normFile}
+                required={false}
+                rules={[
+                  {
+                    validator: async (rule, file) => {
+                      if (file?.length > 0) {
+                        if (
+                          !isValidateFileType(
+                            file[0]?.type,
+                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                          )
+                        ) {
+                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                        } else if (file[0]?.size > maximumImageSize) {
+                          // default size format of files would be in bytes -> 1MB = 1000000bytes
+                          throw new Error(`${t('common:maxSizeVal')}`);
+                        }
                       }
-                    }
+                    },
                   },
-                },
-              ]}
-            >
-              <Upload
-                accept=".doc, .docx, .pdf, .png, .jpg"
-                beforeUpload={(file: any) => {
-                  return false;
-                }}
-                // className="design-upload-section"
-                name="design"
-                action="/upload.do"
-                listType="picture"
-                multiple={false}
-                maxCount={1}
-                disabled={isView}
-                // defaultFileList={form.getFieldValue('annexureAadditionalDocs') || []}
-                fileList={form.getFieldValue('annexureAadditionalDocs') || []}
+                ]}
               >
-                <Button
-                  className="upload-doc"
-                  size="large"
-                  icon={<UploadOutlined />}
+                <Upload
+                  accept=".doc, .docx, .pdf, .png, .jpg"
+                  beforeUpload={(file: any) => {
+                    return false;
+                  }}
+                  // className="design-upload-section"
+                  name="design"
+                  action="/upload.do"
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
                   disabled={isView}
+                  // defaultFileList={form.getFieldValue('annexureAadditionalDocs') || []}
+                  fileList={form.getFieldValue('annexureAadditionalDocs') || []}
                 >
-                  Upload
-                </Button>
-              </Upload>
-            </Form.Item>
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                    disabled={isView}
+                  >
+                    Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </>
 
             <h4 className="annexures">Annexure B</h4>
 
@@ -1012,54 +1021,61 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             >
               <TextArea rows={3} disabled={isView} />
             </Form.Item>
-            <Form.Item
-              name="annexureBadditionalDocs"
-              label="Upload your additional documents here"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-              required={false}
-              rules={[
-                {
-                  validator: async (rule, file) => {
-                    if (file?.length > 0) {
-                      if (
-                        !isValidateFileType(file[0]?.type, DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT)
-                      ) {
-                        throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                      } else if (file[0]?.size > maximumImageSize) {
-                        // default size format of files would be in bytes -> 1MB = 1000000bytes
-                        throw new Error(`${t('common:maxSizeVal')}`);
+
+            <>
+              <LabelWithTooltip label="Upload your additional documents here" required={true} />
+              <Form.Item
+                name="annexureBadditionalDocs"
+                // label="Upload your additional documents here"
+                valuePropName="fileList"
+                getValueFromEvent={normFile}
+                required={false}
+                rules={[
+                  {
+                    validator: async (rule, file) => {
+                      if (file?.length > 0) {
+                        if (
+                          !isValidateFileType(
+                            file[0]?.type,
+                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                          )
+                        ) {
+                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                        } else if (file[0]?.size > maximumImageSize) {
+                          // default size format of files would be in bytes -> 1MB = 1000000bytes
+                          throw new Error(`${t('common:maxSizeVal')}`);
+                        }
                       }
-                    }
+                    },
                   },
-                },
-              ]}
-            >
-              <Upload
-                accept=".doc, .docx, .pdf, .png, .jpg"
-                beforeUpload={(file: any) => {
-                  return false;
-                }}
-                // className="design-upload-section"
-                name="design"
-                action="/upload.do"
-                listType="picture"
-                multiple={false}
-                maxCount={1}
-                disabled={isView}
-                // defaultFileList={form.getFieldValue('annexureBadditionalDocs') || []}
-                fileList={form.getFieldValue('annexureBadditionalDocs') || []}
+                ]}
               >
-                <Button
-                  className="upload-doc"
-                  size="large"
-                  icon={<UploadOutlined />}
+                <Upload
+                  accept=".doc, .docx, .pdf, .png, .jpg"
+                  beforeUpload={(file: any) => {
+                    return false;
+                  }}
+                  // className="design-upload-section"
+                  name="design"
+                  action="/upload.do"
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
                   disabled={isView}
+                  // defaultFileList={form.getFieldValue('annexureBadditionalDocs') || []}
+                  fileList={form.getFieldValue('annexureBadditionalDocs') || []}
                 >
-                  Upload
-                </Button>
-              </Upload>
-            </Form.Item>
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                    disabled={isView}
+                  >
+                    Upload
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </>
           </div>
           {/* Signatures and annexures end */}
 

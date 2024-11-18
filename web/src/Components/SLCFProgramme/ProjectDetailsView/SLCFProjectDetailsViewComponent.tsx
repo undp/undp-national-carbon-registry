@@ -117,6 +117,7 @@ import { HttpStatusCode } from 'axios';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
+import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -1935,6 +1936,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         generalInfo[text] = (
           <span>
             <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
+            <span>{v as string}</span>
+          </span>
+        );
+      } else if (k === 'projectDescription') {
+        const isShowTooltip = (v as string).length > 40;
+        generalInfo[text] = isShowTooltip ? (
+          <span>
+            <Tooltip placement="topLeft" title={v}>
+              <span className="ellipsis">{v as string}</span>
+            </Tooltip>
+          </span>
+        ) : (
+          <span>
             <span>{v as string}</span>
           </span>
         );
