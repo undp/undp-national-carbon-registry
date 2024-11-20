@@ -53,6 +53,7 @@ import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
 import VerificationReport from './Pages/SLCFProgrammeManagement/VerificationReport';
 import SiteVisitCheckListPage from './Pages/SiteVisitCheckListPage/SiteVisitCheckListPage';
 import Settings from './Pages/Settings/settings';
+import SLCFDashboard from './Pages/Dashboard/slcf/slcfdashboard';
 
 const App = () => {
   const ability = defineAbility();
@@ -101,6 +102,7 @@ const App = () => {
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
+                    <Route path="/dashboard/slcf" element={<SLCFDashboard />} />
                   </Route>
                   <Route
                     path="/nationalAccounting"
