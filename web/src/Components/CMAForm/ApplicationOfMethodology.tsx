@@ -295,7 +295,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -321,7 +321,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -335,7 +335,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -349,7 +349,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -507,7 +507,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -521,7 +521,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -535,7 +535,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -549,7 +549,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -746,7 +746,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -760,7 +760,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -774,7 +774,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -788,7 +788,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                               },
                             ]}
                           >
-                            <Select disabled={disableFields}>
+                            <Select disabled={disableFields} placeholder="Select">
                               <Select.Option value={true}>Yes</Select.Option>
                               <Select.Option value={false}>No</Select.Option>
                             </Select>
@@ -946,7 +946,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -960,7 +960,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -974,7 +974,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
@@ -988,7 +988,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           },
                                         ]}
                                       >
-                                        <Select disabled={disableFields}>
+                                        <Select disabled={disableFields} placeholder="Select">
                                           <Select.Option value={true}>Yes</Select.Option>
                                           <Select.Option value={false}>No</Select.Option>
                                         </Select>
