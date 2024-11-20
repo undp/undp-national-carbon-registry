@@ -154,6 +154,9 @@ export class AggregateSlAPIService {
       const arrResultForTimeGroup = groupedDatasObject[timeLabelItem];
       console.log("arrResultForTimeGroup 1234", arrResultForTimeGroup);
 
+      result["awaitingAuthorization"]?.push(0);
+      result["authorised"]?.push(0);
+      result["rejected"]?.push(0);
       let authorisedCreditsSum = 0;
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
@@ -207,7 +210,7 @@ export class AggregateSlAPIService {
 
             console.log("count 1234", count, parseInt(timeGroupItem?.count));
 
-            result["awaitingAuthorization"].push(Number(count) + parseInt(timeGroupItem?.count));
+            result["awaitingAuthorization"].push(count + parseInt(timeGroupItem?.count));
             break;
           case "REJECTED_INF":
           case "REJECTED_PROPOSAL":
@@ -217,7 +220,7 @@ export class AggregateSlAPIService {
             }
             console.log("count 12345", count);
 
-            result["rejected"].push(Number(count) + parseInt(timeGroupItem?.count));
+            result["rejected"].push(count + parseInt(timeGroupItem?.count));
             break;
           case "AUTHORISED":
             resultThere["authorised"] = true;
@@ -226,7 +229,7 @@ export class AggregateSlAPIService {
             }
             console.log("count 123456", count);
 
-            result["authorised"].push(Number(count) + parseInt(timeGroupItem?.count));
+            result["authorised"].push(count + parseInt(timeGroupItem?.count));
             break;
         }
         // if (timeGroupItem?.projectProposalStage === status) {
@@ -238,11 +241,11 @@ export class AggregateSlAPIService {
         // }
         // });
       });
-      statusArray?.map((status) => {
-        if (resultThere[this.firstLower(status)] === false) {
-          result[this.firstLower(status)]?.push(0);
-        }
-      });
+      // statusArray?.map((status) => {
+      //   if (resultThere[this.firstLower(status)] === false) {
+      //     result[this.firstLower(status)]?.push(0);
+      //   }
+      // });
       result["authorisedCredits"]?.push(authorisedCreditsSum);
       result["issuedCredits"]?.push(issuedCreditsSum);
       result["transferredCredits"]?.push(transferredCreditsSum);
