@@ -20,6 +20,8 @@ import { Projection } from "../entities/projection.entity";
 import { EventLog } from "../entities/event.log.entity";
 import { NationalAccountingModule } from "src/analytics-api/national-accounting/national.accounting.module";
 import { NationalAccountingController } from "./national-accounting.controller";
+import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { AggregateSlAPIService } from "./aggregate.sl.api.service";
 
 @Module({
   imports: [
@@ -41,15 +43,16 @@ import { NationalAccountingController } from "./national-accounting.controller";
       InvestmentView,
       Emission,
       Projection,
-      EventLog
+      EventLog,
+      ProgrammeSl,
     ]),
     AuthModule,
     CaslModule,
     UtilModule,
     ProgrammeLedgerModule,
-		NationalAccountingModule
+    NationalAccountingModule,
   ],
   controllers: [ProgrammeController, NationalAccountingController],
-  providers: [Logger, AggregateAPIService],
+  providers: [Logger, AggregateAPIService, AggregateSlAPIService],
 })
 export class AnalyticsAPIModule {}
