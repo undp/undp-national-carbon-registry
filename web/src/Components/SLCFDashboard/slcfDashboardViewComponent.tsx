@@ -1563,10 +1563,10 @@ export const SLCFDashboardComponent = (props: any) => {
   ]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
-  const pending = ['all', ['==', ['get', 'stage'], 'AwaitingAuthorization']];
-  const authorised = ['all', ['==', ['get', 'stage'], 'Authorised']];
-  const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
-  const news = ['all', ['==', ['get', 'stage'], 'Approved']];
+  const pending = ['all', ['==', ['get', 'stage'], 'awaitingAuthorization']];
+  const authorised = ['all', ['==', ['get', 'stage'], 'authorised']];
+  const rejected = ['all', ['==', ['get', 'stage'], 'rejected']];
+  const news = ['all', ['==', ['get', 'stage'], 'approved']];
 
   const colors = ['#6ACDFF', '#CDCDCD', '#FF8183', '#B7A4FE'];
 
@@ -1979,7 +1979,7 @@ ${total}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
               tooltip={
-                t('tTTransferReqSentGovernment')
+                t('tTVerificationReqSentGovernment')
                 //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
                 //     ? 'tTTransferReqSentGovernment'
                 //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
@@ -2114,13 +2114,12 @@ ${total}
               // updatedDate={lastUpdateProgrammesStatsC}
               loading={loading}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTProgrammesGoverment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTProgrammesGoverment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'tTProgrammesProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTProgrammesCertifierMine'
-                  : 'tTProgrammesCertifierOverall'
+                  : 'tTProgrammesGoverment'
               )}
               t={t}
             />
@@ -2135,13 +2134,12 @@ ${total}
               lastUpdate={'0'}
               loading={loading}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTCreditsGovernment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'tTCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTCreditsCertifierMine'
-                  : 'tTCreditsCertifierOverall'
+                  : 'tTCreditsGovernment'
               )}
               Chart={Chart}
             />
@@ -2156,13 +2154,12 @@ ${total}
               lastUpdate={'0'}
               loading={loading}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCertifiedCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCertifiedCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTCertifiedCreditsCertifierMine'
-                  : 'tTCertifiedCreditsCertifierOverall'
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTCertifiedCreditsGovernment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  ? 'tTAuthCreditByTypeProgrammeDev'
+                  : 'tTAuthCreditByTypeGovernment'
               )}
               Chart={Chart}
             />
@@ -2181,13 +2178,12 @@ ${total}
               lastUpdate={'0'}
               loading={loadingCharts}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalProgrammesGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTTotalProgrammesGovernment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'tTTotalProgrammesProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalProgrammesCertifierMine'
-                  : 'tTTotalProgrammesCertifierOverall'
+                  : 'tTTotalProgrammesGovernment'
               )}
               Chart={Chart}
             />
@@ -2202,13 +2198,12 @@ ${total}
               lastUpdate={'0'}
               loading={loadingCharts}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalProgrammesSectorGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTTotalProgrammesSectorGovernment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'tTTotalProgrammesSecProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalProgrammesSecCertifierMine'
-                  : 'tTTotalProgrammesSecCertifierOverall'
+                  : 'tTTotalProgrammesSectorGovernment'
               )}
               Chart={Chart}
             />
@@ -2227,13 +2222,12 @@ ${total}
               lastUpdate={'0'}
               loading={loadingCharts}
               toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'tTTotalCreditsGovernment'
+                //   :
+                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                   ? 'tTTotalCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalCreditsCertifierMine'
-                  : 'tTTotalCreditsCertifierOverall'
+                  : 'tTTotalCreditsGovernment'
               )}
               Chart={Chart}
             />
@@ -2274,13 +2268,12 @@ ${total}
                         placement="bottomRight"
                         trigger="hover"
                         title={t(
-                          userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                            ? 'tTProgrammeLocationsGovernment'
-                            : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                          // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                          //   ? 'tTProgrammeLocationsGovernment'
+                          //   :
+                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                             ? 'tTProgrammeLocationsProgrammeDev'
-                            : categoryType === 'mine'
-                            ? 'tTProgrammeLocationsCertifierMine'
-                            : 'tTProgrammeLocationsCertifierOverall'
+                            : 'tTProgrammeLocationsGovernment'
                         )}
                       >
                         <InfoCircle color="#000000" size={17} />
