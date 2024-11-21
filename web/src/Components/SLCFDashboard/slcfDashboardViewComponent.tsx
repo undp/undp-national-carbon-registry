@@ -1152,7 +1152,7 @@ export const SLCFDashboardComponent = (props: any) => {
           );
         }
         programmeByStatusAuthAggregationResponse =
-          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS;
         if (
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
@@ -1291,7 +1291,7 @@ export const SLCFDashboardComponent = (props: any) => {
           );
         }
         programmeByStatusAuthAggregationResponse =
-          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
           String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
