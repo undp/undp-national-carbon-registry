@@ -15,6 +15,7 @@
   "cRequested": "CREDIT REQUESTED",
   "cBalance": "CREDIT BALANCE",
   "status": "STATUS",
+  "noRetirements": "No Retirements Available",
   "noTransfer": "No Transfers Available",
   "cancelTitle": "Are you sure you want to cancel this request?",
   "rejectTitle": "Are you sure you want to reject this  request?",
