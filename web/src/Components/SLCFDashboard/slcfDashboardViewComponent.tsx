@@ -840,6 +840,7 @@ export const SLCFDashboardComponent = (props: any) => {
         ];
         setTotalCreditsSeries(totalCreditsValues);
         totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
+        totalCreditsOptions.yaxis.max = totalCreditsSeries ? undefined : 25;
       }
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
@@ -1363,7 +1364,8 @@ export const SLCFDashboardComponent = (props: any) => {
         totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
       }
       setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      const creditAuthorized = totalEstCredits - totalIssuedCredits;
+      const creditAuthorized =
+        totalEstCredits - (totalIssuedCredits + totalTxCredits + totalRetiredCredits);
       // const creditIssued =
       //   totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits; //TODO; Fi
       pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
