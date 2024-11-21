@@ -330,7 +330,7 @@ export class AggregateSlAPIService {
         let properties: any = {};
         let geometry: any = {};
         properties.id = String(index);
-        properties.count = parseInt(locationDataItem?.count);
+        properties.count = locationDataItem?.count;
         if (groupField !== undefined) {
           if (locationDataItem[groupField] == null) {
             properties[groupField] = "Unknown";
@@ -1072,34 +1072,98 @@ export class AggregateSlAPIService {
           //     stat.statFilter?.timeGroup ? "day" : undefined
           //   );
           //   break;
-          // case StatType.ALL_PROGRAMME_LOCATION:
-          // case StatType.MY_PROGRAMME_LOCATION:
-          //   if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
-          //     stat.statFilter
-          //       ? (stat.statFilter.onlyMine = true)
-          //       : (stat.statFilter = { onlyMine: true });
-          //   }
-          //   const whereC = [];
-          //   whereC.push(`p."programmeId" != 'null'`);
-          //   if (stat.statFilter && stat.statFilter.onlyMine) {
-          //     whereC.push(
-          //       `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
-          //     );
-          //   }
-          //   if (stat.statFilter && stat.statFilter.startTime) {
-          //     whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
-          //   }
-          //   if (stat.statFilter && stat.statFilter.endTime) {
-          //     whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
-          //   }
-          //   const resultsProgrammeLocations = await this.programmeRepo.manager
-          //     .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
-          //       FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-          //       ${whereC.length > 0 ? " where " : " "}
-          //       ${whereC.join(" and ")}
-          //       GROUP  BY p."programmeId", b."currentStage"`);
-          //   results[key] = await this.programmeLocationDataFormatter(resultsProgrammeLocations);
-          //   break;
+          case StatType.ALL_PROGRAMME_LOCATION:
+          case StatType.MY_PROGRAMME_LOCATION:
+            if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
+              stat.statFilter
+                ? (stat.statFilter.onlyMine = true)
+                : (stat.statFilter = { onlyMine: true });
+            }
+            const whereC = [];
+            whereC.push(`d."geoCoordinates" != 'null'`);
+            if (stat.statFilter && stat.statFilter.onlyMine) {
+              whereC.push(`(${companyId} = b."companyId")`);
+            }
+            if (stat.statFilter && stat.statFilter.startTime) {
+              whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
+            }
+            if (stat.statFilter && stat.statFilter.endTime) {
+              whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
+            }
+            // const resultsProgrammeLocations = await this.programmeRepo.manager
+            //   .query(`SELECT p."programmeId" as loc, b."projectProposalStage" as stage, count(*) AS count
+            //     FROM   programme_sl b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
+            //     ${whereC.length > 0 ? " where " : " "}
+            //     ${whereC.join(" and ")}
+            //     GROUP  BY p."programmeId", b."projectProposalStage"`);
+            const resultsProgrammeLocations = await this.programmeRepo.manager
+              .query(`SELECT d."geoCoordinates" as loc, b."projectProposalStage" as stage, count(*) AS count
+                  FROM programme_sl b
+                  JOIN district d ON b."district" = d."districtName"
+                  ${whereC.length > 0 ? " where " : " "}
+                  ${whereC.join(" and ")}
+                  GROUP BY d."geoCoordinates", b."projectProposalStage"`);
+
+            console.log("resultsProgrammeLocations:", resultsProgrammeLocations);
+
+            const stageMapping = {
+              SUBMITTED_INF: "awaitingAuthorization",
+              APPROVED_INF: "awaitingAuthorization",
+              SUBMITTED_COST_QUOTATION: "awaitingAuthorization",
+              SUBMITTED_PROPOSAL: "awaitingAuthorization",
+              SUBMITTED_VALIDATION_AGREEMENT: "awaitingAuthorization",
+              ACCEPTED_PROPOSAL: "awaitingAuthorization",
+              SUBMITTED_CMA: "awaitingAuthorization",
+              REJECTED_CMA: "awaitingAuthorization",
+              APPROVED_CMA: "awaitingAuthorization",
+              VALIDATION_PENDING: "awaitingAuthorization",
+              REJECTED_VALIDATION: "awaitingAuthorization",
+              REJECTED_INF: "rejected",
+              REJECTED_PROPOSAL: "rejected",
+              AUTHORISED: "authorised",
+            };
+
+            const aggregatedData = resultsProgrammeLocations.reduce(
+              (acc, { loc, stage, count }) => {
+                const mappedStage = stageMapping[stage]; // Map stage
+                const locationKey = JSON.stringify(loc); // Use location as a unique key
+
+                if (!acc[locationKey]) {
+                  acc[locationKey] = { loc, awaitingAuthorization: 0, rejected: 0, authorised: 0 };
+                }
+
+                acc[locationKey][mappedStage] += parseInt(count, 10);
+
+                return acc;
+              },
+              {}
+            );
+
+            // Convert aggregated data into the resultsProgrammeLocations array format
+            const result = Object.values(aggregatedData).flatMap(
+              ({ loc, awaitingAuthorization, rejected, authorised }) => {
+                const output = [];
+                if (awaitingAuthorization > 0) {
+                  output.push({
+                    loc,
+                    stage: "awaitingAuthorization",
+                    count: awaitingAuthorization,
+                  });
+                }
+                if (rejected > 0) {
+                  output.push({ loc, stage: "rejected", count: rejected });
+                }
+                if (authorised > 0) {
+                  output.push({ loc, stage: "authorised", count: authorised });
+                }
+                return output;
+              }
+            );
+
+            console.log("aggregated array:", result);
+
+            results[key] = await this.programmeLocationDataFormatter(result);
+            break;
           // case StatType.ALL_TRANSFER_LOCATION:
           // case StatType.MY_TRANSFER_LOCATION:
           //   if (stat.type === StatType.MY_TRANSFER_LOCATION) {
