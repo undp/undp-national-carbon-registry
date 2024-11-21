@@ -87,7 +87,7 @@ export const SLCFDashboardComponent = (props: any) => {
   const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
     useState<number>(0);
   const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
-  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
+  const [authCreditsByTypePieSeries, setAuthCreditsByTypePieSeries] = useState<number[]>([1, 1, 0]);
   const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
   const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
@@ -945,6 +945,45 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
+  const getAuthorisedCreditsTotalByType = async () => {
+    setLoadingWithoutTimeRange(true);
+
+    try {
+      // const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
+      const response: any = await post(
+        'stats/programme/authCreditsByCreditType',
+        {
+          startTime: startTime !== 0 ? startTime : undefined,
+          endTime: endTime !== 0 ? endTime : undefined,
+        },
+        undefined,
+        statServerUrl
+      );
+      console.log(response);
+
+      const track1Credits = response?.data?.TRACK_1 ? Number(response?.data?.TRACK_1) : 0;
+      const track2Credits = response?.data?.TRACK_2 ? Number(response?.data?.TRACK_2) : 0;
+      const totalAuthCredits = addRoundNumber(track1Credits + track2Credits);
+
+      const pieSeriesCreditTypeData: any[] = [];
+      pieSeriesCreditTypeData.push(track1Credits);
+      pieSeriesCreditTypeData.push(track2Credits);
+      setAuthCreditsByTypePieSeries(pieSeriesCreditTypeData);
+      optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+        '' + addCommSep(totalAuthCredits);
+    } catch (error: any) {
+      console.log('Error in getting pending retirement requests', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
   const getAllProgrammeAnalyticsStatsWithoutTimeRange = async () => {
     setLoadingWithoutTimeRange(true);
     try {
@@ -1070,7 +1109,7 @@ export const SLCFDashboardComponent = (props: any) => {
   const getAllProgrammeAnalyticsStats = async () => {
     setLoading(true);
     const pieSeriesCreditsData: any[] = [];
-    const pieSeriesCreditsCerifiedData: any[] = [];
+    // const pieSeriesCreditsCerifiedData: any[] = [];
     try {
       const response: any = await post(
         'stats/programme/aggSl',
@@ -1333,23 +1372,23 @@ export const SLCFDashboardComponent = (props: any) => {
       pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
       // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
 
-      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
-      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
-      pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
-      const totalCreditsCertified = addRoundNumber(
-        totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
-      );
+      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+      // const totalCreditsCertified = addRoundNumber(
+      //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+      // );
       setCreditsPieChartTotal(
         String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
       );
-      setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
-      const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
+      // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
+      // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
         '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
-      optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + addCommSep(totalCreditsCertified);
+      // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+      //   '' + addCommSep(totalCreditsCertified);
       setCreditPieSeries(pieSeriesCreditsData);
-      setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
+      // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -1375,6 +1414,7 @@ export const SLCFDashboardComponent = (props: any) => {
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
+    getAuthorisedCreditsTotalByType();
   }, [startTime, endTime, categoryType]);
 
   useEffect(() => {
@@ -1410,16 +1450,16 @@ export const SLCFDashboardComponent = (props: any) => {
     });
   }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
-  useEffect(() => {
-    ApexCharts.exec('total-credits-certified', 'updateSeries', {
-      data: totalCertifiedCreditsSeries,
-    });
-    ApexCharts.exec('total-credits-certified', 'updateOptions', {
-      xaxis: {
-        categories: totalCertifiedCreditsOptionsLabels,
-      },
-    });
-  }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
+  // useEffect(() => {
+  //   ApexCharts.exec('total-credits-certified', 'updateSeries', {
+  //     data: totalCertifiedCreditsSeries,
+  //   });
+  //   ApexCharts.exec('total-credits-certified', 'updateOptions', {
+  //     xaxis: {
+  //       categories: totalCertifiedCreditsOptionsLabels,
+  //     },
+  //   });
+  // }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
 
   useEffect(() => {
     ApexCharts.exec('credits', 'updateSeries', {
@@ -1439,21 +1479,21 @@ export const SLCFDashboardComponent = (props: any) => {
   }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
 
   useEffect(() => {
-    ApexCharts.exec('certified-credits', 'updateSeries', {
-      series: creditsCertifiedPieSeries,
+    ApexCharts.exec('auth-credits-by-type', 'updateSeries', {
+      series: authCreditsByTypePieSeries,
     });
-    ApexCharts.exec('credits', 'updateOptions', {
-      plotOptions: {
-        pie: {
-          labels: {
-            total: {
-              formatter: () => certifiedCreditsPieChartTotal,
-            },
-          },
-        },
-      },
-    });
-  }, [creditsCertifiedPieSeries, categoryType, certifiedCreditsPieChartTotal]);
+    // ApexCharts.exec('credits', 'updateOptions', {
+    //   plotOptions: {
+    //     pie: {
+    //       labels: {
+    //         total: {
+    //           formatter: () => certifiedCreditsPieChartTotal,
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+  }, [authCreditsByTypePieSeries, categoryType, certifiedCreditsPieChartTotal]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -2106,13 +2146,14 @@ ${total}
               Chart={Chart}
             />
           </Col>
-          {/* <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <SLCFPieChartsStatComponent
-              id="certified-credits"
-              title={t('certifiedCredits')}
+              id="auth-credits-by-type"
+              title={t('creditDevelopmentPurpose')}
               options={optionDonutPieB}
-              series={creditsCertifiedPieSeries}
-              lastUpdate={lastUpdateCertifiedCreditsStats}
+              series={authCreditsByTypePieSeries}
+              // lastUpdate={lastUpdateCertifiedCreditsStats}
+              lastUpdate={'0'}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -2125,7 +2166,7 @@ ${total}
               )}
               Chart={Chart}
             />
-          </Col> */}
+          </Col>
         </Row>
       </div>
       <div className="stastics-and-charts-container center">
@@ -2157,7 +2198,8 @@ ${total}
               title={t('totalProgrammesSector')}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
-              lastUpdate={lastUpdateProgrammesSectorStatsC}
+              // lastUpdate={lastUpdateProgrammesSectorStatsC}
+              lastUpdate={'0'}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
@@ -2181,7 +2223,8 @@ ${total}
               title={t('totalCredits')}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
-              lastUpdate={lastUpdateTotalCredits}
+              // lastUpdate={lastUpdateTotalCredits}
+              lastUpdate={'0'}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT

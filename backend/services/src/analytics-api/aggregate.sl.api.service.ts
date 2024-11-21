@@ -2208,7 +2208,7 @@ export class AggregateSlAPIService {
       query.andWhere("psl.companyId = :companyId", { companyId: user.companyId });
     }
 
-    const result = await query.getRawOne(); 
+    const result = await query.getRawOne();
     return {
       count: parseInt(result.count, 10),
       latestUpdatedTime: result.latestUpdatedTime,
@@ -2227,12 +2227,41 @@ export class AggregateSlAPIService {
         companyId: user.companyId,
       });
     }
-    const result = await query.getRawOne(); 
+    const result = await query.getRawOne();
 
     return {
       count: parseInt(result.count, 10),
       latestUpdatedTime: result.latestUpdatedTime,
     };
+  }
+
+  async getCreditTypeSummary(statFilter: StatFilter, user: User) {
+    let query = this.programmeSlRepo
+      .createQueryBuilder("programme")
+      .select("programme.purposeOfCreditDevelopment", "purposeOfCreditDevelopment")
+      .addSelect("SUM(programme.creditEst)", "totalCreditEst")
+      .where("programme.projectProposalStage = :stage", { stage: "AUTHORISED" });
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("programme.companyId = :companyId", { companyId: user.companyId });
+    }
+    if (statFilter.startTime && statFilter.endTime) {
+      query.andWhere("programme.createdTime BETWEEN :startTime AND :endTime", {
+        startTime: statFilter.startTime,
+        endTime: statFilter.endTime,
+      });
+      // query
+      //   .andWhere("programme.createdTime >= :startTime", { startTime: statFilter.startTime })
+      //   .andWhere("programme.createdTime <= :endTime", { endTime: statFilter.endTime });
+    }
+    const result = await query.groupBy("programme.purposeOfCreditDevelopment").getRawMany();
+
+    const formattedResult = result.reduce((acc, item) => {
+      acc[item.purposeOfCreditDevelopment] = item.totalCreditEst;
+      return acc;
+    }, {});
+
+    return formattedResult;
   }
 
   async getEstimatedSubSectorData(projectionResult, startYear, endYear) {

@@ -7,6 +7,7 @@ import { PoliciesGuardEx } from "../casl/policy.guard";
 import { Stat } from "../dto/stat.dto";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
+import { StatFilter } from "../dto/stat.filter";
 // import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
 @ApiTags("Programme")
@@ -61,5 +62,13 @@ export class ProgrammeController {
   @Get("retirements")
   async getPendingRetirements(@Request() req) {
     return this.aggSlService.getPendingRetirements(req.user);
+  }
+
+  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("authCreditsByCreditType")
+  async getAuthorisedCreditsTotalByType(@Body() query: StatFilter, @Request() req) {
+    return this.aggSlService.getCreditTypeSummary(query, req.user);
   }
 }

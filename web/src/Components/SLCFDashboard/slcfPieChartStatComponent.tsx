@@ -28,9 +28,9 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
           <div className="pie-charts-top">
             <div className="pie-charts-title">
               {title}
-              {[StatsCardsTypes.CREDITS, StatsCardsTypes.CERTIFIED_CREDITS].includes(title) && (
+              {/* {[StatsCardsTypes.CREDITS, StatsCardsTypes.CERTIFIED_CREDITS].includes(title) && (
                 <div className="unit">(ITMOs)</div>
-              )}
+              )} */}
             </div>
             <div className="info-container">
               <Tooltip

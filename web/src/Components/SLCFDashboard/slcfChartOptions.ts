@@ -691,8 +691,8 @@ export const optionDonutPieB: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
-  labels: ['Certified', 'Uncertified', 'Revoked'],
+  colors: ['#6ACDFF', '#FF8183'],
+  labels: ['SCCER+', 'SLCER'],
   plotOptions: {
     pie: {
       expandOnClick: false,
@@ -737,7 +737,7 @@ export const optionDonutPieB: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['#6ACDFF', '#FF8183', '#CDCDCD'],
+      fillColors: ['#6ACDFF', '#FF8183'],
       radius: 12,
       customHTML: undefined,
       onClick: undefined,
