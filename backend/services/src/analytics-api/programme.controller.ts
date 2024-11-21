@@ -1,4 +1,4 @@
-import { Controller, Logger, UseGuards, Request, Post, Body } from "@nestjs/common";
+import { Controller, Logger, UseGuards, Request, Post, Body, Get } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { StatList } from "../dto/stat.list.dto";
 import { ApiKeyJwtAuthGuard } from "../auth/guards/api-jwt-key.guard";
@@ -7,6 +7,7 @@ import { PoliciesGuardEx } from "../casl/policy.guard";
 import { Stat } from "../dto/stat.dto";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
+// import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
@@ -44,5 +45,21 @@ export class ProgrammeController {
       req.user?.companyRole,
       query.system
     );
+  }
+
+  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Get("verifications")
+  async getPendingVerifications(@Request() req) {
+    return this.aggSlService.getPendingVerifications(req.user);
+  }
+
+  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Get("retirements")
+  async getPendingRetirements(@Request() req) {
+    return this.aggSlService.getPendingRetirements(req.user);
   }
 }

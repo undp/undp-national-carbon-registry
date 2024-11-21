@@ -584,8 +584,8 @@ export const optionDonutPieA: any = {
   dataLabels: {
     enabled: false,
   },
-  colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183', '#B7A4FE'],
-  labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
+  colors: ['#6ACDFF', '#7FEABF', '#CDCDCD', '#FF8183'],
+  labels: ['Authorised', 'Issued', 'Transferred', 'Retired'],
   plotOptions: {
     pie: {
       expandOnClick: false,

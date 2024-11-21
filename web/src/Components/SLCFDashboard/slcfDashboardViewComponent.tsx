@@ -13,7 +13,7 @@ import {
   MenuProps,
 } from 'antd';
 import './dashboard.scss';
-import { BookOutlined, DownloadOutlined, CaretDownOutlined } from '@ant-design/icons';
+import { VerifiedOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   ClockHistory,
@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Gem,
   InfoCircle,
+  FileEarmarkCheck,
 } from 'react-bootstrap-icons';
 import {
   ChartSeriesItem,
@@ -57,8 +58,13 @@ import {
   addCommSep,
 } from '../../Definitions/Definitions/programme.definitions';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { ProgrammeStageLegend, ProgrammeStageR } from '../../Definitions/Enums/programmeStage.enum';
-import { Sector } from '../../Definitions/Enums/sector.enum';
+import {
+  getProjectCategory,
+  ProgrammeCategory,
+  ProgrammeSLStageR,
+  ProgrammeStageLegend,
+} from '../../Definitions/Enums/programmeStage.enum';
+// import { Sector, SlProjectCategory } from '../../Definitions/Enums/sector.enum';
 import { LegendItem } from '../LegendItem/legendItem';
 import { MapComponent } from '../Maps/mapComponent';
 import { StasticCard } from '../StatisticsCard/statisticsCard';
@@ -128,6 +134,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //programmeDeveloper
   const [transferRequestSent, setTransferRequestSent] = useState<number>(0);
+  const [verificationRequestPending, setVerificationRequestPending] = useState<number>(0);
   const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
 
   //last time updates
@@ -544,7 +551,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingCharts(true);
     try {
       const response: any = await post(
-        'stats/programme/agg',
+        'stats/programme/aggSl',
         getAllChartsParams(),
         undefined,
         statServerUrl
@@ -841,12 +848,12 @@ export const SLCFDashboardComponent = (props: any) => {
         });
         setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
         const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
-        const sectorsArray = Object.values(Sector);
+        const sectorsArray = Object.values(ProgrammeCategory);
         sectorsArray?.map((sector: any) => {
-          if (programmesAggBySector[firstLower(sector)] !== undefined) {
+          if (programmesAggBySector[sector] !== undefined) {
             progarmmesSectorSeriesData.push({
-              name: sector,
-              data: programmesAggBySector[firstLower(sector)],
+              name: getProjectCategory[sector],
+              data: programmesAggBySector[sector],
             });
           }
         });
@@ -898,17 +905,56 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
+  const getPendingVerificationRequests = async () => {
+    setLoadingWithoutTimeRange(true);
+
+    try {
+      const response: any = await get('stats/programme/verifications', undefined, statServerUrl);
+      console.log(response);
+      setVerificationRequestPending(response?.data?.count);
+    } catch (error: any) {
+      console.log('Error in getting pending verification requests', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
+  const getPendingRetirementRequests = async () => {
+    setLoadingWithoutTimeRange(true);
+
+    try {
+      const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
+      console.log(response);
+      setTransferRequestSent(response?.data?.count);
+    } catch (error: any) {
+      console.log('Error in getting pending retirement requests', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
   const getAllProgrammeAnalyticsStatsWithoutTimeRange = async () => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/agg',
+        'stats/programme/aggSl',
         getAllProgrammeAnalyticsStatsParamsWithoutTimeRange(),
         undefined,
         statServerUrl
       );
-      const programmeByStatusAggregationResponse =
-        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+      const programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
       const pendingTransferInitAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
       const pendingTransferReceivedAggregationResponse =
@@ -917,14 +963,14 @@ export const SLCFDashboardComponent = (props: any) => {
       const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
       const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-        if (responseItem?.currentStage === 'AwaitingAuthorization') {
+        if (responseItem?.currentStage === 'awaitingAuthorization') {
           //TODO: Widget 1 change needed sum the count of all status
           setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
         }
       });
-      if (pendingTransferInitAggregationResponse) {
-        setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
-      }
+      // if (pendingTransferInitAggregationResponse) {
+      //   setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
+      // }
       if (myCreditAggregationResponse) {
         setCreditBalanceWithoutTimeRange(myCreditAggregationResponse?.primary);
       }
@@ -1027,7 +1073,7 @@ export const SLCFDashboardComponent = (props: any) => {
     const pieSeriesCreditsCerifiedData: any[] = [];
     try {
       const response: any = await post(
-        'stats/programme/agg',
+        'stats/programme/aggSl',
         getAllProgrammeAnalyticsStatsParams(),
         undefined,
         statServerUrl
@@ -1049,8 +1095,7 @@ export const SLCFDashboardComponent = (props: any) => {
             ).fromNow()
           );
         }
-        programmeByStatusAggregationResponse =
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
         if (
           response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
@@ -1192,7 +1237,7 @@ export const SLCFDashboardComponent = (props: any) => {
             ).fromNow()
           );
         }
-        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
         if (
           response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
           String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
@@ -1239,16 +1284,16 @@ export const SLCFDashboardComponent = (props: any) => {
       if (programmeByStatusAggregationResponse?.length > 0) {
         programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
           if (
-            ProgrammeStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
+            ProgrammeSLStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
           ) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             pendingProgrammesC = parseInt(responseItem?.count);
           }
-          if ([ProgrammeStageR.Rejected].includes(responseItem?.currentStage)) {
+          if ([ProgrammeSLStageR.Rejected].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             rejectedProgrammesC = parseInt(responseItem?.count);
           }
-          if ([ProgrammeStageR.Authorised].includes(responseItem?.currentStage)) {
+          if ([ProgrammeSLStageR.Authorised].includes(responseItem?.currentStage)) {
             totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
             authorisedProgrammesC = parseInt(responseItem?.count);
           }
@@ -1286,7 +1331,7 @@ export const SLCFDashboardComponent = (props: any) => {
       pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
       pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
       pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
-      pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
+      // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
 
       pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
       pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
@@ -1323,6 +1368,8 @@ export const SLCFDashboardComponent = (props: any) => {
     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       setCategoryType('mine');
     }
+    getPendingVerificationRequests();
+    getPendingRetirementRequests();
   }, []);
 
   useEffect(() => {
@@ -1856,6 +1903,56 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <StasticCard
               value={
+                verificationRequestPending
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? transferRequestSent
+                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                //   ? transferRequestSent
+                //   : programmesCertifed
+              }
+              title={
+                'verificationsPending'
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? 'trasnferReqInit'
+                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                //   ? 'trasnferReqInit'
+                //   : 'programmesCertified'
+              }
+              updatedDate={
+                '0'
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //   ? lastUpdatePendingTransferSent
+                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                //   ? lastUpdatePendingTransferSent
+                //   : lastUpdateProgrammesCertified
+              }
+              icon={
+                <FileEarmarkCheck color="#16B1FF" size={80} />
+                // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+                //   <BoxArrowRight color="#16B1FF" size={80} />
+                // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                //   <BoxArrowRight color="#16B1FF" size={80} />
+                // ) : (
+                //   <ShieldCheck color="#16B1FF" size={80} />
+                // )
+              }
+              loading={loadingWithoutTimeRange}
+              companyRole={userInfoState?.companyRole}
+              tooltip={
+                t('tTTransferReqSentGovernment')
+                //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                //     ? 'tTTransferReqSentGovernment'
+                //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                //     ? 'tTTransferReqInitProgrammeDev'
+                //     : 'tTProgrammesCertiCertifier'
+                // )
+              }
+              t={t}
+            />
+          </Col>
+          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
+            <StasticCard
+              value={
                 transferRequestSent
                 // userInfoState?.companyRole === CompanyRole.GOVERNMENT
                 //   ? transferRequestSent
@@ -1900,50 +1997,6 @@ ${total}
                 //     : 'tTProgrammesCertiCertifier'
                 // )
               }
-              t={t}
-            />
-          </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <StasticCard
-              value={
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? creditBalanceWithoutTimeRange
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? creditBalanceWithoutTimeRange
-                  : creditCertiedBalanceWithoutTimeRange
-              }
-              title={
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'creditBal'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'creditBal'
-                  : 'creditCertified'
-              }
-              updatedDate={
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? lastUpdateCreditBalance
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? lastUpdateCreditBalance
-                  : lastUpdateProgrammesCertified
-              }
-              icon={
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                  <Gem color="#16B1FF" size={80} />
-                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                  <Gem color="#16B1FF" size={80} />
-                ) : (
-                  <ShieldExclamation color="#16B1FF" size={80} />
-                )
-              }
-              loading={loadingWithoutTimeRange}
-              companyRole={userInfoState?.companyRole}
-              tooltip={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCreditBalanceGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCreditBalanceProgrammeDev'
-                  : 'tTCreditCertifiedCertifier'
-              )}
               t={t}
             />
           </Col>
@@ -2142,7 +2195,7 @@ ${total}
               Chart={Chart}
             />
           </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+          {/* <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <SLCFBarChartsStatComponent
               id="total-credits-certified"
               title={t('totalCreditsCertified')}
@@ -2161,7 +2214,7 @@ ${total}
               )}
               Chart={Chart}
             />
-          </Col>
+          </Col> */}
         </Row>
       </div>
       {mapType !== MapTypes.None ? (

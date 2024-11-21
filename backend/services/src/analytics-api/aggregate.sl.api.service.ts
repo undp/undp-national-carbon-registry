@@ -38,6 +38,9 @@ import {
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { ProgrammeSl } from "src/entities/programmeSl.entity";
 import { ProjectCategory } from "src/enum/projectCategory.enum";
+import { VerificationRequestEntity } from "../entities/verification.request.entity";
+import { User } from "../entities/user.entity";
+import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -66,7 +69,11 @@ export class AggregateSlAPIService {
     @InjectRepository(Emission) private emissionRepo: Repository<Emission>,
     @InjectRepository(Projection) private projectionRepo: Repository<Projection>,
     @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>,
-    @InjectRepository(ProgrammeSl) private programmeSlRepo: Repository<ProgrammeSl>
+    @InjectRepository(ProgrammeSl) private programmeSlRepo: Repository<ProgrammeSl>,
+    @InjectRepository(VerificationRequestEntity)
+    private verificationRequestRepo: Repository<VerificationRequestEntity>,
+    @InjectRepository(CreditRetirementSl)
+    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>
   ) {}
 
   private getFilterAndByStatFilter(
@@ -2184,6 +2191,45 @@ export class AggregateSlAPIService {
     });
     const latestDate = this.getLatestUpdateTime(projections);
     return { totalBau, latestDate };
+  }
+
+  async getPendingVerifications(user: User) {
+    const query = this.verificationRequestRepo
+      .createQueryBuilder("ve")
+      .innerJoin("programme_sl", "psl", "ve.programmeId = psl.programmeId")
+      .select("COUNT(*)", "count") // Select count
+      .addSelect("MAX(ve.updatedTime)", "latestUpdatedTime") // Select latest updated time
+      .where("ve.status != :status", { status: "VERIFICATION_REPORT_VERIFIED" });
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("psl.companyId = :companyId", { companyId: user.companyId });
+    }
+
+    const result = await query.getRawOne(); 
+    return {
+      count: parseInt(result.count, 10),
+      latestUpdatedTime: result.latestUpdatedTime,
+    };
+  }
+
+  async getPendingRetirements(user: User) {
+    const query = this.creditRetirementSlRequestRepo
+      .createQueryBuilder("cr")
+      .select("COUNT(*)", "count") // Select count
+      .addSelect("MAX(cr.createdTime)", "latestUpdatedTime") // Select latest updated time
+      .where("cr.status = :status", { status: "Pending" });
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("(cr.fromCompanyId = :companyId OR cr.toCompanyId = :companyId)", {
+        companyId: user.companyId,
+      });
+    }
+    const result = await query.getRawOne(); 
+
+    return {
+      count: parseInt(result.count, 10),
+      latestUpdatedTime: result.latestUpdatedTime,
+    };
   }
 
   async getEstimatedSubSectorData(projectionResult, startYear, endYear) {

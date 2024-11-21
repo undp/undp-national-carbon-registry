@@ -7,6 +7,7 @@
     "auth": "Authorised",
     "rejected": "Rejected",
     "pending": "Pending",
+    "verificationsPending": "Verification Requests Pending",
     "programmesPending": "Projects Pending",
     "trasnferReqReceived": "Pending Transfers Received",
     "trasnferReqInit": "Pending Transfers Sent",

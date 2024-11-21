@@ -22,6 +22,8 @@ import { NationalAccountingModule } from "src/analytics-api/national-accounting/
 import { NationalAccountingController } from "./national-accounting.controller";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
+import { VerificationRequestEntity } from "../entities/verification.request.entity";
+import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { AggregateSlAPIService } from "./aggregate.sl.api.service";
       Projection,
       EventLog,
       ProgrammeSl,
+      VerificationRequestEntity,
+      CreditRetirementSl
     ]),
     AuthModule,
     CaslModule,
