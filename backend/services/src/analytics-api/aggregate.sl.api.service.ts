@@ -38,6 +38,7 @@ import {
 import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
 import { ProgrammeSl } from "src/entities/programmeSl.entity";
 import { ProjectCategory } from "src/enum/projectCategory.enum";
+import { SLDashboardProjectStage } from "src/enum/slDashboardProjectStage.enum";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -149,14 +150,12 @@ export class AggregateSlAPIService {
     }, {});
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
 
-    console.log("timeLabel 1234", timeLabel);
     timeLabel?.map((timeLabelItem) => {
       const arrResultForTimeGroup = groupedDatasObject[timeLabelItem];
-      console.log("arrResultForTimeGroup 1234", arrResultForTimeGroup);
 
-      result["awaitingAuthorization"]?.push(0);
-      result["authorised"]?.push(0);
-      result["rejected"]?.push(0);
+      result[SLDashboardProjectStage.AWAITING_AUTHORIZATION]?.push(0);
+      result[SLDashboardProjectStage.AUTHORISED]?.push(0);
+      result[SLDashboardProjectStage.REJECTED]?.push(0);
       let authorisedCreditsSum = 0;
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
@@ -170,7 +169,6 @@ export class AggregateSlAPIService {
       const statusArray = Object.values(ProjectProposalStage);
       arrResultForTimeGroup?.map((timeGroupItem) => {
         console.log("status array ----- > ", statusArray);
-        console.log("timeGroupItem", timeGroupItem);
         if (timeGroupItem?.projectProposalStage === ProjectProposalStage.AUTHORISED) {
           authorisedCreditsSum =
             authorisedCreditsSum +
@@ -203,33 +201,33 @@ export class AggregateSlAPIService {
           case "APPROVED_CMA":
           case "VALIDATION_PENDING":
           case "REJECTED_VALIDATION":
-            resultThere["awaitingAuthorization"] = true;
-            if (result["awaitingAuthorization"].length > 0) {
-              count = result["awaitingAuthorization"].pop();
+            resultThere[SLDashboardProjectStage.AWAITING_AUTHORIZATION] = true;
+            if (result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].length > 0) {
+              count = result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].pop();
             }
 
-            console.log("count 1234", count, parseInt(timeGroupItem?.count));
-
-            result["awaitingAuthorization"].push(count + parseInt(timeGroupItem?.count));
+            result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].push(
+              count + parseInt(timeGroupItem?.count)
+            );
             break;
           case "REJECTED_INF":
           case "REJECTED_PROPOSAL":
-            resultThere["rejected"] = true;
-            if (result["rejected"].length > 0) {
-              count = result["rejected"].pop();
-            }
-            console.log("count 12345", count);
+            resultThere[SLDashboardProjectStage.REJECTED] = true;
 
-            result["rejected"].push(count + parseInt(timeGroupItem?.count));
+            if (result[SLDashboardProjectStage.REJECTED].length > 0) {
+              count = result[SLDashboardProjectStage.REJECTED].pop();
+            }
+
+            result[SLDashboardProjectStage.REJECTED].push(count + parseInt(timeGroupItem?.count));
             break;
           case "AUTHORISED":
-            resultThere["authorised"] = true;
-            if (result["authorised"].length > 0) {
-              count = result["authorised"].pop();
-            }
-            console.log("count 123456", count);
+            resultThere[SLDashboardProjectStage.AUTHORISED] = true;
 
-            result["authorised"].push(count + parseInt(timeGroupItem?.count));
+            if (result[SLDashboardProjectStage.AUTHORISED].length > 0) {
+              count = result[SLDashboardProjectStage.AUTHORISED].pop();
+            }
+
+            result[SLDashboardProjectStage.AUTHORISED].push(count + parseInt(timeGroupItem?.count));
             break;
         }
         // if (timeGroupItem?.projectProposalStage === status) {
@@ -278,10 +276,8 @@ export class AggregateSlAPIService {
     });
     const timeLabel = Object.getOwnPropertyNames(groupedDatasObject);
 
-    console.log("timeLabel sector", timeLabel);
     for (let timeIndex = 0; timeIndex < timeLabel.length; timeIndex++) {
       const arrResultForTimeGroup = groupedDatasObject[timeLabel[timeIndex]];
-      console.log("arrResultForTimeGroup sector", arrResultForTimeGroup);
 
       let resultThere: any = {};
       const sectorsArray = Object.values(ProjectCategory);
@@ -382,8 +378,6 @@ export class AggregateSlAPIService {
       timeFields.push(t);
     }
 
-    console.log("Time fields", timeFields);
-
     const whereC = this.helperService.generateWhereSQL(
       query,
       this.helperService.parseMongoQueryToSQLWithTable(tableName, abilityCondition)
@@ -397,8 +391,6 @@ export class AggregateSlAPIService {
     );
 
     let queryBuild = repo.createQueryBuilder(tableName).where(whereC);
-
-    console.log("aggregates:  ", aggregates);
 
     if (aggregates) {
       const selectQuery = aggregates
@@ -1104,23 +1096,21 @@ export class AggregateSlAPIService {
                   ${whereC.join(" and ")}
                   GROUP BY d."geoCoordinates", b."projectProposalStage"`);
 
-            console.log("resultsProgrammeLocations:", resultsProgrammeLocations);
-
             const stageMapping = {
-              SUBMITTED_INF: "awaitingAuthorization",
-              APPROVED_INF: "awaitingAuthorization",
-              SUBMITTED_COST_QUOTATION: "awaitingAuthorization",
-              SUBMITTED_PROPOSAL: "awaitingAuthorization",
-              SUBMITTED_VALIDATION_AGREEMENT: "awaitingAuthorization",
-              ACCEPTED_PROPOSAL: "awaitingAuthorization",
-              SUBMITTED_CMA: "awaitingAuthorization",
-              REJECTED_CMA: "awaitingAuthorization",
-              APPROVED_CMA: "awaitingAuthorization",
-              VALIDATION_PENDING: "awaitingAuthorization",
-              REJECTED_VALIDATION: "awaitingAuthorization",
-              REJECTED_INF: "rejected",
-              REJECTED_PROPOSAL: "rejected",
-              AUTHORISED: "authorised",
+              SUBMITTED_INF: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              APPROVED_INF: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_COST_QUOTATION: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_PROPOSAL: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_VALIDATION_AGREEMENT: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              ACCEPTED_PROPOSAL: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              REJECTED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              APPROVED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              VALIDATION_PENDING: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              REJECTED_VALIDATION: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              REJECTED_INF: SLDashboardProjectStage.REJECTED,
+              REJECTED_PROPOSAL: SLDashboardProjectStage.REJECTED,
+              AUTHORISED: SLDashboardProjectStage.AUTHORISED,
             };
 
             const aggregatedData = resultsProgrammeLocations.reduce(
@@ -1146,21 +1136,23 @@ export class AggregateSlAPIService {
                 if (awaitingAuthorization > 0) {
                   output.push({
                     loc,
-                    stage: "awaitingAuthorization",
+                    stage: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
                     count: awaitingAuthorization,
                   });
                 }
                 if (rejected > 0) {
-                  output.push({ loc, stage: "rejected", count: rejected });
+                  output.push({ loc, stage: SLDashboardProjectStage.REJECTED, count: rejected });
                 }
                 if (authorised > 0) {
-                  output.push({ loc, stage: "authorised", count: authorised });
+                  output.push({
+                    loc,
+                    stage: SLDashboardProjectStage.AUTHORISED,
+                    count: authorised,
+                  });
                 }
                 return output;
               }
             );
-
-            console.log("aggregated array:", result);
 
             results[key] = await this.programmeLocationDataFormatter(result);
             break;
@@ -1956,8 +1948,6 @@ export class AggregateSlAPIService {
       stat.statFilter?.timeGroup ? "day" : undefined
     );
 
-    console.log("result 12345", results);
-
     if (
       [StatType.AGG_PROGRAMME_BY_STATUS, StatType.MY_AGG_PROGRAMME_BY_STATUS].includes(stat.type) &&
       !stat?.statFilter?.timeGroup
@@ -1970,7 +1960,7 @@ export class AggregateSlAPIService {
           totalbalancecredit: 0,
           totalretiredcredit: 0,
           totaltxcredit: 0,
-          currentStage: "awaitingAuthorization",
+          currentStage: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
         },
         {
           count: 0,
@@ -1979,7 +1969,7 @@ export class AggregateSlAPIService {
           totalbalancecredit: 0,
           totalretiredcredit: 0,
           totaltxcredit: 0,
-          currentStage: "rejected",
+          currentStage: SLDashboardProjectStage.REJECTED,
         },
         {
           count: 0,
@@ -1988,12 +1978,11 @@ export class AggregateSlAPIService {
           totalbalancecredit: 0,
           totalretiredcredit: 0,
           totaltxcredit: 0,
-          currentStage: "authorised",
+          currentStage: SLDashboardProjectStage.AUTHORISED,
         },
       ];
 
       results.data.map((result) => {
-        let count = 0;
         switch (result.projectProposalStage) {
           case "SUBMITTED_INF":
           case "APPROVED_INF":
@@ -2045,6 +2034,42 @@ export class AggregateSlAPIService {
               updatedResult[2].totalretiredcredit + parseInt(result?.totalretiredcredit);
             updatedResult[2].totaltxcredit =
               updatedResult[2].totaltxcredit + parseInt(result?.totaltxcredit);
+            break;
+        }
+      });
+      return updatedResult;
+    } else if (
+      [StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS, StatType.AGG_AUTH_PROGRAMME_BY_STATUS].includes(
+        stat.type
+      ) &&
+      !stat?.statFilter?.timeGroup
+    ) {
+      const updatedResult = [
+        {
+          count: 0,
+          totalestcredit: 0,
+          totalissuedcredit: 0,
+          totalbalancecredit: 0,
+          totalretiredcredit: 0,
+          totaltxcredit: 0,
+          currentStage: SLDashboardProjectStage.AUTHORISED,
+        },
+      ];
+
+      results.data.map((result) => {
+        switch (result.projectProposalStage) {
+          case "AUTHORISED":
+            updatedResult[0].count = updatedResult[0].count + parseInt(result?.count);
+            updatedResult[0].totalestcredit =
+              updatedResult[0].totalestcredit + parseInt(result?.totalestcredit);
+            updatedResult[0].totalissuedcredit =
+              updatedResult[0].totalissuedcredit + parseInt(result?.totalissuedcredit);
+            updatedResult[0].totalbalancecredit =
+              updatedResult[0].totalbalancecredit + parseInt(result?.totalbalancecredit);
+            updatedResult[0].totalretiredcredit =
+              updatedResult[0].totalretiredcredit + parseInt(result?.totalretiredcredit);
+            updatedResult[0].totaltxcredit =
+              updatedResult[0].totaltxcredit + parseInt(result?.totaltxcredit);
             break;
         }
       });
