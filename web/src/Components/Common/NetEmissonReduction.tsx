@@ -88,15 +88,14 @@ const NetEmissionReduction = (props: any) => {
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
     // let tempTotal = Number(form.getFieldValue(category) || 0);
     const listVals = form.getFieldValue('estimatedNetEmissionReductions');
-    // if (listVals !== undefined && listVals[0] !== undefined) {
-    //   listVals.forEach((item: any) => {
-    //     if (item && item[category]) {
-    //       tempTotal += Number(item[category]);
-    //     }
-    //   });
-    // }
+    if (typeof listVals === 'undefined' || typeof listVals[0] === 'undefined') {
+      return;
+    }
 
     const tempTotal = listVals?.reduce((total: number, currentVal: any) => {
+      if (!currentVal) {
+        return total;
+      }
       return total + (currentVal[category] || 0);
     }, 0);
 
@@ -255,13 +254,21 @@ const NetEmissionReduction = (props: any) => {
                             picker="month"
                             format="YYYY MMM"
                             onChange={(value) => onPeriodEndChange(value, fields.length)}
-                            disabledDate={(currentDate: any) =>
-                              currentDate <
-                              moment(
+                            disabledDate={(currentDate: any) => {
+                              if (
+                                currentDate &&
                                 form.getFieldValue('estimatedNetEmissionReductions')[name]
-                                  .emissionsPeriodStart
-                              ).startOf('month')
-                            }
+                              ) {
+                                return (
+                                  currentDate <
+                                  moment(
+                                    form.getFieldValue('estimatedNetEmissionReductions')[name]
+                                      .emissionsPeriodStart
+                                  ).startOf('month')
+                                );
+                              }
+                              return false;
+                            }}
                           />
                         </Form.Item>
                       </div>
