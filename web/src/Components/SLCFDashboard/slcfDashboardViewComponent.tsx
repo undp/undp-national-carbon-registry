@@ -967,14 +967,14 @@ export const SLCFDashboardComponent = (props: any) => {
 
       const track1Credits = response?.data?.TRACK_1 ? Number(response?.data?.TRACK_1) : 0;
       const track2Credits = response?.data?.TRACK_2 ? Number(response?.data?.TRACK_2) : 0;
-      const totalAuthCredits = addRoundNumber(track1Credits + track2Credits);
+      // const totalAuthCredits = addRoundNumber(track1Credits + track2Credits);
 
       const pieSeriesCreditTypeData: any[] = [];
       pieSeriesCreditTypeData.push(track1Credits);
       pieSeriesCreditTypeData.push(track2Credits);
       setAuthCreditsByTypePieSeries(pieSeriesCreditTypeData);
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + addCommSep(totalAuthCredits);
+        '' + addCommSep(track1Credits + track2Credits);
     } catch (error: any) {
       console.log('Error in getting pending retirement requests', error);
       message.open({
@@ -1957,7 +1957,11 @@ ${total}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
               tooltip={
-                t('tTprogrammespendingGoverment')
+                t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTprogrammespendingProgrammeDevSLCF'
+                    : 'tTprogrammespendingGovermentSLCF'
+                )
                 //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
                 //     ? 'tTprogrammespendingGoverment'
                 //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
@@ -2007,7 +2011,11 @@ ${total}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
               tooltip={
-                t('tTVerificationReqSentGovernment')
+                t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTVerificationsPendingProgrammeDevSLCF'
+                    : 'tTVerificationsPendingGovernmentSLCF'
+                )
                 //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
                 //     ? 'tTTransferReqSentGovernment'
                 //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
@@ -2057,7 +2065,11 @@ ${total}
               loading={loadingWithoutTimeRange}
               companyRole={userInfoState?.companyRole}
               tooltip={
-                t('tTTransferReqSentGovernment')
+                t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTransfersPendingProgrammeDevSLCF'
+                    : 'tTTransfersPendingGovernmentSLCF'
+                )
                 //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
                 //     ? 'tTTransferReqSentGovernment'
                 //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
@@ -2146,8 +2158,8 @@ ${total}
                 //   ? 'tTProgrammesGoverment'
                 //   :
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTProgrammesProgrammeDev'
-                  : 'tTProgrammesGoverment'
+                  ? 'tTProgrammesProgrammeDevSLCF'
+                  : 'tTProgrammesGovernmentSLCF'
               )}
               t={t}
             />
@@ -2155,7 +2167,7 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col pie">
             <SLCFPieChartsStatComponent
               id="credits"
-              title={t('credits')}
+              title={t('creditsByStatusSLCF')}
               options={optionDonutPieA}
               series={creditsPieSeries}
               // lastUpdate={lastUpdateProgrammesCreditsStats}
@@ -2166,8 +2178,8 @@ ${total}
                 //   ? 'tTCreditsGovernment'
                 //   :
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCreditsProgrammeDev'
-                  : 'tTCreditsGovernment'
+                  ? 'tTCreditsProgrammeDevSLCF'
+                  : 'tTCreditsGovernmentSLCF'
               )}
               Chart={Chart}
             />
@@ -2199,7 +2211,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <SLCFBarChartsStatComponent
               id="total-programmes"
-              title={t('totalProgrammes')}
+              title={t('totalProgrammesByDateSLCF')}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
               // lastUpdate={lastUpdateProgrammesStatsC}
@@ -2210,8 +2222,8 @@ ${total}
                 //   ? 'tTTotalProgrammesGovernment'
                 //   :
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesProgrammeDev'
-                  : 'tTTotalProgrammesGovernment'
+                  ? 'tTTotalProgrammesProgrammeDevSLCF'
+                  : 'tTTotalProgrammesGovernmentSLCF'
               )}
               Chart={Chart}
             />
@@ -2219,7 +2231,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <SLCFBarChartsStatComponent
               id="total-programmes-sector"
-              title={t('totalProgrammesSector')}
+              title={t('totalProgrammesSectorSLCF')}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
               // lastUpdate={lastUpdateProgrammesSectorStatsC}
@@ -2230,8 +2242,8 @@ ${total}
                 //   ? 'tTTotalProgrammesSectorGovernment'
                 //   :
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesSecProgrammeDev'
-                  : 'tTTotalProgrammesSectorGovernment'
+                  ? 'tTTotalProgrammesSecProgrammeDevSLCF'
+                  : 'tTTotalProgrammesSectorGovernmentSLCF'
               )}
               Chart={Chart}
             />
@@ -2243,7 +2255,7 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <SLCFBarChartsStatComponent
               id="total-credits"
-              title={t('totalCredits')}
+              title={t('totalCreditsByDateSLCF')}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
               // lastUpdate={lastUpdateTotalCredits}
@@ -2254,8 +2266,8 @@ ${total}
                 //   ? 'tTTotalCreditsGovernment'
                 //   :
                 userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalCreditsProgrammeDev'
-                  : 'tTTotalCreditsGovernment'
+                  ? 'tTTotalCreditsProgrammeDevSLCF'
+                  : 'tTTotalCreditsGovernmentSLCF'
               )}
               Chart={Chart}
             />
@@ -2288,7 +2300,7 @@ ${total}
             <Col xxl={12} xl={12} md={12} className="stastic-card-col">
               <div className="stastics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('programmeLocations')}</div>
+                  <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
                   <div className="info-container">
                     <div className="info-container">
                       <Tooltip
@@ -2300,8 +2312,8 @@ ${total}
                           //   ? 'tTProgrammeLocationsGovernment'
                           //   :
                           userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                            ? 'tTProgrammeLocationsProgrammeDev'
-                            : 'tTProgrammeLocationsGovernment'
+                            ? 'tTProgrammeLocationsProgrammeDevSLCF'
+                            : 'tTProgrammeLocationsGovernmentSLCF'
                         )}
                       >
                         <InfoCircle color="#000000" size={17} />
