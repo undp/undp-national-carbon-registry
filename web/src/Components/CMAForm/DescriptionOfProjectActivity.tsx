@@ -1373,7 +1373,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:province')} ${t('isRequired')}}`);
+                                throw new Error(`${t('CMAForm:province')} ${t('isRequired')}`);
                               }
                             },
                           },
@@ -1701,7 +1701,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       {fields.map(({ key, name, ...restField }) => (
                         <>
                           <div className="form-list-actions">
-                            <h4 className="list-item-title">location {name + 2}</h4>
+                            <h4 className="list-item-title">Location {name + 2}</h4>
                             <Form.Item>
                               <Button
                                 // type="dashed"
@@ -1783,7 +1783,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('CMAForm:province')} ${t('isRequired')}}`
+                                            `${t('CMAForm:province')} ${t('isRequired')}`
                                           );
                                         }
                                       },
@@ -1847,7 +1847,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('CMAForm:dsDivision')} ${t('isRequired')}`,
+                                      message: ``,
                                     },
                                     {
                                       validator: async (rule, value) => {

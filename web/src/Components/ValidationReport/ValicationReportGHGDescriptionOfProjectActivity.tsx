@@ -254,7 +254,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       );
       let files: any[] = [];
 
-      if (activity?.additionalDocuments.length > 0) {
+      if (activity?.additionalDocuments?.length > 0) {
         files = await fileUploadValueExtract(activity, 'additionalDocuments');
       }
 
@@ -630,11 +630,12 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               <Col xl={12} md={24}>
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
-                                  name={[name, 'geographicalLocationCoordinates']}
+                                  // name={[name, 'geographicalLocationCoordinates']}
                                 >
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
+                                    listName="locationsOfProjectActivity"
                                     existingCordinate={getExistingCordinate(locationIndex)}
                                     disabled={formMode === FormMode.VIEW}
                                     isShowCordinate

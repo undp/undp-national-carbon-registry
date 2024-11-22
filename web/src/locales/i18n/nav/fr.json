@@ -1,9 +1,21 @@
 {
   "dashboard": "Tableau de bord",
-  "programmes": "Programmes",
+  "ghgInventory": "Inventaire des GES",
+  "emissions": "Émissions",
+  "projections": "Projections de l'Article 6",
+  "slcfprogrammes": "Projets SLCF",
+  "programmes": "Projets",
   "transfers": "Transferts",
   "companies": "Organisations",
   "users": "Utilisateurs",
   "viewAll": "Voir Tout",
-  "addNew": "Ajouter Nouveau"
+  "addNew": "Ajouter Nouveau",
+  "investments": "Financement de Projets",
+  "ndcActions": "Activités des Projets",
+  "ndcDetails": "Actions NDC",
+  "reports": "Rapports",
+  "support": "Financement",
+  "nationalAccounting": "Comptabilité Nationale",
+  "retirements": "Retraits",
+  "settings": "Paramètres"
 }

@@ -142,7 +142,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 className={
                   item?.key === 'ndcManagement/viewAll' ||
                   item?.key === 'investmentManagement/viewAll' ||
-                  item?.key === 'retirementManagement/viewAll'
+                  item?.key === 'retirementManagement/viewAll' ||
+                  item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
                     : ''
                 }

@@ -918,7 +918,9 @@ export const CreditRetirementSlComponent = (props: any) => {
                   emptyText: (
                     <Empty
                       image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description={tableData.length === 0 ? t('creditTransfer:noTransfer') : null}
+                      description={
+                        tableData.length === 0 ? t('creditTransfer:noRetirements') : null
+                      }
                     />
                   ),
                 }}
