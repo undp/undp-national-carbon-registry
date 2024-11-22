@@ -45,7 +45,7 @@ export const AddCostQuotationForm = (props: any) => {
         }
       });
     }
-    form.setFieldValue('totalCost', String(tempTotal));
+    form.setFieldValue('totalCost', String(tempTotal.toFixed(2)));
   };
 
   const normFile = (e: any) => {
@@ -77,6 +77,22 @@ export const AddCostQuotationForm = (props: any) => {
           url: vals?.signature[0],
         },
       ],
+      additionalServices: (function () {
+        const servicesObjs: any[] = [];
+        const tempServices: { cost: number; service: string }[] = vals?.additionalServices;
+        if (tempServices !== undefined && tempServices.length > 0) {
+          tempServices.forEach((service) => {
+            const tempServiceObj = {
+              cost: String(service.cost),
+              service: service.service,
+            };
+
+            servicesObjs.push(tempServiceObj);
+          });
+        }
+
+        return servicesObjs;
+      })(),
     };
 
     form.setFieldsValue(tempInialVals);
@@ -118,6 +134,12 @@ export const AddCostQuotationForm = (props: any) => {
       setDisableFields(true);
     }
   }, []);
+
+  const handleInputNumberKeyDown = (event: any) => {
+    if (event.key === 'e' || event.key === 'E') {
+      event.preventDefault();
+    }
+  };
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
 
@@ -234,6 +256,20 @@ export const AddCostQuotationForm = (props: any) => {
                           required: true,
                           message: `${t('costQuotation:address')} ${t('isRequired')}`,
                         },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('costQuotation:quotationNo')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
                       ]}
                     >
                       <TextArea
@@ -320,6 +356,12 @@ export const AddCostQuotationForm = (props: any) => {
                                     'costQuotation:cannotHaveNegativeNumbers'
                                   )}`
                                 );
+                              } else if (value > 999999999999999) {
+                                throw new Error(
+                                  `${t('costQuotation:cost')} ${t(
+                                    'costQuotation:shouldBeLessThanMaxValue'
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -332,6 +374,7 @@ export const AddCostQuotationForm = (props: any) => {
                           onChange={(val) => {
                             calculateTotalCost();
                           }}
+                          onKeyDown={handleInputNumberKeyDown}
                         />
                       </Form.Item>
                     </Col>
@@ -370,6 +413,12 @@ export const AddCostQuotationForm = (props: any) => {
                                     'costQuotation:cannotHaveNegativeNumbers'
                                   )}`
                                 );
+                              } else if (value > 999999999999999) {
+                                throw new Error(
+                                  `${t('costQuotation:cost')} ${t(
+                                    'costQuotation:shouldBeLessThanMaxValue'
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -382,6 +431,7 @@ export const AddCostQuotationForm = (props: any) => {
                           onChange={(val) => {
                             calculateTotalCost();
                           }}
+                          onKeyDown={handleInputNumberKeyDown}
                         />
                       </Form.Item>
                     </Col>
@@ -441,6 +491,23 @@ export const AddCostQuotationForm = (props: any) => {
                                         'costQuotation:isRequired'
                                       )}`,
                                     },
+                                    {
+                                      validator: async (rule, value) => {
+                                        if (value < 0) {
+                                          throw new Error(
+                                            `${t('costQuotation:cost')} ${t(
+                                              'costQuotation:cannotHaveNegativeNumbers'
+                                            )}`
+                                          );
+                                        } else if (value > 999999999999999) {
+                                          throw new Error(
+                                            `${t('costQuotation:cost')} ${t(
+                                              'costQuotation:shouldBeLessThanMaxValue'
+                                            )}`
+                                          );
+                                        }
+                                      },
+                                    },
                                   ]}
                                 >
                                   <Input
@@ -450,6 +517,7 @@ export const AddCostQuotationForm = (props: any) => {
                                     onChange={(val) => {
                                       calculateTotalCost();
                                     }}
+                                    onKeyDown={handleInputNumberKeyDown}
                                   />
                                 </Form.Item>
                               </Col>
@@ -585,7 +653,7 @@ export const AddCostQuotationForm = (props: any) => {
                         ]}
                       >
                         <Upload
-                          accept={'.doc, .docx, .pdf, .png, .jpg'}
+                          accept={'.png, .jpg'}
                           beforeUpload={(file: any) => {
                             return false;
                           }}

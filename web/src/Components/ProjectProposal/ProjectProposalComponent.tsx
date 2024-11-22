@@ -282,9 +282,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       costValidation: String(vals?.costValidation),
       costVerification: String(vals?.costVerification),
       totalCost: String(vals?.totalCost),
-      aditionalServices: function () {
+      additionalServices: (function () {
         const servicesObjs: any[] = [];
-        const tempServices: { cost: number; service: string }[] = vals?.addiitonalServices;
+        const tempServices: { cost: number; service: string }[] = vals?.additionalServices;
         if (tempServices !== undefined && tempServices.length > 0) {
           tempServices.forEach((service) => {
             const tempServiceObj = {
@@ -297,7 +297,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         }
 
         return servicesObjs;
-      },
+      })(),
       firstExecutiveBoardMember: firstBoardMember,
       extraExecutiveBoardMembers: (function () {
         const tempExtraBoardMembers: any[] = [];
