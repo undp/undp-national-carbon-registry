@@ -36,7 +36,7 @@
   "transferReqApproved": "The transfer request has been accepted successfully",
   "retireReqApproved": "The credit retirement request has been accepted successfully",
   "transferReqRejected": "The transfer request has been rejected successfully",
-  "retireReqRejected": "The credit retirement request has been accepted successfully",
+  "retireReqRejected": "The credit retirement request has been rejected successfully",
   "transferReqCanceled": "The transfer request has been cancelled successfully",
   "retireReqCanceled": "The credit retirement request has been cancelled successfully",
   "internationalTranferReqAccepted": "The international transfer retire request has been accepted successfully",

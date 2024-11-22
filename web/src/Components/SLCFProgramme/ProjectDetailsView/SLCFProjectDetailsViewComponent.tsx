@@ -2126,12 +2126,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                               onFinish={(body: any) =>
                                                 onCreditRetireTransferAction(
                                                   body,
-                                                  (response: any) =>
-                                                    getSuccessMsg(
-                                                      response,
-                                                      t('projectDetailsView:successRetireInit'),
-                                                      t('projectDetailsView:successRetire')
-                                                    ),
+                                                  t('projectDetailsView:successRetireInitSLCF'),
                                                   updateCreditInfo
                                                 )
                                               }
@@ -2173,12 +2168,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                                               onFinish={(body: any) =>
                                                 onCreditRetireTransferAction(
                                                   body,
-                                                  (response: any) =>
-                                                    getSuccessMsg(
-                                                      response,
-                                                      t('projectDetailsView:successTransferInit'),
-                                                      t('projectDetailsView:successTransfer')
-                                                    ),
+                                                  t('projectDetailsView:successTransferInitSLCF'),
                                                   updateCreditInfo
                                                 )
                                               }
