@@ -5,6 +5,13 @@ export enum ProgrammeStageR {
   Rejected = 'Rejected',
 }
 
+export enum ProgrammeSLStageR {
+  AwaitingAuthorization = 'awaitingAuthorization',
+  Approved = 'approved',
+  Authorised = 'authorised',
+  Rejected = 'rejected',
+}
+
 export enum ProjectProposalStage {
   SUBMITTED_INF = 'SUBMITTED_INF',
   APPROVED_INF = 'APPROVED_INF',

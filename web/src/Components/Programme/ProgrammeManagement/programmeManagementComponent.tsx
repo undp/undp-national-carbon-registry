@@ -13,6 +13,7 @@ import {
   Typography,
   Tag,
   Tooltip,
+  Alert,
 } from 'antd';
 import React, { useContext, useEffect, useState } from 'react';
 import './programmeManagementComponent.scss';
@@ -523,6 +524,12 @@ export const ProgrammeManagementComponent = (props: any) => {
           )}
         </div>
       </div>
+      <Alert
+        message={t('programme:article6ProjectUnderDevelopment')}
+        type="info"
+        showIcon
+        className="programme-list-alert"
+      />
       <div className="content-card">
         <Row className="table-actions-section">
           <Col lg={{ span: 15 }} md={{ span: 14 }}>
