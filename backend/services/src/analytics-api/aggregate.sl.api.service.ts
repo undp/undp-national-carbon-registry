@@ -160,9 +160,9 @@ export class AggregateSlAPIService {
     timeLabel?.map((timeLabelItem) => {
       const arrResultForTimeGroup = groupedDatasObject[timeLabelItem];
 
-      result[SLDashboardProjectStage.AWAITING_AUTHORIZATION]?.push(0);
-      result[SLDashboardProjectStage.AUTHORISED]?.push(0);
-      result[SLDashboardProjectStage.REJECTED]?.push(0);
+      result["awaitingAuthorization"]?.push(0);
+      result["authorised"]?.push(0);
+      result["rejected"]?.push(0);
       let authorisedCreditsSum = 0;
       let issuedCreditsSum = 0;
       let transferredCreditsSum = 0;
@@ -208,33 +208,31 @@ export class AggregateSlAPIService {
           case "APPROVED_CMA":
           case "VALIDATION_PENDING":
           case "REJECTED_VALIDATION":
-            resultThere[SLDashboardProjectStage.AWAITING_AUTHORIZATION] = true;
-            if (result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].length > 0) {
-              count = result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].pop();
+            resultThere["awaitingAuthorization"] = true;
+            if (result["awaitingAuthorization"].length > 0) {
+              count = result["awaitingAuthorization"].pop();
             }
 
-            result[SLDashboardProjectStage.AWAITING_AUTHORIZATION].push(
-              count + parseInt(timeGroupItem?.count)
-            );
+            result["awaitingAuthorization"].push(count + parseInt(timeGroupItem?.count));
             break;
           case "REJECTED_INF":
           case "REJECTED_PROPOSAL":
-            resultThere[SLDashboardProjectStage.REJECTED] = true;
+            resultThere["rejected"] = true;
 
-            if (result[SLDashboardProjectStage.REJECTED].length > 0) {
-              count = result[SLDashboardProjectStage.REJECTED].pop();
+            if (result["rejected"].length > 0) {
+              count = result["rejected"].pop();
             }
 
-            result[SLDashboardProjectStage.REJECTED].push(count + parseInt(timeGroupItem?.count));
+            result["rejected"].push(count + parseInt(timeGroupItem?.count));
             break;
           case "AUTHORISED":
-            resultThere[SLDashboardProjectStage.AUTHORISED] = true;
+            resultThere["authorised"] = true;
 
-            if (result[SLDashboardProjectStage.AUTHORISED].length > 0) {
-              count = result[SLDashboardProjectStage.AUTHORISED].pop();
+            if (result["authorised"].length > 0) {
+              count = result["authorised"].pop();
             }
 
-            result[SLDashboardProjectStage.AUTHORISED].push(count + parseInt(timeGroupItem?.count));
+            result["authorised"].push(count + parseInt(timeGroupItem?.count));
             break;
         }
         // if (timeGroupItem?.projectProposalStage === status) {
