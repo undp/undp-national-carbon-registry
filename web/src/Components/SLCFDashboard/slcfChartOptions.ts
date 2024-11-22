@@ -692,7 +692,7 @@ export const optionDonutPieB: any = {
     enabled: false,
   },
   colors: ['#6ACDFF', '#FF8183'],
-  labels: ['SCCER+', 'SLCER'],
+  labels: ['SLCER+', 'SLCER'],
   plotOptions: {
     pie: {
       expandOnClick: false,

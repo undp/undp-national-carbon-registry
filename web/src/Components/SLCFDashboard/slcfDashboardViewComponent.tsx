@@ -1570,7 +1570,7 @@ export const SLCFDashboardComponent = (props: any) => {
   const rejected = ['all', ['==', ['get', 'stage'], 'rejected']];
   const news = ['all', ['==', ['get', 'stage'], 'approved']];
 
-  const colors = ['#6ACDFF', '#CDCDCD', '#FF8183', '#B7A4FE'];
+  const colors = ['#6ACDFF', '#FF8183', '#CDCDCD', '#B7A4FE'];
 
   const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
@@ -1591,7 +1591,7 @@ export const SLCFDashboardComponent = (props: any) => {
   };
 
   // code for creating an SVG donut chart from feature properties
-  const createDonutChart = (properties: any) => {
+  const createMapCircleChart = (properties: any) => {
     const offsets = [];
     const offsetsStage = [];
     let counts: any = [];
@@ -1608,13 +1608,13 @@ export const SLCFDashboardComponent = (props: any) => {
         properties.new,
       ];
     } else {
-      if (properties?.stage === 'AwaitingAuthorization') {
+      if (properties?.stage === 'awaitingAuthorization') {
         programmeStageCounts = [0, 0, properties.count, 0];
-      } else if (properties?.stage === 'Authorised') {
+      } else if (properties?.stage === 'authorised') {
         programmeStageCounts = [properties.count, 0, 0, 0];
-      } else if (properties?.stage === 'Rejected') {
+      } else if (properties?.stage === 'rejected') {
         programmeStageCounts = [0, properties.count, 0, 0];
-      } else if (properties?.stage === 'New') {
+      } else if (properties?.stage === 'new') {
         programmeStageCounts = [0, 0, 0, properties.count];
       }
     }
@@ -1750,7 +1750,26 @@ ${total}
         source: 'programmeLocations',
         filter: ['!=', 'cluster', true],
         paint: {
-          'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
+          // 'circle-color': [
+          //   'case',
+          //   pending,
+          //   colors[0],
+          //   rejected,
+          //   colors[1],
+          //   authorised,
+          //   colors[1],
+          //   colors[2],
+          // ],
+          // 'circle-color': [
+          //   'case',
+          //   ['==', ['get', 'programmeStage'], 'pending'],
+          //   colors[0],
+          //   ['==', ['get', 'programmeStage'], 'authorised'],
+          //   colors[1],
+          //   ['==', ['get', 'programmeStage'], 'rejected'],
+          //   colors[4],
+          //   colors[3], // Default
+          // ],
           'circle-opacity': 1,
           'circle-radius': 10,
         },
@@ -1803,7 +1822,7 @@ ${total}
       const properties = feature.properties;
       const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
 
-      const el: any = createDonutChart(properties);
+      const el: any = createMapCircleChart(properties);
       const marker = {
         id: id,
         element: el,
@@ -2312,7 +2331,7 @@ ${total}
                         <>
                           <LegendItem text="Rejected" color="#CDCDCD" />
                           <LegendItem text="Pending" color="#FF8183" />
-                          <LegendItem text="Approved" color="#B7A4FE" />
+                          {/* <LegendItem text="Approved" color="#B7A4FE" /> */}
                         </>
                       )}
                     </div>
