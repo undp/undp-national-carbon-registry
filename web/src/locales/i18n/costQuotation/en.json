@@ -15,8 +15,8 @@
   "serviceVerification": "Verification & Credit Issuance",
   "vatIsNotApplicable": "*VAT is not applicable",
   "conditions": "Conditions:",
-  "paymentUpfront":"40% of the payment on up front",
-  "downPayment":"60% of the payment on completing the Validation and Verification",
+  "paymentUpfront":"40% of the payment on up front.",
+  "downPayment":"60% of the payment on completing the Validation and Verification.",
   "transport": "Client shall arrange transport and accommodation for site visits during validation & verification.",
   "quotationValidation": "The quotation is valid for a period of 30 days from the date of quoting. Any extra work other than that quoted above will be charged accordingly.",
   "one": "1",
@@ -28,6 +28,6 @@
   "sriLankaClimateFund": "Sri Lanka Climate Fund",
   "back":"Back",
   "cancel":"Cancel",
-  "submit":"Submit"
-
+  "submit":"Submit",
+  "shouldBeLessThanMaxValue":"should be <= 999999999999999"
 }
