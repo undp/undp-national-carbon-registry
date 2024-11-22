@@ -2324,16 +2324,19 @@ ${total}
                     </div>
                     <div className="stage-legends">
                       <LegendItem text="Authorised" color="#6ACDFF" />
-                      {!(
+                      <LegendItem text="Pending" color="#CDCDCD" />
+                      <LegendItem text="Rejected" color="#FF8183" />
+                      {/* {!(
                         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
                         categoryType === 'mine'
                       ) && (
                         <>
-                          <LegendItem text="Rejected" color="#CDCDCD" />
-                          <LegendItem text="Pending" color="#FF8183" />
-                          {/* <LegendItem text="Approved" color="#B7A4FE" /> */}
+                          <LegendItem text="Pending" color="#CDCDCD" />
+                          <LegendItem text="Rejected" color="#FF8183" />
+
+                          <LegendItem text="Approved" color="#B7A4FE" />
                         </>
-                      )}
+                      )} */}
                     </div>
                     <div className="updated-on margin-top-1">
                       <div className="updated-moment-container">
