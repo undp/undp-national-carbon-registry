@@ -35,7 +35,7 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
       ) : (
         <>
           <div className="title-section">
-            <div className="title">{t('programmes')}</div>
+            <div className="title">{t('programmesByStatusSLCF')}</div>
             <div className="info-container">
               <Tooltip
                 arrowPointAtCenter
