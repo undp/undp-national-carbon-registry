@@ -1791,7 +1791,7 @@ ${total}
         <div className="systemchange-container" style={{ marginLeft: `20px` }}>
           <ButtonGroup>
             <Button type="primary" className="rgprimary">
-              Carbon Registry
+              ARTICLE 6.4 PROCESS
             </Button>
             <Link to="/dashboard/slcf">
               <Button className="rgdefault">SLCF Registry</Button>

@@ -215,6 +215,9 @@ export const SLCFDashboardComponent = (props: any) => {
           type: 'AGG_PROGRAMME_BY_STATUS',
         },
         {
+          type: 'MY_AGG_PROGRAMME_BY_STATUS',
+        },
+        {
           type: 'PENDING_TRANSFER_INIT',
         },
         {
@@ -994,7 +997,11 @@ export const SLCFDashboardComponent = (props: any) => {
         undefined,
         statServerUrl
       );
-      const programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
+
+      let programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
+      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+        programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
+      }
       const pendingTransferInitAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
       const pendingTransferReceivedAggregationResponse =
@@ -1901,7 +1908,7 @@ ${total}
         <div className="systemchange-container" style={{ marginLeft: `20px` }}>
           <ButtonGroup>
             <Link to="/dashboard">
-              <Button className="slcf-default">Carbon Registry</Button>
+              <Button className="slcf-default">ARTICLE 6.4 PROCESS</Button>
             </Link>
             <Button type="primary" className="slcf-primary">
               SLCF Registry
