@@ -2292,9 +2292,82 @@ ${total}
               Chart={Chart}
             />
           </Col> */}
+          {mapType !== MapTypes.None ? (
+            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+              <div className="stastics-and-pie-card height-map-rem">
+                <div className="pie-charts-top">
+                  <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
+                  <div className="info-container">
+                    <div className="info-container">
+                      <Tooltip
+                        arrowPointAtCenter
+                        placement="bottomRight"
+                        trigger="hover"
+                        title={t(
+                          // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                          //   ? 'tTProgrammeLocationsGovernment'
+                          //   :
+                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                            ? 'tTProgrammeLocationsProgrammeDevSLCF'
+                            : 'tTProgrammeLocationsGovernmentSLCF'
+                        )}
+                      >
+                        <InfoCircle color="#000000" size={17} />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+                {loadingCharts ? (
+                  <div className="margin-top-2">
+                    <Skeleton active />
+                    <Skeleton active />
+                  </div>
+                ) : (
+                  <>
+                    <div className="map-content">
+                      <MapComponent
+                        mapType={mapType}
+                        center={programmeLocationsMapCenter}
+                        zoom={6}
+                        mapSource={programmeLocationsMapSource}
+                        layer={programmeLocationsMapLayer}
+                        height={340}
+                        style="mapbox://styles/mapbox/light-v11"
+                        onRender={programmeLocationsMapOnRender}
+                        accessToken={accessToken}
+                      ></MapComponent>
+                    </div>
+                    <div className="stage-legends">
+                      <LegendItem text="Authorised" color="#6ACDFF" />
+                      <LegendItem text="Pending" color="#CDCDCD" />
+                      <LegendItem text="Rejected" color="#FF8183" />
+                      {/* {!(
+                        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+                        categoryType === 'mine'
+                      ) && (
+                        <>
+                          <LegendItem text="Pending" color="#CDCDCD" />
+                          <LegendItem text="Rejected" color="#FF8183" />
+
+                          <LegendItem text="Approved" color="#B7A4FE" />
+                        </>
+                      )} */}
+                    </div>
+                    <div className="updated-on margin-top-1">
+                      <div className="updated-moment-container">
+                        {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Col>
+          ) : (
+            ''
+          )}
         </Row>
       </div>
-      {mapType !== MapTypes.None ? (
+      {/* {mapType !== MapTypes.None ? (
         <div className="stastics-and-charts-container center">
           <Row gutter={[40, 40]} className="stastic-card-row">
             <Col xxl={12} xl={12} md={12} className="stastic-card-col">
@@ -2355,7 +2428,7 @@ ${total}
 
                           <LegendItem text="Approved" color="#B7A4FE" />
                         </>
-                      )} */}
+                      )}
                     </div>
                     <div className="updated-on margin-top-1">
                       <div className="updated-moment-container">
@@ -2366,7 +2439,7 @@ ${total}
                 )}
               </div>
             </Col>
-            {/* <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
               <div className="stastics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
                   <div className="pie-charts-title">{t('trasnferLocations')}</div>
@@ -2419,12 +2492,12 @@ ${total}
                   </>
                 )}
               </div>
-            </Col> */}
+            </Col>
           </Row>
         </div>
       ) : (
         ''
-      )}
+      )} */}
     </div>
   );
 };

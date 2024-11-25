@@ -292,7 +292,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       technicalAreas: values?.technicalAreas,
       creditingPeriod: values?.creditingPeriod,
       locationsOfProjectActivity: await getLocationDetails(values),
-      startDateCreditingPeriod: moment(values?.startDateofCreditingPeriod).valueOf(),
+      startDateCreditingPeriod: moment(values?.startDateCreditingPeriod).valueOf(),
     };
     console.log(ProcessSteps.VR_GHG_PROJECT_DESCRIPTION, ghgDescriptionFormValues);
     handleValuesUpdate({ [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues });
