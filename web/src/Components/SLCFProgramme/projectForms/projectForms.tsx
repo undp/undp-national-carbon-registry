@@ -372,6 +372,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       )
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -434,6 +435,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         )
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnAdd')}
                     </Button>
@@ -489,6 +491,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       !formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -543,6 +546,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         !formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnAdd')}
                     </Button>
@@ -618,6 +622,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       )
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -684,6 +689,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         )
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnAdd')}
                     </Button>
@@ -743,6 +749,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     onClick={() => navigateToCMAView()}
                     disabled={!formViewPermission(userInfoState, DocType.CMA, projectProposalStage)}
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -791,6 +798,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         !formCreatePermission(userInfoState, DocType.CMA, projectProposalStage)
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnAdd')}
                     </Button>
@@ -839,6 +847,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         !formEditPermission(userInfoState, DocType.CMA, projectProposalStage)
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnEdit')}
                     </Button>
@@ -914,6 +923,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       )
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -988,6 +998,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       )
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnView')}
                   </Button>
@@ -1055,6 +1066,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         )
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnAdd')}
                     </Button>
@@ -1117,6 +1129,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                         )
                       }
                       size="small"
+                      className="btnProjectForms"
                     >
                       {t('projectDetailsView:btnEdit')}
                     </Button>
@@ -1195,6 +1208,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                       )
                     }
                     size="small"
+                    className="btnProjectForms"
                   >
                     {t('projectDetailsView:btnDownload')}
                   </Button>

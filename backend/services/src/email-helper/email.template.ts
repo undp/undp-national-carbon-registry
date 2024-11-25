@@ -137,7 +137,7 @@ export const EmailTemplates = {
   },
   PROGRAMME_SL_CREATE: {
     id: "PROGRAMME_SL_CREATE",
-    subject: "New: Initial Notification Submitted!",
+    subject: "New Initial Notification Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -182,7 +182,7 @@ export const EmailTemplates = {
   },
   PROJECT_PROPOSAL_SUBMITTED: {
     id: "PROJECT_PROPOSAL_SUBMITTED",
-    subject: "New: Proposal Submitted!",
+    subject: "New Proposal Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -227,7 +227,7 @@ export const EmailTemplates = {
   },
   CMA_CREATE: {
     id: "CMA_CREATE",
-    subject: "New: Carbon Management Assessment Form Submitted",
+    subject: "New Carbon Management Assessment Form Submitted",
     html: `
         Hi {{name}}, <br><br>
 
@@ -272,7 +272,7 @@ export const EmailTemplates = {
   },
   VALIDATION_SUBMITTED: {
     id: "VALIDATION_SUBMITTED",
-    subject: "New: Validation Report Submitted!",
+    subject: "New Validation Report Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -321,7 +321,7 @@ export const EmailTemplates = {
   },
   MONITORING_CREATE: {
     id: "MONITORING_CREATE",
-    subject: "New: Monitoring Report Submitted!",
+    subject: "New Monitoring Report Submitted!",
     html: `
         Hi {{name}}, <br><br>
 
@@ -366,7 +366,7 @@ export const EmailTemplates = {
   },
   VERIFICATION_CREATE: {
     id: "VERIFICATION_CREATE",
-    subject: "New: Verification Report Submitted!",
+    subject: "New Verification Report Submitted!",
     html: `
         Hi {{name}}, <br><br>
 

@@ -533,6 +533,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           )
                         }
                         size="small"
+                        className="btnProjectForms"
                       >
                         {t('projectDetailsView:btnView')}
                       </Button>
@@ -607,6 +608,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               )
                             }
                             size="small"
+                            className="btnProjectForms"
                           >
                             {t('projectDetailsView:btnEdit')}
                           </Button>
@@ -666,6 +668,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 )
                               }
                               size="small"
+                              className="btnProjectForms"
                             >
                               {t('projectDetailsView:btnAdd')}
                             </Button>
@@ -754,6 +757,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           )
                         }
                         size="small"
+                        className="btnProjectForms"
                       >
                         {t('projectDetailsView:btnView')}
                       </Button>
@@ -828,6 +832,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                               )
                             }
                             size="small"
+                            className="btnProjectForms"
                           >
                             {t('projectDetailsView:btnEdit')}
                           </Button>
@@ -888,6 +893,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                 )
                               }
                               size="small"
+                              className="btnProjectForms"
                             >
                               {t('projectDetailsView:btnAdd')}
                             </Button>
@@ -961,6 +967,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             )
                           }
                           size="small"
+                          className="btnProjectForms"
                         >
                           {t('projectDetailsView:btnDownload')}
                         </Button>
@@ -1030,6 +1037,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             )
                           }
                           size="small"
+                          className="btnProjectForms"
                         >
                           {t('projectDetailsView:btnDownload')}
                         </Button>
@@ -1104,6 +1112,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             )
                           }
                           size="small"
+                          className="btnProjectForms"
                         >
                           {t('projectDetailsView:btnSend')}
                         </Button>
@@ -1236,6 +1245,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             )
                           }
                           size="small"
+                          className="btnProjectForms"
                         >
                           {t('projectDetailsView:btnApprove')}
                         </Button>
@@ -1351,6 +1361,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             )
                           }
                           size="small"
+                          className="btnDangerProjectForms"
                         >
                           {t('projectDetailsView:btnReject')}
                         </Button>
