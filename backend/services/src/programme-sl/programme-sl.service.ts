@@ -50,6 +50,8 @@ import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
 import { ProjectCategory, SlProjectCategoryMap } from "../enum/projectCategory.enum";
 import { ProjectGeography } from "src/enum/projectGeography.enum";
+import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
+import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -81,9 +83,12 @@ export class ProgrammeSlService {
     private readonly programmeLedgerService: ProgrammeLedgerService,
     private projectRegistrationCertificateGenerator: ProjectRegistrationCertificateGenerator,
     private dateUtilService: DateUtilService,
-    private serialGenerator: SLCFSerialNumberGeneratorService
+    private serialGenerator: SLCFSerialNumberGeneratorService,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
   ) {}
 
+  // MARK: Create Programme
   async create(programmeSlDto: ProgrammeSlDto, user: User): Promise<ProgrammeSl | undefined> {
     if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
@@ -179,6 +184,15 @@ export class ProgrammeSlService {
       savedProgramme.programmeId
     );
 
+    if (savedProgramme) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = savedProgramme.programmeId;
+      log.logType = ProgrammeAuditLogType.CREATE;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return savedProgramme;
   }
 
@@ -225,6 +239,15 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.INF_APPROVED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -273,6 +296,16 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.INF_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
@@ -356,7 +389,16 @@ export class ProgrammeSlService {
       txType: TxType.CREATE_COST_QUOTATION,
       data: data,
     };
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = costQuotationDto.programmeId;
+      log.logType = ProgrammeAuditLogType.CREATE_COST_QUOTATION;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, costQuotationDoc);
   }
@@ -419,7 +461,16 @@ export class ProgrammeSlService {
       programmeId: projectProposalDto.programmeId,
       txType: TxType.CREATE_PROJECT_PROPOSAL,
     };
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = projectProposalDto.programmeId;
+      log.logType = ProgrammeAuditLogType.CREATE_PROJECT_PROPOSAL;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, projectProposalDoc);
   }
@@ -540,7 +591,7 @@ export class ProgrammeSlService {
       programmeId: validationAgreementDto.programmeId,
       txType: TxType.CREATE_VALIDATION_AGREEMENT,
     };
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
     //send email to Project Participant
     await this.emailHelperService.sendEmailToProjectParticipant(
@@ -548,6 +599,15 @@ export class ProgrammeSlService {
       null,
       validationAgreementDto.programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = validationAgreementDto.programmeId;
+      log.logType = ProgrammeAuditLogType.CREATE_VALIDATION_AGREEMENT;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, validationAgreementDoc);
   }
@@ -661,6 +721,16 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_ACCEPTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
@@ -774,6 +844,16 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
@@ -912,13 +992,22 @@ export class ProgrammeSlService {
       txType: TxType.CREATE_CMA,
     };
 
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.CMA_CREATE,
       null,
       cmaDto.programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = cmaDto.programmeId;
+      log.logType = ProgrammeAuditLogType.CMA_CREATE;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, cmaDoc);
   }
@@ -1012,7 +1101,7 @@ export class ProgrammeSlService {
       txType: TxType.APPROVE_CMA,
       data: data,
     };
-    await this.updateProposalStage(updateProgrammeSlProposalStage, user);
+    const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
     //updating document status
     const lastCMADocVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, programmeId);
@@ -1039,6 +1128,16 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.CMA_APPROVED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
   }
 
@@ -1105,6 +1204,15 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.CMA_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
@@ -1246,7 +1354,7 @@ export class ProgrammeSlService {
     validationReportDoc.createdTime = new Date().getTime();
     validationReportDoc.updatedTime = validationReportDoc.createdTime;
 
-    await this.documentRepo.insert(validationReportDoc);
+    const response = await this.documentRepo.insert(validationReportDoc);
 
     const updateProgrammeSlProposalStage = {
       programmeId: validationReportDto.programmeId,
@@ -1260,6 +1368,15 @@ export class ProgrammeSlService {
       null,
       validationReportDto.programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = validationReportDto.programmeId;
+      log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_CREATED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, validationReportDoc);
   }
@@ -1345,6 +1462,32 @@ export class ProgrammeSlService {
       programmeId
     );
 
+    if (response) {
+
+      const logs: ProgrammeAuditLogSl[] = [];
+
+      const ValidationApprovedLog = new ProgrammeAuditLogSl();
+      ValidationApprovedLog.programmeId = programmeId;
+      ValidationApprovedLog.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
+      ValidationApprovedLog.userId = user.id;
+      logs.push(ValidationApprovedLog);
+
+      const authorisedLog = new ProgrammeAuditLogSl();
+      authorisedLog.programmeId = programmeId;
+      authorisedLog.logType = ProgrammeAuditLogType.AUTHORISED;
+      authorisedLog.userId = user.id;
+      logs.push(authorisedLog);
+
+      await this.programmeAuditSlRepo.save(logs);
+
+      // const log = new ProgrammeAuditLogSl();
+      // log.programmeId = programmeId;
+      // log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
+      // log.userId = user.id;
+
+      // await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
@@ -1414,6 +1557,15 @@ export class ProgrammeSlService {
       null,
       programmeId
     );
+
+    if (response) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = programmeId;
+      log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
     return new DataResponseDto(HttpStatus.OK, response);
   }
 

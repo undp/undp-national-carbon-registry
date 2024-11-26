@@ -27,6 +27,8 @@ import { DocType } from "../enum/document.type";
 import { CNCertificateIssueDto } from "../dto/cncertificateIssue.dto";
 import { CarbonNeutralCertificateGenerator } from "../util/carbonNeutralCertificate.gen";
 import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetirementSl.service";
+import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
+import { ProgrammeAuditLogType } from "src/enum/programmeAuditLogType.enum";
 
 @Injectable()
 export class VerificationService {
@@ -47,7 +49,9 @@ export class VerificationService {
     private configService: ConfigService,
     private fileHandler: FileHandlerInterface,
     private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
-    private creditRetirementSlService: CreditRetirementSlService
+    private creditRetirementSlService: CreditRetirementSlService,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
   ) {}
 
   //MARK: create Monitoring Report
@@ -155,6 +159,7 @@ export class VerificationService {
     monitoringReportDocument.createdTime = new Date().getTime();
     monitoringReportDocument.updatedTime = new Date().getTime();
     monitoringReportDocument.content = docContent;
+
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequests: VerificationRequestEntity[] =
         await this.verificationRequestRepository.find({
@@ -204,6 +209,15 @@ export class VerificationService {
       null,
       monitoringReportDto.programmeId
     );
+
+    if (savedReport) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = monitoringReportDto.programmeId;
+      log.logType = ProgrammeAuditLogType.MONITORING_CREATE;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
 
     return new DataResponseDto(HttpStatus.OK, savedReport);
   }
@@ -277,22 +291,29 @@ export class VerificationService {
         );
         return;
       }
+
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = verificationRequest.programmeId;
+      log.logType = verifyReportDto.verify ? ProgrammeAuditLogType.MONITORING_APPROVED : ProgrammeAuditLogType.MONITORING_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     });
 
     //send email to Project Participant
-    if (verifyReportDto.verify) {
+    // if (verifyReportDto.verify) {
       await this.emailHelperService.sendEmailToProjectParticipant(
-        EmailTemplates.MONITORING_APPROVED,
+        (verifyReportDto.verify) ? EmailTemplates.MONITORING_APPROVED : EmailTemplates.MONITORING_REJECTED,
         null,
         verificationRequest.programmeId
       );
-    } else {
-      await this.emailHelperService.sendEmailToProjectParticipant(
-        EmailTemplates.MONITORING_REJECTED,
-        null,
-        verificationRequest.programmeId
-      );
-    }
+    // } else {
+    //   await this.emailHelperService.sendEmailToProjectParticipant(
+    //     EmailTemplates.MONITORING_REJECTED,
+    //     null,
+    //     verificationRequest.programmeId
+    //   );
+    // }
   }
 
   //MARK: create Verification Report
@@ -481,6 +502,15 @@ export class VerificationService {
       verificationReportDto.programmeId
     );
 
+    if (savedReport) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = verificationReportDto.programmeId;
+      log.logType = ProgrammeAuditLogType.VERIFICATION_CREATE;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
+    }
+
     return new DataResponseDto(HttpStatus.OK, savedReport);
   }
 
@@ -553,6 +583,23 @@ export class VerificationService {
           pageLink: hostAddress + `/programmeManagementSLCF/view/${updatedProgramme.programmeId}`,
         }
       );
+
+      const logs: ProgrammeAuditLogSl[] = [];
+
+      const VerificationApprovedLog = new ProgrammeAuditLogSl();
+      VerificationApprovedLog.programmeId = verificationRequest.programmeId;
+      VerificationApprovedLog.logType = ProgrammeAuditLogType.VERIFICATION_APPROVED;
+      VerificationApprovedLog.userId = user.id;
+      logs.push(VerificationApprovedLog);
+
+      const creditIssueLog = new ProgrammeAuditLogSl();
+      creditIssueLog.programmeId = verificationRequest.programmeId;
+      creditIssueLog.logType = ProgrammeAuditLogType.CREDIT_ISSUED;
+      creditIssueLog.data = {creditIssued: Number(verificationRequest.creditAmount)}
+      creditIssueLog.userId = user.id;
+      logs.push(creditIssueLog);
+
+      await this.programmeAuditSlRepo.save(logs);
     }
 
     await this.entityManager.transaction(async (em) => {
@@ -601,28 +648,41 @@ export class VerificationService {
     });
 
     //send email to Project Participant and SLCF
-    if (verifyReportDto.verify) {
-      await this.emailHelperService.sendEmailToSLCFAdmins(
-        EmailTemplates.VERIFICATION_APPROVED,
-        null,
-        verificationRequest.programmeId
-      );
-      await this.emailHelperService.sendEmailToProjectParticipant(
-        EmailTemplates.VERIFICATION_APPROVED,
-        null,
-        verificationRequest.programmeId
-      );
-    } else {
-      await this.emailHelperService.sendEmailToSLCFAdmins(
-        EmailTemplates.VERIFICATION_REJECTED,
-        null,
-        verificationRequest.programmeId
-      );
-      await this.emailHelperService.sendEmailToProjectParticipant(
-        EmailTemplates.VERIFICATION_REJECTED,
-        null,
-        verificationRequest.programmeId
-      );
+    // if (verifyReportDto.verify) {
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      verifyReportDto.verify
+        ? EmailTemplates.VERIFICATION_APPROVED
+        : EmailTemplates.VERIFICATION_REJECTED,
+      null,
+      verificationRequest.programmeId
+    );
+    // await this.emailHelperService.sendEmailToProjectParticipant(
+    //   verifyReportDto.verify
+    //     ? EmailTemplates.VERIFICATION_APPROVED
+    //     : EmailTemplates.VERIFICATION_REJECTED,
+    //   null,
+    //   verificationRequest.programmeId
+    // );
+    // } else {
+    //   await this.emailHelperService.sendEmailToSLCFAdmins(
+    //     EmailTemplates.VERIFICATION_REJECTED,
+    //     null,
+    //     verificationRequest.programmeId
+    //   );
+    //   await this.emailHelperService.sendEmailToProjectParticipant(
+    //     EmailTemplates.VERIFICATION_REJECTED,
+    //     null,
+    //     verificationRequest.programmeId
+    //   );
+    // }
+
+    if (!verifyReportDto.verify) {
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = verificationRequest.programmeId;
+      log.logType = ProgrammeAuditLogType.VERIFICATION_REJECTED;
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     }
   }
 

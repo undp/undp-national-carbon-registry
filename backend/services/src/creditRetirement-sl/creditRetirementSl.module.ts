@@ -11,12 +11,13 @@ import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementSlService } from "./creditRetirementSl.service";
 import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([CreditRetirementSl, CreditRetirementSlView]),
+    TypeOrmModule.forFeature([CreditRetirementSl, CreditRetirementSlView, ProgrammeAuditLogSl]),
     UtilModule,
     CompanyModule,
     UserModule,

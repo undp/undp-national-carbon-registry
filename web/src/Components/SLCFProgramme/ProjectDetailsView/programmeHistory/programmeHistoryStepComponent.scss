@@ -1,0 +1,230 @@
+.programme-timeline-container {
+  .ant-steps-item-title {
+    color: rgba(58, 53, 65, 0.8) !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .ant-steps-item-description {
+    color: rgba(58, 53, 65, 0.6);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail:after {
+    background-color: #16b1ff !important;
+    width: 1.7px !important;
+  }
+
+  .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: #16b1ff !important;
+    width: 1px;
+    height: 100%;
+    border-color: #b0e0f8;
+  }
+  .timeline-icon {
+    background-color: rgba(#c7c7c7, 0.5);
+    color: #211f1e;
+    font-size: 1rem;
+    padding: 0.3rem 0.45rem 0.3rem;
+    border-radius: 100%;
+    margin-right: 10px;
+  }
+
+  .create {
+    color: #ff8f56;
+    background-color: rgba(#fef1ad, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .inf_approved {
+    color: #b2cf2f;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .create_cost_quotation {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .create_project_proposal {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .create_validation_agreement {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .project_proposal_accepted {
+    // color: #78be28;
+    // background-color: rgba(#e7fa94, 0.5);
+    color: #16b1ff;
+    background-color: rgba(#b9e2f4, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .cma_create {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .cma_approved {
+    color: #b2cf2f;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .cma_rejected {
+    color: #ff6565;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .validation_report_created {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .validation_report_approved {
+    color: #b2cf2f;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .validation_report_rejected {
+    color: #ff6565;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .authorised {
+    color: #16b1ff;
+    background-color: rgba(#b9e2f4, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_create {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_rejected {
+    color: #c22e2e;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_approved {
+    color: #9bb42d;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_create {
+    color: #cfa42f;
+    background-color: rgba(#ffde82, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_rejected {
+    color: #c22e2e;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_approved {
+    color: #9bb42d;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .credit_issued {
+    color: #1caf66;
+    background-color: rgba(#80dbae, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .transfer_requested {
+    background-color: rgba(#bfa8ff, 0.5);
+    color: #937fcc;
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .transfer_approved {
+    color: #9bb42d;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .transfer_rejected {
+    color: #c22e2e;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .transfer_cancelled {
+    // color: #c22e2e;
+    // background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_requested {
+    background-color: rgba(#ffa8fb, 0.5);
+    color: #c97fcc;
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_approved {
+    color: #9bb42d;
+    background-color: rgba(#e7fa94, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_rejected {
+    color: #c22e2e;
+    background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_cancelled {
+    // color: #c22e2e;
+    // background-color: rgba(#ff8c8c, 0.5);
+    font-size: 1rem;
+    padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  }
+}

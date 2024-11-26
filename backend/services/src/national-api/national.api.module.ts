@@ -24,6 +24,8 @@ import { CreditRetirementSlController } from "./creditRetirement.controller";
 import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
 import { VerificationController } from "./verification/verification.controller";
 import { VerificationModule } from "src/verification/verification.module";
+import { ProgrammeAuditSlModule } from "../programme-audit-sl/programme-audit-sl.module";
+import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
 
 @Module({
   imports: [
@@ -45,7 +47,8 @@ import { VerificationModule } from "src/verification/verification.module";
     UtilModule,
     LocationModule,
     ProgrammeSlModule,
-    CreditRetirementSlModule
+    CreditRetirementSlModule,
+    ProgrammeAuditSlModule
   ],
   controllers: [
     NationalAPIController,
@@ -58,6 +61,7 @@ import { VerificationModule } from "src/verification/verification.module";
     ProgrammeSlController,
     CreditRetirementSlController,
     VerificationController,
+    ProgrammeAuditSlController
   ],
   providers: [NationalAPIService, Logger],
 })

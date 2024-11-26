@@ -27,6 +27,8 @@ import { VoluntarilyCancellationCertificateGenerator } from "../util/voluntarily
 import { QueryDto } from "../dto/query.dto";
 import { DataListResponseDto } from "../dto/data.list.response";
 import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
+import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
 
 @Injectable()
 export class CreditRetirementSlService {
@@ -43,7 +45,9 @@ export class CreditRetirementSlService {
     private txRefGeneratorService: TxRefGeneratorService,
     private counterService: CounterService,
     private serialGenerator: SLCFSerialNumberGeneratorService,
-    private voluntarilyCancellationCertificateGenerator: VoluntarilyCancellationCertificateGenerator
+    private voluntarilyCancellationCertificateGenerator: VoluntarilyCancellationCertificateGenerator,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
   ) {}
 
   //MARK: Create Retirement
@@ -191,6 +195,14 @@ export class CreditRetirementSlService {
         { credits: creditRetirementDto.creditAmount },
         programme.programmeId
       );
+
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = creditRetirementRequest.programmeId;
+      log.logType = creditRetirementDto.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_REQUESTED : ProgrammeAuditLogType.RETIRE_REQUESTED;
+      log.data = { creditAmount: Number(creditRetirementRequest.creditAmount), ref: creditRetirementRequest.txRef, toCompanyId: creditRetirementRequest.toCompanyId }
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     }
 
     return creditRetirementRequest;
@@ -463,6 +475,14 @@ export class CreditRetirementSlService {
           }
         );
       }
+
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = retirementRequest.programmeId;
+      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_APPROVED : ProgrammeAuditLogType.RETIRE_APPROVED;
+      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId }
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     }
 
     return new BasicResponseDto(
@@ -510,6 +530,14 @@ export class CreditRetirementSlService {
           remark,
         }
       );
+
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = retirementRequest.programmeId;
+      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_REJECTED : ProgrammeAuditLogType.RETIRE_REJECTED;
+      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId, remark }
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     }
 
     return new BasicResponseDto(
@@ -555,6 +583,14 @@ export class CreditRetirementSlService {
         },
         programme.programmeId
       );
+
+      const log = new ProgrammeAuditLogSl();
+      log.programmeId = retirementRequest.programmeId;
+      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_CANCELLED : ProgrammeAuditLogType.RETIRE_CANCELLED;
+      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId }
+      log.userId = user.id;
+
+      await this.programmeAuditSlRepo.save(log);
     }
 
     return new BasicResponseDto(

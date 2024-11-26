@@ -16,12 +16,13 @@ import { VerificationRequestEntity } from "src/entities/verification.request.ent
 import { VerificationService } from "./verification.service";
 import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
 import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
+import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([DocumentEntity, VerificationRequestEntity]),
+    TypeOrmModule.forFeature([DocumentEntity, VerificationRequestEntity, ProgrammeAuditLogSl]),
     UtilModule,
     CompanyModule,
     UserModule,
