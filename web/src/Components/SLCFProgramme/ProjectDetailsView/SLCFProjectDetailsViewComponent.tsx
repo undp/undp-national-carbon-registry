@@ -120,6 +120,7 @@ import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
+import ProgrammeHistoryStepsComponent from './programmeHistory/programmeHistoryStepComponent';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -132,7 +133,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { t, i18n } = useTranslation(['projectDetailsView']);
+  const { t, i18n } = useTranslation(['projectDetailsView', 'slcfProgrammeTimeline']);
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
@@ -1731,11 +1732,20 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
+  //MARK: getProgrammeHistory
   const getProgrammeHistory = async (programmeId: string) => {
     setLoadingHistory(true);
     try {
       const response: any = await get(`national/logs?programmeId=${programmeId}`);
-      if (response) {
+      if (response && response.data) {
+        // const items = response.data.map((log: any) => ({
+        //   title: log.logType.replace(/_/g, ' '), // Convert logType to a readable title
+        //   description: log.data
+        //     ? Object.entries(log.data)
+        //         .map(([key, value]) => `${key}: ${value}`)
+        //         .join(', ')
+        //     : 'No additional details', // Handle cases where data is null
+        // }));
         setProgrammeHistoryLogData(response.data);
         setProgrammeHistoryLogDataLoaded(true);
         console.log(response);
@@ -2369,24 +2379,13 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     //   direction="vertical"
                     //   items={historyData}
                     // />
-                    <Steps
-                      direction="vertical"
-                      current={0}
-                      items={[
-                        {
-                          title: 'Finished',
-                          description: 'test',
-                        },
-                        {
-                          title: 'In Progress',
-                          description: 'test',
-                        },
-                        {
-                          title: 'Waiting',
-                          description: 'test',
-                        },
-                      ]}
-                    />
+                    // <Steps direction="vertical" current={0} items={programmeHistoryLogData} />
+                    <div className="programme-timeline-container">
+                      <ProgrammeHistoryStepsComponent
+                        historyData={programmeHistoryLogData}
+                        translator={t}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

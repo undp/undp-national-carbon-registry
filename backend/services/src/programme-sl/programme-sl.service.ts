@@ -1463,12 +1463,29 @@ export class ProgrammeSlService {
     );
 
     if (response) {
-      const log = new ProgrammeAuditLogSl();
-      log.programmeId = programmeId;
-      log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
-      log.userId = user.id;
 
-      await this.programmeAuditSlRepo.save(log);
+      const logs: ProgrammeAuditLogSl[] = [];
+
+      const ValidationApprovedLog = new ProgrammeAuditLogSl();
+      ValidationApprovedLog.programmeId = programmeId;
+      ValidationApprovedLog.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
+      ValidationApprovedLog.userId = user.id;
+      logs.push(ValidationApprovedLog);
+
+      const authorisedLog = new ProgrammeAuditLogSl();
+      authorisedLog.programmeId = programmeId;
+      authorisedLog.logType = ProgrammeAuditLogType.AUTHORISED;
+      authorisedLog.userId = user.id;
+      logs.push(authorisedLog);
+
+      await this.programmeAuditSlRepo.save(logs);
+
+      // const log = new ProgrammeAuditLogSl();
+      // log.programmeId = programmeId;
+      // log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
+      // log.userId = user.id;
+
+      // await this.programmeAuditSlRepo.save(log);
     }
 
     return new DataResponseDto(HttpStatus.OK, response);

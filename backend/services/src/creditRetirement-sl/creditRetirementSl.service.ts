@@ -534,7 +534,7 @@ export class CreditRetirementSlService {
       const log = new ProgrammeAuditLogSl();
       log.programmeId = retirementRequest.programmeId;
       log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_REJECTED : ProgrammeAuditLogType.RETIRE_REJECTED;
-      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId }
+      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId, remark }
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);
