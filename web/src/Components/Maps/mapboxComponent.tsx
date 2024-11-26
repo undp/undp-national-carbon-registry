@@ -9,6 +9,15 @@ import {
 } from '../../Definitions/Definitions/mapComponent.definitions';
 import './mapboxComponent.scss';
 
+//This is for testing automation purposes
+declare global {
+  interface Window {
+    mapDraw: MapboxDraw;
+  }
+}
+
+window.mapDraw = new MapboxDraw() || {};
+
 export const MapboxComponent = (props: MapComponentProps) => {
   const mapContainerRef = useRef(null);
 
