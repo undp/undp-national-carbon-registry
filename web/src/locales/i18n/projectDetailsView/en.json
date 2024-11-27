@@ -178,7 +178,7 @@
   "verificationReport": "Verification Report",
   "omgeDesc": "Overall Mitigation in Global Emissins (OMGE)",
   "orgNotAuthCreate": "Your organisation is not authorised to create this document",
-  "orgNotAuthView": "Your organisation is not authorised to view this document",
+  "orgNotAuthView": "This document has not yet been submitted",
   "PROPOSAL_STAGE": "Proposal Stage",
   "PROCUREMENT_STAGE": "Procurement Stage",
   "CONSTRUCTION_STAGE": "Construction Stage",
