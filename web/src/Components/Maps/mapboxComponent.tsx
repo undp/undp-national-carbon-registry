@@ -16,7 +16,7 @@ declare global {
   }
 }
 
-window.mapDraw = new MapboxDraw() || {};
+// window.mapDraw = new MapboxDraw() || {};
 
 export const MapboxComponent = (props: MapComponentProps) => {
   const mapContainerRef = useRef(null);
@@ -67,6 +67,8 @@ export const MapboxComponent = (props: MapComponentProps) => {
         },
         defaultMode: 'draw_polygon',
       });
+
+      window.mapDraw = draw; // This is for test automation purposes
 
       map.addControl(draw);
       map.on('draw.create', (e) => {
