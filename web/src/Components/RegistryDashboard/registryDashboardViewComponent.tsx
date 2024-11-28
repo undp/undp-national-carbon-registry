@@ -1791,10 +1791,10 @@ ${total}
         <div className="systemchange-container" style={{ marginLeft: `20px` }}>
           <ButtonGroup>
             <Button type="primary" className="rgprimary">
-              ARTICLE 6.4 PROCESS
+              ARTICLE 6.4 PROJECTS
             </Button>
             <Link to="/dashboard/slcf">
-              <Button className="rgdefault">SLCF Registry</Button>
+              <Button className="rgdefault">SLCF PROJECTS</Button>
             </Link>
           </ButtonGroup>
         </div>
