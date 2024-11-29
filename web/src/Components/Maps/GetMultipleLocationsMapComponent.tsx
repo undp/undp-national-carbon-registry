@@ -5,6 +5,7 @@ import { MapSourceData } from '../../Definitions/Definitions/mapComponent.defini
 import { MapComponent } from './mapComponent';
 import './mapboxComponent.scss';
 import { DeleteOutlined } from '@ant-design/icons';
+import { deepCopy } from '../../Utils/deepCopy';
 
 interface IMultipleLocationsMapComponetProps {
   form: FormInstance;
@@ -127,6 +128,18 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
     } else if (projectLocations !== undefined) {
       form.setFieldValue(formItemName, projectLocations);
     }
+
+    // const lastLocationCoordinates = projectLocations.pop()?.pop();
+    const tempProjectLocations = deepCopy(projectLocations);
+
+    if (tempProjectLocations.length > 0) {
+      console.log('----------tempProjectLocations-------------', tempProjectLocations);
+      const lastPointCoordinates = tempProjectLocations.pop()?.pop().pop();
+      console.log('----------last point-------------', lastPointCoordinates);
+      updateCenter(lastPointCoordinates);
+    }
+
+    // console.log('------------lastLocation----------------', lastLocationCoordinates);
   }, [projectLocations]);
 
   const onPolygonComplete = function (data: any) {

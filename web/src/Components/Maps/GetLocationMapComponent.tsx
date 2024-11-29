@@ -142,7 +142,7 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
           mapType={mapType}
           center={projectLocationMapCenter}
           updateZoomLevel={updateZoomLevel}
-          zoom={4}
+          zoom={zoomLevel}
           height={400}
           style="mapbox://styles/mapbox/light-v11"
           accessToken={accessToken}
