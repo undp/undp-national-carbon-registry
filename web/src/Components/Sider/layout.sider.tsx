@@ -50,6 +50,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
+    getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
@@ -70,20 +72,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //     getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
   //   );
   // }
-
-  if (
-    !(
-      userInfoState?.companyRole === CompanyRole.MINISTRY ||
-      userInfoState?.companyRole === CompanyRole.CERTIFIER
-    )
-  ) {
-    items.splice(
-      1,
-      0,
-      getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
-      getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />)
-    );
-  }
 
   if (userInfoState?.userRole === Role.Root) {
     items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
