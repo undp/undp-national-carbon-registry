@@ -136,7 +136,6 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
       const lastPointCoordinates = tempProjectLocations.pop()?.pop().pop();
       updateCenter(lastPointCoordinates);
     }
-
   }, [projectLocations]);
 
   const onPolygonComplete = function (data: any) {
