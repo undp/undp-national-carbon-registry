@@ -8,6 +8,9 @@
   "infApprovedTitle": "Initial Notification Approved",
   "infApprovedDescription": "The Initial Notification was approved by {}",
 
+  "infRejectedTitle": "Initial Notification Rejected",
+  "infRejectedDescription": "The Initial Notification was rejected by {}",
+
   "costQuoteCreatedTitle": "Cost Quotation Created",
   "costQuoteCreatedDescription": "The Cost Quotation was created by {}",
 
