@@ -277,7 +277,7 @@ const getLogTitle = (logType: any) => {
       return 'slcfProgrammeTimeline:projectProposalAcceptedTitle';
       break;
     case 'PROJECT_PROPOSAL_REJECTED':
-      return 'slcfProgrammeTimeline:projectProposalRejectedDescription';
+      return 'slcfProgrammeTimeline:projectProposalRejectedTitle';
       break;
     case 'CMA_CREATE':
       return 'slcfProgrammeTimeline:cmaCreatedTitle';
