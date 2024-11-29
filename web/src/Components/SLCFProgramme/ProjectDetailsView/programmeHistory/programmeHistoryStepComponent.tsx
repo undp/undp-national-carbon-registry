@@ -31,6 +31,7 @@ interface ProgrammeLog {
 const logTypeIcons: Record<string, React.ReactNode> = {
   CREATE: <Icon.CaretRight />,
   INF_APPROVED: <Icon.FileEarmarkCheck />,
+  INF_REJECTED: <Icon.FileEarmarkX />,
   CREATE_COST_QUOTATION: <Icon.FileText />,
   CREATE_PROJECT_PROPOSAL: <Icon.FileText />,
   CREATE_VALIDATION_AGREEMENT: <Icon.FileText />,
@@ -84,6 +85,9 @@ const getLogDescription = (log: any, t: any) => {
       break;
     case 'INF_APPROVED':
       return formatString('slcfProgrammeTimeline:infApprovedDescription', [log.name], t);
+      break;
+    case 'INF_REJECTED':
+      return formatString('slcfProgrammeTimeline:infRejectedDescription', [log.name], t);
       break;
     case 'CREATE_COST_QUOTATION':
       return formatString('slcfProgrammeTimeline:costQuoteCreatedDescription', [log.name], t);
@@ -263,6 +267,9 @@ const getLogTitle = (logType: any) => {
       break;
     case 'INF_APPROVED':
       return 'slcfProgrammeTimeline:infApprovedTitle';
+      break;
+    case 'INF_REJECTED':
+      return 'slcfProgrammeTimeline:infRejectedTitle';
       break;
     case 'CREATE_COST_QUOTATION':
       return 'slcfProgrammeTimeline:costQuoteCreatedTitle';
