@@ -133,13 +133,10 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
     const tempProjectLocations = deepCopy(projectLocations);
 
     if (tempProjectLocations.length > 0) {
-      console.log('----------tempProjectLocations-------------', tempProjectLocations);
       const lastPointCoordinates = tempProjectLocations.pop()?.pop().pop();
-      console.log('----------last point-------------', lastPointCoordinates);
       updateCenter(lastPointCoordinates);
     }
 
-    // console.log('------------lastLocation----------------', lastLocationCoordinates);
   }, [projectLocations]);
 
   const onPolygonComplete = function (data: any) {
