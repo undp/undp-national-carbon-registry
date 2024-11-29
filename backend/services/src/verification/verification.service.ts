@@ -541,11 +541,13 @@ export class VerificationService {
     }
 
     let updatedProgramme;
+    let isInitialCreditIssue = false;
     if (verifyReportDto.verify === true) {
       const programme = await this.programmeSlService.getProjectById(
         verificationRequest.programmeId
       );
-
+      
+      isInitialCreditIssue = !programme.creditStartSerialNumber;
       const txRef = this.txRefGen.getCreditIssueApproveRef(user, programme, verificationRequest);
 
       updatedProgramme = await this.programmeLedgerService.issueSlCredits(
@@ -569,7 +571,8 @@ export class VerificationService {
       );
       certificateUrl = await this.getCreditIssuanceCertificateURL(
         verificationRequest,
-        creditIssueCertificateSerial
+        creditIssueCertificateSerial,
+        isInitialCreditIssue
       );
 
       const hostAddress = this.configService.get("host");
@@ -648,7 +651,6 @@ export class VerificationService {
     });
 
     //send email to Project Participant and SLCF
-    // if (verifyReportDto.verify) {
     await this.emailHelperService.sendEmailToSLCFAdmins(
       verifyReportDto.verify
         ? EmailTemplates.VERIFICATION_APPROVED
@@ -656,25 +658,6 @@ export class VerificationService {
       null,
       verificationRequest.programmeId
     );
-    // await this.emailHelperService.sendEmailToProjectParticipant(
-    //   verifyReportDto.verify
-    //     ? EmailTemplates.VERIFICATION_APPROVED
-    //     : EmailTemplates.VERIFICATION_REJECTED,
-    //   null,
-    //   verificationRequest.programmeId
-    // );
-    // } else {
-    //   await this.emailHelperService.sendEmailToSLCFAdmins(
-    //     EmailTemplates.VERIFICATION_REJECTED,
-    //     null,
-    //     verificationRequest.programmeId
-    //   );
-    //   await this.emailHelperService.sendEmailToProjectParticipant(
-    //     EmailTemplates.VERIFICATION_REJECTED,
-    //     null,
-    //     verificationRequest.programmeId
-    //   );
-    // }
 
     if (!verifyReportDto.verify) {
       const log = new ProgrammeAuditLogSl();
@@ -779,7 +762,8 @@ export class VerificationService {
   //MARK: get Credit Issuance Certificate URL
   async getCreditIssuanceCertificateURL(
     verificationRequest: VerificationRequestEntity,
-    verificationSerialNo: string
+    verificationSerialNo: string, 
+    isInitialCreditIssue: boolean
   ) {
     const programme = await this.programmeSlService.getProjectById(verificationRequest.programmeId);
 
@@ -790,15 +774,15 @@ export class VerificationService {
       );
     }
 
-    const blockStart = this.serialGenerator.calculateCreditSerialNumber(
+    const blockStart = isInitialCreditIssue ? programme.creditStartSerialNumber : this.serialGenerator.calculateCreditSerialNumber(
       programme.creditStartSerialNumber,
       programme.creditBalance > 0
-        ? programme.creditBalance - verificationRequest.creditAmount + 1
+        ? programme.creditBalance - verificationRequest.creditAmount
         : 0
     );
     const blockEnd = this.serialGenerator.calculateCreditSerialNumber(
       programme.creditStartSerialNumber,
-      programme.creditBalance
+      programme.creditBalance - 1
     );
 
     const certificateData = {

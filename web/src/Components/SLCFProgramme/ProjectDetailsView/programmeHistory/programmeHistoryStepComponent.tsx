@@ -136,7 +136,7 @@ const getLogDescription = (log: any, t: any) => {
       );
       break;
     case 'AUTHORISED':
-      return formatString('slcfProgrammeTimeline:authorisedDescription', [log.name], t);
+      return formatString('slcfProgrammeTimeline:authorisedDescription', [], t);
       break;
     case 'VALIDATION_REPORT_REJECTED':
       return formatString(
