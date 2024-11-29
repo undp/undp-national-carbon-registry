@@ -5,6 +5,7 @@ import { MapSourceData } from '../../Definitions/Definitions/mapComponent.defini
 import { MapComponent } from './mapComponent';
 import './mapboxComponent.scss';
 import { DeleteOutlined } from '@ant-design/icons';
+import { deepCopy } from '../../Utils/deepCopy';
 
 interface IMultipleLocationsMapComponetProps {
   form: FormInstance;
@@ -126,6 +127,14 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
       form.setFieldValue(listName, listFields);
     } else if (projectLocations !== undefined) {
       form.setFieldValue(formItemName, projectLocations);
+    }
+
+    // const lastLocationCoordinates = projectLocations.pop()?.pop();
+    const tempProjectLocations = deepCopy(projectLocations);
+
+    if (tempProjectLocations.length > 0) {
+      const lastPointCoordinates = tempProjectLocations.pop()?.pop().pop();
+      updateCenter(lastPointCoordinates);
     }
   }, [projectLocations]);
 
