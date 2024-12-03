@@ -121,6 +121,7 @@ import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
 import ProgrammeHistoryStepsComponent from './programmeHistory/programmeHistoryStepComponent';
+import ProgrammeStatusTimelineComponent from './programmeStatusTimeline/programmeStatusTimelineComponent';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -2035,6 +2036,15 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         </div>
       </div>
       <div className="content-body">
+        <Row className="programme-status-timeline">
+          <Card className="card-container">
+            <div className="info-view">
+              <ProgrammeStatusTimelineComponent
+                programmeDetails={data}
+              ></ProgrammeStatusTimelineComponent>
+            </div>
+          </Card>
+        </Row>
         <Row gutter={16}>
           <Col md={24} lg={10}>
             <Card className="card-container">
@@ -2373,13 +2383,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   {loadingHistory ? (
                     <Skeleton />
                   ) : (
-                    // <Steps
-                    //   key={activityTimelineKey}
-                    //   current={0}
-                    //   direction="vertical"
-                    //   items={historyData}
-                    // />
-                    // <Steps direction="vertical" current={0} items={programmeHistoryLogData} />
                     <div className="programme-timeline-container">
                       <ProgrammeHistoryStepsComponent
                         historyData={programmeHistoryLogData}

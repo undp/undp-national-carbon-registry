@@ -1,0 +1,230 @@
+.programme-status-timeline {
+  .info-view {
+    .ant-steps-item-icon {
+      width: 26px;
+      height: 26px;
+      margin: 8px 8px 0 0;
+      font-size: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+        'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+      line-height: 24px;
+      text-align: center;
+      // border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 32px;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+      color: rgba(93, 195, 128, 1);
+    }
+
+    .ant-steps-item-process
+      > .ant-steps-item-container
+      > .ant-steps-item-content
+      > .ant-steps-item-title {
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 600;
+    }
+
+    .ant-steps-item-title {
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .ant-steps-item-subtitle {
+      display: block;
+      margin-left: 0px;
+      font-size: 0.77rem;
+      color: rgba(0, 0, 0, 0.85);
+      margin-top: -12px;
+      font-weight: 300;
+    }
+
+    .ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title > .ant-steps-item-subtitle {
+    color: rgba(0, 0, 0, 0.45);
+}
+    .cma-title {
+      line-height: 1.5;
+      margin-bottom: 6px;
+      margin-top: 6px;
+    }
+    .item-description {
+      width: 200px;
+      ul {
+        padding-left: 5px;
+        font-size: 0.7rem;
+      }
+    }
+
+    .inf-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .inf-rejected-process {
+      color: #ff4141;
+      margin-top: -4px;
+    }
+
+    .inf-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+
+    .proposal-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .cma-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .cma-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .cma-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .cma-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .validation-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .auth-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+  }
+}
