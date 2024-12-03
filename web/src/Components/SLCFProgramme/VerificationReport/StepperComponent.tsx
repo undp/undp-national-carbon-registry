@@ -26,6 +26,7 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
+  const [status, setStatus] = useState(null);
   const [current, setCurrent] = useState(0);
   const [verifiedScer, setVerifiedScer] = useState(0);
 
@@ -244,9 +245,9 @@ const StepperComponent = (props: any) => {
         const { data } = await post('national/programmeSl/getDocumentById', {
           docId: docId,
         });
-        console.log(data);
         if (data && data?.content) {
           setReportId(data?.id);
+          setStatus(data?.status);
           setVerificationRequestId(data?.verificationRequestId);
           const content = data?.content;
           projectDetailsForm.setFieldsValue({
@@ -523,6 +524,7 @@ const StepperComponent = (props: any) => {
           useLocation={useLocation}
           translator={translator}
           current={current}
+          status={status}
           form={appendixForm}
           formMode={mode}
           prev={prev}
