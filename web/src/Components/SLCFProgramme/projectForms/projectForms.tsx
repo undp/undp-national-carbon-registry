@@ -21,7 +21,7 @@ import {
   ProgrammeStageUnified,
   ProjectProposalStage,
 } from '../../../Definitions/Enums/programmeStage.enum';
-import { DocType } from '../../../Definitions/Enums/document.type';
+import { DocType, DocumentTypeEnum } from '../../../Definitions/Enums/document.type';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
@@ -41,7 +41,8 @@ import { ProgrammeSlU } from '../../../Definitions/Definitions/programme.definit
 
 export interface ProjectFormProps {
   data: any;
-  title: any;
+  projectFormsTitle: any;
+  validationFormsTitle: any;
   icon: any;
   programmeId: any;
   programmeOwnerId: number;
@@ -56,7 +57,8 @@ export interface ProjectFormProps {
 export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
   const {
     data,
-    title,
+    projectFormsTitle,
+    validationFormsTitle,
     icon,
     programmeId,
     getDocumentDetails,
@@ -113,9 +115,13 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     navigate(`/programmeManagementSLCF/siteVisitCheckList/${programmeId}`);
   };
 
+  // useEffect(() => {
+  //   setDocData(data);
+  // }, [data]);
+
   useEffect(() => {
-    setDocData(data);
-  }, [data]);
+    getProgrammeById();
+  }, [projectProposalStage]);
 
   const getBase64 = (file: RcFile): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -308,7 +314,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
       <div className="info-view">
         <div className="title">
           <span className="title-icon">{icon}</span>
-          <span className="title-text">{title}</span>
+          <span className="title-text">{projectFormsTitle}</span>
         </div>
         <div>
           <Row className="field" key="Cost Quotation">
@@ -316,6 +322,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:costQuotationForm')}</div>
               </div>
+              {/* {designDocUrl !== '' && (
+                <div className="time">
+                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
+                  {' ~ ' + designDocversion}
+                </div>
+              )} */}
             </Col>
             <Col span={6} className="field-value">
               <>
@@ -449,6 +461,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:proposalForm')}</div>
               </div>
+              {/* {designDocUrl !== '' && (
+                <div className="time">
+                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
+                  {' ~ ' + designDocversion}
+                </div>
+              )} */}
             </Col>
             <Col span={6} className="field-value">
               <>
@@ -703,12 +721,16 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:cmaForm')}</div>
               </div>
-              {/* {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )} */}
+              {Object.hasOwn(programmeDetails.documents, DocumentTypeEnum.CMA) &&
+                programmeDetails.documents[DocumentTypeEnum.CMA].createdTime &&
+                programmeDetails.documents[DocumentTypeEnum.CMA].version && (
+                  <div className="time">
+                    {moment(
+                      parseInt(programmeDetails.documents[DocumentTypeEnum.CMA].createdTime)
+                    ).format('DD MMMM YYYY')}
+                    {' ~ V' + programmeDetails.documents[DocumentTypeEnum.CMA].version}
+                  </div>
+                )}
             </Col>
             <Col span={6} className="field-value">
               <>
@@ -931,17 +953,30 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               </>
             </Col>
           </Row>
+        </div>
+        <div className="title">
+          <span className="title-icon">{icon}</span>
+          <span className="title-text">{validationFormsTitle}</span>
+        </div>
+        <div>
           <Row className="field" key="Validation Report">
             <Col span={12} className="field-key">
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:validationReportForm')}</div>
               </div>
-              {/* {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )} */}
+              {Object.hasOwn(programmeDetails.documents, DocumentTypeEnum.VALIDATION_REPORT) &&
+                programmeDetails.documents[DocumentTypeEnum.VALIDATION_REPORT].createdTime &&
+                programmeDetails.documents[DocumentTypeEnum.VALIDATION_REPORT].version && (
+                  <div className="time">
+                    {moment(
+                      parseInt(
+                        programmeDetails.documents[DocumentTypeEnum.VALIDATION_REPORT].createdTime
+                      )
+                    ).format('DD MMMM YYYY')}
+                    {' ~ V' +
+                      programmeDetails.documents[DocumentTypeEnum.VALIDATION_REPORT].version}
+                  </div>
+                )}
             </Col>
             <Col span={6} className="field-value">
               <>

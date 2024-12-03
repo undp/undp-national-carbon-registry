@@ -2285,7 +2285,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               <div>
                 <ProjectForms
                   data={documentsData}
-                  title={t('projectDetailsView:programmeForms')}
+                  projectFormsTitle={t('projectDetailsView:programmeForms')}
+                  validationFormsTitle={t('projectDetailsView:validationFormsTitle')}
                   icon={<QrcodeOutlined />}
                   programmeId={data?.programmeId}
                   programmeOwnerId={programmeOwnerId}

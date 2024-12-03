@@ -23,6 +23,15 @@
       font-size: 0.8rem;
       color: $title-sub;
     }
+
+    .version-selector {
+      .ant-select-selector {
+        border-radius: 8px;
+        .ant-select-selection-item {
+          color: #000000 !important;
+        }
+      }
+    }
   }
 
   .forms-container {
@@ -373,6 +382,7 @@
 
     // }
   }
+
 }
 
 .stepper-title-container {
@@ -399,3 +409,5 @@
 .ant-form-item-tooltip {
   cursor: default !important;
 }
+
+

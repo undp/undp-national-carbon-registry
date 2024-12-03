@@ -152,6 +152,22 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getDocVersions")
+  async getDocVersions(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getDocVersions(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getDocByVersion")
+  async getDocByVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getDocByVersion(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocLastVersion")
   async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocLastVersion(getDocDto, req.user);

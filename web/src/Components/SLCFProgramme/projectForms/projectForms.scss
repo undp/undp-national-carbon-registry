@@ -139,9 +139,18 @@
   //   width: 80px;
   // }
 
-  .btnProjectForms span {
+  .btnProjectForms:not(:disabled) span {
     text-transform: none;
-    color: rgba(58, 53, 65, 0.6);  
+    color: #40a9ff;
+  }
+
+  .ant-btn-sm:disabled span {
+    text-transform: none;
+    color: rgba(58, 53, 65, 0.6) !important;
+  }
+
+  .btnProjectForms:not(:disabled) {
+    border-color: #40a9ff;
   }
 
   .btnDangerProjectForms span {
@@ -149,14 +158,13 @@
     color: #ff7875;  
   }
 
-  .ant-btn-sm:hover span {
-    text-transform: none;
-    color: #40a9ff;  
-  }
-
   .btnDangerProjectForms:hover span {
     text-transform: none;
     color: #ff7875;  
+  }
+  
+  .time {
+    color: rgba(58, 53, 65, 0.3)
   }
 
 }

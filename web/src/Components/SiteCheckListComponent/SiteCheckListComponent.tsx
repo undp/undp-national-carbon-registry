@@ -167,6 +167,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       doc8TrainingRecordsAvailability: vals?.doc8TrainingRecordsAvailability,
       doc8TrainingRecordsComment: vals?.doc8TrainingRecordsComment,
       doc9InternalAuditReportsAvailability: vals?.doc9InternalAuditReportsAvailability,
+      doc9InternalAuditReportsComment: vals?.doc9InternalAuditReportsComment,
       stakeholderName: firstStakeholder?.stakeholderName,
       contactDetails: firstStakeholder?.stakeholderContactNo,
       designation: firstStakeholder?.stakeholderDesignation,
