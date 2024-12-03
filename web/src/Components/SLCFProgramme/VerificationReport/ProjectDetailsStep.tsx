@@ -371,6 +371,7 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:monitoringPeriod')}`}
+                      <span style={{ color: '#ff4d4f' }}> *</span>
                     </h4>
                     <Row>
                       <Col xl={11} md={24}>

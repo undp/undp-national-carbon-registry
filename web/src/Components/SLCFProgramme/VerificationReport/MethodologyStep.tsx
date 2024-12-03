@@ -97,7 +97,7 @@ export const MethodologyStep = (props: any) => {
                   </div>
                 </Col>
 
-                <Col xl={5} md={24}>
+                <Col xl={4} md={24}>
                   <div className="step-form-right-col">
                     <h4>{t('verificationReport:company')}</h4>
                   </div>
@@ -105,15 +105,16 @@ export const MethodologyStep = (props: any) => {
 
                 <Col xl={6} md={24}>
                   <div className="step-form-right-col">
-                    <h4>{t('verificationReport:function')}</h4>
+                    <h4>{t('verificationReport:role')}</h4>
                   </div>
                 </Col>
 
-                <Col xl={8} md={24}>
+                <Col xl={6} md={24}>
                   <div className="step-form-right-col">
                     <h4>{t('verificationReport:taskPerformed')}</h4>
                   </div>
                 </Col>
+                <Col xl={3} md={24}></Col>
               </Row>
 
               <Form.List name="verificationTeamList">
@@ -137,7 +138,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={5} md={24}>
+                          <Col xl={4} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
                                 name={[name, 'company']}
@@ -184,7 +185,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={7} md={24}>
+                          <Col xl={6} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
                                 name={[name, 'taskPerformed']}
@@ -214,46 +215,44 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={1} md={24}>
-                            <div className="form-list-actions">
-                              {/* <h4>Entity {name + 2}</h4> */}
-                              <Form.Item>
-                                {name !== 0 && (
-                                  <Button
-                                    // type="dashed"
-                                    onClick={() => {
-                                      remove(name);
-                                    }}
-                                    size="large"
-                                    className="addMinusBtn"
-                                    // block
-                                    icon={<MinusOutlined />}
-                                  >
-                                    {/* Remove Entity */}
-                                  </Button>
-                                )}
-                              </Form.Item>
-                            </div>
+                          <Col md={3} xl={3} style={{ verticalAlign: 'top' }}>
+                            <Form.Item>
+                              {fields.length > 1 && (
+                                <Button
+                                  // type="dashed"
+                                  style={{ marginRight: 5 }}
+                                  onClick={() => {
+                                    // reduceTotalCreditingYears()
+                                    remove(name);
+                                  }}
+                                  size="small"
+                                  className="addMinusBtn"
+                                  // block
+                                  icon={<MinusOutlined />}
+                                >
+                                  {/* Add Entity */}
+                                </Button>
+                              )}
+                              {name === fields.length - 1 && (
+                                <Button
+                                  // type="dashed"
+                                  onClick={() => {
+                                    // reduceTotalCreditingYears()
+                                    add();
+                                  }}
+                                  size="middle"
+                                  className="addMinusBtn"
+                                  // block
+                                  icon={<PlusOutlined />}
+                                >
+                                  {/* Add Entity */}
+                                </Button>
+                              )}
+                            </Form.Item>
                           </Col>
                         </Row>
                       </>
                     ))}
-                    <div className="form-list-actions">
-                      <Form.Item>
-                        <Button
-                          // type="dashed"
-                          onClick={() => {
-                            add();
-                          }}
-                          size="large"
-                          className="addMinusBtn"
-                          // block
-                          icon={<PlusOutlined />}
-                        >
-                          {/* Add Entity */}
-                        </Button>
-                      </Form.Item>
-                    </div>
                   </>
                 )}
               </Form.List>
@@ -339,11 +338,12 @@ export const MethodologyStep = (props: any) => {
                     <h4>{t('verificationReport:method')}</h4>
                   </div>
                 </Col>
-                <Col xl={8} md={24}>
+                <Col xl={5} md={24}>
                   <div className="step-form-right-col">
                     <h4>{t('verificationReport:mainTopics')}</h4>
                   </div>
                 </Col>
+                <Col xl={3} md={24}></Col>
               </Row>
 
               <Form.List name="inspectionsList">
@@ -416,7 +416,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={7} md={24}>
+                          <Col xl={5} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
                                 name={[name, 'mainTopics']}
@@ -433,46 +433,44 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={1} md={24}>
-                            <div className="form-list-actions">
-                              {/* <h4>Entity {name + 2}</h4> */}
-                              <Form.Item>
-                                {name !== 0 && (
-                                  <Button
-                                    // type="dashed"
-                                    onClick={() => {
-                                      remove(name);
-                                    }}
-                                    size="large"
-                                    className="addMinusBtn"
-                                    // block
-                                    icon={<MinusOutlined />}
-                                  >
-                                    {/* Remove Entity */}
-                                  </Button>
-                                )}
-                              </Form.Item>
-                            </div>
+                          <Col md={24} xl={3} style={{ verticalAlign: 'top' }}>
+                            <Form.Item>
+                              {fields.length > 1 && (
+                                <Button
+                                  // type="dashed"
+                                  style={{ marginRight: 5 }}
+                                  onClick={() => {
+                                    // reduceTotalCreditingYears()
+                                    remove(name);
+                                  }}
+                                  size="small"
+                                  className="addMinusBtn"
+                                  // block
+                                  icon={<MinusOutlined />}
+                                >
+                                  {/* Add Entity */}
+                                </Button>
+                              )}
+                              {name === fields.length - 1 && (
+                                <Button
+                                  // type="dashed"
+                                  onClick={() => {
+                                    // reduceTotalCreditingYears()
+                                    add();
+                                  }}
+                                  size="middle"
+                                  className="addMinusBtn"
+                                  // block
+                                  icon={<PlusOutlined />}
+                                >
+                                  {/* Add Entity */}
+                                </Button>
+                              )}
+                            </Form.Item>
                           </Col>
                         </Row>
                       </>
                     ))}
-                    <div className="form-list-actions">
-                      <Form.Item>
-                        <Button
-                          // type="dashed"
-                          onClick={() => {
-                            add();
-                          }}
-                          size="large"
-                          className="addMinusBtn"
-                          // block
-                          icon={<PlusOutlined />}
-                        >
-                          {/* Add Entity */}
-                        </Button>
-                      </Form.Item>
-                    </div>
                   </>
                 )}
               </Form.List>
