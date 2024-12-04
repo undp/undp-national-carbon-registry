@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   ShopOutlined,
   SplitCellsOutlined,
+  UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +53,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
     getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
     getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
+    getItem(t('nav:projectList'), 'projectList/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
@@ -132,12 +134,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   item?.key === 'ndcManagement/viewAll' ||
                   item?.key === 'investmentManagement/viewAll' ||
                   item?.key === 'retirementManagement/viewAll' ||
+                  item?.key === 'projectList/viewAll' ||
                   item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
                     : ''
                 }
                 disabled={
                   item?.key === 'programmeManagement/viewAll' ||
+                  item?.key === 'projectList/viewAll' ||
                   item?.key === 'verraManagement/viewAll'
                 }
               >
