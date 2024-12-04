@@ -141,7 +141,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Initial Notification form has been submitted, by {{organisationName}} organization. <br><br>
+        A new Initial Notification form has been submitted, by {{organisationName}} organisation. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -171,7 +171,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Initial notification submitted by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
+        Initial notification submitted by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please submit a new notification request.
         <br><br>
@@ -231,7 +231,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Carbon Management Assessment form has been submitted, for the project {{programmeName}}, by {{organisationName}} organization. <br><br>
+        A new Carbon Management Assessment form has been submitted, for the project {{programmeName}}, by {{organisationName}} organisation. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -246,7 +246,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organization has been approved by Sri Lanka Climate Fund. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the form.
         <br><br>
@@ -261,7 +261,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please re-submit the Carbon Management Assessment form by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -293,7 +293,7 @@ export const EmailTemplates = {
 
         Validation Report submitted for the project {{programmeName}} by Sri Lanka Climate Fund has been approved by Executive Board of Sri Lanka Climate Fund. <br><br>
 
-        Now the project has been authorized.
+        Now the project has been authorised.
 
         Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
         <br><br>
@@ -310,7 +310,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organization has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -340,7 +340,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organization has been approved by Sri Lanka Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by Sri Lanka Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> to be directed to create the Verification Report.
         <br><br>
@@ -355,7 +355,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organization has been rejected by Sri Lanka Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund. <br><br>
 
         Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -370,7 +370,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Verification Report has been submitted, for the organization {{organisationName}} for the project {{programmeName}}. <br><br>
+        A new Verification Report has been submitted, for the organisation {{organisationName}} for the project {{programmeName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>

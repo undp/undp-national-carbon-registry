@@ -34,7 +34,7 @@ export const StasticCard: FC<StatisticsCardItemProps> = (props: StatisticsCardIt
           </div>
           <div className="values-section">
             <div className="values-and-unit">
-              {title.includes('credit') && <div className="unit">ITMOs</div>}
+              {/* {title.includes('credit') && <div className="unit">ITMOs</div>} */}
               <div className="value">
                 {title.includes('credit')
                   ? value === 0 || String(value) === 'NaN'

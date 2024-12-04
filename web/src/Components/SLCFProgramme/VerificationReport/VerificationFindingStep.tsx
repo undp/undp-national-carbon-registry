@@ -104,17 +104,18 @@ export const VerificationFindingStep = (props: any) => {
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={12} md={24}>
                   <Row gutter={[40, 16]} className="form-section">
-                    <Col xl={12} md={24}>
+                    <Col xl={9} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:siteLocation')}</h4>
                       </div>
                     </Col>
 
-                    <Col xl={10} md={24}>
+                    <Col xl={9} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:commissioningDate')}</h4>
                       </div>
                     </Col>
+                    <Col xl={6} md={24}></Col>
                   </Row>
 
                   <Form.List name="siteLocations">
@@ -127,7 +128,7 @@ export const VerificationFindingStep = (props: any) => {
                               gutter={[16, 16]}
                               className="form-section"
                             >
-                              <Col xl={12} md={24}>
+                              <Col xl={9} md={24}>
                                 <div className="step-form-right-col">
                                   <Form.Item
                                     name={[name, 'siteLocation']}
@@ -144,7 +145,7 @@ export const VerificationFindingStep = (props: any) => {
                                   </Form.Item>
                                 </div>
                               </Col>
-                              <Col xl={10} md={24}>
+                              <Col xl={9} md={24}>
                                 <div className="step-form-right-col">
                                   <Form.Item
                                     name={[name, 'commissioningDate']}
@@ -180,46 +181,44 @@ export const VerificationFindingStep = (props: any) => {
                                   </Form.Item>
                                 </div>
                               </Col>
-                              <Col xl={2} md={24}>
-                                <div className="form-list-actions">
-                                  {/* <h4>Entity {name + 2}</h4> */}
-                                  <Form.Item>
-                                    {name !== 0 && (
-                                      <Button
-                                        // type="dashed"
-                                        onClick={() => {
-                                          remove(name);
-                                        }}
-                                        size="large"
-                                        className="addMinusBtn"
-                                        // block
-                                        icon={<MinusOutlined />}
-                                      >
-                                        {/* Remove Entity */}
-                                      </Button>
-                                    )}
-                                  </Form.Item>
-                                </div>
+                              <Col md={24} xl={6} style={{ verticalAlign: 'top' }}>
+                                <Form.Item>
+                                  {fields.length > 1 && (
+                                    <Button
+                                      // type="dashed"
+                                      style={{ marginRight: 5 }}
+                                      onClick={() => {
+                                        // reduceTotalCreditingYears()
+                                        remove(name);
+                                      }}
+                                      size="small"
+                                      className="addMinusBtn"
+                                      // block
+                                      icon={<MinusOutlined />}
+                                    >
+                                      {/* Add Entity */}
+                                    </Button>
+                                  )}
+                                  {name === fields.length - 1 && (
+                                    <Button
+                                      // type="dashed"
+                                      onClick={() => {
+                                        // reduceTotalCreditingYears()
+                                        add();
+                                      }}
+                                      size="middle"
+                                      className="addMinusBtn"
+                                      // block
+                                      icon={<PlusOutlined />}
+                                    >
+                                      {/* Add Entity */}
+                                    </Button>
+                                  )}
+                                </Form.Item>
                               </Col>
                             </Row>
                           </>
                         ))}
-                        <div className="form-list-actions">
-                          <Form.Item>
-                            <Button
-                              // type="dashed"
-                              onClick={() => {
-                                add();
-                              }}
-                              size="large"
-                              className="addMinusBtn"
-                              // block
-                              icon={<PlusOutlined />}
-                            >
-                              {/* Add Entity */}
-                            </Button>
-                          </Form.Item>
-                        </div>
                       </>
                     )}
                   </Form.List>
@@ -282,22 +281,23 @@ export const VerificationFindingStep = (props: any) => {
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
                   <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
-                    <Col xl={8} md={24}>
+                    <Col xl={7} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:dataParameter')}</h4>
                       </div>
                     </Col>
 
-                    <Col xl={8} md={24}>
+                    <Col xl={7} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:sourceOfData')}</h4>
                       </div>
                     </Col>
-                    <Col xl={8} md={24}>
+                    <Col xl={7} md={24}>
                       <div className="step-form-right-col">
                         <h4>{t('verificationReport:reportedValue')}</h4>
                       </div>
                     </Col>
+                    <Col xl={3} md={24}></Col>
                   </Row>
 
                   <Form.List name="complianceList">
@@ -310,7 +310,7 @@ export const VerificationFindingStep = (props: any) => {
                               gutter={[16, 16]}
                               className="form-section"
                             >
-                              <Col xl={8} md={24}>
+                              <Col xl={7} md={24}>
                                 <div className="step-form-right-col">
                                   <Form.Item
                                     name={[name, 'dataParameter']}
@@ -328,7 +328,7 @@ export const VerificationFindingStep = (props: any) => {
                                 </div>
                               </Col>
 
-                              <Col xl={8} md={24}>
+                              <Col xl={7} md={24}>
                                 <div className="step-form-right-col">
                                   <Form.Item
                                     name={[name, 'sourceOfData']}
@@ -362,46 +362,44 @@ export const VerificationFindingStep = (props: any) => {
                                   </Form.Item>
                                 </div>
                               </Col>
-                              <Col xl={1} md={24}>
-                                <div className="form-list-actions">
-                                  {/* <h4>Entity {name + 2}</h4> */}
-                                  <Form.Item>
-                                    {name !== 0 && (
-                                      <Button
-                                        // type="dashed"
-                                        onClick={() => {
-                                          remove(name);
-                                        }}
-                                        size="large"
-                                        className="addMinusBtn"
-                                        // block
-                                        icon={<MinusOutlined />}
-                                      >
-                                        {/* Remove Entity */}
-                                      </Button>
-                                    )}
-                                  </Form.Item>
-                                </div>
+                              <Col md={24} xl={3} style={{ verticalAlign: 'top' }}>
+                                <Form.Item>
+                                  {fields.length > 1 && (
+                                    <Button
+                                      // type="dashed"
+                                      style={{ marginRight: 5 }}
+                                      onClick={() => {
+                                        // reduceTotalCreditingYears()
+                                        remove(name);
+                                      }}
+                                      size="small"
+                                      className="addMinusBtn"
+                                      // block
+                                      icon={<MinusOutlined />}
+                                    >
+                                      {/* Add Entity */}
+                                    </Button>
+                                  )}
+                                  {name === fields.length - 1 && (
+                                    <Button
+                                      // type="dashed"
+                                      onClick={() => {
+                                        // reduceTotalCreditingYears()
+                                        add();
+                                      }}
+                                      size="middle"
+                                      className="addMinusBtn"
+                                      // block
+                                      icon={<PlusOutlined />}
+                                    >
+                                      {/* Add Entity */}
+                                    </Button>
+                                  )}
+                                </Form.Item>
                               </Col>
                             </Row>
                           </>
                         ))}
-                        <div className="form-list-actions">
-                          <Form.Item>
-                            <Button
-                              // type="dashed"
-                              onClick={() => {
-                                add();
-                              }}
-                              size="large"
-                              className="addMinusBtn"
-                              // block
-                              icon={<PlusOutlined />}
-                            >
-                              {/* Add Entity */}
-                            </Button>
-                          </Form.Item>
-                        </div>
                       </>
                     )}
                   </Form.List>
@@ -609,7 +607,7 @@ export const VerificationFindingStep = (props: any) => {
                       name="optionalDocuments"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={FormMode.VIEW !== formMode}
+                      required={false}
                       rules={
                         FormMode.VIEW === formMode
                           ? []

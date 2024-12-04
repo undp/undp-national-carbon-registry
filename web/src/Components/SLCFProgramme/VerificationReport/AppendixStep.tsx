@@ -6,6 +6,7 @@ import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
+import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 export const AppendixStep = (props: any) => {
   const {
     useLocation,
@@ -18,6 +19,7 @@ export const AppendixStep = (props: any) => {
     approve,
     reject,
     onFinish,
+    status,
   } = props;
   const { userInfoState } = useUserContext();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -67,7 +69,7 @@ export const AppendixStep = (props: any) => {
                       name="optionalDocuments"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
-                      required={FormMode.VIEW !== formMode}
+                      required={false}
                       rules={
                         FormMode.VIEW === formMode
                           ? []
@@ -109,28 +111,29 @@ export const AppendixStep = (props: any) => {
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
                   Back
                 </Button>
-                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-                  (FormMode.VIEW === formMode && (
-                    <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
-                      Cancel
-                    </Button>
-                  ))}
+                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
+                  <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
+                    Cancel
+                  </Button>
+                )}
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   FormMode.VIEW !== formMode && (
                     <Button type="primary" htmlType="submit" disabled={false}>
                       <span>Submit</span>
                     </Button>
                   )}
-                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button type="primary" onClick={reject} disabled={false}>
-                    <span>Reject</span>
-                  </Button>
-                )}
-                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button type="primary" onClick={approve} disabled={false}>
-                    <span>Approve</span>
-                  </Button>
-                )}
+                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE &&
+                  status === DocumentStatus.PENDING && (
+                    <Button type="primary" onClick={reject} disabled={false}>
+                      <span>Reject</span>
+                    </Button>
+                  )}
+                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE &&
+                  status === DocumentStatus.PENDING && (
+                    <Button type="primary" onClick={approve} disabled={false}>
+                      <span>Approve</span>
+                    </Button>
+                  )}
               </Row>
             </Form>
           </div>

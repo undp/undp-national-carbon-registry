@@ -171,52 +171,71 @@ export const CompanyDetailsComponent = (props: any) => {
               </Col>
             </Row>
           )}
-          <Row className="field">
-            <Col span={12} className="field-key">
-              {t('companyDetails:programmeCount')}
-            </Col>
-            <Col span={12} className="field-value">
-              {companyDetails.programmeCount ? companyDetails.programmeCount : '-'}
-            </Col>
-          </Row>
-          <Row className="field">
-            <Col span={12} className="field-key">
-              {t('companyDetails:creditBalance')}
-            </Col>
-            <Col span={12} className="field-value">
-              {companyDetails.creditBalance ? addCommSep(companyDetails.creditBalance) : '-'}
-            </Col>
-          </Row>
-          <Row className="field">
-            <Col span={12} className="field-key">
-              {t('companyDetails:track1CreditBalance')}
-            </Col>
-            <Col span={12} className="field-value">
-              {companyDetails.slcfAccountBalance?.TRACK_2
-                ? addCommSep(companyDetails.slcfAccountBalance?.TRACK_1)
-                : '-'}
-            </Col>
-          </Row>
-          <Row className="field">
-            <Col span={12} className="field-key">
-              {t('companyDetails:track2CreditBalance')}
-            </Col>
-            <Col span={12} className="field-value">
-              {companyDetails.slcfAccountBalance?.TRACK_2
-                ? addCommSep(companyDetails.slcfAccountBalance?.TRACK_2)
-                : '-'}
-            </Col>
-          </Row>
-          <Row className="field">
-            <Col span={12} className="field-key">
-              {t('companyDetails:totalRetiredCredits')}
-            </Col>
-            <Col span={12} className="field-value">
-              {companyDetails.secondaryAccountBalance?.local?.total
-                ? addCommSep(companyDetails.secondaryAccountBalance?.local?.total)
-                : '-'}
-            </Col>
-          </Row>
+          {![
+            CompanyRole.CERTIFIER,
+            CompanyRole.CLIMATE_FUND,
+            CompanyRole.EXECUTIVE_COMMITTEE,
+          ].includes(companyDetails?.companyRole) && (
+            <Row className="field">
+              <Col span={12} className="field-key">
+                {t('companyDetails:programmeCount')}
+              </Col>
+              <Col span={12} className="field-value">
+                {companyDetails.programmeCount ? companyDetails.programmeCount : '-'}
+              </Col>
+            </Row>
+          )}
+
+          {![
+            CompanyRole.CERTIFIER,
+            CompanyRole.CLIMATE_FUND,
+            CompanyRole.EXECUTIVE_COMMITTEE,
+          ].includes(companyDetails?.companyRole) && (
+            <Row className="field">
+              <Col span={12} className="field-key">
+                {t('companyDetails:creditBalance')}
+              </Col>
+              <Col span={12} className="field-value">
+                {companyDetails.creditBalance ? addCommSep(companyDetails.creditBalance) : '-'}
+              </Col>
+            </Row>
+          )}
+
+          {companyDetails?.companyRole === CompanyRole.PROGRAMME_DEVELOPER && (
+            <>
+              <Row className="field">
+                <Col span={12} className="field-key">
+                  {t('companyDetails:track1CreditBalance')}
+                </Col>
+                <Col span={12} className="field-value">
+                  {companyDetails.slcfAccountBalance?.TRACK_2
+                    ? addCommSep(companyDetails.slcfAccountBalance?.TRACK_1)
+                    : '-'}
+                </Col>
+              </Row>
+              <Row className="field">
+                <Col span={12} className="field-key">
+                  {t('companyDetails:track2CreditBalance')}
+                </Col>
+                <Col span={12} className="field-value">
+                  {companyDetails.slcfAccountBalance?.TRACK_2
+                    ? addCommSep(companyDetails.slcfAccountBalance?.TRACK_2)
+                    : '-'}
+                </Col>
+              </Row>
+              <Row className="field">
+                <Col span={12} className="field-key">
+                  {t('companyDetails:totalRetiredCredits')}
+                </Col>
+                <Col span={12} className="field-value">
+                  {companyDetails.secondaryAccountBalance?.local?.total
+                    ? addCommSep(companyDetails.secondaryAccountBalance?.local?.total)
+                    : '-'}
+                </Col>
+              </Row>
+            </>
+          )}
+
           {parseInt(companyDetails.state) === 0 ? (
             <Row className="field">
               <Col span={12} className="field-key">

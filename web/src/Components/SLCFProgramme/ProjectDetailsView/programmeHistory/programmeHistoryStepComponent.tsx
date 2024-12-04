@@ -31,6 +31,7 @@ interface ProgrammeLog {
 const logTypeIcons: Record<string, React.ReactNode> = {
   CREATE: <Icon.CaretRight />,
   INF_APPROVED: <Icon.FileEarmarkCheck />,
+  INF_REJECTED: <Icon.FileEarmarkX />,
   CREATE_COST_QUOTATION: <Icon.FileText />,
   CREATE_PROJECT_PROPOSAL: <Icon.FileText />,
   CREATE_VALIDATION_AGREEMENT: <Icon.FileText />,
@@ -85,6 +86,9 @@ const getLogDescription = (log: any, t: any) => {
     case 'INF_APPROVED':
       return formatString('slcfProgrammeTimeline:infApprovedDescription', [log.name], t);
       break;
+    case 'INF_REJECTED':
+      return formatString('slcfProgrammeTimeline:infRejectedDescription', [log.name], t);
+      break;
     case 'CREATE_COST_QUOTATION':
       return formatString('slcfProgrammeTimeline:costQuoteCreatedDescription', [log.name], t);
       break;
@@ -136,7 +140,7 @@ const getLogDescription = (log: any, t: any) => {
       );
       break;
     case 'AUTHORISED':
-      return formatString('slcfProgrammeTimeline:authorisedDescription', [log.name], t);
+      return formatString('slcfProgrammeTimeline:authorisedDescription', [], t);
       break;
     case 'VALIDATION_REPORT_REJECTED':
       return formatString(
@@ -264,6 +268,9 @@ const getLogTitle = (logType: any) => {
     case 'INF_APPROVED':
       return 'slcfProgrammeTimeline:infApprovedTitle';
       break;
+    case 'INF_REJECTED':
+      return 'slcfProgrammeTimeline:infRejectedTitle';
+      break;
     case 'CREATE_COST_QUOTATION':
       return 'slcfProgrammeTimeline:costQuoteCreatedTitle';
       break;
@@ -277,7 +284,7 @@ const getLogTitle = (logType: any) => {
       return 'slcfProgrammeTimeline:projectProposalAcceptedTitle';
       break;
     case 'PROJECT_PROPOSAL_REJECTED':
-      return 'slcfProgrammeTimeline:projectProposalRejectedDescription';
+      return 'slcfProgrammeTimeline:projectProposalRejectedTitle';
       break;
     case 'CMA_CREATE':
       return 'slcfProgrammeTimeline:cmaCreatedTitle';
