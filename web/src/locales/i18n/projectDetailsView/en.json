@@ -244,5 +244,7 @@
   "btnSend": "Send",
   "btnApprove": "Approve",
   "btnReject": "Reject",
-  "validationFormsTitle": "Validation Forms"
+  "validationFormsTitle": "Validation",
+  "cmaFormsTitle": "Carbon Management Assessment",
+  "projectProposalFormsTitle": "Project Proposal"
 }

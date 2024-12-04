@@ -43,7 +43,11 @@ export interface ProjectFormProps {
   data: any;
   projectFormsTitle: any;
   validationFormsTitle: any;
+  cmaFormsTitle: any;
   icon: any;
+  projectProposalIcon: any;
+  cmaIcon: any;
+  validationIcon: any;
   programmeId: any;
   programmeOwnerId: number;
   getDocumentDetails: any;
@@ -59,7 +63,11 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     data,
     projectFormsTitle,
     validationFormsTitle,
+    cmaFormsTitle,
     icon,
+    projectProposalIcon,
+    cmaIcon,
+    validationIcon,
     programmeId,
     getDocumentDetails,
     getProgrammeById,
@@ -313,7 +321,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
     <>
       <div className="info-view">
         <div className="title">
-          <span className="title-icon">{icon}</span>
+          <span className="title-icon">{projectProposalIcon}</span>
           <span className="title-text">{projectFormsTitle}</span>
         </div>
         <div>
@@ -716,6 +724,12 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               </Col>
             )}
           </Row>
+        </div>
+        <div className="title">
+          <span className="title-icon">{cmaIcon}</span>
+          <span className="title-text">{cmaFormsTitle}</span>
+        </div>
+        <div>
           <Row className="field" key="Carbon Management Assessment (CMA)">
             <Col span={12} className="field-key">
               <div className="label-container">
@@ -955,7 +969,7 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
           </Row>
         </div>
         <div className="title">
-          <span className="title-icon">{icon}</span>
+          <span className="title-icon">{validationIcon}</span>
           <span className="title-text">{validationFormsTitle}</span>
         </div>
         <div>

@@ -85,7 +85,12 @@ const SLCFCMAForm = (props: { translator: i18n }) => {
           <Row className="row" justify={'space-between'}>
             <Col xl={12} md={12}></Col>
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
-              <Tag color={getDocumentStatusColor(documentStatus)}>{documentStatus}</Tag>
+              <Tag
+                style={{ fontSize: 14, fontWeight: 500, padding: '4px 22px' }}
+                color={getDocumentStatusColor(documentStatus)}
+              >
+                {documentStatus}
+              </Tag>
             </Col>
           </Row>
         ) : (

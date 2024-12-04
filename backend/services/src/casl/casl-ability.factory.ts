@@ -374,6 +374,22 @@ export class CaslAbilityFactory {
       can(Action.Read, VerificationRequestEntity);
     }
 
+    if (user.companyRole === CompanyRole.CERTIFIER) {
+      can(Action.Read, User);
+      can(Action.Read, ProgrammeSl);
+      can(Action.Read, CreditRetirementSl);
+      can(Action.Read, DocumentEntity);
+      can(Action.Read, VerificationRequestEntity);
+    }
+
+    if (user.companyRole === CompanyRole.MINISTRY) {
+      can(Action.Read, User);
+      can(Action.Read, ProgrammeSl);
+      can(Action.Read, CreditRetirementSl);
+      can(Action.Read, DocumentEntity);
+      can(Action.Read, VerificationRequestEntity);
+    }
+
     return build({
       detectSubjectType: (item) => item.constructor as ExtractSubjectType<Subjects>,
     });
