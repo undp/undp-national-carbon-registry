@@ -134,7 +134,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { t, i18n } = useTranslation(['projectDetailsView', 'slcfProgrammeTimeline']);
+  const { t, i18n } = useTranslation([
+    'projectDetailsView',
+    'slcfProgrammeTimeline',
+    'slcfRoadmapTimeline',
+  ]);
   const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
   const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
@@ -2041,6 +2045,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             <div className="info-view">
               <ProgrammeStatusTimelineComponent
                 programmeDetails={data}
+                translator={t}
               ></ProgrammeStatusTimelineComponent>
             </div>
           </Card>

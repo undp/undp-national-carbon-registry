@@ -3,9 +3,6 @@
 import React from 'react';
 import { Steps } from 'antd';
 import {
-  SmileOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
   CloseCircleFilled,
   NotificationOutlined,
   ReadOutlined,
@@ -13,21 +10,16 @@ import {
   FileDoneOutlined,
   SafetyCertificateOutlined,
   LikeOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import './programmeStatusTimelineComponent.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { getProjectProposalStageEnumVal } from '../../../../Definitions/Definitions/programme.definitions';
 import { ProjectProposalStage } from '../../../../Definitions/Enums/programmeStage.enum';
 
-interface StepProps {
-  title: any;
-  subTitle?: any;
-  description?: any;
-  status: 'finish' | 'process' | 'wait'; // Define acceptable statuses
-}
-
 interface ProgrammeStatusTimelineComponentProps {
-  programmeDetails: any; // Example prop structure
+  programmeDetails: any;
+  translator: any;
 }
 
 const getCurrentStep = (stage: ProjectProposalStage) => {
@@ -66,181 +58,200 @@ const getCurrentStep = (stage: ProjectProposalStage) => {
   }
 };
 
-const getProposalContent = (stage: ProjectProposalStage) => {
+const getINFContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
     case ProjectProposalStage.SUBMITTED_INF:
-      return { subTitle: 'Pending', icon: <ReadOutlined />, className: 'proposal-pending' };
-    case ProjectProposalStage.APPROVED_INF:
-      return { subTitle: 'Pending', icon: <ReadOutlined />, className: 'proposal-pending' };
-    case ProjectProposalStage.REJECTED_INF:
-      return { subTitle: '', icon: <CloseOutlined />, className: 'proposal-pending' };
-    case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-      return { subTitle: 'Pending', icon: <ReadOutlined />, className: 'proposal-pending' };
-    case ProjectProposalStage.SUBMITTED_PROPOSAL:
-      return { subTitle: 'Pending', icon: <ReadOutlined />, className: 'proposal-pending' };
-    case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-      return { subTitle: 'Submitted', icon: <ReadOutlined />, className: 'proposal-submitted' };
-    case ProjectProposalStage.ACCEPTED_PROPOSAL:
       return {
-        subTitle: 'Accepted',
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: 'submitted',
+        icon: <NotificationOutlined />,
+        className: 'inf-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
+      };
+    case ProjectProposalStage.REJECTED_INF:
+      return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: 'rejected',
+        icon: <CloseCircleFilled />,
+        className: 'inf-rejected',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+    default:
+      return {
+        subTitle: t('slcfRoadmapTimeline:approved'),
+        statusKey: 'approved',
         icon: <Icon.CheckCircleFill />,
-        className: 'proposal-approved',
-      };
-    case ProjectProposalStage.REJECTED_PROPOSAL:
-      return { subTitle: 'Rejected', icon: <CloseCircleFilled />, className: 'proposal-rejected' };
-    default:
-      return {
-        subTitle: 'Accepted',
-        icon: <Icon.CheckCircleFill />,
-        className: 'proposal-approved',
+        className: 'inf-approved',
+        subTaskOne: true,
+        subTaskTwo: true,
       };
   }
 };
 
-const getINFContent = (stage: ProjectProposalStage) => {
+const getProposalContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
     case ProjectProposalStage.SUBMITTED_INF:
-      return { subTitle: 'Submitted', icon: <NotificationOutlined />, className: 'inf-submitted' };
     case ProjectProposalStage.APPROVED_INF:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'inf-approved' };
-    case ProjectProposalStage.REJECTED_INF:
-      return { subTitle: 'Rejected', icon: <CloseCircleFilled />, className: 'inf-rejected' };
-    default:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'inf-approved' };
-  }
-};
-
-const getCMAContent = (stage: ProjectProposalStage) => {
-  switch (getProjectProposalStageEnumVal(stage)) {
-    case ProjectProposalStage.SUBMITTED_INF:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.APPROVED_INF:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.REJECTED_INF:
-      return { subTitle: '', icon: <CloseOutlined />, className: 'cma-pending' };
     case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
     case ProjectProposalStage.SUBMITTED_PROPOSAL:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.ACCEPTED_PROPOSAL:
-      return { subTitle: 'Pending', icon: <FileDoneOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.REJECTED_PROPOSAL:
-      return { subTitle: '', icon: <CloseOutlined />, className: 'cma-pending' };
-    case ProjectProposalStage.SUBMITTED_CMA:
-      return { subTitle: 'Submitted', icon: <FileDoneOutlined />, className: 'cma-submitted' };
-    case ProjectProposalStage.APPROVED_CMA:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'cma-approved' };
-    case ProjectProposalStage.REJECTED_CMA:
-      return { subTitle: 'Rejected', icon: <CloseCircleFilled />, className: 'cma-rejected' };
-    case ProjectProposalStage.VALIDATION_PENDING:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'cma-approved' };
-    case ProjectProposalStage.AUTHORISED:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'cma-approved' };
-    case ProjectProposalStage.REJECTED_VALIDATION:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'cma-approved' };
-    default:
-      return { subTitle: 'Approved', icon: <Icon.CheckCircleFill />, className: 'cma-approved' };
-  }
-};
-
-const getValidationContent = (stage: ProjectProposalStage) => {
-  switch (getProjectProposalStageEnumVal(stage)) {
-    case ProjectProposalStage.SUBMITTED_INF:
       return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
-      };
-    case ProjectProposalStage.APPROVED_INF:
-      return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: 'pending',
+        icon: <ReadOutlined />,
+        className: 'proposal-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.REJECTED_INF:
       return {
         subTitle: '',
+        statusKey: '',
         icon: <CloseOutlined />,
-        className: 'validation-pending',
-      };
-    case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-      return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
-      };
-    case ProjectProposalStage.SUBMITTED_PROPOSAL:
-      return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
+        className: 'proposal-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
       return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
-      };
-    case ProjectProposalStage.ACCEPTED_PROPOSAL:
-      return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: 'submitted',
+        icon: <ReadOutlined />,
+        className: 'proposal-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.REJECTED_PROPOSAL:
       return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: 'rejected',
+        icon: <CloseCircleFilled />,
+        className: 'proposal-rejected',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+    default:
+      return {
+        subTitle: t('slcfRoadmapTimeline:accepted'),
+        statusKey: 'accepted',
+        icon: <Icon.CheckCircleFill />,
+        className: 'proposal-approved',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+  }
+};
+
+const getCMAContent = (stage: ProjectProposalStage, t: any) => {
+  switch (getProjectProposalStageEnumVal(stage)) {
+    case ProjectProposalStage.SUBMITTED_INF:
+    case ProjectProposalStage.APPROVED_INF:
+    case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
+    case ProjectProposalStage.SUBMITTED_PROPOSAL:
+    case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
+    case ProjectProposalStage.ACCEPTED_PROPOSAL:
+      return {
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: 'pending',
+        icon: <FileDoneOutlined />,
+        className: 'cma-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
+      };
+    case ProjectProposalStage.REJECTED_INF:
+    case ProjectProposalStage.REJECTED_PROPOSAL:
+      return {
         subTitle: '',
+        statusKey: '',
         icon: <CloseOutlined />,
-        className: 'validation-pending',
+        className: 'cma-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.SUBMITTED_CMA:
       return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
-      };
-    case ProjectProposalStage.APPROVED_CMA:
-      return {
-        subTitle: 'Pending',
-        icon: <SafetyCertificateOutlined />,
-        className: 'validation-pending',
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: 'submitted',
+        icon: <FileDoneOutlined />,
+        className: 'cma-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.REJECTED_CMA:
       return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: 'rejected',
+        icon: <CloseCircleFilled />,
+        className: 'cma-rejected',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+    default:
+      return {
+        subTitle: t('slcfRoadmapTimeline:approved'),
+        statusKey: 'approved',
+        icon: <Icon.CheckCircleFill />,
+        className: 'cma-approved',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+  }
+};
+
+const getValidationContent = (stage: ProjectProposalStage, t: any) => {
+  switch (getProjectProposalStageEnumVal(stage)) {
+    case ProjectProposalStage.REJECTED_INF:
+    case ProjectProposalStage.REJECTED_PROPOSAL:
+    case ProjectProposalStage.REJECTED_CMA:
+      return {
         subTitle: '',
+        statusKey: '',
         icon: <CloseOutlined />,
         className: 'validation-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.VALIDATION_PENDING:
       return {
-        subTitle: 'Submitted',
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: 'submitted',
         icon: <SafetyCertificateOutlined />,
         className: 'validation-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
       };
     case ProjectProposalStage.AUTHORISED:
       return {
-        subTitle: 'Approved',
+        subTitle: t('slcfRoadmapTimeline:approved'),
+        statusKey: 'approved',
         icon: <Icon.CheckCircleFill />,
         className: 'validation-approved',
+        subTaskOne: true,
+        subTaskTwo: true,
       };
     case ProjectProposalStage.REJECTED_VALIDATION:
       return {
-        subTitle: 'Rejected',
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: 'rejected',
         icon: <CloseCircleFilled />,
         className: 'validation-rejected',
+        subTaskOne: true,
+        subTaskTwo: true,
       };
     default:
       return {
-        subTitle: 'Approved',
-        icon: <Icon.CheckCircleFill />,
-        className: 'validation-approved',
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: 'pending',
+        icon: <SafetyCertificateOutlined />,
+        className: 'validation-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
   }
 };
 
-const getAuthorisedContent = (stage: ProjectProposalStage) => {
+const getAuthorisedContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
     case ProjectProposalStage.REJECTED_INF:
     case ProjectProposalStage.REJECTED_CMA:
@@ -248,18 +259,21 @@ const getAuthorisedContent = (stage: ProjectProposalStage) => {
     case ProjectProposalStage.REJECTED_VALIDATION:
       return {
         subTitle: '',
+        statusKey: '',
         icon: <CloseOutlined />,
         className: 'auth-pending',
       };
     case ProjectProposalStage.AUTHORISED:
       return {
-        subTitle: 'Completed',
+        subTitle: t('slcfRoadmapTimeline:completed'),
+        statusKey: 'completed',
         icon: <Icon.CheckCircleFill />,
         className: 'auth-approved',
       };
     default:
       return {
-        subTitle: 'Pending',
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: 'pending',
         icon: <LikeOutlined />,
         className: 'auth-pending',
       };
@@ -268,56 +282,105 @@ const getAuthorisedContent = (stage: ProjectProposalStage) => {
 
 const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponentProps> = ({
   programmeDetails,
+  translator,
 }) => {
+  const t = translator;
   const currentStep = getCurrentStep(programmeDetails.projectProposalStage);
+  const infContent = getINFContent(programmeDetails.projectProposalStage, t);
+  const proposalContent = getProposalContent(programmeDetails.projectProposalStage, t);
+  const cmaContent = getCMAContent(programmeDetails.projectProposalStage, t);
+  const validationContent = getValidationContent(programmeDetails.projectProposalStage, t);
 
   return (
     <Steps
       current={currentStep}
       items={[
         {
-          title: 'Initial Notification',
-          subTitle: getINFContent(programmeDetails.projectProposalStage).subTitle,
+          title: t('slcfRoadmapTimeline:infTitle'),
+          subTitle: infContent.subTitle,
           description: (
             <div className="item-description">
               <ul>
-                <li>Submission by Project Participant</li>
-                <li>Approval by SLCF</li>
+                <li className="timeline-description-approved-true">
+                  {infContent.subTaskOne && (
+                    <span className="timeline-description-item-complete">
+                      <CheckOutlined />
+                    </span>
+                  )}
+                  <div>{t('slcfRoadmapTimeline:submissionByPP')}</div>
+                </li>
+                <li
+                  className={`timeline-description-${infContent.statusKey}-${infContent.subTaskTwo}`}
+                >
+                  {infContent.subTaskTwo ? (
+                    infContent.statusKey === 'rejected' ? (
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                    ) : (
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                    )
+                  ) : null}
+                  {t('slcfRoadmapTimeline:approveBySLCF')}
+                </li>
               </ul>
             </div>
           ),
           icon: (
             <div
-              className={`${getINFContent(programmeDetails.projectProposalStage).className}-${
+              className={`${infContent.className}-${
                 currentStep === 0 ? 'process' : 'finish'
               } timeline-icon`}
             >
-              {getINFContent(programmeDetails.projectProposalStage).icon}
+              {infContent.icon}
             </div>
           ),
           status: currentStep === 0 ? 'process' : 'finish',
         },
         {
-          title: 'Project Proposal',
+          title: t('slcfRoadmapTimeline:projectProposal'),
           description: (
             <div className="item-description">
               <ul>
-                <li>
-                  Submission of <b>Cost Quotation, Proposal</b> and <b>Validation Agreement</b> by
-                  SLCF
+                <li
+                  className={`timeline-description-${proposalContent.statusKey}-${proposalContent.subTaskOne}`}
+                >
+                  {proposalContent.subTaskOne ? (
+                    <span className="timeline-description-item-complete">
+                      <CheckOutlined />
+                    </span>
+                  ) : null}
+                  <div>{t('slcfRoadmapTimeline:subCostQuoteBySLCF')}</div>
                 </li>
-                <li>Approval by Project Participant</li>
+                <li
+                  className={`timeline-description-${proposalContent.statusKey}-${proposalContent.subTaskTwo}`}
+                >
+                  {proposalContent.subTaskTwo ? (
+                    proposalContent.statusKey === 'rejected' ? (
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                    ) : (
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                    )
+                  ) : null}
+                  {t('slcfRoadmapTimeline:acceptByPP')}
+                </li>
               </ul>
             </div>
           ),
-          subTitle: getProposalContent(programmeDetails.projectProposalStage).subTitle,
+          subTitle: proposalContent.subTitle,
           icon: (
             <div
-              className={`${getProposalContent(programmeDetails.projectProposalStage).className}-${
+              className={`${proposalContent.className}-${
                 currentStep === 1 ? 'process' : currentStep > 1 ? 'finish' : 'wait'
               } timeline-icon`}
             >
-              {getProposalContent(programmeDetails.projectProposalStage).icon}
+              {proposalContent.icon}
             </div>
           ),
           status: currentStep === 1 ? 'process' : currentStep > 1 ? 'finish' : 'wait',
@@ -325,71 +388,110 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
         {
           title: (
             <div className="cma-title">
-              Carbon Management <br /> Assessment
+              {t('slcfRoadmapTimeline:cmaTitlePart1')} <br />
+              {t('slcfRoadmapTimeline:cmaTitlePart2')}
             </div>
           ),
           description: (
             <div className="item-description">
               <ul>
-                <li>Submission by Project Participant</li>
-                <li>Approval by SLCF</li>
+                <li
+                  className={`timeline-description-${cmaContent.statusKey}-${cmaContent.subTaskOne}`}
+                >
+                  {cmaContent.subTaskOne ? (
+                    <span className="timeline-description-item-complete">
+                      <CheckOutlined />
+                    </span>
+                  ) : null}
+                  {t('slcfRoadmapTimeline:submissionByPP')}
+                </li>
+                <li
+                  className={`timeline-description-${cmaContent.statusKey}-${cmaContent.subTaskTwo}`}
+                >
+                  {cmaContent.subTaskTwo ? (
+                    cmaContent.statusKey === 'rejected' ? (
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                    ) : (
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                    )
+                  ) : null}
+                  {t('slcfRoadmapTimeline:approveBySLCF')}
+                </li>
               </ul>
             </div>
           ),
-          subTitle: getCMAContent(programmeDetails.projectProposalStage).subTitle,
+          subTitle: cmaContent.subTitle,
           icon: (
             <div
-              className={`${getCMAContent(programmeDetails.projectProposalStage).className}-${
+              className={`${cmaContent.className}-${
                 currentStep === 2 ? 'process' : currentStep > 2 ? 'finish' : 'wait'
               } timeline-icon`}
             >
-              {getCMAContent(programmeDetails.projectProposalStage).icon}
+              {cmaContent.icon}
             </div>
           ),
           status: currentStep === 2 ? 'process' : currentStep > 2 ? 'finish' : 'wait',
         },
         {
-          title: 'Validation Report',
+          title: t('slcfRoadmapTimeline:validationTitle'),
           description: (
             <div className="item-description">
               <ul>
-                <li>Submission by SLCF</li>
-                <li>Approval by SLCF</li>
+                <li
+                  className={`timeline-description-${validationContent.statusKey}-${validationContent.subTaskOne}`}
+                >
+                  {validationContent.subTaskOne ? (
+                    <span className="timeline-description-item-complete">
+                      <CheckOutlined />
+                    </span>
+                  ) : null}
+                  {t('slcfRoadmapTimeline:submissionBySLCF')}
+                </li>
+                <li
+                  className={`timeline-description-${validationContent.statusKey}-${validationContent.subTaskTwo}`}
+                >
+                  {validationContent.subTaskTwo ? (
+                    validationContent.statusKey === 'rejected' ? (
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                    ) : (
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                    )
+                  ) : null}
+                  {t('slcfRoadmapTimeline:approveByExCom')}
+                </li>
               </ul>
             </div>
           ),
-          subTitle: getValidationContent(programmeDetails.projectProposalStage).subTitle,
+          subTitle: validationContent.subTitle,
           icon: (
             <div
-              className={`${
-                getValidationContent(programmeDetails.projectProposalStage).className
-              }-${
+              className={`${validationContent.className}-${
                 currentStep === 3 ? 'process' : currentStep > 3 ? 'finish' : 'wait'
               } timeline-icon`}
             >
-              {getValidationContent(programmeDetails.projectProposalStage).icon}
+              {validationContent.icon}
             </div>
           ),
           status: currentStep === 3 ? 'process' : currentStep > 3 ? 'finish' : 'wait',
         },
         {
-          title: 'Project Registration',
-          // description: (
-          //   <div className="item-description">
-          //     <ul>
-          //       <li>Submission by SLCF</li>
-          //       <li>Approval by SLCF</li>
-          //     </ul>
-          //   </div>
-          // ),
-          subTitle: getAuthorisedContent(programmeDetails.projectProposalStage).subTitle,
+          title: t('slcfRoadmapTimeline:authorisedTitle'),
+          subTitle: getAuthorisedContent(programmeDetails.projectProposalStage, t).subTitle,
           icon: (
             <div
               className={`${
-                getAuthorisedContent(programmeDetails.projectProposalStage).className
+                getAuthorisedContent(programmeDetails.projectProposalStage, t).className
               }-${currentStep === 4 ? 'finish' : 'wait'} timeline-icon`}
             >
-              {getAuthorisedContent(programmeDetails.projectProposalStage).icon}
+              {getAuthorisedContent(programmeDetails.projectProposalStage, t).icon}
             </div>
           ),
           status: currentStep === 4 ? 'finish' : 'wait',

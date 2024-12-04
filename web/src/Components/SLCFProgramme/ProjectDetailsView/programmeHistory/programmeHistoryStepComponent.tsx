@@ -1,14 +1,6 @@
 import React from 'react';
 import { Steps } from 'antd';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  SyncOutlined,
-  FileOutlined,
-  ClockCircleOutlined,
-  CheckOutlined,
-  CaretRightOutlined,
-} from '@ant-design/icons';
+import { FileOutlined } from '@ant-design/icons';
 
 import * as Icon from 'react-bootstrap-icons';
 
@@ -20,9 +12,9 @@ interface ProgrammeLog {
   id: number;
   programmeId: string;
   logType: string;
-  data: Record<string, any> | null; // 'data' can be an object or null
+  data: Record<string, any> | null;
   userId: number;
-  createdTime: string; // Epoch time stored as a string
+  createdTime: string;
   name: string;
   companyRole: string;
   role: string;
