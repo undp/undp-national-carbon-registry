@@ -2378,26 +2378,28 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 </div>
               </Card>
             )}
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<ClockCircleOutlined />}</span>
-                  <span className="title-text">{t('view:timeline')}</span>
+            {programmeHistoryLogData && programmeHistoryLogData.length > 0 && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<ClockCircleOutlined />}</span>
+                    <span className="title-text">{t('view:timeline')}</span>
+                  </div>
+                  <div className="content">
+                    {loadingHistory ? (
+                      <Skeleton />
+                    ) : (
+                      <div className="programme-timeline-container">
+                        <ProgrammeHistoryStepsComponent
+                          historyData={programmeHistoryLogData}
+                          translator={t}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="content">
-                  {loadingHistory ? (
-                    <Skeleton />
-                  ) : (
-                    <div className="programme-timeline-container">
-                      <ProgrammeHistoryStepsComponent
-                        historyData={programmeHistoryLogData}
-                        translator={t}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Card>
+              </Card>
+            )}
           </Col>
         </Row>
       </div>
